@@ -19,7 +19,6 @@ package io.jmix.flowui.kit.component.sidepanellayout;
 import com.google.common.base.Strings;
 import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.dependency.JsModule;
-import com.vaadin.flow.dom.Element;
 import com.vaadin.flow.dom.ElementUtil;
 import com.vaadin.flow.dom.PropertyChangeEvent;
 import com.vaadin.flow.shared.Registration;
@@ -514,16 +513,6 @@ public class JmixSidePanelLayout extends Component implements HasSize, HasStyle 
                         ") is not a child of this component");
             }
         }
-
-        Element[] existingChildren = getChildren()
-                .map(Component::getElement)
-                .toList()
-                .toArray(new Element[0]);
-
-        // When fullscreen enabled and the side panel is opened, removed components are not deleted from
-        // the client side. We need to explicitly send existing children to the client to delete the
-        // difference.
-        getElement().callJsFunction("_updateControllers", (Object[]) existingChildren);
     }
 
     protected void updateContentInert(boolean modal) {

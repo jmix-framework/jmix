@@ -109,7 +109,6 @@ export const JmixSidePanelLayoutMixin = (superClass) =>
             _displayAsOverlay: {
                 type: Boolean,
                 value: false,
-                observer: '_displayAsOverlayChanged',
             },
         };
     }
@@ -142,7 +141,7 @@ export const JmixSidePanelLayoutMixin = (superClass) =>
      * @param {HTMLElement} focusComponent
      */
     focusComponent(focusComponent) {
-        if (!focusComponent || this._contentController.getActualNodes().includes(focusComponent)) {
+        if (!focusComponent || this._getSidePanelContentNodes().includes(focusComponent)) {
             return
         }
 
@@ -196,10 +195,6 @@ export const JmixSidePanelLayoutMixin = (superClass) =>
     _sidePanelOpenedChanged(opened, oldOpened) {
         this._updateModalityCurtainHidden();
         this._updateContentSize();
-
-        if (opened) {
-            this._moveSidePanelChildren();
-        }
     }
 
     /**
@@ -409,15 +404,6 @@ export const JmixSidePanelLayoutMixin = (superClass) =>
     }
 
     /**
-     * Observer for fullscreen property.
-     *
-     * @private
-     */
-    _displayAsOverlayChanged(fullscreen, oldFullscreen) {
-        this._moveSidePanelChildren();
-    }
-
-    /**
      * Returns true if the dialog should be opened.
      *
      * @private
@@ -427,77 +413,15 @@ export const JmixSidePanelLayoutMixin = (superClass) =>
     }
 
     /**
-     * Moves the side panel children to the dialog or component depending on how the side panel is displayed.
+     * Returns the side panel content nodes, i.e. the light DOM children assigned to the
+     * {@code sidePanelContentSlot} slot. These nodes stay in the host's light DOM in both the inline
+     * and the overlay display modes, so they remain stylable by application/theme CSS.
      *
      * @private
      */
-    _moveSidePanelChildren() {
-      if (this._displayAsOverlay) {
-        // Move to dialog
-        this._moveSidePanelChildrenTo(this.$.dialog.$.overlay);
-      } else {
-        // Move to component
-        this._moveSidePanelChildrenTo(this);
-      }
-    }
-
-    /**
-     * Moves the side panel children to the target element (dialog or component).
-     *
-     * @private
-     */
-    _moveSidePanelChildrenTo(target) {
-      // If the component is not fully initialized
-      if (!this._contentController) {
-          return;
-      }
-
-      const contents = this._contentController.getActualNodes();
-      const nodes = [...contents];
-
-      if (!nodes.every((node) => node instanceof HTMLElement)) {
-        return;
-      }
-
-      this._contentController.suspendRemovingActualNodes();
-
-      [...nodes].forEach((node) => {
-        target.appendChild(node);
-      });
-
-      // Wait for the nodes to be moved.
-      setTimeout(() => {
-          this._contentController.resumeRemovingActualNodes();
-      })
-    }
-
-    /**
-     * Server callable function.
-     *
-     * Updates the controllers to remove any elements that are no longer in the DOM.
-     * @param existingChildren the existing children of the side panel layout
-     *
-     * @private
-     */
-    _updateControllers(...existingChildren) {
-        if (!existingChildren || !this._displayAsOverlay || !this._contentController) {
-            return;
-        }
-
-        const removedElements = [];
-
-        this._contentController.getActualNodes().forEach((element) => {
-            if (existingChildren.indexOf(element) === -1) {
-                this._contentController.removeActualNode(element);
-                removedElements.push(element);
-            }
-        });
-
-        // Update dialog overlay if opened
-        if (this.sidePanelOpened && removedElements.length > 0) {
-            for (const element of removedElements) {
-                this.$.dialog.$.overlay.removeChild(element);
-            }
-        }
+    _getSidePanelContentNodes() {
+      return Array.from(this.children).filter(
+        (node) => node.nodeType === Node.ELEMENT_NODE && node.slot === 'sidePanelContentSlot',
+      );
     }
 }

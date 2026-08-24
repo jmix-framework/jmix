@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { html, LitElement } from 'lit';
+import { html, LitElement, nothing } from 'lit';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { defineCustomElement } from '@vaadin/component-base/src/define.js';
 import { ThemableMixin } from '@vaadin/vaadin-themable-mixin/vaadin-themable-mixin.js';
@@ -22,7 +22,6 @@ import { ElementMixin } from '@vaadin/component-base/src/element-mixin.js';
 import { PolylitMixin } from '@vaadin/component-base/src/polylit-mixin.js';
 import { LumoInjectionMixin } from '@vaadin/vaadin-themable-mixin/lumo-injection-mixin.js';
 import { MediaQueryController } from '@vaadin/component-base/src/media-query-controller.js';
-import { JmixSidePanelLayoutSlotController } from './jmix-side-panel-layout-slot-controller.js';
 
 import { JmixSidePanelLayoutMixin } from './jmix-side-panel-layout-mixin.js';
 import { sidePanelLayoutStyles } from './styles/jmix-side-panel-layout-base-styles.js';
@@ -47,7 +46,7 @@ class JmixSidePanelLayout extends JmixSidePanelLayoutMixin(ElementMixin(Themable
                 <div id="modalityCurtain" part="modalityCurtain" ?hidden="${this._modalityCurtainHidden}"></div>
                 <div id="sidePanel" part="sidePanel">
                     <div id="sidePanelContent" part="sidePanelContent">
-                         <slot name="sidePanelContentSlot"></slot>
+                         ${this._displayAsOverlay ? nothing : html`<slot name="sidePanelContentSlot"></slot>`}
                     </div>
                 </div>
             </div>
@@ -59,7 +58,11 @@ class JmixSidePanelLayout extends JmixSidePanelLayoutMixin(ElementMixin(Themable
                     aria-label="${ifDefined(this.overlayAriaLabel)}"
                     theme="${ifDefined(this._theme)}"
                     @close="${this._closeSidePanel}"
-                  ></jmix-side-panel-layout-dialog>
+                  >
+                ${this._displayAsOverlay
+                        ? html`<slot name="sidePanelContentSlot" slot="sidePanelContentSlot"></slot>`
+                        : nothing}
+            </jmix-side-panel-layout-dialog>
         `;
     }
 
@@ -72,9 +75,6 @@ class JmixSidePanelLayout extends JmixSidePanelLayoutMixin(ElementMixin(Themable
                 this.toggleAttribute('overlay', this._displayAsOverlay);
             }),
         );
-
-        this._contentController = new JmixSidePanelLayoutSlotController(this, 'sidePanelContentSlot');
-        this.addController(this._contentController);
 
         this._attachSidePanelSizeObserver();
     }

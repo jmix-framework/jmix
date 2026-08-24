@@ -904,21 +904,30 @@ class LlmDataLoaderTest {
     }
 
     @Test
-    void testFailureNamesAnEmptyReportParameterAsEmptyRatherThanAsUnknown() {
-        // An optional report parameter left unfilled arrives with a null value. It is the common way a run meets
-        // an unbindable parameter, and the author has to hear which one it is and that filling it in is the fix.
+    void testEmptyReportParameterIsBoundAsNullSoAGuardedConditionCanSwitchOff() {
+        // An optional report parameter left unfilled arrives with a null value. The query generated for it
+        // guards its condition with (:name is null or …), which needs that null bound: binding nothing would
+        // fail a query written precisely to survive an empty value.
         DataSet dataSet = llmDataSet(PROMPT, storedQuery(List.of(parameter("dateFrom", "java.time.LocalDate"))));
         Map<String, Object> params = new HashMap<>();
         params.put("dateFrom", null);
 
-        assertThatThrownBy(() -> loader().loadData(dataSet, null, params))
-                .isInstanceOf(DataLoadingException.class)
-                .hasMessageContainingAll("dateFrom", "left empty", "fill the parameter in");
+        loader().loadData(dataSet, null, params);
 
-        // A name the run never heard of stays a different message: nothing to fill in there.
+        assertThat(dataLoader.getLastExecution().arguments()).containsEntry("dateFrom", null);
+    }
+
+    @Test
+    void testParameterTheRunNeverHeardOfStillFailsTheDataSet() {
+        // Binding null is for a parameter the report knows and this run left empty. A name the run has nothing
+        // for at all is a query that does not match its report, and it says so.
+        DataSet dataSet = llmDataSet(PROMPT, storedQuery(List.of(parameter("dateFrom", "java.time.LocalDate"))));
+
         assertThatThrownBy(() -> loader().loadData(dataSet, null, Map.of()))
                 .isInstanceOf(DataLoadingException.class)
                 .hasMessageContaining("provides no value for it");
+
+        assertThat(dataLoader.getExecutions()).isEmpty();
     }
 
     @Test
@@ -1028,14 +1037,68 @@ class LlmDataLoaderTest {
     }
 
     @Test
-    void testEmptyListParameterCannotBeBound() {
-        // A collection with nothing to match is not a value, so the parameter has none and the query says so.
+    void testEmptyValueMatchedWithInFailsRatherThanBindingNull() {
+        // A collection parameter the run left empty arrives as null, indistinguishable from an empty scalar, so
+        // the query text is what tells them apart: matched with IN, an empty value cannot work at all.
+        LlmDataQuery inCondition = new LlmDataQuery(
+                "select o.number as orderNumber from sales_Order o where o.number in :orderNumbers",
+                List.of("orderNumber"), List.of(parameter("orderNumbers", "java.lang.String")), null, List.of());
+        DataSet dataSet = llmDataSet(PROMPT, serializer.toJson(inCondition));
+        Map<String, Object> params = new HashMap<>();
+        params.put("orderNumbers", null);
+
+        assertThatThrownBy(() -> loader().loadData(dataSet, null, params))
+                .isInstanceOf(DataLoadingException.class)
+                .hasMessageContainingAll("orderNumbers", "IN");
+
+        assertThat(dataLoader.getExecutions()).isEmpty();
+    }
+
+    @Test
+    void testEmptyValueOfAScalarConditionIsStillBoundAsNull() {
+        // The scalar case the IN rule must not swallow: here a guard does switch the condition off.
+        dataLoader.setRows(List.of(Map.of("orderNumber", "A-1")));
+        LlmDataQuery guarded = new LlmDataQuery(
+                "select o.number as orderNumber from sales_Order o where (:city is null or o.city = :city)",
+                List.of("orderNumber"), List.of(parameter("city", "java.lang.String")), null, List.of());
+        DataSet dataSet = llmDataSet(PROMPT, serializer.toJson(guarded));
+        Map<String, Object> params = new HashMap<>();
+        params.put("city", null);
+
+        loader().loadData(dataSet, null, params);
+
+        assertThat(dataLoader.getLastExecution().arguments()).containsEntry("city", null);
+    }
+
+    @Test
+    void testAnInSpelledInsideALiteralIsNotAnInCondition() {
+        dataLoader.setRows(List.of(Map.of("orderNumber", "A-1")));
+        LlmDataQuery literal = new LlmDataQuery(
+                "select o.number as orderNumber from sales_Order o "
+                        + "where o.note = 'in :city' and (:city is null or o.city = :city)",
+                List.of("orderNumber"), List.of(parameter("city", "java.lang.String")), null, List.of());
+        DataSet dataSet = llmDataSet(PROMPT, serializer.toJson(literal));
+        Map<String, Object> params = new HashMap<>();
+        params.put("city", null);
+
+        loader().loadData(dataSet, null, params);
+
+        assertThat(dataLoader.getLastExecution().arguments()).containsEntry("city", null);
+    }
+
+    @Test
+    void testEmptyListParameterIsNotBoundEvenThoughNullIs() {
+        // The exception to binding an empty value: an IN over an empty list is a syntax error, and a guard does
+        // not rescue it either (see LlmQueryExecutionTest), so such a parameter has no value and the query says
+        // so rather than emptying the band in silence.
         DataSet dataSet = llmDataSet(PROMPT,
                 storedQuery(List.of(parameter("orderNumbers", "java.lang.String"))));
 
         assertThatThrownBy(() -> loader().loadData(dataSet, null, Map.of("orderNumbers", List.of())))
                 .isInstanceOf(DataLoadingException.class)
                 .hasMessageContaining("orderNumbers");
+
+        assertThat(dataLoader.getExecutions()).isEmpty();
     }
 
     protected ReportDataLoader loader() {

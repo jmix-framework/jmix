@@ -57,11 +57,13 @@ class LlmDataQuerySerializerTest {
 
     @Test
     void testStoredDocumentCarriesNothingButTheQueryContract() {
+        // Both flags describe what a run offers, not what the query declares, so neither may travel in the
+        // report XML: a document read back elsewhere must not claim anything about the report's parameters.
         String json = serializer.toJson(new LlmDataQuery("select o.id as id from sales_Order o", List.of("id"),
-                List.of(new LlmQueryParameter("years", "java.lang.Integer", true)),
+                List.of(new LlmQueryParameter("years", "java.lang.Integer", true, true)),
                 null, List.of()));
 
-        assertThat(json).doesNotContain("multiValued");
+        assertThat(json).doesNotContain("multiValued").doesNotContain("optional");
     }
 
     @Test

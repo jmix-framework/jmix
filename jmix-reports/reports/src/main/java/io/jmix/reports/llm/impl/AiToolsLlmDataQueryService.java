@@ -280,6 +280,7 @@ public class AiToolsLlmDataQueryService implements LlmDataQueryService {
 
         if (!request.getAvailableParameters().isEmpty()) {
             userText.append("\n\nAVAILABLE REPORT PARAMETERS:");
+            boolean anyOptional = false;
             for (LlmQueryParameter parameter : request.getAvailableParameters()) {
                 userText.append("\n- :").append(parameter.getName())
                         .append(" (").append(parameter.getJavaType());
@@ -288,12 +289,24 @@ public class AiToolsLlmDataQueryService implements LlmDataQueryService {
                     userText.append(", several values of this type, matched with IN and no parentheses ")
                             .append("around the parameter name");
                 }
+
+                if (parameter.isOptional()) {
+                    anyOptional = true;
+                    userText.append(", may be empty");
+                }
                 userText.append(')');
             }
             userText.append("\n\nPARAMETER RULES:")
                     .append("\n- Reference these as JPQL named parameters, never inline their values.")
                     .append("\n- Declare in \"parameters\" only the ones the query actually references.")
                     .append("\n- Use a parameter only where the request calls for it; ignore the rest.");
+
+            if (anyOptional) {
+                userText.append("\n- A parameter marked \"may be empty\" must not be compared directly. Wrap its ")
+                        .append("whole condition so that an empty value switches the condition off, like this: ")
+                        .append("(:name is null or e.attribute = :name). Write that guard for every condition ")
+                        .append("that uses such a parameter.");
+            }
         }
 
         appendCrossTabRules(userText, request);

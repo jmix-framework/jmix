@@ -240,6 +240,29 @@ class AiToolsLlmDataQueryServiceTest {
     }
 
     @Test
+    void testOptionalParameterIsMarkedAndTheGuardIsSpelledOut() {
+        // Told only that a value "may be empty", a model writes a plain comparison, which matches nothing once
+        // null is bound and empties the band. The guard is therefore dictated, not described.
+        service.generate(new LlmQueryGenerationRequest(PROMPT, List.of(
+                new LlmQueryParameter("city", "java.lang.String", false, true),
+                new LlmQueryParameter("dateFrom", "java.time.LocalDate")), List.of()));
+
+        String userText = generationService.getLastUserText();
+        assertThat(userText).containsPattern(":city \\(java\\.lang\\.String, may be empty\\)");
+        assertThat(userText).contains("(:name is null or e.attribute = :name)");
+        // A required parameter carries no such mark.
+        assertThat(userText).containsPattern(":dateFrom \\(java\\.time\\.LocalDate\\)");
+    }
+
+    @Test
+    void testTheGuardRuleIsAbsentWhenNoParameterMayBeEmpty() {
+        service.generate(new LlmQueryGenerationRequest(PROMPT,
+                List.of(new LlmQueryParameter("dateFrom", "java.time.LocalDate")), List.of()));
+
+        assertThat(generationService.getLastUserText()).doesNotContain("may be empty");
+    }
+
+    @Test
     void testCrossTabRequiredResultColumnsAreDescribedExplicitly() {
         service.generate(new LlmQueryGenerationRequest(PROMPT, List.of(
                 new LlmQueryParameter("revenue_dynamic_header_year", "java.lang.Integer", true)),

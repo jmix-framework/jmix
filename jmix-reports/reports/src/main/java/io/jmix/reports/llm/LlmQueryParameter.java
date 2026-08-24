@@ -39,17 +39,28 @@ public class LlmQueryParameter {
      */
     protected transient boolean multiValued;
 
+    /**
+     * Transient for the same reason as {@link #multiValued}: whether a run may leave this parameter empty is a
+     * fact about the report, not about the query text that references it.
+     */
+    protected transient boolean optional;
+
     public LlmQueryParameter(String name, String javaType) {
-        this(name, javaType, false);
+        this(name, javaType, false, false);
     }
 
     public LlmQueryParameter(String name, String javaType, boolean multiValued) {
+        this(name, javaType, multiValued, false);
+    }
+
+    public LlmQueryParameter(String name, String javaType, boolean multiValued, boolean optional) {
         checkNotNullArgument(name, "name is null");
         checkNotNullArgument(javaType, "javaType is null");
 
         this.name = name;
         this.javaType = javaType;
         this.multiValued = multiValued;
+        this.optional = optional;
     }
 
     /**
@@ -76,6 +87,18 @@ public class LlmQueryParameter {
      */
     public boolean isMultiValued() {
         return multiValued;
+    }
+
+    /**
+     * Tells a parameter a run may leave empty from one it always supplies — an optional report parameter, as
+     * opposed to a required one. A query referencing an optional parameter has to survive an empty value, which
+     * in JPQL means guarding the condition with {@code (:name is null or …)}; generation is told so, and a run
+     * binds {@code null} for such a parameter instead of failing.
+     *
+     * @return {@code true} if a run may bind {@code null} for this parameter
+     */
+    public boolean isOptional() {
+        return optional;
     }
 
     @Override

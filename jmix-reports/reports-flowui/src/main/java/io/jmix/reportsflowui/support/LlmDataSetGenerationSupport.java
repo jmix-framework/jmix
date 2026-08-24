@@ -33,6 +33,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.regex.Pattern;
 
 /**
  * Serves the designer's side of the {@link DataSetType#LLM} data set type: whether the type can be authored
@@ -124,7 +125,8 @@ public class LlmDataSetGenerationSupport {
             LlmQueryParameter rightParameter = right.get(i);
             if (!leftParameter.getName().equals(rightParameter.getName())
                     || !leftParameter.getJavaType().equals(rightParameter.getJavaType())
-                    || leftParameter.isMultiValued() != rightParameter.isMultiValued()) {
+                    || leftParameter.isMultiValued() != rightParameter.isMultiValued()
+                    || leftParameter.isOptional() != rightParameter.isOptional()) {
                 return false;
             }
         }
@@ -235,18 +237,13 @@ public class LlmDataSetGenerationSupport {
             if (StringUtils.isBlank(alias) || !LlmQueryParameterNames.isValid(alias)) {
                 continue;
             }
-            // Only a required parameter is offered. A run always supplies a required one, so a query that filters
-            // by it always binds; an optional one may arrive empty, and a stored query referencing it then has
-            // nothing to bind and fails the run — a generated query cannot drop a condition the way a JPQL data
-            // set drops a null ${param}. An optional filter is therefore written by hand, not generated.
-            if (!Boolean.TRUE.equals(inputParameter.getRequired())) {
-                continue;
-            }
             // A parameter holding several values arrives as a collection of its declared type, so it is offered
             // as multi-valued and matched with IN, as the loader binds it.
             boolean multiValued = inputParameter.getType() == ParameterType.ENTITY_LIST;
+            boolean optional = !Boolean.TRUE.equals(inputParameter.getRequired()) && !multiValued;
+
             parameters.put(alias,
-                    new LlmQueryParameter(alias, resolveJavaType(inputParameter), multiValued));
+                    new LlmQueryParameter(alias, resolveJavaType(inputParameter), multiValued, optional));
         }
     }
 
@@ -415,6 +412,60 @@ public class LlmDataSetGenerationSupport {
     @Nullable
     public LlmDataQuery readStoredQueryOrFail(DataSet dataSet) {
         return llmDataQuerySerializer.fromJson(dataSet.getLlmGeneratedQuery());
+    }
+
+    /**
+     * Names the optional parameters a query references without guarding them, which is the one way this data set
+     * type can print wrong data instead of failing.
+     * <p>
+     * A run binds an empty optional parameter as {@code null}, so an unguarded {@code e.city = :city} matches
+     * nothing and the band comes out empty with no error at all. Generation is told to write
+     * {@code (:city is null or …)} for such a parameter, and the rule is dictated verbatim — but a model may
+     * ignore it, and an author editing by hand may not know it, so what is stored is read back and checked.
+     * <p>
+     * The guard is recognised by the form the contract dictates — {@code :name is null} joined by {@code or}, in
+     * either order — so an {@code and} in its place is reported, as it should be: it switches nothing off.
+     * Two things this cannot see: another way of writing the same intent ({@code coalesce}, for one), and a
+     * parameter guarded in one condition and compared bare in a second. So it is a warning about a query worth a
+     * second look, not a verdict on it.
+     *
+     * @param dataSet data set whose report states which parameters are optional
+     * @param query   query to read
+     * @return aliases of the optional parameters the query references without a guard, in the report's order
+     */
+    public List<String> unguardedOptionalParameters(DataSet dataSet, LlmDataQuery query) {
+        Report report = dataSet.getBandDefinition() != null ? dataSet.getBandDefinition().getReport() : null;
+        if (report == null || report.getInputParameters() == null) {
+            return Collections.emptyList();
+        }
+
+        String text = LlmQueryParameterNames.stripStringLiterals(query.getJpql());
+        List<String> referenced = query.getParameters().stream().map(LlmQueryParameter::getName).toList();
+
+        List<String> unguarded = new ArrayList<>();
+        for (ReportInputParameter inputParameter : report.getInputParameters()) {
+            String alias = inputParameter.getAlias();
+            if (StringUtils.isBlank(alias)
+                    || Boolean.TRUE.equals(inputParameter.getRequired())
+                    // A collection parameter is never offered as optional: a guard cannot rescue an IN over an
+                    // empty list, so there is no guard to look for.
+                    || inputParameter.getType() == ParameterType.ENTITY_LIST
+                    || !referenced.contains(alias)) {
+                continue;
+            }
+
+            // The guard has to be a disjunction: (:city is null and e.city = :city) reads like one and switches
+            // nothing off. Both orders count, since either reads naturally.
+            String quoted = Pattern.quote(alias);
+            Pattern guard = Pattern.compile(
+                    ":" + quoted + "\\s+is\\s+null\\s+or\\b|\\bor\\s+:" + quoted + "\\s+is\\s+null",
+                    Pattern.CASE_INSENSITIVE);
+            if (!guard.matcher(text).find()) {
+                unguarded.add(alias);
+            }
+        }
+
+        return unguarded;
     }
 
     protected String resolveJavaType(ReportInputParameter inputParameter) {

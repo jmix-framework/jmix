@@ -166,12 +166,14 @@ public final class LlmCrossTabAxes {
                 continue;
             }
 
-            if (availableValues.putIfAbsent(name, values) != null) {
+            if (availableValues.containsKey(name)) {
                 warnOnce.accept("shadowed-axis-field:" + name,
                         () -> log.warn("Parameter [{}] is already available, so the values of the field [{}] of "
                                 + "the cross-tab axis [{}] are not offered to the query, while the column of that "
                                 + "name may still be required back; rename one of them to make both usable",
                                 name, field.getKey(), axisName));
+            } else {
+                availableValues.put(name, values);
             }
         }
     }

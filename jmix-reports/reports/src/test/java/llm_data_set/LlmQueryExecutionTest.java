@@ -45,6 +45,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.LinkedHashMap;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -147,6 +148,60 @@ class LlmQueryExecutionTest {
                 Map.of("name", OWN + "%", "minPrice", new BigDecimal("10")));
 
         assertThat(rows).containsExactly(Map.of("gameName", OWN + "Destiny"));
+    }
+
+    @Test
+    void testGuardedConditionSwitchesOffWhenAnOptionalParameterIsEmpty() {
+        // What the whole optional-parameter contract rests on: the guard the model is told to write really does
+        // neutralise the condition once null is bound, against a real database.
+        Publisher publisher = publisher("Nintendo");
+        game("Tetris", new BigDecimal("5"), publisher);
+        game("Destiny", new BigDecimal("25"), publisher);
+        LlmDataQuery guarded = new LlmDataQuery(
+                "select g.name as gameName from GameTitle g where g.name like :name "
+                        + "and (:minPrice is null or g.price >= :minPrice) order by g.name",
+                List.of("gameName"), List.of(new LlmQueryParameter("name", "java.lang.String"),
+                new LlmQueryParameter("minPrice", "java.math.BigDecimal")),
+                null, List.of());
+        DataSet dataSet = llmDataSet(guarded);
+
+        Map<String, Object> empty = new HashMap<>();
+        empty.put("name", OWN + "%");
+        empty.put("minPrice", null);
+        List<Map<String, Object>> everything = loader().loadData(dataSet, null, empty);
+
+        // Empty: the condition is off, so both rows come back.
+        assertThat(everything).containsExactly(
+                Map.of("gameName", OWN + "Destiny"), Map.of("gameName", OWN + "Tetris"));
+
+        // Filled: the very same stored query narrows.
+        List<Map<String, Object>> narrowed = loader().loadData(dataSet, null,
+                Map.of("name", OWN + "%", "minPrice", new BigDecimal("10")));
+        assertThat(narrowed).containsExactly(Map.of("gameName", OWN + "Destiny"));
+    }
+
+    @Test
+    void testAnEmptyValueMatchedWithInFailsInsteadOfEmptyingTheBand() {
+        // A collection parameter left empty reaches a run as null — Reporting puts every declared parameter into
+        // the map — and an IN cannot match it, guard or no guard: (:names is null or … in :names) still matches
+        // nothing, which measured here is why the run refuses such a value rather than binding it.
+        publisher("Nintendo");
+        publisher("Ubisoft");
+        LlmDataQuery guarded = new LlmDataQuery(
+                "select p.name as publisherName from Publisher p where p.name like :name "
+                        + "and (:names is null or p.name in :names) order by p.name",
+                List.of("publisherName"), List.of(new LlmQueryParameter("name", "java.lang.String"),
+                new LlmQueryParameter("names", "java.lang.String")),
+                null, List.of());
+        DataSet dataSet = llmDataSet(guarded);
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("name", OWN + "%");
+        params.put("names", null);
+
+        assertThatThrownBy(() -> loader().loadData(dataSet, null, params))
+                .isInstanceOf(DataLoadingException.class)
+                .hasMessageContainingAll("names", "IN");
     }
 
     @Test

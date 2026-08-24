@@ -395,9 +395,9 @@ public class LlmDataSetGenerationSupportTest {
     }
 
     @Test
-    void testOptionalReportParametersAreNotOffered() {
-        // An optional parameter may arrive empty at run time, and a stored query referencing it would then fail
-        // the run with nothing to bind, so it is not offered for generation.
+    void testOptionalReportParameterIsOfferedAsOptional() {
+        // It is offered — a query can filter by it — but marked, so generation guards its condition and the
+        // loader may bind null for it.
         Report report = reportWithParameters();
         report.getInputParameters().add(inputParameter("optionalCity", ParameterType.TEXT, false));
         DataSet dataSet = llmDataSet(report);
@@ -405,9 +405,110 @@ public class LlmDataSetGenerationSupportTest {
         List<LlmQueryParameter> parameters = generationSupport.createGenerationRequest(dataSet)
                 .getAvailableParameters();
 
-        assertThat(parameters).extracting(LlmQueryParameter::getName)
-                .contains("customerName", "orderDate")
-                .doesNotContain("optionalCity");
+        assertThat(parameters)
+                .filteredOn(parameter -> "optionalCity".equals(parameter.getName()))
+                .singleElement()
+                .extracting(LlmQueryParameter::isOptional)
+                .isEqualTo(true);
+        assertThat(parameters)
+                .filteredOn(parameter -> "orderDate".equals(parameter.getName()))
+                .singleElement()
+                .extracting(LlmQueryParameter::isOptional)
+                .isEqualTo(false);
+    }
+
+    @Test
+    void testUnguardedOptionalParameterIsNamed() {
+        // The one way this type prints wrong data instead of failing: an empty value is bound as null and a
+        // plain comparison then matches nothing, emptying the band with no error.
+        Report report = reportWithParameters();
+        report.getInputParameters().add(inputParameter("optionalCity", ParameterType.TEXT, false));
+        DataSet dataSet = llmDataSet(report);
+        LlmDataQuery unguarded = new LlmDataQuery(
+                "select o.number as orderNumber from sales_Order o where o.city = :optionalCity",
+                List.of("orderNumber"), List.of(new LlmQueryParameter("optionalCity", "java.lang.String")),
+                null, List.of());
+
+        assertThat(generationSupport.unguardedOptionalParameters(dataSet, unguarded))
+                .containsExactly("optionalCity");
+    }
+
+    @Test
+    void testGuardedOptionalParameterIsNotNamed() {
+        Report report = reportWithParameters();
+        report.getInputParameters().add(inputParameter("optionalCity", ParameterType.TEXT, false));
+        DataSet dataSet = llmDataSet(report);
+        LlmDataQuery guarded = new LlmDataQuery(
+                "select o.number as orderNumber from sales_Order o "
+                        + "where (:optionalCity is null or o.city = :optionalCity)",
+                List.of("orderNumber"), List.of(new LlmQueryParameter("optionalCity", "java.lang.String")),
+                null, List.of());
+
+        assertThat(generationSupport.unguardedOptionalParameters(dataSet, guarded)).isEmpty();
+    }
+
+    @Test
+    void testAnAndInPlaceOfTheGuardIsStillNamed() {
+        // (:city is null and e.city = :city) contains the words but switches nothing off, so it must not pass
+        // for a guard.
+        Report report = reportWithParameters();
+        report.getInputParameters().add(inputParameter("optionalCity", ParameterType.TEXT, false));
+        DataSet dataSet = llmDataSet(report);
+        LlmDataQuery conjunction = new LlmDataQuery(
+                "select o.number as orderNumber from sales_Order o "
+                        + "where (:optionalCity is null and o.city = :optionalCity)",
+                List.of("orderNumber"), List.of(new LlmQueryParameter("optionalCity", "java.lang.String")),
+                null, List.of());
+
+        assertThat(generationSupport.unguardedOptionalParameters(dataSet, conjunction))
+                .containsExactly("optionalCity");
+    }
+
+    @Test
+    void testTheGuardIsRecognisedInEitherOrder() {
+        Report report = reportWithParameters();
+        report.getInputParameters().add(inputParameter("optionalCity", ParameterType.TEXT, false));
+        DataSet dataSet = llmDataSet(report);
+        LlmDataQuery reversed = new LlmDataQuery(
+                "select o.number as orderNumber from sales_Order o "
+                        + "where (o.city = :optionalCity or :optionalCity is null)",
+                List.of("orderNumber"), List.of(new LlmQueryParameter("optionalCity", "java.lang.String")),
+                null, List.of());
+
+        assertThat(generationSupport.unguardedOptionalParameters(dataSet, reversed)).isEmpty();
+    }
+
+    @Test
+    void testRequiredParameterNeedsNoGuard() {
+        // A run always supplies a required parameter, so a plain comparison is exactly right for it.
+        Report report = reportWithParameters();
+        DataSet dataSet = llmDataSet(report);
+        LlmDataQuery plain = new LlmDataQuery(
+                "select o.number as orderNumber from sales_Order o where o.date >= :orderDate",
+                List.of("orderNumber"), List.of(new LlmQueryParameter("orderDate", "java.time.LocalDate")),
+                null, List.of());
+
+        assertThat(generationSupport.unguardedOptionalParameters(dataSet, plain)).isEmpty();
+    }
+
+    @Test
+    void testOptionalCollectionParameterIsNotMarkedOptional() {
+        // A guard cannot rescue an IN over an empty collection, so such a parameter is not described as one a
+        // query may survive without: an empty one fails the run instead, saying which parameter it was.
+        Report report = reportWithParameters();
+        report.getInputParameters().add(inputParameter("customers", ParameterType.ENTITY_LIST, false));
+        DataSet dataSet = llmDataSet(report);
+
+        List<LlmQueryParameter> parameters = generationSupport.createGenerationRequest(dataSet)
+                .getAvailableParameters();
+
+        assertThat(parameters)
+                .filteredOn(parameter -> "customers".equals(parameter.getName()))
+                .singleElement()
+                .satisfies(parameter -> {
+                    assertThat(parameter.isMultiValued()).isTrue();
+                    assertThat(parameter.isOptional()).isFalse();
+                });
     }
 
     @Test
@@ -502,6 +603,13 @@ public class LlmDataSetGenerationSupportTest {
                 inputParameter("customerName", ParameterType.TEXT),
                 inputParameter("orderDate", ParameterType.DATE))));
         return report;
+    }
+
+    protected ReportInputParameter parameterByAlias(Report report, String alias) {
+        return report.getInputParameters().stream()
+                .filter(parameter -> alias.equals(parameter.getAlias()))
+                .findFirst()
+                .orElseThrow(() -> new IllegalStateException("No input parameter [" + alias + "]"));
     }
 
     protected ReportInputParameter inputParameter(String alias, ParameterType type) {

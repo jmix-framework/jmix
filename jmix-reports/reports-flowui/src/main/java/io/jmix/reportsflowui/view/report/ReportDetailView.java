@@ -869,6 +869,7 @@ public class ReportDetailView extends StandardDetailView<Report> {
 
         // Validation has succeeded, so this save is allowed to turn the draft into its stored form.
         finishLlmQueryEditing();
+        warnAboutUnguardedOptionalParametersInReport();
         setupReportXml();
     }
 
@@ -1875,6 +1876,52 @@ public class ReportDetailView extends StandardDetailView<Report> {
         }
 
         notifications.create(messageBundle.formatMessage(messageKey, String.join("; ", problems)))
+                .withType(Notifications.Type.WARNING)
+                .show();
+    }
+
+    /**
+     * Says which optional report parameters the stored queries of this report compare without a guard — the one
+     * way this data set type prints wrong data instead of failing.
+     * <p>
+     * A run binds an empty optional parameter as {@code null}, and an unguarded comparison against {@code null}
+     * matches nothing: the band comes out empty with no error anywhere. Generation is told to write
+     * {@code (:name is null or …)}, but a model can ignore the rule, a hand edit can miss it, and — the case
+     * nothing else would catch — making a parameter optional turns a comparison written for a required one into
+     * exactly this. Every query is therefore read on save, which is where the whole report is in its stored form.
+     */
+    protected void warnAboutUnguardedOptionalParametersInReport() {
+        List<String> affected = new ArrayList<>();
+        for (BandDefinition band : getEditedEntity().getBands()) {
+            if (band.getDataSets() == null) {
+                continue;
+            }
+
+            for (DataSet dataSet : band.getDataSets()) {
+                if (dataSet.getType() != DataSetType.LLM) {
+                    continue;
+                }
+
+                LlmDataQuery query = llmDataSetGenerationSupport.readStoredQuery(dataSet);
+                if (query == null) {
+                    continue;
+                }
+
+                List<String> unguarded =
+                        llmDataSetGenerationSupport.unguardedOptionalParameters(dataSet, query);
+                if (!unguarded.isEmpty()) {
+                    affected.add(dataSet.getName() + " (" + String.join(", ", unguarded) + ")");
+                }
+            }
+        }
+
+        if (affected.isEmpty()) {
+            return;
+        }
+
+        notifications.create(messageBundle.formatMessage(
+                        "bandsTab.dataSetTypeLayout.llmUnguardedOptionalParametersInReport",
+                        String.join("; ", affected)))
                 .withType(Notifications.Type.WARNING)
                 .show();
     }

@@ -95,6 +95,14 @@ public class LlmDataLoader implements ReportDataLoader {
      */
     protected static final Pattern CASE_INSENSITIVE_PARAMETER_PATTERN = Pattern.compile(":\\(\\?i\\)");
 
+    /**
+     * A parameter matched with {@code IN}, with or without parentheses around it. Such a parameter cannot be
+     * given an empty value: an {@code IN} over nothing matches nothing, and a {@code (:name is null or …)} guard
+     * does not switch it off.
+     */
+    protected static final Pattern IN_PARAMETER_PATTERN = Pattern.compile(
+            "\\bin\\s*\\(?\\s*:([A-Za-z_][A-Za-z0-9_]*)", Pattern.CASE_INSENSITIVE);
+
     @Autowired
     protected DataManager dataManager;
 
@@ -152,7 +160,8 @@ public class LlmDataLoader implements ReportDataLoader {
                     collectedParameters.requiredResultProperties(), bandName);
         }
 
-        Map<String, Object> arguments = resolveArguments(reportQuery, query, availableParameters, params);
+        Map<String, @Nullable Object> arguments =
+                resolveArguments(reportQuery, query, availableParameters, params, scope);
         String storeName = scope.storeName(query.getJpql(), () -> resolveStoreName(query));
         log.debug("Executing the query of data set [{}] in store [{}]: {}",
                 reportQuery.getName(), storeName, query.getJpql());
@@ -197,7 +206,7 @@ public class LlmDataLoader implements ReportDataLoader {
      * @return one row per row the query returned
      */
     protected List<Map<String, @Nullable Object>> executeQuery(LlmDataQuery query,
-                                                               Map<String, Object> arguments,
+                                                               Map<String, @Nullable Object> arguments,
                                                                String storeName) {
         FluentValuesLoader valuesLoader = dataManager.loadValues(query.getJpql())
                 .store(storeName)
@@ -414,9 +423,7 @@ public class LlmDataLoader implements ReportDataLoader {
 
         for (Map.Entry<String, Object> param : params.entrySet()) {
             Object value = param.getValue();
-            // A report parameter left unfilled arrives as a null value, whatever the map's declared type says.
-            //noinspection ConstantValue
-            if (value == null || !LlmQueryParameterNames.isValid(param.getKey())) {
+            if (!LlmQueryParameterNames.isValid(param.getKey())) {
                 continue;
             }
 
@@ -431,10 +438,19 @@ public class LlmDataLoader implements ReportDataLoader {
                 continue;
             }
 
-            Object bindable = toBindableValue(value);
-            if (bindable != null) {
-                availableParameters.put(param.getKey(), bindable);
+            // A collection with nothing to match has no value a query could use: an IN over an empty list is a
+            // syntax error, and — measured against EclipseLink — an (:names is null or … in :names) guard does
+            // not rescue it either, it just matches nothing. Such a parameter is left out, and a query
+            // referencing it says so, rather than emptying the band in silence.
+            if (isEmptyCollection(value)) {
+                continue;
             }
+
+            // A run parameter the report knows is offered even when this run left it empty: an optional
+            // parameter arrives as null, and a query generated for it guards its condition with
+            // (:name is null or …), which needs that null bound. Binding nothing at all would fail a query
+            // written precisely to survive an empty value.
+            availableParameters.put(param.getKey(), value);
         }
 
         // The walk stops short of the root band: its data is the run parameters, which are already offered
@@ -453,17 +469,22 @@ public class LlmDataLoader implements ReportDataLoader {
     }
 
     /**
-     * Returns the value to bind under a name, or {@code null} when there is nothing to bind. A parameter
-     * holding several values — a "list of entities" parameter, for instance — is bound as the collection it is,
-     * which a query matches with {@code IN}. A collection holding nothing to match is not a value.
+     * Names the parameters the query matches with {@code IN}, which is what makes an empty value unusable for
+     * them. Read off the text because nothing else can say it: a collection parameter left empty reaches a run
+     * as {@code null}, indistinguishable from an empty scalar, and the stored document declares no cardinality.
+     * String literals are blanked first, so an {@code in :name} spelled inside one is text.
      */
-    @Nullable
-    protected Object toBindableValue(Object value) {
-        if (!(value instanceof Collection<?> values)) {
-            return value;
+    protected Set<String> parametersMatchedWithIn(String jpql) {
+        Set<String> names = new LinkedHashSet<>();
+        Matcher matcher = IN_PARAMETER_PATTERN.matcher(LlmQueryParameterNames.stripStringLiterals(jpql));
+        while (matcher.find()) {
+            names.add(matcher.group(1));
         }
+        return names;
+    }
 
-        return values.stream().anyMatch(Objects::nonNull) ? value : null;
+    protected boolean isEmptyCollection(@Nullable Object value) {
+        return value instanceof Collection<?> values && values.stream().noneMatch(Objects::nonNull);
     }
 
     /**
@@ -489,17 +510,18 @@ public class LlmDataLoader implements ReportDataLoader {
                 continue;
             }
 
-            Object bindable = toBindableValue(value);
-            if (bindable == null) {
+            if (isEmptyCollection(value)) {
                 continue;
             }
 
-            if (availableParameters.putIfAbsent(name, bindable) != null) {
+            if (availableParameters.containsKey(name)) {
                 // The band is loaded once per parent row, and the collision is the same every time.
                 scope.warnOnce(reportQuery, "shadowed-band-field:" + name,
                         () -> log.warn("Parameter [{}] is already available, so the field [{}] of band [{}] is not "
                                 + "offered to the query; rename one of them to make both usable",
                                 name, field.getKey(), band.getName()));
+            } else {
+                availableParameters.put(name, value);
             }
         }
     }
@@ -515,18 +537,29 @@ public class LlmDataLoader implements ReportDataLoader {
      * parameter is not consulted: it was written to tell a model what the value would be, and a value is bound
      * as the run holds it.
      */
-    protected Map<String, Object> resolveArguments(ReportQuery reportQuery, LlmDataQuery query,
-                                                   Map<String, Object> availableParameters,
-                                                   Map<String, Object> params) {
-        Map<String, Object> arguments = new LinkedHashMap<>();
+    protected Map<String, @Nullable Object> resolveArguments(ReportQuery reportQuery, LlmDataQuery query,
+                                                             Map<String, Object> availableParameters,
+                                                             Map<String, Object> params, RunScope scope) {
+        Map<String, @Nullable Object> arguments = new LinkedHashMap<>();
+        Set<String> matchedWithIn =
+                scope.parametersMatchedWithIn(query.getJpql(), () -> parametersMatchedWithIn(query.getJpql()));
 
         for (LlmQueryParameter parameter : query.getParameters()) {
-            Object available = availableParameters.get(parameter.getName());
-            if (available == null) {
-                throw new DataLoadingException(describeMissingArgument(reportQuery, parameter.getName(), params));
+            String name = parameter.getName();
+            if (!availableParameters.containsKey(name)) {
+                throw new DataLoadingException(describeMissingArgument(reportQuery, name, params));
             }
 
-            arguments.put(parameter.getName(), available);
+            Object value = availableParameters.get(name);
+            if (value == null && matchedWithIn.contains(name)) {
+                throw new DataLoadingException(String.format(
+                        "The query of data set [%s] matches parameter [%s] with IN, and this run left it empty: "
+                                + "an IN condition cannot match an empty value and no guard switches it off. "
+                                + "Fill the parameter in or regenerate the query without it",
+                        reportQuery.getName(), name));
+            }
+
+            arguments.put(name, value);
         }
 
         return arguments;
@@ -540,9 +573,9 @@ public class LlmDataLoader implements ReportDataLoader {
      */
     protected String describeMissingArgument(ReportQuery reportQuery, String name, Map<String, Object> params) {
         if (params.containsKey(name)) {
-            return String.format("The query of data set [%s] references parameter [%s], which this run left "
-                    + "empty. The query binds every parameter it references, so fill the parameter in or "
-                    + "regenerate the query without it", reportQuery.getName(), name);
+            return String.format("The query of data set [%s] references parameter [%s], whose value this run "
+                    + "cannot bind as it stands — a collection with nothing to match, for instance. Fill the "
+                    + "parameter in or regenerate the query without it", reportQuery.getName(), name);
         }
 
         return String.format("The query of data set [%s] references parameter [%s], but the report run provides "
@@ -566,6 +599,7 @@ public class LlmDataLoader implements ReportDataLoader {
         protected WeakReference<@Nullable BandData> rootBand = new WeakReference<>(null);
         protected Map<String, Optional<LlmDataQuery>> storedQueries = new LinkedHashMap<>();
         protected Map<String, String> storeNames = new LinkedHashMap<>();
+        protected Map<String, Set<String>> inParameters = new LinkedHashMap<>();
         /**
          * Held weakly, as the root band is and for the same reason: a data set belongs to a report, whose bands,
          * parameters and templates — the content of a template included — would otherwise stay reachable from a
@@ -581,6 +615,7 @@ public class LlmDataLoader implements ReportDataLoader {
             this.rootBand = new WeakReference<>(rootBand);
             storedQueries = new LinkedHashMap<>();
             storeNames = new LinkedHashMap<>();
+            inParameters = new LinkedHashMap<>();
             warnings = new WeakHashMap<>();
         }
 
@@ -600,6 +635,14 @@ public class LlmDataLoader implements ReportDataLoader {
          */
         protected String storeName(String jpql, Supplier<String> resolve) {
             return storeNames.computeIfAbsent(jpql, key -> resolve.get());
+        }
+
+        /**
+         * Returns the parameters a query text matches with {@code IN}, reading each text once: telling them
+         * apart means scanning the query, which no row of a parent band changes.
+         */
+        protected Set<String> parametersMatchedWithIn(String jpql, Supplier<Set<String>> read) {
+            return inParameters.computeIfAbsent(jpql, key -> read.get());
         }
 
         /**

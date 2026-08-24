@@ -47,8 +47,8 @@ public class TestLlmDataLoader extends LlmDataLoader {
     /**
      * What one call of the query would have executed.
      */
-    public record Execution(String jpql, List<String> resultProperties, Map<String, Object> arguments,
-                            String storeName) {
+    public record Execution(String jpql, List<String> resultProperties,
+                            Map<String, @Nullable Object> arguments, String storeName) {
     }
 
     /**
@@ -62,7 +62,7 @@ public class TestLlmDataLoader extends LlmDataLoader {
 
     @Override
     protected List<Map<String, @Nullable Object>> executeQuery(LlmDataQuery query,
-                                                               Map<String, Object> arguments,
+                                                               Map<String, @Nullable Object> arguments,
                                                                String storeName) {
         executions.add(new Execution(query.getJpql(), query.getResultProperties(), arguments, storeName));
         if (failure != null) {

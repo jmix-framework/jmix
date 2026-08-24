@@ -3527,6 +3527,11 @@ public final class StudioPropertyGroups {
     @StudioPropertyGroup(
             properties = {
                     @StudioProperty(
+                            xmlAttribute = StudioXmlAttributes.ADD_CONDITION_DIALOG_RESIZABLE,
+                            type = StudioPropertyType.BOOLEAN,
+                            category = StudioProperty.Category.SIZE,
+                            defaultValue = "false"),
+                    @StudioProperty(
                             xmlAttribute = StudioXmlAttributes.AUTO_APPLY,
                             type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true",

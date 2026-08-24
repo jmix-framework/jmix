@@ -16,7 +16,7 @@
 
 import '@vaadin/component-base/src/styles/style-props.js';
 import {field} from '@vaadin/field-base/src/styles/field-base-styles.js';
-import {addGlobalStyles} from '@vaadin/component-base/src/styles/add-global-styles.js';
+import {addGlobalStyles} from '@vaadin/component-base/src/css-utils.js';
 import {css} from 'lit';
 
 const jmixUploadField = css`

@@ -235,6 +235,13 @@ public class LlmDataSetGenerationSupport {
             if (StringUtils.isBlank(alias) || !LlmQueryParameterNames.isValid(alias)) {
                 continue;
             }
+            // Only a required parameter is offered. A run always supplies a required one, so a query that filters
+            // by it always binds; an optional one may arrive empty, and a stored query referencing it then has
+            // nothing to bind and fails the run — a generated query cannot drop a condition the way a JPQL data
+            // set drops a null ${param}. An optional filter is therefore written by hand, not generated.
+            if (!Boolean.TRUE.equals(inputParameter.getRequired())) {
+                continue;
+            }
             // A parameter holding several values arrives as a collection of its declared type, so it is offered
             // as multi-valued and matched with IN, as the loader binds it.
             boolean multiValued = inputParameter.getType() == ParameterType.ENTITY_LIST;

@@ -395,6 +395,22 @@ public class LlmDataSetGenerationSupportTest {
     }
 
     @Test
+    void testOptionalReportParametersAreNotOffered() {
+        // An optional parameter may arrive empty at run time, and a stored query referencing it would then fail
+        // the run with nothing to bind, so it is not offered for generation.
+        Report report = reportWithParameters();
+        report.getInputParameters().add(inputParameter("optionalCity", ParameterType.TEXT, false));
+        DataSet dataSet = llmDataSet(report);
+
+        List<LlmQueryParameter> parameters = generationSupport.createGenerationRequest(dataSet)
+                .getAvailableParameters();
+
+        assertThat(parameters).extracting(LlmQueryParameter::getName)
+                .contains("customerName", "orderDate")
+                .doesNotContain("optionalCity");
+    }
+
+    @Test
     void testListOfEntitiesParameterIsOfferedAsMultiValued() {
         Report report = reportWithParameters();
         report.getInputParameters().add(inputParameter("customers", ParameterType.ENTITY_LIST));
@@ -489,10 +505,17 @@ public class LlmDataSetGenerationSupportTest {
     }
 
     protected ReportInputParameter inputParameter(String alias, ParameterType type) {
+        // Required by default: only a required parameter is offered to generation, and most fixtures assert what
+        // is offered.
+        return inputParameter(alias, type, true);
+    }
+
+    protected ReportInputParameter inputParameter(String alias, ParameterType type, boolean required) {
         ReportInputParameter parameter = metadata.create(ReportInputParameter.class);
         parameter.setAlias(alias);
         parameter.setName(alias);
         parameter.setType(type);
+        parameter.setRequired(required);
         return parameter;
     }
 

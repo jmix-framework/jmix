@@ -44,13 +44,41 @@ import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 /**
  * The utility class that is responsible for serializing and deserializing
  * various data types into string representations suitable for URL parameters.
+ * <p>
+ * Text values are escaped if they contain characters that cannot be used in a value of a single
+ * URL path segment or query parameter, see {@link #escape(String)}.
  */
 @Component("flowui_UrlParamSerializer")
 public class UrlParamSerializer {
 
+    /**
+     * The default character that starts an escape sequence of a text URL parameter.
+     *
+     * @see #getEscapeChar()
+     */
+    public static final char ESCAPE_CHAR = '~';
+
+    /**
+     * The default prefix that marks a text URL parameter containing escape sequences.
+     *
+     * @see #getEscapedValuePrefix()
+     */
+    public static final String ESCAPED_VALUE_PREFIX = "~~";
+
     public static final String DEFAULT_DATE_FORMAT = "yyyy-MM-dd";
     public static final String DEFAULT_TIME_FORMAT = "HH-mm-ss";
     public static final String DEFAULT_OFFSET_FORMAT = "Z";
+
+    /**
+     * The default characters that cannot be used in a value of a URL path segment.
+     *
+     * @see #getUnsafeChars()
+     */
+    protected static final String UNSAFE_CHARS = "/\\";
+
+    protected static final String HEX_DIGITS = "0123456789ABCDEF";
+
+    protected static final int ESCAPE_SEQUENCE_LENGTH = 3;
 
     protected DateTimeFormatter temporalDateFormatter;
     protected DateTimeFormatter temporalTimeFormatter;
@@ -129,7 +157,7 @@ public class UrlParamSerializer {
             return serializePrimitive(value);
 
         } else if (Character.class == type) {
-            return serializePrimitive(value);
+            return serializeText(value);
 
         } else if (Double.class == type) {
             return serializePrimitive(value);
@@ -147,10 +175,10 @@ public class UrlParamSerializer {
             return serializePrimitive(value);
 
         } else if (String.class == type) {
-            return serializePrimitive(value);
+            return serializeText(value);
 
         } else if (URI.class == type) {
-            return serializePrimitive(value);
+            return serializeText(value);
 
         } else if (java.sql.Date.class == type) {
             return serializeDate(((java.sql.Date) value));
@@ -236,6 +264,10 @@ public class UrlParamSerializer {
 
     protected String serializePrimitive(Object value) {
         return value.toString();
+    }
+
+    protected String serializeText(Object value) {
+        return escape(value.toString());
     }
 
     protected String serializeUuid(UUID value) {
@@ -388,7 +420,7 @@ public class UrlParamSerializer {
     }
 
     protected Character parseCharacter(String stringValue) {
-        return stringValue.charAt(0);
+        return unescape(stringValue).charAt(0);
     }
 
     protected java.sql.Date parseDate(String stringValue) {
@@ -444,7 +476,7 @@ public class UrlParamSerializer {
     }
 
     protected String parseString(String stringValue) {
-        return stringValue;
+        return unescape(stringValue);
     }
 
     protected Integer parseInteger(String stringValue) {
@@ -452,7 +484,7 @@ public class UrlParamSerializer {
     }
 
     protected URI parseUri(String stringValue) {
-        return URI.create(stringValue);
+        return URI.create(unescape(stringValue));
     }
 
     protected Long parseLong(String stringValue) {
@@ -503,5 +535,162 @@ public class UrlParamSerializer {
     protected String propertyValueMapper(String property) {
         String[] splitProperty = property.split("=", 2);
         return splitProperty[1];
+    }
+
+    /**
+     * Escapes the given {@code value} if it cannot be used in a URL as is.
+     * <p>
+     * A value that contains no unsafe characters is returned unchanged. Otherwise the whole value is
+     * prefixed with {@link #getEscapedValuePrefix()} and every unsafe character is replaced with
+     * {@link #getEscapeChar()} followed by two hexadecimal digits of its code, e.g. {@code foo/bar}
+     * is escaped to {@code ~~foo~2Fbar}. Unsafe characters are listed by {@link #getUnsafeChars()}.
+     * <p>
+     * The prefix keeps escaping backward compatible: {@link #unescape(String)} processes only values
+     * that carry it, so URLs created before escaping was introduced are parsed exactly as before.
+     * <p>
+     * Percent-encoding is not used on purpose: a servlet container decodes percent-encoded sequences
+     * before Vaadin resolves route parameters, so an encoded value would be indistinguishable from a
+     * raw one. Besides, Tomcat 10.1 and later reject requests containing encoded slashes in the path.
+     * {@link #getEscapeChar()} belongs to the unreserved set of RFC 3986 and thus is left as is
+     * by both browsers and servlet containers, unlike {@code %} which the transport layer would
+     * consume.
+     *
+     * @param value a value to escape
+     * @return the escaped value, or the given value if escaping is not required
+     */
+    protected String escape(String value) {
+        if (!isEscapingRequired(value)) {
+            return value;
+        }
+
+        String prefix = getEscapedValuePrefix();
+        char escapeChar = getEscapeChar();
+
+        StringBuilder escaped = new StringBuilder(value.length() + prefix.length())
+                .append(prefix);
+
+        for (int i = 0; i < value.length(); i++) {
+            char c = value.charAt(i);
+
+            if (c == escapeChar || isUnsafe(c)) {
+                escaped.append(escapeChar)
+                        .append(HEX_DIGITS.charAt((c >> 4) & 0xF))
+                        .append(HEX_DIGITS.charAt(c & 0xF));
+            } else {
+                escaped.append(c);
+            }
+        }
+
+        return escaped.toString();
+    }
+
+    /**
+     * Unescapes the given {@code value} if it was escaped by {@link #escape(String)}.
+     * <p>
+     * A value without {@link #getEscapedValuePrefix()} is returned as is, which keeps URLs created
+     * before escaping was introduced readable.
+     *
+     * @param value a value to unescape
+     * @return the unescaped value, or the given value if it is not escaped
+     */
+    protected String unescape(String value) {
+        String prefix = getEscapedValuePrefix();
+
+        if (!value.startsWith(prefix)) {
+            return value;
+        }
+
+        String escapedValue = value.substring(prefix.length());
+        StringBuilder unescaped = new StringBuilder(escapedValue.length());
+
+        for (int i = 0; i < escapedValue.length(); i++) {
+            char c = escapedValue.charAt(i);
+
+            if (c == getEscapeChar()
+                    && i + ESCAPE_SEQUENCE_LENGTH <= escapedValue.length()) {
+                int highDigit = Character.digit(escapedValue.charAt(i + 1), 16);
+                int lowDigit = Character.digit(escapedValue.charAt(i + 2), 16);
+
+                if (highDigit >= 0 && lowDigit >= 0) {
+                    unescaped.append((char) ((highDigit << 4) + lowDigit));
+                    i += ESCAPE_SEQUENCE_LENGTH - 1;
+                    continue;
+                }
+            }
+
+            unescaped.append(c);
+        }
+
+        return unescaped.toString();
+    }
+
+    /**
+     * Checks whether the given {@code value} must be escaped to be used in a URL.
+     *
+     * @param value a value to check
+     * @return {@code true} if the value contains unsafe characters
+     * or can be mistaken for an escaped value
+     */
+    protected boolean isEscapingRequired(String value) {
+        if (value.startsWith(getEscapedValuePrefix())) {
+            return true;
+        }
+
+        for (int i = 0; i < value.length(); i++) {
+            if (isUnsafe(value.charAt(i))) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Checks whether the given character cannot be used in a URL as is.
+     *
+     * @param c a character to check
+     * @return {@code true} if the character is unsafe
+     */
+    protected boolean isUnsafe(char c) {
+        return getUnsafeChars().indexOf(c) >= 0;
+    }
+
+    /**
+     * Returns characters that cannot be used in a value of a URL path segment.
+     * <p>
+     * Only path separators are unsafe by default. Both {@code /} and {@code \} are separators:
+     * a browser normalizes a backslash to a forward slash, so it splits the path segment as well.
+     * <p>
+     * Query parameters need no escaping here, because Vaadin encodes and decodes their values on
+     * its own. Other delimiters survive a path segment, as the browser percent-encodes them and
+     * the servlet container decodes them back, while {@code %2F} is rejected by Tomcat 10.1
+     * and later.
+     * <p>
+     * The escape character returned by {@link #getEscapeChar()} is not included: on its own it
+     * doesn't break a URL, so a value containing it is not escaped. It is escaped only inside an
+     * already escaped value, to keep escape sequences unambiguous.
+     * <p>
+     * Values escaped by an overridden character set remain readable by {@link #unescape(String)},
+     * because unescaping is driven by escape sequences rather than by the character set.
+     *
+     * @return unsafe characters, {@link #UNSAFE_CHARS} by default
+     */
+    protected String getUnsafeChars() {
+        return UNSAFE_CHARS;
+    }
+
+    /**
+     * @return the character that starts an escape sequence, {@link #ESCAPE_CHAR} by default
+     */
+    protected char getEscapeChar() {
+        return ESCAPE_CHAR;
+    }
+
+    /**
+     * @return the prefix that marks a value containing escape sequences,
+     * {@link #ESCAPED_VALUE_PREFIX} by default
+     */
+    protected String getEscapedValuePrefix() {
+        return ESCAPED_VALUE_PREFIX;
     }
 }

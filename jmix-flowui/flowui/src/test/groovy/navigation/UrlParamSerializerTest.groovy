@@ -287,6 +287,90 @@ class UrlParamSerializerTest extends FlowuiTestSpecification {
         offsetTimeValue == offsetTimeDeserialized
     }
 
+    def "Values containing a path separator are escaped"() {
+        when: "values containing a path separator are serialized"
+        def slashSerialized = urlParamSerializer.serialize('foo/bar')
+        def backslashSerialized = urlParamSerializer.serialize('foo\\bar')
+        def slashCharSerialized = urlParamSerializer.serialize(('/' as char))
+        def backslashCharSerialized = urlParamSerializer.serialize(('\\' as char))
+        def uriSerialized = urlParamSerializer.serialize(URI.create('scheme://host/path'))
+
+        then: "the value is prefixed and separators are replaced with escape sequences"
+        slashSerialized == '~~foo~2Fbar'
+        backslashSerialized == '~~foo~5Cbar'
+        slashCharSerialized == '~~~2F'
+        backslashCharSerialized == '~~~5C'
+        uriSerialized == '~~scheme:~2F~2Fhost~2Fpath'
+    }
+
+    def "Escaped values survive serialization round trip"() {
+        def stringValue = 'foo/bar~\\?#;%+&=,:@ x'
+        def uriValue = URI.create('scheme://host/path')
+
+        when: "values are serialized and deserialized back"
+        def stringSerialized = urlParamSerializer.serialize(stringValue)
+        def stringDeserialized = urlParamSerializer.deserialize(String, stringSerialized)
+
+        def charSerialized = urlParamSerializer.serialize(('\\' as char))
+        def charDeserialized = urlParamSerializer.deserialize(Character, charSerialized)
+
+        def uriSerialized = urlParamSerializer.serialize(uriValue)
+        def uriDeserialized = urlParamSerializer.deserialize(URI, uriSerialized)
+
+        then: "serialized values are usable as a single URL path segment"
+        !stringSerialized.contains('/')
+        !stringSerialized.contains('\\')
+        !uriSerialized.contains('/')
+        !uriSerialized.contains('\\')
+
+        and: "deserialized values are equal to initial values"
+        stringValue == stringDeserialized
+        ('\\' as char) == charDeserialized
+        uriValue == uriDeserialized
+    }
+
+    def "Values that need no escaping are serialized as is"() {
+        expect: "values without a path separator keep their previous representation"
+        urlParamSerializer.serialize('foo') == 'foo'
+        urlParamSerializer.serialize('user-1.2_3') == 'user-1.2_3'
+        urlParamSerializer.serialize('someString') == 'someString'
+        urlParamSerializer.serialize(new BigDecimal('10.5')) == '10.5'
+        urlParamSerializer.serialize(3.14159265358979d) == '3.14159265358979'
+
+        and: "characters that a browser and a servlet container handle themselves are not escaped"
+        urlParamSerializer.serialize('foo?bar') == 'foo?bar'
+        urlParamSerializer.serialize('foo+bar') == 'foo+bar'
+        urlParamSerializer.serialize('foo=bar&baz') == 'foo=bar&baz'
+
+        and: "the escape character alone doesn't trigger escaping"
+        urlParamSerializer.serialize('~foo') == '~foo'
+        urlParamSerializer.serialize('foo~bar') == 'foo~bar'
+        urlParamSerializer.serialize('~ab') == '~ab'
+    }
+
+    def "A value that can be mistaken for an escaped one is escaped"() {
+        when: "a value starts with the escaped value prefix"
+        def serialized = urlParamSerializer.serialize('~~foo')
+
+        then: "it is escaped to stay distinguishable from the prefix"
+        serialized == '~~~7E~7Efoo'
+        urlParamSerializer.deserialize(String, serialized) == '~~foo'
+    }
+
+    def "Deserialization of values without the escaped value prefix is unchanged"() {
+        expect: "an unprefixed value is returned as is, exactly as before escaping was introduced"
+        urlParamSerializer.deserialize(String, 'foo/bar') == 'foo/bar'
+        urlParamSerializer.deserialize(String, 'foo\\bar') == 'foo\\bar'
+        urlParamSerializer.deserialize(String, 'foo') == 'foo'
+        urlParamSerializer.deserialize(String, 'someString') == 'someString'
+        urlParamSerializer.deserialize(String, 'foo~bar') == 'foo~bar'
+        urlParamSerializer.deserialize(String, '~foo') == '~foo'
+        urlParamSerializer.deserialize(String, '~ab') == '~ab'
+        urlParamSerializer.deserialize(String, '~2F') == '~2F'
+        urlParamSerializer.deserialize(String, 'trailing~') == 'trailing~'
+        urlParamSerializer.deserialize(URI, 'scheme://host/path') == URI.create('scheme://host/path')
+    }
+
     def "Deserialize legacy temporal values without nanoseconds"() {
         when: "legacy values without nanoseconds should be serialized"
         def legacyLocalDateTime = "2023-01-01T12-15-17"

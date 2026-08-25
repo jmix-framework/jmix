@@ -27,6 +27,7 @@ import test_support.BaseRestDsIntegrationTest;
 import test_support.entity.ContactType;
 import test_support.entity.Customer;
 import test_support.entity.CustomerContact;
+import test_support.entity.Employee;
 import test_support.service.CustomerService;
 import test_support.service.SampleService;
 
@@ -93,6 +94,61 @@ public class RemoteServiceTest extends BaseRestDsIntegrationTest {
     @AfterEach
     void tearDown() {
         dataManager.remove(contact1, contact2, customer);
+    }
+
+    @Test
+    void testReplacedEntityResult() {
+        Employee employee = sampleService.replacedEntityMethod();
+
+        assertThat(employee).isNotNull();
+        assertThat(employee.getName()).isEqualTo("John Doe");
+        assertThat(employee.getExtInfo()).isEqualTo("Ext info");
+    }
+
+    @Test
+    void testReplacedEntityListResult() {
+        List<Employee> employees = sampleService.replacedEntityListMethod();
+
+        assertThat(employees).isNotEmpty();
+        assertThat(employees.get(0).getName()).isEqualTo("John Doe");
+    }
+
+    @Test
+    void testReplacedEntityParam() {
+        Employee employee = dataManager.load(Employee.class).all().maxResults(1).one();
+
+        String name = sampleService.replacedEntityParamMethod(employee);
+
+        assertThat(name).isEqualTo(employee.getName());
+    }
+
+    @Test
+    void testReplacedEntityInPojoResult() {
+        SampleService.SamplePojoWithReplacedEntity pojo = sampleService.pojoWithReplacedEntityMethod();
+
+        assertThat(pojo).isNotNull();
+        assertThat(pojo.getName()).isEqualTo("pojo");
+        assertThat(pojo.getEmployee()).isNotNull();
+        assertThat(pojo.getEmployee().getName()).isEqualTo("John Doe");
+        assertThat(pojo.getEmployee().getExtInfo()).isEqualTo("Ext info");
+    }
+
+    @Test
+    void testReplacedEntityInPojoListResult() {
+        List<SampleService.SamplePojoWithReplacedEntity> pojos = sampleService.pojoWithReplacedEntityListMethod();
+
+        assertThat(pojos).hasSize(1);
+        assertThat(pojos.get(0).getEmployee().getName()).isEqualTo("John Doe");
+    }
+
+    @Test
+    void testReplacedEntityInPojoParam() {
+        Employee employee = dataManager.load(Employee.class).all().maxResults(1).one();
+
+        String name = sampleService.pojoWithReplacedEntityParamMethod(
+                new SampleService.SamplePojoWithReplacedEntity("pojo", employee));
+
+        assertThat(name).isEqualTo(employee.getName());
     }
 
     @Test

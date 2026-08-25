@@ -24,9 +24,11 @@ import io.jmix.core.Stores;
 import io.jmix.core.accesscontext.CrudEntityContext;
 import io.jmix.core.entity.KeyValueEntity;
 import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.security.AccessDeniedException;
 import io.jmix.core.security.EntityOp;
 import io.jmix.data.QueryParser;
+import io.jmix.data.QueryTransformer;
 import io.jmix.data.QueryTransformerFactory;
 import io.jmix.reports.entity.DataSet;
 import io.jmix.reports.entity.DataSetType;
@@ -40,6 +42,10 @@ import io.jmix.reports.yarg.loaders.ReportDataLoader;
 import io.jmix.reports.yarg.structure.BandData;
 import io.jmix.reports.yarg.structure.BandOrientation;
 import io.jmix.reports.yarg.structure.ReportQuery;
+import io.jmix.security.constraint.PolicyStore;
+import io.jmix.security.model.RowLevelPolicy;
+import io.jmix.security.model.RowLevelPolicyAction;
+import io.jmix.security.model.RowLevelPolicyType;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
 import org.jspecify.annotations.NullMarked;
@@ -122,6 +128,9 @@ public class LlmDataLoader implements ReportDataLoader {
     @Autowired
     protected AccessManager accessManager;
 
+    @Autowired
+    protected PolicyStore policyStore;
+
     /**
      * Holds what one report run has already generated and already warned about. Bound to the thread the run
      * executes on: the next run reaching that thread replaces its contents, and the reference is soft, so what
@@ -162,10 +171,23 @@ public class LlmDataLoader implements ReportDataLoader {
         Map<String, Object> availableParameters = collectedParameters.availableParameters();
 
         LlmDataQuery query = resolveQuery(reportQuery, additionalParams, scope);
-        // Permission first, before anything about this query is judged or reported: the platform does not stop a
-        // value load over an entity the current user may not read, so this type checks it itself. Read once per
-        // query text per run — the permissions of a run do not change between the rows of a parent band.
+        // Permission first, and that means before the query is judged as a query: the diagnostics of the barrier
+        // below name the entities and the columns of the text, which a user who may not read them should not be
+        // told either. The platform does not stop a value load over an entity the current user may not read, so
+        // this type checks it itself. Checked once per query text per run — the permissions of a run do not
+        // change between the rows of a parent band.
         scope.entityReadChecked(query.getJpql(), () -> checkEntityReadPermitted(query));
+
+        // Then whether the text can be executed at all, which is what its own diagnostics are about — and which
+        // has to be settled before anything rewrites it: a text refused here is not one to weave conditions into.
+        // Once per text per run, like the check above.
+        scope.queryChecked(query.getJpql(), () -> checkQueryIsFitToExecute(reportQuery, query));
+
+        // Then the rest of the permissions: the platform weaves the row-level policies of the query's own entity
+        // into a value load, and the policies of everything else it reads are this loader's to apply — or, where
+        // they cannot be applied, to refuse the query over.
+        String jpql = scope.rowLevelJpql(query.getJpql(),
+                () -> applyRowLevelPolicies(reportQuery, query.getJpql()));
 
         if (enforcesAxes) {
             LlmCrossTabAxes.checkAxesAreLinkable(reportQuery.getName(), query, params,
@@ -176,11 +198,11 @@ public class LlmDataLoader implements ReportDataLoader {
                 resolveArguments(reportQuery, query, availableParameters, params, scope);
         String storeName = scope.storeName(query.getJpql(), () -> resolveStoreName(query));
         log.debug("Executing the query of data set [{}] in store [{}]: {}",
-                reportQuery.getName(), storeName, query.getJpql());
+                reportQuery.getName(), storeName, jpql);
 
         List<Map<String, @Nullable Object>> rows;
         try {
-            rows = executeQuery(query, arguments, storeName);
+            rows = executeQuery(query, jpql, arguments, storeName);
         } catch (AccessDeniedException e) {
             // Being refused the data is not a failure of this data set: the engine reports it as what it is.
             throw e;
@@ -213,18 +235,30 @@ public class LlmDataLoader implements ReportDataLoader {
      * and merging several data sets of one band writes into it). Values, {@code null} and an empty string
      * included, are kept as they came.
      *
-     * @param query     stored query to execute
+     * @param query     stored query, which names the columns the rows are keyed by and the count it is limited to
+     * @param jpql      text to execute — the stored one with the row-level policies of what it reads woven in
      * @param arguments value to bind per parameter the query references
      * @param storeName data store to execute in, the one the query's entity belongs to
      * @return one row per row the query returned
      */
     protected List<Map<String, @Nullable Object>> executeQuery(LlmDataQuery query,
+                                                               String jpql,
                                                                Map<String, @Nullable Object> arguments,
                                                                String storeName) {
-        FluentValuesLoader valuesLoader = dataManager.loadValues(query.getJpql())
+        FluentValuesLoader valuesLoader = dataManager.loadValues(jpql)
                 .store(storeName)
                 .properties(query.getResultProperties());
         arguments.forEach(valuesLoader::parameter);
+
+        // What the prompt asked for as a count — "the top 5 customers" — is carried by the query rather than by
+        // its text, JPQL having no `limit`, and is applied per execution: a band under a parent gets that many
+        // rows for each parent row, which is what a nested band asking for the top few means.
+        if (query.getFirstResult() != null) {
+            valuesLoader.firstResult(query.getFirstResult());
+        }
+        if (query.getMaxResults() != null) {
+            valuesLoader.maxResults(query.getMaxResults());
+        }
 
         List<Map<String, @Nullable Object>> rows = new ArrayList<>();
         for (KeyValueEntity row : valuesLoader.list()) {
@@ -336,9 +370,10 @@ public class LlmDataLoader implements ReportDataLoader {
      * rather than quietly asking a model for one.
      * <p>
      * Read once per document per run: the same data set is loaded once per row of its parent band, and parsing
-     * the same JSON for every row would be work done to reach the same result. A query read here is also a query
-     * found fit to execute — {@link #checkQueryIsFitToExecute} judges the document, which no row of a parent band
-     * changes, so it is judged where the document is read.
+     * the same JSON for every row would be work done to reach the same result. Reading is all this does — whether
+     * the query may run, and whether its text can run at all, is asked afterwards and in that order, so that a
+     * user refused the data is told about the permission rather than about the query
+     * ({@link #checkEntityReadPermitted}, then {@link #checkQueryIsFitToExecute}).
      */
     protected LlmDataQuery resolveQuery(ReportQuery reportQuery, Map<String, Object> additionalParams,
                                         RunScope scope) {
@@ -351,13 +386,7 @@ public class LlmDataLoader implements ReportDataLoader {
 
         LlmDataQuery storedQuery;
         try {
-            storedQuery = scope.storedQuery(storedDocument, () -> {
-                LlmDataQuery read = llmDataQuerySerializer.fromJson(storedDocument);
-                if (read != null) {
-                    checkQueryIsFitToExecute(reportQuery, read);
-                }
-                return read;
-            });
+            storedQuery = scope.storedQuery(storedDocument, () -> llmDataQuerySerializer.fromJson(storedDocument));
         } catch (LlmDataQueryException e) {
             throw new DataLoadingException(String.format(
                     "The stored query of data set [%s] cannot be read: generate it again in the report designer",
@@ -519,28 +548,235 @@ public class LlmDataLoader implements ReportDataLoader {
     }
 
     /**
-     * Names the entities a query selects whole, root or joined.
+     * Names what a query selects whole instead of as a value — an alias, or a path that ends in an entity or an
+     * embeddable.
      * <p>
-     * Told apart by the selected path itself: {@code select p.name} gives a path whose property is the attribute
-     * {@code name}, while {@code select p} gives one whose property is the variable's own alias {@code p}. So a
-     * selected path whose property *is* its variable is the entity — which holds for a joined alias exactly as
-     * for the root one, where asking the parser whether this is an "entity select" only ever answers about the
-     * root.
+     * An alias is told by the selected path itself: {@code select p.name} gives a path whose property is the
+     * attribute {@code name}, while {@code select p} gives one whose property is the variable's own alias
+     * {@code p}. So a selected path whose property *is* its variable is the entity — which holds for a joined
+     * alias exactly as for the root one, where asking the parser whether this is an "entity select" only ever
+     * answers about the root.
      * <p>
-     * Deliberately not "a property the entity does not have": that would also catch
-     * {@code select p.noSuchAttribute}, a query written against another data model, which has its own and better
-     * failure. A constant or an aggregate ({@code select 1}, {@code select count(p)}) contributes no selected
-     * path at all, so neither is mistaken for an entity.
+     * A path is told by what the data model says it ends in: {@code select g.publisher} names a property, not an
+     * alias, and yet — measured — hands back a whole {@code Publisher} whose denied attributes read fine, since
+     * masking is applied to the selected column and the column here *is* the entity. {@code Range#isClass} covers an
+     * embeddable too, which is an object a band cannot print either.
+     * <p>
+     * A property the entity does not have is deliberately not treated as one: {@code select p.noSuchAttribute} is
+     * a query written against another data model, which has its own and better failure. A constant or an
+     * aggregate ({@code select 1}, {@code select count(p)}) contributes no selected path at all, so neither is
+     * mistaken for an entity.
      */
     protected List<String> selectedEntitiesOf(QueryParser parser) {
         List<String> selected = new ArrayList<>();
         for (QueryParser.QueryPath path : parser.getQueryPaths()) {
-            if (path.isSelectedPath() && path.getPropertyPath().equals(path.getVariableName())
-                    && !selected.contains(path.getEntityName())) {
-                selected.add(path.getEntityName());
+            if (!path.isSelectedPath()) {
+                continue;
+            }
+
+            String selectedWhole = path.getPropertyPath().equals(path.getVariableName())
+                    ? path.getEntityName()
+                    : entityValuedPathOf(path);
+            if (selectedWhole != null && !selected.contains(selectedWhole)) {
+                selected.add(selectedWhole);
             }
         }
         return selected;
+    }
+
+    /**
+     * Returns the description of a selected path that ends in an entity or an embeddable, or {@code null} when it
+     * ends in a value or cannot be placed in the data model at all.
+     */
+    @Nullable
+    protected String entityValuedPathOf(QueryParser.QueryPath path) {
+        MetaClass entity = metadata.findClass(path.getEntityName());
+        if (entity == null) {
+            return null;
+        }
+
+        MetaPropertyPath propertyPath = entity.getPropertyPath(path.getPropertyPath());
+        if (propertyPath == null || !propertyPath.getRange().isClass()) {
+            return null;
+        }
+        return path.getVariableName() + "." + path.getPropertyPath()
+                + " (" + propertyPath.getRange().asClass().getName() + ")";
+    }
+
+    /**
+     * Weaves the row-level policies of the entities a query reads into its text, so that a band shows the rows
+     * the current user is allowed to see rather than all of them.
+     * <p>
+     * The platform does this for one entity only. {@code JpaDataStore#createLoadQuery} builds a single
+     * {@code ReadEntityQueryContext}, for the entity the parser calls the query's own, and
+     * {@code ReadEntityQueryConstraint} weaves that entity's {@code JPQL} policies into it. An entity reached by
+     * a join is left untouched — and a report query joins as a matter of course, which would show the rows of a
+     * joined entity that its policies exist to hide.
+     * <p>
+     * So the same thing is done here for everything else the query reads: the policy's {@code {E}} placeholder is
+     * replaced with that entity's own alias — {@code QueryParser#getEntityAlias} gives it — and the condition is
+     * added to the {@code where} through the platform's own {@code QueryTransformer}, which places it ahead of a
+     * {@code group by}, a {@code having} or an {@code order by} the query already has. Only conditions are added,
+     * never joins (see below). Nothing at all is added for a query whose entities carry no policies, which is
+     * every query in an application that has none.
+     * <p>
+     * Three shapes cannot be filtered, and are refused rather than executed unfiltered:
+     * <ul>
+     *     <li>a {@code PREDICATE} policy, which is a Java predicate evaluated against an entity instance. A value
+     *     load returns rows, not instances, so the platform does not apply such a policy even to the query's own
+     *     entity — which is why this is asked before that entity is left to the platform;</li>
+     *     <li>an entity that appears <em>only inside a subquery</em>, whose alias is not in scope where a
+     *     condition would have to be added. {@code getEntityAlias} answers {@code null} for exactly that, and an
+     *     entity carrying several aliases is refused for the same reason — a condition on one of them would leave
+     *     the others unfiltered;</li>
+     *     <li>a policy with a {@code joinClause}, on any entity but the query's own: measured,
+     *     {@code QueryTransformer#addJoinAndWhere} re-bases the join onto the root alias, so the condition would
+     *     filter another entity or name a path that does not exist.</li>
+     * </ul>
+     * Each refusal names the entity and says what to do about it, because there is something to do: make that
+     * entity the query's own — {@code select p.name from Publisher p where …} rather than a join into it — and the
+     * platform filters it, or, for a predicate policy, write that policy as JPQL.
+     * <p>
+     * Parameters a policy references need no binding here: {@code session_*} names are resolved by the platform's
+     * own {@code QueryParamValuesManager} when the query executes. Rows are not de-duplicated either — nothing
+     * woven in here can multiply them, and a join the platform itself adds for the query's own entity does not
+     * make it de-duplicate a list-returning load.
+     * <p>
+     * A text this parser cannot read — one using a construct EclipseLink accepts and the platform's own JPQL
+     * grammar does not — is left as it is. Nothing is lost by that: the platform builds its own
+     * {@code ReadEntityQueryContext} by parsing the text with the same parser, so such a query gets no policies
+     * from the platform either, and does not execute through {@code loadValues} at all.
+     *
+     * @param jpql the stored query text
+     * @return the text to execute, unchanged when nothing had to be woven in
+     */
+    protected String applyRowLevelPolicies(ReportQuery reportQuery, String jpql) {
+        QueryParser parser;
+        List<String> readEntities;
+        String ownEntity;
+        try {
+            parser = queryTransformerFactory.parser(jpql);
+            readEntities = readEntitiesOf(parser);
+            // The entity the platform applies the policies of itself.
+            ownEntity = parser.getEntityName();
+        } catch (RuntimeException e) {
+            // A text this parser cannot read gets no policies woven in — and gets none from the platform either,
+            // whose own context parses it with the very same parser before it can execute anything.
+            log.debug("The entities read by [{}] cannot be told, so no row-level policy is applied", jpql, e);
+            return jpql;
+        }
+
+        QueryTransformer transformer = null;
+        for (String entityName : readEntities) {
+            MetaClass entity = metadata.findClass(entityName);
+            if (entity == null) {
+                continue;
+            }
+
+            List<RowLevelPolicy> policies = policyStore.getRowLevelPolicies(entity)
+                    .filter(policy -> policy.getAction() == RowLevelPolicyAction.READ)
+                    .toList();
+            if (policies.isEmpty()) {
+                continue;
+            }
+
+            // Before anything about aliases, and for the query's own entity as much as for the rest: a predicate
+            // policy is evaluated against an entity instance, and no value load has one to evaluate it against —
+            // the platform applies none of it either, root included.
+            if (policies.stream().anyMatch(policy -> policy.getType() != RowLevelPolicyType.JPQL)) {
+                throw new DataLoadingException(String.format(
+                        "The stored query of data set [%s] reads entity [%s], which has a predicate row-level "
+                                + "policy. Such a policy is evaluated against an entity instance, while this data "
+                                + "set type reads values, so the rows it may show cannot be narrowed by it. A "
+                                + "report over [%s] needs its row-level policy written as JPQL",
+                        reportQuery.getName(), entity.getName(), entity.getName()));
+            }
+
+            String alias = aliasOf(parser, entityName);
+            if (alias == null) {
+                throw new DataLoadingException(String.format(
+                        "The stored query of data set [%s] reads entity [%s], whose row-level policies cannot be "
+                                + "applied to it: the entity is used in a subquery, or under more than one alias, "
+                                + "so the rows it may show cannot be narrowed. Rewrite the query with [%s] as the "
+                                + "entity it selects from",
+                        reportQuery.getName(), entity.getName(), entity.getName()));
+            }
+
+            if (entityName.equals(ownEntity)) {
+                // The platform weaves this one in — its where and its join alike, both written against the
+                // alias the query is rooted at, which is the alias the transformer binds a join to. Reaching here
+                // means that alias is the only one the entity has: an entity named both as the root and again
+                // under a second alias was refused above, the platform narrowing the root and leaving the other.
+                continue;
+            }
+
+            if (policies.stream().anyMatch(policy -> StringUtils.isNotBlank(policy.getJoinClause()))) {
+                // Measured: `QueryTransformer#addJoinAndWhere` re-bases the join onto the query's root alias —
+                // `join p.games x` on a joined `p` comes out as `join g.games x` — so the condition would filter
+                // another entity, or the path would not exist at all. Refusing beats filtering the wrong rows,
+                // and applying it properly needs a transformer that takes the alias to join from.
+                throw new DataLoadingException(String.format(
+                        "The stored query of data set [%s] reads entity [%s], whose row-level policy joins another "
+                                + "entity. Such a policy can only be applied to the entity a query selects from, "
+                                + "so rewrite the query with [%s] as that entity",
+                        reportQuery.getName(), entity.getName(), entity.getName()));
+            }
+
+            for (RowLevelPolicy policy : policies) {
+                String where = withAlias(policy.getWhereClause(), alias);
+                if (StringUtils.isBlank(where)) {
+                    // A policy without a condition narrows nothing. Its join, if it had one, was refused above.
+                    continue;
+                }
+
+                if (transformer == null) {
+                    transformer = queryTransformerFactory.transformer(jpql);
+                }
+                transformer.addWhere(where);
+            }
+        }
+
+        return transformer != null ? transformer.getResult() : jpql;
+    }
+
+    /**
+     * Names the entities of a query graph in a stable order.
+     * <p>
+     * Sorted, so that which of several entities a message blames does not depend on hashing, and without the
+     * nulls the parser leaves for a name it could not resolve — it honours no nullness contract, whatever the
+     * declared element type says, and sorting would trip over one.
+     */
+    protected List<String> readEntitiesOf(QueryParser parser) {
+        //noinspection ConstantValue
+        return parser.getAllEntityNames().stream().filter(Objects::nonNull).sorted().toList();
+    }
+
+    /**
+     * Returns the alias a condition on this entity can be written against, or {@code null} when there is none to
+     * write against: the entity lives in a subquery, or carries more than one alias, of which filtering one would
+     * leave the others as they were.
+     */
+    @Nullable
+    protected String aliasOf(QueryParser parser, String entityName) {
+        String alias = parser.getEntityAlias(entityName);
+        // Declared non-null, measured to answer null for an entity that only a subquery names: the parser honours
+        // no nullness contract here, as it does not for the entity names either.
+        //noinspection ConstantValue
+        if (alias == null) {
+            return null;
+        }
+
+        long aliases = parser.getQueryPaths().stream()
+                .filter(path -> entityName.equals(path.getEntityName()))
+                .map(QueryParser.QueryPath::getVariableName)
+                .distinct()
+                .count();
+        return aliases > 1 ? null : alias;
+    }
+
+    @Nullable
+    protected String withAlias(@Nullable String clause, String alias) {
+        return clause == null ? null : clause.replace(QueryTransformer.ALIAS_PLACEHOLDER, alias);
     }
 
     /**
@@ -560,9 +796,9 @@ public class LlmDataLoader implements ReportDataLoader {
      * them.
      */
     protected void checkEntityReadPermitted(LlmDataQuery query) {
-        Set<String> entityNames;
+        List<String> entityNames;
         try {
-            entityNames = queryTransformerFactory.parser(query.getJpql()).getAllEntityNames();
+            entityNames = readEntitiesOf(queryTransformerFactory.parser(query.getJpql()));
         } catch (RuntimeException e) {
             // A query written against another data model tells the check nothing, cannot execute either, and
             // fails on its own terms with a message naming the data set. Nothing is let through that would not
@@ -572,14 +808,7 @@ public class LlmDataLoader implements ReportDataLoader {
             return;
         }
 
-        // Sorted, and without the nulls the parser leaves for a name it could not resolve: which of several
-        // denied entities a message blames should not depend on hashing.
-        // The parser honours no nullness contract: a name it could not resolve arrives as null, which sorting
-        // would trip over, whatever the declared element type says.
-        //noinspection ConstantValue
-        List<String> named = entityNames.stream().filter(Objects::nonNull).sorted().toList();
-
-        for (String entityName : named) {
+        for (String entityName : entityNames) {
             MetaClass entity = metadata.findClass(entityName);
             if (entity == null) {
                 // A name the model does not know: the query cannot execute either, and says so itself.
@@ -720,7 +949,9 @@ public class LlmDataLoader implements ReportDataLoader {
         protected Map<String, Optional<LlmDataQuery>> storedQueries = new LinkedHashMap<>();
         protected Map<String, String> storeNames = new LinkedHashMap<>();
         protected Map<String, Set<String>> inParameters = new LinkedHashMap<>();
+        protected Map<String, String> rowLevelJpql = new LinkedHashMap<>();
         protected Set<String> entityReadChecked = new LinkedHashSet<>();
+        protected Set<String> queryChecked = new LinkedHashSet<>();
         /**
          * Held weakly, as the root band is and for the same reason: a data set belongs to a report, whose bands,
          * parameters and templates — the content of a template included — would otherwise stay reachable from a
@@ -737,7 +968,9 @@ public class LlmDataLoader implements ReportDataLoader {
             storedQueries = new LinkedHashMap<>();
             storeNames = new LinkedHashMap<>();
             inParameters = new LinkedHashMap<>();
+            rowLevelJpql = new LinkedHashMap<>();
             entityReadChecked = new LinkedHashSet<>();
+            queryChecked = new LinkedHashSet<>();
             warnings = new WeakHashMap<>();
         }
 
@@ -768,18 +1001,41 @@ public class LlmDataLoader implements ReportDataLoader {
         }
 
         /**
+         * Returns the text to execute for a stored query text, weaving the row-level policies into it once: the
+         * policies of a run do not change between the rows of a parent band, and weaving them parses the query.
+         */
+        protected String rowLevelJpql(String jpql, Supplier<String> weave) {
+            return rowLevelJpql.computeIfAbsent(jpql, key -> weave.get());
+        }
+
+        /**
          * Runs the entity-read check once per query text: the permissions of a run do not change between the
          * rows of a parent band, and the check parses the query to find the entities it reads.
          */
         protected void entityReadChecked(String jpql, Runnable check) {
-            if (entityReadChecked.contains(jpql)) {
+            checkedOnce(entityReadChecked, jpql, check);
+        }
+
+        /**
+         * Runs the barrier once per query text: what makes a text unfit to execute does not change between the
+         * rows of a parent band, and establishing it parses and scans the query.
+         */
+        protected void queryChecked(String jpql, Runnable check) {
+            checkedOnce(queryChecked, jpql, check);
+        }
+
+        /**
+         * Runs a check the first time a query text reaches it, remembering it only <em>once it has passed</em>: a
+         * refusal must be raised again for every data set and every parent row that reaches this query, not
+         * swallowed because the first attempt already ran.
+         */
+        protected void checkedOnce(Set<String> passed, String jpql, Runnable check) {
+            if (passed.contains(jpql)) {
                 return;
             }
 
-            // Remembered only once it has passed: a refusal must be raised again for every data set and every
-            // parent row that reaches this query, not swallowed because the first attempt already ran.
             check.run();
-            entityReadChecked.add(jpql);
+            passed.add(jpql);
         }
 
         /**

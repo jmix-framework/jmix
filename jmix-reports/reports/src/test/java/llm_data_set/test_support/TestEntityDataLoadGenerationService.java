@@ -37,6 +37,12 @@ public class TestEntityDataLoadGenerationService implements EntityDataLoadGenera
     protected List<String> warnings = List.of();
 
     @Nullable
+    protected Integer maxResults;
+
+    @Nullable
+    protected Integer firstResult;
+
+    @Nullable
     protected RuntimeException failure;
 
     @Override
@@ -45,7 +51,8 @@ public class TestEntityDataLoadGenerationService implements EntityDataLoadGenera
         if (failure != null) {
             throw failure;
         }
-        return new EntityDataLoadQuery(jpql, parameters, resultProperties, explanation, warnings, null, null);
+        return new EntityDataLoadQuery(jpql, parameters, resultProperties, explanation, warnings,
+                maxResults, firstResult);
     }
 
     public String getLastUserText() {
@@ -74,6 +81,15 @@ public class TestEntityDataLoadGenerationService implements EntityDataLoadGenera
 
     public void setWarnings(List<String> warnings) {
         this.warnings = warnings;
+    }
+
+    /**
+     * Stands in for a prompt asking for a number of rows, which the add-on's contract answers beside the query
+     * rather than inside its text.
+     */
+    public void setRowCount(@Nullable Integer maxResults, @Nullable Integer firstResult) {
+        this.maxResults = maxResults;
+        this.firstResult = firstResult;
     }
 
     public void setFailure(RuntimeException failure) {

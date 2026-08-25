@@ -41,11 +41,27 @@ public class LlmDataQuery {
 
     protected List<String> warnings;
 
+    @Nullable
+    protected Integer maxResults;
+
+    @Nullable
+    protected Integer firstResult;
+
     public LlmDataQuery(String jpql,
                         @Nullable List<String> resultProperties,
                         @Nullable List<LlmQueryParameter> parameters,
                         @Nullable String explanation,
                         @Nullable List<String> warnings) {
+        this(jpql, resultProperties, parameters, explanation, warnings, null, null);
+    }
+
+    public LlmDataQuery(String jpql,
+                        @Nullable List<String> resultProperties,
+                        @Nullable List<LlmQueryParameter> parameters,
+                        @Nullable String explanation,
+                        @Nullable List<String> warnings,
+                        @Nullable Integer maxResults,
+                        @Nullable Integer firstResult) {
         checkNotNullArgument(jpql, "jpql is null");
 
         this.jpql = jpql;
@@ -53,6 +69,19 @@ public class LlmDataQuery {
         this.parameters = parameters == null ? List.of() : List.copyOf(parameters);
         this.explanation = explanation;
         this.warnings = warnings == null ? List.of() : List.copyOf(warnings);
+        this.maxResults = positiveOrNull(maxResults);
+        this.firstResult = positiveOrNull(firstResult);
+    }
+
+    /**
+     * Keeps a row count only if it is one. A zero or a negative number says nothing about how many rows to
+     * return — whether it comes from a model, from a document edited by hand, or from an application's own
+     * implementation of the seam — and a query without a count is a query that returns everything. Reading such a
+     * value as a count would empty a band instead.
+     */
+    @Nullable
+    protected static Integer positiveOrNull(@Nullable Integer count) {
+        return count != null && count > 0 ? count : null;
     }
 
     /**
@@ -92,5 +121,28 @@ public class LlmDataQuery {
      */
     public List<String> getWarnings() {
         return warnings;
+    }
+
+    /**
+     * Returns how many rows the query is meant to return, or {@code null} for all of them. A prompt asking for
+     * "the top 5 customers" says so here rather than in the text: JPQL has no {@code limit}, so the count is
+     * applied when the query is executed.
+     *
+     * @return the row count the query is limited to, or {@code null} if it is not limited
+     */
+    @Nullable
+    public Integer getMaxResults() {
+        return maxResults;
+    }
+
+    /**
+     * Returns how many rows the query skips, or {@code null} for none — the offset half of the same contract as
+     * {@link #getMaxResults()}.
+     *
+     * @return the number of rows to skip, or {@code null} if none are skipped
+     */
+    @Nullable
+    public Integer getFirstResult() {
+        return firstResult;
     }
 }

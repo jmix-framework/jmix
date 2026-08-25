@@ -45,7 +45,9 @@ public class TestLlmDataLoader extends LlmDataLoader {
     protected RuntimeException failure;
 
     /**
-     * What one call of the query would have executed.
+     * What one call of the query would have executed. {@code jpql} is the text as it would have run — the stored
+     * one with the row-level policies of what it reads woven in, which for an entity without policies is the
+     * stored text unchanged.
      */
     public record Execution(String jpql, List<String> resultProperties,
                             Map<String, @Nullable Object> arguments, String storeName) {
@@ -62,9 +64,10 @@ public class TestLlmDataLoader extends LlmDataLoader {
 
     @Override
     protected List<Map<String, @Nullable Object>> executeQuery(LlmDataQuery query,
+                                                               String jpql,
                                                                Map<String, @Nullable Object> arguments,
                                                                String storeName) {
-        executions.add(new Execution(query.getJpql(), query.getResultProperties(), arguments, storeName));
+        executions.add(new Execution(jpql, query.getResultProperties(), arguments, storeName));
         if (failure != null) {
             throw failure;
         }

@@ -63,6 +63,38 @@ class AiToolsLlmDataQueryServiceTest {
     }
 
     @Test
+    void testRowCountTheModelAnsweredWithIsCarriedByTheQuery() {
+        // The add-on's contract puts "the top 5 customers" into maxResults and forbids `limit` inside JPQL, so a
+        // query that dropped it would answer a different prompt than the one the author wrote.
+        generationService.setRowCount(5, 10);
+
+        LlmDataQuery query = service.generate(generationRequest());
+
+        assertThat(query.getMaxResults()).isEqualTo(5);
+        assertThat(query.getFirstResult()).isEqualTo(10);
+    }
+
+    @Test
+    void testRowCountSurvivesARepair() {
+        // Repair answers about the text; how many rows the prompt asked for is not the text's business.
+        generationService.setRowCount(5, null);
+        validationAndRepairService.setRepairedResult(new GeneratedJpqlResult(
+                "select o.number as orderNumber from sales_Order o", List.of(), "", List.of()));
+
+        LlmDataQuery query = service.generate(generationRequest());
+
+        assertThat(query.getMaxResults()).isEqualTo(5);
+    }
+
+    @Test
+    void testNoRowCountLeavesTheQueryUnlimited() {
+        LlmDataQuery query = service.generate(generationRequest());
+
+        assertThat(query.getMaxResults()).isNull();
+        assertThat(query.getFirstResult()).isNull();
+    }
+
+    @Test
     void testColumnsOfARepairedQueryWithAnUnderscoreAliasAreReadWhole() {
         // The letters "from" inside an alias are part of the name, not the query's own from.
         validationAndRepairService.setRepairedResult(new GeneratedJpqlResult(

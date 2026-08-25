@@ -35,6 +35,43 @@ class LlmDataQuerySerializerTest {
     protected final LlmDataQuerySerializer serializer = new LlmDataQuerySerializer();
 
     @Test
+    void testRowCountSurvivesRoundTrip() {
+        LlmDataQuery query = new LlmDataQuery("select o.number as orderNumber from sales_Order o",
+                List.of("orderNumber"), List.of(), null, List.of(), 5, 10);
+
+        LlmDataQuery restored = serializer.fromJson(serializer.toJson(query));
+
+        assertThat(restored).isNotNull();
+        assertThat(restored.getMaxResults()).isEqualTo(5);
+        assertThat(restored.getFirstResult()).isEqualTo(10);
+    }
+
+    @Test
+    void testStoredRowCountThatIsNotACountReadsAsUnlimited() {
+        // A document written by hand can carry a zero or a negative number, and neither says "return this many
+        // rows": a run reads such a query as unlimited instead of emptying the band over it.
+        LlmDataQuery restored = serializer.fromJson("""
+                {"jpql":"select o.number as orderNumber from sales_Order o",\
+                "resultProperties":["orderNumber"],"maxResults":0,"firstResult":-3}""");
+
+        assertThat(restored).isNotNull();
+        assertThat(restored.getMaxResults()).isNull();
+        assertThat(restored.getFirstResult()).isNull();
+    }
+
+    @Test
+    void testEditedQueryKeepsTheRowCountOfThePreviousDocument() {
+        // An edit is about the text, and the count was never in the text to be edited out of it.
+        LlmDataQuery previous = new LlmDataQuery("select o.number as orderNumber from sales_Order o",
+                List.of("orderNumber"), List.of(), null, List.of(), 5, null);
+
+        LlmDataQuery edited = serializer.assemble("select o.amount as total from sales_Order o",
+                List.of("total"), previous);
+
+        assertThat(edited.getMaxResults()).isEqualTo(5);
+    }
+
+    @Test
     void testQuerySurvivesRoundTrip() {
         LlmDataQuery query = new LlmDataQuery(
                 "select o.number as orderNumber from sales_Order o where o.date >= :dateFrom",

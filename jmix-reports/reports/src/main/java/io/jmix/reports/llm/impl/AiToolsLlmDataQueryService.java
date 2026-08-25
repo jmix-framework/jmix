@@ -88,10 +88,13 @@ public class AiToolsLlmDataQueryService implements LlmDataQueryService {
 
         // A model answers with the lists it likes, and nothing between here and the model rejects a null
         // element in them, so they are cleaned before the query is built out of them.
+        // The row count belongs to the answer, not to the text: the add-on's contract puts "the top 5 customers"
+        // into maxResults and forbids `limit` inside JPQL, which JPQL has no place for anyway.
         LlmDataQuery query = new LlmDataQuery(generatedQuery.getJpql(),
                 retainNonNull(generatedQuery.getResultProperties()),
                 toQueryParameters(generatedQuery.getJpql(), generatedQuery.getParameters()),
-                generatedQuery.getExplanation(), retainNonNull(generatedQuery.getWarnings()));
+                generatedQuery.getExplanation(), retainNonNull(generatedQuery.getWarnings()),
+                generatedQuery.getMaxResults(), generatedQuery.getFirstResult());
 
         return repairIfNeeded(userText, query);
     }
@@ -136,10 +139,11 @@ public class AiToolsLlmDataQueryService implements LlmDataQueryService {
         }
 
         log.debug("The generated query was repaired: {}", repaired.getJpql());
+        // Repair answers about the text; how many rows the prompt asked for is unchanged by it.
         return new LlmDataQuery(repaired.getJpql(), resultProperties,
                 toQueryParameters(repaired.getJpql(), repaired.getParameters()),
                 StringUtils.defaultIfBlank(repaired.getExplanation(), query.getExplanation()),
-                retainNonNull(repaired.getWarnings()));
+                retainNonNull(repaired.getWarnings()), query.getMaxResults(), query.getFirstResult());
     }
 
     protected JpqlExecutionRequest toExecutionRequest(String userText, LlmDataQuery query) {
@@ -192,11 +196,10 @@ public class AiToolsLlmDataQueryService implements LlmDataQueryService {
      * text — the clause arrives with its literals already blanked by {@link #selectClauseOf}.
      */
     protected int selectedExpressionCount(String selectClause) {
-        String text = selectClause;
         int depth = 0;
         int count = 1;
-        for (int i = 0; i < text.length(); i++) {
-            char character = text.charAt(i);
+        for (int i = 0; i < selectClause.length(); i++) {
+            char character = selectClause.charAt(i);
             if (character == '(') {
                 depth++;
             } else if (character == ')') {
@@ -319,7 +322,7 @@ public class AiToolsLlmDataQueryService implements LlmDataQueryService {
      * column of the same name — that is how the extraction controller places a row in the matrix. Stated as an
      * explicit list of required aliases rather than inferred from multi-valued parameters: an ordinary report
      * parameter may be a collection too, while told only a generic rule, models alias axis columns after their
-     * attributes instead (`username`, `active`) and the report then renders an empty matrix.
+     * attributes instead ({@code username}, {@code active}) and the report then renders an empty matrix.
      */
     protected void appendCrossTabRules(StringBuilder userText, LlmQueryGenerationRequest request) {
         List<String> axisNames = request.getRequiredResultProperties();

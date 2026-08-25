@@ -98,7 +98,9 @@ public class LlmDataQuerySerializer {
                 retainNonNull(parsed.getResultProperties()),
                 retainNamedParameters(parsed.getParameters()),
                 parsed.getExplanation(),
-                retainNonNull(parsed.getWarnings()));
+                retainNonNull(parsed.getWarnings()),
+                parsed.getMaxResults(),
+                parsed.getFirstResult());
     }
 
     protected <T> List<T> retainNonNull(@Nullable List<T> values) {
@@ -150,6 +152,8 @@ public class LlmDataQuerySerializer {
 
         return new LlmDataQuery(jpql, resultProperties, parameters,
                 previous != null ? previous.getExplanation() : null,
-                previous != null ? previous.getWarnings() : Collections.emptyList());
+                previous != null ? previous.getWarnings() : Collections.emptyList(),
+                previous != null ? previous.getMaxResults() : null,
+                previous != null ? previous.getFirstResult() : null);
     }
 }

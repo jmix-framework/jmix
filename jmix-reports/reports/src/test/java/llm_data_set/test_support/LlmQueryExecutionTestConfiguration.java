@@ -17,8 +17,11 @@
 package llm_data_set.test_support;
 
 import io.jmix.core.AccessConstraintsRegistry;
+import io.jmix.security.constraint.PolicyStore;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 
 /**
  * Leaves the loader Reports declares in place — a test on this configuration executes queries for real — and
@@ -35,5 +38,17 @@ public class LlmQueryExecutionTestConfiguration {
         // both halves are registered and driven by the same denied set.
         registry.register(new CrudEntityDenial(constraint));
         return constraint;
+    }
+
+    /**
+     * Puts the row-level policies a test sets up where the platform and the loader read them from. Primary, so
+     * that both the platform's own constraint and the loader see the same store; the platform's own store is
+     * asked for by name, since asking for the type here would ask for this bean.
+     */
+    @Bean
+    @Primary
+    public TestRowLevelPolicies testRowLevelPolicies(
+            @Qualifier("sec_AuthenticationPolicyStore") PolicyStore delegate) {
+        return new TestRowLevelPolicies(delegate);
     }
 }

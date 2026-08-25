@@ -53,13 +53,13 @@ class ChatClientToolContextTest {
     @Autowired
     StubChatModel stubChatModel;
 
+    @Autowired
+    SystemAuthenticator systemAuthenticator;
+
     @BeforeEach
     void resetChatModel() {
         stubChatModel.reset();
     }
-
-    @Autowired
-    SystemAuthenticator systemAuthenticator;
 
     @Test
     @DisplayName("A caller's status callback reaches the tool through the default tool context")

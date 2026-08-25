@@ -237,7 +237,7 @@ public class JpqlExecutionService {
         List<Map<String, @Nullable Object>> rows = new ArrayList<>(rowCount);
         for (int i = 0; i < rowCount; i++) {
             KeyValueEntity entity = loadedRows.get(i);
-            Map<String, Object> valueRow = toValueRow(entity, request.getResultProperties());
+            Map<String, @Nullable Object> valueRow = toValueRow(entity, request.getResultProperties());
             rows.add(valueRow);
         }
 

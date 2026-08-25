@@ -18,7 +18,6 @@ package io.jmix.reports.llm;
 
 import java.util.List;
 
-
 /**
  * Turns a data set prompt into a JPQL query and says whether that query would run. This is the Reports-side
  * integration seam, used while a report is authored in the designer; a report run executes the stored query

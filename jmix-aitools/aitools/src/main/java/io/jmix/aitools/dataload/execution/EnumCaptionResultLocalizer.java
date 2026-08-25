@@ -178,7 +178,7 @@ public class EnumCaptionResultLocalizer {
      * @return the matching constant, or {@code null} if none matches
      */
     @Nullable
-    protected Enum<?> findConstantByStoredValue(Class<? extends Enum<?>> enumType, @Nullable Object storedValue) {
+    protected Enum<?> findConstantByStoredValue(Class<? extends Enum<?>> enumType, Object storedValue) {
         for (Enum<?> constant : enumType.getEnumConstants()) {
             if (constant instanceof EnumClass<?> enumClass) {
                 Object id = enumClass.getId();

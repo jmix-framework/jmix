@@ -34,9 +34,10 @@ import llm_data_set.test_support.TestLlmDataLoader;
 import llm_data_set.test_support.TestLlmDataQueryService;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
-import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -49,6 +50,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -131,13 +133,13 @@ class LlmDataSetReportRunTest {
 
         ReportOutputDocument document = reportRunner.byReportEntity(createCrossTabReport()).run();
 
-        Sheet sheet = readFirstSheet(document.getContent());
-        assertThat(cellValue(sheet, 0, 1)).isEqualTo("March");
-        assertThat(cellValue(sheet, 0, 2)).isEqualTo("April");
-        assertThat(cellValue(sheet, 1, 0)).isEqualTo("Nintendo");
-        assertThat(cellValue(sheet, 1, 1)).isEqualTo(10.0);
-        assertThat(cellValue(sheet, 2, 0)).isEqualTo("Ubisoft");
-        assertThat(cellValue(sheet, 2, 2)).isEqualTo(20.0);
+        List<List<Object>> cells = readFirstSheetCells(document.getContent());
+        assertThat(cells.get(0)).element(1).isEqualTo("March");
+        assertThat(cells.get(0)).element(2).isEqualTo("April");
+        assertThat(cells.get(1)).element(0).isEqualTo("Nintendo");
+        assertThat(cells.get(1)).element(1).isEqualTo(10.0);
+        assertThat(cells.get(2)).element(0).isEqualTo("Ubisoft");
+        assertThat(cells.get(2)).element(2).isEqualTo(20.0);
     }
 
     @Test
@@ -229,16 +231,31 @@ class LlmDataSetReportRunTest {
         }
     }
 
-    protected Sheet readFirstSheet(byte[] content) {
+    /**
+     * Reads the cells of the first sheet, row by row, while the workbook is still open: a sheet read after its
+     * workbook is closed is not something POI promises to answer.
+     */
+    protected List<List<Object>> readFirstSheetCells(byte[] content) {
         try (Workbook workbook = WorkbookFactory.create(new ByteArrayInputStream(content))) {
-            return workbook.getSheetAt(0);
+            List<List<Object>> rows = new ArrayList<>();
+            for (Row row : workbook.getSheetAt(0)) {
+                List<Object> values = new ArrayList<>();
+                for (int column = 0; column < row.getLastCellNum(); column++) {
+                    values.add(cellValue(row.getCell(column)));
+                }
+                rows.add(values);
+            }
+            return rows;
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
     }
 
-    protected Object cellValue(Sheet sheet, int row, int column) {
-        Cell cell = sheet.getRow(row).getCell(column);
+    @Nullable
+    protected Object cellValue(@Nullable Cell cell) {
+        if (cell == null) {
+            return null;
+        }
         return cell.getCellType() == CellType.NUMERIC ? cell.getNumericCellValue() : cell.getStringCellValue();
     }
 

@@ -784,7 +784,9 @@ public class LlmDataSetPanelUiTest {
         LlmDataQuery stored = saveAndLoadStoredQuery(view);
         assertThat(stored).isNotNull();
         assertThat(stored.getJpql()).isEqualTo(EDITED_JPQL);
-        assertThat(stored.getExplanation()).isNotNull();
+        // Carried over unchanged: had the blank text been taken for a cleared query, the explanation would have
+        // gone with it, which "not null" would not have noticed.
+        assertThat(stored.getExplanation()).isEqualTo("All order numbers");
     }
 
     @Test

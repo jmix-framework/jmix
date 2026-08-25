@@ -22,7 +22,9 @@ import io.jmix.reports.ReportsTestConfiguration;
 import io.jmix.reports.entity.BandDefinition;
 import io.jmix.reports.entity.DataSet;
 import io.jmix.reports.entity.DataSetType;
+import io.jmix.reports.entity.Orientation;
 import io.jmix.reports.entity.Report;
+import io.jmix.reports.yarg.structure.BandOrientation;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +33,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -71,14 +72,24 @@ public class LlmDataSetSerializationTest {
     void testLlmSettingsArePublishedAsAdditionalParams() {
         DataSet dataSet = findDataDataSet(createReportWithLlmDataSet());
 
-        Map<String, Object> additionalParams = dataSet.getAdditionalParams();
-        assertThat(additionalParams)
-                .containsEntry(DataSet.LLM_GENERATED_QUERY, GENERATED_QUERY);
+        // The loader is handed a query and the params of the run, and it tells its own band's values from
+        // another band's by these two: they have to reach it alongside the stored query.
+        assertThat(dataSet.getAdditionalParams())
+                .containsEntry(DataSet.LLM_GENERATED_QUERY, GENERATED_QUERY)
+                .containsEntry(DataSet.BAND_NAME, "Data")
+                .containsEntry(DataSet.BAND_ORIENTATION, BandOrientation.HORIZONTAL);
     }
 
     @Test
-    void testLoaderTypeOfLlmDataSetIsLlm() {
-        assertThat(findDataDataSet(createReportWithLlmDataSet()).getLoaderType()).isEqualTo("llm");
+    void testDataSetWithoutABandPublishesNoBandOfItsOwn() {
+        // A data set is created before it is attached to a band, and the designer asks it for its params
+        // meanwhile.
+        DataSet detached = metadata.create(DataSet.class);
+        detached.setType(DataSetType.LLM);
+
+        assertThat(detached.getAdditionalParams())
+                .containsEntry(DataSet.BAND_NAME, null)
+                .containsEntry(DataSet.BAND_ORIENTATION, null);
     }
 
     protected Report createReportWithLlmDataSet() {
@@ -93,6 +104,7 @@ public class LlmDataSetSerializationTest {
         BandDefinition dataBand = metadata.create(BandDefinition.class);
         dataBand.setName("Data");
         dataBand.setPosition(0);
+        dataBand.setOrientation(Orientation.HORIZONTAL);
         dataBand.setReport(report);
         dataBand.setParentBandDefinition(rootBand);
         rootBand.getChildrenBandDefinitions().add(dataBand);

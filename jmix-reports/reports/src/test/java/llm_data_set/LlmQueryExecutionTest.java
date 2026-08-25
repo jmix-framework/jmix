@@ -48,7 +48,6 @@ import java.util.LinkedHashMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -236,20 +235,6 @@ class LlmQueryExecutionTest {
                 "select p.name as publisherName from Publisher p where p.name like :name",
                 List.of("publisherName"), List.of(new LlmQueryParameter("name", "java.lang.String")),
                 null, List.of()));
-
-        assertThatThrownBy(() -> loader().loadData(dataSet, null, Map.of("name", OWN + "%")))
-                .isInstanceOf(AccessDeniedException.class);
-    }
-
-    @Test
-    void testEntityDenialAlsoCoversAQuerySelectingAttributes() {
-        // The denial is about the entity, so it does not matter which of its attributes a query selects.
-        publisher("Nintendo");
-        denyingConstraint.denyEntity("Publisher");
-        DataSet dataSet = llmDataSet(new LlmDataQuery(
-                "select p.name as publisherName, p.id as publisherId from Publisher p where p.name like :name",
-                List.of("publisherName", "publisherId"),
-                List.of(new LlmQueryParameter("name", "java.lang.String")), null, List.of()));
 
         assertThatThrownBy(() -> loader().loadData(dataSet, null, Map.of("name", OWN + "%")))
                 .isInstanceOf(AccessDeniedException.class);

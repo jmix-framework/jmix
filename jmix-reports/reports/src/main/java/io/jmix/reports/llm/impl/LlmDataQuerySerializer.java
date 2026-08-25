@@ -38,8 +38,9 @@ import java.util.Objects;
 /**
  * Reads and writes the document a generated query is stored as in {@link DataSet#getLlmGeneratedQuery()}.
  * <p>
- * Parameter values are never written: {@link LlmQueryParameter} keeps its value transient, so one stored
- * query stays valid for any arguments.
+ * A document says what the query text declares and nothing about the run that will execute it: an
+ * {@link LlmQueryParameter} carries no value, and what it says about the run offering it — multi-valued,
+ * optional — is transient and stays out of the document. One stored query therefore serves every run.
  */
 @Component("report_LlmDataQuerySerializer")
 public class LlmDataQuerySerializer {

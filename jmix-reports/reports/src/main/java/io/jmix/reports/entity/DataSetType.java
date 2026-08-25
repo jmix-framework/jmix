@@ -68,8 +68,9 @@ public enum DataSetType implements EnumClass<Integer> {
     DELEGATE(70, "delegate"),
 
     /**
-     * Data is produced by a JPQL query generated from a natural-language prompt by the AI Tools add-on.
-     * Available only if the application includes that add-on.
+     * Data is produced by a JPQL query generated from a natural-language prompt. Generating one needs the AI
+     * Tools add-on, so the report designer offers this type only where the add-on is present; a run executes
+     * the query stored with the report and needs nothing of it.
      */
     LLM(80, "llm");
 

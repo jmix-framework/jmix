@@ -22,6 +22,7 @@ import org.jspecify.annotations.NullMarked;
 import test_support.entity.ContactType;
 import test_support.entity.Customer;
 import test_support.entity.CustomerContact;
+import test_support.entity.Employee;
 
 import java.net.URI;
 import java.time.LocalDateTime;
@@ -67,6 +68,18 @@ public interface SampleService {
     Set<Customer> entitySetMethod(Set<Customer> param);
 
     Map<String, CustomerContact> entityMapMethod(Map<String, CustomerContact> param);
+
+    Employee replacedEntityMethod();
+
+    List<Employee> replacedEntityListMethod();
+
+    String replacedEntityParamMethod(Employee param);
+
+    SamplePojoWithReplacedEntity pojoWithReplacedEntityMethod();
+
+    List<SamplePojoWithReplacedEntity> pojoWithReplacedEntityListMethod();
+
+    String pojoWithReplacedEntityParamMethod(SamplePojoWithReplacedEntity param);
 
     ContactType enumMethod(ContactType param);
 
@@ -160,4 +173,33 @@ public interface SampleService {
     record SampleRecord(String name, int age) {}
 
     record SampleRecordWithEntity(String name, Customer customer) {}
+
+    class SamplePojoWithReplacedEntity {
+        private String name;
+        private Employee employee;
+
+        public SamplePojoWithReplacedEntity() {
+        }
+
+        public SamplePojoWithReplacedEntity(String name, Employee employee) {
+            this.name = name;
+            this.employee = employee;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public Employee getEmployee() {
+            return employee;
+        }
+
+        public void setEmployee(Employee employee) {
+            this.employee = employee;
+        }
+    }
 }

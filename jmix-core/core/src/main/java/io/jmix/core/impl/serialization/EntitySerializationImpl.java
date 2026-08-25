@@ -420,7 +420,20 @@ public class EntitySerializationImpl implements EntitySerialization {
 
         @Override
         public Entity deserialize(JsonElement jsonElement, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-            return (Entity) readEntity(jsonElement.getAsJsonObject(), metaClass);
+            return (Entity) readEntity(jsonElement.getAsJsonObject(), resolveMetaClass(typeOfT));
+        }
+
+        /**
+         * Returns the MetaClass to deserialize into: the one passed to this deserializer if any, otherwise the one
+         * corresponding to the declared Java type. The latter is relevant for entities nested in POJOs and records,
+         * where the declared type of the field is the only information about the entity type available locally.
+         */
+        @Nullable
+        protected MetaClass resolveMetaClass(@Nullable Type typeOfT) {
+            if (metaClass != null) {
+                return metaClass;
+            }
+            return typeOfT instanceof Class<?> javaClass ? metadata.findClass(javaClass) : null;
         }
 
         protected Object readEntity(JsonObject jsonObject, @Nullable MetaClass metaClass) {

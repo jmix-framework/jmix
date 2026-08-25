@@ -29,6 +29,30 @@ import {LumoInjectionMixin} from '@vaadin/vaadin-themable-mixin/lumo-injection-m
 import {ThemableMixin} from '@vaadin/vaadin-themable-mixin/vaadin-themable-mixin.js';
 import {jmixCodeEditorStyles} from './styles/jmix-code-editor-base-styles';
 
+/*
+ * Ace appends the suggestions popup to the document body, so the popup is painted in the regular
+ * stacking context. Vaadin shows overlays as popovers, i.e. in the browser top layer, which is painted
+ * above the regular content regardless of the `z-index`, therefore the popup is promoted to the top
+ * layer as well. See `JmixCodeEditor#_configureSuggestionsPopup()`.
+ */
+ace.require('ace/lib/dom').importCssString(`
+    .ace_editor.ace_autocomplete[popover] {
+        /* The user agent stylesheet centers a popover using 'inset: 0' and 'margin: auto', which
+           overrides the position assigned to the popup by Ace. */
+        inset: auto;
+        margin: 0;
+        /* A modal overlay disables pointer events on the document body. */
+        pointer-events: auto;
+    }
+
+    /* Ace measures the popup right after making it visible and before the popup is promoted to the
+       top layer, so the popup must keep its box while it is not shown as a popover. Ace hides the
+       popup by an inline 'display: none' style, which still wins over this rule. */
+    .ace_editor.ace_autocomplete[popover]:not(:popover-open) {
+        display: block;
+    }
+`, 'jmix-code-editor-autocomplete.css');
+
 class JmixCodeEditor extends ResizeMixin(InputFieldMixin(ThemableMixin(ElementMixin(PolylitMixin(LumoInjectionMixin(LitElement)))))) {
 
     static get is() {
@@ -245,6 +269,7 @@ class JmixCodeEditor extends ResizeMixin(InputFieldMixin(ThemableMixin(ElementMi
 
         this.initSuggestionListeners();
         this.updateSuggestions();
+        this.initSuggestionsPopup();
     }
 
     initApplicationThemeObserver() {
@@ -334,6 +359,46 @@ class JmixCodeEditor extends ResizeMixin(InputFieldMixin(ThemableMixin(ElementMi
                 }
             }
         };
+    }
+
+    /**
+     * Subscribes to the creation of the popup in which the suggestions are shown. Ace creates the
+     * popup lazily, on the first suggestions request.
+     */
+    initSuggestionsPopup() {
+        const {Autocomplete} = ace.require('ace/autocomplete');
+        const completer = Autocomplete.for(this._editor);
+
+        const createPopup = completer.$init.bind(completer);
+        completer.$init = () => this._configureSuggestionsPopup(createPopup());
+    }
+
+    /**
+     * Promotes the suggestions popup to the browser top layer for the time it is shown. Otherwise,
+     * the popup of an editor placed in a Vaadin overlay, e.g. in a dialog window, is completely
+     * covered by that overlay.
+     *
+     * @private
+     */
+    _configureSuggestionsPopup(popup) {
+        const element = popup.container;
+        element.popover = 'manual';
+
+        // The popup is added to the top layer anew every time it is shown, so that it is placed
+        // above the overlays opened in the meantime.
+        popup.on('show', () => {
+            if (!element.matches(':popover-open')) {
+                element.showPopover();
+            }
+        });
+
+        popup.on('hide', () => {
+            if (element.matches(':popover-open')) {
+                element.hidePopover();
+            }
+        });
+
+        return popup;
     }
 
     /**

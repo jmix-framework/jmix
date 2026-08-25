@@ -17,6 +17,7 @@
 package io.jmix.restds.impl.service;
 
 import io.jmix.core.EntitySerialization;
+import io.jmix.core.EntitySerializationOption;
 import io.jmix.core.Metadata;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.datatype.Datatype;
@@ -88,7 +89,7 @@ public class RemoteServiceInvoker {
             if (paramValue == null) {
                 paramJson = "null";
             } else if (EntityValues.isEntity(paramValue)) {
-                paramJson = entitySerialization.toJson(paramValue);
+                paramJson = entitySerialization.toJson(paramValue, null, EntitySerializationOption.IGNORE_ENTITY_NAME);
             } else {
                 Datatype<?> datatype = datatypeRegistry.find(paramValue.getClass());
                 if (datatype != null) {
@@ -99,7 +100,7 @@ public class RemoteServiceInvoker {
                         paramJson = "\"" + formatted + "\"";
                     }
                 } else {
-                    paramJson = entitySerialization.objectToJson(paramValue);
+                    paramJson = entitySerialization.objectToJson(paramValue, EntitySerializationOption.IGNORE_ENTITY_NAME);
                 }
             }
             paramsJson.append("\"").append(paramName).append("\":").append(paramJson);
@@ -122,11 +123,15 @@ public class RemoteServiceInvoker {
         Type returnType = method.getGenericReturnType();
         Class<?> rawReturnType = method.getReturnType();
 
+        Class<?> entityElementType = getEntityElementType(returnType);
+
         try {
             if (isEntity(rawReturnType)) {
-                result = entitySerialization.entityFromJson(resultJson, null);
-            } else if (isCollectionOfEntities(returnType)) {
-                result = entitySerialization.entitiesCollectionFromJson(resultJson, null);
+                result = entitySerialization.entityFromJson(resultJson, metadata.getClass(rawReturnType),
+                        EntitySerializationOption.IGNORE_ENTITY_NAME);
+            } else if (entityElementType != null) {
+                result = entitySerialization.entitiesCollectionFromJson(resultJson, metadata.getClass(entityElementType),
+                        EntitySerializationOption.IGNORE_ENTITY_NAME);
             } else {
                 Datatype<?> datatype = datatypeRegistry.find(rawReturnType);
                 if (datatype != null) {
@@ -135,7 +140,8 @@ public class RemoteServiceInvoker {
                     if (rawReturnType.isPrimitive())
                         result = deserializePrimitive(resultJson, rawReturnType);
                     else
-                        result = entitySerialization.objectFromJson(resultJson, returnType);
+                        result = entitySerialization.objectFromJson(resultJson, returnType,
+                                EntitySerializationOption.IGNORE_ENTITY_NAME);
                 }
             }
         } catch (ParseException e) {
@@ -149,21 +155,25 @@ public class RemoteServiceInvoker {
         return metadata.findClass(aClass) != null;
     }
 
-    protected boolean isCollectionOfEntities(Type type) {
+    /**
+     * Returns the entity type of a collection type, or null if the given type is not a collection of entities.
+     */
+    @Nullable
+    protected Class<?> getEntityElementType(Type type) {
         if (!(type instanceof ParameterizedType parameterizedType)) {
-            return false;
+            return null;
         }
         // Check if raw type is a collection
         Class<?> rawType = (Class<?>) parameterizedType.getRawType();
         if (!Collection.class.isAssignableFrom(rawType)) {
-            return false;
+            return null;
         }
         // Check if type argument is an entity
         Type[] typeArgs = parameterizedType.getActualTypeArguments();
-        if (typeArgs.length != 1 || !(typeArgs[0] instanceof Class<?>)) {
-            return false;
+        if (typeArgs.length != 1 || !(typeArgs[0] instanceof Class<?> elementType)) {
+            return null;
         }
-        return isEntity((Class<?>) typeArgs[0]);
+        return isEntity(elementType) ? elementType : null;
     }
 
     @Nullable

@@ -333,9 +333,11 @@ public class DataModelRegistry {
         String fieldType = field.getJavaType().getSimpleName();
         List<String> joinColumnNames = getJoinColumnNames(field);
 
-        if (!joinColumnNames.isEmpty()) {
+        if (hasJoinColumns(field)) {
             if (isEmbeddable) {
                 attributeModel = constructAttribute(fieldName, fieldType, isAnnotationPresent(field, NotNull.class));
+            } else if (joinColumnNames.isEmpty()) {
+                attributeModel = constructAttribute(fieldName, fieldType, field.isMandatory());
             } else {
                 attributeModel = constructAttribute(joinColumnNames, fieldName, fieldType,
                         findEntityForField(entity, field), field.isMandatory());
@@ -617,6 +619,17 @@ public class DataModelRegistry {
 
     protected boolean isAnnotationPresent(MetaProperty field, Class<? extends Annotation> annotationClass) {
         return field.getAnnotatedElement().isAnnotationPresent(annotationClass);
+    }
+
+    /**
+     * Checks whether the given field declares join columns, regardless of whether their names are set explicitly.
+     * An owning side of an association always declares them, an inverse side never does.
+     *
+     * @param field the field to inspect
+     * @return {@code true} if the field declares at least one join column
+     */
+    protected boolean hasJoinColumns(MetaProperty field) {
+        return field.getAnnotatedElement().getAnnotationsByType(JoinColumn.class).length > 0;
     }
 
     /**

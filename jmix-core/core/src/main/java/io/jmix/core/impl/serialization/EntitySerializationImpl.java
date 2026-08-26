@@ -26,6 +26,7 @@ import io.jmix.core.*;
 import io.jmix.core.accesscontext.ExportImportEntityContext;
 import io.jmix.core.annotation.Secret;
 import io.jmix.core.entity.EntityValues;
+import io.jmix.core.impl.MetadataImpl;
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -185,6 +186,16 @@ public class EntitySerializationImpl implements EntitySerialization {
         if (field != null && !Modifier.isPublic(field.getModifiers())) {
             field.setAccessible(true);
         }
+    }
+
+    /**
+     * Creates an instance for a deserialized entity. The entity is not new, so {@code @PostConstruct} methods are not
+     * invoked unless {@link CoreProperties#isInvokePostConstructOnEntityDeserialization()} is true.
+     */
+    protected Object createEntityInstance(MetaClass metaClass) {
+        return metadata instanceof MetadataImpl metadataImpl ?
+                metadataImpl.createForExistingEntity(metaClass) :
+                metadata.create(metaClass);
     }
 
     protected class EntitySerializer implements JsonSerializer<Entity> {
@@ -453,7 +464,7 @@ public class EntitySerializationImpl implements EntitySerialization {
                 throw new EntitySerializationException("Cannot deserialize an entity. MetaClass is not defined");
             }
 
-            Object entity = metadata.create(resultMetaClass);
+            Object entity = createEntityInstance(resultMetaClass);
             clearFields(entity);
 
             MetaProperty primaryKeyProperty = metadataTools.getPrimaryKeyProperty(resultMetaClass);
@@ -641,7 +652,7 @@ public class EntitySerializationImpl implements EntitySerialization {
 
         protected Object readEmbeddedEntity(JsonObject jsonObject, MetaProperty metaProperty) {
             MetaClass metaClass = metaProperty.getRange().asClass();
-            Object entity = metadata.create(metaClass);
+            Object entity = createEntityInstance(metaClass);
             clearFields(entity);
             readFields(jsonObject, entity);
 

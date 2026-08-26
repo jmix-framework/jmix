@@ -48,7 +48,8 @@ public class TestCoreProperties extends CoreProperties {
                               boolean instanceNameFallbackEnabled,
                               boolean dataObservationEnabled,
                               boolean useUserInfoForObservation,
-                              boolean applicationInfoFileEnabled) {
+                              boolean applicationInfoFileEnabled,
+                              boolean invokePostConstructOnEntityDeserialization) {
         super(webHostName, webPort, confDir, workDir, tempDir, dbDir, availableLocales,
                 crossDataStoreReferenceLoadingBatchSize, idGenerationForEntitiesInAdditionalDataStoresEnabled,
                 dom4jMaxPoolSize, dom4jMaxBorrowWaitMillis, anonymousAuthenticationTokenKey, defaultFileStorage,
@@ -56,7 +57,8 @@ public class TestCoreProperties extends CoreProperties {
                 unsafeRuntimeFeaturesEnabled, hotDeployEnabled, legacyFetchPlanSerializationAttributeName,
                 triggerFilesEnabled, triggerFilesProcessInterval,
                 roundDecimalValueByFormat, skipNullOrEmptyConditionsByDefault, instanceNameFallbackEnabled,
-                dataObservationEnabled, useUserInfoForObservation, applicationInfoFileEnabled);
+                dataObservationEnabled, useUserInfoForObservation, applicationInfoFileEnabled,
+                invokePostConstructOnEntityDeserialization);
     }
 
     public static Builder builder() {
@@ -90,6 +92,7 @@ public class TestCoreProperties extends CoreProperties {
         boolean dataObservationEnabled = false;
         boolean useUserInfoForObservation = false;
         boolean applicationInfoFileEnabled = true;
+        boolean invokePostConstructOnEntityDeserialization = false;
 
         public Builder setWebHostName(String webHostName) {
             this.webHostName = webHostName;
@@ -216,6 +219,11 @@ public class TestCoreProperties extends CoreProperties {
             return this;
         }
 
+        public Builder setInvokePostConstructOnEntityDeserialization(boolean invokePostConstructOnEntityDeserialization) {
+            this.invokePostConstructOnEntityDeserialization = invokePostConstructOnEntityDeserialization;
+            return this;
+        }
+
         public TestCoreProperties build() {
             return new TestCoreProperties(
                     this.webHostName,
@@ -243,7 +251,8 @@ public class TestCoreProperties extends CoreProperties {
                     this.instanceNameFallbackEnabled,
                     this.dataObservationEnabled,
                     this.useUserInfoForObservation,
-                    this.applicationInfoFileEnabled);
+                    this.applicationInfoFileEnabled,
+                    this.invokePostConstructOnEntityDeserialization);
         }
     }
 }

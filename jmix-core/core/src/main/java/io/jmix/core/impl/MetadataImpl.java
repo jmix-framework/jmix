@@ -32,6 +32,7 @@ import org.jspecify.annotations.Nullable;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.List;
+import java.util.function.Predicate;
 
 @Component("core_Metadata")
 public class MetadataImpl implements Metadata {
@@ -94,6 +95,11 @@ public class MetadataImpl implements Metadata {
     }
 
     protected <T> T internalCreate(Class<T> entityClass, @Nullable Object id) {
+        return internalCreate(entityClass, id, initializer -> true);
+    }
+
+    protected <T> T internalCreate(Class<T> entityClass, @Nullable Object id,
+                                   Predicate<EntityInitializer> initializerFilter) {
         Class<T> extClass = getSession().getClass(entityClass).getJavaClass();
         try {
             T obj = extClass.getDeclaredConstructor().newInstance();
@@ -103,7 +109,9 @@ public class MetadataImpl implements Metadata {
 
             if (entityInitializers != null) {
                 for (EntityInitializer initializer : entityInitializers) {
-                    initializer.initEntity(obj);
+                    if (initializerFilter.test(initializer)) {
+                        initializer.initEntity(obj);
+                    }
                 }
             }
 
@@ -144,6 +152,16 @@ public class MetadataImpl implements Metadata {
     public Object create(String entityName, Object id) {
         MetaClass metaClass = getSession().getClass(entityName);
         return internalCreate(metaClass.getJavaClass(), id);
+    }
+
+    /**
+     * Creates an instance for an entity that already exists, for example when the entity is deserialized from JSON.
+     * <p>
+     * Unlike {@link #create(MetaClass)}, invokes only the {@link EntityInitializer} beans that are
+     * {@link EntityInitializer#isApplicableToExistingEntity() applicable to existing entities}.
+     */
+    public Object createForExistingEntity(MetaClass metaClass) {
+        return internalCreate(metaClass.getJavaClass(), null, EntityInitializer::isApplicableToExistingEntity);
     }
 
     @Nullable

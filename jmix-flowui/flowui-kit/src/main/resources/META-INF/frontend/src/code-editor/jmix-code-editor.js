@@ -74,7 +74,9 @@ class JmixCodeEditor extends ResizeMixin(InputFieldMixin(ThemableMixin(ElementMi
                 <div part="input-field"
                      .readonly="${this.readonly}"
                      .disabled="${this.disabled}"
-                     .invalid="${this.invalid}"></div>
+                     .invalid="${this.invalid}">
+                    <div class="jmix-code-editor-canvas"></div>
+                </div>
 
                 <div part="helper-text">
                     <slot name="helper"></slot>
@@ -219,17 +221,30 @@ class JmixCodeEditor extends ResizeMixin(InputFieldMixin(ThemableMixin(ElementMi
     }
 
     /** @protected */
+    connectedCallback() {
+        super.connectedCallback();
+
+        if (this._editor !== undefined && this.theme === undefined) {
+            this.initApplicationThemeObserver();
+            this._applyTheme();
+        }
+    }
+
+    /** @protected */
+    disconnectedCallback() {
+        super.disconnectedCallback();
+
+        this._disconnectApplicationThemeObserver();
+    }
+
+    /** @protected */
     ready() {
         super.ready();
 
-        const editor = this.shadowRoot.querySelector('[part="input-field"]');
-
-        if (this.theme === undefined) {
-            this.initApplicationThemeObserver();
-        }
+        const editor = this.shadowRoot.querySelector('.jmix-code-editor-canvas');
 
         this._editor = ace.edit(editor, {
-            theme: "ace/theme/" + this.theme,
+            theme: "ace/theme/" + (this.theme ?? this._getApplicationEditorTheme()),
             mode: "ace/mode/" + this.mode,
             highlightActiveLine: this.highlightActiveLine,
             highlightGutterLine: this.highlightGutterLine,
@@ -247,6 +262,10 @@ class JmixCodeEditor extends ResizeMixin(InputFieldMixin(ThemableMixin(ElementMi
             enableLiveAutocompletion: this.liveSuggestionsEnabled,
             useWorker: false
         });
+
+        if (this.theme === undefined) {
+            this.initApplicationThemeObserver();
+        }
 
         this._tooltipController = new TooltipController(this);
         this._tooltipController.setPosition('top');
@@ -273,8 +292,9 @@ class JmixCodeEditor extends ResizeMixin(InputFieldMixin(ThemableMixin(ElementMi
     }
 
     initApplicationThemeObserver() {
-        // Apply current application theme as initial value
-        this._applyTheme()
+        // 'ready()' is reached from within 'super.connectedCallback()', so both may request the
+        // observer during the same attach: the previous one must be released, not just replaced.
+        this._disconnectApplicationThemeObserver();
 
         this._applicationThemeObserver = new MutationObserver(mutations => {
             if (mutations.filter(mutation =>
@@ -405,9 +425,32 @@ class JmixCodeEditor extends ResizeMixin(InputFieldMixin(ThemableMixin(ElementMi
      * @protected
      */
     _applyTheme() {
-        const currentTheme = this._getCurrentApplicationTheme();
+        if (this._editor === undefined) {
+            return;
+        }
 
-        this.theme = currentTheme === 'dark' ? 'nord_dark' : 'textmate';
+        // The application theme is applied to the editor directly instead of being written to the
+        // 'theme' property: otherwise an implicitly applied theme is indistinguishable from a theme
+        // set explicitly, and the latter gets silently overwritten.
+        this._editor.setTheme("ace/theme/" + this._getApplicationEditorTheme());
+    }
+
+    /**
+     * @protected
+     */
+    _disconnectApplicationThemeObserver() {
+        if (this._applicationThemeObserver !== undefined) {
+            this._applicationThemeObserver.disconnect();
+            this._applicationThemeObserver = undefined;
+        }
+    }
+
+    /**
+     * @return the editor theme matching the current application theme
+     * @protected
+     */
+    _getApplicationEditorTheme() {
+        return this._getCurrentApplicationTheme() === 'dark' ? 'nord_dark' : 'textmate';
     }
 
     /**
@@ -463,6 +506,9 @@ class JmixCodeEditor extends ResizeMixin(InputFieldMixin(ThemableMixin(ElementMi
         if (this._editor === undefined) {
             return;
         }
+
+        // An explicitly set theme wins over the application theme.
+        this._disconnectApplicationThemeObserver();
 
         this._editor.setTheme("ace/theme/" + theme);
     }

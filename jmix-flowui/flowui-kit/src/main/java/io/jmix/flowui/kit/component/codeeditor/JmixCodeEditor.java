@@ -212,6 +212,10 @@ public class JmixCodeEditor extends AbstractSinglePropertyField<JmixCodeEditor, 
     }
 
     /**
+     * Returns the visual theme set for the editor, or {@link CodeEditorTheme#TEXTMATE} if none has
+     * been set. A theme explicitly set on the client side is synchronized back, while a theme
+     * derived from the application theme is applied on the client only and is not reflected here.
+     *
      * @return current visual theme applied to the editor
      */
     @Synchronize(property = PROPERTY_THEME, value = PROPERTY_THEME_CHANGED_EVENT)
@@ -228,6 +232,8 @@ public class JmixCodeEditor extends AbstractSinglePropertyField<JmixCodeEditor, 
      * <p>
      * Thus - when using the light theme of the application, {@link CodeEditorTheme#TEXTMATE} will be applied,
      * when using the dark theme - {@link CodeEditorTheme#NORD_DARK} will be applied.
+     * <p>
+     * Setting a theme explicitly stops the editor from following the application theme.
      *
      * @param theme the instance of the {@link CodeEditorTheme} to be applied
      */

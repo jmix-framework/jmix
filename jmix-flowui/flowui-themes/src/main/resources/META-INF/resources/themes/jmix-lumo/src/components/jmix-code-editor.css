@@ -23,22 +23,52 @@
     }
 
     .jmix-code-editor-container {
-        height: 100%;
+        /*
+         * Sized by the host through flex, not by a percentage: a percentage does not resolve
+         * against an 'auto' height, and setting 'height' at all would suppress the cross-axis
+         * stretch that gives the container its height when the host is sized by 'min-height'.
+         */
+        flex: 1;
+        min-height: 0;
     }
 
     /* Lumo specific styles */
-    [part='input-field'],
     [part='input-field'] ::slotted(textarea) {
         height: auto;
         box-sizing: border-box;
     }
 
     [part='input-field'] {
-        /* Equal to the implicit padding in vaadin-text-field */
-        padding-top: calc((var(--lumo-text-field-size) - 1em * var(--lumo-line-height-s)) / 2);
-        padding-bottom: calc((var(--lumo-text-field-size) - 1em * var(--lumo-line-height-s)) / 2);
+        height: auto;
+        flex: 1;
+        min-height: 0;
+        box-sizing: border-box;
+        display: flex;
         transition: background-color 0.1s;
         line-height: var(--lumo-line-height-s);
+        border: 1px solid var(--lumo-contrast-20pct);
+        border-radius: var(--lumo-border-radius-l);
+    }
+
+    /*
+     * Ace is rendered into a nested element rather than into the 'input-field' part. The part is a
+     * public styling hook, so an application theme addressing '::part(input-field)' from the
+     * document wins over the styles an Ace theme injects into the shadow root, and would repaint
+     * the editor with the colors of the field.
+     */
+    .jmix-code-editor-canvas,
+    /*
+     * Ace adds '.ace_editor' to the canvas on initialization; the doubled class outweighs the
+     * percentage sizing of the vendored Ace stylesheet regardless of the order of the rules.
+     */
+    .jmix-code-editor-canvas.ace_editor {
+        /* The canvas is sized by the field: stretched vertically, filling it horizontally. */
+        flex: 1;
+        width: auto;
+        height: auto;
+        min-width: 0;
+        border-radius: inherit;
+        overflow: hidden;
     }
 
     :host(:not([readonly])) [part='input-field']::after {
@@ -196,9 +226,6 @@
         direction: ltr;
         text-align: left;
         -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-        border: 1px solid;
-        border-radius: var(--lumo-border-radius-l);
-        border-color: var(--lumo-contrast-20pct);
     }
 
     .ace_scroller {

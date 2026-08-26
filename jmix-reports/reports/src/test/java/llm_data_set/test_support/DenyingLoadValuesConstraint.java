@@ -53,9 +53,8 @@ public class DenyingLoadValuesConstraint implements EntityOperationConstraint<Lo
 
     /**
      * Denies READ on the entity itself. Two things answer that question, and a test needs both: the platform's
-     * value-load context, which calls {@code setDenied()} and is then ignored by the platform, and
-     * {@code CrudEntityContext}, which is what entity READ is actually decided by and what the loader asks.
-     * {@link CrudEntityDenial} carries the second half.
+     * value-load context, which calls {@code setDenied()} and is then ignored by the platform, and {@code
+     * CrudEntityContext}, which is what entity READ is actually decided by and what the loader asks.
      */
     public void denyEntity(String entityName) {
         deniedEntities.add(entityName);

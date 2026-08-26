@@ -28,13 +28,8 @@ import java.util.Map;
 import java.util.stream.Stream;
 
 /**
- * Gives the current user row-level policies a test chose, and leaves every other policy question to the real
- * store it wraps.
- * <p>
- * A row-level policy normally comes from a role of the authenticated user, and these tests run as the system
- * user, whom no policy applies to. Wrapping the store puts the policies where the platform and the loader both
- * read them from — {@code PolicyStore} — so what a test sets up is answered to the production code paths
- * unchanged.
+ * Gives the current user row-level policies a test chose, and leaves every other policy question to the real store it
+ * wraps.
  */
 public class TestRowLevelPolicies implements PolicyStore {
 

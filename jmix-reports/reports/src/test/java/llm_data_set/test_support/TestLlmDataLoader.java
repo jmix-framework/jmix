@@ -26,12 +26,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * The loader with its one outward step replaced: instead of running the query it records what would have been
- * run and answers with preconfigured rows.
- * <p>
- * Everything the loader decides — which query to read, which values to bind under which names, what to refuse —
- * is decided before that step, so this keeps those tests free of a database while still observing the decisions
- * where they are made. Execution against a real database is covered by the report-run tests.
+ * The loader with its one outward step replaced: instead of running the query it records what would have been run and
+ * answers with preconfigured rows.
  */
 public class TestLlmDataLoader extends LlmDataLoader {
 

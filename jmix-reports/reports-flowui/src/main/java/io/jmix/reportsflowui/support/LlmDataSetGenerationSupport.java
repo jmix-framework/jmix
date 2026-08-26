@@ -173,13 +173,10 @@ public class LlmDataSetGenerationSupport {
     }
 
     /**
-     * Stores a query being edited by hand, assembling the document out of the text and the column names as the
-     * author left them. The parameters are re-derived from the text and the previous document's explanation and
-     * warnings are carried over (see {@link LlmDataQuerySerializer#assemble}).
-     * <p>
-     * Blank text is left alone here: while editing, an empty editor is a query on its way to being retyped, and
-     * clearing the document would take the explanation and the warnings with it. Dropping a query is what
-     * {@link #finishEditedQuery(DataSet, String, List)} does.
+     * Stores a query being edited by hand: parameters are re-derived from the text, and the previous document's
+     * explanation and warnings are carried over ({@link LlmDataQuerySerializer#assemble}). Blank text is left alone
+     * — an empty editor is a query on its way to being retyped; dropping one is
+     * {@link #finishEditedQuery(DataSet, String, List)}'s job.
      *
      * @param dataSet          data set to store the query in
      * @param jpql             query text as edited
@@ -313,14 +310,10 @@ public class LlmDataSetGenerationSupport {
     }
 
     /**
-     * Names the data sets around this one whose columns generation is not told about: the fields of a parent band
-     * and the columns of a cross-tab axis are known here only from a stored LLM query, while a JPQL, SQL or
-     * Groovy data set states its columns as aliases inside its own text, and an LLM one states them once its
-     * query is generated.
-     * <p>
-     * A query generated without them references neither, and the two cases fail differently: a detail band then
-     * prints the same rows under every master row, silently, while a cross-tab cell fails the run because it
-     * cannot be linked to its axis. Both are worth saying out loud before a query is generated.
+     * Names the data sets around this one whose columns generation is not told about: a parent band's fields and a
+     * cross-tab axis's columns are known here only from a stored LLM query. A query generated without them fails
+     * differently on each side — a detail band prints the same rows under every master row, silently, while a
+     * cross-tab cell fails the run — so both are said out loud before the model is called.
      *
      * @param dataSet data set a query is about to be generated for
      * @return names of the bands and axes whose columns stay unknown, in the order they are met
@@ -415,19 +408,11 @@ public class LlmDataSetGenerationSupport {
     }
 
     /**
-     * Names the optional parameters a query references without guarding them, which is the one way this data set
-     * type can print wrong data instead of failing.
-     * <p>
-     * A run binds an empty optional parameter as {@code null}, so an unguarded {@code e.city = :city} matches
-     * nothing and the band comes out empty with no error at all. Generation is told to write
-     * {@code (:city is null or …)} for such a parameter, and the rule is dictated verbatim — but a model may
-     * ignore it, and an author editing by hand may not know it, so what is stored is read back and checked.
-     * <p>
-     * The guard is recognised by the form the contract dictates — {@code :name is null} joined by {@code or}, in
-     * either order — so an {@code and} in its place is reported, as it should be: it switches nothing off.
-     * Two things this cannot see: another way of writing the same intent ({@code coalesce}, for one), and a
-     * parameter guarded in one condition and compared bare in a second. So it is a warning about a query worth a
-     * second look, not a verdict on it.
+     * Names the optional parameters a query references without guarding them — the one way this type prints wrong
+     * data instead of failing, since a run binds an empty optional as {@code null} and an unguarded comparison then
+     * matches nothing. The guard is recognised in the form the contract dictates ({@code :name is null} joined by
+     * {@code or}, either order), so it cannot see another way of writing the same intent, nor a parameter guarded
+     * in one condition and compared bare in a second: a warning worth a second look, not a verdict.
      *
      * @param dataSet data set whose report states which parameters are optional
      * @param query   query to read

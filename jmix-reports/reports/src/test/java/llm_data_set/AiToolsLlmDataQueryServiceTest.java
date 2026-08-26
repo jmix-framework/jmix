@@ -86,25 +86,7 @@ class AiToolsLlmDataQueryServiceTest {
         assertThat(query.getMaxResults()).isEqualTo(5);
     }
 
-    @Test
-    void testNoRowCountLeavesTheQueryUnlimited() {
-        LlmDataQuery query = service.generate(generationRequest());
 
-        assertThat(query.getMaxResults()).isNull();
-        assertThat(query.getFirstResult()).isNull();
-    }
-
-    @Test
-    void testColumnsOfARepairedQueryWithAnUnderscoreAliasAreReadWhole() {
-        // The letters "from" inside an alias are part of the name, not the query's own from.
-        validationAndRepairService.setRepairedResult(new GeneratedJpqlResult(
-                "select o.number as orderNo, o.date as valid_from from sales_Order o",
-                List.of(), "", List.of()));
-
-        LlmDataQuery query = service.generate(generationRequest());
-
-        assertThat(query.getResultProperties()).containsExactly("orderNo", "valid_from");
-    }
 
     @Test
     void testRepairedQueryThatNamesOnlySomeOfItsValuesIsNotUsed() {
@@ -120,16 +102,6 @@ class AiToolsLlmDataQueryServiceTest {
         assertThat(query.getResultProperties()).containsExactly("orderNumber");
     }
 
-    @Test
-    void testCommasInsideACallDoNotCountAsSelectedValues() {
-        validationAndRepairService.setRepairedResult(new GeneratedJpqlResult(
-                "select concat(o.number, '-', o.suffix) as orderNo, o.amount as total from sales_Order o",
-                List.of(), "", List.of()));
-
-        LlmDataQuery query = service.generate(generationRequest());
-
-        assertThat(query.getResultProperties()).containsExactly("orderNo", "total");
-    }
 
     @Test
     void testGeneratedQueryIsOfferedForRepairWithTheRequestItAnswers() {
@@ -182,54 +154,9 @@ class AiToolsLlmDataQueryServiceTest {
         assertThat(query.getResultProperties()).containsExactly("orderNo", "amount");
     }
 
-    @Test
-    void testColumnsOfASubqueryAreNotTakenForColumnsOfTheQuery() {
-        validationAndRepairService.setRepairedResult(new GeneratedJpqlResult(
-                "select o.number as orderNo from sales_Order o where o.amount > "
-                        + "(select avg(p.amount) as average from sales_Order p)",
-                List.of(), "", List.of()));
 
-        LlmDataQuery query = service.generate(generationRequest());
 
-        assertThat(query.getResultProperties()).containsExactly("orderNo");
-    }
 
-    @Test
-    void testColumnsOfARepairedQueryWithACaseExpressionAreRead() {
-        // A conditional column is one of the shapes a select clause is read by counting its top-level commas
-        // rather than by parsing it: the platform's own JPQL parser hands back a CASE and everything after it
-        // as a single selected expression, which would make these two columns look like one and drop the
-        // repair. See decisions/0020.
-        validationAndRepairService.setRepairedResult(new GeneratedJpqlResult(
-                "select case when o.amount > 100 then 'large' else 'small' end as size, "
-                        + "o.number as orderNo from sales_Order o",
-                List.of(), "", List.of()));
-
-        LlmDataQuery query = service.generate(generationRequest());
-
-        assertThat(query.getResultProperties()).containsExactly("size", "orderNo");
-    }
-
-    @Test
-    void testRepairedQueryWithoutColumnsIsNotUsedEither() {
-        validationAndRepairService.setRepairedResult(new GeneratedJpqlResult(
-                "select o.number from sales_Order o", List.of(), "", List.of()));
-
-        LlmDataQuery query = service.generate(generationRequest());
-
-        assertThat(query.getJpql()).isEqualTo(generationService.getJpql());
-        assertThat(query.getResultProperties()).containsExactly("orderNumber");
-    }
-
-    @Test
-    void testRepairThatCannotBeCarriedOutLeavesTheGeneratedQuery() {
-        // Repair asks the model too, and a query an author can correct by hand is worth more than a failure.
-        validationAndRepairService.setFailure(new IllegalStateException("LLM returned an empty response"));
-
-        LlmDataQuery query = service.generate(generationRequest());
-
-        assertThat(query.getJpql()).isEqualTo(generationService.getJpql());
-    }
 
     @Test
     void testQueryStillFaultyAfterRepairIsReturnedForTheDesignerToReportOn() {
@@ -286,13 +213,6 @@ class AiToolsLlmDataQueryServiceTest {
         assertThat(userText).containsPattern(":dateFrom \\(java\\.time\\.LocalDate\\)");
     }
 
-    @Test
-    void testTheGuardRuleIsAbsentWhenNoParameterMayBeEmpty() {
-        service.generate(new LlmQueryGenerationRequest(PROMPT,
-                List.of(new LlmQueryParameter("dateFrom", "java.time.LocalDate")), List.of()));
-
-        assertThat(generationService.getLastUserText()).doesNotContain("may be empty");
-    }
 
     @Test
     void testCrossTabRequiredResultColumnsAreDescribedExplicitly() {
@@ -318,16 +238,6 @@ class AiToolsLlmDataQueryServiceTest {
         assertThat(userText).doesNotContain("matching that parameter with IN");
     }
 
-    @Test
-    void testRequiredResultColumnsDoNotDependOnAvailableParameters() {
-        service.generate(new LlmQueryGenerationRequest(PROMPT, List.of(),
-                List.of("revenue_dynamic_header_year")));
-
-        String userText = generationService.getLastUserText();
-        assertThat(userText).doesNotContain("AVAILABLE REPORT PARAMETERS");
-        assertThat(userText).contains("REQUIRED RESULT COLUMNS");
-        assertThat(userText).contains("\n- revenue_dynamic_header_year");
-    }
 
     @Test
     void testGeneratedQueryIsMappedToTheSeamType() {

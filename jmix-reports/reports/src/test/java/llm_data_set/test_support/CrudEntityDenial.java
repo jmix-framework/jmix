@@ -20,11 +20,8 @@ import io.jmix.core.accesscontext.CrudEntityContext;
 import io.jmix.core.constraint.EntityOperationConstraint;
 
 /**
- * Denies entity READ the way a resource role without that permission does: through {@code CrudEntityContext},
- * the context the platform decides entity operations by and the one the loader asks before executing a query.
- * <p>
- * Which entities are denied is shared with {@link DenyingLoadValuesConstraint}, so a test says
- * {@code denyEntity(...)} once and both halves of the platform answer accordingly.
+ * Denies entity READ the way a resource role without that permission does: through {@code CrudEntityContext}, the
+ * context the platform decides entity operations by and the one the loader asks before executing a query.
  */
 public class CrudEntityDenial implements EntityOperationConstraint<CrudEntityContext> {
 

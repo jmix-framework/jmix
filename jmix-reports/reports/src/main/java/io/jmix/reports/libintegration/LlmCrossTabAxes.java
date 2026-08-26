@@ -93,19 +93,15 @@ public final class LlmCrossTabAxes {
     }
 
     /**
-     * Tells whether the axes a run put into its params are this data set's to read. Only a cell of a cross-tab
-     * band sits between axes: a band of another orientation is never handed any, and a data set named after an
-     * axis builds one instead of filling the matrix.
-     * <p>
-     * Both halves matter because the params of a run are one map shared by every band of it. A band that is not
-     * a cross-tab would otherwise read a report parameter that happens to be named like an axis as one, and an
-     * axis data set of a cross-tab band under a multi-row parent would find the axes of the row extracted before
-     * it — its own among them — and be taken for a cell of the matrix it builds.
+     * Tells whether the axes a run put into its params are this data set's to read: only a cell of a cross-tab band
+     * sits between axes, and a data set named after an axis builds one instead of filling the matrix. Both halves
+     * matter because the params of a run are one map shared by every band — otherwise an ordinary band would read a
+     * parameter merely named like an axis, and an axis data set under a multi-row parent would find the axes of the
+     * previous row, its own among them.
      *
-     * @param dataSetName     name of the data set being loaded, which is what tells an axis from a cell:
-     *                        {@code CrossTabExtractionController} recognises an axis by its data set's name
-     * @param bandOrientation orientation of the band the data set belongs to, or {@code null} when it is
-     *                        unknown, which claims the axes as before the orientation was published
+     * @param dataSetName     name of the data set being loaded, which is what tells an axis from a cell
+     * @param bandOrientation orientation of the band, or {@code null} when unknown, which claims the axes as before
+     *                        the orientation was published
      */
     public static boolean areReadBy(String dataSetName, @Nullable BandOrientation bandOrientation) {
         return !LlmQueryParameterNames.isCrossTabAxis(dataSetName)
@@ -124,19 +120,14 @@ public final class LlmCrossTabAxes {
     }
 
     /**
-     * Offers the values of one cross-tab axis, one name per field of its rows, so that a cell query can narrow
-     * itself to the columns and rows the matrix actually has. The value offered is the whole list of what the
-     * axis holds for that field, which a query matches with {@code IN}.
+     * Offers the values of one cross-tab axis, one name per field of its rows, each bound as the whole list the
+     * axis holds for that field — which a query matches with {@code IN}.
      * <p>
-     * Exactly one of those names is required back as a result column: a cross-tab links a cell to its axis by
-     * the first returned column whose name starts with the axis prefix, so requiring every field would let a
-     * caption column come first and the matrix link by the caption text. The required one is the axis's first
-     * referenceable field, which is the order the axis itself describes — the same field on every run, so that
-     * a query generated once keeps answering the requirement.
-     * <p>
-     * A field with no values in it is required back all the same, but offers nothing to bind. The same naming
-     * rules as for band fields apply: a name that is not an identifier is skipped, and a name already taken is
-     * kept.
+     * Exactly one of those names is required back as a result column, the axis's first referenceable field: a
+     * cross-tab links a cell to its axis by the first returned column starting with the axis prefix, so requiring
+     * every field would let a caption column come first and the matrix link by caption text. A field with no values
+     * is required back all the same. Naming follows the band-field rules: a non-identifier name is skipped, and a
+     * name already taken is kept.
      *
      * @param axisName                 name of the axis data set, which its fields are named after
      * @param rows                     rows the axis produced

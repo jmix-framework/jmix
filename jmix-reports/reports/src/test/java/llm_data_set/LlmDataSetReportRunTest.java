@@ -263,21 +263,9 @@ class LlmDataSetReportRunTest {
         Report report = metadata.create(Report.class);
         report.setName("Nested LLM band report");
 
-        BandDefinition rootBand = metadata.create(BandDefinition.class);
-        rootBand.setReport(report);
-        rootBand.setName("Root");
-        rootBand.setOrientation(Orientation.HORIZONTAL);
-        rootBand.setMultiDataSet(false);
-        rootBand.setPosition(0);
-
-        BandDefinition ordersBand = metadata.create(BandDefinition.class);
-        ordersBand.setReport(report);
-        ordersBand.setName("Orders");
-        ordersBand.setOrientation(Orientation.HORIZONTAL);
-        ordersBand.setMultiDataSet(false);
-        ordersBand.setPosition(0);
-        ordersBand.setParentBandDefinition(rootBand);
-        rootBand.getChildrenBandDefinitions().add(ordersBand);
+        BandDefinition rootBand = rootBand(report);
+        BandDefinition ordersBand = band(report, "Orders", rootBand);
+        BandDefinition linesBand = band(report, "Lines", ordersBand);
 
         DataSet ordersDataSet = metadata.create(DataSet.class);
         ordersDataSet.setName("Orders");
@@ -286,56 +274,27 @@ class LlmDataSetReportRunTest {
         ordersDataSet.setText("return [[\"number\": \"A-1\"], [\"number\": \"A-2\"]]");
         ordersBand.setDataSets(List.of(ordersDataSet));
 
-        BandDefinition linesBand = metadata.create(BandDefinition.class);
-        linesBand.setReport(report);
-        linesBand.setName("Lines");
-        linesBand.setOrientation(Orientation.HORIZONTAL);
-        linesBand.setMultiDataSet(false);
-        linesBand.setPosition(0);
-        linesBand.setParentBandDefinition(ordersBand);
-        ordersBand.getChildrenBandDefinitions().add(linesBand);
-
-        DataSet linesDataSet = metadata.create(DataSet.class);
-        linesDataSet.setName("Lines");
-        linesDataSet.setBandDefinition(linesBand);
-        linesDataSet.setType(DataSetType.LLM);
-        linesDataSet.setText("Lines of the order");
-        linesDataSet.setLlmGeneratedQuery("""
+        linesBand.setDataSets(List.of(llmDataSet(linesBand, "Lines", "Lines of the order", """
                 {"jpql":"select l.product as product from sales_OrderLine l where l.order.number = :Orders_number",\
                 "resultProperties":["product"],\
-                "parameters":[{"name":"Orders_number","javaType":"java.lang.String"}]}""");
-        linesBand.setDataSets(List.of(linesDataSet));
+                "parameters":[{"name":"Orders_number","javaType":"java.lang.String"}]}""")));
 
         report.setBands(Set.of(rootBand, ordersBand, linesBand));
-        report.setTemplates(List.of(csvTemplate(report, "Number\n${number}\n")));
-        report.setDefaultTemplate(report.getTemplates().get(0));
-
-        report.setXml(reportsSerialization.convertToString(report));
-        return report;
+        return finish(report, csvTemplate(report, "Number\n${number}\n"));
     }
-
     /**
      * Root → a band fed by two data sets: a Groovy one and an LLM one that links to it by the order number.
+     */
+    /**
+     * Root -> a band fed by two data sets: a Groovy one and an LLM one that links to it by the order number.
      */
     protected Report createReportWithLinkedDataSets() {
         Report report = metadata.create(Report.class);
         report.setName("Linked data sets report");
 
-        BandDefinition rootBand = metadata.create(BandDefinition.class);
-        rootBand.setReport(report);
-        rootBand.setName("Root");
-        rootBand.setOrientation(Orientation.HORIZONTAL);
-        rootBand.setMultiDataSet(false);
-        rootBand.setPosition(0);
-
-        BandDefinition ordersBand = metadata.create(BandDefinition.class);
-        ordersBand.setReport(report);
-        ordersBand.setName("Orders");
-        ordersBand.setOrientation(Orientation.HORIZONTAL);
+        BandDefinition rootBand = rootBand(report);
+        BandDefinition ordersBand = band(report, "Orders", rootBand);
         ordersBand.setMultiDataSet(true);
-        ordersBand.setPosition(0);
-        ordersBand.setParentBandDefinition(rootBand);
-        rootBand.getChildrenBandDefinitions().add(ordersBand);
 
         DataSet orders = metadata.create(DataSet.class);
         orders.setName("Orders");
@@ -344,27 +303,17 @@ class LlmDataSetReportRunTest {
         orders.setText("""
                 return [["orderNumber": "A-1", "customer": "Acme"], ["orderNumber": "A-2", "customer": "Globex"]]""");
 
-        DataSet amounts = metadata.create(DataSet.class);
-        amounts.setName("Amounts");
-        amounts.setBandDefinition(ordersBand);
-        amounts.setType(DataSetType.LLM);
-        amounts.setText("Amount of every order");
-        amounts.setLinkParameterName("orderNumber");
-        amounts.setLlmGeneratedQuery("""
+        DataSet amounts = llmDataSet(ordersBand, "Amounts", "Amount of every order", """
                 {"jpql":"select o.number as orderNumber, o.amount as amount from sales_Order o",\
                 "resultProperties":["orderNumber","amount"]}""");
+        amounts.setLinkParameterName("orderNumber");
 
         ordersBand.setDataSets(List.of(orders, amounts));
         report.setBands(Set.of(rootBand, ordersBand));
 
-        ReportTemplate template = csvTemplate(report, "Number,Customer,Amount\n${orderNumber},${customer},${amount}\n");
-        report.setTemplates(List.of(template));
-        report.setDefaultTemplate(template);
-
-        report.setXml(reportsSerialization.convertToString(report));
-        return report;
+        return finish(report,
+                csvTemplate(report, "Number,Customer,Amount\n${orderNumber},${customer},${amount}\n"));
     }
-
     protected ReportTemplate csvTemplate(Report report, String content) {
         ReportTemplate template = metadata.create(ReportTemplate.class);
         template.setReport(report);
@@ -379,38 +328,48 @@ class LlmDataSetReportRunTest {
         Report report = metadata.create(Report.class);
         report.setName("LLM band report");
 
-        BandDefinition rootBand = metadata.create(BandDefinition.class);
-        rootBand.setReport(report);
-        rootBand.setName("Root");
-        rootBand.setOrientation(Orientation.HORIZONTAL);
-        rootBand.setMultiDataSet(false);
-        rootBand.setPosition(0);
-
+        BandDefinition rootBand = rootBand(report);
         // The CSV formatter takes its rows from the root band's children, so the data set lives on a child.
-        BandDefinition ordersBand = metadata.create(BandDefinition.class);
-        ordersBand.setReport(report);
-        ordersBand.setName("Orders");
-        ordersBand.setOrientation(Orientation.HORIZONTAL);
-        ordersBand.setMultiDataSet(false);
-        ordersBand.setPosition(0);
-        ordersBand.setParentBandDefinition(rootBand);
-        rootBand.getChildrenBandDefinitions().add(ordersBand);
-
-        DataSet dataSet = metadata.create(DataSet.class);
-        dataSet.setName("Orders");
-        dataSet.setBandDefinition(ordersBand);
-        dataSet.setType(DataSetType.LLM);
-        dataSet.setText("Order numbers with their amounts");
-        dataSet.setLlmGeneratedQuery("""
+        BandDefinition ordersBand = band(report, "Orders", rootBand);
+        ordersBand.setDataSets(List.of(llmDataSet(ordersBand, "Orders", "Order numbers with their amounts", """
                 {"jpql":"select o.number as orderNumber, o.amount as amount from sales_Order o",\
-                "resultProperties":["orderNumber","amount"]}""");
-        ordersBand.setDataSets(List.of(dataSet));
+                "resultProperties":["orderNumber","amount"]}""")));
         report.setBands(Set.of(rootBand, ordersBand));
 
-        ReportTemplate template = csvTemplate(report, "Number,Amount\n${orderNumber},${amount}\n");
+        return finish(report, csvTemplate(report, "Number,Amount\n${orderNumber},${amount}\n"));
+    }
+
+    protected BandDefinition rootBand(Report report) {
+        return band(report, "Root", null);
+    }
+
+    protected BandDefinition band(Report report, String name, @Nullable BandDefinition parent) {
+        BandDefinition band = metadata.create(BandDefinition.class);
+        band.setReport(report);
+        band.setName(name);
+        band.setOrientation(Orientation.HORIZONTAL);
+        band.setMultiDataSet(false);
+        band.setPosition(0);
+        if (parent != null) {
+            band.setParentBandDefinition(parent);
+            parent.getChildrenBandDefinitions().add(band);
+        }
+        return band;
+    }
+
+    protected DataSet llmDataSet(BandDefinition band, String name, String prompt, String storedQuery) {
+        DataSet dataSet = metadata.create(DataSet.class);
+        dataSet.setName(name);
+        dataSet.setBandDefinition(band);
+        dataSet.setType(DataSetType.LLM);
+        dataSet.setText(prompt);
+        dataSet.setLlmGeneratedQuery(storedQuery);
+        return dataSet;
+    }
+
+    protected Report finish(Report report, ReportTemplate template) {
         report.setTemplates(List.of(template));
         report.setDefaultTemplate(template);
-
         report.setXml(reportsSerialization.convertToString(report));
         return report;
     }

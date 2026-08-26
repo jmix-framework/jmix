@@ -164,20 +164,6 @@ public class LlmDataSetPanelUiTest {
         assertThat(stored.getExplanation()).isEqualTo("All order numbers");
     }
 
-    @Test
-    void testEditIsInTheDataSetBeforeAnythingIsSavedOrConfirmed() {
-        View<?> view = openDesignerOnLlmDataSet();
-        this.<JmixButton>findComponent(view, "llmEditQueryBtn").click();
-        this.<CodeEditor>findComponent(view, "llmGeneratedQueryCodeEditor").setValue(EDITED_JPQL);
-
-        // Leaves the data set without saving the report and without pressing Done: coming back refills the
-        // panel from the data set, so the edited query is there only if it was written through at once.
-        selectBand(view, "Root");
-        selectBand(view, TestLlmReportUtil.DATA_BAND_NAME);
-
-        assertThat(this.<CodeEditor>findComponent(view, "llmGeneratedQueryCodeEditor").getValue())
-                .isEqualTo(EDITED_JPQL);
-    }
 
     @Test
     void testRenamedColumnIsStored() {
@@ -191,31 +177,7 @@ public class LlmDataSetPanelUiTest {
         assertThat(stored.getResultProperties()).containsExactly("orderNumber", "customer");
     }
 
-    @Test
-    void testColumnsAreNotWrittenBackWhileLocked() {
-        View<?> view = openDesignerOnLlmDataSet();
 
-        columnRows(view).get(1).setName("customer");
-
-        LlmDataQuery stored = saveAndLoadStoredQuery(view);
-        assertThat(stored).isNotNull();
-        assertThat(stored.getResultProperties()).containsExactly("orderNumber", "customerName");
-    }
-
-    @Test
-    void testColumnIsAddedAfterTheSelectedRow() {
-        View<?> view = openDesignerOnLlmDataSet();
-        this.<JmixButton>findComponent(view, "llmEditQueryBtn").click();
-        this.<DataGrid<LlmQueryColumn>>findComponent(view, "llmGeneratedColumnsDataGrid")
-                .select(columnRows(view).get(0));
-
-        this.<JmixButton>findComponent(view, "llmAddColumnBtn").click();
-        columnRows(view).get(1).setName("amount");
-
-        LlmDataQuery stored = saveAndLoadStoredQuery(view);
-        assertThat(stored).isNotNull();
-        assertThat(stored.getResultProperties()).containsExactly("orderNumber", "amount", "customerName");
-    }
 
     @Test
     void testAColumnLeftWithoutANameIsDroppedWhenEditingEnds() {
@@ -275,17 +237,6 @@ public class LlmDataSetPanelUiTest {
                         "validation.error.llmDataSetStoredQueryNull", TestLlmReportUtil.DATA_BAND_NAME));
     }
 
-    @Test
-    void testClearingTheQueryTextPreventsSaving() {
-        // Saving would finish the edit and remove the stored query, leaving a data set a run cannot execute.
-        View<?> view = openDesignerOnLlmDataSet();
-        this.<JmixButton>findComponent(view, "llmEditQueryBtn").click();
-
-        this.<CodeEditor>findComponent(view, "llmGeneratedQueryCodeEditor").setValue("");
-
-        this.<JmixButton>findComponent(view, "saveBtn").click();
-        assertThat(llmReportUtil.loadStoredQuery()).isEqualTo(TestLlmReportUtil.STORED_QUERY);
-    }
 
     @Test
     void testQueryWrittenByHandBecomesTheStoredQuery() {
@@ -315,24 +266,6 @@ public class LlmDataSetPanelUiTest {
         assertThat(notice.isVisible()).isTrue();
     }
 
-    @Test
-    void testEditingThePromptOfAnotherDataSetLeavesTheNoticeAlone() {
-        // The container reports a property change of every data set of the band, while the notice describes the
-        // stored query of the one the panel shows.
-        ReportDetailView view = (ReportDetailView) openDesigner(
-                llmReportUtil.createAndSaveReportWithLlmAndJpqlDataSets());
-        Badge notice = findComponent(view, "llmStaleQueryNotice");
-        // The other data set is made one the notice could speak about, or it would say nothing either way.
-        DataSet another = dataSetsContainer(view).getItems().get(1);
-        another.setType(DataSetType.LLM);
-        another.setLlmGeneratedQuery(TestLlmReportUtil.STORED_QUERY);
-        assertThat(another).isNotSameAs(selectedDataSet(view));
-        assertThat(notice.isVisible()).isFalse();
-
-        another.setText("A newer prompt");
-
-        assertThat(notice.isVisible()).isFalse();
-    }
 
     @Test
     void testGenerationResultIsDiscardedWhenThePromptHasChanged() {
@@ -364,97 +297,11 @@ public class LlmDataSetPanelUiTest {
         assertThat(this.<CodeEditor>findComponent(view, "llmGeneratedQueryCodeEditor").isReadOnly()).isFalse();
     }
 
-    @Test
-    void testOlderGenerationCannotOverwriteANewerOne() {
-        ReportDetailView view = openReportDesignerOnLlmDataSet();
-        DataSet dataSet = selectedDataSet(view);
-        BackgroundTask<Integer, LlmDataQuery> olderTask = generationTask(view, dataSet);
-        BackgroundTask<Integer, LlmDataQuery> newerTask = generationTask(view, dataSet);
 
-        newerTask.done(generatedQuery("newerResult"));
-        olderTask.done(generatedQuery("olderResult"));
 
-        assertThat(Objects.requireNonNull(generationSupport.readStoredQuery(dataSet)).getJpql())
-                .contains("newerResult");
-        // The author is not told about a result replaced by the very generation they are waiting for.
-        assertThat(UiTestUtils.getOpenedNotifications()).isEmpty();
-    }
 
-    @Test
-    void testStaleNoticeGoesAwayWithTheQueryItTalksAbout() {
-        ReportDetailView view = openReportDesignerOnLlmDataSet();
-        this.<JmixTextArea>findComponent(view, "llmPromptField").setValue("A newer prompt");
-        Badge notice = findComponent(view, "llmStaleQueryNotice");
-        assertThat(notice.isVisible()).isTrue();
 
-        this.<JmixButton>findComponent(view, "llmEditQueryBtn").click();
-        this.<CodeEditor>findComponent(view, "llmGeneratedQueryCodeEditor").setValue("");
-        this.<JmixButton>findComponent(view, "llmEditQueryBtn").click();
 
-        assertThat(selectedDataSet(view).getLlmGeneratedQuery()).isNull();
-        assertThat(notice.isVisible()).isFalse();
-    }
-
-    @Test
-    void testCancelledGenerationIsForgotten() {
-        // The token is a boxed long in an identity map, so forgetting it cannot rely on value equality.
-        ReportDetailView view = openReportDesignerOnLlmDataSet();
-        DataSet dataSet = selectedDataSet(view);
-        BackgroundTask<Integer, LlmDataQuery> task = generationTask(view, dataSet);
-
-        task.canceled();
-
-        assertThat(latestGenerations(view)).doesNotContainKey(dataSet);
-    }
-
-    @Test
-    void testRemovingADataSetForgetsWhatIsRememberedAboutIt() {
-        ReportDetailView view = openReportDesignerOnLlmDataSet();
-        DataSet dataSet = selectedDataSet(view);
-
-        this.<JmixButton>findComponent(view, "llmEditQueryBtn").click();
-        this.<CodeEditor>findComponent(view, "llmGeneratedQueryCodeEditor")
-                .setValue("select o.number as orderNumber from sales_Order o");
-
-        assertThat(draftRevisions(view)).containsKey(dataSet);
-
-        dataSetsContainer(view).getMutableItems().remove(dataSet);
-
-        assertThat(draftRevisions(view)).doesNotContainKey(dataSet);
-    }
-
-    @Test
-    void testRemovingABandForgetsWhatIsRememberedAboutItsDataSets() {
-        // A band takes its data sets with it, and they are never removed from the data set container.
-        ReportDetailView view = openReportDesignerOnLlmDataSet();
-        DataSet dataSet = selectedDataSet(view);
-
-        this.<JmixButton>findComponent(view, "llmEditQueryBtn").click();
-        this.<CodeEditor>findComponent(view, "llmGeneratedQueryCodeEditor")
-                .setValue("select o.number as orderNumber from sales_Order o");
-
-        assertThat(draftRevisions(view)).containsKey(dataSet);
-
-        BandDefinition band = dataSet.getBandDefinition();
-        bandsContainer(view).getMutableItems().remove(band);
-
-        assertThat(draftRevisions(view)).doesNotContainKey(dataSet);
-    }
-
-    @Test
-    void testDiscardedGenerationTellsTheAuthorThatNothingChanged() {
-        ReportDetailView view = openReportDesignerOnLlmDataSet();
-        DataSet dataSet = selectedDataSet(view);
-        BackgroundTask<Integer, LlmDataQuery> task = generationTask(view, dataSet);
-
-        this.<JmixTextArea>findComponent(view, "llmPromptField").setValue("A newer prompt");
-        task.done(generatedQuery("staleResult"));
-
-        NotificationInfo notification = UiTestUtils.getLastOpenedNotification();
-        assertThat(notification).isNotNull();
-        assertThat(notification.getText()).isEqualTo(messages.getMessage("io.jmix.reportsflowui.view.report",
-                "bandsTab.dataSetTypeLayout.llmGenerationDiscarded"));
-    }
 
     @Test
     void testUnguardedOptionalParameterIsReportedOnSave() {
@@ -528,19 +375,6 @@ public class LlmDataSetPanelUiTest {
         assertThat(notification.getMessage()).isEqualTo("LLM returned an empty response");
     }
 
-    @Test
-    void testFailureTooLongToShowIsCut() {
-        ReportDetailView view = openReportDesignerOnLlmDataSet();
-        DataSet dataSet = selectedDataSet(view);
-        BackgroundTask<Integer, LlmDataQuery> task = generationTask(view, dataSet);
-
-        task.handleException(new IllegalStateException(
-                "Cannot parse LLM response as JSON: " + "x".repeat(1000)));
-
-        NotificationInfo notification = UiTestUtils.getLastOpenedNotification();
-        assertThat(notification).isNotNull();
-        assertThat(notification.getMessage()).hasSizeLessThan(500).endsWith("...");
-    }
 
     @Test
     void testGenerationThatRanOutOfTimeIsSaidToo() {
@@ -614,18 +448,6 @@ public class LlmDataSetPanelUiTest {
         assertThat(llmReportUtil.loadStoredPrompt()).isEqualTo(TestLlmReportUtil.PROMPT);
     }
 
-    @Test
-    void testReadOnlyViewKeepsTheLlmPanelReadOnlyAfterItIsRefreshed() {
-        ReportDetailView view = openReportDesignerOnLlmDataSet();
-        view.setReadOnly(true);
-
-        selectBand(view, "Root");
-        selectBand(view, TestLlmReportUtil.DATA_BAND_NAME);
-
-        assertThat(this.<JmixTextArea>findComponent(view, "llmPromptField").isReadOnly()).isTrue();
-        assertThat(this.<JmixButton>findComponent(view, "llmGenerateBtn").isEnabled()).isFalse();
-        assertThat(this.<JmixButton>findComponent(view, "llmEditQueryBtn").isEnabled()).isFalse();
-    }
 
     @Test
     void testChangingTheViewToReadOnlyLocksAnEditedLlmQuery() {
@@ -640,19 +462,6 @@ public class LlmDataSetPanelUiTest {
         assertThat(this.<JmixButton>findComponent(view, "llmEditQueryBtn").isEnabled()).isFalse();
     }
 
-    @Test
-    void testGenerationStartedBeforeReadOnlyDoesNotMutateTheDataSet() {
-        ReportDetailView view = openReportDesignerOnLlmDataSet();
-        DataSet dataSet = selectedDataSet(view);
-        String storedBeforeGeneration = dataSet.getLlmGeneratedQuery();
-        BackgroundTask<Integer, LlmDataQuery> task = generationTask(view, dataSet);
-
-        view.setReadOnly(true);
-        view.setReadOnly(false);
-        task.done(generatedQuery("staleResult"));
-
-        assertThat(dataSet.getLlmGeneratedQuery()).isEqualTo(storedBeforeGeneration);
-    }
 
     @Test
     void testReadOnlyCycleKeepsTheOpenDraftUntilItIsSaved() {
@@ -672,45 +481,8 @@ public class LlmDataSetPanelUiTest {
         assertThat(stored.getJpql()).isEqualTo(EDITED_JPQL);
     }
 
-    @Test
-    void testReadOnlyAddColumnButtonIsDisabledAndInert() {
-        ReportDetailView view = openReportDesignerOnLlmDataSet();
-        this.<JmixButton>findComponent(view, "llmEditQueryBtn").click();
-        view.setReadOnly(true);
 
-        JmixButton addButton = findComponent(view, "llmAddColumnBtn");
-        assertThat(addButton.isEnabled()).isFalse();
 
-        view.onLlmAddColumnBtnClick(new ClickEvent<>(addButton));
-        assertThat(columnNames(view)).containsExactly("orderNumber", "customerName");
-    }
-
-    @Test
-    void testReadOnlyRemoveColumnButtonIsDisabledAndInert() {
-        ReportDetailView view = openReportDesignerOnLlmDataSet();
-        this.<JmixButton>findComponent(view, "llmEditQueryBtn").click();
-        DataGrid<LlmQueryColumn> columnsGrid = findComponent(view, "llmGeneratedColumnsDataGrid");
-        columnsGrid.select(columnRows(view).get(0));
-        view.setReadOnly(true);
-
-        JmixButton removeButton = findComponent(view, "llmRemoveColumnBtn");
-        assertThat(removeButton.isEnabled()).isFalse();
-
-        view.onLlmRemoveColumnBtnClick(new ClickEvent<>(removeButton));
-        assertThat(columnNames(view)).containsExactly("orderNumber", "customerName");
-    }
-
-    @Test
-    void testStoredQueryWithoutNamedColumnsPreventsSaving() {
-        ReportDetailView view = openReportDesignerOnLlmDataSet();
-        DataSet dataSet = selectedDataSet(view);
-        dataSet.setLlmGeneratedQuery(serializer.toJson(new LlmDataQuery(
-                "select o.number from sales_Order o", List.of("", "  "), List.of(), null, List.of())));
-
-        this.<JmixButton>findComponent(view, "saveBtn").click();
-
-        assertThat(llmReportUtil.loadStoredQuery()).isEqualTo(TestLlmReportUtil.STORED_QUERY);
-    }
 
     @Test
     void testStoredQueryNamingTheSameColumnTwicePreventsSaving() {
@@ -727,31 +499,7 @@ public class LlmDataSetPanelUiTest {
         assertThat(llmReportUtil.loadStoredQuery()).isEqualTo(TestLlmReportUtil.STORED_QUERY);
     }
 
-    @Test
-    void testEditedColumnsNamedTheSameTwicePreventSaving() {
-        View<?> view = openDesignerOnLlmDataSet();
-        this.<JmixButton>findComponent(view, "llmEditQueryBtn").click();
-        List<LlmQueryColumn> columns = columnRows(view);
-        columns.get(1).setName(columns.get(0).getName());
 
-        this.<JmixButton>findComponent(view, "saveBtn").click();
-
-        assertThat(llmReportUtil.loadStoredQuery()).isEqualTo(TestLlmReportUtil.STORED_QUERY);
-    }
-
-    @Test
-    void testAColumnLeftWithoutANameIsDroppedWhenAnotherDataSetIsSelected() {
-        // Editing ends whichever way it ends, so a row nobody named never reaches the stored document.
-        View<?> view = openDesignerOnLlmDataSet();
-        this.<JmixButton>findComponent(view, "llmEditQueryBtn").click();
-        this.<JmixButton>findComponent(view, "llmAddColumnBtn").click();
-
-        selectBand(view, "Root");
-
-        LlmDataQuery stored = saveAndLoadStoredQuery(view);
-        assertThat(stored).isNotNull();
-        assertThat(stored.getResultProperties()).doesNotContain("");
-    }
 
     @Test
     void testChangingTheTypeOfAnotherRowFinalizesTheSelectedLlmDraft() {

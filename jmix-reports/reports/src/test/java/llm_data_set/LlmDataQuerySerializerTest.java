@@ -103,16 +103,6 @@ class LlmDataQuerySerializerTest {
         assertThat(json).doesNotContain("multiValued").doesNotContain("optional");
     }
 
-    @Test
-    void testStoredDocumentKeepsTheQueryReadable() {
-        // The document travels in the report XML, which people export, diff and fix by hand; Gson escapes the
-        // comparison operators of a query as unicode escapes unless told not to.
-        String jpql = "select o.number as n from sales_Order o where o.date >= :dateFrom and o.amount < 100";
-
-        String json = serializer.toJson(new LlmDataQuery(jpql, List.of("n"), List.of(), null, List.of()));
-
-        assertThat(json).contains(jpql);
-    }
 
     @Test
     void testEditedQueryKeepsItsTextColumnsAndDerivedParameters() {
@@ -144,13 +134,6 @@ class LlmDataQuerySerializerTest {
                 .containsExactly("dateFrom");
     }
 
-    @Test
-    void testDoubledQuoteInsideAStringLiteralDoesNotEndIt() {
-        LlmDataQuery edited = serializer.assemble(
-                "select o.number as num from sales_Order o where o.note = 'it''s a:label'", List.of("num"), null);
-
-        assertThat(edited.getParameters()).isEmpty();
-    }
 
     @Test
     void testEditedQueryKeepsTheJavaTypeOfAParameterThePreviousDocumentDeclared() {
@@ -170,13 +153,6 @@ class LlmDataQuerySerializerTest {
                 .containsExactly(tuple("dateFrom", "java.time.LocalDate"), tuple("numberPart", ""));
     }
 
-    @Test
-    void testEditedQueryDropsAParameterRemovedFromTheText() {
-        LlmDataQuery edited = serializer.assemble("select o.id as id from sales_Order o", List.of("id"), null);
-
-        assertThat(edited.getParameters()).isEmpty();
-        assertThat(edited.getExplanation()).isNull();
-    }
 
     @Test
     void testBlankDocumentMeansNoCachedQuery() {

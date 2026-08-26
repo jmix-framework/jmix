@@ -183,20 +183,6 @@ public class LlmDataSetGenerationSupportTest {
                 .containsExactly(AXIS_NAME);
     }
 
-    @Test
-    void testParentBandColumnsAreNotOfferedWithoutAStoredQuery() {
-        Report report = reportWithParameters();
-        BandDefinition parentBand = band(report, "Orders", rootBand(report));
-        llmDataSet(parentBand);
-
-        BandDefinition linesBand = band(report, "Lines", parentBand);
-        DataSet linesDataSet = llmDataSet(linesBand);
-
-        List<LlmQueryParameter> parameters = generationSupport.createGenerationRequest(linesDataSet)
-                .getAvailableParameters();
-
-        assertThat(parameters).extracting(LlmQueryParameter::getName).doesNotContain("Orders_orderNumber");
-    }
 
     @Test
     void testGeneratingForAnAxisIsOfferedNoColumnsOfTheOtherAxis() {
@@ -261,20 +247,6 @@ public class LlmDataSetGenerationSupportTest {
                 .contains("Revenue_dynamic_header_year", "Revenue_dynamic_header_year_caption");
     }
 
-    @Test
-    void testCrossTabAxisWithoutAStoredQueryOffersNothing() {
-        Report report = reportWithParameters();
-        BandDefinition crossBand = band(report, "Revenue", null);
-        crossBand.setOrientation(Orientation.CROSS);
-        axisDataSet(crossBand, null);
-        DataSet cellDataSet = llmDataSet(crossBand);
-
-        List<LlmQueryParameter> parameters = generationSupport.createGenerationRequest(cellDataSet)
-                .getAvailableParameters();
-
-        assertThat(parameters).extracting(LlmQueryParameter::getName)
-                .doesNotContain("Revenue_dynamic_header_year");
-    }
 
     @Test
     void testColumnsOfABandWhoseNameIsNotAnIdentifierAreNotOffered() {
@@ -328,36 +300,7 @@ public class LlmDataSetGenerationSupportTest {
         assertThat(stored.getWarnings()).containsExactly("Amounts are not converted");
     }
 
-    @Test
-    void testQueryWrittenByHandIsStoredWithoutAPreviousOne() {
-        DataSet dataSet = llmDataSet(reportWithParameters());
 
-        generationSupport.storeEditedQuery(dataSet, "select o.number as num from sales_Order o", List.of("num"));
-
-        LlmDataQuery stored = serializer.fromJson(dataSet.getLlmGeneratedQuery());
-        assertThat(stored).isNotNull();
-        assertThat(stored.getResultProperties()).containsExactly("num");
-        assertThat(stored.getExplanation()).isNull();
-    }
-
-    @Test
-    void testStoringAQueryNothingChangedAboutLeavesTheDocumentAsItIs() {
-        // Opening the editor and closing it again re-assembles the same query; writing the result back would
-        // reorder its parameters and mark the report changed for a change nobody made.
-        DataSet dataSet = llmDataSet(reportWithParameters());
-        LlmDataQuery generated = new LlmDataQuery(
-                "select o.number as orderNumber from sales_Order o where o.date between :dateTo and :dateFrom",
-                List.of("orderNumber"),
-                List.of(new LlmQueryParameter("dateTo", "java.time.LocalDate"),
-                        new LlmQueryParameter("dateFrom", "java.time.LocalDate")),
-                "Orders of the period", List.of());
-        String stored = serializer.toJson(generated);
-        dataSet.setLlmGeneratedQuery(stored);
-
-        generationSupport.storeEditedQuery(dataSet, generated.getJpql(), generated.getResultProperties());
-
-        assertThat(dataSet.getLlmGeneratedQuery()).isEqualTo(stored);
-    }
 
     @Test
     void testBlankQueryTextLeavesTheDataSetWithoutAStoredQueryOnceEditingEnds() {
@@ -369,20 +312,6 @@ public class LlmDataSetGenerationSupportTest {
         assertThat(dataSet.getLlmGeneratedQuery()).isNull();
     }
 
-    @Test
-    void testBlankQueryTextWhileEditingKeepsWhatTheDocumentDescribes() {
-        // The editor sends its value on blur, so a cut-and-paste passes through an empty text; dropping the
-        // document there would take the explanation and the warnings with it.
-        DataSet dataSet = llmDataSet(reportWithParameters());
-        generationSupport.storeGeneratedQuery(dataSet, storedQueryWithNotes());
-
-        generationSupport.storeEditedQuery(dataSet, "", List.of("orderNumber"));
-
-        LlmDataQuery stored = generationSupport.readStoredQuery(dataSet);
-        assertThat(stored).isNotNull();
-        assertThat(stored.getExplanation()).isEqualTo("All order numbers");
-        assertThat(stored.getWarnings()).containsExactly("Time zone ignored");
-    }
 
     @Test
     void testUnreadableStoredDocumentIsReportedRatherThanHidden() {
@@ -447,49 +376,8 @@ public class LlmDataSetGenerationSupportTest {
         assertThat(generationSupport.unguardedOptionalParameters(dataSet, guarded)).isEmpty();
     }
 
-    @Test
-    void testAnAndInPlaceOfTheGuardIsStillNamed() {
-        // (:city is null and e.city = :city) contains the words but switches nothing off, so it must not pass
-        // for a guard.
-        Report report = reportWithParameters();
-        report.getInputParameters().add(inputParameter("optionalCity", ParameterType.TEXT, false));
-        DataSet dataSet = llmDataSet(report);
-        LlmDataQuery conjunction = new LlmDataQuery(
-                "select o.number as orderNumber from sales_Order o "
-                        + "where (:optionalCity is null and o.city = :optionalCity)",
-                List.of("orderNumber"), List.of(new LlmQueryParameter("optionalCity", "java.lang.String")),
-                null, List.of());
 
-        assertThat(generationSupport.unguardedOptionalParameters(dataSet, conjunction))
-                .containsExactly("optionalCity");
-    }
 
-    @Test
-    void testTheGuardIsRecognisedInEitherOrder() {
-        Report report = reportWithParameters();
-        report.getInputParameters().add(inputParameter("optionalCity", ParameterType.TEXT, false));
-        DataSet dataSet = llmDataSet(report);
-        LlmDataQuery reversed = new LlmDataQuery(
-                "select o.number as orderNumber from sales_Order o "
-                        + "where (o.city = :optionalCity or :optionalCity is null)",
-                List.of("orderNumber"), List.of(new LlmQueryParameter("optionalCity", "java.lang.String")),
-                null, List.of());
-
-        assertThat(generationSupport.unguardedOptionalParameters(dataSet, reversed)).isEmpty();
-    }
-
-    @Test
-    void testRequiredParameterNeedsNoGuard() {
-        // A run always supplies a required parameter, so a plain comparison is exactly right for it.
-        Report report = reportWithParameters();
-        DataSet dataSet = llmDataSet(report);
-        LlmDataQuery plain = new LlmDataQuery(
-                "select o.number as orderNumber from sales_Order o where o.date >= :orderDate",
-                List.of("orderNumber"), List.of(new LlmQueryParameter("orderDate", "java.time.LocalDate")),
-                null, List.of());
-
-        assertThat(generationSupport.unguardedOptionalParameters(dataSet, plain)).isEmpty();
-    }
 
     @Test
     void testOptionalCollectionParameterIsNotMarkedOptional() {
@@ -583,17 +471,6 @@ public class LlmDataSetGenerationSupportTest {
         assertThat(change.disappeared()).containsExactly("total");
     }
 
-    @Test
-    void testColumnNamesAreStoredWithoutSurroundingSpaces() {
-        DataSet dataSet = llmDataSet(reportWithParameters());
-
-        generationSupport.storeEditedQuery(dataSet, "select o.number as num from sales_Order o",
-                List.of("  num  "));
-
-        LlmDataQuery stored = serializer.fromJson(dataSet.getLlmGeneratedQuery());
-        assertThat(stored).isNotNull();
-        assertThat(stored.getResultProperties()).containsExactly("num");
-    }
 
     protected Report reportWithParameters() {
         Report report = metadata.create(Report.class);

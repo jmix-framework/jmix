@@ -219,21 +219,13 @@ public class LlmDataLoader implements ReportDataLoader {
     }
 
     /**
-     * Executes the stored query through {@code DataManager}, so that the attribute permissions of the current
-     * user and the row-level policies of the query's root entity apply as they do to any other data set: an
-     * attribute the user may not read comes back as {@code null}. Entity READ is checked before this, by
-     * {@link #checkEntityReadPermitted}, because the platform does not act on it for a value load.
+     * Executes the stored query through {@code DataManager}, so the attribute permissions and the row-level
+     * policies of the current user apply. Entity READ is checked before this, by {@link #checkEntityReadPermitted},
+     * because the platform does not act on it for a value load.
      * <p>
-     * The query runs in the store of the entity it reads, which {@link #resolveStoreName} works out from the
-     * query itself.
-     * <p>
-     * Values are bound as named JPQL parameters, never inlined into the text: the query is written once and run
-     * with whatever the report parameters and the parent band hold this time.
-     * <p>
-     * A row comes out as the report engine needs it: keyed by the query's columns in select-clause order (a
-     * cross-tab links its cells by the first matching column) and mutable ({@link ReportDataLoader} states so,
-     * and merging several data sets of one band writes into it). Values, {@code null} and an empty string
-     * included, are kept as they came.
+     * Values are bound as named JPQL parameters, never inlined, and the row count the prompt asked for is applied
+     * per execution. A row comes out as the report engine needs it: keyed by the query's columns in select-clause
+     * order and mutable, with {@code null} and an empty string kept apart.
      *
      * @param query     stored query, which names the columns the rows are keyed by and the count it is limited to
      * @param jpql      text to execute — the stored one with the row-level policies of what it reads woven in
@@ -291,15 +283,9 @@ public class LlmDataLoader implements ReportDataLoader {
     }
 
     /**
-     * Refuses a stored query that does more than read the entity model through {@code DataManager}: one that is
-     * not a select, and one that reaches past JPQL into the database itself, whose text this loader would
-     * otherwise hand over as it stands. See {@link #NATIVE_ESCAPE_PATTERN} for what counts as reaching past.
-     * <p>
-     * Write keywords are not looked for: a JPQL query is a single statement, so {@code update} or {@code delete}
-     * inside a select is a word rather than an operation, and refusing a query for the name of an attribute
-     * would cost more than it saves.
-     *
-     * @param withoutLiterals the query text with its string literals blanked
+     * Refuses a query that does more than read the entity model through {@code DataManager}: one that is not a
+     * {@code select}, and one calling any of the six EclipseLink escapes that reach past JPQL into the database,
+     * where the constraints of the current user do not follow.
      */
     protected void checkQueryOnlyReads(ReportQuery reportQuery, LlmDataQuery query, String withoutLiterals) {
         if (!Strings.CI.startsWith(query.getJpql().stripLeading(), "select")) {
@@ -317,15 +303,9 @@ public class LlmDataLoader implements ReportDataLoader {
     }
 
     /**
-     * Refuses a stored query holding a parameter marker this data set type cannot read at all. See
-     * {@link #CASE_INSENSITIVE_PARAMETER_PATTERN} for the one there is.
-     * <p>
-     * A parameter the text references and the document does not declare is left to the JPA provider, which
-     * fails on it: the run then reports that failure the way it reports any other, naming the data set and the
-     * way out. Refusing it here would demand of every stored document that its parameters match its text
-     * exactly, which is a promise the format does not make.
-     *
-     * @param withoutLiterals the query text with its string literals blanked
+     * Refuses a query whose parameters could not be bound: the case-insensitive marker {@code :(?i)name}, which
+     * ordinary Jmix JPQL accepts and neither this loader nor the add-on's validator reads as a parameter name — so
+     * nothing would ever be bound to it and the run would fail inside EclipseLink instead.
      */
     protected void checkParametersCanBeBound(ReportQuery reportQuery, String withoutLiterals) {
         if (CASE_INSENSITIVE_PARAMETER_PATTERN.matcher(withoutLiterals).find()) {
@@ -337,14 +317,9 @@ public class LlmDataLoader implements ReportDataLoader {
     }
 
     /**
-     * Refuses a stored query whose columns cannot key the rows of a band: one naming no column at all, one
-     * naming a blank column, and one naming the same column twice.
-     * <p>
-     * A row of a band is a map keyed by those columns, and {@code KeyValueEntity} holds one value per property,
-     * so a duplicate name loses one of the values the query selected — and, in a cross-tab cell, shifts which
-     * column the matrix is linked by. None of it is reported by anything downstream: the band simply prints
-     * something else than the query asked for. The designer refuses to save a data set in any of these states; a
-     * report also arrives by import, bringing whatever the file holds.
+     * Refuses a query that names no result column, a blank one, or the same one twice. A band row is built from the
+     * columns a query declares: none means rows a template cannot print, and a duplicate silently loses one of the
+     * values the query selects.
      */
     protected void checkQueryReturnsColumns(ReportQuery reportQuery, LlmDataQuery query) {
         List<String> columns = query.getResultProperties();
@@ -402,17 +377,11 @@ public class LlmDataLoader implements ReportDataLoader {
     }
 
     /**
-     * Returns the data store the stored query has to run in: the one the entity it reads from belongs to.
-     * <p>
-     * Query generation is offered the whole entity model — {@code JpaDomainModelIntrospector} keeps every JPA
-     * entity, whichever store it belongs to — so a stored query may well read an entity of an additional store,
-     * and only that store can execute it. Nothing asks the author which store that is: the entity says so, and
-     * the data set's own {@code dataStore} is not offered for this type.
-     * <p>
-     * The store is worked out once per query text per run ({@link RunScope#storeName}), so a band under a parent
-     * pays for it once rather than per row. A text the platform's parser cannot read, or an entity name the
-     * model does not know, leaves the main store — the query then fails on its own terms, saying what is wrong
-     * with it, which is more use than a failure about a store.
+     * Tells the data store a query runs in from the query itself: the entity it reads, and that entity's store.
+     * Generation is offered the whole entity model, additional stores included, so the data set's own
+     * {@code dataStore} is not consulted and not shown for this type. Worked out once per query text per run
+     * ({@link RunScope#storeName}). A text the parser cannot read, or an unknown entity, leaves the main store —
+     * such a query fails on its own terms, which is more use than a failure about a store.
      */
     protected String resolveStoreName(LlmDataQuery query) {
         String entityName;
@@ -515,17 +484,9 @@ public class LlmDataLoader implements ReportDataLoader {
     }
 
     /**
-     * Refuses a query that selects an entity itself rather than its attributes.
-     * <p>
-     * Two reasons, and either alone would be enough. A band row is a tabular value — a template prints it, and an
-     * entity prints as whatever its {@code toString} says. And, measured: the attribute permissions of the
-     * current user are applied by masking *selected columns*, so an entity handed back whole carries the
-     * attributes that masking would have hidden. Selecting {@code p} where {@code p.name} is denied really does
-     * return the name.
-     * <p>
-     * The add-on's own generation prompt says the same ("Do not return the root entity alias itself as the
-     * selected value"), so this refuses what generation was already told not to produce — and what an import or a
-     * hand edit can still carry in.
+     * Refuses a query that hands back an entity rather than its attributes — a band row is a tabular value, and an
+     * entity carries the very attributes masking would have hidden. The add-on's generation prompt forbids the same
+     * thing, so this refuses what generation was told not to produce and an import can still carry in.
      */
     protected void checkQuerySelectsValues(ReportQuery reportQuery, LlmDataQuery query) {
         List<String> selectedEntities;
@@ -548,24 +509,13 @@ public class LlmDataLoader implements ReportDataLoader {
     }
 
     /**
-     * Names what a query selects whole instead of as a value — an alias, or a path that ends in an entity or an
-     * embeddable.
+     * Names what a query selects whole instead of as a value: a path whose property is its own variable alias
+     * ({@code select p}), or one the data model says ends in a class ({@code select g.publisher}, an embeddable
+     * too). Both were measured to hand back the entity itself, whose denied attributes then read fine — masking is
+     * applied to the selected column, and the column here is the entity.
      * <p>
-     * An alias is told by the selected path itself: {@code select p.name} gives a path whose property is the
-     * attribute {@code name}, while {@code select p} gives one whose property is the variable's own alias
-     * {@code p}. So a selected path whose property *is* its variable is the entity — which holds for a joined
-     * alias exactly as for the root one, where asking the parser whether this is an "entity select" only ever
-     * answers about the root.
-     * <p>
-     * A path is told by what the data model says it ends in: {@code select g.publisher} names a property, not an
-     * alias, and yet — measured — hands back a whole {@code Publisher} whose denied attributes read fine, since
-     * masking is applied to the selected column and the column here *is* the entity. {@code Range#isClass} covers an
-     * embeddable too, which is an object a band cannot print either.
-     * <p>
-     * A property the entity does not have is deliberately not treated as one: {@code select p.noSuchAttribute} is
-     * a query written against another data model, which has its own and better failure. A constant or an
-     * aggregate ({@code select 1}, {@code select count(p)}) contributes no selected path at all, so neither is
-     * mistaken for an entity.
+     * A property the entity does not have is deliberately not treated as one: {@code select p.noSuchAttribute} is a
+     * query against another data model, which has its own and better failure.
      */
     protected List<String> selectedEntitiesOf(QueryParser parser) {
         List<String> selected = new ArrayList<>();
@@ -604,48 +554,22 @@ public class LlmDataLoader implements ReportDataLoader {
     }
 
     /**
-     * Weaves the row-level policies of the entities a query reads into its text, so that a band shows the rows
-     * the current user is allowed to see rather than all of them.
+     * Weaves the row-level policies of the entities a query reads into its text, so that a band shows the rows the
+     * current user may see. The platform does this for one entity only — the one the query selects from — and a
+     * report query joins as a matter of course, so the rest is this loader's to apply: the policy's {@code {E}}
+     * becomes that entity's own alias and the condition is added to the {@code where} through the platform's own
+     * {@code QueryTransformer}. Only conditions, never joins.
      * <p>
-     * The platform does this for one entity only. {@code JpaDataStore#createLoadQuery} builds a single
-     * {@code ReadEntityQueryContext}, for the entity the parser calls the query's own, and
-     * {@code ReadEntityQueryConstraint} weaves that entity's {@code JPQL} policies into it. An entity reached by
-     * a join is left untouched — and a report query joins as a matter of course, which would show the rows of a
-     * joined entity that its policies exist to hide.
+     * Three shapes cannot be filtered and are refused instead, each naming the entity and what to do about it: a
+     * {@code PREDICATE} policy (asked first, and of the query's own entity too, since a value load has no instance
+     * to evaluate it against), an entity whose alias is out of scope for a condition (used only in a subquery, or
+     * under more than one alias), and a policy carrying a {@code joinClause} on anything but the query's own entity
+     * — measured, {@code addJoinAndWhere} re-bases the join onto the root alias. A text this parser cannot read is
+     * left as it is: the platform parses it with the same parser, so such a query does not execute either.
      * <p>
-     * So the same thing is done here for everything else the query reads: the policy's {@code {E}} placeholder is
-     * replaced with that entity's own alias — {@code QueryParser#getEntityAlias} gives it — and the condition is
-     * added to the {@code where} through the platform's own {@code QueryTransformer}, which places it ahead of a
-     * {@code group by}, a {@code having} or an {@code order by} the query already has. Only conditions are added,
-     * never joins (see below). Nothing at all is added for a query whose entities carry no policies, which is
-     * every query in an application that has none.
-     * <p>
-     * Three shapes cannot be filtered, and are refused rather than executed unfiltered:
-     * <ul>
-     *     <li>a {@code PREDICATE} policy, which is a Java predicate evaluated against an entity instance. A value
-     *     load returns rows, not instances, so the platform does not apply such a policy even to the query's own
-     *     entity — which is why this is asked before that entity is left to the platform;</li>
-     *     <li>an entity that appears <em>only inside a subquery</em>, whose alias is not in scope where a
-     *     condition would have to be added. {@code getEntityAlias} answers {@code null} for exactly that, and an
-     *     entity carrying several aliases is refused for the same reason — a condition on one of them would leave
-     *     the others unfiltered;</li>
-     *     <li>a policy with a {@code joinClause}, on any entity but the query's own: measured,
-     *     {@code QueryTransformer#addJoinAndWhere} re-bases the join onto the root alias, so the condition would
-     *     filter another entity or name a path that does not exist.</li>
-     * </ul>
-     * Each refusal names the entity and says what to do about it, because there is something to do: make that
-     * entity the query's own — {@code select p.name from Publisher p where …} rather than a join into it — and the
-     * platform filters it, or, for a predicate policy, write that policy as JPQL.
-     * <p>
-     * Parameters a policy references need no binding here: {@code session_*} names are resolved by the platform's
-     * own {@code QueryParamValuesManager} when the query executes. Rows are not de-duplicated either — nothing
-     * woven in here can multiply them, and a join the platform itself adds for the query's own entity does not
-     * make it de-duplicate a list-returning load.
-     * <p>
-     * A text this parser cannot read — one using a construct EclipseLink accepts and the platform's own JPQL
-     * grammar does not — is left as it is. Nothing is lost by that: the platform builds its own
-     * {@code ReadEntityQueryContext} by parsing the text with the same parser, so such a query gets no policies
-     * from the platform either, and does not execute through {@code loadValues} at all.
+     * See
+     * {@code docs/features/reports-llm-data-query/decisions/0018-row-level-policies-are-applied-to-the-whole-query-graph.md}
+     * for what was measured and why.
      *
      * @param jpql the stored query text
      * @return the text to execute, unchanged when nothing had to be woven in
@@ -780,20 +704,11 @@ public class LlmDataLoader implements ReportDataLoader {
     }
 
     /**
-     * Refuses a query that reads an entity the current user may not read — every entity in it, not only the one
-     * whose attributes it selects.
-     * <p>
-     * The platform leaves this open twice over. {@code DataStoreCrudValuesListener} consumes only the denied
-     * *columns* of a value load and never reads {@code isPermitted()}, so a denied entity does not stop the
-     * query; and {@code LoadValuesAccessContext#getEntityClasses()} — what the platform's own constraint judges
-     * by — is built from the *selected* paths alone, so it sees neither the root of
-     * {@code select p.name from GameTitle g join g.publisher p} nor any entity of
-     * {@code select 1 as marker from Publisher p}.
-     * <p>
-     * So the question is asked here, of every entity the query graph names
-     * ({@code QueryParser#getAllEntityNames}, which reaches into subqueries as well), through the platform's own
-     * {@code CrudEntityContext} — the context entity READ is actually decided by. Denied *columns* are still left to the platform, which masks
-     * them.
+     * Refuses a query that reads an entity the current user may not read — every entity in the graph, not only the
+     * one whose attributes it selects. The platform leaves this open twice over: nothing on the value-load path
+     * reads {@code isPermitted()}, and the context it would ask judges by the selected paths alone. So the question
+     * is asked here, of {@code QueryParser#getAllEntityNames}, through the platform's own {@code CrudEntityContext}.
+     * Denied <em>columns</em> are still left to the platform, which masks them.
      */
     protected void checkEntityReadPermitted(LlmDataQuery query) {
         List<String> entityNames;

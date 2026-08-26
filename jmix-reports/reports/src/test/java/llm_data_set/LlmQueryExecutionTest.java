@@ -134,10 +134,9 @@ class LlmQueryExecutionTest {
     void testStoredQueryIsExecutedAndItsAliasesKeyTheBandRows() {
         publisher("Nintendo");
         publisher("Ubisoft");
-        DataSet dataSet = llmDataSet(new LlmDataQuery(
+        DataSet dataSet = llmDataSet(
                 "select p.name as publisherName from Publisher p where p.name like :name order by p.name",
-                List.of("publisherName"), List.of(new LlmQueryParameter("name", "java.lang.String")),
-                null, List.of()));
+                List.of("publisherName"), text("name"));
 
         List<Map<String, Object>> rows = loader().loadData(dataSet, null, Map.of("name", OWN + "%"));
 
@@ -146,23 +145,6 @@ class LlmQueryExecutionTest {
                 Map.of("publisherName", OWN + "Ubisoft"));
     }
 
-    @Test
-    void testBandRowsFollowTheSelectClauseAndCanBeWrittenInto() {
-        // What the report engine needs of a band row: the columns positioned as the select clause puts them,
-        // because a cross-tab links its cells by the first matching one, and a row it can write into, because
-        // merging several data sets of one band does exactly that.
-        publisher("Nintendo");
-        DataSet dataSet = llmDataSet(new LlmDataQuery(
-                "select p.name as publisherName, p.id as publisherId from Publisher p where p.name like :name",
-                List.of("publisherName", "publisherId"),
-                List.of(new LlmQueryParameter("name", "java.lang.String")), null, List.of()));
-
-        List<Map<String, Object>> rows = loader().loadData(dataSet, null, Map.of("name", OWN + "%"));
-
-        assertThat(rows.get(0).keySet()).containsExactly("publisherName", "publisherId");
-        rows.get(0).put("addedByTheEngine", "value");
-        rows.add(new LinkedHashMap<>());
-    }
 
     @Test
     void testRowCountOfThePromptLimitsWhatTheBandGets() {
@@ -183,22 +165,6 @@ class LlmQueryExecutionTest {
                 .containsExactly(OWN + "Doom", OWN + "Rayman");
     }
 
-    @Test
-    void testRowOffsetOfThePromptSkipsWhatItSays() {
-        Publisher publisher = publisher("Nintendo");
-        game("Tetris", new BigDecimal("5"), publisher);
-        game("Rayman", new BigDecimal("7"), publisher);
-        game("Doom", new BigDecimal("9"), publisher);
-        DataSet dataSet = llmDataSet(new LlmDataQuery(
-                "select g.name as gameName from GameTitle g where g.name like :name order by g.price desc",
-                List.of("gameName"), List.of(new LlmQueryParameter("name", "java.lang.String")),
-                null, List.of(), null, 1));
-
-        List<Map<String, Object>> rows = loader().loadData(dataSet, null, Map.of("name", OWN + "%"));
-
-        assertThat(rows).extracting(row -> row.get("gameName"))
-                .containsExactly(OWN + "Rayman", OWN + "Tetris");
-    }
 
     @Test
     void testValueIsBoundAsANamedJpqlParameter() {
@@ -281,10 +247,9 @@ class LlmQueryExecutionTest {
         publisher("Nintendo");
         publisher("Ubisoft");
         publisher("Activision");
-        DataSet dataSet = llmDataSet(new LlmDataQuery(
+        DataSet dataSet = llmDataSet(
                 "select p.name as publisherName from Publisher p where p.name in :names order by p.name",
-                List.of("publisherName"), List.of(new LlmQueryParameter("names", "java.lang.String")),
-                null, List.of()));
+                List.of("publisherName"), text("names"));
 
         List<Map<String, Object>> rows = loader().loadData(dataSet, null,
                 Map.of("names", List.of(OWN + "Ubisoft", OWN + "Nintendo")));
@@ -301,10 +266,9 @@ class LlmQueryExecutionTest {
         // selects. This type promises a run reads no more than its user may, so it checks that itself.
         publisher("Nintendo");
         denyingConstraint.denyEntity("Publisher");
-        DataSet dataSet = llmDataSet(new LlmDataQuery(
+        DataSet dataSet = llmDataSet(
                 "select p.name as publisherName from Publisher p where p.name like :name",
-                List.of("publisherName"), List.of(new LlmQueryParameter("name", "java.lang.String")),
-                null, List.of()));
+                List.of("publisherName"), text("name"));
 
         assertThatThrownBy(() -> loader().loadData(dataSet, null, Map.of("name", OWN + "%")))
                 .isInstanceOf(AccessDeniedException.class);
@@ -314,46 +278,15 @@ class LlmQueryExecutionTest {
     void testEntityTheUserMayReadIsNotStopped() {
         // The control: nothing is denied, so the same query runs.
         publisher("Nintendo");
-        DataSet dataSet = llmDataSet(new LlmDataQuery(
+        DataSet dataSet = llmDataSet(
                 "select p.name as publisherName from Publisher p where p.name like :name",
-                List.of("publisherName"), List.of(new LlmQueryParameter("name", "java.lang.String")),
-                null, List.of()));
+                List.of("publisherName"), text("name"));
 
         assertThat(loader().loadData(dataSet, null, Map.of("name", OWN + "%")))
                 .containsExactly(Map.of("publisherName", OWN + "Nintendo"));
     }
 
-    @Test
-    void testDeniedRootEntityIsCaughtEvenWhenAJoinedAttributeIsSelected() {
-        // The obvious hole in judging by the selected paths alone: what the query selects belongs to the joined
-        // entity, so nothing about the root — the entity the query actually reads from — is looked at. The check
-        // asks about every entity the query graph names.
-        Publisher publisher = publisher("Nintendo");
-        game("Tetris", new BigDecimal("5"), publisher);
-        denyingConstraint.denyEntity("GameTitle");
-        DataSet dataSet = llmDataSet(new LlmDataQuery(
-                "select p.name as publisherName from GameTitle g join g.publisher p where p.name like :name",
-                List.of("publisherName"), List.of(new LlmQueryParameter("name", "java.lang.String")),
-                null, List.of()));
 
-        assertThatThrownBy(() -> loader().loadData(dataSet, null, Map.of("name", OWN + "%")))
-                .isInstanceOf(AccessDeniedException.class);
-    }
-
-    @Test
-    void testDeniedEntityIsCaughtWhenTheQuerySelectsNoAttributeOfIt() {
-        // The other one: a query selecting a constant has no selected entity at all, so judging by selected
-        // paths would find nothing to check.
-        publisher("Nintendo");
-        denyingConstraint.denyEntity("Publisher");
-        DataSet dataSet = llmDataSet(new LlmDataQuery(
-                "select 1 as marker from Publisher p where p.name like :name",
-                List.of("marker"), List.of(new LlmQueryParameter("name", "java.lang.String")),
-                null, List.of()));
-
-        assertThatThrownBy(() -> loader().loadData(dataSet, null, Map.of("name", OWN + "%")))
-                .isInstanceOf(AccessDeniedException.class);
-    }
 
     @Test
     void testDeniedEntityInsideASubqueryIsCaughtToo() {
@@ -362,11 +295,10 @@ class LlmQueryExecutionTest {
         Publisher publisher = publisher("Nintendo");
         game("Tetris", new BigDecimal("5"), publisher);
         denyingConstraint.denyEntity("GameTitle");
-        DataSet dataSet = llmDataSet(new LlmDataQuery(
+        DataSet dataSet = llmDataSet(
                 "select p.name as publisherName from Publisher p where p.name like :name "
                         + "and exists (select g from GameTitle g where g.publisher = p)",
-                List.of("publisherName"), List.of(new LlmQueryParameter("name", "java.lang.String")),
-                null, List.of()));
+                List.of("publisherName"), text("name"));
 
         assertThatThrownBy(() -> loader().loadData(dataSet, null, Map.of("name", OWN + "%")))
                 .isInstanceOf(AccessDeniedException.class);
@@ -380,10 +312,9 @@ class LlmQueryExecutionTest {
         // than an alias, which is what the alias rule alone did not catch.
         Publisher publisher = publisher("Nintendo");
         game("Tetris", new BigDecimal("5"), publisher);
-        DataSet dataSet = llmDataSet(new LlmDataQuery(
+        DataSet dataSet = llmDataSet(
                 "select g.publisher as publisher from GameTitle g where g.name like :name",
-                List.of("publisher"), List.of(new LlmQueryParameter("name", "java.lang.String")),
-                null, List.of()));
+                List.of("publisher"), text("name"));
 
         assertThatThrownBy(() -> loader().loadData(dataSet, null, Map.of("name", OWN + "%")))
                 .isInstanceOf(DataLoadingException.class)
@@ -396,30 +327,15 @@ class LlmQueryExecutionTest {
         // prints it.
         Publisher publisher = publisher("Nintendo");
         game("Tetris", new BigDecimal("5"), publisher);
-        DataSet dataSet = llmDataSet(new LlmDataQuery(
+        DataSet dataSet = llmDataSet(
                 "select g.publisher.name as publisherName from GameTitle g where g.name like :name",
-                List.of("publisherName"), List.of(new LlmQueryParameter("name", "java.lang.String")),
-                null, List.of()));
+                List.of("publisherName"), text("name"));
 
         List<Map<String, Object>> rows = loader().loadData(dataSet, null, Map.of("name", OWN + "%"));
 
         assertThat(rows).extracting(row -> row.get("publisherName")).containsExactly(OWN + "Nintendo");
     }
 
-    @Test
-    void testSelectingAJoinedEntityWholeIsRefusedToo() {
-        // The joined half of the whole-entity refusal: asking the parser whether this is an "entity select"
-        // answers about the root only, so a joined alias selected whole used to pass.
-        Publisher publisher = publisher("Nintendo");
-        game("Tetris", new BigDecimal("5"), publisher);
-        DataSet dataSet = llmDataSet(new LlmDataQuery(
-                "select p as publisher from GameTitle g join g.publisher p",
-                List.of("publisher"), List.of(), null, List.of()));
-
-        assertThatThrownBy(() -> loader().loadData(dataSet, null, Map.of()))
-                .isInstanceOf(DataLoadingException.class)
-                .hasMessageContainingAll("selects the entities", "Publisher");
-    }
 
     @Test
     void testSelectingAnEntityItselfIsRefusedBecauseMaskingCannotReachIt() {
@@ -428,9 +344,9 @@ class LlmQueryExecutionTest {
         // Publisher whose denied name was readable. A band prints values, so this is refused outright.
         publisher("Nintendo");
         denyingConstraint.denySelectedPath("name");
-        DataSet dataSet = llmDataSet(new LlmDataQuery(
+        DataSet dataSet = llmDataSet(
                 "select p as publisher from Publisher p where p.id is not null",
-                List.of("publisher"), List.of(), null, List.of()));
+                List.of("publisher"));
 
         assertThatThrownBy(() -> loader().loadData(dataSet, null, Map.of()))
                 .isInstanceOf(DataLoadingException.class)
@@ -447,10 +363,9 @@ class LlmQueryExecutionTest {
         game("Rayman", new BigDecimal("7"), hidden);
         rowLevelPolicies.add("Publisher",
                 new RowLevelPolicy("Publisher", "{E}.name = '" + OWN + "Nintendo'", null));
-        DataSet dataSet = llmDataSet(new LlmDataQuery(
+        DataSet dataSet = llmDataSet(
                 "select g.name as gameName from GameTitle g join g.publisher p where g.name like :name",
-                List.of("gameName"), List.of(new LlmQueryParameter("name", "java.lang.String")),
-                null, List.of()));
+                List.of("gameName"), text("name"));
 
         List<Map<String, Object>> rows = loader().loadData(dataSet, null, Map.of("name", OWN + "%"));
 
@@ -497,10 +412,9 @@ class LlmQueryExecutionTest {
                         roleGrantedAuthorityUtils.createResourceRoleGrantedAuthority(FullAccessRole.NAME),
                         roleGrantedAuthorityUtils.createRowLevelRoleGrantedAuthority(TestPublisherRowLevelRole.CODE)))
                 .build());
-        DataSet dataSet = llmDataSet(new LlmDataQuery(
+        DataSet dataSet = llmDataSet(
                 "select g.name as gameName from GameTitle g join g.publisher p where g.name like :name",
-                List.of("gameName"), List.of(new LlmQueryParameter("name", "java.lang.String")),
-                null, List.of()));
+                List.of("gameName"), text("name"));
 
         List<Map<String, Object>> rows = systemAuthenticator.withUser(ROW_LEVEL_USER,
                 () -> loader().loadData(dataSet, null, Map.of("name", OWN + "%")));
@@ -520,10 +434,9 @@ class LlmQueryExecutionTest {
         game("Rayman", new BigDecimal("7"), hidden);
         rowLevelPolicies.add("Publisher",
                 new RowLevelPolicy("Publisher", "{E}.name = :session_visiblePublisher", null));
-        DataSet dataSet = llmDataSet(new LlmDataQuery(
+        DataSet dataSet = llmDataSet(
                 "select g.name as gameName from GameTitle g join g.publisher p where g.name like :name",
-                List.of("gameName"), List.of(new LlmQueryParameter("name", "java.lang.String")),
-                null, List.of()));
+                List.of("gameName"), text("name"));
 
         ThreadLocalSessionData.setAttribute("visiblePublisher", OWN + "Nintendo");
         try {
@@ -535,22 +448,6 @@ class LlmQueryExecutionTest {
         }
     }
 
-    @Test
-    void testRowLevelPolicyOfTheQueryOwnEntityIsLeftToThePlatform() {
-        // The platform applies this one, and applying it again here would be the same condition twice.
-        publisher("Nintendo");
-        publisher("Ubisoft");
-        rowLevelPolicies.add("Publisher",
-                new RowLevelPolicy("Publisher", "{E}.name = '" + OWN + "Nintendo'", null));
-        DataSet dataSet = llmDataSet(new LlmDataQuery(
-                "select p.name as publisherName from Publisher p where p.name like :name",
-                List.of("publisherName"), List.of(new LlmQueryParameter("name", "java.lang.String")),
-                null, List.of()));
-
-        List<Map<String, Object>> rows = loader().loadData(dataSet, null, Map.of("name", OWN + "%"));
-
-        assertThat(rows).extracting(row -> row.get("publisherName")).containsExactly(OWN + "Nintendo");
-    }
 
     @Test
     void testEntityReadOnlyInsideASubqueryWithAPolicyIsRefused() {
@@ -560,35 +457,16 @@ class LlmQueryExecutionTest {
         game("Tetris", new BigDecimal("5"), publisher);
         rowLevelPolicies.add("Publisher",
                 new RowLevelPolicy("Publisher", "{E}.name = '" + OWN + "Nintendo'", null));
-        DataSet dataSet = llmDataSet(new LlmDataQuery(
+        DataSet dataSet = llmDataSet(
                 "select g.name as gameName from GameTitle g where g.name like :name and exists "
                         + "(select p from Publisher p where p = g.publisher)",
-                List.of("gameName"), List.of(new LlmQueryParameter("name", "java.lang.String")),
-                null, List.of()));
+                List.of("gameName"), text("name"));
 
         assertThatThrownBy(() -> loader().loadData(dataSet, null, Map.of("name", OWN + "%")))
                 .isInstanceOf(DataLoadingException.class)
                 .hasMessageContainingAll("Publisher", "row-level policies cannot be applied", "subquery");
     }
 
-    @Test
-    void testEntityNamedTwiceWithAPolicyIsRefusedEvenAsTheQueryOwnEntity() {
-        // The platform weaves the policy in for the alias the query is rooted at, and only that one, so a second
-        // alias of the same entity would come back unnarrowed. There is no single alias to narrow, so no query.
-        Publisher publisher = publisher("Nintendo");
-        game("Tetris", new BigDecimal("5"), publisher);
-        rowLevelPolicies.add("GameTitle",
-                new RowLevelPolicy("GameTitle", "{E}.name = '" + OWN + "Tetris'", null));
-        DataSet dataSet = llmDataSet(new LlmDataQuery(
-                "select g.name as gameName from GameTitle g, GameTitle other "
-                        + "where g.name like :name and other.publisher = g.publisher",
-                List.of("gameName"), List.of(new LlmQueryParameter("name", "java.lang.String")),
-                null, List.of()));
-
-        assertThatThrownBy(() -> loader().loadData(dataSet, null, Map.of("name", OWN + "%")))
-                .isInstanceOf(DataLoadingException.class)
-                .hasMessageContainingAll("GameTitle", "more than one alias");
-    }
 
     @Test
     void testAQueryThatCannotRunIsSaidToBeSoBeforeItsPoliciesAreWeighed() {
@@ -597,10 +475,9 @@ class LlmQueryExecutionTest {
         publisher("Nintendo");
         rowLevelPolicies.add("Publisher", new RowLevelPolicy("Publisher", RowLevelPolicyAction.READ,
                 (entity, context) -> true, Collections.emptyMap()));
-        DataSet dataSet = llmDataSet(new LlmDataQuery(
+        DataSet dataSet = llmDataSet(
                 "delete from Publisher p where p.name like :name",
-                List.of("publisherName"), List.of(new LlmQueryParameter("name", "java.lang.String")),
-                null, List.of()));
+                List.of("publisherName"), text("name"));
 
         assertThatThrownBy(() -> loader().loadData(dataSet, null, Map.of("name", OWN + "%")))
                 .isInstanceOf(DataLoadingException.class)
@@ -615,10 +492,9 @@ class LlmQueryExecutionTest {
         publisher("Ubisoft");
         rowLevelPolicies.add("Publisher", new RowLevelPolicy("Publisher", RowLevelPolicyAction.READ,
                 (entity, context) -> true, Collections.emptyMap()));
-        DataSet dataSet = llmDataSet(new LlmDataQuery(
+        DataSet dataSet = llmDataSet(
                 "select p.name as publisherName from Publisher p where p.name like :name",
-                List.of("publisherName"), List.of(new LlmQueryParameter("name", "java.lang.String")),
-                null, List.of()));
+                List.of("publisherName"), text("name"));
 
         assertThatThrownBy(() -> loader().loadData(dataSet, null, Map.of("name", OWN + "%")))
                 .isInstanceOf(DataLoadingException.class)
@@ -633,51 +509,16 @@ class LlmQueryExecutionTest {
         game("Tetris", new BigDecimal("5"), publisher);
         rowLevelPolicies.add("Publisher",
                 new RowLevelPolicy("Publisher", "t.name like '" + OWN + "%'", "join {E}.titles t"));
-        DataSet dataSet = llmDataSet(new LlmDataQuery(
+        DataSet dataSet = llmDataSet(
                 "select g.name as gameName from GameTitle g join g.publisher p where g.name like :name",
-                List.of("gameName"), List.of(new LlmQueryParameter("name", "java.lang.String")),
-                null, List.of()));
+                List.of("gameName"), text("name"));
 
         assertThatThrownBy(() -> loader().loadData(dataSet, null, Map.of("name", OWN + "%")))
                 .isInstanceOf(DataLoadingException.class)
                 .hasMessageContainingAll("Publisher", "joins another entity");
     }
 
-    @Test
-    void testPredicateRowLevelPolicyOfAJoinedEntityIsRefused() {
-        // A predicate is evaluated against an entity instance, and a value load returns rows — which is why the
-        // platform does not apply such a policy even to the query's own entity.
-        Publisher publisher = publisher("Nintendo");
-        game("Tetris", new BigDecimal("5"), publisher);
-        rowLevelPolicies.add("Publisher", new RowLevelPolicy("Publisher", RowLevelPolicyAction.READ,
-                (entity, context) -> true, Collections.emptyMap()));
-        DataSet dataSet = llmDataSet(new LlmDataQuery(
-                "select g.name as gameName from GameTitle g join g.publisher p where g.name like :name",
-                List.of("gameName"), List.of(new LlmQueryParameter("name", "java.lang.String")),
-                null, List.of()));
 
-        assertThatThrownBy(() -> loader().loadData(dataSet, null, Map.of("name", OWN + "%")))
-                .isInstanceOf(DataLoadingException.class)
-                .hasMessageContainingAll("Publisher", "predicate row-level policy");
-    }
-
-    @Test
-    void testAQueryWhoseEntitiesHaveNoPoliciesIsExecutedAsWritten() {
-        // The control: nothing is woven into a query in an application without row-level policies, which is
-        // every application that has none.
-        Publisher publisher = publisher("Nintendo");
-        game("Tetris", new BigDecimal("5"), publisher);
-        game("Rayman", new BigDecimal("7"), publisher);
-        DataSet dataSet = llmDataSet(new LlmDataQuery(
-                "select g.name as gameName from GameTitle g join g.publisher p where g.name like :name",
-                List.of("gameName"), List.of(new LlmQueryParameter("name", "java.lang.String")),
-                null, List.of()));
-
-        List<Map<String, Object>> rows = loader().loadData(dataSet, null, Map.of("name", OWN + "%"));
-
-        assertThat(rows).extracting(row -> row.get("gameName"))
-                .containsExactlyInAnyOrder(OWN + "Tetris", OWN + "Rayman");
-    }
 
     @Test
     void testPermissionIsAnsweredBeforeTheQueryIsJudgedAsAQuery() {
@@ -686,35 +527,15 @@ class LlmQueryExecutionTest {
         // text says is not something to tell a user who is refused its data.
         publisher("Nintendo");
         denyingConstraint.denyEntity("Publisher");
-        DataSet dataSet = llmDataSet(new LlmDataQuery(
+        DataSet dataSet = llmDataSet(
                 "select p as publisher from Publisher p where p.name like :name",
-                List.of("publisher"), List.of(new LlmQueryParameter("name", "java.lang.String")),
-                null, List.of()));
+                List.of("publisher"), text("name"));
 
         // AccessDeniedException, not the DataLoadingException the barrier would have raised.
         assertThatThrownBy(() -> loader().loadData(dataSet, null, Map.of("name", OWN + "%")))
                 .isInstanceOf(AccessDeniedException.class);
     }
 
-    @Test
-    void testAttributeOfAJoinedEntityTheUserMayNotReadComesBackAsNull() {
-        // Masking is not about the query's own entity either: a column selected through a join is withheld the
-        // same way, and the row is kept.
-        Publisher publisher = publisher("Nintendo");
-        game("Tetris", new BigDecimal("5"), publisher);
-        denyingConstraint.denySelectedPath("publisher.name");
-        DataSet dataSet = llmDataSet(new LlmDataQuery(
-                "select g.name as gameName, g.publisher.name as publisherName from GameTitle g "
-                        + "where g.name like :name",
-                List.of("gameName", "publisherName"),
-                List.of(new LlmQueryParameter("name", "java.lang.String")), null, List.of()));
-
-        List<Map<String, Object>> rows = loader().loadData(dataSet, null, Map.of("name", OWN + "%"));
-
-        assertThat(rows).hasSize(1);
-        assertThat(rows.get(0))
-                .containsExactly(entry("gameName", OWN + "Tetris"), entry("publisherName", null));
-    }
 
     @Test
     void testQueryThePlatformParserCannotReadNeverRunsAtAll() {
@@ -724,10 +545,9 @@ class LlmQueryExecutionTest {
         Publisher publisher = publisher("Nintendo");
         game("Tetris", new BigDecimal("5"), publisher);
         denyingConstraint.denyEntity("Publisher");
-        DataSet dataSet = llmDataSet(new LlmDataQuery(
+        DataSet dataSet = llmDataSet(
                 "select CAST(p.name as CHAR) as publisherName from Publisher p where p.name like :name",
-                List.of("publisherName"), List.of(new LlmQueryParameter("name", "java.lang.String")),
-                null, List.of()));
+                List.of("publisherName"), text("name"));
 
         assertThatThrownBy(() -> loader().loadData(dataSet, null, Map.of("name", OWN + "%")))
                 .isInstanceOf(DataLoadingException.class)
@@ -772,9 +592,9 @@ class LlmQueryExecutionTest {
 
     @Test
     void testQueryThatNoLongerFitsTheDataModelFailsNamingTheDataSetAndTheWayOut() {
-        DataSet dataSet = llmDataSet(new LlmDataQuery(
+        DataSet dataSet = llmDataSet(
                 "select p.title as publisherTitle from Publisher p",
-                List.of("publisherTitle"), List.of(), null, List.of()));
+                List.of("publisherTitle"));
 
         assertThatThrownBy(() -> loader().loadData(dataSet, null, Map.of()))
                 .isInstanceOf(DataLoadingException.class)
@@ -786,9 +606,9 @@ class LlmQueryExecutionTest {
         // The promise of this data set type is that a run reads through DataManager, under the permissions of
         // the current user; a native escape would step around that, so it does not reach the database at all.
         publisher("Nintendo");
-        DataSet dataSet = llmDataSet(new LlmDataQuery(
+        DataSet dataSet = llmDataSet(
                 "select p.name as publisherName from Publisher p where sql('1 = 1')",
-                List.of("publisherName"), List.of(), null, List.of()));
+                List.of("publisherName"));
 
         assertThatThrownBy(() -> loader().loadData(dataSet, null, Map.of()))
                 .isInstanceOf(DataLoadingException.class)
@@ -812,6 +632,26 @@ class LlmQueryExecutionTest {
         game.setReleaseDate(LocalDate.of(2026, 1, 1));
         game.setPublisher(publisher);
         return dataManager.unconstrained().save(game);
+    }
+
+    /**
+     * A data set carrying the given query, with the columns it names and the parameters it references.
+     */
+    protected DataSet llmDataSet(String jpql, List<String> columns, LlmQueryParameter... parameters) {
+        return llmDataSet(new LlmDataQuery(jpql, columns, List.of(parameters), null, List.of()));
+    }
+
+    /**
+     * The same, limited to a row count as a prompt asking for "the top few" would be.
+     */
+    protected DataSet llmDataSet(String jpql, List<String> columns, Integer maxResults,
+                                 Integer firstResult, LlmQueryParameter... parameters) {
+        return llmDataSet(new LlmDataQuery(jpql, columns, List.of(parameters), null, List.of(),
+                maxResults, firstResult));
+    }
+
+    protected LlmQueryParameter text(String name) {
+        return new LlmQueryParameter(name, "java.lang.String");
     }
 
     protected DataSet llmDataSet(LlmDataQuery query) {

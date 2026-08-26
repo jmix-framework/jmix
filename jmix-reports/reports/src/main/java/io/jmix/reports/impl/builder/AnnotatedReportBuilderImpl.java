@@ -570,6 +570,13 @@ public class AnnotatedReportBuilderImpl implements AnnotatedReportBuilder {
                 }
             }
             dataSet.setType(annotation.type());
+
+            if (annotation.type() == DataSetType.LLM) {
+                throw new InvalidReportDefinitionException("A data set of type " + DataSetType.LLM
+                        + " is supported only for a report created in the runtime, because its query is "
+                        + "generated in the designer and stored with the report: " + dataSet.getName());
+            }
+
             if (!annotation.linkParameterName().isEmpty()) {
                 dataSet.setLinkParameterName(annotation.linkParameterName());
             }

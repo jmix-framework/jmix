@@ -33,10 +33,13 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import test_support.DataAccessTestConfiguration;
 import test_support.entity.sales.Status;
 
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {DataAccessTestConfiguration.class})
@@ -95,6 +98,22 @@ class EnumCaptionResultLocalizerTest {
         JpqlExecutionResult localized = localizer.localize(result, List.of("cnt"));
 
         assertEquals(5L, localized.getRows().get(0).get("cnt"));
+    }
+
+    @Test
+    @DisplayName("Preserves null and empty-string values")
+    void testPreservesNullAndEmptyStringValues() {
+        Map<String, Object> row = new LinkedHashMap<>();
+        row.put("missing", null);
+        row.put("empty", "");
+        JpqlExecutionResult result = createResult(
+                "select o.comment as missing, o.note as empty from aitls_Order o", List.of(row));
+
+        JpqlExecutionResult localized = localizer.localize(result, List.of("missing", "empty"));
+
+        assertTrue(localized.getRows().get(0).containsKey("missing"));
+        assertNull(localized.getRows().get(0).get("missing"));
+        assertEquals("", localized.getRows().get(0).get("empty"));
     }
 
     protected JpqlExecutionResult createResult(String jpql, List<Map<String, Object>> rows) {

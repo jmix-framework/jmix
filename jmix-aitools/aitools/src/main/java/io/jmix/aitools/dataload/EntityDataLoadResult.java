@@ -35,7 +35,7 @@ public class EntityDataLoadResult {
 
     protected EntityDataLoadQuery query;
     protected JpqlValidationResult validationResult;
-    protected List<Map<String, Object>> rows;
+    protected List<Map<String, @Nullable Object>> rows;
 
     protected boolean hasMore;
     protected boolean executed;
@@ -46,7 +46,7 @@ public class EntityDataLoadResult {
     public EntityDataLoadResult(String userText,
                                 EntityDataLoadQuery query,
                                 JpqlValidationResult validationResult,
-                                List<Map<String, Object>> rows,
+                                List<Map<String, @Nullable Object>> rows,
                                 boolean hasMore,
                                 boolean executed,
                                 @Nullable String executionError) {
@@ -104,11 +104,12 @@ public class EntityDataLoadResult {
     /**
      * Returns the fetched rows; each map is keyed by the names from
      * {@link EntityDataLoadQuery#getResultProperties()}. Empty when the query was not
-     * executed or produced no rows.
+     * executed or produced no rows. A value is {@code null} when the query returned no
+     * value for that column; an empty string is a value the query actually returned.
      *
      * @return the fetched rows
      */
-    public List<Map<String, Object>> getRows() {
+    public List<Map<String, @Nullable Object>> getRows() {
         return rows;
     }
 

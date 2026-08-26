@@ -18,18 +18,19 @@ package io.jmix.reportsflowui.view.report;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.BiMap;
-import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.Multimap;
 import com.vaadin.flow.component.AbstractField.ComponentValueChangeEvent;
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasValue.ValueChangeListener;
 import com.vaadin.flow.component.Html;
+import com.vaadin.flow.component.badge.Badge;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.checkbox.Checkbox;
+import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.NativeLabel;
+import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.FontIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.FlexLayout;
@@ -39,6 +40,7 @@ import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.data.provider.ListDataProvider;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.data.renderer.Renderer;
+import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteAlias;
 import com.vaadin.flow.shared.Registration;
@@ -48,6 +50,8 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.security.AccessDeniedException;
 import io.jmix.flowui.*;
+import io.jmix.flowui.backgroundtask.BackgroundTask;
+import io.jmix.flowui.backgroundtask.TaskLifeCycle;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.checkbox.JmixCheckbox;
 import io.jmix.flowui.component.codeeditor.CodeEditor;
@@ -60,6 +64,7 @@ import io.jmix.flowui.component.tabsheet.JmixTabSheet;
 import io.jmix.flowui.component.textarea.JmixTextArea;
 import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.component.validation.ValidationErrors;
+import io.jmix.flowui.icon.Icons;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.kit.component.ComponentUtils;
@@ -75,6 +80,9 @@ import io.jmix.reports.entity.*;
 import io.jmix.reports.entity.wizard.ReportData;
 import io.jmix.reports.entity.wizard.ReportRegion;
 import io.jmix.reports.impl.StreamingReportValidationSupport;
+import io.jmix.reports.llm.LlmDataQuery;
+import io.jmix.reports.llm.LlmDataQueryException;
+import io.jmix.reports.llm.LlmQueryGenerationRequest;
 import io.jmix.reports.util.DataSetFactory;
 import io.jmix.reports.yarg.reporting.StreamingReportValidator;
 import io.jmix.reports.yarg.structure.BandOrientation;
@@ -83,7 +91,9 @@ import io.jmix.reportsflowui.constant.ReportStyleConstants;
 import io.jmix.reportsflowui.helper.OutputTypeHelper;
 import io.jmix.reportsflowui.helper.ReportScriptEditor;
 import io.jmix.reportsflowui.support.CrossTabDataGridSupport;
+import io.jmix.reportsflowui.support.LlmDataSetGenerationSupport;
 import io.jmix.reportsflowui.view.region.ReportRegionWizardDetailView;
+import io.jmix.reportsflowui.view.report.model.LlmQueryColumn;
 import io.jmix.reportsflowui.view.reportwizard.ReportWizard;
 import io.jmix.reportsflowui.view.run.InputParametersDialog;
 import io.jmix.reportsflowui.view.template.ReportTemplateDetailView;
@@ -95,10 +105,14 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.IterableUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.jspecify.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @RouteAlias(value = "reports/:id", layout = DefaultMainViewParent.class)
@@ -108,7 +122,20 @@ import java.util.stream.Collectors;
 @EditedEntityContainer("reportDc")
 public class ReportDetailView extends StandardDetailView<Report> {
 
+    private static final Logger log = LoggerFactory.getLogger(ReportDetailView.class);
+
     public static final String ROOT_BAND = "Root";
+
+    /**
+     * Key of the only column of the LLM query column list, as {@code report-detail-view.xml} declares it.
+     */
+    protected static final String LLM_COLUMN_NAME_KEY = "name";
+
+    /**
+     * How much of a generation failure is shown. A model's answer quoted back by a parsing failure is
+     * unbounded, and a notification is not a log.
+     */
+    protected static final int LLM_FAILURE_MESSAGE_LIMIT = 400;
 
     @ViewComponent
     protected DataContext dataContext;
@@ -124,6 +151,8 @@ public class ReportDetailView extends StandardDetailView<Report> {
     protected CollectionPropertyContainer<DataSet> dataSetsDc;
     @ViewComponent
     protected CollectionPropertyContainer<ReportInputParameter> parametersDc;
+    @ViewComponent
+    protected CollectionContainer<LlmQueryColumn> llmQueryColumnsDc;
 
     @ViewComponent
     protected TreeDataGrid<BandDefinition> bandsTreeDataGrid;
@@ -167,6 +196,32 @@ public class ReportDetailView extends StandardDetailView<Report> {
     protected VerticalLayout commonEntityGrid;
     @ViewComponent
     protected VerticalLayout jsonDataSetTypeVBox;
+    @ViewComponent
+    protected VerticalLayout llmDataSetTypeBox;
+    @ViewComponent
+    protected JmixTextArea llmPromptField;
+    @ViewComponent
+    protected JmixButton llmGenerateBtn;
+    @ViewComponent
+    protected JmixButton llmEditQueryBtn;
+    @ViewComponent
+    protected CodeEditor llmGeneratedQueryCodeEditor;
+    @ViewComponent
+    protected Badge llmStaleQueryNotice;
+    @ViewComponent
+    protected Badge llmColumnsChangedNotice;
+    @ViewComponent
+    protected DataGrid<LlmQueryColumn> llmGeneratedColumnsDataGrid;
+    @ViewComponent
+    protected HorizontalLayout llmColumnsButtonsLayout;
+    @ViewComponent
+    protected JmixButton llmAddColumnBtn;
+    @ViewComponent
+    protected JmixButton llmRemoveColumnBtn;
+    @ViewComponent
+    protected Span llmGeneratedExplanationSpan;
+    @ViewComponent
+    protected Badge llmGeneratedWarningsBadge;
     @ViewComponent
     protected VerticalLayout dataSetScriptBox;
     @ViewComponent
@@ -286,10 +341,33 @@ public class ReportDetailView extends StandardDetailView<Report> {
     protected OutputTypeHelper outputTypeHelper;
     @Autowired
     protected StreamingReportValidationSupport streamingReportValidationSupport;
+    @Autowired
+    protected LlmDataSetGenerationSupport llmDataSetGenerationSupport;
+    @Autowired
+    protected Icons icons;
 
     protected JmixComboBoxBinder<String> entityParamFieldBinder;
     protected JmixComboBoxBinder<String> entitiesParamFieldBinder;
     protected JmixComboBoxBinder<String> fetchPlanNameFieldBinder;
+
+    protected boolean llmQueryEditing;
+    @Nullable
+    protected Renderer<LlmQueryColumn> llmColumnNameRenderer;
+    protected DataSet llmEditedDataSet;
+    protected long llmGenerationSequence;
+
+    /**
+     * The last generation token issued for a data set. It outlives the attempt that carried it, so a response
+     * arriving after a newer generation already finished is still recognized as the older one.
+     */
+    protected final Map<DataSet, Long> latestLlmGeneration = new IdentityHashMap<>();
+    protected final Map<DataSet, Long> llmQueryDraftRevisions = new IdentityHashMap<>();
+
+    /**
+     * The data set types the designer offers, computed once: they do not change while the view is open, and
+     * the inline selector of a multi-data-set band would otherwise rebuild them for every rendered row.
+     */
+    protected List<DataSetType> dataSetTypeOptions;
 
     @Subscribe
     public void onInit(InitEvent event) {
@@ -302,6 +380,7 @@ public class ReportDetailView extends StandardDetailView<Report> {
 
         initDataStoreField();
         initJsonPathQueryTextAreaField();
+        initLlmDataSetComponents();
 
         initEntitiesParamField();
         initEntityParamField();
@@ -588,11 +667,18 @@ public class ReportDetailView extends StandardDetailView<Report> {
         if (event.getChangeType() == CollectionChangeType.REFRESH) {
             bandsTreeDataGrid.expand(event.getSource().getItems());
         }
+
+        // A band takes its data sets with it, and they never reach the data set container to be removed there.
+        forgetDataSetsOutsideTheReport();
     }
 
     @Subscribe(id = "dataSetsDc", target = Target.DATA_CONTAINER)
     protected void onDataSetsDcItemChange(InstanceContainer.ItemChangeEvent<DataSet> event) {
         DataSet dataSet = event.getItem();
+
+        // Leaving a data set ends the editing of its query, exactly as pressing the button would.
+        finishLlmQueryEditing();
+        llmStaleQueryNotice.setVisible(false);
 
         if (dataSet == null) {
             hideAllDataSetEditComponents();
@@ -600,6 +686,7 @@ public class ReportDetailView extends StandardDetailView<Report> {
         }
 
         applyVisibilityRules(event.getItem());
+        refreshLlmPanelIfShown(dataSet);
 
         setupEntityParamFieldValue(dataSet);
         setupEntitiesParamFieldValue(dataSet);
@@ -617,10 +704,18 @@ public class ReportDetailView extends StandardDetailView<Report> {
 
     @Subscribe(id = "dataSetsDc", target = Target.DATA_CONTAINER)
     protected void onDataSetsDcItemPropertyChange(InstanceContainer.ItemPropertyChangeEvent<DataSet> event) {
-        applyVisibilityRules(event.getItem());
+        if (!DataSet.LLM_GENERATED_QUERY.equals(event.getProperty())) {
+            applyVisibilityRules(event.getItem());
+        }
 
         if ("type".equals(event.getProperty())) {
             updateStreamingRelatedFields();
+            clearLlmPropertiesIfNotLlm(event.getItem());
+            refreshLlmPanelIfShown(event.getItem());
+        }
+
+        if ("text".equals(event.getProperty())) {
+            updateLlmStaleQueryNotice(event.getItem());
         }
 
         if ("entityParamName".equals(event.getProperty())) {
@@ -647,6 +742,35 @@ public class ReportDetailView extends StandardDetailView<Report> {
     @Subscribe(id = "dataSetsDc", target = Target.DATA_CONTAINER)
     protected void onDataSetsDcCollectionChange(CollectionContainer.CollectionChangeEvent<DataSet> event) {
         updateStreamingRelatedFields();
+
+        forgetDataSetsOutsideTheReport();
+    }
+
+    /**
+     * Drops what is remembered about data sets the report no longer holds. Removing a data set, removing the
+     * band that owned it and switching to another band all reach the view differently, so the maps are pruned
+     * against the report itself rather than against one collection event.
+     */
+    protected void forgetDataSetsOutsideTheReport() {
+        Set<DataSet> present = Collections.newSetFromMap(new IdentityHashMap<>());
+        for (BandDefinition band : bandsDc.getItems()) {
+            if (band.getDataSets() != null) {
+                present.addAll(band.getDataSets());
+            }
+        }
+
+        latestLlmGeneration.keySet().removeIf(dataSet -> !present.contains(dataSet));
+        llmQueryDraftRevisions.keySet().removeIf(dataSet -> !present.contains(dataSet));
+    }
+
+    @Subscribe(id = "llmQueryColumnsDc", target = Target.DATA_CONTAINER)
+    public void onLlmQueryColumnsDcItemPropertyChange(InstanceContainer.ItemPropertyChangeEvent<LlmQueryColumn> event) {
+        assembleEditedQuery();
+    }
+
+    @Subscribe(id = "llmQueryColumnsDc", target = Target.DATA_CONTAINER)
+    public void onLlmQueryColumnsDcCollectionChange(CollectionContainer.CollectionChangeEvent<LlmQueryColumn> event) {
+        assembleEditedQuery();
     }
 
     @Subscribe(id = "templatesDc", target = Target.DATA_CONTAINER)
@@ -739,6 +863,13 @@ public class ReportDetailView extends StandardDetailView<Report> {
     @Subscribe
     protected void onBeforeSave(BeforeSaveEvent event) {
         checkReportCode(event);
+        if (event.isSavePrevented()) {
+            return;
+        }
+
+        // Validation has succeeded, so this save is allowed to turn the draft into its stored form.
+        finishLlmQueryEditing();
+        warnAboutUnguardedOptionalParametersInReport();
         setupReportXml();
     }
 
@@ -1113,6 +1244,80 @@ public class ReportDetailView extends StandardDetailView<Report> {
         }
     }
 
+    /**
+     * Refuses an LLM data set a run could not use: one without a prompt, and one without a usable query. The
+     * query is required because a run executes that very query and generates nothing — like the script of a
+     * JPQL data set, which the designer requires for the same reason. The prompt is required because it is what
+     * the query can be generated from again.
+     */
+    protected void validateLlmDataSet(ValidationErrors errors, DataSet dataSet) {
+        if (StringUtils.isBlank(dataSet.getText())) {
+            errors.add(messageBundle.formatMessage("validation.error.llmDataSetPromptNull", dataSet.getName()));
+        }
+
+        validateLlmStoredQuery(errors, dataSet);
+    }
+
+    /**
+     * Refuses a query the data set could not run: a missing one, one whose document is unreadable, and one left
+     * without columns — the band rows are keyed by those, so a query that names none returns nothing a template
+     * could print.
+     */
+    protected void validateLlmStoredQuery(ValidationErrors errors, DataSet dataSet) {
+        // Validation observes the draft of an unfinished edit but does not finish it, so what it judges is the
+        // query the data set is about to be saved with: the text on screen while it is being edited, and the
+        // stored document otherwise.
+        boolean editing = llmQueryEditing && dataSet == llmEditedDataSet;
+        String query = editing ? llmGeneratedQueryCodeEditor.getValue() : dataSet.getLlmGeneratedQuery();
+
+        if (StringUtils.isBlank(query)) {
+            errors.add(messageBundle.formatMessage(
+                    "validation.error.llmDataSetStoredQueryNull", dataSet.getName()));
+            return;
+        }
+
+        if (editing) {
+            // Rows nobody named are ignored just as they will be when the draft is normalized.
+            List<String> named = editedLlmQueryColumns().stream().filter(StringUtils::isNotBlank).toList();
+            if (named.isEmpty()) {
+                errors.add(messageBundle.formatMessage(
+                        "validation.error.llmDataSetColumnsEmpty", dataSet.getName()));
+            } else if (hasDuplicates(named)) {
+                errors.add(messageBundle.formatMessage(
+                        "validation.error.llmDataSetColumnsDuplicate", dataSet.getName()));
+            }
+            return;
+        }
+
+        LlmDataQuery storedQuery;
+        try {
+            storedQuery = llmDataSetGenerationSupport.readStoredQueryOrFail(dataSet);
+        } catch (LlmDataQueryException e) {
+            errors.add(messageBundle.formatMessage(
+                    "validation.error.llmDataSetStoredQueryUnreadable", dataSet.getName()));
+            return;
+        }
+
+        if (storedQuery == null) {
+            return;
+        }
+
+        List<String> named = storedQuery.getResultProperties().stream().filter(StringUtils::isNotBlank).toList();
+        if (named.isEmpty()) {
+            errors.add(messageBundle.formatMessage(
+                    "validation.error.llmDataSetColumnsEmpty", dataSet.getName()));
+        } else if (hasDuplicates(named)) {
+            // A row of a band is keyed by these names, so a duplicate loses one of the values the query
+            // selects — silently, which is why a run refuses such a query outright.
+            errors.add(messageBundle.formatMessage(
+                    "validation.error.llmDataSetColumnsDuplicate", dataSet.getName()));
+        }
+    }
+
+    protected boolean hasDuplicates(List<String> names) {
+        return new HashSet<>(names).size() != names.size();
+    }
+
     protected void validateBand(ValidationErrors errors, BandDefinition band, Multimap<String, BandDefinition> names) {
         names.put(band.getName(), band);
 
@@ -1154,6 +1359,8 @@ public class ReportDetailView extends StandardDetailView<Report> {
                         errors.add(messageBundle.formatMessage(
                                 "validation.error.jsonDataSetScriptNull", dataSet.getName()));
                     }
+                } else if (dataSet.getType() == DataSetType.LLM) {
+                    validateLlmDataSet(errors, dataSet);
                 }
             }
         }
@@ -1326,6 +1533,9 @@ public class ReportDetailView extends StandardDetailView<Report> {
         field.setStatusChangeHandler(typedTextFieldStatusContext -> {/*do nothing*/});
         field.setWidthFull();
         field.addValueChangeListener(event -> {
+            // The type is set first, so the item-change handler that follows sees the type the row now has and
+            // rebuilds the fields that depend on it. A property change of a row that is not the shown one
+            // leaves the details panel alone, which is what makes this order safe.
             item.setType(event.getValue());
             // Avoiding bug with not selected edited row
             dataSetsDc.setItem(item);
@@ -1334,9 +1544,31 @@ public class ReportDetailView extends StandardDetailView<Report> {
         return field;
     }
 
+    /**
+     * Returns the data set types the designer offers. The list is fixed for the lifetime of the view: replacing
+     * or refreshing the items of a bound {@code Select} clears its value, and that null would be written back to
+     * the data set.
+     */
     protected List<DataSetType> getDataSetTypeOptions() {
+        if (dataSetTypeOptions == null) {
+            dataSetTypeOptions = buildDataSetTypeOptions();
+        }
+
+        return dataSetTypeOptions;
+    }
+
+    protected List<DataSetType> buildDataSetTypeOptions() {
         ArrayList<DataSetType> options = new ArrayList<>(Arrays.asList(DataSetType.values()));
         options.remove(DataSetType.DELEGATE); // can't set it up in runtime editor
+
+        if (!llmDataSetGenerationSupport.isTypeSupported()) {
+            // Authoring such a data set needs the AI Tools add-on: its query is required and there would be
+            // nothing here to produce one. A run is a separate matter — a report authored elsewhere runs
+            // without the add-on — and so is a model, which only generating a query needs: a data set whose
+            // query is already stored is edited without one, so the type stays on offer.
+            options.remove(DataSetType.LLM);
+        }
+
         return options;
     }
 
@@ -1410,6 +1642,9 @@ public class ReportDetailView extends StandardDetailView<Report> {
                     initJsonDataSetOptions(dataSet);
                     jsonDataSetTypeVBox.setVisible(true);
                     break;
+                case LLM:
+                    llmDataSetTypeBox.setVisible(true);
+                    break;
                 default:
                     break;
             }
@@ -1455,6 +1690,389 @@ public class ReportDetailView extends StandardDetailView<Report> {
         dataSetScriptBox.setVisible(false);
         commonEntityGrid.setVisible(false);
         jsonDataSetTypeVBox.setVisible(false);
+        llmDataSetTypeBox.setVisible(false);
+    }
+
+    protected void initLlmDataSetComponents() {
+        // A locked panel shows the columns as plain text, and the fields appear only while the query is
+        // unlocked, so the declarative renderer is kept to switch back to.
+        Grid.Column<LlmQueryColumn> nameColumn = llmColumnNameColumn();
+        llmColumnNameRenderer = nameColumn != null ? nameColumn.getRenderer() : null;
+        llmGeneratedColumnsDataGrid.addSelectionListener(event ->
+                llmRemoveColumnBtn.setEnabled(isLlmQueryEditorEditable()
+                        && event.getFirstSelectedItem().isPresent()));
+
+        // Every change of the text is assembled into the stored document, so that saving the report or leaving
+        // the data set cannot drop an edit.
+        llmGeneratedQueryCodeEditor.addValueChangeListener(event -> assembleEditedQuery());
+
+        setLlmQueryEditing(false);
+    }
+
+    @SuppressWarnings("unchecked")
+    protected Component createLlmColumnNameField(LlmQueryColumn column) {
+        TypedTextField<String> field = uiComponents.create(TypedTextField.class);
+        field.setWidthFull();
+
+        // A name typed into the last field must reach the stored document even if editing ends on the button
+        // right away: the default mode would only send it once the field loses focus, and finishing the mode
+        // removes the field before that happens.
+        field.setValueChangeMode(ValueChangeMode.EAGER);
+
+        field.setValue(StringUtils.defaultString(column.getName()));
+        field.addTypedValueChangeListener(event -> column.setName(event.getValue()));
+
+        field.addFocusListener(event -> llmGeneratedColumnsDataGrid.select(column));
+        return field;
+    }
+
+    /**
+     * Returns the column the names of an LLM data set's query columns are shown in, or {@code null} when the
+     * grid has none. FlowUI removes a column whose attribute the current user may not read, and
+     * {@link LlmQueryColumn} is an entity like any other: a role written by hand, without a policy for it,
+     * leaves this grid without its only column. The panel is then read-only for the columns rather than broken —
+     * a missing policy must not take the report designer down with it.
+     */
+    protected Grid.@Nullable Column<LlmQueryColumn> llmColumnNameColumn() {
+        return llmGeneratedColumnsDataGrid.getColumnByKey(LLM_COLUMN_NAME_KEY);
+    }
+
+    /**
+     * Renders a column name as a field that survives its own edit. A name typed into it renames the column,
+     * which refreshes the row it is in; a renderer that can only create would answer that refresh with a new
+     * field, and the one being typed into would leave the grid, taking the focus and the caret with it.
+     * <p>
+     * Keeping the field as it is shows the current name all the same: while the panel is unlocked, that field is
+     * the only thing that renames its column, and every other change to the list — filling it, dropping the
+     * nameless rows, locking the panel again — replaces the items or the renderer and re-renders the grid.
+     */
+    protected Renderer<LlmQueryColumn> createLlmColumnNameRenderer() {
+        return new ComponentRenderer<>(this::createLlmColumnNameField, (field, column) -> field);
+    }
+
+    protected void setLlmQueryEditing(boolean editing) {
+        if (editing && !isLlmPanelEditable()) {
+            return;
+        }
+
+        DataSet editedDataSet = editing ? dataSetsDc.getItemOrNull() : null;
+        if (editing && (!llmQueryEditing || llmEditedDataSet != editedDataSet)) {
+            touchLlmQueryDraft(editedDataSet);
+        }
+
+        llmQueryEditing = editing;
+        llmEditedDataSet = editedDataSet;
+
+        updateLlmQueryEditingControls();
+    }
+
+    protected void updateLlmQueryEditingControls() {
+        boolean editorEditable = isLlmQueryEditorEditable();
+
+        llmGeneratedQueryCodeEditor.setReadOnly(!editorEditable);
+        llmColumnsButtonsLayout.setVisible(editorEditable);
+        llmAddColumnBtn.setEnabled(editorEditable);
+        llmRemoveColumnBtn.setEnabled(editorEditable
+                && llmGeneratedColumnsDataGrid.getSingleSelectedItem() != null);
+
+        // The button carries the mode in its icon: a pencil offers the edit, a check ends it.
+        llmEditQueryBtn.setIcon(icons.get(llmQueryEditing ? JmixFontIcon.CHECK : JmixFontIcon.PENCIL));
+        llmEditQueryBtn.setTooltipText(messageBundle.getMessage(llmQueryEditing
+                ? "bandsTab.dataSetTypeLayout.llmEditQueryBtn.doneTooltip"
+                : "bandsTab.dataSetTypeLayout.llmEditQueryBtn.editTooltip"));
+
+        Grid.Column<LlmQueryColumn> nameColumn = llmColumnNameColumn();
+        if (nameColumn != null && llmColumnNameRenderer != null) {
+            nameColumn.setRenderer(editorEditable ? createLlmColumnNameRenderer() : llmColumnNameRenderer);
+        }
+    }
+
+    protected boolean isLlmQueryEditorEditable() {
+        return llmQueryEditing && isLlmPanelEditable();
+    }
+
+    protected void assembleEditedQuery() {
+        DataSet dataSet = dataSetsDc.getItemOrNull();
+        if (!llmQueryEditing || dataSet == null || dataSet.getType() != DataSetType.LLM) {
+            return;
+        }
+
+        touchLlmQueryDraft(dataSet);
+
+        // Blank text in the middle of an edit is a query about to be retyped, not a query being dropped: the
+        // document is only cleared when the editing ends, so that a cut-and-paste keeps what it described.
+        llmDataSetGenerationSupport.storeEditedQuery(dataSet, llmGeneratedQueryCodeEditor.getValue(),
+                editedLlmQueryColumns());
+    }
+
+    protected void touchLlmQueryDraft(@Nullable DataSet dataSet) {
+        if (dataSet != null) {
+            llmQueryDraftRevisions.merge(dataSet, 1L, Long::sum);
+        }
+    }
+
+    protected long getLlmQueryDraftRevision(DataSet dataSet) {
+        return llmQueryDraftRevisions.getOrDefault(dataSet, 0L);
+    }
+
+    protected List<String> editedLlmQueryColumns() {
+        return llmQueryColumnsDc.getItems().stream()
+                .map(LlmQueryColumn::getName)
+                .toList();
+    }
+
+    /**
+     * Ends the editing of the query the panel was unlocked for, whichever way it ends: the check button, moving
+     * to another data set, or successfully saving the report. Only here do the rows left without a name go away
+     * and a query left blank clear the stored document.
+     */
+    protected void finishLlmQueryEditing() {
+        if (!llmQueryEditing) {
+            return;
+        }
+
+        DataSet dataSet = llmEditedDataSet;
+        setLlmQueryEditing(false);
+
+        if (dataSet == null || dataSet.getType() != DataSetType.LLM) {
+            return;
+        }
+
+        removeBlankLlmQueryColumns();
+        llmDataSetGenerationSupport.finishEditedQuery(dataSet, llmGeneratedQueryCodeEditor.getValue(),
+                editedLlmQueryColumns());
+        showEditedQueryProblems(llmDataSetGenerationSupport.readStoredQuery(dataSet));
+    }
+
+    /**
+     * Says what would make a freshly generated query fail a report run. Generation already gave it one chance
+     * to be corrected, so what is left is what the model could not fix and the author now can.
+     */
+    protected void showGeneratedQueryProblems(@Nullable LlmDataQuery query) {
+        showLlmQueryProblems(query, "bandsTab.dataSetTypeLayout.llmGeneratedQueryProblems");
+    }
+
+    /**
+     * Says what would make a hand-edited query fail a report run. Nothing corrects such a query — it is the
+     * author's — so this is only ever a report of what is wrong with it.
+     */
+    protected void showEditedQueryProblems(@Nullable LlmDataQuery query) {
+        showLlmQueryProblems(query, "bandsTab.dataSetTypeLayout.llmQueryProblems");
+    }
+
+    /**
+     * Says what would make the stored query fail a report run, right after it is stored. A query is checked
+     * without running it and without asking the model anything, so an author learns of a broken query while
+     * the panel that produced it is still open, instead of on the next run of the report.
+     */
+    protected void showLlmQueryProblems(@Nullable LlmDataQuery query, String messageKey) {
+        if (query == null) {
+            return;
+        }
+
+        List<String> problems = llmDataSetGenerationSupport.validate(query);
+        if (problems.isEmpty()) {
+            return;
+        }
+
+        notifications.create(messageBundle.formatMessage(messageKey, String.join("; ", problems)))
+                .withType(Notifications.Type.WARNING)
+                .show();
+    }
+
+    /**
+     * Says which optional report parameters the stored queries of this report compare without a guard — the one
+     * way this data set type prints wrong data instead of failing.
+     * <p>
+     * A run binds an empty optional parameter as {@code null}, and an unguarded comparison against {@code null}
+     * matches nothing: the band comes out empty with no error anywhere. Generation is told to write
+     * {@code (:name is null or …)}, but a model can ignore the rule, a hand edit can miss it, and — the case
+     * nothing else would catch — making a parameter optional turns a comparison written for a required one into
+     * exactly this. Every query is therefore read on save, which is where the whole report is in its stored form.
+     */
+    protected void warnAboutUnguardedOptionalParametersInReport() {
+        List<String> affected = new ArrayList<>();
+        for (BandDefinition band : getEditedEntity().getBands()) {
+            if (band.getDataSets() == null) {
+                continue;
+            }
+
+            for (DataSet dataSet : band.getDataSets()) {
+                if (dataSet.getType() != DataSetType.LLM) {
+                    continue;
+                }
+
+                LlmDataQuery query = llmDataSetGenerationSupport.readStoredQuery(dataSet);
+                if (query == null) {
+                    continue;
+                }
+
+                List<String> unguarded =
+                        llmDataSetGenerationSupport.unguardedOptionalParameters(dataSet, query);
+                if (!unguarded.isEmpty()) {
+                    affected.add(dataSet.getName() + " (" + String.join(", ", unguarded) + ")");
+                }
+            }
+        }
+
+        if (affected.isEmpty()) {
+            return;
+        }
+
+        notifications.create(messageBundle.formatMessage(
+                        "bandsTab.dataSetTypeLayout.llmUnguardedOptionalParametersInReport",
+                        String.join("; ", affected)))
+                .withType(Notifications.Type.WARNING)
+                .show();
+    }
+
+    /**
+     * Says whether the stored query of the data set on screen answers a prompt that has since been edited.
+     * <p>
+     * Only that data set: the container reports a property change of every data set of the band, while the
+     * notice belongs to the panel, so a prompt edited elsewhere must leave it as it is — the same reason the
+     * type branch refreshes the panel only for the data set it shows.
+     */
+    protected void updateLlmStaleQueryNotice(DataSet dataSet) {
+        if (dataSet != dataSetsDc.getItemOrNull() || dataSet.getType() != DataSetType.LLM) {
+            return;
+        }
+
+        // The prompt was edited, so a query generated earlier answers the previous wording.
+        llmStaleQueryNotice.setVisible(StringUtils.isNotBlank(dataSet.getLlmGeneratedQuery()));
+    }
+
+    /**
+     * Drops what only an LLM data set is described by when the data set becomes one of another type. Kept
+     * otherwise, a stored query would be saved and exported with a data set nothing reads it for, and would
+     * come back as the current query if the type were switched back.
+     */
+    protected void clearLlmPropertiesIfNotLlm(DataSet dataSet) {
+        // A data set left without a type is one being retyped, not one that stopped being an LLM data set.
+        if (dataSet.getType() == null || dataSet.getType() == DataSetType.LLM) {
+            return;
+        }
+
+        dataSet.setLlmGeneratedQuery(null);
+    }
+
+    protected void fillLlmQueryColumns(@Nullable LlmDataQuery storedQuery) {
+        llmQueryColumnsDc.setItems(storedQuery == null
+                ? Collections.emptyList()
+                : storedQuery.getResultProperties().stream()
+                        .map(this::createLlmQueryColumn)
+                        .toList());
+    }
+
+    protected void refreshLlmPanelIfShown(DataSet dataSet) {
+        if (dataSet != dataSetsDc.getItemOrNull()) {
+            return;
+        }
+
+        if (dataSet.getType() == DataSetType.LLM) {
+            initLlmDataSetOptions(dataSet);
+        } else {
+            // The panel now belongs to a data set of another type, and the query it was unlocked for is gone.
+            setLlmQueryEditing(false);
+        }
+    }
+
+    protected void initLlmDataSetOptions(DataSet dataSet) {
+        setLlmQueryEditing(false);
+        // What the last generation changed is said about the query the panel is leaving, not about this one.
+        llmColumnsChangedNotice.setVisible(false);
+        // The stale notice talks about a stored query; without one there is nothing for it to be stale about.
+        llmStaleQueryNotice.setVisible(llmStaleQueryNotice.isVisible()
+                && StringUtils.isNotBlank(dataSet.getLlmGeneratedQuery()));
+        updateLlmPanelAvailability();
+
+        LlmDataQuery storedQuery;
+        List<String> warnings;
+        try {
+            storedQuery = llmDataSetGenerationSupport.readStoredQueryOrFail(dataSet);
+            warnings = storedQuery != null ? storedQuery.getWarnings() : Collections.emptyList();
+        } catch (LlmDataQueryException e) {
+            // The document is there but unreadable: saying so is the only way the author learns of it before
+            // the first run does.
+            storedQuery = null;
+            warnings = List.of(e.getMessage());
+        }
+
+        llmGeneratedQueryCodeEditor.setValue(storedQuery != null ? storedQuery.getJpql() : "");
+        fillLlmQueryColumns(storedQuery);
+        llmGeneratedExplanationSpan.setText(storedQuery != null
+                ? StringUtils.defaultString(storedQuery.getExplanation())
+                : "");
+
+        // A badge with no text would still paint its background and its icon, hence the visibility.
+        boolean warningsExists = !warnings.isEmpty();
+        llmGeneratedWarningsBadge.setVisible(warningsExists);
+        if (warningsExists) {
+            llmGeneratedWarningsBadge.setText(String.join("; ", warnings));
+        }
+    }
+
+    /**
+     * Keeps the panel read-only when either the application cannot serve the type or the report itself was
+     * opened without editing rights.
+     */
+    protected void updateLlmPanelAvailability() {
+        boolean editable = isLlmPanelEditable();
+
+        // Everything but generation works without a model behind it: a stored query is edited by hand, checked
+        // and run, so only the button that calls the model follows generation availability.
+        llmGenerateBtn.setEnabled(editable && llmDataSetGenerationSupport.isGenerationAvailable());
+        llmEditQueryBtn.setEnabled(editable);
+        llmPromptField.setReadOnly(!editable);
+        updateLlmQueryEditingControls();
+    }
+
+    protected boolean isLlmPanelEditable() {
+        return !isReadOnly() && llmDataSetGenerationSupport.isTypeSupported();
+    }
+
+    @Subscribe
+    public void onReadOnlyChangeEvent(ReadOnlyTracker.ReadOnlyChangeEvent event) {
+        if (event.isReadOnly()) {
+            // An attempt started with editing rights must not become applicable again if the view is later
+            // switched back to writable before its response arrives.
+            latestLlmGeneration.clear();
+        }
+
+        // Read-only changes only whether an open draft can be touched. Its logical editing state is kept so
+        // that returning to writable mode resumes the same draft and a later save still finalizes it.
+        DataSet dataSet = dataSetsDc.getItemOrNull();
+        if (dataSet != null && dataSet.getType() == DataSetType.LLM) {
+            updateLlmPanelAvailability();
+        }
+    }
+
+    protected void showLlmColumnsChangedNotice(List<String> previousColumns, List<String> generatedColumns) {
+        LlmDataSetGenerationSupport.ColumnsChange change =
+                llmDataSetGenerationSupport.compareColumns(previousColumns, generatedColumns);
+
+        llmColumnsChangedNotice.setVisible(!change.isEmpty());
+        if (change.isEmpty()) {
+            return;
+        }
+
+        List<String> parts = new ArrayList<>();
+        if (!change.added().isEmpty()) {
+            parts.add(messageBundle.formatMessage("bandsTab.dataSetTypeLayout.llmColumnsChangedNotice.added",
+                    String.join(", ", change.added())));
+        }
+        if (!change.disappeared().isEmpty()) {
+            parts.add(messageBundle.formatMessage("bandsTab.dataSetTypeLayout.llmColumnsChangedNotice.disappeared",
+                    String.join(", ", change.disappeared())));
+        }
+
+        llmColumnsChangedNotice.setText(String.join("; ", parts));
+    }
+
+    protected LlmQueryColumn createLlmQueryColumn(String name) {
+        LlmQueryColumn column = metadata.create(LlmQueryColumn.class);
+        column.setName(name);
+        return column;
     }
 
     protected void applyVisibilityRulesForEntityType(DataSet item) {
@@ -1560,6 +2178,279 @@ public class ReportDetailView extends StandardDetailView<Report> {
     @Subscribe("dataSetScriptFullScreenBtn")
     protected void onDataSetScriptFullScreenBtnClick(ClickEvent<Button> event) {
         onDataSetScriptFieldExpandIconClick();
+    }
+
+    @Subscribe("llmAddColumnBtn")
+    public void onLlmAddColumnBtnClick(ClickEvent<Button> event) {
+        if (!isLlmQueryEditorEditable()) {
+            return;
+        }
+
+        List<LlmQueryColumn> columns = llmQueryColumnsDc.getMutableItems();
+        LlmQueryColumn selected = llmGeneratedColumnsDataGrid.getSingleSelectedItem();
+
+        // Columns are positional against the select clause, so a new one goes right after the selected row.
+        LlmQueryColumn column = createLlmQueryColumn("");
+        columns.add(selected != null ? columns.indexOf(selected) + 1 : columns.size(), column);
+        llmGeneratedColumnsDataGrid.select(column);
+    }
+
+    @Subscribe("llmRemoveColumnBtn")
+    public void onLlmRemoveColumnBtnClick(ClickEvent<Button> event) {
+        if (!isLlmQueryEditorEditable()) {
+            return;
+        }
+
+        LlmQueryColumn selected = llmGeneratedColumnsDataGrid.getSingleSelectedItem();
+        if (selected != null) {
+            llmQueryColumnsDc.getMutableItems().remove(selected);
+        }
+    }
+
+    @Subscribe("llmGeneratedQueryHelpBtn")
+    public void onLlmGeneratedQueryHelpBtnClick(ClickEvent<Button> event) {
+        dialogs.createMessageDialog()
+                .withHeader(messageBundle.getMessage(
+                        "bandsTab.dataSetTypeLayout.llmGeneratedQueryCodeEditor.helpIcon.dialog.header"))
+                .withContent(new Html(messageBundle.getMessage(
+                        "bandsTab.dataSetTypeLayout.llmGeneratedQueryCodeEditor.helpIcon.dialog.content")))
+                .withResizable(true)
+                .withModal(false)
+                .withWidth("50em")
+                .open();
+    }
+
+    @Subscribe("llmGenerateBtn")
+    public void onLlmGenerateBtnClick(ClickEvent<Button> event) {
+        DataSet dataSet = dataSetsDc.getItemOrNull();
+        if (dataSet == null || !isLlmPanelEditable() || !llmDataSetGenerationSupport.isGenerationAvailable()) {
+            return;
+        }
+
+        if (StringUtils.isBlank(dataSet.getText())) {
+            notifications.create(messageBundle.getMessage("bandsTab.dataSetTypeLayout.llmPromptRequired"))
+                    .withType(Notifications.Type.WARNING)
+                    .show();
+            return;
+        }
+
+        warnAboutUndeclaredColumns(dataSet);
+
+        LlmQueryGenerationRequest request = llmDataSetGenerationSupport.createGenerationRequest(dataSet);
+        BackgroundTask<Integer, LlmDataQuery> task = createLlmGenerationTask(request, dataSet);
+
+        dialogs.createBackgroundTaskDialog(task)
+                .withHeader(messageBundle.getMessage("bandsTab.dataSetTypeLayout.llmGenerationDialog.header"))
+                .withText(messageBundle.getMessage("bandsTab.dataSetTypeLayout.llmGenerationDialog.text"))
+                .withCancelAllowed(true)
+                .open();
+    }
+
+    /**
+     * Says which bands and axes the query being generated will not be able to reference, because their own data
+     * sets do not declare their columns. Said before generation rather than after, so that an author who meant
+     * the query to filter by a master row can stop and write the reference by hand instead.
+     */
+    protected void warnAboutUndeclaredColumns(DataSet dataSet) {
+        List<String> sources = llmDataSetGenerationSupport.sourcesWithUndeclaredColumns(dataSet);
+        if (sources.isEmpty()) {
+            return;
+        }
+
+        notifications.create(messageBundle.formatMessage(
+                        "bandsTab.dataSetTypeLayout.llmUndeclaredColumns", String.join(", ", sources)))
+                .withType(Notifications.Type.WARNING)
+                .show();
+    }
+
+    /**
+     * Creates the task that generates a query for the data set, and issues the token that makes it the current
+     * attempt for that data set: a task created later supersedes whatever was created before it.
+     */
+    protected BackgroundTask<Integer, LlmDataQuery> createLlmGenerationTask(LlmQueryGenerationRequest request,
+                                                                           DataSet dataSet) {
+        long timeoutMs = reportsClientProperties.getLlmQueryGenerationTimeout().toMillis();
+        long generationToken = ++llmGenerationSequence;
+        latestLlmGeneration.put(dataSet, generationToken);
+        LlmGenerationAttempt attempt = new LlmGenerationAttempt(dataSet, request,
+                dataSet.getLlmGeneratedQuery(), getLlmQueryDraftRevision(dataSet), generationToken);
+
+        return new BackgroundTask<>(timeoutMs, TimeUnit.MILLISECONDS, ReportDetailView.this) {
+
+            @Override
+            public LlmDataQuery run(TaskLifeCycle<Integer> taskLifeCycle) {
+                return llmDataSetGenerationSupport.generate(request);
+            }
+
+            @Override
+            public void done(LlmDataQuery generatedQuery) {
+                applyLlmGeneratedQuery(attempt, generatedQuery);
+            }
+
+            @Override
+            public void canceled() {
+                forgetLlmGenerationAttempt(attempt);
+            }
+
+            @Override
+            public boolean handleTimeoutException() {
+                forgetLlmGenerationAttempt(attempt);
+                showLlmGenerationTimeout();
+                return true;
+            }
+
+            @Override
+            public boolean handleException(Exception ex) {
+                forgetLlmGenerationAttempt(attempt);
+                showLlmGenerationFailure(ex);
+                return true;
+            }
+        };
+    }
+
+    /**
+     * Says that generation ran out of the time it was given. Left unhandled it would be said to no one, as a
+     * failure would.
+     */
+    protected void showLlmGenerationTimeout() {
+        notifications.create(messageBundle.getMessage("bandsTab.dataSetTypeLayout.llmGenerationTimedOut"))
+                .withType(Notifications.Type.ERROR)
+                .show();
+    }
+
+    /**
+     * Says that generation failed, and why. Nothing in the platform reports an unhandled failure of a
+     * background task to the person who started it, so without this a failed generation would leave the author
+     * with a closed dialog and no query.
+     */
+    protected void showLlmGenerationFailure(Exception exception) {
+        log.error("Cannot generate the query of an LLM data set", exception);
+
+        notifications.create(messageBundle.getMessage("bandsTab.dataSetTypeLayout.llmGenerationFailed"),
+                        describeLlmGenerationFailure(exception))
+                .withType(Notifications.Type.ERROR)
+                .show();
+    }
+
+    /**
+     * Describes a failed generation in the words of what actually went wrong. The innermost cause carries that:
+     * the layers above it say no more than the notice already does. Overly long text — a model's answer quoted
+     * back in a parsing failure, say — is cut, and the log keeps all of it.
+     */
+    protected String describeLlmGenerationFailure(Exception exception) {
+        String message = ExceptionUtils.getThrowableList(exception).reversed().stream()
+                .map(Throwable::getMessage)
+                .filter(StringUtils::isNotBlank)
+                .findFirst()
+                .orElseGet(() -> exception.getClass().getSimpleName());
+
+        return StringUtils.abbreviate(message, LLM_FAILURE_MESSAGE_LIMIT);
+    }
+
+    /**
+     * Stores the query a finished generation produced and brings the panel up to date with it. An attempt the
+     * data set has moved on from is discarded instead.
+     */
+    protected void applyLlmGeneratedQuery(LlmGenerationAttempt attempt, LlmDataQuery generatedQuery) {
+        if (!isLlmGenerationAttemptCurrent(attempt)) {
+            discardLlmGenerationAttempt(attempt);
+            return;
+        }
+
+        DataSet dataSet = attempt.dataSet();
+        LlmDataQuery previousQuery = llmDataSetGenerationSupport.readStoredQuery(dataSet);
+
+        // A failed generation never reaches this point, so the previously stored query stays as it was.
+        llmDataSetGenerationSupport.storeGeneratedQuery(dataSet, generatedQuery);
+
+        // Generation is long enough for another data set to be selected meanwhile. The query belongs to the data
+        // set it was requested for, but the panel must only be refreshed if that one is still shown — otherwise
+        // it would describe someone else's data set.
+        if (dataSetsDc.getItemOrNull() == dataSet) {
+            initLlmDataSetOptions(dataSet);
+            llmStaleQueryNotice.setVisible(false);
+            showLlmColumnsChangedNotice(
+                    previousQuery != null ? previousQuery.getResultProperties() : Collections.emptyList(),
+                    generatedQuery.getResultProperties());
+            showGeneratedQueryProblems(generatedQuery);
+        }
+    }
+
+    protected boolean isLlmGenerationAttemptCurrent(LlmGenerationAttempt attempt) {
+        return isLlmPanelEditable()
+                && attempt.dataSet().getType() == DataSetType.LLM
+                && Objects.equals(latestLlmGeneration.get(attempt.dataSet()), attempt.token())
+                && Objects.equals(attempt.dataSet().getLlmGeneratedQuery(), attempt.storedQuery())
+                && getLlmQueryDraftRevision(attempt.dataSet()) == attempt.draftRevision()
+                && llmDataSetGenerationSupport.isGenerationRequestCurrent(attempt.dataSet(), attempt.request());
+    }
+
+    protected void forgetLlmGenerationAttempt(LlmGenerationAttempt attempt) {
+        Long latestToken = latestLlmGeneration.get(attempt.dataSet());
+        if (latestToken != null && latestToken == attempt.token()) {
+            latestLlmGeneration.remove(attempt.dataSet());
+        }
+    }
+
+    /**
+     * Ends an attempt whose result cannot be applied any more and says why nothing changed, so that a finished
+     * generation is never dropped silently. An attempt whose data set has since been generated again stays
+     * silent: the author is already waiting for, or already has, that newer result.
+     */
+    protected void discardLlmGenerationAttempt(LlmGenerationAttempt attempt) {
+        Long latestToken = latestLlmGeneration.get(attempt.dataSet());
+        forgetLlmGenerationAttempt(attempt);
+
+        if (latestToken == null || latestToken == attempt.token()) {
+            notifications.create(messageBundle.getMessage("bandsTab.dataSetTypeLayout.llmGenerationDiscarded"))
+                    .withType(Notifications.Type.WARNING)
+                    .show();
+        }
+    }
+
+    protected record LlmGenerationAttempt(DataSet dataSet,
+                                          LlmQueryGenerationRequest request,
+                                          @Nullable String storedQuery,
+                                          long draftRevision,
+                                          long token) {
+    }
+
+    @Subscribe("llmEditQueryBtn")
+    public void onLlmEditQueryBtnClick(ClickEvent<Button> event) {
+        if (!isLlmPanelEditable()) {
+            return;
+        }
+
+        if (!llmQueryEditing) {
+            setLlmQueryEditing(true);
+            return;
+        }
+
+        DataSet dataSet = llmEditedDataSet;
+        finishLlmQueryEditing();
+
+        if (dataSet != null && dataSet == dataSetsDc.getItemOrNull()) {
+            // A locked panel describes the stored query, so finishing shows what the data set now holds rather
+            // than what was typed: blank text clears the stored query altogether, and a name is stored trimmed.
+            initLlmDataSetOptions(dataSet);
+        }
+    }
+
+    /**
+     * Drops the rows left without a name when the author finishes editing — a row added and never filled in. A
+     * nameless column is of no use to a template and would only take a position in the list the add-on names
+     * the selected values by.
+     * <p>
+     * Only on finishing, not on every change: while editing, an empty row is a row about to be typed into.
+     */
+    protected void removeBlankLlmQueryColumns() {
+        List<LlmQueryColumn> blankColumns = llmQueryColumnsDc.getItems().stream()
+                .filter(column -> StringUtils.isBlank(column.getName()))
+                .toList();
+
+        if (!blankColumns.isEmpty()) {
+            llmQueryColumnsDc.getMutableItems().removeAll(blankColumns);
+        }
     }
 
     @Subscribe("dataSetScriptCodeEditorHelpBtn")
@@ -1814,6 +2705,8 @@ public class ReportDetailView extends StandardDetailView<Report> {
 
     protected void initSingleDataSetTypeField() {
         singleDataSetTypeField.setItems(getDataSetTypeOptions());
+        // The same indicator the type editor of the data sets grid carries: one property, edited in two places.
+        singleDataSetTypeField.setRequired(true);
     }
 
     protected void initJsonSourceTypeField() {
@@ -2012,7 +2905,7 @@ public class ReportDetailView extends StandardDetailView<Report> {
 
     protected CodeEditorMode getCodeEditorMode(DataSet dataSet) {
         return switch (dataSet.getType()) {
-            case SQL -> CodeEditorMode.SQL;
+            case SQL, JPQL -> CodeEditorMode.SQL;
             case GROOVY -> CodeEditorMode.GROOVY;
             default -> CodeEditorMode.TEXT;
         };

@@ -20,6 +20,7 @@ import io.jmix.core.CoreProperties;
 import io.jmix.core.annotation.JmixModule;
 import io.jmix.data.DataConfiguration;
 import io.jmix.eclipselink.EclipselinkConfiguration;
+import io.jmix.reports.entity.DataSetType;
 import io.jmix.reports.libintegration.*;
 import io.jmix.reports.yarg.formatters.impl.docx.MultilineTextProcessor;
 import io.jmix.reports.yarg.formatters.impl.docx.MultilineTextProcessorImpl;
@@ -89,7 +90,8 @@ public class ReportsConfiguration {
                                              JmixJsonDataLoader jsonDataLoader,
                                              SingleEntityDataLoader singleEntityDataLoader,
                                              MultiEntityDataLoader multiEntityDataLoader,
-                                             DelegatingDataLoader delegatingDataLoader) {
+                                             DelegatingDataLoader delegatingDataLoader,
+                                             LlmDataLoader llmDataLoader) {
         DefaultLoaderFactory loaderFactory = new DefaultLoaderFactory();
         Map<String, ReportDataLoader> dataLoaders = new HashMap<>();
         dataLoaders.put("sql", sqlDataLoader);
@@ -99,6 +101,7 @@ public class ReportsConfiguration {
         dataLoaders.put("single", singleEntityDataLoader);
         dataLoaders.put("multi", multiEntityDataLoader);
         dataLoaders.put("delegate", delegatingDataLoader);
+        dataLoaders.put(DataSetType.LLM.getCode(), llmDataLoader);
         loaderFactory.setDataLoaders(dataLoaders);
         return loaderFactory;
     }
@@ -124,6 +127,16 @@ public class ReportsConfiguration {
     @Bean("report_DelegatingDataLoader")
     public DelegatingDataLoader delegatingDataLoader() {
         return new DelegatingDataLoader();
+    }
+
+    /**
+     * The loader of the {@link DataSetType#LLM} data set type. It needs nothing of the AI Tools add-on: a run
+     * executes the query stored with the report through {@code DataManager}, so a report authored where the
+     * add-on is present runs where it is not.
+     */
+    @Bean("report_LlmDataLoader")
+    public LlmDataLoader llmDataLoader() {
+        return new LlmDataLoader();
     }
 
     @Bean("report_JpqlDataLoader")

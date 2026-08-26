@@ -65,7 +65,14 @@ public enum DataSetType implements EnumClass<Integer> {
     /**
      * Delegation to user-defined {@link ReportDataLoader} object.
      */
-    DELEGATE(70, "delegate");
+    DELEGATE(70, "delegate"),
+
+    /**
+     * Data is produced by a JPQL query generated from a natural-language prompt. Generating one needs the AI
+     * Tools add-on, so the report designer offers this type only where the add-on is present; a run executes
+     * the query stored with the report and needs nothing of it.
+     */
+    LLM(80, "llm");
 
     private Integer id;
 

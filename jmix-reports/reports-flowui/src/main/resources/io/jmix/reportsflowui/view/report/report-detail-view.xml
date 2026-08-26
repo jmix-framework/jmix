@@ -34,6 +34,7 @@
         </instance>
 
         <collection id="availableParentBandsDc" class="io.jmix.reports.entity.BandDefinition"/>
+        <collection id="llmQueryColumnsDc" class="io.jmix.reportsflowui.view.report.model.LlmQueryColumn"/>
         <collection id="groupsDc" class="io.jmix.reports.entity.ReportGroup">
             <loader id="groupsDl"/>
         </collection>
@@ -259,6 +260,84 @@
                                                   label="msg://bandsTab.dataSetTypeLayout.jsonSourceURLTextArea.label"
                                                   property="jsonSourceText" required="true"
                                                   requiredMessage="msg://bandsTab.dataSetTypeLayout.jsonSourceURLTextArea.requiredMessage"/>
+                                    </vbox>
+                                    <vbox id="llmDataSetTypeBox" padding="false" width="100%" height="100%">
+                                        <textArea id="llmPromptField" width="100%" height="100%" minHeight="14em"
+                                                  classNames="llm-editor-block"
+                                                  label="msg://bandsTab.dataSetTypeLayout.llmPromptField.label"
+                                                  dataContainer="dataSetsDc"
+                                                  property="text"/>
+                                        <hbox id="llmGenerateLayout" padding="false" alignItems="CENTER"
+                                              wrap="true">
+                                            <button id="llmGenerateBtn"
+                                                    text="msg://bandsTab.dataSetTypeLayout.llmGenerateBtn.text"
+                                                    themeNames="primary"/>
+                                            <button id="llmEditQueryBtn" themeNames="icon"/>
+                                            <badge id="llmStaleQueryNotice"
+                                                   text="msg://bandsTab.dataSetTypeLayout.llmStaleQueryNotice.text"
+                                                   themeNames="warning" icon="WARNING" role="status"/>
+                                            <badge id="llmColumnsChangedNotice"
+                                                   themeNames="warning" icon="WARNING" role="status"/>
+                                        </hbox>
+                                        <flexLayout id="llmGeneratedQueryBox" classNames="flex-layout llm-editor-block"
+                                                    minHeight="14em"
+                                                    width="100%" expand="llmGeneratedQueryEditorBox">
+                                            <vbox id="llmGeneratedQueryEditorBox" padding="false" spacing="false"
+                                                  height="100%" minWidth="15em"
+                                                  expand="llmGeneratedQueryCodeEditor">
+                                                <flexLayout width="100%" justifyContent="BETWEEN"
+                                                            alignItems="CENTER">
+                                                    <nativeLabel id="llmGeneratedQueryCodeEditorLabel"
+                                                                 text="msg://bandsTab.dataSetTypeLayout.llmGeneratedQueryCodeEditor.label"
+                                                                 classNames="field-label"
+                                                                 setFor="llmGeneratedQueryCodeEditor"/>
+                                                    <button id="llmGeneratedQueryHelpBtn" icon="QUESTION_CIRCLE"
+                                                            classNames="link-button"/>
+                                                </flexLayout>
+                                                <codeEditor id="llmGeneratedQueryCodeEditor"
+                                                            mode="SQL"
+                                                            readOnly="true"
+                                                            showPrintMargin="false"
+                                                            textWrap="true"
+                                                            width="100%" height="100%" minHeight="7em"/>
+                                            </vbox>
+                                            <vbox id="llmGeneratedColumnsBox" padding="false" width="15em"
+                                                  expand="llmGeneratedColumnsDataGrid">
+                                                <flexLayout width="100%" justifyContent="BETWEEN"
+                                                            alignItems="CENTER">
+                                                    <nativeLabel id="llmGeneratedColumnsLabel"
+                                                                 text="msg://bandsTab.dataSetTypeLayout.llmGeneratedColumnsDataGrid.label"
+                                                                 classNames="field-label"/>
+                                                    <hbox id="llmColumnsButtonsLayout" padding="false"
+                                                          spacing="false">
+                                                        <button id="llmAddColumnBtn" icon="PLUS"
+                                                                classNames="link-button">
+                                                            <tooltip
+                                                                    text="msg://bandsTab.dataSetTypeLayout.llmAddColumnBtn.tooltip"/>
+                                                        </button>
+                                                        <button id="llmRemoveColumnBtn" icon="MINUS"
+                                                                classNames="link-button">
+                                                            <tooltip
+                                                                    text="msg://bandsTab.dataSetTypeLayout.llmRemoveColumnBtn.tooltip"/>
+                                                        </button>
+                                                    </hbox>
+                                                </flexLayout>
+                                                <dataGrid id="llmGeneratedColumnsDataGrid"
+                                                          dataContainer="llmQueryColumnsDc"
+                                                          width="100%" height="100%"
+                                                          themeNames="no-border no-header row-stripes">
+                                                    <columns>
+                                                        <column property="name" sortable="false"/>
+                                                    </columns>
+                                                </dataGrid>
+                                            </vbox>
+                                        </flexLayout>
+                                        <vbox id="llmGeneratedQueryNotesBox" padding="false" spacing="false"
+                                              width="100%">
+                                            <span id="llmGeneratedExplanationSpan"/>
+                                            <badge id="llmGeneratedWarningsBadge"
+                                                   themeNames="warning" icon="WARNING" role="status"/>
+                                        </vbox>
                                     </vbox>
                                 </div>
                             </flexLayout>

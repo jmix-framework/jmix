@@ -44,6 +44,22 @@ public class DataSet implements ReportQuery, CopyingSystemState<DataSet> {
     public static final String JSON_INPUT_PROVIDER = "jsonInputProvider";
     public static final String JSON_PATH_QUERY = "jsonPathQuery";
     public static final String JSON_INPUT_PARAMETER = "jsonSourceInputParameter";
+    public static final String LLM_GENERATED_QUERY = "llmGeneratedQuery";
+
+    /**
+     * Name of the band this data set belongs to, published so that a loader can tell what belongs to its own
+     * band. A loader is given a {@code ReportQuery} and the params of the run, and the params of a run are one
+     * mutable map shared by every band of it ({@code ExtractionContextImpl#extendParams}), so an entry named
+     * after another band is indistinguishable from one's own by name alone.
+     */
+    public static final String BAND_NAME = "bandName";
+
+    /**
+     * Orientation of the band this data set belongs to, published for the same reason as {@link #BAND_NAME}:
+     * only a cross-tab band is handed the values of its axes, so a loader that reads them has to know whether
+     * its own band is one.
+     */
+    public static final String BAND_ORIENTATION = "bandOrientation";
 
     private static final long serialVersionUID = -3706206933129963303L;
 
@@ -76,6 +92,8 @@ public class DataSet implements ReportQuery, CopyingSystemState<DataSet> {
     protected String jsonPathQuery;
     @JmixProperty
     protected ReportInputParameter jsonSourceInputParameter;
+    @JmixProperty
+    protected String llmGeneratedQuery;
     @JmixProperty
     protected String entityParamName;
     @JmixProperty
@@ -248,6 +266,19 @@ public class DataSet implements ReportQuery, CopyingSystemState<DataSet> {
         this.jsonPathQuery = jsonPathQuery;
     }
 
+    /**
+     * @return the query generated for the {@link DataSetType#LLM} prompt, or {@code null} if it has not
+     * been generated yet
+     */
+    @Nullable
+    public String getLlmGeneratedQuery() {
+        return llmGeneratedQuery;
+    }
+
+    public void setLlmGeneratedQuery(@Nullable String llmGeneratedQuery) {
+        this.llmGeneratedQuery = llmGeneratedQuery;
+    }
+
     public JsonInputProvider getJsonInputProvider() {
         return jsonInputProvider;
     }
@@ -276,6 +307,9 @@ public class DataSet implements ReportQuery, CopyingSystemState<DataSet> {
         params.put(JSON_PATH_QUERY, jsonPathQuery);
         params.put(JSON_INPUT_PARAMETER, jsonSourceInputParameter);
         params.put(JSON_INPUT_PROVIDER, jsonInputProvider);
+        params.put(LLM_GENERATED_QUERY, llmGeneratedQuery);
+        params.put(BAND_NAME, bandDefinition != null ? bandDefinition.getName() : null);
+        params.put(BAND_ORIENTATION, bandDefinition != null ? bandDefinition.getBandOrientation() : null);
 
         return params;
     }

@@ -24,6 +24,7 @@ import io.jmix.aitools.dataload.repair.JpqlRepairRequest;
 import io.jmix.aitools.dataload.validation.JpqlValidationIssue;
 import io.jmix.aitools.dataload.validation.JpqlValidationResult;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,6 +48,11 @@ class DefaultJpqlRepairerTest {
 
     @Autowired
     StubChatModel stubChatModel;
+
+    @BeforeEach
+    void resetChatModel() {
+        stubChatModel.reset();
+    }
 
     @Test
     @DisplayName("Repairs invalid JPQL result from validation feedback")

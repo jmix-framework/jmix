@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- The content is never rendered: this file only gives the template the 'jrxml' extension,
+     which declares the widest set of output types the user can choose from. -->
+<jasperReport name="WideOutputTemplate"/>

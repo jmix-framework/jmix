@@ -62,6 +62,8 @@ public class DataModelRegistry {
 
     private static final Logger log = LoggerFactory.getLogger(DataModelRegistry.class);
 
+    protected static final String COLUMN_NAME_SEPARATOR = ", ";
+
     protected static class State {
         protected final Map<String, Map<String, DataModel>> dataModels = new HashMap<>();
         protected final ReadWriteLock lock = new ReentrantReadWriteLock();
@@ -287,11 +289,17 @@ public class DataModelRegistry {
                                          List<AttributeModel> attributeModelsList, String dataStoreName,
                                          Map<RelationType, List<Relation>> relationsMap) {
         String fieldType = field.getJavaType().getSimpleName();
+        List<String> joinColumnNames = getJoinColumnNames(field);
 
-        AttributeModel attributeModel = isEmbeddable
-                ? constructAttribute(fieldName, fieldType, isAnnotationPresent(field, NotNull.class))
-                : constructAttribute(getAnnotation(field, JoinColumn.class).name(),
-                fieldName, fieldType, findEntityForField(entity, field), field.isMandatory());
+        AttributeModel attributeModel;
+        if (isEmbeddable) {
+            attributeModel = constructAttribute(fieldName, fieldType, isAnnotationPresent(field, NotNull.class));
+        } else if (joinColumnNames.isEmpty()) {
+            attributeModel = constructAttribute(fieldName, fieldType, field.isMandatory());
+        } else {
+            attributeModel = constructAttribute(joinColumnNames, fieldName, fieldType,
+                    findEntityForField(entity, field), field.isMandatory());
+        }
         attributeModelsList.add(attributeModel);
 
         String referencedClassName = field.getRange().asClass().getName();
@@ -323,13 +331,14 @@ public class DataModelRegistry {
                                         List<AttributeModel> attributeModelsList) {
         AttributeModel attributeModel;
         String fieldType = field.getJavaType().getSimpleName();
+        List<String> joinColumnNames = getJoinColumnNames(field);
 
-        if (isAnnotationPresent(field, JoinColumn.class)) {
+        if (!joinColumnNames.isEmpty()) {
             if (isEmbeddable) {
                 attributeModel = constructAttribute(fieldName, fieldType, isAnnotationPresent(field, NotNull.class));
             } else {
-                attributeModel = constructAttribute(getAnnotation(field, JoinColumn.class).name(),
-                        fieldName, fieldType, findEntityForField(entity, field), field.isMandatory());
+                attributeModel = constructAttribute(joinColumnNames, fieldName, fieldType,
+                        findEntityForField(entity, field), field.isMandatory());
             }
         } else {
             boolean isMandatory = getAnnotation(field, OneToOne.class).optional();
@@ -437,6 +446,19 @@ public class DataModelRegistry {
         AttributeModel attributeModel = constructAttribute(fieldName, fieldType);
         attributeModel.setColumnName(columnName);
         attributeModel.setDbType(getDatabaseColumnType(entity, columnName));
+        attributeModel.setIsMandatory(isMandatory);
+
+        return attributeModel;
+    }
+
+    protected AttributeModel constructAttribute(List<String> columnNames, String fieldName,
+                                                String fieldType, MetaClass entity,
+                                                boolean isMandatory) {
+        AttributeModel attributeModel = constructAttribute(fieldName, fieldType);
+        attributeModel.setColumnName(String.join(COLUMN_NAME_SEPARATOR, columnNames));
+        attributeModel.setDbType(columnNames.stream()
+                .map(columnName -> getDatabaseColumnType(entity, columnName))
+                .collect(Collectors.joining(COLUMN_NAME_SEPARATOR)));
         attributeModel.setIsMandatory(isMandatory);
 
         return attributeModel;
@@ -595,6 +617,21 @@ public class DataModelRegistry {
 
     protected boolean isAnnotationPresent(MetaProperty field, Class<? extends Annotation> annotationClass) {
         return field.getAnnotatedElement().isAnnotationPresent(annotationClass);
+    }
+
+    /**
+     * Returns names of the join columns declared on the given field. Supports both a single {@link JoinColumn}
+     * and a composite foreign key declared via {@link JoinColumns}: {@code JoinColumn} is repeatable, so it is
+     * not directly present on the field when wrapped into the container annotation.
+     *
+     * @param field the field to inspect
+     * @return names of the declared join columns, empty if the field has no explicitly named join column
+     */
+    protected List<String> getJoinColumnNames(MetaProperty field) {
+        return Arrays.stream(field.getAnnotatedElement().getAnnotationsByType(JoinColumn.class))
+                .map(JoinColumn::name)
+                .filter(name -> !name.isEmpty())
+                .toList();
     }
 
     protected <T extends Annotation> T getAnnotation(MetaProperty field, Class<T> annotationClass) {

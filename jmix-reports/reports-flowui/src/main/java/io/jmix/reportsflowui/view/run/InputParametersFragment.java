@@ -50,6 +50,7 @@ import org.springframework.context.ApplicationContextAware;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -73,6 +74,7 @@ public class InputParametersFragment extends Composite<FormLayout>
     protected Report report;
     protected Map<String, Object> parameters;
     protected boolean bulkPrint;
+    protected ReportOutputType requestedOutputType;
     protected String presentationId = ReportExecutionPresentationIds.DEFAULT;
     protected ReportInputParameter inputParameter;
     protected HashMap<String, AbstractField> parameterComponents = new HashMap<>();
@@ -157,6 +159,10 @@ public class InputParametersFragment extends Composite<FormLayout>
         this.bulkPrint = bulkPrint;
     }
 
+    public void setOutputType(@Nullable ReportOutputType outputType) {
+        this.requestedOutputType = outputType;
+    }
+
     public void setPresentationId(String presentationId) {
         this.presentationId = presentationId;
     }
@@ -200,7 +206,10 @@ public class InputParametersFragment extends Composite<FormLayout>
         ReportTemplate template = getEffectiveTemplate();
         var outputTypes = presentation.getAvailableOutputTypes(report, template);
         if (outputTypes.isEmpty()) {
-            ReportOutputType outputType = presentation.resolveDefaultOutputType(report, template, outputTypeComboBox.getValue());
+            // There is nothing to choose from, so the output type is defined by the template or by the explicitly
+            // requested value. The value selected for another template must not be taken into account.
+            ReportOutputType outputType =
+                    presentation.resolveDefaultOutputType(report, template, requestedOutputType);
             if (outputType != null) {
                 outputTypeComboBox.setItems(outputType);
                 outputTypeComboBox.setValue(outputType);
@@ -212,8 +221,11 @@ public class InputParametersFragment extends Composite<FormLayout>
             return;
         }
 
+        // The value must be read before setItems(), because changing the items resets it.
+        ReportOutputType preselectedOutputType = getPreselectedOutputType(outputTypes);
         outputTypeComboBox.setItems(outputTypes);
-        ReportOutputType outputType = presentation.resolveDefaultOutputType(report, template, outputTypeComboBox.getValue());
+        ReportOutputType outputType =
+                presentation.resolveDefaultOutputType(report, template, preselectedOutputType);
         if (outputType != null && outputTypes.contains(outputType)) {
             outputTypeComboBox.setValue(outputType);
         } else {
@@ -223,6 +235,21 @@ public class InputParametersFragment extends Composite<FormLayout>
         boolean multipleOutputTypes = outputTypes.size() > 1;
         outputTypeComboBox.setVisible(multipleOutputTypes);
         outputTypeComboBox.setEnabled(multipleOutputTypes);
+    }
+
+    /**
+     * @return the output type the resolution starts from: the one selected by the user, or the explicitly requested
+     *         one if the selected one is not available for the current template, or {@code null} if neither of them
+     *         is available
+     */
+    @Nullable
+    protected ReportOutputType getPreselectedOutputType(List<ReportOutputType> outputTypes) {
+        ReportOutputType selectedOutputType = outputTypeComboBox.getValue();
+        if (selectedOutputType != null && outputTypes.contains(selectedOutputType)) {
+            return selectedOutputType;
+        }
+
+        return requestedOutputType != null && outputTypes.contains(requestedOutputType) ? requestedOutputType : null;
     }
 
     public Map<String, Object> collectParameters() {

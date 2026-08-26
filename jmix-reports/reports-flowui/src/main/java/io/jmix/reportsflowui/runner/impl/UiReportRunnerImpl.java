@@ -275,6 +275,7 @@ public class UiReportRunnerImpl implements UiReportRunner {
         inputParametersDialog.setInputParameter(inputParameter);
         inputParametersDialog.setParameters(context.getParams());
         inputParametersDialog.setTemplateCode(getTemplateCode(context));
+        inputParametersDialog.setOutputType(context.getOutputType());
         inputParametersDialog.setOutputFileName(context.getOutputNamePattern());
         inputParametersDialog.setBulkPrint(bulkPrint);
         inputParametersDialog.setInBackground(context.getInBackground());

@@ -28,7 +28,7 @@ import org.springframework.stereotype.Component;
 import java.util.Collections;
 import java.util.List;
 
-import static io.jmix.reports.util.ReportTemplateUtils.inputParametersRequiredByTemplates;
+import static io.jmix.reports.util.ReportTemplateUtils.containsAlterableTemplate;
 import static io.jmix.reports.util.ReportTemplateUtils.supportAlterableForTemplate;
 
 @Internal
@@ -86,24 +86,37 @@ public class DefaultReportExecutionPresentation implements ReportExecutionPresen
             return null;
         }
 
-        List<ReportOutputType> outputTypes = getAvailableOutputTypes(report, template);
-        if (!outputTypes.isEmpty()) {
-            if (selectedOutputType != null && outputTypes.contains(selectedOutputType)) {
-                return selectedOutputType;
-            }
-
-            ReportOutputType defaultOutputType = template.getReportOutputType();
-            return defaultOutputType != null && outputTypes.contains(defaultOutputType)
-                    ? defaultOutputType
-                    : outputTypes.get(0);
+        if (selectedOutputType != null) {
+            // The "alterable output" flag restricts the output type selection in the input parameters dialog only,
+            // so an output type requested explicitly, e.g. by the report runner API, is always applied. A type the
+            // template cannot be rendered to is rejected by the formatter with a message naming both of them.
+            return selectedOutputType;
         }
 
-        return template.getReportOutputType();
+        List<ReportOutputType> outputTypes = getAvailableOutputTypes(report, template);
+        if (outputTypes.isEmpty()) {
+            return template.getReportOutputType();
+        }
+
+        ReportOutputType defaultOutputType = template.getReportOutputType();
+        return defaultOutputType != null && outputTypes.contains(defaultOutputType)
+                ? defaultOutputType
+                : outputTypes.get(0);
     }
 
     @Override
     public boolean requiresUserChoice(@Nullable Report report, @Nullable ReportTemplate selectedTemplate,
                                       @Nullable ReportOutputType selectedOutputType) {
-        return report != null && inputParametersRequiredByTemplates(report);
+        if (report == null) {
+            return false;
+        }
+
+        if (getAvailableTemplates(report).size() > 1) {
+            return true;
+        }
+
+        // The output type is the only thing the dialog can ask for, so there is no reason to show it
+        // when the output type is already chosen, e.g. by the report runner API.
+        return selectedOutputType == null && containsAlterableTemplate(report);
     }
 }

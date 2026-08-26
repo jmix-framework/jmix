@@ -155,6 +155,8 @@ public class ReportPresentationRegistry {
                 && report != null
                 && context.getReportTemplate() == null
                 && report.getDefaultTemplate() == null
-                && !presentation.requiresUserChoice(report, null, context.getOutputType());
+                // Asked without the current selection on purpose: whether the report falls back to its first
+                // template or reports the missing default one must not depend on the requested output type.
+                && !presentation.requiresUserChoice(report, null, null);
     }
 }

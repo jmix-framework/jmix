@@ -152,9 +152,15 @@ public final class UiComponentUtils {
                 return getComponentRecursively(getOwnComponents(container), id, idComparator);
             } else {
                 Component innerComponent = innerComponentOpt.get();
-                if (isContainer(innerComponent) || innerComponent instanceof Fragment) {
-                    String subPath = ValuePathHelper.pathSuffix(elements);
+                String subPath = ValuePathHelper.pathSuffix(elements);
+                if (innerComponent instanceof View || innerComponent instanceof Fragment) {
+                    // a view or a fragment starts a new naming context, so the comparator is defined by it
                     return findComponent(innerComponent, subPath);
+                } else if (isContainer(innerComponent)) {
+                    // an ordinary container doesn't change the naming context, so the passed comparator is
+                    // used further. It also makes the lookup independent of the components tree, because
+                    // an inner component may be temporarily detached, e.g. a content of a not selected tab
+                    return findComponent(innerComponent, subPath, idComparator);
                 }
 
                 return Optional.empty();

@@ -43,6 +43,16 @@ public class AiToolStatusPublisher {
     public static final String STATUS_UPDATE_CALLBACK = "aitls_statusUpdateCallback";
 
     /**
+     * Key of the marker entry that the add-on places into the default {@link ToolContext} of its chat
+     * clients, so it is visible to every tool invocation, including application-defined ones.
+     * <p>
+     * Only the presence of the key is part of the contract — its value is unspecified and may change.
+     * An application whose tool iterates, logs or forwards the tool context should reference this
+     * constant to recognise and skip the entry rather than hard-coding the string.
+     */
+    public static final String DEFAULT_TOOL_CONTEXT_MARKER = "aitls_defaultToolContext";
+
+    /**
      * Publishes an in-flight status update — "this step has started, no result yet".
      * Sends an {@link AiToolStatusUpdate} with a blank {@code resultSnippet}.
      *

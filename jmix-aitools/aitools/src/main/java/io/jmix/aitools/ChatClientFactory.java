@@ -16,6 +16,7 @@
 
 package io.jmix.aitools;
 
+import io.jmix.aitools.tool.AiToolStatusPublisher;
 import io.jmix.core.annotation.Internal;
 import io.jmix.core.common.util.Preconditions;
 import org.jspecify.annotations.NullMarked;
@@ -45,8 +46,6 @@ import java.util.function.Consumer;
 public class ChatClientFactory implements InitializingBean {
 
     private static final Logger log = LoggerFactory.getLogger(ChatClientFactory.class);
-
-    private static final String DEFAULT_TOOL_CONTEXT_MARKER = "aitls_defaultToolContext";
 
     @Autowired
     protected ObjectProvider<ChatClient.Builder> chatClientBuilderProvider;
@@ -92,11 +91,6 @@ public class ChatClientFactory implements InitializingBean {
     /**
      * Creates a {@link ChatClient} with the default advisors and tool context, or an empty
      * {@link Optional} when Spring AI is not configured (see {@link #isConfigured()}).
-     * <p>
-     * Spring AI rejects a tool call when the tool method declares a {@code ToolContext} parameter and
-     * the caller passed an empty context, and the tools of this add-on do declare it. The default tool
-     * context holds a marker entry for exactly that reason: the tools take their values from the caller's
-     * own entries, which {@code ChatClientRequestSpec#toolContext(Map)} merges on top of this one.
      *
      * @return a new chat client with default advisors, or empty when Spring AI is not configured
      */
@@ -108,7 +102,8 @@ public class ChatClientFactory implements InitializingBean {
                 clientBuilder.defaultAdvisors(
                                 SimpleLoggerAdvisor.builder().build(),
                                 ToolCallingAdvisor.builder().build())
-                        .defaultToolContext(Map.of(DEFAULT_TOOL_CONTEXT_MARKER, Boolean.TRUE))));
+                        // Keep the tool context non-empty so tools declaring a ToolContext parameter can be called.
+                        .defaultToolContext(Map.of(AiToolStatusPublisher.DEFAULT_TOOL_CONTEXT_MARKER, Boolean.TRUE))));
     }
 
     /**

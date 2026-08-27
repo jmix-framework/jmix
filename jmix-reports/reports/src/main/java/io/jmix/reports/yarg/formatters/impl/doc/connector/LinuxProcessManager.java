@@ -16,8 +16,6 @@
 
 package io.jmix.reports.yarg.formatters.impl.doc.connector;
 
-import io.jmix.reports.yarg.formatters.impl.doc.connector.JavaProcessManager;
-import io.jmix.reports.yarg.formatters.impl.doc.connector.ProcessManager;
 import org.apache.commons.io.IOUtils;
 import org.jspecify.annotations.NullMarked;
 

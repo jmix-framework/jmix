@@ -26,7 +26,7 @@ import java.util.Map;
 /**
  * This interface implementation should create immutable extraction context object
  *
- * <p>The default implementation is <b>io.jmix.reports.yarg.reporting.extraction.DefaultExtractionContextFactory</b></p>
+ * <p>The default implementation is <b>DefaultExtractionContextFactory</b></p>
  */
 @NullMarked
 public interface ExtractionContextFactory {

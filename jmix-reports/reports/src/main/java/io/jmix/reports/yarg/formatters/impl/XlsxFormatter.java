@@ -41,7 +41,6 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.DateUtil;
-import org.apache.poi.ss.usermodel.Drawing;
 import org.apache.poi.ss.usermodel.Picture;
 import org.apache.poi.ss.util.ImageUtils;
 import org.apache.poi.xssf.usermodel.XSSFClientAnchor;
@@ -846,7 +845,7 @@ public class XlsxFormatter extends AbstractFormatter {
 
         if (resultSheet.getSheetData().getRow().size() < firstRow.getR() + templateRange.getLastRow() - templateRange.getFirstRow()) {
             for (int i = 0; i < templateRange.getLastRow() - templateRange.getFirstRow(); i++) {
-                Row row = createNewRow(resultSheet);
+                createNewRow(resultSheet);
             }
         }
         return firstRow;
@@ -970,7 +969,6 @@ public class XlsxFormatter extends AbstractFormatter {
             newRow.getC().add(newCell);
             newCell.setParent(newRow);
 
-            WorksheetPart worksheet = result.getWorksheets().get(0).getWorksheet();
             WorksheetPart worksheetPart = null;
             for (Document.SheetWrapper sheetWrapper : result.getWorksheets()) {
                 Worksheet contents;

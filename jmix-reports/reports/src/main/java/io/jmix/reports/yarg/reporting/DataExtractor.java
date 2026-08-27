@@ -24,7 +24,7 @@ import java.util.Set;
 
 /**
  * This class should load data using ReportQuery objects, convert data onto BandData object and build BandData object tree (link children and parent bands)
- * The default implementation is io.jmix.reports.yarg.reporting.DataExtractorImpl
+ * The default implementation is DataExtractorImpl
  * !Attention! Please make sure if you really need to change this behaviour against default implementation cause it might crash report generation logic
  */
 @FunctionalInterface

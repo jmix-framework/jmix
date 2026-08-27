@@ -15,7 +15,6 @@
  */
 package io.jmix.reports.yarg.formatters.impl.xls;
 
-import io.jmix.reports.yarg.formatters.impl.xls.Cell;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.util.AreaReference;
 

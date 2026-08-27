@@ -16,7 +16,6 @@
 
 package io.jmix.reports.yarg.formatters.impl.docx;
 
-import io.jmix.reports.yarg.formatters.impl.docx.HtmlImportProcessor;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;

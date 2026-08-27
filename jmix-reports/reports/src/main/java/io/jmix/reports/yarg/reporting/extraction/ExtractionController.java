@@ -26,7 +26,7 @@ import java.util.Map;
 /**
  * This interface implementation should contains data extraction logic
  *
- * <p>The default implementation is <b>io.jmix.reports.yarg.reporting.extraction.controller.DefaultExtractionController</b></p>
+ * <p>The default implementation is <b>DefaultExtractionController</b></p>
  */
 @FunctionalInterface
 @NullMarked
@@ -42,7 +42,7 @@ public interface ExtractionController {
     /**
      * <p>Method may presents specific logic for for data extraction without traverse</p>
      * ex: data extraction for root band
-     * io.jmix.reports.yarg.reporting.DataExtractorImpl#extractData
+     * DataExtractorImpl#extractData
      *
      * @param context - should contains band, parent band data and params
      * @return list of loaded data

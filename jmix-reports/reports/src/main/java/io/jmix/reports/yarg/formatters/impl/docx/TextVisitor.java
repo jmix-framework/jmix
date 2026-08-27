@@ -17,8 +17,6 @@
 package io.jmix.reports.yarg.formatters.impl.docx;
 
 import io.jmix.reports.yarg.formatters.impl.DocxFormatterDelegate;
-import io.jmix.reports.yarg.formatters.impl.docx.AliasVisitor;
-import io.jmix.reports.yarg.formatters.impl.docx.TextWrapper;
 import org.docx4j.wml.Text;
 
 import java.util.HashSet;

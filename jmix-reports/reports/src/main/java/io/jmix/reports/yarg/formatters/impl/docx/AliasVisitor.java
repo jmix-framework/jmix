@@ -18,7 +18,6 @@ package io.jmix.reports.yarg.formatters.impl.docx;
 
 import io.jmix.reports.yarg.formatters.impl.AbstractFormatter;
 import io.jmix.reports.yarg.formatters.impl.DocxFormatterDelegate;
-import io.jmix.reports.yarg.formatters.impl.docx.TextMerger;
 import org.docx4j.TraversalUtil;
 import org.docx4j.XmlUtils;
 import org.docx4j.wml.ContentAccessor;

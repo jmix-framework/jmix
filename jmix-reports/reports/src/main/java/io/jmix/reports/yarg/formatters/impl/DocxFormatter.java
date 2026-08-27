@@ -119,7 +119,7 @@ public class DocxFormatter extends AbstractFormatter {
     }
 
     protected void handleUrls() {
-        UrlVisitor urlVisitor = new UrlVisitor(new io.jmix.reports.yarg.formatters.impl.DocxFormatterDelegate(this), wordprocessingMLPackage.getMainDocumentPart());
+        UrlVisitor urlVisitor = new UrlVisitor(new DocxFormatterDelegate(this), wordprocessingMLPackage.getMainDocumentPart());
         new TraversalUtil(wordprocessingMLPackage.getMainDocumentPart(), urlVisitor);
     }
 

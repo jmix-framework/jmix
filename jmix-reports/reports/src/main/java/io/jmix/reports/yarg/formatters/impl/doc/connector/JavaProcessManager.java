@@ -16,7 +16,6 @@
 
 package io.jmix.reports.yarg.formatters.impl.doc.connector;
 
-import io.jmix.reports.yarg.formatters.impl.doc.connector.ProcessManager;
 import org.jspecify.annotations.NullMarked;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

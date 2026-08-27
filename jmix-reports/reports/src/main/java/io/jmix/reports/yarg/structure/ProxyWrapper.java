@@ -21,7 +21,7 @@ import org.jspecify.annotations.NullMarked;
 /**
  * This interface used for proxy wrapping
  *
- * <p>ex: io.jmix.reports.yarg.reporting.extraction.preprocessor.SqlCrosstabPreprocessor#preprocess</p>
+ * <p>ex: SqlCrosstabPreprocessor#preprocess</p>
  */
 @NullMarked
 public interface ProxyWrapper {

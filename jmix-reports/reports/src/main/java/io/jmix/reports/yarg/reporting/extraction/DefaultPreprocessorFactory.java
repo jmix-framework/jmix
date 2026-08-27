@@ -60,4 +60,5 @@ public class DefaultPreprocessorFactory implements PreprocessorFactory {
     public Map<String, QueryLoaderPreprocessor> getPreprocessors() {
         return Collections.unmodifiableMap(preprocessorMap);
     }
+
 }

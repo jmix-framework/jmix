@@ -34,7 +34,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 @NullMarked
 public class DataExtractorImpl implements DataExtractor {
-    protected static final Map<String, Object> EMPTY_MAP = Collections.emptyMap();
 
     protected ReportLoaderFactory loaderFactory;
     protected ExtractionContextFactory contextFactory;

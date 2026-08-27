@@ -231,7 +231,7 @@ public abstract class AbstractDbDataLoader extends AbstractDataLoader {
             // Replace multiple parameter with (?,..(N)..,?)
             List<?> multipleValues = parameter.getMultipleValues();
             StringBuilder builder = new StringBuilder(" (");
-            for (Object value : multipleValues) {
+            for (int i = 0; i < multipleValues.size(); i++) {
                 builder.append("?,");
             }
             builder.deleteCharAt(builder.length() - 1);

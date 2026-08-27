@@ -23,7 +23,7 @@ import org.jspecify.annotations.NullMarked;
 import org.xlsx4j.sml.Cell;
 
 @NullMarked
-public class CustomCellStyleXlsxHint extends io.jmix.reports.yarg.formatters.impl.xlsx.hints.AbstractXlsxHint {
+public class CustomCellStyleXlsxHint extends AbstractXlsxHint {
     protected Document document;
 
     public CustomCellStyleXlsxHint(Document document) {

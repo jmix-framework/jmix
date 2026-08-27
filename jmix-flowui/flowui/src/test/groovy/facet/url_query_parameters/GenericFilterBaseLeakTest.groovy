@@ -19,15 +19,15 @@ package facet.url_query_parameters
 import com.vaadin.flow.router.QueryParameters
 import facet.url_query_parameters.view.GenericFilterBaseLeakTestView
 import facet.url_query_parameters.view.GenericFilterConfigsTestView
-import io.jmix.core.querycondition.Condition
-import io.jmix.core.querycondition.LogicalCondition
 import io.jmix.core.querycondition.PropertyCondition
 import io.jmix.flowui.component.genericfilter.Configuration
-import io.jmix.flowui.component.propertyfilter.PropertyFilter
-import io.jmix.flowui.facet.UrlQueryParametersFacet
-import io.jmix.flowui.facet.urlqueryparameters.GenericFilterUrlQueryParametersBinder
 import org.springframework.boot.test.context.SpringBootTest
 import test_support.spec.FlowuiTestSpecification
+
+import static component.genericfilter.TestFilterConditions.hasPropertyConditionOn
+import static component.genericfilter.TestFilterConditions.propertyConditionsOn
+import static facet.url_query_parameters.TestGenericFilterUrlBinders.getBinder
+import static facet.url_query_parameters.TestGenericFilterUrlBinders.propertyFilterOn
 
 /**
  * Opening a view directly by a URL that already carries generic filter parameters (as happens when
@@ -65,13 +65,13 @@ class GenericFilterBaseLeakTest extends FlowuiTestSpecification {
         screen.ownersFilter.apply()
 
         then: "the loader still filters by 'name' exactly once, by the new value"
-        namePropertyConditions(screen.ownersDl.condition)*.parameterValue == ["mey"]
+        propertyConditionsOn(screen.ownersDl.condition, "name")*.parameterValue == ["mey"]
     }
 
-    def "a configuration activated during init: URL value change must not accumulate loader conditions"() {
-        given: "a view whose configuration is made current during init (as a default configuration is)"
+    def "control: a configuration made current during init never accumulated the URL condition"() {
+        given: "a view whose configuration is made current during init, so the filter has already captured its base"
         def screen = navigateToView(GenericFilterConfigsTestView)
-        def binder = GenericFilterReNavigationTest.getBinder(screen)
+        def binder = getBinder(screen)
         Configuration active = screen.ownersFilter.getConfiguration("active")
 
         when: "the view is opened by a URL carrying that configuration and a condition value"
@@ -81,11 +81,11 @@ class GenericFilterBaseLeakTest extends FlowuiTestSpecification {
         ]))
 
         and: "the user changes the filter value"
-        GenericFilterReNavigationTest.propertyFilterOn(active, "name").setValue("mey")
+        propertyFilterOn(active, "name").setValue("mey")
         screen.ownersFilter.apply()
 
         then: "the loader filters by 'name' exactly once, by the new value"
-        namePropertyConditions(screen.ownersFilter.dataLoader.condition)*.parameterValue == ["mey"]
+        propertyConditionsOn(screen.ownersFilter.dataLoader.condition, "name")*.parameterValue == ["mey"]
     }
 
     def "a non-logical base condition set by the application must not absorb the URL condition"() {
@@ -108,17 +108,17 @@ class GenericFilterBaseLeakTest extends FlowuiTestSpecification {
         screen.ownersFilter.apply()
 
         then: "the loader filters by 'name' exactly once, and the application condition is kept"
-        namePropertyConditions(screen.ownersDl.condition)*.parameterValue == ["mey"]
-        allPropertyConditions(screen.ownersDl.condition).any { it.property == "email" }
+        propertyConditionsOn(screen.ownersDl.condition, "name")*.parameterValue == ["mey"]
+        hasPropertyConditionOn(screen.ownersDl.condition, "email")
     }
 
-    def "workaround: activating the empty configuration in onInit makes the filter capture a clean base"() {
+    def "a base captured before the URL arrives is not disturbed by the URL condition"() {
         given: "a view opened by a URL with filter parameters"
         def screen = navigateToView(GenericFilterBaseLeakTestView)
         def binder = getBinder(screen)
         Configuration byName = screen.ownersFilter.getConfiguration("byName")
 
-        when: "the application forces the base condition capture before the URL is applied"
+        when: "the base condition is captured before the URL is applied"
         screen.ownersFilter.setCurrentConfiguration(screen.ownersFilter.emptyConfiguration)
 
         and: "the URL parameters arrive and the user then changes the filter value"
@@ -130,42 +130,35 @@ class GenericFilterBaseLeakTest extends FlowuiTestSpecification {
         screen.ownersFilter.apply()
 
         then: "the loader filters by 'name' exactly once, by the new value"
-        namePropertyConditions(screen.ownersDl.condition)*.parameterValue == ["mey"]
+        propertyConditionsOn(screen.ownersDl.condition, "name")*.parameterValue == ["mey"]
 
         and: "the URL-selected configuration is still the current one"
         screen.ownersFilter.currentConfiguration.is(byName)
     }
 
-    // --- helpers ---
+    def "a URL condition added to the empty configuration is applied exactly once"() {
+        given: "a view opened by a URL that carries a condition but selects no configuration"
+        def screen = navigateToView(GenericFilterBaseLeakTestView)
+        def binder = getBinder(screen)
+        Configuration empty = screen.ownersFilter.emptyConfiguration
 
-    static GenericFilterUrlQueryParametersBinder getBinder(screen) {
-        UrlQueryParametersFacet facet = screen.urlQueryParameters
-        return facet.binders
-                .findAll { it instanceof GenericFilterUrlQueryParametersBinder }
-                .first() as GenericFilterUrlQueryParametersBinder
-    }
+        expect: "the filter has not touched the loader condition yet"
+        screen.ownersDl.condition == null
 
-    static PropertyFilter propertyFilterOn(Configuration configuration, String property) {
-        return configuration.rootLogicalFilterComponent.filterComponents.find {
-            it instanceof PropertyFilter && ((PropertyFilter) it).property == property
-        } as PropertyFilter
-    }
+        when:
+        binder.updateState(QueryParameters.simple([
+                (binder.conditionParam): "property:name_equal_lane"
+        ]))
 
-    static List<PropertyCondition> namePropertyConditions(Condition condition) {
-        return allPropertyConditions(condition).findAll { it.property == "name" }
-    }
+        then: "the condition was added to the empty configuration, which became current"
+        screen.ownersFilter.currentConfiguration.is(empty)
+        propertyFilterOn(empty, "name").value == "lane"
 
-    static List<PropertyCondition> allPropertyConditions(Condition condition) {
-        List<PropertyCondition> result = []
-        collectPropertyConditions(condition, result)
-        return result
-    }
+        when: "the user changes the filter value"
+        propertyFilterOn(empty, "name").setValue("mey")
+        screen.ownersFilter.apply()
 
-    static void collectPropertyConditions(Condition condition, List<PropertyCondition> result) {
-        if (condition instanceof LogicalCondition) {
-            condition.conditions.each { collectPropertyConditions(it, result) }
-        } else if (condition instanceof PropertyCondition) {
-            result.add(condition)
-        }
+        then: "the loader filters by 'name' exactly once, by the new value"
+        propertyConditionsOn(screen.ownersDl.condition, "name")*.parameterValue == ["mey"]
     }
 }

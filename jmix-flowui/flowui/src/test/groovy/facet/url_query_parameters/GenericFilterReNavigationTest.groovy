@@ -25,8 +25,6 @@ import io.jmix.flowui.component.genericfilter.Configuration
 import io.jmix.flowui.component.genericfilter.configuration.RunTimeConfiguration
 import io.jmix.flowui.component.logicalfilter.GroupFilter
 import io.jmix.flowui.component.propertyfilter.PropertyFilter
-import io.jmix.flowui.facet.UrlQueryParametersFacet
-import io.jmix.flowui.facet.urlqueryparameters.GenericFilterUrlQueryParametersBinder
 import io.jmix.flowui.model.CollectionLoader
 import io.jmix.flowui.view.View
 import io.jmix.flowui.view.ViewControllerUtils
@@ -34,6 +32,9 @@ import org.springframework.boot.test.context.SpringBootTest
 import test_support.spec.FlowuiTestSpecification
 
 import java.util.concurrent.atomic.AtomicInteger
+
+import static facet.url_query_parameters.TestGenericFilterUrlBinders.getBinder
+import static facet.url_query_parameters.TestGenericFilterUrlBinders.propertyFilterOn
 
 /**
  * Verifies how a {@link io.jmix.flowui.component.genericfilter.GenericFilter} bound via the
@@ -566,13 +567,6 @@ class GenericFilterReNavigationTest extends FlowuiTestSpecification {
 
     // --- helpers ---
 
-    static GenericFilterUrlQueryParametersBinder getBinder(screen) {
-        UrlQueryParametersFacet facet = screen.urlQueryParameters
-        return facet.binders
-                .findAll { it instanceof GenericFilterUrlQueryParametersBinder }
-                .first() as GenericFilterUrlQueryParametersBinder
-    }
-
     static List currentComponents(screen) {
         return screen.ownersFilter.currentConfiguration.rootLogicalFilterComponent.filterComponents
     }
@@ -581,12 +575,6 @@ class GenericFilterReNavigationTest extends FlowuiTestSpecification {
         return configuration.rootLogicalFilterComponent.filterComponents.any {
             it instanceof PropertyFilter && ((PropertyFilter) it).property == property
         }
-    }
-
-    static PropertyFilter propertyFilterOn(Configuration configuration, String property) {
-        return configuration.rootLogicalFilterComponent.filterComponents.find {
-            it instanceof PropertyFilter && ((PropertyFilter) it).property == property
-        } as PropertyFilter
     }
 
     static List<String> nestedProperties(GroupFilter group) {

@@ -16,6 +16,7 @@
 
 package io.jmix.aitools;
 
+import io.jmix.aitools.tool.AiToolStatusPublisher;
 import io.jmix.core.annotation.Internal;
 import io.jmix.core.common.util.Preconditions;
 import org.jspecify.annotations.NullMarked;
@@ -31,6 +32,7 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
 
@@ -87,8 +89,8 @@ public class ChatClientFactory implements InitializingBean {
     }
 
     /**
-     * Creates a {@link ChatClient} with the default advisors, or an empty {@link Optional} when
-     * Spring AI is not configured (see {@link #isConfigured()}).
+     * Creates a {@link ChatClient} with the default advisors and tool context, or an empty
+     * {@link Optional} when Spring AI is not configured (see {@link #isConfigured()}).
      *
      * @return a new chat client with default advisors, or empty when Spring AI is not configured
      */
@@ -98,8 +100,10 @@ public class ChatClientFactory implements InitializingBean {
         }
         return Optional.of(createChatClient(clientBuilder ->
                 clientBuilder.defaultAdvisors(
-                        SimpleLoggerAdvisor.builder().build(),
-                        ToolCallingAdvisor.builder().build())));
+                                SimpleLoggerAdvisor.builder().build(),
+                                ToolCallingAdvisor.builder().build())
+                        // Keep the tool context non-empty so tools declaring a ToolContext parameter can be called.
+                        .defaultToolContext(Map.of(AiToolStatusPublisher.DEFAULT_TOOL_CONTEXT_MARKER, Boolean.TRUE))));
     }
 
     /**

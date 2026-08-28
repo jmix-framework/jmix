@@ -530,6 +530,10 @@ public class GenericFilterUrlQueryParametersBinder extends AbstractUrlQueryParam
         propertyFilter.setOperationEditable(true);
 
         propertyFilter.setParameterName(PropertyConditionUtils.generateParameterName(property));
+        // A throwaway carrier of the URL value: whether matched onto a configuration condition, adopted
+        // by the root group, or rejected, the component itself is discarded, so it must never contribute
+        // to the data loader condition on its own (as AbstractFilterComponentConverter / GroupFilter.add).
+        propertyFilter.setConditionModificationDelegated(true);
         propertyFilter.setDataLoader(dataLoader);
 
         propertyFilter.setValueComponent(generatePropertyFilterValueComponent(propertyFilter));

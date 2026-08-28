@@ -35,6 +35,16 @@ class TestFilterConditions {
         return false
     }
 
+    static List<PropertyCondition> propertyConditionsOn(Condition condition, String property) {
+        if (condition instanceof PropertyCondition) {
+            return property == condition.property ? [condition] : []
+        }
+        if (condition instanceof LogicalCondition) {
+            return condition.conditions.collectMany { propertyConditionsOn(it, property) }
+        }
+        return []
+    }
+
     static int countPropertyConditions(Condition condition) {
         if (condition instanceof PropertyCondition) {
             return 1

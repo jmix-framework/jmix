@@ -19,10 +19,11 @@ package facet.url_query_parameters
 import com.vaadin.flow.router.QueryParameters
 import facet.url_query_parameters.view.GenericFilterUrlQueryParamsTestView
 import io.jmix.flowui.component.propertyfilter.PropertyFilter
-import io.jmix.flowui.facet.UrlQueryParametersFacet
 import io.jmix.flowui.facet.urlqueryparameters.GenericFilterUrlQueryParametersBinder
 import org.springframework.boot.test.context.SpringBootTest
 import test_support.spec.FlowuiTestSpecification
+
+import static facet.url_query_parameters.TestGenericFilterUrlBinders.getBinder
 
 /**
  * Sanity check that {@link GenericFilterUrlQueryParametersBinder} does not suffer from the
@@ -81,10 +82,4 @@ class GenericFilterUrlQueryParametersBinderTest extends FlowuiTestSpecification 
         return components.first() as PropertyFilter<?>
     }
 
-    private GenericFilterUrlQueryParametersBinder getBinder(GenericFilterUrlQueryParamsTestView screen) {
-        UrlQueryParametersFacet facet = screen.urlQueryParameters
-        return facet.binders
-                .findAll { it instanceof GenericFilterUrlQueryParametersBinder }
-                .first() as GenericFilterUrlQueryParametersBinder
-    }
 }

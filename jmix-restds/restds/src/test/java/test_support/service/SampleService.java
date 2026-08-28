@@ -24,8 +24,11 @@ import test_support.entity.CustomerContact;
 import test_support.entity.Employee;
 
 import java.net.URI;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.OffsetDateTime;
+import java.time.OffsetTime;
 import java.util.*;
 
 @RemoteService(store = "restService1")
@@ -84,6 +87,8 @@ public interface SampleService {
     SamplePojo pojoMethod(SamplePojo param);
 
     SamplePojoWithEntity pojoWithEntityMethod(SamplePojoWithEntity param);
+
+    SamplePojoWithDates pojoWithDatesMethod(SamplePojoWithDates param);
 
     SampleRecord recordMethod(SampleRecord param);
 
@@ -165,6 +170,63 @@ public interface SampleService {
         @Override
         public int hashCode() {
             return Objects.hash(getName(), getCustomer());
+        }
+    }
+
+    class SamplePojoWithDates {
+        private Date date;
+        private LocalDate localDate;
+        private LocalDateTime localDateTime;
+        private LocalTime localTime;
+        private OffsetDateTime offsetDateTime;
+        private OffsetTime offsetTime;
+
+        public Date getDate() {
+            return date;
+        }
+
+        public void setDate(Date date) {
+            this.date = date;
+        }
+
+        public LocalDate getLocalDate() {
+            return localDate;
+        }
+
+        public void setLocalDate(LocalDate localDate) {
+            this.localDate = localDate;
+        }
+
+        public LocalDateTime getLocalDateTime() {
+            return localDateTime;
+        }
+
+        public void setLocalDateTime(LocalDateTime localDateTime) {
+            this.localDateTime = localDateTime;
+        }
+
+        public LocalTime getLocalTime() {
+            return localTime;
+        }
+
+        public void setLocalTime(LocalTime localTime) {
+            this.localTime = localTime;
+        }
+
+        public OffsetDateTime getOffsetDateTime() {
+            return offsetDateTime;
+        }
+
+        public void setOffsetDateTime(OffsetDateTime offsetDateTime) {
+            this.offsetDateTime = offsetDateTime;
+        }
+
+        public OffsetTime getOffsetTime() {
+            return offsetTime;
+        }
+
+        public void setOffsetTime(OffsetTime offsetTime) {
+            this.offsetTime = offsetTime;
         }
     }
 

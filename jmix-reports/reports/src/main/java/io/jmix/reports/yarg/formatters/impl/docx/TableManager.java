@@ -40,6 +40,7 @@ public class TableManager {
     protected String bandName = null;
     protected boolean skipIt = false;
     protected List<Text> multilineTexts = new ArrayList<>();
+    protected int rowToCopyIndex = -1;
 
     TableManager(DocxFormatterDelegate docxFormatter, Tbl tbl) {
         this.docxFormatter = docxFormatter;
@@ -55,9 +56,23 @@ public class TableManager {
     public Tr copyRow(Tr row) {
         Tr copiedRow = XmlUtils.deepCopy(row);
         new TraversalUtil(copiedRow, INVARIANTS_SETTER);//set parent for each sub-element of copied row (otherwise parent would be JaxbElement)
-        int index = table.getContent().indexOf(row);
-        table.getContent().add(index, copiedRow);
+        List<Object> content = table.getContent();
+        int index = indexOfRowToCopy(content, row);
+        content.add(index, copiedRow);
+        rowToCopyIndex = index + 1;//The copy took the place of the row, so the row moved one position forward.
         return copiedRow;
+    }
+
+    /**
+     * Returns the position of the row to copy, remembered from the previous copy when it still holds that
+     * position. A row is copied once per band of the report, so searching for it would scan all the copies
+     * inserted before it.
+     */
+    protected int indexOfRowToCopy(List<Object> content, Tr row) {
+        if (rowToCopyIndex >= 0 && rowToCopyIndex < content.size() && content.get(rowToCopyIndex) == row) {
+            return rowToCopyIndex;
+        }
+        return content.indexOf(row);
     }
 
     public void fillRowFromBand(Tr row, final BandData band) {

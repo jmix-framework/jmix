@@ -48,6 +48,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -63,10 +64,23 @@ public class DocxFormatter extends AbstractFormatter {
     protected DocumentConverter documentConverter;
     protected HtmlImportProcessor htmlImportProcessor;
 
+    /**
+     * Band paths already resolved for the aliases of the template. An alias of a field of the band being
+     * printed matches no band name, so resolving it walks the whole band tree, and a tabulated region meets
+     * the same aliases once per row of the report. The band tree does not change while the document is being
+     * rendered, so an alias always resolves to the same band path.
+     */
+    protected final Map<String, BandPathAndParameterName> resolvedBandPaths = new HashMap<>();
+
     public DocxFormatter(FormatterFactoryInput formatterFactoryInput) {
         super(formatterFactoryInput);
         supportedOutputTypes.add(ReportOutputType.docx);
         supportedOutputTypes.add(ReportOutputType.pdf);
+    }
+
+    @Override
+    protected BandPathAndParameterName separateBandNameAndParameterName(String alias) {
+        return resolvedBandPaths.computeIfAbsent(alias, super::separateBandNameAndParameterName);
     }
 
     public void setDocumentConverter(DocumentConverter documentConverter) {

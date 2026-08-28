@@ -85,4 +85,17 @@ public interface Metadata extends Session {
      * @return              entity instance
      */
     Object create(String entityName, Object id);
+
+    /**
+     * Instantiate an entity that already exists, for example when the entity is deserialized from JSON.
+     * <p>
+     * Unlike {@link #create(MetaClass)}, invokes only the {@link EntityInitializer} beans that are
+     * {@link EntityInitializer#isApplicableToExistingEntity() applicable to existing entities}.
+     *
+     * @param metaClass     entity MetaClass
+     * @return              entity instance
+     */
+    default Object createForExistingEntity(MetaClass metaClass) {
+        return create(metaClass);
+    }
 }

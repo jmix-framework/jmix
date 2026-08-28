@@ -154,12 +154,7 @@ public class MetadataImpl implements Metadata {
         return internalCreate(metaClass.getJavaClass(), id);
     }
 
-    /**
-     * Creates an instance for an entity that already exists, for example when the entity is deserialized from JSON.
-     * <p>
-     * Unlike {@link #create(MetaClass)}, invokes only the {@link EntityInitializer} beans that are
-     * {@link EntityInitializer#isApplicableToExistingEntity() applicable to existing entities}.
-     */
+    @Override
     public Object createForExistingEntity(MetaClass metaClass) {
         return internalCreate(metaClass.getJavaClass(), null, EntityInitializer::isApplicableToExistingEntity);
     }

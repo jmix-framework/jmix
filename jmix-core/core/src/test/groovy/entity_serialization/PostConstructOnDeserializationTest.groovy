@@ -23,6 +23,8 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ContextConfiguration
 import spock.lang.Specification
 import test_support.base.TestBaseConfiguration
+import test_support.base.entity.TestEmbeddedOwnerEntity
+import test_support.base.entity.TestPostConstructEmbeddable
 import test_support.base.entity.TestPostConstructEntity
 
 @ContextConfiguration(classes = [CoreConfiguration, TestBaseConfiguration])
@@ -56,6 +58,19 @@ class PostConstructOnDeserializationTest extends Specification {
 
         then:
         TestPostConstructEntity.initCount.get() == 0
+        // the value comes from JSON, not from the @PostConstruct method
         entity.name == 'default name'
+    }
+
+    def "@PostConstruct of an embedded entity is not invoked when the owning entity is deserialized"() {
+
+        def json = entitySerialization.toJson(metadata.create(TestEmbeddedOwnerEntity))
+        TestPostConstructEmbeddable.initCount.set(0)
+
+        when:
+        entitySerialization.entityFromJson(json, metadata.getClass(TestEmbeddedOwnerEntity))
+
+        then:
+        TestPostConstructEmbeddable.initCount.get() == 0
     }
 }

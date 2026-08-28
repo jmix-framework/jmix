@@ -33,6 +33,15 @@ public class EntityEmbeddedInitializer implements EntityInitializer, Ordered {
     @Autowired
     protected Metadata metadata;
 
+    /**
+     * Returns false because the created embedded instances are always discarded by the caller: the entity is
+     * populated from the existing data right after creation.
+     */
+    @Override
+    public boolean isApplicableToExistingEntity() {
+        return false;
+    }
+
     @Override
     public void initEntity(Object entity) {
         MetaClass metaClass = metadata.getClass(entity);

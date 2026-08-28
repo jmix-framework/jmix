@@ -81,6 +81,12 @@ public class CoreProperties {
     String entitySerializationTokenEncryptionKey;
 
     /**
+     * Whether the @PostConstruct methods of entities are invoked when an entity instance is created during
+     * deserialization from JSON. The entity is not new in this case, so the default value is false.
+     */
+    boolean invokePostConstructOnEntityDeserialization;
+
+    /**
      * Whether potentially dangerous runtime features are enabled.
      */
     boolean unsafeRuntimeFeaturesEnabled;
@@ -175,7 +181,8 @@ public class CoreProperties {
             @DefaultValue("true") boolean instanceNameFallbackEnabled,
             @DefaultValue("false") boolean dataObservationEnabled,
             @DefaultValue("true") boolean useUserInfoForObservation,
-            @DefaultValue("true") boolean applicationInfoFileEnabled) {
+            @DefaultValue("true") boolean applicationInfoFileEnabled,
+            @DefaultValue("false") boolean invokePostConstructOnEntityDeserialization) {
         this.webHostName = webHostName;
         this.webPort = webPort;
         this.confDir = confDir;
@@ -210,6 +217,7 @@ public class CoreProperties {
         this.dataObservationEnabled = dataObservationEnabled;
         this.useUserInfoForObservation = useUserInfoForObservation;
         this.applicationInfoFileEnabled = applicationInfoFileEnabled;
+        this.invokePostConstructOnEntityDeserialization = invokePostConstructOnEntityDeserialization;
     }
 
     public String getWebHostName() {
@@ -282,6 +290,13 @@ public class CoreProperties {
      */
     public boolean isEntitySerializationTokenRequired() {
         return entitySerializationTokenRequired;
+    }
+
+    /**
+     * @see #invokePostConstructOnEntityDeserialization
+     */
+    public boolean isInvokePostConstructOnEntityDeserialization() {
+        return invokePostConstructOnEntityDeserialization;
     }
 
     public String getEntitySerializationTokenEncryptionKey() {

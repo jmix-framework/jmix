@@ -485,7 +485,7 @@ public class EntitySerializationImpl implements EntitySerialization {
                 throw new EntitySerializationException("Cannot deserialize an entity. MetaClass is not defined");
             }
 
-            Object entity = metadata.create(resultMetaClass);
+            Object entity = metadata.createForExistingEntity(resultMetaClass);
             clearFields(entity);
 
             MetaProperty primaryKeyProperty = metadataTools.getPrimaryKeyProperty(resultMetaClass);
@@ -673,7 +673,7 @@ public class EntitySerializationImpl implements EntitySerialization {
 
         protected Object readEmbeddedEntity(JsonObject jsonObject, MetaProperty metaProperty) {
             MetaClass metaClass = metaProperty.getRange().asClass();
-            Object entity = metadata.create(metaClass);
+            Object entity = metadata.createForExistingEntity(metaClass);
             clearFields(entity);
             readFields(jsonObject, entity);
 

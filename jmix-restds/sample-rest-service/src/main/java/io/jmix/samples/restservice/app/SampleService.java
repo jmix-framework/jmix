@@ -26,8 +26,11 @@ import io.jmix.samples.restservice.entity.CustomerContact;
 import io.jmix.samples.restservice.entity.Employee;
 
 import java.net.URI;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.OffsetDateTime;
+import java.time.OffsetTime;
 import java.util.*;
 
 @RestService("SampleService")
@@ -188,6 +191,11 @@ public class SampleService {
     }
 
     @RestMethod
+    public SamplePojoWithDates pojoWithDatesMethod(SamplePojoWithDates param) {
+        return param;
+    }
+
+    @RestMethod
     public SampleRecord recordMethod(SampleRecord param) {
         return param;
     }
@@ -234,6 +242,63 @@ public class SampleService {
     }
 
     public record MultipleParamsPojo(int number, String str, Customer entity, SamplePojo pojo) {}
+
+    public static class SamplePojoWithDates {
+        private Date date;
+        private LocalDate localDate;
+        private LocalDateTime localDateTime;
+        private LocalTime localTime;
+        private OffsetDateTime offsetDateTime;
+        private OffsetTime offsetTime;
+
+        public Date getDate() {
+            return date;
+        }
+
+        public void setDate(Date date) {
+            this.date = date;
+        }
+
+        public LocalDate getLocalDate() {
+            return localDate;
+        }
+
+        public void setLocalDate(LocalDate localDate) {
+            this.localDate = localDate;
+        }
+
+        public LocalDateTime getLocalDateTime() {
+            return localDateTime;
+        }
+
+        public void setLocalDateTime(LocalDateTime localDateTime) {
+            this.localDateTime = localDateTime;
+        }
+
+        public LocalTime getLocalTime() {
+            return localTime;
+        }
+
+        public void setLocalTime(LocalTime localTime) {
+            this.localTime = localTime;
+        }
+
+        public OffsetDateTime getOffsetDateTime() {
+            return offsetDateTime;
+        }
+
+        public void setOffsetDateTime(OffsetDateTime offsetDateTime) {
+            this.offsetDateTime = offsetDateTime;
+        }
+
+        public OffsetTime getOffsetTime() {
+            return offsetTime;
+        }
+
+        public void setOffsetTime(OffsetTime offsetTime) {
+            this.offsetTime = offsetTime;
+        }
+    }
 
     public static class SamplePojo {
         private String name;

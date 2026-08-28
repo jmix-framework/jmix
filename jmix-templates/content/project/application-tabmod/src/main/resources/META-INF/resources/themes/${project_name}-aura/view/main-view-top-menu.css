@@ -1,7 +1,7 @@
 /* Predefined styles for the MainView with a HorizontalMenu */
 
 .jmix-main-view-top-menu-app-layout {
-    --vaadin-app-layout-navbar-padding-bottom: 0px;
+    --vaadin-app-layout-drawer-width: 0px;
 }
 
 vaadin-app-layout.jmix-main-view-top-menu-app-layout::part(navbar) {

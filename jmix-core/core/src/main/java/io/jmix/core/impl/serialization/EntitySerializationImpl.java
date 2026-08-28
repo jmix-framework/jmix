@@ -45,12 +45,23 @@ import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.text.ParseException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.OffsetDateTime;
+import java.time.OffsetTime;
 import java.util.*;
 
 @Component("core_EntitySerialization")
 public class EntitySerializationImpl implements EntitySerialization {
 
     private static final Logger log = LoggerFactory.getLogger(EntitySerializationImpl.class);
+
+    /**
+     * Types which are serialized and deserialized using datatypes because Gson cannot handle them by itself.
+     */
+    protected static final List<Class<?>> DATATYPE_ADAPTER_CLASSES = List.of(
+            LocalDate.class, LocalDateTime.class, LocalTime.class, OffsetDateTime.class, OffsetTime.class);
 
     @Autowired
     protected MetadataTools metadataTools;
@@ -154,8 +165,8 @@ public class EntitySerializationImpl implements EntitySerialization {
         }
         gsonBuilder
                 .registerTypeHierarchyAdapter(Entity.class, new EntitySerializer(fetchPlan, options))
-                .registerTypeHierarchyAdapter(Date.class, new DateSerializer())
-                .create();
+                .registerTypeHierarchyAdapter(Date.class, new DateSerializer());
+        registerDatatypeAdaptersForSerialization(gsonBuilder);
         if (ArrayUtils.contains(options, EntitySerializationOption.SERIALIZE_NULLS)) {
             gsonBuilder.serializeNulls();
         }
@@ -163,10 +174,31 @@ public class EntitySerializationImpl implements EntitySerialization {
     }
 
     protected Gson createGsonForDeserialization(@Nullable MetaClass metaClass, EntitySerializationOption... options) {
-        return new GsonBuilder()
+        GsonBuilder gsonBuilder = new GsonBuilder()
                 .registerTypeHierarchyAdapter(Entity.class, new EntityDeserializer(metaClass, options))
-                .registerTypeHierarchyAdapter(Date.class, new DateDeserializer())
-                .create();
+                .registerTypeHierarchyAdapter(Date.class, new DateDeserializer());
+        registerDatatypeAdaptersForDeserialization(gsonBuilder);
+        return gsonBuilder.create();
+    }
+
+    /**
+     * Registers serializers for the types that Gson cannot handle by itself, e.g. the {@code java.time} types.
+     * The values are written using the corresponding datatypes.
+     */
+    protected void registerDatatypeAdaptersForSerialization(GsonBuilder gsonBuilder) {
+        for (Class<?> javaClass : DATATYPE_ADAPTER_CLASSES) {
+            gsonBuilder.registerTypeAdapter(javaClass, new DatatypeSerializer<>(javaClass));
+        }
+    }
+
+    /**
+     * Registers deserializers for the types that Gson cannot handle by itself, e.g. the {@code java.time} types.
+     * The values are read using the corresponding datatypes.
+     */
+    protected void registerDatatypeAdaptersForDeserialization(GsonBuilder gsonBuilder) {
+        for (Class<?> javaClass : DATATYPE_ADAPTER_CLASSES) {
+            gsonBuilder.registerTypeAdapter(javaClass, new DatatypeDeserializer<>(javaClass));
+        }
     }
 
     @Nullable
@@ -757,6 +789,39 @@ public class EntitySerializationImpl implements EntitySerialization {
                 return Strings.isNullOrEmpty(formattedDate) ? null : dateDatatype.parse(formattedDate);
             } catch (ParseException e) {
                 throw new EntitySerializationException("Cannot parse date " + formattedDate);
+            }
+        }
+    }
+
+    protected class DatatypeSerializer<T> implements JsonSerializer<T> {
+
+        private final Datatype<T> datatype;
+
+        public DatatypeSerializer(Class<T> javaClass) {
+            datatype = datatypeRegistry.get(javaClass);
+        }
+
+        @Override
+        public JsonElement serialize(T src, Type typeOfSrc, JsonSerializationContext context) {
+            return new JsonPrimitive(datatype.format(src));
+        }
+    }
+
+    protected class DatatypeDeserializer<T> implements JsonDeserializer<T> {
+
+        private final Datatype<T> datatype;
+
+        public DatatypeDeserializer(Class<T> javaClass) {
+            datatype = datatypeRegistry.get(javaClass);
+        }
+
+        @Override
+        public T deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+            String formattedValue = json.getAsJsonPrimitive().getAsString();
+            try {
+                return Strings.isNullOrEmpty(formattedValue) ? null : datatype.parse(formattedValue);
+            } catch (ParseException e) {
+                throw new EntitySerializationException("Cannot parse value " + formattedValue);
             }
         }
     }

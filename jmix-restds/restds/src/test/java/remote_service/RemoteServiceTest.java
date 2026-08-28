@@ -34,8 +34,11 @@ import test_support.service.SampleService;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.OffsetDateTime;
+import java.time.OffsetTime;
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -210,6 +213,27 @@ public class RemoteServiceTest extends BaseRestDsIntegrationTest {
         assertThat(resultOffsetDateTime).isEqualTo(offsetDateTime);
 
         // ZonedDateTime is not supported by entities and REST
+    }
+
+    @Test
+    void testDatesInPojo() throws Exception {
+        SampleService.SamplePojoWithDates pojo = new SampleService.SamplePojoWithDates();
+        pojo.setDate(new SimpleDateFormat("yyyy-MM-dd HH:mm").parse("2025-04-26 18:44"));
+        pojo.setLocalDate(LocalDate.parse("2025-04-26"));
+        pojo.setLocalDateTime(LocalDateTime.parse("2025-04-26T18:44"));
+        pojo.setLocalTime(LocalTime.parse("18:44"));
+        pojo.setOffsetDateTime(OffsetDateTime.parse("2025-04-26T18:44+04:00"));
+        pojo.setOffsetTime(OffsetTime.parse("18:44+04:00"));
+
+        SampleService.SamplePojoWithDates resultPojo = sampleService.pojoWithDatesMethod(pojo);
+
+        assertThat(resultPojo).isNotNull();
+        assertThat(resultPojo.getDate()).isEqualTo(pojo.getDate());
+        assertThat(resultPojo.getLocalDate()).isEqualTo(pojo.getLocalDate());
+        assertThat(resultPojo.getLocalDateTime()).isEqualTo(pojo.getLocalDateTime());
+        assertThat(resultPojo.getLocalTime()).isEqualTo(pojo.getLocalTime());
+        assertThat(resultPojo.getOffsetDateTime()).isEqualTo(pojo.getOffsetDateTime());
+        assertThat(resultPojo.getOffsetTime()).isEqualTo(pojo.getOffsetTime());
     }
 
     @Test

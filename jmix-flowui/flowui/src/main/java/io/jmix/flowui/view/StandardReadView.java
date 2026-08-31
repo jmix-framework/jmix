@@ -20,6 +20,8 @@ import com.google.common.base.Strings;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.annotation.Internal;
+import io.jmix.core.common.util.Preconditions;
+import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.flowui.DialogWindows;
@@ -40,6 +42,8 @@ public class StandardReadView<E> extends StandardView implements ReadView<E> {
 
     public static final String DEFAULT_ROUTE_PARAM = "id";
 
+    @Nullable
+    private E entityToRead;
     @Nullable
     private String serializedEntityIdToRead;
 
@@ -96,13 +100,35 @@ public class StandardReadView<E> extends StandardView implements ReadView<E> {
 
     @Override
     public void setEntityToRead(E entity) {
-        throw new UnsupportedOperationException("Not implemented yet");
+        Preconditions.checkNotNullArgument(entity);
+
+        this.entityToRead = entity;
+        setupEntityToRead(entity);
+    }
+
+    /**
+     * Invoked when the view is opened in a dialog window or when {@link #setEntityToRead(Object)} is called
+     * explicitly. Puts the id of the given instance on the loader, so the shown entity is read through the
+     * view's own fetch plan.
+     *
+     * @param entityToRead entity instance to show
+     */
+    protected void setupEntityToRead(E entityToRead) {
+        Object entityId = EntityValues.getId(entityToRead);
+        if (entityId == null) {
+            throw new IllegalArgumentException(String.format(
+                    "Cannot show an entity with no id in %s. A read view shows a stored entity",
+                    getClass().getName()));
+        }
+
+        getEntityLoader().setEntityId(entityId);
     }
 
     @Nullable
     @Override
     public E getEntityOrNull() {
-        return getEntityContainer().getItemOrNull();
+        E item = getEntityContainer().getItemOrNull();
+        return item != null ? item : entityToRead;
     }
 
     protected InstanceContainer<E> getEntityContainer() {

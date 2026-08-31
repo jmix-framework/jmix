@@ -22,7 +22,9 @@ import component.standardreadview.view.OrderReadTestView
 import component.standardreadview.view.ReadBlankTestView
 import io.jmix.core.DataManager
 import io.jmix.flowui.ViewNavigators
+import io.jmix.flowui.model.impl.NoopDataContext
 import io.jmix.flowui.testassist.UiTestUtils
+import io.jmix.flowui.view.ViewControllerUtils
 import io.jmix.flowui.view.navigation.RouteSupport
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -62,6 +64,22 @@ class StandardReadViewTest extends FlowuiTestSpecification {
                 .navigate()
 
         UiTestUtils.getCurrentView() as OrderReadTestView
+    }
+
+    def "read view always gets a read-only data context"() {
+        when: "navigating to a read view whose descriptor does not declare readOnly"
+        def view = navigateToReadView(order.id)
+        def dataContext = ViewControllerUtils.getViewData(view).getDataContext()
+
+        then: "the context is the no-op one"
+        dataContext instanceof NoopDataContext
+
+        when: "an attribute of the shown entity is changed"
+        view.getEntity().number = 'changed'
+
+        then: "nothing is tracked"
+        !dataContext.hasChanges()
+        !dataContext.isModified(view.getEntity())
     }
 
     def "read view without @ReadEntityContainer fails with a meaningful message"() {

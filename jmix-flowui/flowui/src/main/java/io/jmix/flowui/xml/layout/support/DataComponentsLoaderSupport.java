@@ -76,11 +76,41 @@ public class DataComponentsLoaderSupport {
     }
 
     public void load(HasDataComponents dataHolder, Element element) {
-        load(dataHolder, element, null);
+        load(dataHolder, element, null, false);
     }
 
     public void load(HasDataComponents dataHolder, Element element,
                      @Nullable HasDataComponents hostDataHolder) {
+        load(dataHolder, element, hostDataHolder, false);
+    }
+
+    /**
+     * Loads data components declared in the given {@code data} element into the given holder.
+     *
+     * @param dataHolder    holder to load data components into
+     * @param element       {@code data} element
+     * @param forceReadOnly {@code true} to create a read-only data context regardless of the
+     *                      {@code readOnly} attribute of the element
+     */
+    public void load(HasDataComponents dataHolder, Element element, boolean forceReadOnly) {
+        load(dataHolder, element, null, forceReadOnly);
+    }
+
+    /**
+     * Loads data components declared in the given {@code data} element into the given holder.
+     * <p>
+     * If the host data holder has a data context, the loaded holder shares it and {@code forceReadOnly}
+     * has no effect. Otherwise, a new data context is created, and it is read-only if
+     * {@code forceReadOnly} is {@code true} or the element declares the {@code readOnly} attribute.
+     *
+     * @param dataHolder     holder to load data components into
+     * @param element        {@code data} element
+     * @param hostDataHolder host data holder or {@code null} if there is no host
+     * @param forceReadOnly  {@code true} to create a read-only data context regardless of the
+     *                       {@code readOnly} attribute of the element
+     */
+    public void load(HasDataComponents dataHolder, Element element,
+                     @Nullable HasDataComponents hostDataHolder, boolean forceReadOnly) {
         Preconditions.checkNotNullArgument(dataHolder, HasDataComponents.class.getSimpleName() + " is null");
         Preconditions.checkNotNullArgument(element, "Element is null");
 
@@ -90,7 +120,7 @@ public class DataComponentsLoaderSupport {
         if (hostDataContext != null) {
             dataHolder.setDataContext(hostDataContext);
         } else {
-            boolean readOnly = loadReadOnly(element);
+            boolean readOnly = forceReadOnly || loadReadOnly(element);
             DataContext dataContext = readOnly ? new NoopDataContext(applicationContext) : factory.createDataContext();
             dataHolder.setDataContext(dataContext);
         }

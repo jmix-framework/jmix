@@ -1,0 +1,93 @@
+:is(jmix-ai-message-input) {
+  /* Copied from Vaadin to get the same color as other inputs */
+  --aura-surface-opacity: 0.5;
+  --_up: clamp(0, var(--aura-surface-level), 4);
+  --_down: clamp(0, calc(var(--aura-surface-level) * -1), 4);
+  --_u: calc(var(--_up) / 4);
+  --_e-light: clamp(0, calc(var(--_u) * 4 - var(--_u) * 8 * var(--_u) + var(--_u) * 6.5 * var(--_u) * var(--_u)), 1);
+  --_e-dark: calc(var(--_down) / 20);
+  --aura-surface-color-solid: light-dark(oklch(from var(--aura-background-color-light) clamp(0, calc(l + (1 - l) * var(--_e-light) - l * var(--_e-dark)), 1) clamp(0, calc(c * (1 - 0.5 * var(--_e-light) - 0.15 * var(--aura-surface-level)) * (1 - 0.35 * var(--_e-dark))), 0.4) h), oklch(from var(--aura-background-color-dark) calc(max(0.03, l) + 0.03 * var(--aura-surface-level) + max(0, 0.2 - max(0.03, l)) * (1.1 - 0.06 * var(--aura-surface-level))) clamp(0, c * (1 + l), 0.2) h));
+  --aura-surface-color: color-mix(in oklab, var(--aura-surface-color-solid) calc(100% * var(--aura-surface-opacity)), transparent);
+  --vaadin-background-color: var(--aura-surface-color-solid);
+}
+
+:is(jmix-ai-message-input) {
+  --aura-surface-level: 4;
+  --aura-surface-opacity: 0.7;
+}
+
+:is(jmix-ai-message-input)::part(input-container) {
+  background: var(--jmix-ai-message-input-background, var(--aura-surface-color));
+  background-clip: padding-box;
+}
+
+:is(jmix-ai-message-input):not([disabled])::part(input-container) {
+  box-shadow: var(--aura-shadow-xs);
+}
+
+:is(jmix-ai-message-input)[disabled]::part(input-container) {
+  background: var(--vaadin-background-container);
+}
+
+:is(jmix-ai-message-input) > vaadin-text-area::part(input-field) {
+  background: var(--vaadin-input-field-background, transparent);
+}
+
+:is(jmix-ai-message-input)[disabled] > vaadin-text-area::part(input-field) {
+  background: transparent;
+}
+
+:is(jmix-ai-message-input):not([disabled]) > vaadin-text-area::part(input-field) {
+  box-shadow: none;
+}
+
+:is(jmix-ai-message-input-button) {
+  --vaadin-button-background: var(--aura-accent-color);
+  --vaadin-button-text-color: var(--aura-accent-contrast-color);
+  position: relative;
+  box-shadow: var(--aura-shadow-s);
+  transition: scale 180ms;
+}
+
+:is(jmix-ai-message-input-button)::after {
+  content: '';
+  position: absolute;
+  inset: calc(var(--vaadin-button-border-width, 1px) * -1);
+  pointer-events: none;
+  border-radius: inherit;
+  background-color: var(--vaadin-button-text-color);
+  opacity: 0;
+  transition:
+          opacity 100ms,
+          background-color 100ms;
+}
+
+@supports (color: hsl(0 0 0)) {
+  :is(jmix-ai-message-input-button)::after {
+    background-color: oklch(from var(--vaadin-button-text-color) calc(l + 0.4 - c) c h / calc(1 - l / 2));
+  }
+}
+
+@media (any-hover: hover) {
+  :is(jmix-ai-message-input-button):hover:not([disabled], [active])::after {
+    opacity: 0.12;
+  }
+}
+
+@media (min-resolution: 2x) {
+  /* prettier-ignore */
+  :is(jmix-ai-message-input-button)[active]:not([disabled]) {
+    scale: 0.98;
+    transition-duration: 50ms;
+  }
+}
+
+:is(jmix-ai-message-input-button)[active]:not([disabled]) {
+  box-shadow: none;
+}
+
+:is(jmix-ai-message-input-button)[active]:not([disabled])::after {
+  transition-duration: 0s;
+  opacity: 0.16;
+  background: oklch(from var(--vaadin-button-text-color) min(c, 1 - l + c) calc(c * 0.9) h);
+}

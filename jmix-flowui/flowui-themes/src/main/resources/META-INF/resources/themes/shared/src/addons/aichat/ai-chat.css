@@ -1,0 +1,55 @@
+.jmix-ai-chat {
+  display: flex;
+  flex-direction: column;
+  gap: var(--vaadin-gap-m);
+  height: 100%;
+  box-sizing: border-box;
+  --jmix-ai-message-list-max-width: var(--jmix-ai-chat-max-width, 768px);
+  --jmix-ai-message-input-max-width: var(--jmix-ai-chat-max-width, 768px);
+}
+
+.jmix-ai-chat jmix-ai-message-list {
+  flex: 1 1 auto;
+  min-height: 0;
+  width: 100%;
+}
+
+.jmix-ai-chat .jmix-ai-chat-empty-header,
+.jmix-ai-chat .jmix-ai-chat-empty-footer {
+  width: 100%;
+  max-width: var(--jmix-ai-message-input-max-width, 768px);
+  margin-inline: auto;
+}
+
+.jmix-ai-chat[empty] {
+  justify-content: center;
+}
+
+.jmix-ai-chat[empty] jmix-ai-message-list {
+  display: none;
+}
+
+.jmix-ai-chat[empty]:not([theme~='input-header-component-always-visible']) jmix-ai-message-input::part(header) {
+  display: none;
+}
+
+.jmix-ai-chat[empty]:not([theme~='input-footer-component-always-visible']) jmix-ai-message-input::part(footer) {
+  display: none;
+}
+
+.jmix-ai-chat:not([empty]) .jmix-ai-chat-empty-header,
+.jmix-ai-chat:not([empty]) .jmix-ai-chat-empty-footer {
+  display: none;
+}
+
+.jmix-ai-chat .screen-reader-only {
+  border-width: 0;
+  clip: rect(0, 0, 0, 0);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  white-space: nowrap;
+  width: 1px;
+}

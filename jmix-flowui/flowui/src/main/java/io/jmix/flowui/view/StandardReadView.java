@@ -16,6 +16,7 @@
 
 package io.jmix.flowui.view;
 
+import com.google.common.base.Strings;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.annotation.Internal;
@@ -106,15 +107,39 @@ public class StandardReadView<E> extends StandardView implements ReadView<E> {
 
     protected InstanceContainer<E> getEntityContainer() {
         ReadEntityContainer annotation = getClass().getAnnotation(ReadEntityContainer.class);
+        if (annotation == null || Strings.isNullOrEmpty(annotation.value())) {
+            throw new IllegalStateException(
+                    String.format("'%s' does not declare @%s", getClass(),
+                            ReadEntityContainer.class.getSimpleName())
+            );
+        }
+
+        if (annotation.value().contains(".")) {
+            throw new UnsupportedOperationException(
+                    String.format("Can't obtain shown entity container with id: '%s'", annotation.value()));
+        }
+
         return getViewData().getContainer(annotation.value());
     }
 
     @SuppressWarnings("unchecked")
     protected InstanceLoader<E> getEntityLoader() {
         InstanceContainer<E> container = getEntityContainer();
-        DataLoader loader = container instanceof HasLoader
-                ? ((HasLoader) container).getLoader()
-                : null;
+        DataLoader loader = null;
+
+        if (container instanceof HasLoader containerWithLoader) {
+            loader = containerWithLoader.getLoader();
+        }
+
+        if (loader == null) {
+            throw new IllegalStateException("Loader of shown entity container not found");
+        }
+
+        if (!(loader instanceof InstanceLoader)) {
+            throw new IllegalStateException(String.format(
+                    "Loader %s of shown entity container %s must implement %s",
+                    loader, container, InstanceLoader.class.getSimpleName()));
+        }
 
         return (InstanceLoader<E>) loader;
     }

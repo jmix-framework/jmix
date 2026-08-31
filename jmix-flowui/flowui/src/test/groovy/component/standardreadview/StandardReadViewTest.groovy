@@ -16,6 +16,8 @@
 
 package component.standardreadview
 
+import component.standardreadview.view.NoContainerReadTestView
+import component.standardreadview.view.NoLoaderReadTestView
 import component.standardreadview.view.OrderReadTestView
 import component.standardreadview.view.ReadBlankTestView
 import io.jmix.core.DataManager
@@ -60,6 +62,30 @@ class StandardReadViewTest extends FlowuiTestSpecification {
                 .navigate()
 
         UiTestUtils.getCurrentView() as OrderReadTestView
+    }
+
+    def "read view without @ReadEntityContainer fails with a meaningful message"() {
+        when: "navigating to a read view that declares no container"
+        def origin = navigateToView(ReadBlankTestView)
+        navigators.view(origin, NoContainerReadTestView)
+                .withRouteParameters(routeSupport.createRouteParameters('id', order.id))
+                .navigate()
+
+        then: "the failure names the annotation"
+        def e = thrown(IllegalStateException)
+        e.message.contains('ReadEntityContainer')
+    }
+
+    def "read view whose container has no loader fails with a meaningful message"() {
+        when: "navigating to a read view whose container declares no loader"
+        def origin = navigateToView(ReadBlankTestView)
+        navigators.view(origin, NoLoaderReadTestView)
+                .withRouteParameters(routeSupport.createRouteParameters('id', order.id))
+                .navigate()
+
+        then: "the failure names the loader"
+        def e = thrown(IllegalStateException)
+        e.message.contains('Loader')
     }
 
     def "read view loads the entity by the route id"() {

@@ -31,6 +31,7 @@ import com.vaadin.flow.dom.ThemeList;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.core.Messages;
 import io.jmix.core.common.event.EventHub;
+import io.jmix.core.common.event.Subscription;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.component.WrapperUtils;
 import io.jmix.flowui.icon.Icons;
@@ -43,6 +44,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
+import java.util.EventObject;
 import java.util.Optional;
 import java.util.function.Consumer;
 
@@ -55,12 +57,22 @@ public class AbstractDialogWindow<V extends View<?>> implements HasSize, HasThem
         ApplicationContextAware, InitializingBean {
 
     protected static final String BASE_CLASS_NAME = "jmix-dialog-window";
+    protected static final String MAXIMIZED_ATTRIBUTE_NAME = "jmix-maximized";
 
     protected Dialog dialog;
     protected V view;
 
     protected ApplicationContext applicationContext;
     protected HorizontalLayout headerContent;
+
+    @Nullable
+    protected JmixButton maximizeButton;
+
+    protected boolean maximizable = false;
+    protected boolean maximized = false;
+
+    protected boolean resizableBeforeMaximize = false;
+    protected boolean draggableBeforeMaximize = false;
 
     // private, lazily initialized
     private EventHub eventHub = null;
@@ -144,6 +156,7 @@ public class AbstractDialogWindow<V extends View<?>> implements HasSize, HasThem
             }
             setDraggable(dialogMode.draggable());
             setResizable(dialogMode.resizable());
+            setMaximizable(dialogMode.maximizable());
             setCloseOnOutsideClick(dialogMode.closeOnOutsideClick());
             setCloseOnEsc(dialogMode.closeOnEsc());
             setKeepInViewport(dialogMode.keepInViewport());
@@ -188,6 +201,29 @@ public class AbstractDialogWindow<V extends View<?>> implements HasSize, HasThem
         view.closeWithDefaultAction();
     }
 
+    protected JmixButton createHeaderMaximizeButton() {
+        JmixButton maximizeButton = uiComponents().create(JmixButton.class);
+        maximizeButton.addClassNames(BASE_CLASS_NAME + "-maximize-button",
+                StyleUtility.Button.DIALOG_HEADER_BUTTON);
+        maximizeButton.setVisible(maximizable);
+        maximizeButton.addClickListener(this::onMaximizeButtonClicked);
+
+        updateMaximizeButtonState(maximizeButton);
+
+        return maximizeButton;
+    }
+
+    protected void onMaximizeButtonClicked(ClickEvent<Button> event) {
+        setMaximizedInternal(!maximized, true);
+    }
+
+    protected void updateMaximizeButtonState(JmixButton button) {
+        button.setIcon(icons().get(maximized ? JmixFontIcon.COMPRESS : JmixFontIcon.EXPAND));
+        button.setTitle(messages().getMessage(maximized
+                ? "dialogWindow.restoreButton.description"
+                : "dialogWindow.maximizeButton.description"));
+    }
+
     protected Div createHeaderWrapper() {
         Div headerWrapper = uiComponents().create(Div.class);
         headerWrapper.setClassName(BASE_CLASS_NAME + "-header-wrapper");
@@ -198,6 +234,9 @@ public class AbstractDialogWindow<V extends View<?>> implements HasSize, HasThem
         headerContent.setPadding(false);
 
         headerWrapper.add(headerContent);
+
+        maximizeButton = createHeaderMaximizeButton();
+        headerWrapper.add(maximizeButton);
 
         Button closeButton = createHeaderCloseButton();
         if (closeButton != null) {
@@ -278,6 +317,19 @@ public class AbstractDialogWindow<V extends View<?>> implements HasSize, HasThem
      */
     public Registration addDraggedListener(ComponentEventListener<Dialog.DialogDraggedEvent> listener) {
         return dialog.addDraggedListener(listener);
+    }
+
+    /**
+     * Adds a listener that is notified when the dialog window is maximized or restored.
+     *
+     * @param listener the listener to add
+     * @return a Registration for removing the event listener
+     * @see #setMaximized(boolean)
+     */
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    public Registration addMaximizedChangeListener(Consumer<MaximizedChangeEvent<V>> listener) {
+        Subscription subscription = getEventHub().subscribe(MaximizedChangeEvent.class, ((Consumer) listener));
+        return Registration.once(subscription::remove);
     }
 
     /**
@@ -411,30 +463,117 @@ public class AbstractDialogWindow<V extends View<?>> implements HasSize, HasThem
      * @return whether dialog is enabled to be dragged or not.
      */
     public boolean isDraggable() {
-        return dialog.isDraggable();
+        return maximized ? draggableBeforeMaximize : dialog.isDraggable();
     }
 
     /**
+     * Sets whether dialog is enabled to be dragged by the user or not. While the dialog is
+     * maximized, dragging is suppressed and the passed value is applied when the dialog
+     * is restored.
+     *
      * @param draggable {@code true} to enable dragging of the dialog, {@code false} otherwise
      */
     public void setDraggable(boolean draggable) {
-        dialog.setDraggable(draggable);
+        if (maximized) {
+            draggableBeforeMaximize = draggable;
+        } else {
+            dialog.setDraggable(draggable);
+        }
     }
 
     /**
      * @return whether dialog is enabled to be resized or not.
      */
     public boolean isResizable() {
-        return dialog.isResizable();
+        return maximized ? resizableBeforeMaximize : dialog.isResizable();
     }
 
     /**
-     * Sets whether dialog can be resized by user or not.
+     * Sets whether dialog can be resized by user or not. While the dialog is maximized, resizing
+     * is suppressed and the passed value is applied when the dialog is restored.
      *
      * @param resizable {@code true} to enabled resizing of the dialog, {@code false} otherwise.
      */
     public void setResizable(boolean resizable) {
-        dialog.setResizable(resizable);
+        if (maximized) {
+            resizableBeforeMaximize = resizable;
+        } else {
+            dialog.setResizable(resizable);
+        }
+    }
+
+    /**
+     * @return {@code true} if the dialog window shows the maximize button, {@code false} otherwise
+     */
+    public boolean isMaximizable() {
+        return maximizable;
+    }
+
+    /**
+     * Sets whether the dialog window can be maximized by the user. When enabled, a toggle button
+     * is shown in the dialog header next to the close button.
+     *
+     * @param maximizable {@code true} to show the maximize button, {@code false} to hide it
+     */
+    public void setMaximizable(boolean maximizable) {
+        this.maximizable = maximizable;
+
+        if (maximizeButton != null) {
+            maximizeButton.setVisible(maximizable);
+        }
+    }
+
+    /**
+     * @return {@code true} if the dialog window is maximized, {@code false} otherwise
+     */
+    public boolean isMaximized() {
+        return maximized;
+    }
+
+    /**
+     * Maximizes the dialog window to the whole viewport or restores it to the previous size
+     * and position.
+     * <p>
+     * The size and position of the dialog are not changed on the server: the maximized layout is
+     * applied by the theme, so restoring returns the dialog exactly where the user left it. While
+     * the dialog is maximized, dragging and resizing are suppressed; values passed to
+     * {@link #setDraggable(boolean)} and {@link #setResizable(boolean)} in this state are applied
+     * when the dialog is restored.
+     *
+     * @param maximized {@code true} to maximize the dialog, {@code false} to restore it
+     */
+    public void setMaximized(boolean maximized) {
+        setMaximizedInternal(maximized, false);
+    }
+
+    protected void setMaximizedInternal(boolean maximized, boolean fromClient) {
+        if (this.maximized == maximized) {
+            return;
+        }
+
+        this.maximized = maximized;
+
+        if (maximized) {
+            resizableBeforeMaximize = dialog.isResizable();
+            draggableBeforeMaximize = dialog.isDraggable();
+
+            dialog.setResizable(false);
+            dialog.setDraggable(false);
+
+            dialog.getElement().setAttribute(MAXIMIZED_ATTRIBUTE_NAME, true);
+        } else {
+            dialog.getElement().removeAttribute(MAXIMIZED_ATTRIBUTE_NAME);
+
+            dialog.setResizable(resizableBeforeMaximize);
+            dialog.setDraggable(draggableBeforeMaximize);
+        }
+
+        if (maximizeButton != null) {
+            updateMaximizeButtonState(maximizeButton);
+        }
+
+        MaximizedChangeEvent<V> event = new MaximizedChangeEvent<>(this, maximized, fromClient);
+        publish(MaximizedChangeEvent.class, event);
     }
 
     /**
@@ -716,5 +855,53 @@ public class AbstractDialogWindow<V extends View<?>> implements HasSize, HasThem
 
     protected Icons icons() {
         return applicationContext.getBean(Icons.class);
+    }
+
+    /**
+     * An event that is fired when the dialog window is maximized or restored.
+     *
+     * @param <V> the type of the view associated with the dialog window
+     */
+    public static class MaximizedChangeEvent<V extends View<?>> extends EventObject {
+
+        protected final boolean maximized;
+        protected final boolean fromClient;
+
+        public MaximizedChangeEvent(AbstractDialogWindow<V> source, boolean maximized, boolean fromClient) {
+            super(source);
+
+            this.maximized = maximized;
+            this.fromClient = fromClient;
+        }
+
+        @SuppressWarnings("unchecked")
+        @Override
+        public AbstractDialogWindow<V> getSource() {
+            return (AbstractDialogWindow<V>) super.getSource();
+        }
+
+        /**
+         * Returns the view associated with the dialog window.
+         *
+         * @return the view associated with the dialog window
+         */
+        public V getView() {
+            return getSource().getView();
+        }
+
+        /**
+         * @return {@code true} if the dialog window is maximized, {@code false} if it is restored
+         */
+        public boolean isMaximized() {
+            return maximized;
+        }
+
+        /**
+         * @return {@code true} if the state was changed by the user using the maximize button,
+         * {@code false} if it was changed programmatically
+         */
+        public boolean isFromClient() {
+            return fromClient;
+        }
     }
 }

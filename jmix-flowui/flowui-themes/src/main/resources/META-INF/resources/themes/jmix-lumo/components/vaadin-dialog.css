@@ -22,3 +22,22 @@
 .jmix-dialog-window-header-wrapper > .jmix-dialog-window-close-button {
     margin-inline-start: auto;
 }
+
+.jmix-dialog-window-header-wrapper > .jmix-dialog-window-maximize-button:not([hidden]) {
+    margin-inline-start: auto;
+}
+
+.jmix-dialog-window-header-wrapper > .jmix-dialog-window-maximize-button:not([hidden]) ~ .jmix-dialog-window-close-button {
+    margin-inline-start: 0;
+}
+
+vaadin-dialog[jmix-maximized]::part(overlay) {
+    position: var(--jmix-dialog-maximized-position, fixed) !important;
+    inset: var(--jmix-dialog-maximized-inset, 0) !important;
+    width: var(--jmix-dialog-maximized-width, auto) !important;
+    height: var(--jmix-dialog-maximized-height, auto) !important;
+
+    max-width: none;
+    max-height: none;
+    border-radius: 0;
+}

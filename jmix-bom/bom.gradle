@@ -114,6 +114,7 @@ dependencies {
         api "io.jmix.bulkeditor:jmix-bulkeditor-starter:$freeVersion"
 
         api "io.jmix.aichat:jmix-aichat-flowui:$premiumVersion"
+        api "io.jmix.aichat:jmix-aichat-flowui-kit:$premiumVersion"
         api "io.jmix.aichat:jmix-aichat-flowui-starter:$premiumVersion"
 
         api "io.jmix.bpm:jmix-bpm:$premiumVersion"

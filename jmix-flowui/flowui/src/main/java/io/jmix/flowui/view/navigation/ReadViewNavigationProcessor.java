@@ -16,9 +16,12 @@
 
 package io.jmix.flowui.view.navigation;
 
+import com.vaadin.flow.router.QueryParameters;
 import com.vaadin.flow.router.RouteParameters;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.flowui.sys.ViewSupport;
+import io.jmix.flowui.view.ReadView;
+import io.jmix.flowui.view.StandardDetailView;
 import io.jmix.flowui.view.StandardReadView;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewRegistry;
@@ -63,6 +66,19 @@ public class ReadViewNavigationProcessor extends AbstractNavigationProcessor<Rea
 
                     return routeSupport.createRouteParameters(StandardReadView.DEFAULT_ROUTE_PARAM, id);
                 });
+    }
+
+    @Override
+    protected QueryParameters getQueryParameters(ReadViewNavigator<?> navigator) {
+        QueryParameters queryParameters = super.getQueryParameters(navigator);
+
+        if (!ReadView.class.isAssignableFrom(getViewClass(navigator))) {
+            // View resolution fell back to a detail view, so it must be opened in the read-only mode.
+            return routeSupport.addQueryParameter(queryParameters,
+                    StandardDetailView.MODE_PARAM, StandardDetailView.MODE_READONLY);
+        }
+
+        return queryParameters;
     }
 
     @Override

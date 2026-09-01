@@ -16,6 +16,7 @@
 
 package component.standardreadview
 
+import component.standardreadview.view.CustomerDetailFallbackTestView
 import component.standardreadview.view.OrderReadTestView
 import component.standardreadview.view.ReadBlankTestView
 import io.jmix.core.DataManager
@@ -23,6 +24,7 @@ import io.jmix.flowui.ViewNavigators
 import io.jmix.flowui.testassist.UiTestUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import test_support.entity.sales.Customer
 import test_support.entity.sales.Order
 import test_support.spec.FlowuiTestSpecification
 
@@ -61,6 +63,27 @@ class ReadViewOpeningTest extends FlowuiTestSpecification {
         def view = UiTestUtils.getCurrentView()
         view instanceof OrderReadTestView
         (view as OrderReadTestView).getEntity().id == order.id
+    }
+
+    def "navigator falls back to the detail view opened read-only"() {
+        given: "a customer, whose only view in this package is a detail view"
+        def customer = dataManager.create(Customer)
+        customer.name = 'customer-1'
+        dataManager.save(customer)
+
+        when: "navigating with the read view navigator"
+        def origin = navigateToView(ReadBlankTestView)
+        navigators.readView(origin, Customer)
+                .readEntity(customer)
+                .navigate()
+
+        then: "the detail view is shown in read-only mode"
+        def view = UiTestUtils.getCurrentView()
+        view instanceof CustomerDetailFallbackTestView
+        (view as CustomerDetailFallbackTestView).isReadOnly()
+
+        cleanup:
+        dataManager.remove(customer)
     }
 
     def "navigator requires an entity"() {

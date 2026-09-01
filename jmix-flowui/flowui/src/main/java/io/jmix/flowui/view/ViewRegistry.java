@@ -522,7 +522,7 @@ public class ViewRegistry implements ApplicationContextAware {
      * @throws NoSuchViewException if no read view is registered for the entity
      */
     public ViewInfo getReadViewInfo(MetaClass metaClass) {
-        return getViewInfo(getReadViewIdInternal(metaClass));
+        return getViewInfo(getAvailableReadViewId(metaClass));
     }
 
     /**
@@ -658,6 +658,23 @@ public class ViewRegistry implements ApplicationContextAware {
         return hasView(id) ? id : getListViewIdInternal(metaClass);
     }
 
+    /**
+     * Returns read view id by entity metaclass determined by the following procedure:
+     * <ol>
+     *     <li>If a view annotated with @{@link PrimaryReadView} exists, its id is used</li>
+     *     <li>Otherwise, if a view with {@code <entity_name>.read} id exists, its id is used</li>
+     *     <li>Otherwise, if a view annotated with @{@link PrimaryDetailView} exists, its id is used</li>
+     *     <li>Otherwise, a view with {@code <entity_name>.detail} id is used</li>
+     * </ol>
+     *
+     * @param metaClass entity metaclass
+     * @return view's id
+     */
+    public String getAvailableReadViewId(MetaClass metaClass) {
+        String id = getReadViewIdInternal(metaClass);
+        return hasView(id) ? id : getDetailViewIdInternal(metaClass);
+    }
+
 
     protected String getListViewIdInternal(MetaClass metaClass) {
         MetaClass originalMetaClass = extendedEntities.getOriginalOrThisMetaClass(metaClass);
@@ -669,6 +686,12 @@ public class ViewRegistry implements ApplicationContextAware {
         MetaClass originalMetaClass = extendedEntities.getOriginalOrThisMetaClass(metaClass);
         ViewInfo viewInfo = primaryLookupViews.get(originalMetaClass.getJavaClass());
         return viewInfo != null ? viewInfo.getId() : getLookupViewId(metaClass);
+    }
+
+    protected String getDetailViewIdInternal(MetaClass metaClass) {
+        MetaClass originalMetaClass = extendedEntities.getOriginalOrThisMetaClass(metaClass);
+        ViewInfo viewInfo = primaryDetailViews.get(originalMetaClass.getJavaClass());
+        return viewInfo != null ? viewInfo.getId() : getDetailViewId(metaClass);
     }
 
     /**

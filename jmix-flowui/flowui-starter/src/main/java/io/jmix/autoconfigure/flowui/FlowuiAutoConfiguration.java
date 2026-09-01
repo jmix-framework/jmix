@@ -103,6 +103,15 @@ public class FlowuiAutoConfiguration {
         return new DetailViewNavigationProcessor(viewSupport, viewRegistry, navigationSupport, routeSupport);
     }
 
+    @Bean("flowui_ReadViewNavigationProcessor")
+    @ConditionalOnMissingBean
+    public ReadViewNavigationProcessor readViewNavigationProcessor(ViewSupport viewSupport,
+                                                                   ViewRegistry viewRegistry,
+                                                                   ViewNavigationSupport navigationSupport,
+                                                                   RouteSupport routeSupport) {
+        return new ReadViewNavigationProcessor(viewSupport, viewRegistry, navigationSupport, routeSupport);
+    }
+
     @Bean("flowui_ListViewNavigationProcessor")
     @ConditionalOnMissingBean
     public ListViewNavigationProcessor listViewNavigationProcessor(ViewSupport viewSupport,

@@ -24,7 +24,7 @@ import io.jmix.flowui.view.ViewDescriptor;
 import test_support.entity.sales.Order;
 
 @Route(value = "OrderReadTestView/:id")
-@ViewController("OrderReadTestView")
+@ViewController("test_Order.read")
 @ViewDescriptor("order-read-test-view.xml")
 @ReadEntityContainer("orderDc")
 public class OrderReadTestView extends StandardReadView<Order> {

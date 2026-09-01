@@ -22,6 +22,7 @@ import io.jmix.flowui.*;
 import io.jmix.flowui.sys.UiAccessChecker;
 import io.jmix.flowui.sys.ViewSupport;
 import io.jmix.flowui.testassist.navigation.TestDetailViewNavigationProcessor;
+import io.jmix.flowui.testassist.navigation.TestReadViewNavigationProcessor;
 import io.jmix.flowui.testassist.navigation.TestListViewNavigationProcessor;
 import io.jmix.flowui.testassist.navigation.TestViewNavigationProcessor;
 import io.jmix.flowui.testassist.navigation.ViewNavigationDelegate;
@@ -73,6 +74,16 @@ public class FlowuiTestAssistConfiguration {
                                          ListViewNavigationProcessor listViewNavigationProcessor,
                                          ViewNavigationProcessor viewNavigationProcessor) {
         return new ViewNavigators(detailViewNavigationProcessor, listViewNavigationProcessor, viewNavigationProcessor);
+    }
+
+    @Bean("ui_TestReadViewNavigationProcessor")
+    public ReadViewNavigationProcessor readViewNavigationProcessor(ViewSupport viewSupport,
+                                                                   ViewRegistry viewRegistry,
+                                                                   ViewNavigationSupport navigationSupport,
+                                                                   RouteSupport routeSupport,
+                                                                   ViewNavigationDelegate<?> navigationDelegate) {
+        return new TestReadViewNavigationProcessor(viewSupport, viewRegistry, navigationSupport, routeSupport,
+                (ViewNavigationDelegate<ReadViewNavigator<?>>) navigationDelegate);
     }
 
     @Bean("ui_TestDetailViewNavigationProcessor")

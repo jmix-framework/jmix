@@ -1,0 +1,74 @@
+/*
+ * Copyright 2026 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package component.standardreadview
+
+import component.standardreadview.view.OrderReadTestView
+import component.standardreadview.view.ReadBlankTestView
+import io.jmix.core.DataManager
+import io.jmix.flowui.ViewNavigators
+import io.jmix.flowui.testassist.UiTestUtils
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.context.SpringBootTest
+import test_support.entity.sales.Order
+import test_support.spec.FlowuiTestSpecification
+
+@SpringBootTest
+class ReadViewOpeningTest extends FlowuiTestSpecification {
+
+    @Autowired
+    ViewNavigators navigators
+    @Autowired
+    DataManager dataManager
+
+    Order order
+
+    @Override
+    void setup() {
+        registerViewBasePackages("component.standardreadview.view")
+
+        order = dataManager.create(Order)
+        order.number = 'order-1'
+        dataManager.save(order)
+    }
+
+    @Override
+    void cleanup() {
+        dataManager.remove(order)
+    }
+
+    def "navigator opens the read view resolved for the entity"() {
+        when: "navigating with the read view navigator"
+        def origin = navigateToView(ReadBlankTestView)
+        navigators.readView(origin, Order)
+                .readEntity(order)
+                .navigate()
+
+        then: "the read view is shown with the entity loaded"
+        def view = UiTestUtils.getCurrentView()
+        view instanceof OrderReadTestView
+        (view as OrderReadTestView).getEntity().id == order.id
+    }
+
+    def "navigator requires an entity"() {
+        when: "navigating without an entity"
+        def origin = navigateToView(ReadBlankTestView)
+        navigators.readView(origin, Order).navigate()
+
+        then:
+        thrown(IllegalStateException)
+    }
+}

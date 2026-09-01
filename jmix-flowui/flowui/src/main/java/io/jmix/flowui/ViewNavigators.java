@@ -27,6 +27,7 @@ import io.jmix.flowui.data.HasType;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewController;
 import io.jmix.flowui.view.navigation.*;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import static com.google.common.base.Preconditions.checkState;
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
@@ -39,6 +40,9 @@ public class ViewNavigators {
     protected DetailViewNavigationProcessor detailViewNavigationProcessor;
     protected ListViewNavigationProcessor listViewNavigationProcessor;
     protected ViewNavigationProcessor viewNavigationProcessor;
+
+    @Autowired
+    protected ReadViewNavigationProcessor readViewNavigationProcessor;
 
     public ViewNavigators(DetailViewNavigationProcessor detailViewNavigationProcessor,
                           ListViewNavigationProcessor listViewNavigationProcessor,
@@ -126,6 +130,25 @@ public class ViewNavigators {
 
         return navigator
                 .withBackwardNavigation(true);
+    }
+
+    /**
+     * Creates a read view navigator for an entity class.
+     * <p>
+     * Example of navigating to a view showing an entity:
+     * <pre>{@code
+     * viewNavigators.readView(this, Customer.class)
+     *         .readEntity(customersTable.getSingleSelectedItem())
+     *         .navigate();
+     * }</pre>
+     *
+     * @param origin      calling view
+     * @param entityClass shown entity class
+     */
+    public <E> ReadViewNavigator<E> readView(View<?> origin, Class<E> entityClass) {
+        checkNotNullArgument(entityClass);
+
+        return new ReadViewNavigator<>(origin, entityClass, readViewNavigationProcessor::processNavigation);
     }
 
     /**

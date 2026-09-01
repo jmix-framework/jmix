@@ -24,11 +24,13 @@ import test_support.entity.Foo
 import test_support.entity.sales.*
 import test_support.spec.FlowuiTestSpecification
 import view_registry.view.customer.CustomerDetailView
+import view_registry.view.customer.CustomerReadView
 import view_registry.view.customer.CustomerLookupView
 import view_registry.view.customer.CustomerPrimaryListView
 import view_registry.view.order.OrderPrimaryListView
 import view_registry.view.product.ProductListView
 import view_registry.view.product.ProductPrimaryDetailView
+import view_registry.view.product.ProductPrimaryReadView
 import view_registry.view.product.ProductPrimaryLookupView
 import view_registry.view.producttag.ProductTagListView
 
@@ -134,5 +136,23 @@ class ViewRegistryTest extends FlowuiTestSpecification {
 
         then:
         thrown(NoSuchViewException)
+    }
+
+    /* Read view */
+
+    def "find read view with @PrimaryReadView"() {
+        when:
+        def viewInfo = viewRegistry.getReadViewInfo(Product)
+
+        then:
+        viewInfo.id == ProductPrimaryReadView.VIEW_ID
+    }
+
+    def "find read view with read view id convention"() {
+        when:
+        def viewInfo = viewRegistry.getReadViewInfo(Customer)
+
+        then:
+        viewInfo.id == CustomerReadView.VIEW_ID
     }
 }

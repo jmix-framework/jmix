@@ -74,6 +74,7 @@ public class ViewRegistry implements ApplicationContextAware {
     public static final String DETAIL_VIEW_SUFFIX = ".detail";
     public static final String LIST_VIEW_SUFFIX = ".list";
     public static final String LOOKUP_VIEW_SUFFIX = ".lookup";
+    public static final String READ_VIEW_SUFFIX = ".read";
 
     protected Metadata metadata;
     protected Resources resources;
@@ -90,6 +91,7 @@ public class ViewRegistry implements ApplicationContextAware {
     protected Map<Class<?>, ViewInfo> primaryDetailViews = new HashMap<>();
     protected Map<Class<?>, ViewInfo> primaryListViews = new HashMap<>();
     protected Map<Class<?>, ViewInfo> primaryLookupViews = new HashMap<>();
+    protected Map<Class<?>, ViewInfo> primaryReadViews = new HashMap<>();
 
     protected List<ViewControllersConfiguration> configurations = Collections.emptyList();
 
@@ -206,6 +208,7 @@ public class ViewRegistry implements ApplicationContextAware {
         primaryDetailViews.clear();
         primaryListViews.clear();
         primaryLookupViews.clear();
+        primaryReadViews.clear();
 
         loadViewConfigurations();
         loadViewTemplateConfigurations();
@@ -285,6 +288,7 @@ public class ViewRegistry implements ApplicationContextAware {
         registerPrimaryDetailView(viewInfo, annotationMetadata);
         registerPrimaryListView(viewInfo, annotationMetadata);
         registerPrimaryLookupView(viewInfo, annotationMetadata);
+        registerPrimaryReadView(viewInfo, annotationMetadata);
 
         views.put(id, viewInfo);
     }
@@ -305,6 +309,12 @@ public class ViewRegistry implements ApplicationContextAware {
         getAnnotationValue(annotationMetadata, PrimaryLookupView.class)
                 .ifPresent(aClass ->
                         primaryLookupViews.put(aClass, viewInfo));
+    }
+
+    protected void registerPrimaryReadView(ViewInfo viewInfo, AnnotationMetadata annotationMetadata) {
+        getAnnotationValue(annotationMetadata, PrimaryReadView.class)
+                .ifPresent(aClass ->
+                        primaryReadViews.put(aClass, viewInfo));
     }
 
     protected Optional<Class<?>> getAnnotationValue(AnnotationMetadata annotationMetadata,
@@ -493,6 +503,56 @@ public class ViewRegistry implements ApplicationContextAware {
     public ViewInfo getDetailViewInfo(Object entity) {
         MetaClass metaClass = metadata.getClass(entity);
         return getDetailViewInfo(metaClass);
+    }
+
+    /**
+     * Returns standard id of the read view for an entity, for example {@code Customer.read}.
+     *
+     * @param metaClass entity metaclass
+     */
+    public String getReadViewId(MetaClass metaClass) {
+        return getMetaClassViewId(metaClass, READ_VIEW_SUFFIX);
+    }
+
+    /**
+     * Returns read view information by entity metaclass.
+     *
+     * @param metaClass entity metaclass
+     * @return view's registration information
+     * @throws NoSuchViewException if no read view is registered for the entity
+     */
+    public ViewInfo getReadViewInfo(MetaClass metaClass) {
+        return getViewInfo(getReadViewIdInternal(metaClass));
+    }
+
+    /**
+     * Returns read view information by entity class.
+     *
+     * @param entityClass entity class
+     * @return view's registration information
+     * @throws NoSuchViewException if no read view is registered for the entity
+     */
+    public ViewInfo getReadViewInfo(Class<?> entityClass) {
+        MetaClass metaClass = metadata.getSession().getClass(entityClass);
+        return getReadViewInfo(metaClass);
+    }
+
+    /**
+     * Returns read view information by entity instance.
+     *
+     * @param entity entity instance
+     * @return view's registration information
+     * @throws NoSuchViewException if no read view is registered for the entity
+     */
+    public ViewInfo getReadViewInfo(Object entity) {
+        MetaClass metaClass = metadata.getClass(entity);
+        return getReadViewInfo(metaClass);
+    }
+
+    protected String getReadViewIdInternal(MetaClass metaClass) {
+        MetaClass originalMetaClass = extendedEntities.getOriginalOrThisMetaClass(metaClass);
+        ViewInfo viewInfo = primaryReadViews.get(originalMetaClass.getJavaClass());
+        return viewInfo != null ? viewInfo.getId() : getReadViewId(metaClass);
     }
 
     /**

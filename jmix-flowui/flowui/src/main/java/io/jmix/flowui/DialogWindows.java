@@ -47,6 +47,9 @@ public class DialogWindows {
     protected LookupWindowBuilderProcessor lookupBuilderProcessor;
     protected ObjectProvider<OpenedDialogWindows> openedDialogWindows;
 
+    @Autowired
+    protected ReadWindowBuilderProcessor readBuilderProcessor;
+
     public DialogWindows(WindowBuilderProcessor windowBuilderProcessor,
                          DetailWindowBuilderProcessor detailBuilderProcessor,
                          LookupWindowBuilderProcessor lookupBuilderProcessor,
@@ -149,6 +152,25 @@ public class DialogWindows {
         }
 
         return builder;
+    }
+
+    /**
+     * Creates a read view builder for an entity class.
+     * <p>
+     * Example:
+     * <pre>{@code
+     * dialogWindows.read(this, Customer.class)
+     *         .readEntity(customersTable.getSingleSelectedItem())
+     *         .open();
+     * }</pre>
+     *
+     * @param origin      calling view
+     * @param entityClass shown entity class
+     */
+    public <E, V extends View<?>> ReadWindowBuilder<E, V> read(View<?> origin, Class<E> entityClass) {
+        checkNotNullArgument(entityClass);
+
+        return new ReadWindowBuilder<>(origin, entityClass, readBuilderProcessor::build);
     }
 
     /**

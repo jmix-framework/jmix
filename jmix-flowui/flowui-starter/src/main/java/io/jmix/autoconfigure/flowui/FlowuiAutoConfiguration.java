@@ -29,6 +29,7 @@ import io.jmix.flowui.sys.ViewSupport;
 import io.jmix.flowui.view.ViewAttributes;
 import io.jmix.flowui.view.ViewRegistry;
 import io.jmix.flowui.view.builder.DetailWindowBuilderProcessor;
+import io.jmix.flowui.view.builder.ReadWindowBuilderProcessor;
 import io.jmix.flowui.view.builder.EditedEntityTransformer;
 import io.jmix.flowui.view.builder.LookupWindowBuilderProcessor;
 import io.jmix.flowui.view.builder.WindowBuilderProcessor;
@@ -153,6 +154,17 @@ public class FlowuiAutoConfiguration {
             @Nullable List<EditedEntityTransformer> editedEntityTransformers) {
         return new DetailWindowBuilderProcessor(applicationContext, views, viewRegistry, metadata, extendedEntities,
                 viewProperties, uiAccessChecker, editedEntityTransformers);
+    }
+
+    @Bean("flowui_ReadWindowBuilderProcessor")
+    @ConditionalOnMissingBean
+    public ReadWindowBuilderProcessor readWindowBuilderProcessor(ApplicationContext applicationContext,
+                                                                 Views views,
+                                                                 ViewRegistry viewRegistry,
+                                                                 UiAccessChecker uiAccessChecker,
+                                                                 DetailWindowBuilderProcessor detailBuilderProcessor) {
+        return new ReadWindowBuilderProcessor(applicationContext, views, viewRegistry, uiAccessChecker,
+                detailBuilderProcessor);
     }
 
     @Bean("flowui_LookupWindowBuilderProcessor")

@@ -29,6 +29,7 @@ import io.jmix.flowui.testassist.navigation.ViewNavigationDelegate;
 import io.jmix.flowui.view.ViewAttributes;
 import io.jmix.flowui.view.ViewRegistry;
 import io.jmix.flowui.view.builder.DetailWindowBuilderProcessor;
+import io.jmix.flowui.view.builder.ReadWindowBuilderProcessor;
 import io.jmix.flowui.view.builder.EditedEntityTransformer;
 import io.jmix.flowui.view.builder.LookupWindowBuilderProcessor;
 import io.jmix.flowui.view.builder.WindowBuilderProcessor;
@@ -130,6 +131,16 @@ public class FlowuiTestAssistConfiguration {
                                                          ViewRegistry viewRegistry,
                                                          UiAccessChecker uiAccessChecker) {
         return new WindowBuilderProcessor(applicationContext, views, viewRegistry, uiAccessChecker);
+    }
+
+    @Bean("flowui_ReadWindowBuilderProcessor")
+    public ReadWindowBuilderProcessor readWindowBuilderProcessor(ApplicationContext applicationContext,
+                                                                 Views views,
+                                                                 ViewRegistry viewRegistry,
+                                                                 UiAccessChecker uiAccessChecker,
+                                                                 DetailWindowBuilderProcessor detailBuilderProcessor) {
+        return new ReadWindowBuilderProcessor(applicationContext, views, viewRegistry, uiAccessChecker,
+                detailBuilderProcessor);
     }
 
     @Bean("flowui_DetailWindowBuilderProcessor")

@@ -99,8 +99,7 @@ class StandardReadViewTest extends FlowuiTestSpecification {
         dataManager.save(another)
 
         and: "a read view opened on the first one"
-        def first = navigateToReadView(order.id)
-        def firstInstance = first
+        navigateToReadView(order.id)
 
         when: "navigating to the same view with another id"
         def second = navigateToReadView(another.id)

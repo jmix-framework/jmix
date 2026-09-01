@@ -31,6 +31,7 @@ import io.jmix.flowui.model.HasLoader;
 import io.jmix.flowui.model.InstanceContainer;
 import io.jmix.flowui.model.InstanceLoader;
 import io.jmix.flowui.view.navigation.UrlParamSerializer;
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -38,6 +39,7 @@ import org.jspecify.annotations.Nullable;
  *
  * @param <E> entity class
  */
+@NullMarked
 public class StandardReadView<E> extends StandardView implements ReadView<E> {
 
     public static final String DEFAULT_ROUTE_PARAM = "id";

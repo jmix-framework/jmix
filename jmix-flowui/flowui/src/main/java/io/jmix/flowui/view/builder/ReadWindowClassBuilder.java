@@ -23,6 +23,7 @@ import io.jmix.flowui.view.DialogWindow.AfterCloseEvent;
 import io.jmix.flowui.view.DialogWindow.AfterOpenEvent;
 import io.jmix.flowui.view.ReadView;
 import io.jmix.flowui.view.View;
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 import java.util.Optional;
@@ -36,6 +37,7 @@ import java.util.function.Function;
  * @param <E> shown entity type
  * @param <V> a view type which is opened in a dialog window
  */
+@NullMarked
 public class ReadWindowClassBuilder<E, V extends View<?> & ReadView<E>> extends ReadWindowBuilder<E, V>
         implements DialogWindowClassBuilder<V> {
 

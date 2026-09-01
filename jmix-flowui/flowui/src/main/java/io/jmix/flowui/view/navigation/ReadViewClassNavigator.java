@@ -19,6 +19,7 @@ package io.jmix.flowui.view.navigation;
 import com.vaadin.flow.router.QueryParameters;
 import com.vaadin.flow.router.RouteParameters;
 import io.jmix.flowui.view.View;
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 import java.util.Optional;
@@ -32,11 +33,13 @@ import java.util.function.Consumer;
  * @param <E> the type of the entity shown by the view
  * @param <V> the type of the view being navigated to
  */
+@NullMarked
 public class ReadViewClassNavigator<E, V extends View<?>> extends ReadViewNavigator<E>
         implements SupportsAfterViewNavigationHandler<V> {
 
     protected Class<V> viewClass;
 
+    @Nullable
     protected Consumer<AfterViewNavigationEvent<V>> afterNavigationHandler;
 
     public ReadViewClassNavigator(View<?> origin,

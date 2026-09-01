@@ -53,10 +53,15 @@ public class StandardReadView<E> extends StandardView implements ReadView<E> {
     @Internal
     public StandardReadView() {
         addBeforeShowListener(this::onBeforeShow);
+        addReadyListener(this::onReady);
     }
 
     private void onBeforeShow(BeforeShowEvent event) {
         setupEntityToRead();
+    }
+
+    private void onReady(ReadyEvent event) {
+        applyReadOnlyState();
     }
 
     @Override
@@ -170,6 +175,15 @@ public class StandardReadView<E> extends StandardView implements ReadView<E> {
         return (InstanceLoader<E>) loader;
     }
 
+    /**
+     * Makes data-bound components of the view read-only and disables actions that adjust themselves when a
+     * view is read-only. Invoked on {@link ReadyEvent}, i.e. after the view's own {@link BeforeShowEvent}
+     * handlers have created their components.
+     */
+    protected void applyReadOnlyState() {
+        getReadOnlyViewsSupport().setViewReadOnly(this, true);
+    }
+
     private Class<?> getSerializedIdType() {
         MetaClass entityMetaClass = getEntityContainer().getEntityMetaClass();
         MetaProperty primaryKeyProperty = getMetadataTools().getPrimaryKeyProperty(entityMetaClass);
@@ -179,6 +193,10 @@ public class StandardReadView<E> extends StandardView implements ReadView<E> {
         }
 
         return primaryKeyProperty.getJavaType();
+    }
+
+    private ReadOnlyViewsSupport getReadOnlyViewsSupport() {
+        return getApplicationContext().getBean(ReadOnlyViewsSupport.class);
     }
 
     private MetadataTools getMetadataTools() {

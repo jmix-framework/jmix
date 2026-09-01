@@ -161,10 +161,8 @@ public class FlowuiAutoConfiguration {
     public ReadWindowBuilderProcessor readWindowBuilderProcessor(ApplicationContext applicationContext,
                                                                  Views views,
                                                                  ViewRegistry viewRegistry,
-                                                                 UiAccessChecker uiAccessChecker,
-                                                                 DetailWindowBuilderProcessor detailBuilderProcessor) {
-        return new ReadWindowBuilderProcessor(applicationContext, views, viewRegistry, uiAccessChecker,
-                detailBuilderProcessor);
+                                                                 UiAccessChecker uiAccessChecker) {
+        return new ReadWindowBuilderProcessor(applicationContext, views, viewRegistry, uiAccessChecker);
     }
 
     @Bean("flowui_LookupWindowBuilderProcessor")

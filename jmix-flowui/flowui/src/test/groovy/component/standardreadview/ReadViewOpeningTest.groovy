@@ -17,6 +17,7 @@
 package component.standardreadview
 
 import component.standardreadview.view.CustomerDetailFallbackTestView
+import component.standardreadview.view.OrderListTestView
 import component.standardreadview.view.OrderReadTestView
 import component.standardreadview.view.ReadBlankTestView
 import io.jmix.core.DataManager
@@ -121,6 +122,60 @@ class ReadViewOpeningTest extends FlowuiTestSpecification {
 
         cleanup:
         dataManager.remove(customer)
+    }
+
+    def "navigator takes the origin and the entity off a list component"() {
+        given: "a list view with the order selected in its grid"
+        def listView = navigateToView(OrderListTestView)
+        listView.ordersDataGrid.select(listView.ordersDc.getItems().find { it.id == order.id })
+
+        when: "navigating from the grid"
+        navigators.readView(listView.ordersDataGrid).navigate()
+
+        then: "the read view shows the selected entity"
+        def view = UiTestUtils.getCurrentView()
+        view instanceof OrderReadTestView
+        (view as OrderReadTestView).getEntity().id == order.id
+    }
+
+    def "dialog takes the origin and the entity off a list component"() {
+        given: "a list view with the order selected in its grid"
+        def listView = navigateToView(OrderListTestView)
+        listView.ordersDataGrid.select(listView.ordersDc.getItems().find { it.id == order.id })
+
+        when: "opening a dialog from the grid"
+        def dialog = dialogWindows.read(listView.ordersDataGrid).open()
+
+        then: "the read view shows the selected entity"
+        dialog.view instanceof OrderReadTestView
+        (dialog.view as OrderReadTestView).getEntity().id == order.id
+    }
+
+    def "navigator takes the entity off a picker component"() {
+        given: "a view with the order set to its picker"
+        def listView = navigateToView(OrderListTestView)
+        listView.orderPicker.setValue(order)
+
+        when: "navigating from the picker"
+        navigators.readView(listView.orderPicker).navigate()
+
+        then: "the read view shows the picker value"
+        def view = UiTestUtils.getCurrentView()
+        view instanceof OrderReadTestView
+        (view as OrderReadTestView).getEntity().id == order.id
+    }
+
+    def "dialog takes the entity off a picker component"() {
+        given: "a view with the order set to its picker"
+        def listView = navigateToView(OrderListTestView)
+        listView.orderPicker.setValue(order)
+
+        when: "opening a dialog from the picker"
+        def dialog = dialogWindows.read(listView.orderPicker).open()
+
+        then: "the read view shows the picker value"
+        dialog.view instanceof OrderReadTestView
+        (dialog.view as OrderReadTestView).getEntity().id == order.id
     }
 
     def "navigator requires an entity"() {

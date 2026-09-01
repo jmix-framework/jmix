@@ -152,6 +152,57 @@ public class ViewNavigators {
     }
 
     /**
+     * Creates a read view navigator to show an entity selected in the list component.
+     *
+     * @param listDataComponent the component which provides an entity to show
+     * @see #readView(View, Class)
+     */
+    public <E> ReadViewNavigator<E> readView(ListDataComponent<E> listDataComponent) {
+        checkNotNullArgument(listDataComponent);
+
+        View<?> origin = UiComponentUtils.getView((Component) listDataComponent);
+        Class<E> beanType = getBeanType(listDataComponent);
+
+        ReadViewNavigator<E> navigator =
+                new ReadViewNavigator<>(origin, beanType, readViewNavigationProcessor::processNavigation);
+
+        E selected = listDataComponent.getSingleSelectedItem();
+        if (selected != null) {
+            navigator.readEntity(selected);
+        }
+
+        return navigator
+                .withBackwardNavigation(true);
+    }
+
+    /**
+     * Creates a read view navigator to show an entity selected in the picker component.
+     *
+     * @param picker the component which provides an entity to show
+     * @see #readView(View, Class)
+     */
+    @SuppressWarnings("unchecked")
+    public <E> ReadViewNavigator<E> readView(EntityPickerComponent<E> picker) {
+        checkNotNullArgument(picker);
+        checkState(picker instanceof HasValue,
+                "A component must implement " + HasValue.class.getSimpleName());
+
+        View<?> origin = UiComponentUtils.getView((Component) picker);
+        Class<E> beanType = getBeanType(picker);
+
+        ReadViewNavigator<E> navigator =
+                new ReadViewNavigator<>(origin, beanType, readViewNavigationProcessor::processNavigation);
+
+        E value = ((HasValue<?, E>) picker).getValue();
+        if (value != null) {
+            navigator.readEntity(value);
+        }
+
+        return navigator
+                .withBackwardNavigation(true);
+    }
+
+    /**
      * Creates a list view navigator for an entity class.
      * <p>
      * Example of navigating to a view for editing an entity and returning to the calling view:

@@ -18,7 +18,6 @@ package io.jmix.flowui.view.builder;
 
 import io.jmix.flowui.Views;
 import io.jmix.flowui.sys.UiAccessChecker;
-import io.jmix.flowui.sys.ViewDescriptorUtils;
 import io.jmix.flowui.view.*;
 import org.springframework.context.ApplicationContext;
 
@@ -30,16 +29,11 @@ import org.springframework.context.ApplicationContext;
  */
 public class ReadWindowBuilderProcessor extends AbstractWindowBuilderProcessor {
 
-    protected DetailWindowBuilderProcessor detailBuilderProcessor;
-
     public ReadWindowBuilderProcessor(ApplicationContext applicationContext,
                                       Views views,
                                       ViewRegistry viewRegistry,
-                                      UiAccessChecker uiAccessChecker,
-                                      DetailWindowBuilderProcessor detailBuilderProcessor) {
+                                      UiAccessChecker uiAccessChecker) {
         super(applicationContext, views, viewRegistry, uiAccessChecker);
-
-        this.detailBuilderProcessor = detailBuilderProcessor;
     }
 
     /**
@@ -51,12 +45,6 @@ public class ReadWindowBuilderProcessor extends AbstractWindowBuilderProcessor {
      * @return built dialog window
      */
     public <E, V extends View<?>> DialogWindow<V> build(ReadWindowBuilder<E, V> builder) {
-        Class<V> viewClass = getViewClass(builder);
-
-        if (!ReadView.class.isAssignableFrom(viewClass)) {
-            return buildFallbackDetailWindow(builder, viewClass);
-        }
-
         V view = createView(builder);
 
         DialogWindow<V> dialog = createDialog(view);
@@ -67,52 +55,25 @@ public class ReadWindowBuilderProcessor extends AbstractWindowBuilderProcessor {
         return dialog;
     }
 
-    /**
-     * Builds a dialog window for a detail view that view resolution returned instead of a read view.
-     * <p>
-     * The window is built by {@link DetailWindowBuilderProcessor}, so the detail view behaves exactly as it
-     * does when opened for editing - in particular, the list data component and the field are updated if
-     * the user enables editing and saves the entity - and then the view is switched to the read-only mode.
-     *
-     * @param builder   builder that provides the shown entity and the dialog configuration
-     * @param viewClass resolved detail view class
-     * @param <E>       shown entity type
-     * @param <V>       view type
-     * @return built dialog window
-     */
-    protected <E, V extends View<?>> DialogWindow<V> buildFallbackDetailWindow(ReadWindowBuilder<E, V> builder,
-                                                                              Class<V> viewClass) {
-        DetailWindowBuilder<E, V> detailBuilder = new DetailWindowBuilder<>(builder.getOrigin(),
-                builder.getEntityClass(), detailBuilderProcessor::build);
-
-        detailBuilder.withViewId(ViewDescriptorUtils.getInferredViewId(viewClass))
-                .editEntity(getEntity(builder));
-
-        builder.getListDataComponent().ifPresent(detailBuilder::withListDataComponent);
-        builder.getField().ifPresent(detailBuilder::withField);
-        builder.getAfterOpenListener().ifPresent(detailBuilder::withAfterOpenListener);
-        builder.getAfterCloseListener().ifPresent(detailBuilder::withAfterCloseListener);
-        builder.getDraggedListener().ifPresent(detailBuilder::withDraggedListener);
-        builder.getResizeListener().ifPresent(detailBuilder::withResizeListener);
-        builder.getViewConfigurer().ifPresent(detailBuilder::withViewConfigurer);
-
-        DialogWindow<V> dialog = detailBuilder.build();
-
-        View<?> view = dialog.getView();
-        if (view instanceof ReadOnlyAwareView readOnlyAwareView) {
-            readOnlyAwareView.setReadOnly(true);
-        } else {
-            throw new IllegalStateException(String.format("%s '%s' does not implement %s: %s",
-                    View.class.getSimpleName(), view.getId().orElse(null),
-                    ReadOnlyAwareView.class.getSimpleName(), view.getClass()));
-        }
-
-        return dialog;
-    }
-
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "rawtypes"})
     protected <E, V extends View<?>> void setupEntity(ReadWindowBuilder<E, V> builder, V view) {
-        ((ReadView<E>) view).setEntityToRead(getEntity(builder));
+        E entity = getEntity(builder);
+
+        if (view instanceof ReadView readView) {
+            readView.setEntityToRead(entity);
+        } else if (view instanceof DetailView detailView) {
+            // View resolution fell back to a detail view, so it must be shown in the read-only mode.
+            detailView.setEntityToEdit(entity);
+
+            if (view instanceof ReadOnlyAwareView readOnlyAwareView) {
+                readOnlyAwareView.setReadOnly(true);
+            }
+        } else {
+            throw new IllegalStateException(String.format("%s '%s' implements neither %s nor %s: %s",
+                    View.class.getSimpleName(), view.getId().orElse(null),
+                    ReadView.class.getSimpleName(), DetailView.class.getSimpleName(),
+                    view.getClass()));
+        }
     }
 
     protected <E, V extends View<?>> E getEntity(ReadWindowBuilder<E, V> builder) {

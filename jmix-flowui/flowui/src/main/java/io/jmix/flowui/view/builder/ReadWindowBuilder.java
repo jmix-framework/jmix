@@ -17,9 +17,7 @@
 package io.jmix.flowui.view.builder;
 
 import com.vaadin.flow.component.ComponentEventListener;
-import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.component.dialog.Dialog;
-import io.jmix.flowui.component.ListDataComponent;
 import io.jmix.flowui.view.DialogWindow;
 import io.jmix.flowui.view.DialogWindow.AfterCloseEvent;
 import io.jmix.flowui.view.DialogWindow.AfterOpenEvent;
@@ -47,11 +45,6 @@ public class ReadWindowBuilder<E, V extends View<?>> extends AbstractWindowBuild
     @Nullable
     protected E entity;
 
-    @Nullable
-    protected ListDataComponent<E> listDataComponent;
-    @Nullable
-    protected HasValue<?, E> field;
-
     public ReadWindowBuilder(View<?> origin,
                              Class<E> entityClass,
                              Function<? extends ReadWindowBuilder<E, V>, DialogWindow<V>> handler) {
@@ -65,9 +58,6 @@ public class ReadWindowBuilder<E, V extends View<?>> extends AbstractWindowBuild
         super(builder.origin, builder.handler);
 
         this.entity = builder.entity;
-
-        this.listDataComponent = builder.listDataComponent;
-        this.field = builder.field;
 
         this.entityClass = builder.entityClass;
         this.viewId = builder.viewId;
@@ -90,47 +80,6 @@ public class ReadWindowBuilder<E, V extends View<?>> extends AbstractWindowBuild
 
         this.entity = entity;
         return this;
-    }
-
-    /**
-     * Sets the list data component that is updated with the entity after it is saved.
-     * <p>
-     * It matters only if view resolution falls back to a detail view and the user enables editing there:
-     * the saved entity is then set to the component the same way the detail view builder does it.
-     *
-     * @param listDataComponent the list data component to set
-     * @return this instance for chaining
-     */
-    public ReadWindowBuilder<E, V> withListDataComponent(@Nullable ListDataComponent<E> listDataComponent) {
-        this.listDataComponent = listDataComponent;
-        return this;
-    }
-
-    /**
-     * Sets the field that is updated with the entity after it is saved.
-     * <p>
-     * It matters only if view resolution falls back to a detail view and the user enables editing there.
-     *
-     * @param field the field to set
-     * @return this instance for chaining
-     */
-    public ReadWindowBuilder<E, V> withField(@Nullable HasValue<?, E> field) {
-        this.field = field;
-        return this;
-    }
-
-    /**
-     * @return the list data component to update after the entity is saved, or an empty {@link Optional}
-     */
-    public Optional<ListDataComponent<E>> getListDataComponent() {
-        return Optional.ofNullable(listDataComponent);
-    }
-
-    /**
-     * @return the field to update after the entity is saved, or an empty {@link Optional}
-     */
-    public Optional<HasValue<?, E>> getField() {
-        return Optional.ofNullable(field);
     }
 
     /**

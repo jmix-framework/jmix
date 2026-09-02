@@ -21,7 +21,9 @@ import io.jmix.data.QueryTransformerFactory;
 import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -33,6 +35,8 @@ public final class JpqlValidatorSupport {
     private static final Pattern STRING_LITERAL_PATTERN = Pattern.compile("'(?:''|[^'])*'");
 
     private static final Pattern AS_ALIAS_PATTERN = Pattern.compile("\\bas\\s+(\\w+)", Pattern.CASE_INSENSITIVE);
+
+    private static final Pattern PARAMETER_PATTERN = Pattern.compile(":([A-Za-z_][A-Za-z0-9_]*)");
 
     private JpqlValidatorSupport() {
     }
@@ -69,6 +73,27 @@ public final class JpqlValidatorSupport {
      */
     public static String stripStringLiterals(String jpql) {
         return STRING_LITERAL_PATTERN.matcher(jpql).replaceAll("''");
+    }
+
+    /**
+     * Returns the named parameters the query text references, in order of first appearance. This is
+     * the reading the add-on applies when it accepts or rejects a query: a {@code :name} occurrence
+     * counts as a parameter reference unless it sits inside a string literal (see
+     * {@link #stripStringLiterals(String)}). Consumers that store a query together with a parameter
+     * declaration should derive that declaration with this method, so a query the consumer writes and
+     * a query the add-on validates read the same.
+     *
+     * @param jpql JPQL text
+     * @return the referenced parameter names in order of appearance; empty if there are none
+     */
+    public static Set<String> referencedParameters(String jpql) {
+        // Strip string literals first: a ':'-prefixed word inside a literal is not a JPQL parameter.
+        Set<String> parameterNames = new LinkedHashSet<>();
+        Matcher matcher = PARAMETER_PATTERN.matcher(stripStringLiterals(jpql));
+        while (matcher.find()) {
+            parameterNames.add(matcher.group(1));
+        }
+        return parameterNames;
     }
 
     /**

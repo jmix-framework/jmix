@@ -29,7 +29,7 @@
 .dynmod-settings-view .header-box {
     align-items: end;
     justify-content: space-between;
-    flex-wrap: wrap-reverse;
+    flex-wrap: wrap;
     gap: var(--vaadin-gap-s);
     width: 100%;
 }
@@ -54,7 +54,7 @@
 
 @container dynmod-settings-view (max-width: 640px) {
     .dynmod-settings-view .header-box {
-        flex-direction: column-reverse;
+        flex-direction: column;
         align-items: start;
     }
 

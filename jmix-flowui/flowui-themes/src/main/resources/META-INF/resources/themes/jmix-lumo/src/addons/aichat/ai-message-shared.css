@@ -50,6 +50,10 @@
     min-width: 0;
   }
 
+  :host(:not([has-message])) [part='content'] {
+    gap: 0;
+  }
+
   [part='message'] {
     font-size: var(--jmix-ai-message-font-size, inherit);
     line-height: var(--jmix-ai-message-line-height, inherit);
@@ -106,6 +110,7 @@
   [part='attachments'] {
     display: flex;
     flex-wrap: wrap;
+    align-items: flex-start;
     gap: var(--lumo-space-xs);
   }
 

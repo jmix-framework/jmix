@@ -418,6 +418,16 @@ public final class ViewControllerUtils {
     }
 
     /**
+     * Returns the route parameter name associated with the given read view.
+     *
+     * @param readView the read view instance from which to retrieve the route parameter name
+     * @return the route parameter name
+     */
+    public static String getRouteParamName(StandardReadView<?> readView) {
+        return readView.getRouteParamName();
+    }
+
+    /**
      * Returns a list of application event listeners associated with a given {@link View}.
      *
      * @param view the {@link View} for which to retrieve the application event listeners

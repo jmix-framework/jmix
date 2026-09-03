@@ -317,6 +317,10 @@ dependencies {
         api "io.jmix.uiconstraints:jmix-uiconstraints:$premiumVersion"
         api "io.jmix.uiconstraints:jmix-uiconstraints-starter:$premiumVersion"
 
+        api "io.jmix.uirecovery:jmix-uirecovery:$premiumVersion"
+        api "io.jmix.uirecovery:jmix-uirecovery-flowui:$premiumVersion"
+        api "io.jmix.uirecovery:jmix-uirecovery-flowui-starter:$premiumVersion"
+
         api "io.jmix.vcc:vaadin-dashboard:$premiumVersion"
         api "io.jmix.vcc:vaadin-dashboard-starter:$premiumVersion"
         api "io.jmix.vcc:vaadin-dashboard-kit:$premiumVersion"

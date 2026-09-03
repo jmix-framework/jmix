@@ -25,10 +25,8 @@ import org.springframework.core.Ordered;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-import static io.jmix.aitools.dataload.validation.validator.JpqlValidatorSupport.stripStringLiterals;
+import static io.jmix.aitools.dataload.validation.validator.JpqlValidatorSupport.referencedParameters;
 
 /**
  * Checks that the JPQL named parameters and the declared parameters match — flagging both
@@ -45,8 +43,6 @@ public class ParametersValidator implements JpqlResultValidator, Ordered {
     public static final String PARAMETER_UNUSED_CODE = "parameter.unusedInJpql";
     public static final String PARAMETER_UNUSED_GUIDANCE = "Remove parameters that are not used in the JPQL text.";
 
-    protected static final Pattern PARAMETER_PATTERN = Pattern.compile(":([A-Za-z_][A-Za-z0-9_]*)");
-
     @Override
     public List<JpqlValidationIssue> validate(GeneratedJpqlResult result) {
         String jpql = result.getJpql();
@@ -56,7 +52,7 @@ public class ParametersValidator implements JpqlResultValidator, Ordered {
 
         List<JpqlValidationIssue> issues = new ArrayList<>();
 
-        Set<String> jpqlParameters = extractParameterNames(jpql);
+        Set<String> jpqlParameters = referencedParameters(jpql);
         Set<String> dtoParameters = new LinkedHashSet<>();
         for (GeneratedJpqlParameter parameter : result.getParameters()) {
             dtoParameters.add(parameter.getName());
@@ -83,15 +79,5 @@ public class ParametersValidator implements JpqlResultValidator, Ordered {
     @Override
     public int getOrder() {
         return JmixOrder.HIGHEST_PRECEDENCE + 1200;
-    }
-
-    protected Set<String> extractParameterNames(String jpql) {
-        Set<String> parameterNames = new LinkedHashSet<>();
-        // Strip string literals first: a ':'-prefixed word inside a literal is not a JPQL parameter.
-        Matcher matcher = PARAMETER_PATTERN.matcher(stripStringLiterals(jpql));
-        while (matcher.find()) {
-            parameterNames.add(matcher.group(1));
-        }
-        return parameterNames;
     }
 }

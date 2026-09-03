@@ -41,8 +41,11 @@ public final class LlmQueryParameterNames {
     private static final Pattern VALID_NAME = Pattern.compile("[A-Za-z_][A-Za-z0-9_]*");
 
     /**
-     * How a query refers to a parameter, which is the pattern the add-on reads a query's parameters by too:
-     * the two must agree, or a query the add-on considers to declare the wrong parameters is stored.
+     * How a query refers to a parameter. This is a copy of the reading the add-on judges a query by
+     * ({@code JpqlValidatorSupport.referencedParameters}), kept because the parameters are also derived
+     * here when the add-on is absent — a hand-written or hand-edited query is stored and run without it.
+     * The two must agree, or a query the add-on considers to declare the wrong parameters is stored; the
+     * agreement is pinned by a parity test rather than held by this comment.
      */
     private static final Pattern REFERENCE = Pattern.compile(":([A-Za-z_][A-Za-z0-9_]*)");
 
@@ -120,8 +123,10 @@ public final class LlmQueryParameterNames {
     /**
      * Returns the parameters a query text references, in the order it references them. This is what a query
      * declares by being written, and what the parameters of a stored document are derived from every time a
-     * query is stored: the add-on's validator reads a query the same way, so a document the designer wrote and
-     * a document the designer validated agree.
+     * query is stored. It must read a query the same way the add-on's validator does
+     * ({@code JpqlValidatorSupport.referencedParameters}), so a document the designer wrote and a document
+     * the designer validated agree; a parity test enforces that. It lives here, rather than delegating to the
+     * add-on, so the derivation still works when the add-on is absent.
      *
      * @param jpql query text
      * @return names of the referenced parameters

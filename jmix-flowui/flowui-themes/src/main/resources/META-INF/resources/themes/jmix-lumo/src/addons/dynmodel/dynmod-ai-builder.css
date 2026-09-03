@@ -1,0 +1,268 @@
+/*
+ * Copyright 2026 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+.dynmod-ai-builder {
+    container-type: inline-size;
+    container-name: dynmod-ai-builder;
+}
+
+.dynmod-ai-builder .chat-pane {
+    flex: 1 1 auto;
+    min-width: 0;
+    min-height: 0;
+    height: 100%;
+    overflow: hidden;
+    border-inline-end: 1px solid var(--lumo-contrast-10pct);
+}
+
+.dynmod-ai-builder .chat-pane .jmix-ai-chat {
+    min-height: 0;
+    box-sizing: border-box;
+}
+
+.dynmod-ai-builder .chat-empty {
+    gap: var(--lumo-space-s);
+    padding: 0 var(--lumo-space-m) var(--lumo-space-m);
+    text-align: center;
+}
+
+.dynmod-ai-builder .chat-empty-icon {
+    color: var(--lumo-primary-color-50pct);
+    width: var(--lumo-icon-size-l);
+    height: var(--lumo-icon-size-l);
+}
+
+.dynmod-ai-builder .chat-empty-text {
+    color: var(--lumo-secondary-text-color);
+    font-size: var(--lumo-font-size-s);
+    line-height: var(--lumo-line-height-s);
+    max-width: 28em;
+}
+
+.dynmod-ai-builder .chat-empty-examples {
+    justify-content: center;
+    gap: var(--lumo-space-xs);
+}
+
+.dynmod-ai-builder vaadin-button.example-chip {
+    --vaadin-button-tertiary-background: var(--lumo-primary-color-10pct);
+    border-radius: var(--lumo-size-m);
+    padding: 0 var(--lumo-space-m);
+}
+
+.dynmod-ai-builder .draft-panel {
+    flex: 0 0 30em;
+    width: 30em;
+    height: 100%;
+    background: var(--lumo-contrast-5pct);
+    box-sizing: border-box;
+}
+
+.dynmod-ai-builder .draft-header {
+    gap: var(--lumo-space-s);
+    padding: var(--lumo-space-s) var(--lumo-space-m);
+    border-bottom: 1px solid var(--lumo-contrast-10pct);
+    box-sizing: border-box;
+}
+
+.dynmod-ai-builder .draft-title {
+    margin: 0;
+    font-size: var(--lumo-font-size-l);
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.dynmod-ai-builder .draft-revision {
+    margin-inline-start: auto;
+    color: var(--lumo-secondary-text-color);
+    font-size: var(--lumo-font-size-s);
+    white-space: nowrap;
+}
+
+.dynmod-ai-builder .draft-body {
+    min-height: 0;
+    padding: var(--lumo-space-s) var(--lumo-space-m);
+    overflow-y: auto;
+    box-sizing: border-box;
+}
+
+.dynmod-ai-builder .card {
+    background: var(--lumo-base-color);
+    border: 1px solid var(--lumo-contrast-10pct);
+    border-radius: var(--lumo-border-radius-m);
+    padding: var(--lumo-space-s) var(--lumo-space-m);
+    box-sizing: border-box;
+}
+
+.dynmod-ai-builder .card-caption {
+    margin: 0 0 var(--lumo-space-xs);
+    color: var(--lumo-secondary-text-color);
+    font-size: var(--lumo-font-size-xs);
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.dynmod-ai-builder .dimmed {
+    opacity: 0.6;
+}
+
+.dynmod-ai-builder .empty-hint {
+    color: var(--lumo-secondary-text-color);
+    font-size: var(--lumo-font-size-s);
+    line-height: var(--lumo-line-height-s);
+    text-align: center;
+    padding: var(--lumo-space-l) var(--lumo-space-m);
+}
+
+.dynmod-ai-builder .plan-item {
+    display: block;
+    position: relative;
+    padding: 0.22em 0 0.22em 1.1em;
+    color: var(--lumo-body-text-color);
+    font-size: var(--lumo-font-size-s);
+    line-height: var(--lumo-line-height-s);
+    overflow-wrap: anywhere;
+}
+
+.dynmod-ai-builder .plan-item::before {
+    content: '';
+    position: absolute;
+    inset-inline-start: 0.05em;
+    top: 0.72em;
+    width: 0.32em;
+    height: 0.32em;
+    border-radius: 50%;
+    background: var(--lumo-primary-color);
+}
+
+.dynmod-ai-builder .plan-minor {
+    color: var(--lumo-secondary-text-color);
+    font-size: var(--lumo-font-size-xs);
+}
+
+.dynmod-ai-builder .plan-minor::before {
+    background: var(--lumo-contrast-30pct);
+}
+
+.dynmod-ai-builder .finding {
+    display: block;
+    padding: 0.2em 0;
+    font-size: var(--lumo-font-size-s);
+    line-height: var(--lumo-line-height-s);
+    overflow-wrap: anywhere;
+}
+
+.dynmod-ai-builder .finding-blocking {
+    color: var(--lumo-error-text-color);
+}
+
+.dynmod-ai-builder .finding-advisory {
+    color: var(--lumo-warning-text-color);
+}
+
+.dynmod-ai-builder .finding-ok {
+    color: var(--lumo-success-text-color);
+}
+
+.dynmod-ai-builder .finding-row {
+    align-items: baseline;
+    gap: var(--lumo-space-s);
+}
+
+.dynmod-ai-builder .fix-button {
+    flex-shrink: 0;
+    font-size: var(--lumo-font-size-xs);
+}
+
+.dynmod-ai-builder .note-title {
+    display: block;
+    margin-bottom: 0.25em;
+    font-weight: 600;
+}
+
+.dynmod-ai-builder .note-text {
+    display: block;
+    color: var(--lumo-body-text-color);
+    font-size: var(--lumo-font-size-s);
+    line-height: var(--lumo-line-height-s);
+}
+
+.dynmod-ai-builder .note-warning {
+    border-color: var(--lumo-warning-color-50pct);
+    background: var(--lumo-warning-color-10pct);
+}
+
+.dynmod-ai-builder .note-success {
+    border-color: var(--lumo-success-color-50pct);
+    background: var(--lumo-success-color-10pct);
+}
+
+.dynmod-ai-builder .note-error {
+    border-color: var(--lumo-error-color-50pct);
+    background: var(--lumo-error-color-10pct);
+}
+
+.dynmod-ai-builder vaadin-details.card-details {
+    background: var(--lumo-base-color);
+    border: 1px solid var(--lumo-contrast-10pct);
+    border-radius: var(--lumo-border-radius-m);
+    padding: 0 var(--lumo-space-s);
+    box-sizing: border-box;
+}
+
+.dynmod-ai-builder .step-row,
+.dynmod-ai-builder .history-row {
+    display: block;
+    padding: 0.2em 0;
+    font-size: var(--lumo-font-size-s);
+    line-height: var(--lumo-line-height-s);
+    overflow-wrap: anywhere;
+}
+
+.dynmod-ai-builder .step-args,
+.dynmod-ai-builder .history-meta {
+    display: block;
+    color: var(--lumo-secondary-text-color);
+    font-size: var(--lumo-font-size-xs);
+}
+
+.dynmod-ai-builder .actions {
+    padding: var(--lumo-space-s) var(--lumo-space-m) var(--lumo-space-m);
+    border-top: 1px solid var(--lumo-contrast-10pct);
+    box-sizing: border-box;
+}
+
+@container dynmod-ai-builder (max-width: 640px) {
+    .dynmod-ai-builder {
+        flex-direction: column;
+    }
+
+    .dynmod-ai-builder .chat-pane {
+        height: auto;
+        border-inline-end: none;
+        border-bottom: 1px solid var(--lumo-contrast-10pct);
+    }
+
+    .dynmod-ai-builder .draft-panel {
+        flex: 0 0 auto;
+        width: 100%;
+        height: auto;
+        max-height: 45%;
+    }
+}

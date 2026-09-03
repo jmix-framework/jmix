@@ -36,6 +36,9 @@ import io.jmix.flowui.sys.ActionViewInitializer;
 import io.jmix.flowui.view.*;
 import io.jmix.flowui.view.builder.DetailWindowBuilder;
 import io.jmix.flowui.view.navigation.DetailViewNavigator;
+import io.jmix.flowui.view.navigation.ReadViewNavigator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.jspecify.annotations.Nullable;
 
@@ -46,10 +49,13 @@ import java.util.function.Function;
 public class ReadAction<E> extends SecuredListDataComponentAction<ReadAction<E>, E>
         implements ViewOpeningAction {
 
+    private static final Logger log = LoggerFactory.getLogger(ReadAction.class);
+
     public static final String ID = "list_read";
 
     protected ViewNavigators viewNavigators;
     protected DialogWindows dialogWindows;
+    protected ViewRegistry viewRegistry;
 
     protected ActionViewInitializer viewInitializer = new ActionViewInitializer();
     protected Consumer<E> afterSaveHandler;
@@ -238,6 +244,11 @@ public class ReadAction<E> extends SecuredListDataComponentAction<ReadAction<E>,
         this.dialogWindows = dialogWindows;
     }
 
+    @Autowired
+    public void setViewRegistry(ViewRegistry viewRegistry) {
+        this.viewRegistry = viewRegistry;
+    }
+
     @Override
     public void setText(@Nullable String text) {
         super.setText(text);
@@ -330,7 +341,64 @@ public class ReadAction<E> extends SecuredListDataComponentAction<ReadAction<E>,
         dialogWindow.open();
     }
 
-    protected void navigate(E editedEntity) {
+    protected void navigate(E entity) {
+        if (isReadViewResolved(entity)) {
+            navigateToReadView(entity);
+        } else {
+            navigateToDetailView(entity);
+        }
+    }
+
+    /**
+     * Returns the class of the view the action opens: an explicitly configured view class or id,
+     * otherwise the view resolved for the entity by {@link ViewRegistry#getReadViewInfo(Object)}.
+     *
+     * @param entity entity to show
+     * @return the class of the view the action opens
+     */
+    protected Class<? extends View> resolveViewClass(E entity) {
+        Class<? extends View> viewClass = viewInitializer.getViewClass();
+        if (viewClass != null) {
+            return viewClass;
+        }
+
+        String viewId = viewInitializer.getViewId();
+        if (viewId != null) {
+            return viewRegistry.getViewInfo(viewId).getControllerClass();
+        }
+
+        return viewRegistry.getReadViewInfo(entity).getControllerClass();
+    }
+
+    protected boolean isReadViewResolved(E entity) {
+        return ReadView.class.isAssignableFrom(resolveViewClass(entity));
+    }
+
+    protected void navigateToReadView(E entity) {
+        warnOnInapplicableSaveHooks();
+
+        ReadViewNavigator<E> navigator = viewNavigators.readView(target)
+                .readEntity(entity)
+                .withBackwardNavigation(true);
+
+        navigator = viewInitializer.initNavigator(navigator);
+
+        ActionHandlerValidator.validate(this, OpenMode.NAVIGATION);
+
+        navigator.navigate();
+    }
+
+    /**
+     * Logs a warning if the action carries handlers that apply only to a detail view opened for editing.
+     */
+    protected void warnOnInapplicableSaveHooks() {
+        if (afterSaveHandler != null || transformation != null) {
+            log.warn("'{}' action is configured with 'afterSaveHandler' or 'transformation', which do not " +
+                    "apply to a read view and will not be invoked", getId());
+        }
+    }
+
+    protected void navigateToDetailView(E editedEntity) {
         DetailViewNavigator<E> navigator = viewNavigators.detailView((target))
                 .editEntity(editedEntity)
                 .withBackwardNavigation(true)

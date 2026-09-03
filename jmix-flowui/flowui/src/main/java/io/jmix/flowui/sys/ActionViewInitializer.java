@@ -24,6 +24,7 @@ import io.jmix.flowui.view.builder.DetailWindowBuilder;
 import io.jmix.flowui.view.builder.LookupWindowBuilder;
 import io.jmix.flowui.view.builder.WindowBuilder;
 import io.jmix.flowui.view.navigation.DetailViewNavigator;
+import io.jmix.flowui.view.navigation.ReadViewNavigator;
 import io.jmix.flowui.view.navigation.ViewNavigator;
 import org.jspecify.annotations.Nullable;
 
@@ -113,6 +114,26 @@ public class ActionViewInitializer {
     }
 
     public <E> DetailViewNavigator<E> initNavigator(DetailViewNavigator<E> navigator) {
+        if (viewClass != null) {
+            navigator = navigator.withViewClass(viewClass);
+        }
+
+        if (viewId != null) {
+            navigator = navigator.withViewId(viewId);
+        }
+
+        if (routeParametersProvider != null) {
+            navigator = navigator.withRouteParameters(routeParametersProvider.getRouteParameters());
+        }
+
+        if (queryParametersProvider != null) {
+            navigator = navigator.withQueryParameters(queryParametersProvider.getQueryParameters());
+        }
+
+        return navigator;
+    }
+
+    public <E> ReadViewNavigator<E> initNavigator(ReadViewNavigator<E> navigator) {
         if (viewClass != null) {
             navigator = navigator.withViewClass(viewClass);
         }

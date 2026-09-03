@@ -33,6 +33,22 @@
     box-sizing: border-box;
 }
 
+.dynmod-ai-builder .chat-pane .jmix-ai-chat[empty] {
+    justify-content: flex-end;
+}
+
+.dynmod-ai-builder .chat-pane .jmix-ai-chat[empty] .jmix-ai-chat-empty-header {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.dynmod-ai-builder .chat-pane jmix-ai-message-input {
+    box-sizing: border-box;
+    padding: 0 var(--lumo-space-m) var(--lumo-space-m);
+}
+
 .dynmod-ai-builder .chat-empty {
     gap: var(--lumo-space-s);
     padding: 0 var(--lumo-space-m) var(--lumo-space-m);
@@ -123,6 +139,7 @@
 }
 
 .dynmod-ai-builder .empty-hint {
+    margin-block: auto;
     color: var(--lumo-secondary-text-color);
     font-size: var(--lumo-font-size-s);
     line-height: var(--lumo-line-height-s);

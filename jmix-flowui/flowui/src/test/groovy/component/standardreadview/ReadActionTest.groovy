@@ -23,6 +23,7 @@ import component.standardreadview.view.OrderReadTestView
 import io.jmix.core.DataManager
 import io.jmix.flowui.action.list.ReadAction
 import io.jmix.flowui.testassist.UiTestUtils
+import io.jmix.flowui.view.OpenMode
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import test_support.entity.sales.Customer
@@ -81,6 +82,40 @@ class ReadActionTest extends FlowuiTestSpecification {
 
         then: "the detail view is shown in the read-only mode"
         def view = UiTestUtils.getCurrentView()
+        view instanceof CustomerDetailFallbackTestView
+        (view as CustomerDetailFallbackTestView).isReadOnly()
+    }
+
+    def "action opens the read view in a dialog"() {
+        given: "an order selected in the list and the action set to open a dialog"
+        def listView = navigateToView(OrderListTestView)
+        listView.ordersDataGrid.select(listView.ordersDc.getItems().find { it.id == order.id })
+
+        def action = listView.ordersDataGrid.getAction('read') as ReadAction
+        action.setOpenMode(OpenMode.DIALOG)
+
+        when: "the read action is performed"
+        action.actionPerform(listView.ordersDataGrid)
+
+        then: "the read view is shown in a dialog with the entity loaded"
+        def view = UiTestUtils.getLastOpenedViewDialog()
+        view instanceof OrderReadTestView
+        (view as OrderReadTestView).getEntity().id == order.id
+    }
+
+    def "action opens the fallback detail view in a dialog read-only"() {
+        given: "a customer selected in the list and the action set to open a dialog"
+        def listView = navigateToView(CustomerListTestView)
+        listView.customersDataGrid.select(listView.customersDc.getItems().find { it.id == customer.id })
+
+        def action = listView.customersDataGrid.getAction('read') as ReadAction
+        action.setOpenMode(OpenMode.DIALOG)
+
+        when: "the read action is performed"
+        action.actionPerform(listView.customersDataGrid)
+
+        then: "the detail view is shown in a dialog in the read-only mode"
+        def view = UiTestUtils.getLastOpenedViewDialog()
         view instanceof CustomerDetailFallbackTestView
         (view as CustomerDetailFallbackTestView).isReadOnly()
     }

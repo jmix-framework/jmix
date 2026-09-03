@@ -22,6 +22,7 @@ import io.jmix.flowui.view.DialogWindow.AfterCloseEvent;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.builder.DetailWindowBuilder;
 import io.jmix.flowui.view.builder.LookupWindowBuilder;
+import io.jmix.flowui.view.builder.ReadWindowBuilder;
 import io.jmix.flowui.view.builder.WindowBuilder;
 import io.jmix.flowui.view.navigation.DetailViewNavigator;
 import io.jmix.flowui.view.navigation.ReadViewNavigator;
@@ -154,6 +155,26 @@ public class ActionViewInitializer {
     }
 
     public <E, V extends View<?>> DetailWindowBuilder<E, V> initWindowBuilder(DetailWindowBuilder<E, V> windowBuilder) {
+        if (viewClass != null) {
+            windowBuilder = windowBuilder.withViewClass((Class) viewClass);
+        }
+
+        if (viewId != null) {
+            windowBuilder = windowBuilder.withViewId(viewId);
+        }
+
+        if (afterCloseHandler != null) {
+            windowBuilder = windowBuilder.withAfterCloseListener((Consumer) afterCloseHandler);
+        }
+
+        if (viewConfigurer != null) {
+            windowBuilder = windowBuilder.withViewConfigurer((Consumer) viewConfigurer);
+        }
+
+        return windowBuilder;
+    }
+
+    public <E, V extends View<?>> ReadWindowBuilder<E, V> initWindowBuilder(ReadWindowBuilder<E, V> windowBuilder) {
         if (viewClass != null) {
             windowBuilder = windowBuilder.withViewClass((Class) viewClass);
         }

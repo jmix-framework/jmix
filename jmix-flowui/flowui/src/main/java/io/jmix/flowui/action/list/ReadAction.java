@@ -35,6 +35,7 @@ import io.jmix.flowui.kit.icon.JmixFontIcon;
 import io.jmix.flowui.sys.ActionViewInitializer;
 import io.jmix.flowui.view.*;
 import io.jmix.flowui.view.builder.DetailWindowBuilder;
+import io.jmix.flowui.view.builder.ReadWindowBuilder;
 import io.jmix.flowui.view.navigation.DetailViewNavigator;
 import io.jmix.flowui.view.navigation.ReadViewNavigator;
 import org.slf4j.Logger;
@@ -304,7 +305,31 @@ public class ReadAction<E> extends SecuredListDataComponentAction<ReadAction<E>,
         }
     }
 
-    protected void openDialog(E editedEntity) {
+    protected void openDialog(E entity) {
+        if (isReadViewResolved(entity)) {
+            openReadViewDialog(entity);
+        } else {
+            openDetailViewDialog(entity);
+        }
+    }
+
+    protected void openReadViewDialog(E entity) {
+        warnOnInapplicableSaveHooks();
+
+        ReadWindowBuilder<E, View<?>> builder = dialogWindows.read(target);
+
+        builder = viewInitializer.initWindowBuilder(builder);
+
+        builder = builder.readEntity(entity);
+
+        DialogWindow<View<?>> dialogWindow = builder.build();
+
+        ActionHandlerValidator.validate(this, OpenMode.DIALOG);
+
+        dialogWindow.open();
+    }
+
+    protected void openDetailViewDialog(E editedEntity) {
         DetailWindowBuilder<E, View<?>> builder = dialogWindows.detail(target);
 
         builder = viewInitializer.initWindowBuilder(builder);

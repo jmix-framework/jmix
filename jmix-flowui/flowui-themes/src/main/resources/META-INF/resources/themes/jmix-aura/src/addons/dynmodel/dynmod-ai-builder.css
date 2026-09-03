@@ -139,8 +139,11 @@
     opacity: 0.6;
 }
 
+.dynmod-ai-builder .draft-body.centered {
+    justify-content: center;
+}
+
 .dynmod-ai-builder .empty-hint {
-    margin-block: auto;
     color: var(--vaadin-text-color-secondary);
     font-size: var(--aura-font-size-s);
     text-align: center;

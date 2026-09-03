@@ -138,8 +138,11 @@
     opacity: 0.6;
 }
 
+.dynmod-ai-builder .draft-body.centered {
+    justify-content: center;
+}
+
 .dynmod-ai-builder .empty-hint {
-    margin-block: auto;
     color: var(--lumo-secondary-text-color);
     font-size: var(--lumo-font-size-s);
     line-height: var(--lumo-line-height-s);

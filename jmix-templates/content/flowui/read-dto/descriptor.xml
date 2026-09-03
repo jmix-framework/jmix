@@ -1,0 +1,46 @@
+<%
+dcId = "${entity.uncapitalizedClassName}Dc"
+dlId = "${entity.uncapitalizedClassName}Dl"
+
+def formXml = api.processSnippet('dto_form.xml',
+        ['entity': entity,
+        'api': api,
+        'dcId': dcId,
+        'formId': 'form',
+        'asideLabelsPosition': asideLabelsPosition])
+%><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<view xmlns="http://jmix.io/schema/flowui/view"
+      title="${messageKeys['readTitle']}"
+      focusComponent="form">
+    <data>
+        <instance id="${dcId}"
+                  class="${entity.fqn}">
+            <loader id="${dlId}"/>
+        </instance>
+    </data>
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+    </facets>
+    <actions>
+        <action id="closeAction" type="view_close"/>
+    </actions>
+    <%if (readFixedFooter) {%>
+    <layout alignItems="STRETCH"
+            padding="false" spacing="false"
+            expand="contentBox">
+        <vbox id="contentBox" classNames="overflow-auto">
+    <%} else {%>
+    <layout>
+    <%}%>
+        ${formXml}
+        <%if (readFixedFooter) {%>
+        </vbox>
+        <hbox id="readActions"
+              classNames="footer-panel">
+        <%} else {%>
+        <hbox id="readActions">
+        <%}%>
+            <button id="closeButton" action="closeAction"/>
+        </hbox>
+    </layout>
+</view>

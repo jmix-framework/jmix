@@ -21,6 +21,7 @@ import io.jmix.data.impl.jpql.model.JpqlEntityModel;
 import io.jmix.data.impl.jpql.tree.IdentificationVariableNode;
 import io.jmix.data.impl.jpql.tree.ParameterNode;
 import io.jmix.data.impl.jpql.tree.PathNode;
+import io.jmix.data.impl.jpql.tree.QueryNode;
 import io.jmix.data.impl.jpql.tree.SimpleConditionNode;
 import org.antlr.runtime.tree.CommonTree;
 import org.antlr.runtime.tree.Tree;
@@ -116,6 +117,32 @@ public class QueryTreeAnalyzer {
 
     public List<SimpleConditionNode> getConditions() {
         return queryTree.visit(NodesFinder.of(SimpleConditionNode.class)).getFoundNodes();
+    }
+
+    /**
+     * Returns conditions of the main query. Conditions located in subqueries are not returned.
+     */
+    public List<SimpleConditionNode> getMainQueryConditions() {
+        return getConditions().stream()
+                .filter(condition -> !isInSubquery(condition))
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Returns true if the given node is located in a subquery. Subqueries are represented by the same node type
+     * as the main query, so the node is in a subquery if it has more than one query node among its parents.
+     */
+    protected boolean isInSubquery(CommonTree node) {
+        int queryNodeCount = 0;
+        for (Tree parent = node.getParent(); parent != null; parent = parent.getParent()) {
+            if (parent instanceof QueryNode) {
+                queryNodeCount++;
+                if (queryNodeCount > 1) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     public boolean isQueryWithJoins() {

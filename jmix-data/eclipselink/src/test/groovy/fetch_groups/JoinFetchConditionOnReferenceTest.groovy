@@ -136,5 +136,33 @@ class JoinFetchConditionOnReferenceTest extends DataSpec {
 
         then:
         description.hints['e.customer'] == QueryHints.LEFT_FETCH
+
+        when: "reference is used in a condition inside a subquery"
+        description = fetchGroupManager.calculateFetchGroup(
+                'select e from sales_Order e where exists (select o from sales_Order o where o.customer = e.customer)',
+                fetchPlan, false, true)
+
+        then:
+        description.hints['e.customer'] == QueryHints.LEFT_FETCH
+    }
+
+    def "reference used in conditions of several subqueries is join-fetched"() {
+        def fetchPlan = fetchPlans.builder(Order)
+                .addFetchPlan(FetchPlan.BASE)
+                .add('customer', FetchPlan.BASE)
+                .build()
+
+        when: "the same reference is used in conditions of two subqueries"
+        def orders = dm.load(Order)
+                .query('''select e from sales_Order e
+                        where exists (select o1 from sales_Order o1 where o1.customer = e.customer)
+                          and exists (select o2 from sales_Order o2 where o2.customer = e.customer)''')
+                .fetchPlan(fetchPlan)
+                .list()
+
+        then: "the query is executed and the reference is loaded"
+        orders.size() == 1
+        orders[0] == orderWithCustomer
+        entityStates.isLoaded(orders[0], 'customer')
     }
 }

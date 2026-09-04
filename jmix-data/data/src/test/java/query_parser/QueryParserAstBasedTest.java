@@ -302,6 +302,15 @@ public class QueryParserAstBasedTest {
 
         parser = new QueryParserAstBased(model, "select h from sec_GroupHierarchy h left join h.group g where g.name = :name");
         assertFalse(parser.hasConditionOnAttribute("group"));
+
+        parser = new QueryParserAstBased(model,
+                "select h from sec_GroupHierarchy h where exists (select c from sec_Constraint c where c.group = h.group)");
+        assertFalse(parser.hasConditionOnAttribute("group"));
+
+        parser = new QueryParserAstBased(model,
+                "select h from sec_GroupHierarchy h where h.group = :group "
+                        + "and exists (select c from sec_Constraint c where c.group = h.group)");
+        assertTrue(parser.hasConditionOnAttribute("group"));
     }
 
     @Test

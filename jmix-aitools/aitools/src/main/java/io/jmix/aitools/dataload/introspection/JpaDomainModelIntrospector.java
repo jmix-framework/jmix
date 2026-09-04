@@ -274,6 +274,11 @@ public class JpaDomainModelIntrospector {
     protected List<EntityPropertyDescriptor> introspectProperties(MetaClass metaClass) {
         List<EntityPropertyDescriptor> propertyDescriptors = new ArrayList<>();
         for (MetaProperty property : metaClass.getProperties()) {
+            // A @Secret attribute is never indexed: it is hidden from discovery and, because the index
+            // also backs JPQL validation, rejected if a generated query references it anyway.
+            if (metadataTools.isSecret(property)) {
+                continue;
+            }
             EntityPropertyDescriptor propertyDescriptor = introspectProperty(property);
             if (propertyDescriptor != null) {
                 propertyDescriptors.add(propertyDescriptor);

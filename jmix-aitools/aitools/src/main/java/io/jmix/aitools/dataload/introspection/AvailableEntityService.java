@@ -16,9 +16,14 @@
 
 package io.jmix.aitools.dataload.introspection;
 
+import io.jmix.aitools.AiToolsDataLoadProperties;
 import io.jmix.aitools.dataload.introspection.model.EntityDescriptor;
 import io.jmix.aitools.dataload.introspection.model.EntityPropertyDescriptor;
 import io.jmix.aitools.dataload.introspection.model.EntitySummary;
+import io.jmix.core.Metadata;
+import io.jmix.core.MetadataTools;
+import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.core.metamodel.model.MetaProperty;
 import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -42,6 +47,12 @@ public class AvailableEntityService {
     protected JpaDomainModelIntrospector modelIntrospector;
     @Autowired
     protected AvailableEntityFilter availableEntityFilter;
+    @Autowired
+    protected MetadataTools metadataTools;
+    @Autowired
+    protected Metadata metadata;
+    @Autowired
+    protected AiToolsDataLoadProperties dataLoadProperties;
 
     /**
      * Returns compact summaries for all entities available to the current user.
@@ -80,11 +91,56 @@ public class AvailableEntityService {
             }
         }
 
-        return availableEntityFilter.filter(List.copyOf(entityDescriptors));
+        return hideSystemLevelAttributes(availableEntityFilter.filter(List.copyOf(entityDescriptors)));
     }
 
     protected List<EntityDescriptor> getAvailableEntityDescriptors() {
-        return availableEntityFilter.filter(List.copyOf(modelIntrospector.getEntityDescriptors()));
+        return hideSystemLevelAttributes(
+                availableEntityFilter.filter(List.copyOf(modelIntrospector.getEntityDescriptors())));
+    }
+
+    /**
+     * Drops {@link io.jmix.core.entity.annotation.SystemLevel}-annotated attributes from the exposed
+     * descriptors when {@code jmix.aitools.dataload.exclude-system-level-attributes} is enabled. The
+     * attributes are only hidden from discovery: they remain in the introspected index, so a generated
+     * query may still reference them.
+     *
+     * @param entityDescriptors descriptors to narrow
+     * @return descriptors without their system-level attributes, or the same list when hiding is disabled
+     */
+    protected List<EntityDescriptor> hideSystemLevelAttributes(List<EntityDescriptor> entityDescriptors) {
+        if (!Boolean.TRUE.equals(dataLoadProperties.getExcludeSystemLevelAttributes())) {
+            return entityDescriptors;
+        }
+        return entityDescriptors.stream()
+                .map(this::hideSystemLevelAttributes)
+                .toList();
+    }
+
+    protected EntityDescriptor hideSystemLevelAttributes(EntityDescriptor entityDescriptor) {
+        MetaClass metaClass = metadata.findClass(entityDescriptor.getName());
+        if (metaClass == null) {
+            return entityDescriptor;
+        }
+
+        List<EntityPropertyDescriptor> properties = entityDescriptor.getProperties();
+        List<EntityPropertyDescriptor> exposed = new ArrayList<>(properties.size());
+        for (EntityPropertyDescriptor property : properties) {
+            if (!isSystemLevel(metaClass, property.getName())) {
+                exposed.add(property);
+            }
+        }
+
+        if (exposed.size() == properties.size()) {
+            return entityDescriptor;
+        }
+        return new EntityDescriptor(entityDescriptor.getName(), entityDescriptor.getLocalizedNames(),
+                List.copyOf(exposed), entityDescriptor.getComment());
+    }
+
+    protected boolean isSystemLevel(MetaClass metaClass, String propertyName) {
+        MetaProperty metaProperty = metaClass.findProperty(propertyName);
+        return metaProperty != null && metadataTools.isSystemLevel(metaProperty);
     }
 
     protected EntitySummary toEntitySummary(EntityDescriptor entityDescriptor) {

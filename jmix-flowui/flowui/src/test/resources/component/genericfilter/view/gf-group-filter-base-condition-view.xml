@@ -29,6 +29,9 @@
     <layout>
         <groupFilter id="groupFilter" operation="AND" dataLoader="ordersDl">
             <propertyFilter property="number" operation="EQUAL"/>
+            <groupFilter operation="OR">
+                <propertyFilter property="date" operation="GREATER"/>
+            </groupFilter>
         </groupFilter>
     </layout>
 </view>

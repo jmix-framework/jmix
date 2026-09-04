@@ -103,13 +103,6 @@
     white-space: nowrap;
 }
 
-.dynmod-ai-builder .draft-revision {
-    margin-inline-start: auto;
-    color: var(--lumo-secondary-text-color);
-    font-size: var(--lumo-font-size-s);
-    white-space: nowrap;
-}
-
 .dynmod-ai-builder .draft-body {
     min-height: 0;
     padding: var(--lumo-space-s) var(--lumo-space-m);
@@ -132,10 +125,6 @@
     font-weight: 600;
     letter-spacing: 0.04em;
     text-transform: uppercase;
-}
-
-.dynmod-ai-builder .dimmed {
-    opacity: 0.6;
 }
 
 .dynmod-ai-builder .draft-body.centered {
@@ -246,8 +235,7 @@
     box-sizing: border-box;
 }
 
-.dynmod-ai-builder .step-row,
-.dynmod-ai-builder .history-row {
+.dynmod-ai-builder .step-row {
     display: block;
     padding: 0.2em 0;
     font-size: var(--lumo-font-size-s);
@@ -255,8 +243,7 @@
     overflow-wrap: anywhere;
 }
 
-.dynmod-ai-builder .step-args,
-.dynmod-ai-builder .history-meta {
+.dynmod-ai-builder .step-args {
     display: block;
     color: var(--lumo-secondary-text-color);
     font-size: var(--lumo-font-size-xs);

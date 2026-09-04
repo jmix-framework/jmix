@@ -314,8 +314,15 @@ public class GroupFilter extends Composite<VerticalLayout>
         if (filterComponent instanceof PropertyFilter) {
             // Keep the registration so remove() can detach it; otherwise re-adding a component
             // (e.g. on a filter re-navigation restore) would accumulate stale apply() listeners.
+            // Apply on the user's gesture only: a programmatic operation change (e.g. the URL binder
+            // restoring the filter state) must not fire a load of its own, consistently with the
+            // value path, which is gated by isFromClient in SingleFilterComponentBase.
             Registration operationChangeRegistration = ((PropertyFilter<?>) filterComponent)
-                    .addOperationChangeListener(operationChangeEvent -> apply());
+                    .addOperationChangeListener(operationChangeEvent -> {
+                        if (operationChangeEvent.isFromClient()) {
+                            apply();
+                        }
+                    });
             operationChangeRegistrations.put(filterComponent, operationChangeRegistration);
         }
 

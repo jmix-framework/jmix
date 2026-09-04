@@ -165,7 +165,7 @@ class GenericFilterApplyAfterBaseChangeTest extends FlowuiTestSpecification {
 
         when: "the base is replaced again and the user changes the operation of a condition, which applies the group through its listener"
         groupFilter.dataLoader.setCondition(PropertyCondition.greater("amount", 0))
-        number.setOperation(PropertyFilter.Operation.CONTAINS)
+        number.setOperationInternal(PropertyFilter.Operation.CONTAINS, true)
 
         then:
         hasPropertyConditionOn(groupFilter.dataLoader.condition, "amount")
@@ -199,7 +199,7 @@ class GenericFilterApplyAfterBaseChangeTest extends FlowuiTestSpecification {
         when: "a child operation change applies the delegated root group"
         PropertyFilter<?> number = filter.getConfiguration("c1").rootLogicalFilterComponent.filterComponents
                 .find { it instanceof PropertyFilter } as PropertyFilter
-        number.setOperation(PropertyFilter.Operation.CONTAINS)
+        number.setOperationInternal(PropertyFilter.Operation.CONTAINS, true)
 
         then: "the application did not replace the base — same loader condition object"
         filter.dataLoader.condition.is(composedByGenericFilter)
@@ -236,7 +236,7 @@ class GenericFilterApplyAfterBaseChangeTest extends FlowuiTestSpecification {
         filter.dataLoader.setCondition(PropertyCondition.greater("total", 0))
 
         when: "the user changes the condition operation, which applies the delegated root group"
-        number.setOperation(PropertyFilter.Operation.CONTAINS)
+        number.setOperationInternal(PropertyFilter.Operation.CONTAINS, true)
 
         then: "one load, by the new base AND the shown configuration"
         loads == 1
@@ -252,7 +252,7 @@ class GenericFilterApplyAfterBaseChangeTest extends FlowuiTestSpecification {
         groupFilter.dataLoader.setCondition(PropertyCondition.greater("total", 0))
 
         when: "the user changes the operation of the nested group's condition, which applies the nested (delegated) group"
-        date.setOperation(PropertyFilter.Operation.LESS)
+        date.setOperationInternal(PropertyFilter.Operation.LESS, true)
 
         then: "the loader condition combines the new base with the owning group's output"
         hasPropertyConditionOn(groupFilter.dataLoader.condition, "total")

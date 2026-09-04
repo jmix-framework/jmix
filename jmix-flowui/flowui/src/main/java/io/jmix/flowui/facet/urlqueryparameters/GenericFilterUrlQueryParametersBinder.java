@@ -426,28 +426,15 @@ public class GenericFilterUrlQueryParametersBinder extends AbstractUrlQueryParam
     }
 
     protected ParsedPropertyCondition parsePropertyConditionModel(String conditionString) {
-        int separatorIndex = conditionString.indexOf(SEPARATOR);
-        if (separatorIndex == -1) {
-            throw new IllegalStateException("Can't parse property condition: " + conditionString);
-        }
+        List<String> tokens = filterUrlQueryParametersSupport.splitParameter(conditionString, 2);
 
-        String propertyString = conditionString.substring(0, separatorIndex);
         String property = urlParamSerializer.deserialize(String.class,
-                filterUrlQueryParametersSupport.restoreSeparatorValue(propertyString));
-
-        conditionString = conditionString.substring(separatorIndex + 1);
-        separatorIndex = conditionString.indexOf(SEPARATOR);
-        if (separatorIndex == -1) {
-            throw new IllegalStateException("Can't parse property condition: " + conditionString);
-        }
-
-        String operationString = conditionString.substring(0, separatorIndex);
+                filterUrlQueryParametersSupport.restoreSeparatorValue(tokens.get(0)));
         PropertyFilter.Operation operation = urlParamSerializer
                 .deserialize(PropertyFilter.Operation.class,
-                        filterUrlQueryParametersSupport.restoreSeparatorValue(operationString));
+                        filterUrlQueryParametersSupport.restoreSeparatorValue(tokens.get(1)));
 
-        String valueString = conditionString.substring(separatorIndex + 1);
-        return new ParsedPropertyCondition(property, operation, Strings.emptyToNull(valueString));
+        return new ParsedPropertyCondition(property, operation, Strings.emptyToNull(tokens.get(2)));
     }
 
     protected boolean isConditionPermitted(DataLoader dataLoader, ParsedPropertyCondition condition) {

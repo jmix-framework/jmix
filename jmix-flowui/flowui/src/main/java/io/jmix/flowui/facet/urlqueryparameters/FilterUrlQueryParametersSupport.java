@@ -30,9 +30,11 @@ import io.jmix.flowui.view.navigation.UrlParamSerializer;
 import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -128,6 +130,33 @@ public class FilterUrlQueryParametersSupport {
         return Arrays.stream(collectionValueString.split(","))
                 .map(valueString -> parseSingleValue(property, valueString, mpp))
                 .toList();
+    }
+
+    /**
+     * Splits a serialized parameter string into {@code headTokens} structural tokens separated by
+     * {@link #SEPARATOR}, plus the remainder — everything past the last structural separator. The
+     * remainder may itself contain separator characters (e.g. inside a serialized value) and may be
+     * empty. The returned list always has {@code headTokens + 1} elements.
+     *
+     * @param parameterString the serialized parameter string
+     * @param headTokens      the number of structural tokens before the remainder
+     * @return the structural tokens followed by the remainder
+     * @throws IllegalStateException if the string has fewer than {@code headTokens} separators
+     */
+    public List<String> splitParameter(String parameterString, int headTokens) {
+        List<String> tokens = new ArrayList<>(headTokens + 1);
+        String rest = parameterString;
+        for (int i = 0; i < headTokens; i++) {
+            int separatorIndex = rest.indexOf(SEPARATOR);
+            if (separatorIndex == -1) {
+                throw new IllegalStateException("Can't parse parameter: " + parameterString);
+            }
+            tokens.add(rest.substring(0, separatorIndex));
+            rest = rest.substring(separatorIndex + 1);
+        }
+        tokens.add(rest);
+
+        return tokens;
     }
 
     public Object getSerializableValue(@Nullable Object value) {

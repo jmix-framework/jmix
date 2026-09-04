@@ -128,14 +128,9 @@ public class PropertyFilterUrlQueryParametersBinder extends AbstractUrlQueryPara
         if (parameters.containsKey(getParameter())) {
             String serializedSettings = parameters.get(getParameter()).get(0);
 
-            int separatorIndex = serializedSettings.indexOf(SEPARATOR);
-            if (separatorIndex == -1) {
-                throw new IllegalStateException("Can't parse property filter settings: " + serializedSettings);
-            }
-
-            String operationString = serializedSettings.substring(0, separatorIndex);
+            List<String> tokens = filterUrlQueryParametersSupport.splitParameter(serializedSettings, 1);
             Operation operation = urlParamSerializer.deserialize(Operation.class,
-                    filterUrlQueryParametersSupport.restoreSeparatorValue(operationString));
+                    filterUrlQueryParametersSupport.restoreSeparatorValue(tokens.get(0)));
 
             if (filter.isOperationEditable()) {
                 filter.setOperation(operation);
@@ -144,7 +139,7 @@ public class PropertyFilterUrlQueryParametersBinder extends AbstractUrlQueryPara
                 return;
             }
 
-            String valueString = serializedSettings.substring(separatorIndex + 1);
+            String valueString = tokens.get(1);
             if (!Strings.isNullOrEmpty(valueString)) {
                 MetaClass entityMetaClass = filter.getDataLoader().getContainer().getEntityMetaClass();
                 try {

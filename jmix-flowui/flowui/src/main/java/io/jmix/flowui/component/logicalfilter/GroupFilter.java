@@ -36,6 +36,7 @@ import io.jmix.flowui.component.filter.BaseConditionSupport;
 import io.jmix.flowui.component.filter.FilterComponent;
 import io.jmix.flowui.component.filter.SingleFilterComponent;
 import io.jmix.flowui.component.filter.SingleFilterComponentBase;
+import io.jmix.flowui.component.filter.SupportsLoaderConditionRecompose;
 import io.jmix.flowui.component.propertyfilter.PropertyFilter;
 import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.model.DataLoader;
@@ -56,7 +57,7 @@ import static com.google.common.base.Preconditions.checkState;
  */
 public class GroupFilter extends Composite<VerticalLayout>
         implements LogicalFilterComponent<GroupFilter>, SupportsResponsiveSteps,
-        ApplicationContextAware, InitializingBean {
+        SupportsLoaderConditionRecompose, ApplicationContextAware, InitializingBean {
 
     protected static final String GROUP_FILTER_CLASS_NAME = "jmix-group-filter";
 
@@ -245,15 +246,25 @@ public class GroupFilter extends Composite<VerticalLayout>
         if (dataLoader != null) {
             // A standalone group recomposes its output onto a base condition only when the
             // application replaced the loader condition since the group's last contribution;
-            // an untouched loader condition is left as is. A delegated group never recomposes:
-            // its load bypasses the owner's composition, which is a known limitation of the
-            // value/operation change paths.
+            // an untouched loader condition is left as is. A delegated group does not compose
+            // itself: before loading it lets the nearest owner recompose an outdated base.
             if (!isConditionModificationDelegated() && isLoaderConditionOutdated()) {
                 updateDataLoaderCondition();
             }
             if (autoApply) {
+                if (isConditionModificationDelegated()) {
+                    SupportsLoaderConditionRecompose.recomposeNearestOwner(this);
+                }
                 dataLoader.load();
             }
+        }
+    }
+
+    @Internal
+    @Override
+    public void recomposeLoaderConditionIfOutdated() {
+        if (!isConditionModificationDelegated() && isLoaderConditionOutdated()) {
+            updateDataLoaderCondition();
         }
     }
 

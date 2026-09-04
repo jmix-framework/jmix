@@ -190,7 +190,7 @@ class GenericFilterApplyAfterBaseChangeTest extends FlowuiTestSpecification {
         loads == 0
     }
 
-    def "the delegated root group inside a GenericFilter leaves the loader condition to its owner"() {
+    def "the delegated root group inside a GenericFilter leaves an untouched loader condition alone"() {
         given: "c1 is active; the loader holds the GenericFilter's composed condition"
         GenericFilter filter = navigateToView(GfBaseConditionAfterActivationTestView).genericFilter
         filter.apply()
@@ -201,7 +201,79 @@ class GenericFilterApplyAfterBaseChangeTest extends FlowuiTestSpecification {
                 .find { it instanceof PropertyFilter } as PropertyFilter
         number.setOperation(PropertyFilter.Operation.CONTAINS)
 
-        then: "the group did not recompose on its own — same loader condition object"
+        then: "the application did not replace the base — same loader condition object"
         filter.dataLoader.condition.is(composedByGenericFilter)
+    }
+
+    def "a condition value change inside a GenericFilter recomposes onto a replaced base before loading"() {
+        given: "c1 is active and the loader combines the base with the configuration"
+        GenericFilter filter = navigateToView(GfBaseConditionAfterActivationTestView).genericFilter
+        PropertyFilter<?> number = filter.getConfiguration("c1").rootLogicalFilterComponent.filterComponents
+                .find { it instanceof PropertyFilter } as PropertyFilter
+        int loads = 0
+        filter.dataLoader.addPostLoadListener { loads++ }
+
+        and: "the application replaces the loader condition with a new base"
+        filter.dataLoader.setCondition(PropertyCondition.greater("total", 0))
+
+        when: "the user commits a condition value, which applies the condition component directly"
+        number.apply()
+
+        then: "one load, by the new base AND the shown configuration — not by the base alone"
+        loads == 1
+        hasPropertyConditionOn(filter.dataLoader.condition, "total")
+        hasPropertyConditionOn(filter.dataLoader.condition, "number")
+        !hasPropertyConditionOn(filter.dataLoader.condition, "amount")
+    }
+
+    def "a condition operation change inside a GenericFilter recomposes onto a replaced base before loading"() {
+        given: "c1 is active and the application has replaced the loader condition"
+        GenericFilter filter = navigateToView(GfBaseConditionAfterActivationTestView).genericFilter
+        PropertyFilter<?> number = filter.getConfiguration("c1").rootLogicalFilterComponent.filterComponents
+                .find { it instanceof PropertyFilter } as PropertyFilter
+        int loads = 0
+        filter.dataLoader.addPostLoadListener { loads++ }
+        filter.dataLoader.setCondition(PropertyCondition.greater("total", 0))
+
+        when: "the user changes the condition operation, which applies the delegated root group"
+        number.setOperation(PropertyFilter.Operation.CONTAINS)
+
+        then: "one load, by the new base AND the shown configuration"
+        loads == 1
+        hasPropertyConditionOn(filter.dataLoader.condition, "total")
+        hasPropertyConditionOn(filter.dataLoader.condition, "number")
+    }
+
+    def "an operation change in a group nested in a standalone GroupFilter recomposes onto a replaced base"() {
+        given: "a standalone group with a nested group, and the application has replaced the loader condition"
+        GroupFilter groupFilter = navigateToView(GfGroupFilterBaseConditionTestView).groupFilter
+        GroupFilter nested = groupFilter.ownFilterComponents.find { it instanceof GroupFilter } as GroupFilter
+        PropertyFilter<?> date = nested.ownFilterComponents.find { it instanceof PropertyFilter } as PropertyFilter
+        groupFilter.dataLoader.setCondition(PropertyCondition.greater("total", 0))
+
+        when: "the user changes the operation of the nested group's condition, which applies the nested (delegated) group"
+        date.setOperation(PropertyFilter.Operation.LESS)
+
+        then: "the loader condition combines the new base with the owning group's output"
+        hasPropertyConditionOn(groupFilter.dataLoader.condition, "total")
+        hasPropertyConditionOn(groupFilter.dataLoader.condition, "number")
+        !hasPropertyConditionOn(groupFilter.dataLoader.condition, "amount")
+    }
+
+    def "a value change of a condition delegated to a standalone GroupFilter recomposes onto a replaced base"() {
+        given:
+        GroupFilter groupFilter = navigateToView(GfGroupFilterBaseConditionTestView).groupFilter
+        PropertyFilter<?> number = groupFilter.ownFilterComponents.find { it instanceof PropertyFilter } as PropertyFilter
+        groupFilter.dataLoader.setCondition(PropertyCondition.greater("total", 0))
+        int loads = 0
+        groupFilter.dataLoader.addPostLoadListener { loads++ }
+
+        when: "the user commits a condition value, which applies the condition component directly"
+        number.apply()
+
+        then: "one load, by the new base AND the group's conditions"
+        loads == 1
+        hasPropertyConditionOn(groupFilter.dataLoader.condition, "total")
+        hasPropertyConditionOn(groupFilter.dataLoader.condition, "number")
     }
 }

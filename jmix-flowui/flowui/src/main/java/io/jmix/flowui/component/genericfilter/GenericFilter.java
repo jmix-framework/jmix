@@ -29,6 +29,7 @@ import io.jmix.core.AccessManager;
 import io.jmix.core.Messages;
 import io.jmix.core.Metadata;
 import io.jmix.core.annotation.Experimental;
+import io.jmix.core.annotation.Internal;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.querycondition.Condition;
 import io.jmix.core.querycondition.LogicalCondition;
@@ -50,6 +51,7 @@ import io.jmix.flowui.component.filter.BaseConditionSupport;
 import io.jmix.flowui.component.filter.FilterComponent;
 import io.jmix.flowui.component.filter.SingleFilterComponent;
 import io.jmix.flowui.component.filter.SingleFilterComponentBase;
+import io.jmix.flowui.component.filter.SupportsLoaderConditionRecompose;
 import io.jmix.flowui.component.genericfilter.configuration.DesignTimeConfiguration;
 import io.jmix.flowui.component.genericfilter.configuration.RunTimeConfiguration;
 import io.jmix.flowui.component.logicalfilter.GroupFilter;
@@ -89,7 +91,8 @@ import static com.google.common.base.Preconditions.checkState;
  * for repeated use.
  */
 public class GenericFilter extends Composite<JmixDetails>
-        implements SupportsResponsiveSteps, HasActions, HasEnabled, HasSize, HasStyle, HasTheme, HasTooltip,
+        implements SupportsResponsiveSteps, SupportsLoaderConditionRecompose,
+        HasActions, HasEnabled, HasSize, HasStyle, HasTheme, HasTooltip,
         ApplicationContextAware, InitializingBean {
 
     private static final Logger log = LoggerFactory.getLogger(GenericFilter.class);
@@ -480,6 +483,14 @@ public class GenericFilter extends Composite<JmixDetails>
             }
             setupLoaderFirstResult();
             if (isAutoApply()) dataLoader.load();
+        }
+    }
+
+    @Internal
+    @Override
+    public void recomposeLoaderConditionIfOutdated() {
+        if (isLoaderConditionOutdated()) {
+            updateDataLoaderCondition();
         }
     }
 

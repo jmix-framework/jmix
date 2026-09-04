@@ -210,6 +210,13 @@ public abstract class SingleFilterComponentBase<V> extends CustomField<V>
         if (isAttached() && dataLoader != null) {
             setupLoaderFirstResult();
             if (autoApply) {
+                // A delegated condition loads directly, bypassing the owning filter's composition;
+                // if the application replaced the loader condition since the owner composed it
+                // last, this condition's query condition is no longer part of it. Let the owner
+                // recompose first, so the load never runs by the replaced base alone.
+                if (isConditionModificationDelegated()) {
+                    SupportsLoaderConditionRecompose.recomposeNearestOwner(this);
+                }
                 dataLoader.load();
             }
         }

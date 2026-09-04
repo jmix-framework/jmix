@@ -318,6 +318,12 @@ public class GenericFilter extends Composite<JmixDetails>
     }
 
     protected void onApplyButtonClick(ClickEvent<MenuItem> clickEvent) {
+        // Same recomposition rule as apply(): recompose only when the application replaced the
+        // loader condition since the filter's last contribution. Unlike apply(), the button always
+        // loads and keeps the current page.
+        if (isLoaderConditionOutdated()) {
+            updateDataLoaderCondition();
+        }
         getDataLoader().load();
     }
 
@@ -465,9 +471,26 @@ public class GenericFilter extends Composite<JmixDetails>
      */
     public void apply() {
         if (dataLoader != null) {
+            // The application may have replaced the loader condition since the filter's last
+            // contribution (a new base condition); compose that base AND the shown configuration
+            // before loading, not the base alone. An untouched loader condition is left as is,
+            // so applications that never replace it see exactly the previous behavior.
+            if (isLoaderConditionOutdated()) {
+                updateDataLoaderCondition();
+            }
             setupLoaderFirstResult();
             if (isAutoApply()) dataLoader.load();
         }
+    }
+
+    /**
+     * Returns whether the loader condition was replaced by the application since this filter
+     * composed it last, so the composition no longer contains the shown configuration.
+     */
+    protected boolean isLoaderConditionOutdated() {
+        return lastConditionSetByFilter != null
+                && dataLoader != null
+                && dataLoader.getCondition() != lastConditionSetByFilter;
     }
 
     protected void setupLoaderFirstResult() {

@@ -242,9 +242,29 @@ public class GroupFilter extends Composite<VerticalLayout>
 
     @Override
     public void apply() {
-        if (dataLoader != null && autoApply) {
-            dataLoader.load();
+        if (dataLoader != null) {
+            // A standalone group recomposes its output onto a base condition only when the
+            // application replaced the loader condition since the group's last contribution;
+            // an untouched loader condition is left as is. A delegated group never recomposes:
+            // its load bypasses the owner's composition, which is a known limitation of the
+            // value/operation change paths.
+            if (!isConditionModificationDelegated() && isLoaderConditionOutdated()) {
+                updateDataLoaderCondition();
+            }
+            if (autoApply) {
+                dataLoader.load();
+            }
         }
+    }
+
+    /**
+     * Returns whether the loader condition was replaced by the application since this group
+     * composed it last, so the composition no longer contains this group's conditions.
+     */
+    protected boolean isLoaderConditionOutdated() {
+        return lastConditionSetByFilter != null
+                && dataLoader != null
+                && dataLoader.getCondition() != lastConditionSetByFilter;
     }
 
     @Override

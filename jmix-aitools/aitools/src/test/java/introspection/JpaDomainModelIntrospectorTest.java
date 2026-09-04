@@ -262,6 +262,29 @@ class JpaDomainModelIntrospectorTest {
     }
 
     @Test
+    @DisplayName("Never indexes @Secret attributes, keeps @SystemLevel attributes queryable")
+    void testSecretExcludedSystemLevelKeptInIndex() {
+        // @Secret is dropped from the index entirely: hidden from discovery and rejected by JPQL validation.
+        assertFalse(introspector.containsProperty("aitls_Customer", "secretToken"));
+        assertNull(introspector.resolvePropertyPath("aitls_Customer", "secretToken"));
+
+        // @SystemLevel stays in the index so a generated query may still reference it; it is only hidden
+        // from discovery output (see the discovery tests).
+        assertTrue(introspector.containsProperty("aitls_Customer", "systemNote"));
+        assertNotNull(introspector.resolvePropertyPath("aitls_Customer", "systemNote"));
+    }
+
+    @Test
+    @DisplayName("Secret wins when an attribute is both @Secret and @SystemLevel (as User.password)")
+    void testSecretWinsOverSystemLevelWhenBothPresent() {
+        // Mirrors the standard-template User.password (both @Secret and @SystemLevel): @Secret drops the
+        // attribute from the index entirely, so the "kept but hidden" @SystemLevel rule never applies — it
+        // is neither exposed nor queryable.
+        assertFalse(introspector.containsProperty("aitls_Customer", "secretSystemNote"));
+        assertNull(introspector.resolvePropertyPath("aitls_Customer", "secretSystemNote"));
+    }
+
+    @Test
     @DisplayName("Indexes property descriptors by entity and property name")
     void testIndexesPropertiesByEntityAndName() {
         assertTrue(introspector.containsProperty("aitls_Order", "number"));

@@ -219,6 +219,40 @@ class JpqlValidationServiceTest {
     }
 
     @Test
+    @DisplayName("Accepts a @SystemLevel attribute: hidden from discovery but still queryable")
+    void testAcceptsSystemLevelAttributePath() {
+        GeneratedJpqlResult result = new GeneratedJpqlResult(
+                "select e.systemNote as note from aitls_Customer e",
+                List.of(),
+                "System-level attribute in select",
+                List.of()
+        );
+
+        JpqlValidationResult validationResult = jpqlValidationService.validate(result);
+
+        assertTrue(validationResult.isValid());
+        assertTrue(validationResult.getIssues().stream()
+                .noneMatch(issue -> issue.getCode().equals(PROPERTY_PATH_INVALID_CODE)));
+    }
+
+    @Test
+    @DisplayName("Rejects a @Secret attribute path as an unknown property")
+    void testRejectsSecretAttributePath() {
+        GeneratedJpqlResult result = new GeneratedJpqlResult(
+                "select e.secretToken as token from aitls_Customer e",
+                List.of(),
+                "Secret attribute in select",
+                List.of()
+        );
+
+        JpqlValidationResult validationResult = jpqlValidationService.validate(result);
+
+        assertFalse(validationResult.isValid());
+        assertTrue(validationResult.getIssues().stream()
+                .anyMatch(issue -> issue.getCode().equals(PROPERTY_PATH_INVALID_CODE)));
+    }
+
+    @Test
     @DisplayName("Rejects parameter mismatches between JPQL and DTO")
     void testRejectsParameterMismatches() {
         GeneratedJpqlResult result = new GeneratedJpqlResult(

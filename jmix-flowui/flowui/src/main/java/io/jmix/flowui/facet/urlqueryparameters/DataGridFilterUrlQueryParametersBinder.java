@@ -193,23 +193,11 @@ public class DataGridFilterUrlQueryParametersBinder extends AbstractUrlQueryPara
 
     @SuppressWarnings({"rawtypes", "unchecked"})
     protected void applyPropertyFilterParameter(String parameterString) {
-        int separatorIndex = parameterString.indexOf(SEPARATOR);
+        List<String> tokens = filterUrlQueryParametersSupport.splitParameter(parameterString, 3);
 
-        if (separatorIndex == -1) {
-            throw new IllegalStateException("Can't parse property condition: " + parameterString);
-        }
-
-        String keyString = parameterString.substring(0, separatorIndex);
-
-        parameterString = parameterString.substring(separatorIndex + 1);
-        separatorIndex = parameterString.indexOf(SEPARATOR);
-        if (separatorIndex == -1) {
-            throw new IllegalStateException("Can't parse property condition: " + parameterString);
-        }
-
-        String propertyString = parameterString.substring(0, separatorIndex);
+        String keyString = tokens.get(0);
         String property = urlParamSerializer.deserialize(String.class,
-                filterUrlQueryParametersSupport.restoreSeparatorValue(propertyString));
+                filterUrlQueryParametersSupport.restoreSeparatorValue(tokens.get(1)));
 
         DataGridColumn<?> column = (DataGridColumn<?>) grid.getColumnByKey(keyString);
         if (column == null) {
@@ -219,22 +207,15 @@ public class DataGridFilterUrlQueryParametersBinder extends AbstractUrlQueryPara
             throw new IllegalStateException("Column must be filterable");
         }
 
-        parameterString = parameterString.substring(separatorIndex + 1);
-        separatorIndex = parameterString.indexOf(SEPARATOR);
-        if (separatorIndex == -1) {
-            throw new IllegalStateException("Can't parse property condition: " + parameterString);
-        }
-
-        String operationString = parameterString.substring(0, separatorIndex);
         PropertyFilter.Operation operation = urlParamSerializer
                 .deserialize(PropertyFilter.Operation.class,
-                        filterUrlQueryParametersSupport.restoreSeparatorValue(operationString));
+                        filterUrlQueryParametersSupport.restoreSeparatorValue(tokens.get(2)));
 
         DataGridHeaderFilter headerFilter = (DataGridHeaderFilter) column.getHeaderComponent();
         PropertyFilter propertyFilter = headerFilter.getPropertyFilter();
         propertyFilter.setOperation(operation);
 
-        String valueString = parameterString.substring(separatorIndex + 1);
+        String valueString = tokens.get(3);
         if (!Strings.isNullOrEmpty(valueString)) {
             try {
                 Object parsedValue = filterUrlQueryParametersSupport

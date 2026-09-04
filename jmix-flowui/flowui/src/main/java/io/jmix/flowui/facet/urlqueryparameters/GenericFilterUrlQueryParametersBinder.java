@@ -23,6 +23,7 @@ import com.vaadin.flow.component.HasValueAndElement;
 import com.vaadin.flow.router.QueryParameters;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.core.AccessManager;
+import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.accesscontext.EntityAttributeContext;
 import io.jmix.core.annotation.Internal;
@@ -41,10 +42,14 @@ import io.jmix.flowui.component.genericfilter.Configuration;
 import io.jmix.flowui.component.genericfilter.FilterUtils;
 import io.jmix.flowui.component.genericfilter.GenericFilter;
 import io.jmix.flowui.component.genericfilter.configuration.RunTimeConfiguration;
+import io.jmix.flowui.component.genericfilter.converter.FilterConverter;
+import io.jmix.flowui.component.genericfilter.registration.FilterComponents;
 import io.jmix.flowui.component.logicalfilter.LogicalFilterComponent;
 import io.jmix.flowui.component.logicalfilter.LogicalFilterComponent.FilterComponentsChangeEvent;
 import io.jmix.flowui.component.propertyfilter.PropertyFilter;
 import io.jmix.flowui.component.propertyfilter.SingleFilterSupport;
+import io.jmix.flowui.entity.filter.FilterValueComponent;
+import io.jmix.flowui.entity.filter.PropertyFilterCondition;
 import io.jmix.flowui.facet.UrlQueryParametersFacet.UrlQueryParametersChangeEvent;
 import io.jmix.flowui.model.CollectionLoader;
 import io.jmix.flowui.model.DataLoader;
@@ -88,6 +93,8 @@ public class GenericFilterUrlQueryParametersBinder extends AbstractUrlQueryParam
     protected SingleFilterComponentStateSupport singleFilterComponentStateSupport;
     protected SingleFilterSupport singleFilterSupport;
     protected MetadataTools metadataTools;
+    protected Metadata metadata;
+    protected FilterComponents filterComponents;
     protected FilterUrlQueryParametersSupport filterUrlQueryParametersSupport;
     protected AccessManager accessManager;
 
@@ -373,12 +380,12 @@ public class GenericFilterUrlQueryParametersBinder extends AbstractUrlQueryParam
 
             LogicalFilterComponent<?> rootLogicalFilterComponent = currentConfiguration.getRootLogicalFilterComponent();
 
-            List<FilterComponent> conditions = deserializeConditions(conditionParams,
-                    rootLogicalFilterComponent.getDataLoader());
-            conditions.forEach(filterComponent -> {
+            DataLoader dataLoader = rootLogicalFilterComponent.getDataLoader();
+            for (ParsedPropertyCondition condition : deserializeConditionModels(conditionParams, dataLoader)) {
+                FilterComponent filterComponent = createPropertyFilter(condition, dataLoader);
                 rootLogicalFilterComponent.add(filterComponent);
                 currentConfiguration.setFilterComponentModified(filterComponent, true);
-            });
+            }
 
             FilterUtils.setCurrentConfiguration(filter, currentConfiguration, true);
         }
@@ -388,69 +395,221 @@ public class GenericFilterUrlQueryParametersBinder extends AbstractUrlQueryParam
         return urlParamSerializer.deserialize(String.class, configurationParam);
     }
 
-    protected List<FilterComponent> deserializeConditions(List<String> conditionParams, DataLoader dataLoader) {
-        List<FilterComponent> conditions = new ArrayList<>(conditionParams.size());
+    protected List<ParsedPropertyCondition> deserializeConditionModels(List<String> conditionParams,
+                                                                       DataLoader dataLoader) {
+        List<ParsedPropertyCondition> conditions = new ArrayList<>(conditionParams.size());
         for (String conditionString : conditionParams) {
-            FilterComponent filterComponent = parseCondition(conditionString, dataLoader);
-            if (isPermitted(dataLoader, filterComponent)) {
-                conditions.add(filterComponent);
+            ParsedPropertyCondition condition;
+            try {
+                condition = parseConditionModel(conditionString);
+            } catch (RuntimeException e) {
+                // A URL is external input: a malformed condition (hand-edited, truncated, or from
+                // another version) degrades to a skipped condition, never to a failed navigation.
+                log.warn("A URL condition '{}' is skipped: {}", conditionString, e.toString());
+                continue;
+            }
+            if (isConditionPermitted(dataLoader, condition)) {
+                conditions.add(condition);
             }
         }
 
         return conditions;
     }
 
+    protected ParsedPropertyCondition parseConditionModel(String conditionString) {
+        if (conditionString.startsWith(PROPERTY_CONDITION_PREFIX)) {
+            String propertyConditionString = conditionString.substring(PROPERTY_CONDITION_PREFIX.length());
+            return parsePropertyConditionModel(propertyConditionString);
+        }
+
+        throw new IllegalStateException("Unknown condition type: " + conditionString);
+    }
+
+    protected ParsedPropertyCondition parsePropertyConditionModel(String conditionString) {
+        int separatorIndex = conditionString.indexOf(SEPARATOR);
+        if (separatorIndex == -1) {
+            throw new IllegalStateException("Can't parse property condition: " + conditionString);
+        }
+
+        String propertyString = conditionString.substring(0, separatorIndex);
+        String property = urlParamSerializer.deserialize(String.class,
+                filterUrlQueryParametersSupport.restoreSeparatorValue(propertyString));
+
+        conditionString = conditionString.substring(separatorIndex + 1);
+        separatorIndex = conditionString.indexOf(SEPARATOR);
+        if (separatorIndex == -1) {
+            throw new IllegalStateException("Can't parse property condition: " + conditionString);
+        }
+
+        String operationString = conditionString.substring(0, separatorIndex);
+        PropertyFilter.Operation operation = urlParamSerializer
+                .deserialize(PropertyFilter.Operation.class,
+                        filterUrlQueryParametersSupport.restoreSeparatorValue(operationString));
+
+        String valueString = conditionString.substring(separatorIndex + 1);
+        return new ParsedPropertyCondition(property, operation, Strings.emptyToNull(valueString));
+    }
+
+    protected boolean isConditionPermitted(DataLoader dataLoader, ParsedPropertyCondition condition) {
+        MetaClass entityMetaClass = dataLoader.getContainer().getEntityMetaClass();
+        MetaPropertyPath propertyPath = getMetadataTools()
+                .resolveMetaPropertyPathOrNull(entityMetaClass, condition.property());
+        if (propertyPath == null) {
+            log.warn("A URL condition on '{}' is skipped: the attribute does not exist in entity '{}'",
+                    condition.property(), entityMetaClass.getName());
+            return false;
+        }
+
+        Predicate<MetaPropertyPath> propertyFiltersPredicate = filter.getPropertyFiltersPredicate();
+        if (propertyFiltersPredicate != null && !propertyFiltersPredicate.test(propertyPath)) {
+            return false;
+        }
+
+        EntityAttributeContext context = new EntityAttributeContext(propertyPath);
+        accessManager.applyRegisteredConstraints(context);
+        if (!context.canView()) {
+            return false;
+        }
+
+        return !propertyPath.getMetaProperty().getAnnotatedElement().isAnnotationPresent(SystemLevel.class);
+    }
+
+    @Nullable
+    protected Object parseConditionValue(ParsedPropertyCondition condition, DataLoader dataLoader) {
+        if (condition.valueString() == null) {
+            return null;
+        }
+        try {
+            return filterUrlQueryParametersSupport.parseValue(dataLoader.getContainer().getEntityMetaClass(),
+                    condition.property(), condition.operation().getType(), condition.valueString());
+        } catch (RuntimeException e) {
+            log.warn("Cannot parse the value of a URL condition on '{}': {}", condition.property(), e.toString());
+            return null;
+        }
+    }
+
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    protected PropertyFilter<?> createPropertyFilter(ParsedPropertyCondition condition, DataLoader dataLoader) {
+        PropertyFilterCondition model = getMetadata().create(PropertyFilterCondition.class);
+        model.setProperty(condition.property());
+        model.setOperation(condition.operation());
+        model.setParameterName(PropertyConditionUtils.generateParameterName(condition.property()));
+        model.setValueComponent(getMetadata().create(FilterValueComponent.class));
+
+        FilterConverter<PropertyFilter, PropertyFilterCondition> converter =
+                (FilterConverter) getFilterComponents().getConverterByModelClass(PropertyFilterCondition.class, filter);
+        PropertyFilter propertyFilter = converter.convertToComponent(model);
+
+        Object value = parseConditionValue(condition, dataLoader);
+        if (value != null) {
+            propertyFilter.setValue(value);
+        }
+
+        return propertyFilter;
+    }
+
+    /**
+     * @deprecated the URL restore no longer builds a filter component per condition; conditions are
+     * parsed into {@link ParsedPropertyCondition} models and validated by
+     * {@link #deserializeConditionModels(List, DataLoader)} first, and a component is created by
+     * {@link #createPropertyFilter(ParsedPropertyCondition, DataLoader)} only for the surviving ones.
+     * This method now delegates to that flow.
+     */
+    @Deprecated(since = "3.1", forRemoval = true)
+    protected List<FilterComponent> deserializeConditions(List<String> conditionParams, DataLoader dataLoader) {
+        List<ParsedPropertyCondition> models = deserializeConditionModels(conditionParams, dataLoader);
+        List<FilterComponent> conditions = new ArrayList<>(models.size());
+        for (ParsedPropertyCondition condition : models) {
+            conditions.add(createPropertyFilter(condition, dataLoader));
+        }
+
+        return conditions;
+    }
+
+    /**
+     * @deprecated use {@link #isConditionPermitted(DataLoader, ParsedPropertyCondition)}, which this
+     * method delegates to, instead. Unlike before, an attribute that does not exist in the entity is
+     * reported as not permitted rather than tolerated.
+     */
+    @Deprecated(since = "3.1", forRemoval = true)
     protected boolean isPermitted(DataLoader dataLoader, FilterComponent filterComponent) {
         if (filterComponent instanceof PropertyFilter<?> propertyFilter && propertyFilter.getProperty() != null) {
-            MetaClass entityMetaClass = dataLoader.getContainer().getEntityMetaClass();
-            MetaPropertyPath propertyPath = getMetadataTools().resolveMetaPropertyPathOrNull(entityMetaClass, propertyFilter.getProperty());
-
-            Predicate<MetaPropertyPath> propertyFiltersPredicate = filter.getPropertyFiltersPredicate();
-            if (propertyFiltersPredicate != null && !propertyFiltersPredicate.test(propertyPath)) {
-                return false;
-            }
-
-            EntityAttributeContext context = new EntityAttributeContext(propertyPath);
-            accessManager.applyRegisteredConstraints(context);
-            if (!context.canView()) {
-                return false;
-            }
-
-            return propertyPath == null ||
-                    !propertyPath.getMetaProperty().getAnnotatedElement().isAnnotationPresent(SystemLevel.class);
+            return isConditionPermitted(dataLoader, new ParsedPropertyCondition(
+                    propertyFilter.getProperty(), propertyFilter.getOperation(), null));
         }
         return true;
     }
 
     protected void updateConfigurationConditions(Configuration currentConfiguration, List<String> conditionParams) {
         LogicalFilterComponent<?> rootLogicalFilterComponent = currentConfiguration.getRootLogicalFilterComponent();
+        DataLoader dataLoader = rootLogicalFilterComponent.getDataLoader();
 
-        List<FilterComponent> conditions = deserializeConditions(conditionParams,
-                rootLogicalFilterComponent.getDataLoader());
+        List<ParsedPropertyCondition> conditions = deserializeConditionModels(conditionParams, dataLoader);
         List<FilterComponent> configurationComponents = rootLogicalFilterComponent.getFilterComponents();
 
-        for (FilterComponent filterComponent : conditions) {
+        for (ParsedPropertyCondition condition : conditions) {
             FilterComponent usedFilterComponent = null;
 
             for (int i = 0; i < configurationComponents.size() && usedFilterComponent == null; ++i) {
                 FilterComponent configurationComponent = configurationComponents.get(i);
 
-                usedFilterComponent = updateFilterComponent(configurationComponent, filterComponent);
+                usedFilterComponent = applyConditionToComponent(configurationComponent, condition, dataLoader);
             }
 
             if (usedFilterComponent != null) {
                 configurationComponents.remove(usedFilterComponent);
-            }
-
-            if (currentConfiguration instanceof RunTimeConfiguration && usedFilterComponent == null) {
+            } else if (currentConfiguration instanceof RunTimeConfiguration) {
+                FilterComponent filterComponent = createPropertyFilter(condition, dataLoader);
                 currentConfiguration.setFilterComponentModified(filterComponent, true);
                 rootLogicalFilterComponent.add(filterComponent);
             } else {
-                log.debug("Can't add filterComponent to Design-Time Configuration");
+                log.warn("A URL condition on '{}' is skipped: the design-time configuration '{}' has no" +
+                        " matching condition and cannot be extended", condition.property(), currentConfiguration.getId());
             }
         }
     }
 
+    @Nullable
+    protected FilterComponent applyConditionToComponent(FilterComponent configurationComponent,
+                                                        ParsedPropertyCondition condition,
+                                                        DataLoader dataLoader) {
+        if (configurationComponent instanceof PropertyFilter<?> configurationPropertyFilter) {
+            return applyPropertyCondition(configurationPropertyFilter, condition, dataLoader);
+        }
+
+        return null;
+    }
+
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    @Nullable
+    protected FilterComponent applyPropertyCondition(PropertyFilter configurationComponent,
+                                                     ParsedPropertyCondition condition,
+                                                     DataLoader dataLoader) {
+        if (!Objects.equals(configurationComponent.getProperty(), condition.property())) {
+            return null;
+        }
+
+        if (configurationComponent.isOperationEditable()) {
+            configurationComponent.setOperation(condition.operation());
+        }
+
+        if (Objects.equals(configurationComponent.getOperation(), condition.operation())) {
+            Object value = parseConditionValue(condition, dataLoader);
+            if (value != null) {
+                UiComponentUtils.setValue(configurationComponent, value);
+            }
+
+            return configurationComponent;
+        }
+
+        return null;
+    }
+
+    /**
+     * @deprecated use {@link #applyConditionToComponent(FilterComponent, ParsedPropertyCondition, DataLoader)}
+     * instead
+     */
+    @Deprecated(since = "3.1", forRemoval = true)
     @Nullable
     protected FilterComponent updateFilterComponent(FilterComponent configurationComponent,
                                                     FilterComponent filterComponent) {
@@ -471,6 +630,10 @@ public class GenericFilterUrlQueryParametersBinder extends AbstractUrlQueryParam
         return null;
     }
 
+    /**
+     * @deprecated use {@link #applyPropertyCondition(PropertyFilter, ParsedPropertyCondition, DataLoader)} instead
+     */
+    @Deprecated(since = "3.1", forRemoval = true)
     @SuppressWarnings({"rawtypes", "unchecked"})
     @Nullable
     protected FilterComponent updatePropertyCondition(PropertyFilter configurationComponent,
@@ -492,64 +655,32 @@ public class GenericFilterUrlQueryParametersBinder extends AbstractUrlQueryParam
         return null;
     }
 
+    /**
+     * @deprecated use {@link #parseConditionModel(String)} and
+     * {@link #createPropertyFilter(ParsedPropertyCondition, DataLoader)}, which this method delegates
+     * to, instead
+     */
+    @Deprecated(since = "3.1", forRemoval = true)
     protected FilterComponent parseCondition(String conditionString, DataLoader dataLoader) {
-        if (conditionString.startsWith(PROPERTY_CONDITION_PREFIX)) {
-            String propertyConditionString = conditionString.substring(PROPERTY_CONDITION_PREFIX.length());
-            return parsePropertyCondition(propertyConditionString, dataLoader);
-        }
-
-        throw new IllegalStateException("Unknown condition type: " + conditionString);
+        return createPropertyFilter(parseConditionModel(conditionString), dataLoader);
     }
 
-    @SuppressWarnings({"rawtypes", "unchecked"})
+    /**
+     * @deprecated use {@link #parsePropertyConditionModel(String)} and
+     * {@link #createPropertyFilter(ParsedPropertyCondition, DataLoader)} instead; this method now
+     * delegates to them, so the component is created through the converter route and its condition
+     * modification is delegated to the filter
+     */
+    @Deprecated(since = "3.1", forRemoval = true)
     protected PropertyFilter<?> parsePropertyCondition(String conditionString, DataLoader dataLoader) {
-        int separatorIndex = conditionString.indexOf(SEPARATOR);
-        if (separatorIndex == -1) {
-            throw new IllegalStateException("Can't parse property condition: " + conditionString);
-        }
-
-        String propertyString = conditionString.substring(0, separatorIndex);
-        String property = urlParamSerializer.deserialize(String.class,
-                filterUrlQueryParametersSupport.restoreSeparatorValue(propertyString));
-
-        conditionString = conditionString.substring(separatorIndex + 1);
-        separatorIndex = conditionString.indexOf(SEPARATOR);
-        if (separatorIndex == -1) {
-            throw new IllegalStateException("Can't parse property condition: " + conditionString);
-        }
-
-        String operationString = conditionString.substring(0, separatorIndex);
-        PropertyFilter.Operation operation = urlParamSerializer
-                .deserialize(PropertyFilter.Operation.class,
-                        filterUrlQueryParametersSupport.restoreSeparatorValue(operationString));
-
-        PropertyFilter propertyFilter = uiComponents.create(PropertyFilter.class);
-        propertyFilter.setProperty(property);
-        propertyFilter.setOperation(operation);
-        // TODO: gg, change when configurations and custom conditions will be implemented
-        propertyFilter.setOperationEditable(true);
-
-        propertyFilter.setParameterName(PropertyConditionUtils.generateParameterName(property));
-        propertyFilter.setDataLoader(dataLoader);
-
-        propertyFilter.setValueComponent(generatePropertyFilterValueComponent(propertyFilter));
-
-        String valueString = conditionString.substring(separatorIndex + 1);
-        if (!Strings.isNullOrEmpty(valueString)) {
-            try {
-                Object parsedValue = filterUrlQueryParametersSupport
-                        .parseValue(dataLoader.getContainer().getEntityMetaClass(),
-                                property, operation.getType(), valueString);
-                propertyFilter.setValue(parsedValue);
-            } catch (Exception e) {
-                log.info("Cannot parse URL parameter. {}", e.toString());
-                propertyFilter.setValue(null);
-            }
-        }
-
-        return propertyFilter;
+        return createPropertyFilter(parsePropertyConditionModel(conditionString), dataLoader);
     }
 
+    /**
+     * @deprecated the value component is generated by the {@code PropertyFilterConverter} used in
+     * {@link #createPropertyFilter(ParsedPropertyCondition, DataLoader)}
+     */
+    @Deprecated(since = "3.1", forRemoval = true)
     protected HasValueAndElement<?, ?> generatePropertyFilterValueComponent(PropertyFilter<?> propertyFilter) {
         MetaClass metaClass = propertyFilter.getDataLoader().getContainer().getEntityMetaClass();
         return getSingleFilterSupport().generateValueComponent(metaClass,
@@ -625,6 +756,20 @@ public class GenericFilterUrlQueryParametersBinder extends AbstractUrlQueryParam
         return metadataTools;
     }
 
+    protected Metadata getMetadata() {
+        if (metadata == null) {
+            metadata = applicationContext.getBean(Metadata.class);
+        }
+        return metadata;
+    }
+
+    protected FilterComponents getFilterComponents() {
+        if (filterComponents == null) {
+            filterComponents = applicationContext.getBean(FilterComponents.class);
+        }
+        return filterComponents;
+    }
+
     protected SingleFilterSupport getSingleFilterSupport() {
         if (singleFilterSupport == null) {
             singleFilterSupport = applicationContext.getBean(SingleFilterSupport.class);
@@ -658,6 +803,22 @@ public class GenericFilterUrlQueryParametersBinder extends AbstractUrlQueryParam
                                   List<ComponentNode> structure,
                                   Map<SingleFilterComponentBase<?>, SingleFilterComponentStateSupport.State> states,
                                   Map<String, Object> defaultValues) {
+    }
+
+    /**
+     * A URL property condition parsed into a plain description: the attribute path, the operation and
+     * the raw (still serialized) value. Permission checks and matching against the configuration run
+     * on this model; a filter component is created, and the value is deserialized (which may load a
+     * referenced entity), only for the conditions that survive them.
+     *
+     * @param property    the entity attribute path
+     * @param operation   the condition operation
+     * @param valueString the serialized condition value, or {@code null} if the URL carries none
+     */
+    @Internal
+    protected record ParsedPropertyCondition(String property,
+                                             PropertyFilter.Operation operation,
+                                             @Nullable String valueString) {
     }
 
     /**

@@ -213,4 +213,36 @@ class CompositionViewsTest extends FlowuiTestSpecification {
 
         dataManager.remove(lineParam, orderLine, order)
     }
+
+    def "reverting a line attribute in a second dialog session leaves the order view with nothing to save"() {
+
+        given: "an order with a line, opened in the order view"
+
+        def order = dataManager.save(new Order(number: '1', orderLines: []))
+        def orderLine = dataManager.save(new OrderLine(quantity: 1, params: [], order: order))
+
+        navigationSupport.navigate(OrderView, urlParamSerializer.serialize(order.id))
+        OrderView orderView = UI.getCurrent().getInternals().getActiveRouterTargetsChain().get(0)
+
+        def orderViewCtx = orderView.viewData.dataContext
+
+        when: "a first dialog session changes the quantity"
+
+        orderView.buildLineScreenForEdit(false).changeSaveAndClose(2)
+
+        then: "the order view holds the edit and reports it as unsaved"
+
+        orderViewCtx.find(OrderLine, orderLine.id).quantity == 2
+        !orderViewCtx.getModified().empty
+
+        when: "a second dialog session sets the quantity back to the persisted value"
+
+        orderView.buildLineScreenForEdit(false).changeSaveAndClose(1)
+
+        then: "the line matches the database again and the order view has nothing to save"
+
+        orderViewCtx.find(OrderLine, orderLine.id).quantity == 1
+        orderViewCtx.getModifiedAttributes(orderViewCtx.find(OrderLine, orderLine.id)).empty
+        orderViewCtx.getModified().empty
+    }
 }

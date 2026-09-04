@@ -1379,7 +1379,9 @@ public class DataContextImpl implements DataContextInternal {
         for (String attribute : childDirtyAttributes) {
             if (changeTracker.isAttributeDirty(result, attribute)) {
                 // already dirty here: keep the existing baseline, the child's value replaced
-                // the current value only
+                // the current value only. That value can be a revert to this context's baseline
+                // (edited in one child session, set back in a later one), so re-measure it.
+                remeasureAgainstBaseline(result, attribute);
                 continue;
             }
             if (!entityStates.isLoaded(result, rootSegment(attribute))) {
@@ -1387,12 +1389,38 @@ public class DataContextImpl implements DataContextInternal {
                 // would hit unfetched state). After the merge these are normally loaded, so this is rare.
                 log.debug("Skipping dirty union of '{}' from child context: not loaded on the parent instance {}",
                         attribute, result);
+                // the child's change cannot be represented as dirty state here, but the instance must
+                // still be saved with this context (see saveToParentContext)
+                modifiedInstances.add(result);
                 continue;
             }
             changeTracker.markDirty(result, attribute, preMergeValues.get(attribute));
         }
         markCompositionOwnersModified(result);
         return result;
+    }
+
+    /**
+     * Re-measures an attribute that was already dirty in this context before {@link #mergeFromChild}
+     * wrote the child's value onto the managed instance: the attribute keeps this context's own baseline,
+     * and the value coming from the child can have returned it to that baseline, which un-dirties it. Never
+     * marks an attribute dirty - both tracker calls below only compare against an existing baseline.
+     */
+    protected void remeasureAgainstBaseline(Object entity, String attribute) {
+        MetaProperty property = attribute.indexOf('.') < 0
+                ? getEntityMetaClass(entity).findProperty(attribute)
+                : null;
+        if (property != null && property.getRange().isClass() && property.getRange().getCardinality().isMany()) {
+            Object value = EntityValues.getValue(entity, attribute);
+            if (value instanceof Collection<?> current) {
+                changeTracker.trackCollectionChange(entity, attribute, current);
+            }
+            return;
+        }
+        // valueForBaseline already yields the tracker's baseline shape, so no further reference keying is
+        // needed here. A reference to an id-less instance keeps its dirty state either way: the tracker's
+        // own baseline for it is an IdentityKey, which no value produced here can equal.
+        changeTracker.trackChange(entity, attribute, null, valueForBaseline(entity, attribute), false);
     }
 
     @Override
@@ -1538,8 +1566,17 @@ public class DataContextImpl implements DataContextInternal {
     protected Set<Object> saveToParentContext() {
         Set<Object> savedEntities = new HashSet<>();
         for (Object entity : modifiedInstances) {
-            Object merged = parentContext.mergeFromChild(entity, changeTracker.getModifiedAttributes(entity));
-            parentContext.getModifiedInstances().add(merged);
+            Set<String> dirtyAttributes = changeTracker.getModifiedAttributes(entity);
+            Object merged = parentContext.mergeFromChild(entity, dirtyAttributes);
+            if (dirtyAttributes.isEmpty() || manuallyModified.contains(entity)
+                    || parentContext.getModifiedInstances().contains(merged)) {
+                // Reasons to be modified that the parent cannot derive from the merged attributes - no
+                // dirty attributes at all (a new instance), or a setModified pin - are carried over as
+                // they were. Otherwise the parent's own tracking decides: mergeFromChild leaves the
+                // instance out of the modified set when the child's values returned every attribute to the
+                // parent's baseline, and it must not be re-added here.
+                parentContext.getModifiedInstances().add(merged);
+            }
             savedEntities.add(merged);
         }
         // Runs after every modified instance has been merged: their dirty attributes are registered in

@@ -1129,4 +1129,38 @@ class DataContextMergePolicyTest extends DataContextSpec {
         cleanup:
         dataManager.remove(line1, order1, customer1)
     }
+
+    def "a child save that returns an attribute to the parent's baseline clears the dirty state"() {
+        given:
+        DataContext parent = factory.createDataContext()
+        Customer customer = dataManager.save(new Customer(name: 'c1', address: new Address()))
+        Customer parentManaged = parent.merge(dataManager.load(Id.of(customer)).fetchPlan { it.add('name') }.one())
+
+        when: "a first dialog session edits the attribute"
+        DataContext child1 = factory.createDataContext()
+        child1.setParent(parent)
+        Customer child1Managed = child1.merge(parentManaged)
+        child1Managed.name = 'edited'
+        child1.save()
+
+        then:
+        parentManaged.name == 'edited'
+        parent.getModifiedAttributes(parentManaged) == ['name'] as Set
+
+        when: "a second dialog session sets it back to the original value"
+        DataContext child2 = factory.createDataContext()
+        child2.setParent(parent)
+        Customer child2Managed = child2.merge(parentManaged)
+        child2Managed.name = 'c1'
+        child2.save()
+
+        then: "the parent is back at its baseline and has nothing to save"
+        parentManaged.name == 'c1'
+        parent.getModifiedAttributes(parentManaged).empty
+        !parent.isModified(parentManaged)
+        parent.getModified().empty
+
+        cleanup:
+        dataManager.remove(customer)
+    }
 }

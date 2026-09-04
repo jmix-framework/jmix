@@ -110,6 +110,8 @@ public class EntityInspectorDetailView extends StandardDetailView<Object> {
     protected HashMap<Tab, Component> tabToContentMap = new HashMap();
 
     protected Boolean isNew = true;
+    // Whether the edited entity is loaded from the data store, see initMainContainer().
+    protected boolean entityLoadedFromDataStore;
     protected InstanceContainer container;
     protected String metadataClassName;
     protected String metadataId;
@@ -216,7 +218,14 @@ public class EntityInspectorDetailView extends StandardDetailView<Object> {
 
             loader.setHint(PersistenceHints.SOFT_DELETION, false);
             loader.setContainer(container);
-            loader.load();
+
+            entityLoadedFromDataStore = !doNotReloadEditedEntity(container);
+            if (entityLoadedFromDataStore) {
+                loader.load();
+            } else {
+                // Reloading would discard the changes the entity has in the parent data context.
+                container.setItem(dataContext.merge(entity));
+            }
         } else {
             container.setItem(entity);
         }
@@ -254,7 +263,7 @@ public class EntityInspectorDetailView extends StandardDetailView<Object> {
                 .withOwnerComponent(getContent())
                 .build();
 
-        if (!isNew) {
+        if (!isNew && entityLoadedFromDataStore) {
             getEditedEntityLoader().load();
         }
 

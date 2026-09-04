@@ -129,7 +129,9 @@ class GenericFilterUrlConditionModelTest extends FlowuiTestSpecification {
         view.ownersFilter.currentConfiguration.rootLogicalFilterComponent.filterComponents.isEmpty()
 
         where:
-        conditionString << ["property:name", "property:name_garbage_x", "garbage"]
+        conditionString << ["property:name", "property:name_garbage_x", "garbage",
+                            "property:_contains_x", "property:__", "property:a.b.c_equal_x",
+                            "property:name..weird_equal_x"]
     }
 
     def "a LIST condition value from the URL is restored as a collection"() {
@@ -185,15 +187,49 @@ class GenericFilterUrlConditionModelTest extends FlowuiTestSpecification {
         def view = navigateToView(GenericFilterUrlQueryParamsTestView)
         def binder = getBinder(view.urlQueryParameters)
 
-        when: "the URL carries a UUID attribute condition with a malformed value"
-        binder.updateState(QueryParameters.simple(
-                [(binder.conditionParam): "property:id_equal_not-a-uuid"]))
+        when: "the URL carries a resolvable attribute with a value that cannot be deserialized"
+        binder.updateState(QueryParameters.simple([(binder.conditionParam): conditionString]))
 
         then: "the condition is present but empty, and the restore succeeds"
         noExceptionThrown()
         def components = view.ownersFilter.currentConfiguration.rootLogicalFilterComponent.filterComponents
         components.size() == 1
         (components.first() as PropertyFilter<?>).value == null
+
+        where: "a malformed UUID and an unparsable value of an embedded attribute"
+        conditionString << ["property:id_equal_not-a-uuid", "property:address_equal_x"]
+    }
+
+    def "a condition with an operation not available for the attribute is skipped"() {
+        given:
+        def view = navigateToView(GenericFilterUrlQueryParamsTestView)
+        def binder = getBinder(view.urlQueryParameters)
+
+        when: "the URL carries a string operation on a UUID attribute"
+        binder.updateState(QueryParameters.simple(
+                [(binder.conditionParam): "property:id_contains_x"]))
+
+        then: "the restore succeeds and the condition is not applied"
+        noExceptionThrown()
+        view.ownersFilter.currentConfiguration.rootLogicalFilterComponent.filterComponents.isEmpty()
+    }
+
+    def "an operation outside the component's operations list is not applied and does not fail the restore"() {
+        given: "a design-time configuration whose condition allows only EQUAL"
+        def view = navigateToView(GenericFilterEditableOpConfigTestView)
+        def binder = getBinder(view.urlQueryParameters)
+        def component = view.ownersFilter.getConfiguration("byName").rootLogicalFilterComponent.filterComponents
+                .first() as PropertyFilter<?>
+        component.setOperationsList(List.of(PropertyFilter.Operation.EQUAL))
+
+        when: "the URL carries an operation outside that list"
+        binder.updateState(new QueryParameters([
+                (binder.configurationParam): List.of("byName"),
+                (binder.conditionParam)    : List.of("property:name_not-equal_Bob")]))
+
+        then: "the restore succeeds and the component keeps its own operation"
+        noExceptionThrown()
+        component.operation == PropertyFilter.Operation.EQUAL
     }
 
     @SuppressWarnings('GrDeprecatedAPIUsage')

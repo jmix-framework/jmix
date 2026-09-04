@@ -47,6 +47,7 @@ import io.jmix.flowui.component.genericfilter.registration.FilterComponents;
 import io.jmix.flowui.component.logicalfilter.LogicalFilterComponent;
 import io.jmix.flowui.component.logicalfilter.LogicalFilterComponent.FilterComponentsChangeEvent;
 import io.jmix.flowui.component.propertyfilter.PropertyFilter;
+import io.jmix.flowui.component.propertyfilter.PropertyFilterSupport;
 import io.jmix.flowui.component.propertyfilter.SingleFilterSupport;
 import io.jmix.flowui.entity.filter.FilterValueComponent;
 import io.jmix.flowui.entity.filter.PropertyFilterCondition;
@@ -92,6 +93,7 @@ public class GenericFilterUrlQueryParametersBinder extends AbstractUrlQueryParam
     protected UiComponents uiComponents;
     protected SingleFilterComponentStateSupport singleFilterComponentStateSupport;
     protected SingleFilterSupport singleFilterSupport;
+    protected PropertyFilterSupport propertyFilterSupport;
     protected MetadataTools metadataTools;
     protected Metadata metadata;
     protected FilterComponents filterComponents;
@@ -120,6 +122,9 @@ public class GenericFilterUrlQueryParametersBinder extends AbstractUrlQueryParam
         singleFilterComponentStateSupport = applicationContext.getBean(SingleFilterComponentStateSupport.class);
         filterUrlQueryParametersSupport = applicationContext.getBean(FilterUrlQueryParametersSupport.class);
         accessManager = applicationContext.getBean(AccessManager.class);
+        metadata = applicationContext.getBean(Metadata.class);
+        filterComponents = applicationContext.getBean(FilterComponents.class);
+        propertyFilterSupport = applicationContext.getBean(PropertyFilterSupport.class);
     }
 
     protected void initComponent(GenericFilter filter) {
@@ -458,7 +463,20 @@ public class GenericFilterUrlQueryParametersBinder extends AbstractUrlQueryParam
             return false;
         }
 
-        return !propertyPath.getMetaProperty().getAnnotatedElement().isAnnotationPresent(SystemLevel.class);
+        if (propertyPath.getMetaProperty().getAnnotatedElement().isAnnotationPresent(SystemLevel.class)) {
+            return false;
+        }
+
+        // The operation compatibility used to be checked only by PropertyFilter.setOperation while
+        // the component was being built, where a failure escaped into the navigation. Validate it
+        // here on the model, so an incompatible operation degrades to a skipped condition.
+        if (!propertyFilterSupport.getAvailableOperations(propertyPath).contains(condition.operation())) {
+            log.warn("A URL condition on '{}' is skipped: the operation '{}' is not available for the attribute",
+                    condition.property(), condition.operation());
+            return false;
+        }
+
+        return true;
     }
 
     @Nullable
@@ -477,14 +495,14 @@ public class GenericFilterUrlQueryParametersBinder extends AbstractUrlQueryParam
 
     @SuppressWarnings({"rawtypes", "unchecked"})
     protected PropertyFilter<?> createPropertyFilter(ParsedPropertyCondition condition, DataLoader dataLoader) {
-        PropertyFilterCondition model = getMetadata().create(PropertyFilterCondition.class);
+        PropertyFilterCondition model = metadata.create(PropertyFilterCondition.class);
         model.setProperty(condition.property());
         model.setOperation(condition.operation());
         model.setParameterName(PropertyConditionUtils.generateParameterName(condition.property()));
-        model.setValueComponent(getMetadata().create(FilterValueComponent.class));
+        model.setValueComponent(metadata.create(FilterValueComponent.class));
 
         FilterConverter<PropertyFilter, PropertyFilterCondition> converter =
-                (FilterConverter) getFilterComponents().getConverterByModelClass(PropertyFilterCondition.class, filter);
+                (FilterConverter) filterComponents.getConverterByModelClass(PropertyFilterCondition.class, filter);
         PropertyFilter propertyFilter = converter.convertToComponent(model);
 
         Object value = parseConditionValue(condition, dataLoader);
@@ -576,7 +594,12 @@ public class GenericFilterUrlQueryParametersBinder extends AbstractUrlQueryParam
             return null;
         }
 
-        if (configurationComponent.isOperationEditable()) {
+        // The component may narrow the attribute's operations further via setOperationsList
+        // (an empty list means no restriction); an operation outside that list is not applied
+        // instead of failing the restore.
+        List<PropertyFilter.Operation> operationsList = configurationComponent.getOperationsList();
+        if (configurationComponent.isOperationEditable()
+                && (operationsList.isEmpty() || operationsList.contains(condition.operation()))) {
             configurationComponent.setOperation(condition.operation());
         }
 
@@ -743,19 +766,6 @@ public class GenericFilterUrlQueryParametersBinder extends AbstractUrlQueryParam
         return metadataTools;
     }
 
-    protected Metadata getMetadata() {
-        if (metadata == null) {
-            metadata = applicationContext.getBean(Metadata.class);
-        }
-        return metadata;
-    }
-
-    protected FilterComponents getFilterComponents() {
-        if (filterComponents == null) {
-            filterComponents = applicationContext.getBean(FilterComponents.class);
-        }
-        return filterComponents;
-    }
 
     protected SingleFilterSupport getSingleFilterSupport() {
         if (singleFilterSupport == null) {

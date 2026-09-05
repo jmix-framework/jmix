@@ -19,6 +19,8 @@ package io.jmix.flowui.component.genericfilter.converter;
 import com.google.common.base.Strings;
 import com.vaadin.flow.component.Component;
 import io.jmix.flowui.component.filter.FilterComponent;
+import io.jmix.flowui.component.filter.SingleFilterComponentBase;
+import io.jmix.flowui.component.logicalfilter.GroupFilter;
 import io.jmix.flowui.component.genericfilter.GenericFilter;
 import io.jmix.flowui.entity.filter.FilterCondition;
 
@@ -37,6 +39,13 @@ public abstract class AbstractFilterComponentConverter<C extends Component & Fil
     public C convertToComponent(M model) {
         C filterComponent = createComponent();
         filterComponent.setConditionModificationDelegated(true);
+        // A root group created by a converter belongs to the filter directly; a nested child gets
+        // re-wired to its owning group's chain when it is added to that group.
+        if (filterComponent instanceof SingleFilterComponentBase<?> singleFilterComponent) {
+            singleFilterComponent.setLoaderConditionRecomposeDelegate(filter::recomposeLoaderConditionIfOutdated);
+        } else if (filterComponent instanceof GroupFilter groupFilter) {
+            groupFilter.setLoaderConditionRecomposeDelegate(filter::recomposeLoaderConditionIfOutdated);
+        }
         filterComponent.setDataLoader(filter.getDataLoader());
         filterComponent.setAutoApply(filter.isAutoApply());
 

@@ -36,7 +36,6 @@ import io.jmix.flowui.component.filter.BaseConditionSupport;
 import io.jmix.flowui.component.filter.FilterComponent;
 import io.jmix.flowui.component.filter.SingleFilterComponent;
 import io.jmix.flowui.component.filter.SingleFilterComponentBase;
-import io.jmix.flowui.component.filter.SupportsLoaderConditionRecompose;
 import io.jmix.flowui.component.propertyfilter.PropertyFilter;
 import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.model.DataLoader;
@@ -57,7 +56,7 @@ import static com.google.common.base.Preconditions.checkState;
  */
 public class GroupFilter extends Composite<VerticalLayout>
         implements LogicalFilterComponent<GroupFilter>, SupportsResponsiveSteps,
-        SupportsLoaderConditionRecompose, ApplicationContextAware, InitializingBean {
+        ApplicationContextAware, InitializingBean {
 
     protected static final String GROUP_FILTER_CLASS_NAME = "jmix-group-filter";
 
@@ -73,6 +72,7 @@ public class GroupFilter extends Composite<VerticalLayout>
 
     @Internal
     protected boolean conditionModificationDelegated = false;
+    protected Runnable loaderConditionRecomposeDelegate;
 
     protected List<ResponsiveStep> responsiveSteps;
     protected Div summaryComponent;
@@ -244,27 +244,64 @@ public class GroupFilter extends Composite<VerticalLayout>
     @Override
     public void apply() {
         if (dataLoader != null) {
-            // A standalone group recomposes its output onto a base condition only when the
-            // application replaced the loader condition since the group's last contribution;
-            // an untouched loader condition is left as is. A delegated group does not compose
-            // itself: before loading it lets the nearest owner recompose an outdated base.
-            if (!isConditionModificationDelegated() && isLoaderConditionOutdated()) {
-                updateDataLoaderCondition();
-            }
+            // Compose "base AND own conditions" before loading if the application replaced the
+            // loader condition since the last contribution: a standalone group recomposes itself,
+            // a delegated group asks its owner through the delegate the owner has set.
+            recomposeOwnerLoaderCondition();
             if (autoApply) {
-                if (isConditionModificationDelegated()) {
-                    SupportsLoaderConditionRecompose.recomposeNearestOwner(this);
-                }
                 dataLoader.load();
             }
         }
     }
 
-    @Internal
-    @Override
-    public void recomposeLoaderConditionIfOutdated() {
+    /**
+     * Recomposes the loader condition if the application has replaced it since this group
+     * composed it last; an untouched loader condition is left as is. A delegated group never
+     * composes itself.
+     */
+    protected void recomposeLoaderConditionIfOutdated() {
         if (!isConditionModificationDelegated() && isLoaderConditionOutdated()) {
             updateDataLoaderCondition();
+        }
+    }
+
+    /**
+     * Recomposes the loader condition through the owner's delegate when this group is delegated,
+     * or directly when it is standalone. Child components of this group receive this method as
+     * their delegate, so a recomposition request from any nesting level reaches the outermost
+     * owner.
+     */
+    protected void recomposeOwnerLoaderCondition() {
+        if (loaderConditionRecomposeDelegate != null) {
+            loaderConditionRecomposeDelegate.run();
+        } else {
+            recomposeLoaderConditionIfOutdated();
+        }
+    }
+
+    /**
+     * Sets the owner's recomposition callback for a group whose condition modification is
+     * delegated: {@link #apply()} invokes it before loading the data loader directly, so the
+     * owning filter can recompose a loader condition the application has replaced. Maintained by
+     * the owner when this group is added to or removed from it.
+     *
+     * @param loaderConditionRecomposeDelegate the owner's recomposition callback, or {@code null}
+     */
+    @Internal
+    public void setLoaderConditionRecomposeDelegate(@Nullable Runnable loaderConditionRecomposeDelegate) {
+        this.loaderConditionRecomposeDelegate = loaderConditionRecomposeDelegate;
+    }
+
+    /**
+     * Sets or clears the recomposition delegate on a child component of this group, so the
+     * child's direct load can first let the group's chain recompose an outdated loader condition.
+     */
+    protected void setLoaderConditionRecomposeDelegateOn(FilterComponent filterComponent,
+                                                         @Nullable Runnable delegate) {
+        if (filterComponent instanceof SingleFilterComponentBase<?> singleFilterComponent) {
+            singleFilterComponent.setLoaderConditionRecomposeDelegate(delegate);
+        } else if (filterComponent instanceof GroupFilter groupFilter) {
+            groupFilter.setLoaderConditionRecomposeDelegate(delegate);
         }
     }
 
@@ -301,6 +338,7 @@ public class GroupFilter extends Composite<VerticalLayout>
 
         filterComponent.setConditionModificationDelegated(true);
         filterComponent.setAutoApply(isAutoApply());
+        setLoaderConditionRecomposeDelegateOn(filterComponent, this::recomposeOwnerLoaderCondition);
         getQueryCondition().add(filterComponent.getQueryCondition());
 
         if (ownFilterComponentsOrder == null) {
@@ -351,6 +389,7 @@ public class GroupFilter extends Composite<VerticalLayout>
             if (operationChangeRegistration != null) {
                 operationChangeRegistration.remove();
             }
+            setLoaderConditionRecomposeDelegateOn(filterComponent, null);
 
             FormLayout.FormItem formItem = null;
             if (filterComponent instanceof SingleFilterComponent) {
@@ -381,6 +420,11 @@ public class GroupFilter extends Composite<VerticalLayout>
 
     @Override
     public void removeAll() {
+        if (ownFilterComponentsOrder != null) {
+            for (FilterComponent filterComponent : ownFilterComponentsOrder) {
+                setLoaderConditionRecomposeDelegateOn(filterComponent, null);
+            }
+        }
         ownFilterComponentsOrder = null;
 
         operationChangeRegistrations.values().forEach(Registration::remove);

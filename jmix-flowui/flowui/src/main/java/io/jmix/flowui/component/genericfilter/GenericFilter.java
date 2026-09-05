@@ -51,7 +51,6 @@ import io.jmix.flowui.component.filter.BaseConditionSupport;
 import io.jmix.flowui.component.filter.FilterComponent;
 import io.jmix.flowui.component.filter.SingleFilterComponent;
 import io.jmix.flowui.component.filter.SingleFilterComponentBase;
-import io.jmix.flowui.component.filter.SupportsLoaderConditionRecompose;
 import io.jmix.flowui.component.genericfilter.configuration.DesignTimeConfiguration;
 import io.jmix.flowui.component.genericfilter.configuration.RunTimeConfiguration;
 import io.jmix.flowui.component.logicalfilter.GroupFilter;
@@ -91,8 +90,7 @@ import static com.google.common.base.Preconditions.checkState;
  * for repeated use.
  */
 public class GenericFilter extends Composite<JmixDetails>
-        implements SupportsResponsiveSteps, SupportsLoaderConditionRecompose,
-        HasActions, HasEnabled, HasSize, HasStyle, HasTheme, HasTooltip,
+        implements SupportsResponsiveSteps, HasActions, HasEnabled, HasSize, HasStyle, HasTheme, HasTooltip,
         ApplicationContextAware, InitializingBean {
 
     private static final Logger log = LoggerFactory.getLogger(GenericFilter.class);
@@ -207,6 +205,7 @@ public class GenericFilter extends Composite<JmixDetails>
             LogicalFilterComponent.Operation rootOperation) {
         GroupFilter rootGroupFilter = uiComponents.create(GroupFilter.class);
         rootGroupFilter.setConditionModificationDelegated(true);
+        rootGroupFilter.setLoaderConditionRecomposeDelegate(this::recomposeLoaderConditionIfOutdated);
         rootGroupFilter.setOperation(rootOperation);
         rootGroupFilter.setOperationTextVisible(false);
 
@@ -321,12 +320,9 @@ public class GenericFilter extends Composite<JmixDetails>
     }
 
     protected void onApplyButtonClick(ClickEvent<MenuItem> clickEvent) {
-        // Same recomposition rule as apply(): recompose only when the application replaced the
-        // loader condition since the filter's last contribution. Unlike apply(), the button always
-        // loads and keeps the current page.
-        if (isLoaderConditionOutdated()) {
-            updateDataLoaderCondition();
-        }
+        // Same recomposition rule as apply(). Unlike apply(), the button always loads and keeps
+        // the current page.
+        recomposeLoaderConditionIfOutdated();
         getDataLoader().load();
     }
 
@@ -474,20 +470,21 @@ public class GenericFilter extends Composite<JmixDetails>
      */
     public void apply() {
         if (dataLoader != null) {
-            // The application may have replaced the loader condition since the filter's last
-            // contribution (a new base condition); compose that base AND the shown configuration
-            // before loading, not the base alone. An untouched loader condition is left as is,
-            // so applications that never replace it see exactly the previous behavior.
-            if (isLoaderConditionOutdated()) {
-                updateDataLoaderCondition();
-            }
+            recomposeLoaderConditionIfOutdated();
             setupLoaderFirstResult();
             if (isAutoApply()) dataLoader.load();
         }
     }
 
+    /**
+     * Recomposes the data loader condition as "base AND the shown configuration" if the
+     * application has replaced the loader condition since the filter's last contribution
+     * (a new base condition); an untouched loader condition is left as is, so applications
+     * that never replace it see exactly the previous behavior. Delegated condition components
+     * of the current configuration receive this method as their recomposition delegate, so
+     * their direct loads never run by a replaced base alone.
+     */
     @Internal
-    @Override
     public void recomposeLoaderConditionIfOutdated() {
         if (isLoaderConditionOutdated()) {
             updateDataLoaderCondition();

@@ -230,6 +230,7 @@ public class RunTimeConfigurationBuilder {
         // Build the root GroupFilter — mirrors GenericFilter.createConfigurationRootLogicalFilterComponent()
         GroupFilter root = uiComponents.create(GroupFilter.class);
         root.setConditionModificationDelegated(true);
+        root.setLoaderConditionRecomposeDelegate(filter::recomposeLoaderConditionIfOutdated);
         root.setOperation(operation);
         root.setOperationTextVisible(false);
         root.setAutoApply(filter.isAutoApply());

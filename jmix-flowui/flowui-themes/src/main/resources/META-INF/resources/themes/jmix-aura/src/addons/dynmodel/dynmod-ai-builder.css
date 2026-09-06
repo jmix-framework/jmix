@@ -209,6 +209,14 @@
     font-size: var(--aura-font-size-s);
 }
 
+.dynmod-ai-builder .note-detail {
+    display: block;
+    margin-block-start: 0.25em;
+    color: var(--vaadin-text-color-secondary);
+    font-size: var(--aura-font-size-xs);
+    overflow-wrap: anywhere;
+}
+
 .dynmod-ai-builder .note-warning {
     border-color: light-dark(oklch(0.8 0.14 80), oklch(0.6 0.12 80));
     background: light-dark(oklch(0.96 0.05 85), oklch(0.3 0.05 80));

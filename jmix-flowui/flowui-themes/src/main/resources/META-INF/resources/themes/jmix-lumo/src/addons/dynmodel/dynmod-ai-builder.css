@@ -212,6 +212,14 @@
     line-height: var(--lumo-line-height-s);
 }
 
+.dynmod-ai-builder .note-detail {
+    display: block;
+    margin-block-start: 0.25em;
+    color: var(--lumo-secondary-text-color);
+    font-size: var(--lumo-font-size-xs);
+    overflow-wrap: anywhere;
+}
+
 .dynmod-ai-builder .note-warning {
     border-color: var(--lumo-warning-color-50pct);
     background: var(--lumo-warning-color-10pct);

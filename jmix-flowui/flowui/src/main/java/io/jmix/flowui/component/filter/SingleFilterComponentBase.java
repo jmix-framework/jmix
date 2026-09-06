@@ -200,7 +200,7 @@ public abstract class SingleFilterComponentBase<V> extends CustomField<V>
 
     /**
      * Sets the owner's recomposition callback for a condition whose modification is delegated:
-     * {@link #apply()} invokes it before loading the data loader directly, so the owning filter
+     * {@link #apply()} invokes it before triggering the data loader directly, so the owning filter
      * can recompose a loader condition the application has replaced since the last composition.
      * Maintained by the owning logical filter component when this condition is added to or
      * removed from it.
@@ -223,15 +223,16 @@ public abstract class SingleFilterComponentBase<V> extends CustomField<V>
         // So if we have several such conditions we get redundant data loading.
         // To avoid this problem FilterComponent skips data loading if it's not attached to the UI.
         if (isAttached() && dataLoader != null) {
+            // A delegated condition loads directly, bypassing the owning filter's composition;
+            // if the application replaced the loader condition since the owner composed it last,
+            // this condition's query condition is no longer part of it. Let the owner recompose
+            // first - like the other apply entry points, regardless of autoApply - so a load
+            // never uses the replaced base alone.
+            if (loaderConditionRecomposeDelegate != null) {
+                loaderConditionRecomposeDelegate.run();
+            }
             setupLoaderFirstResult();
             if (autoApply) {
-                // A delegated condition loads directly, bypassing the owning filter's composition;
-                // if the application replaced the loader condition since the owner composed it
-                // last, this condition's query condition is no longer part of it. Let the owner
-                // recompose first, so the load never runs by the replaced base alone.
-                if (loaderConditionRecomposeDelegate != null) {
-                    loaderConditionRecomposeDelegate.run();
-                }
                 dataLoader.load();
             }
         }

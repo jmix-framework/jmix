@@ -247,7 +247,7 @@ public class GroupFilter extends Composite<VerticalLayout>
             // Compose "base AND own conditions" before loading if the application replaced the
             // loader condition since the last contribution: a standalone group recomposes itself,
             // a delegated group asks its owner through the delegate the owner has set.
-            recomposeOwnerLoaderCondition();
+            recomposeLoaderConditionIfOutdated();
             if (autoApply) {
                 dataLoader.load();
             }
@@ -255,35 +255,24 @@ public class GroupFilter extends Composite<VerticalLayout>
     }
 
     /**
-     * Recomposes the loader condition if the application has replaced it since this group
-     * composed it last; an untouched loader condition is left as is. A delegated group never
-     * composes itself.
+     * Recomposes the loader condition if the application has replaced it since the last
+     * contribution; an untouched loader condition is left as is. A group with a recomposition
+     * delegate forwards the request to it instead of composing itself; child components of this
+     * group receive this method as their delegate, so a request from any nesting level reaches
+     * the outermost owner.
      */
     protected void recomposeLoaderConditionIfOutdated() {
-        if (!isConditionModificationDelegated() && isLoaderConditionOutdated()) {
+        if (loaderConditionRecomposeDelegate != null) {
+            loaderConditionRecomposeDelegate.run();
+        } else if (!isConditionModificationDelegated() && isLoaderConditionOutdated()) {
             updateDataLoaderCondition();
         }
     }
 
     /**
-     * Recomposes the loader condition through the owner's delegate when this group is delegated,
-     * or directly when it is standalone. Child components of this group receive this method as
-     * their delegate, so a recomposition request from any nesting level reaches the outermost
-     * owner.
-     */
-    protected void recomposeOwnerLoaderCondition() {
-        if (loaderConditionRecomposeDelegate != null) {
-            loaderConditionRecomposeDelegate.run();
-        } else {
-            recomposeLoaderConditionIfOutdated();
-        }
-    }
-
-    /**
-     * Sets the owner's recomposition callback for a group whose condition modification is
-     * delegated: {@link #apply()} invokes it before loading the data loader directly, so the
-     * owning filter can recompose a loader condition the application has replaced. Maintained by
-     * the owner when this group is added to or removed from it.
+     * Sets the recomposition callback this group forwards to instead of composing the loader
+     * condition itself: for a configuration's root group the owning filter sets it at creation,
+     * for a nested group the owning group sets it on add and clears it on removal.
      *
      * @param loaderConditionRecomposeDelegate the owner's recomposition callback, or {@code null}
      */
@@ -310,9 +299,8 @@ public class GroupFilter extends Composite<VerticalLayout>
      * composed it last, so the composition no longer contains this group's conditions.
      */
     protected boolean isLoaderConditionOutdated() {
-        return lastConditionSetByFilter != null
-                && dataLoader != null
-                && dataLoader.getCondition() != lastConditionSetByFilter;
+        return dataLoader != null
+                && BaseConditionSupport.isReplacedExternally(dataLoader.getCondition(), lastConditionSetByFilter);
     }
 
     @Override
@@ -338,7 +326,7 @@ public class GroupFilter extends Composite<VerticalLayout>
 
         filterComponent.setConditionModificationDelegated(true);
         filterComponent.setAutoApply(isAutoApply());
-        setLoaderConditionRecomposeDelegateOn(filterComponent, this::recomposeOwnerLoaderCondition);
+        setLoaderConditionRecomposeDelegateOn(filterComponent, this::recomposeLoaderConditionIfOutdated);
         getQueryCondition().add(filterComponent.getQueryCondition());
 
         if (ownFilterComponentsOrder == null) {

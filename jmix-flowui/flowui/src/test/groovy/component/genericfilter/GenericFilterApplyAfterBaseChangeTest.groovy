@@ -205,6 +205,25 @@ class GenericFilterApplyAfterBaseChangeTest extends FlowuiTestSpecification {
         filter.dataLoader.condition.is(composedByGenericFilter)
     }
 
+    def "a value change with autoApply=false recomposes the loader condition without loading"() {
+        given: "c1 is active, the filter does not apply automatically, and the base was replaced"
+        GenericFilter filter = navigateToView(GfBaseConditionAfterActivationTestView).genericFilter
+        filter.setAutoApply(false)
+        PropertyFilter<?> number = filter.getConfiguration("c1").rootLogicalFilterComponent.filterComponents
+                .find { it instanceof PropertyFilter } as PropertyFilter
+        filter.dataLoader.setCondition(PropertyCondition.greater("total", 0))
+        int loads = 0
+        filter.dataLoader.addPostLoadListener { loads++ }
+
+        when: "the user commits a condition value"
+        number.apply()
+
+        then: "the condition is ready for whoever loads next - same as the other apply entry points - but nothing was loaded"
+        loads == 0
+        hasPropertyConditionOn(filter.dataLoader.condition, "total")
+        hasPropertyConditionOn(filter.dataLoader.condition, "number")
+    }
+
     def "a condition value change inside a GenericFilter recomposes onto a replaced base before loading"() {
         given: "c1 is active and the loader combines the base with the configuration"
         GenericFilter filter = navigateToView(GfBaseConditionAfterActivationTestView).genericFilter

@@ -480,9 +480,9 @@ public class GenericFilter extends Composite<JmixDetails>
      * Recomposes the data loader condition as "base AND the shown configuration" if the
      * application has replaced the loader condition since the filter's last contribution
      * (a new base condition); an untouched loader condition is left as is, so applications
-     * that never replace it see exactly the previous behavior. Delegated condition components
-     * of the current configuration receive this method as their recomposition delegate, so
-     * their direct loads never run by a replaced base alone.
+     * that never replace it see exactly the previous behavior. A configuration's root component
+     * receives this method as its recomposition delegate at creation; nested components reach it
+     * through their owning group's chain, so their direct loads never use a replaced base alone.
      */
     @Internal
     public void recomposeLoaderConditionIfOutdated() {
@@ -496,9 +496,8 @@ public class GenericFilter extends Composite<JmixDetails>
      * composed it last, so the composition no longer contains the shown configuration.
      */
     protected boolean isLoaderConditionOutdated() {
-        return lastConditionSetByFilter != null
-                && dataLoader != null
-                && dataLoader.getCondition() != lastConditionSetByFilter;
+        return dataLoader != null
+                && BaseConditionSupport.isReplacedExternally(dataLoader.getCondition(), lastConditionSetByFilter);
     }
 
     protected void setupLoaderFirstResult() {

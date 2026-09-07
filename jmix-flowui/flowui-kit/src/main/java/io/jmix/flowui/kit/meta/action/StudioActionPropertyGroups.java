@@ -567,6 +567,30 @@ final class StudioActionPropertyGroups {
                             xmlAttribute = StudioXmlAttributes.ICON,
                             type = StudioPropertyType.ICON,
                             category = StudioProperty.Category.LOOK_AND_FEEL,
+                            defaultValue = "EYE",
+                            setParameterFqn = "com.vaadin.flow.component.Component"),
+                    @StudioProperty(
+                            xmlAttribute = StudioXmlAttributes.ID,
+                            type = StudioPropertyType.COMPONENT_ID,
+                            category = StudioProperty.Category.GENERAL,
+                            required = true,
+                            initialValue = "entityRead"),
+                    @StudioProperty(
+                            xmlAttribute = StudioXmlAttributes.TEXT,
+                            type = StudioPropertyType.LOCALIZED_STRING,
+                            category = StudioProperty.Category.GENERAL,
+                            defaultValue = "msg:///actions.entityPicker.read.description")
+            }
+    )
+    public interface EntityReadActionComponent extends BaseAction {
+    }
+
+    @StudioPropertyGroup(
+            properties = {
+                    @StudioProperty(
+                            xmlAttribute = StudioXmlAttributes.ICON,
+                            type = StudioPropertyType.ICON,
+                            category = StudioProperty.Category.LOOK_AND_FEEL,
                             defaultValue = "SEARCH",
                             setParameterFqn = "com.vaadin.flow.component.Component"),
                     @StudioProperty(

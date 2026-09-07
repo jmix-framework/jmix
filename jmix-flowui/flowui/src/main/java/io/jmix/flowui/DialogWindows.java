@@ -47,6 +47,9 @@ public class DialogWindows {
     protected LookupWindowBuilderProcessor lookupBuilderProcessor;
     protected ObjectProvider<OpenedDialogWindows> openedDialogWindows;
 
+    @Autowired
+    protected ReadWindowBuilderProcessor readBuilderProcessor;
+
     public DialogWindows(WindowBuilderProcessor windowBuilderProcessor,
                          DetailWindowBuilderProcessor detailBuilderProcessor,
                          LookupWindowBuilderProcessor lookupBuilderProcessor,
@@ -146,6 +149,74 @@ public class DialogWindows {
         E value = ((HasValue<?, E>) picker).getValue();
         if (value != null) {
             builder.editEntity(value);
+        }
+
+        return builder;
+    }
+
+    /**
+     * Creates a read view builder for an entity class.
+     * <p>
+     * Example:
+     * <pre>{@code
+     * dialogWindows.read(this, Customer.class)
+     *         .readEntity(customersTable.getSingleSelectedItem())
+     *         .open();
+     * }</pre>
+     *
+     * @param origin      calling view
+     * @param entityClass shown entity class
+     */
+    public <E, V extends View<?>> ReadWindowBuilder<E, V> read(View<?> origin, Class<E> entityClass) {
+        checkNotNullArgument(entityClass);
+
+        return new ReadWindowBuilder<>(origin, entityClass, readBuilderProcessor::build);
+    }
+
+    /**
+     * Creates a builder that opens a read view for an entity selected in the list component.
+     *
+     * @param listDataComponent the component which provides an entity to show
+     * @see #read(View, Class)
+     */
+    public <E, V extends View<?>> ReadWindowBuilder<E, V> read(ListDataComponent<E> listDataComponent) {
+        checkNotNullArgument(listDataComponent);
+
+        View<?> origin = UiComponentUtils.getView((Component) listDataComponent);
+        Class<E> beanType = getBeanType(listDataComponent);
+
+        ReadWindowBuilder<E, V> builder =
+                new ReadWindowBuilder<>(origin, beanType, readBuilderProcessor::build);
+
+        E selected = listDataComponent.getSingleSelectedItem();
+        if (selected != null) {
+            builder.readEntity(selected);
+        }
+
+        return builder;
+    }
+
+    /**
+     * Creates a builder that opens a read view for an entity set to the picker component.
+     *
+     * @param picker the component which provides an entity to show
+     * @see #read(View, Class)
+     */
+    @SuppressWarnings("unchecked")
+    public <E, V extends View<?>> ReadWindowBuilder<E, V> read(EntityPickerComponent<E> picker) {
+        checkNotNullArgument(picker);
+        checkState(picker instanceof HasValue,
+                "A component must implement " + HasValue.class.getSimpleName());
+
+        View<?> origin = UiComponentUtils.getView((Component) picker);
+        Class<E> beanType = getBeanType(picker);
+
+        ReadWindowBuilder<E, V> builder =
+                new ReadWindowBuilder<>(origin, beanType, readBuilderProcessor::build);
+
+        E value = ((HasValue<?, E>) picker).getValue();
+        if (value != null) {
+            builder.readEntity(value);
         }
 
         return builder;

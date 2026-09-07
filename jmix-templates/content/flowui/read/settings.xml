@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  ~ Copyright 2026 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<template xmlns="http://schemas.haulmont.com/studio/template-settings.xsd"
+          icon="resource://template/template_editor.svg"
+          name="Entity read view"
+          order="17">
+    <tags>
+        <tag>ENTITY</tag>
+        <tag>JPA</tag>
+    </tags>
+    <description>
+        <![CDATA[<html>Entity read view with a form and a <i>Close</i> button. The view shows an entity and cannot edit it.</html>]]>
+    </description>
+    <locMessages key="readTitle" expressionKey="${studioUtils.decapitalize(readControllerName)}.title">
+        <message lang="default">
+            <![CDATA[${studioUtils.makeNaturalMessage(entity.className)}]]>
+        </message>
+    </locMessages>
+    <steps>
+        <step name="Entity read view" order="0"/>
+        <step name="Entity read view fetch plan" order="1"
+              description="Read view fetch plan determines entity attributes and associations to be loaded from the database and shown in the view components"/>
+    </steps>
+    <property caption="Entity"
+              code="entity"
+              propertyType="ENTITY"
+              required="true"/>
+
+    <property caption="Use Data Repositories"
+              code="useDataRepositories"
+              propertyType="BOOLEAN"
+              defaultValue="false"
+              advanced="true"/>
+    <property caption="Repository"
+              code="repository"
+              propertyType="DATA_REPOSITORY"
+              advanced="true">
+         <dynamicAttribute name="enabled" source="${useDataRepositories}">
+            <dependency code = "useDataRepositories"/>
+        </dynamicAttribute>
+        <dynamicAttribute name="visible" source="${useDataRepositories}">
+            <dependency code = "useDataRepositories"/>
+        </dynamicAttribute>
+        <dynamicAttribute name="required" source="${useDataRepositories}">
+            <dependency code = "useDataRepositories"/>
+        </dynamicAttribute>
+    </property>
+
+    <property caption="Entity fetch plan"
+              code="readFetchPlan"
+              step="1"
+              propertyType="VIEW_COMPONENT"
+              relatedProperty="entity"
+              required="true"/>
+
+    <property caption="Labels position aside"
+              code="asideLabelsPosition"
+              propertyType="BOOLEAN"
+              preferences="true"/>
+
+    <property caption="Fixed footer"
+              code="readFixedFooter"
+              propertyType="BOOLEAN"
+              preferences="true"/>
+
+    <property caption="Descriptor name"
+              code="readDescriptorName"
+              propertyType="DESCRIPTOR_NAME"
+              sourceName="descriptor"
+              required="true"
+              dynamic="true"
+              advanced="true"
+              valueTemplate="${api.evaluateScript('descriptorFileName.groovy', ['entity': entity])}-read-view">
+        <dependency code="entity"/>
+    </property>
+
+    <property caption="Controller name"
+              code="readControllerName"
+              propertyType="CLASS_NAME"
+              sourceName="controller"
+              required="true"
+              dynamic="true"
+              advanced="true"
+              valueTemplate="${entity.className}ReadView">
+        <dependency code="entity"/>
+    </property>
+
+    <property caption="View Id"
+              code="readId"
+              propertyType="SCREEN_ID"
+              advanced="true"
+              dynamic="true"
+              valueTemplate="${entity.name!=null?entity.name:entity.className}.read"
+              required="true">
+        <dependency code="entity"/>
+    </property>
+
+    <property caption="View route"
+              code="readRoute"
+              propertyType="FLOW_VIEW_ROUTE"
+              advanced="true"
+              dynamic="true"
+              required="true"
+              valueTemplate="${api.pluralForm(entity.uncapitalizedClassName)}">
+        <dependency code="entity"/>
+    </property>
+
+    <property caption="View route parameter"
+              code="readRouteParam"
+              propertyType="STRING"
+              advanced="true"
+              required="true"
+              defaultValue="id"/>
+
+    <property caption="View route layout"
+              code="routeLayout"
+              propertyType="FLOW_VIEW_ROUTE_LAYOUT"
+              visible="false"
+              advanced="true"/>
+
+    <source fileExt="xml"
+            name="descriptor"/>
+    <source fileExt="java"
+            name="controller"/>
+    <source fileExt="kt"
+            name="controller"/>
+</template>

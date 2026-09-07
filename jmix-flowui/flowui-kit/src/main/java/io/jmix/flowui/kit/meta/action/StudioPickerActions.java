@@ -94,6 +94,25 @@ interface StudioPickerActions {
     void entityOpenAction();
 
     @StudioAction(
+            type = "entity_read",
+            description = "Shows an entity using the entity read view",
+            classFqn = "io.jmix.flowui.action.entitypicker.EntityReadAction",
+            unsupportedTarget = {
+                    "io.jmix.flowui.app.main.StandardMainView",
+                    "io.jmix.tabbedmode.app.main.StandardTabbedModeMainView",
+                    "io.jmix.flowui.component.valuepicker.JmixValuePicker",
+                    "io.jmix.flowui.component.valuepicker.JmixMultiValuePicker"
+            },
+            documentationLink = "%VERSION%/flow-ui/actions/entity-picker-actions.html#entity_read",
+            propertyGroups = StudioActionPropertyGroups.EntityReadActionComponent.class,
+            items = {
+                    @StudioPropertiesItem(xmlAttribute = StudioXmlAttributes.VIEW_ID, type = StudioPropertyType.STRING),
+                    @StudioPropertiesItem(xmlAttribute = StudioXmlAttributes.VIEW_CLASS, type = StudioPropertyType.STRING)
+            }
+    )
+    void entityReadAction();
+
+    @StudioAction(
             type = "entity_openComposition",
             description = "Opens a one-to-one composition entity using the entity detail view",
             classFqn = "io.jmix.flowui.action.entitypicker.EntityOpenCompositionAction",

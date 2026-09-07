@@ -82,9 +82,8 @@ class JpaDomainModelIntrospectorTest {
         assertEquals("Boolean", datatype(properties, "active").getJavaType());
         assertEquals("Integer", datatype(properties, "version").getJavaType());
 
-        DatatypePropertyDescriptor transientNote = datatype(properties, "transientNote");
-        assertEquals(Boolean.FALSE, transientNote.getPersistent());
-        assertEquals(Boolean.FALSE, transientNote.getMandatory());
+        // transientNote is a non-persistent @Transient @JmixProperty: it is not indexed at all.
+        assertFalse(properties.containsKey("transientNote"));
     }
 
     @Test
@@ -247,8 +246,8 @@ class JpaDomainModelIntrospectorTest {
         assertTrue(embeddedString.contains("EmbeddedPropertyDescriptor{name='address'"));
         assertTrue(embeddedString.contains("embedded=true"));
 
-        String datatypeString = datatype(properties("aitls_Order"), "transientNote").toString();
-        assertTrue(datatypeString.contains("persistent=false"));
+        String datatypeString = datatype(properties("aitls_Order"), "id").toString();
+        assertTrue(datatypeString.contains("persistent=true"));
         assertTrue(datatypeString.contains("mandatory=false"));
     }
 
@@ -282,6 +281,20 @@ class JpaDomainModelIntrospectorTest {
         // is neither exposed nor queryable.
         assertFalse(introspector.containsProperty("aitls_Customer", "secretSystemNote"));
         assertNull(introspector.resolvePropertyPath("aitls_Customer", "secretSystemNote"));
+    }
+
+    @Test
+    @DisplayName("Never indexes non-persistent attributes: cannot appear in JPQL")
+    void testNonPersistentAttributeExcludedFromIndex() {
+        // transientNote is a @Transient @JmixProperty on aitls_Order: it has no column, so it cannot be
+        // used in JPQL. Like @Secret, it is dropped from the index — hidden from discovery and rejected
+        // by JPQL validation (resolvePropertyPath returns null).
+        assertFalse(introspector.containsProperty("aitls_Order", "transientNote"));
+        assertNull(introspector.resolvePropertyPath("aitls_Order", "transientNote"));
+
+        // A persistent sibling on the same entity stays indexed and queryable.
+        assertTrue(introspector.containsProperty("aitls_Order", "number"));
+        assertNotNull(introspector.resolvePropertyPath("aitls_Order", "number"));
     }
 
     @Test

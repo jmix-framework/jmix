@@ -18,6 +18,7 @@ package component.standardreadview.view;
 
 import com.vaadin.flow.router.Route;
 import io.jmix.flowui.component.grid.DataGrid;
+import io.jmix.flowui.component.valuepicker.EntityPicker;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.view.StandardListView;
 import io.jmix.flowui.view.ViewComponent;
@@ -35,4 +36,7 @@ public class CustomerListTestView extends StandardListView<Customer> {
 
     @ViewComponent
     public DataGrid<Customer> customersDataGrid;
+
+    @ViewComponent
+    public EntityPicker<Customer> customerPicker;
 }

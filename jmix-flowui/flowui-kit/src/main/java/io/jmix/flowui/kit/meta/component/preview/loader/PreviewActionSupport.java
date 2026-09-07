@@ -149,6 +149,7 @@ public final class PreviewActionSupport {
             Map.entry("entity_lookup", new ActionDefaults(null, JmixFontIcon.ENTITY_LOOKUP_ACTION)),
             Map.entry("entity_clear", new ActionDefaults(null, JmixFontIcon.ENTITY_CLEAR_ACTION)),
             Map.entry("entity_open", new ActionDefaults(null, JmixFontIcon.ENTITY_OPEN_ACTION)),
+            Map.entry("entity_read", new ActionDefaults(null, JmixFontIcon.READ_ACTION)),
             Map.entry("value_clear", new ActionDefaults(null, JmixFontIcon.VALUE_CLEAR_ACTION)),
             // add-on action types: icon only, the text falls back to the humanized action id
             Map.entry("sec_showRoleAssignments",
@@ -158,7 +159,7 @@ public final class PreviewActionSupport {
 
     /** Picker-style types whose runtime buttons are icon-only; everything else gets a text. */
     private static final Set<String> ICON_ONLY_TYPES =
-            Set.of("entity_lookup", "entity_clear", "entity_open", "value_clear");
+            Set.of("entity_lookup", "entity_clear", "entity_open", "entity_read", "value_clear");
 
     /** Types of the implicit view actions that exist at runtime without an {@code <action>} element. */
     private static final Map<String, String> IMPLICIT_ACTION_TYPES = Map.of(

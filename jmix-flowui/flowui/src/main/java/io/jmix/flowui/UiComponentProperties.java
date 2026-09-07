@@ -75,6 +75,7 @@ public class UiComponentProperties {
 
     String pickerLookupShortcut;
     String pickerOpenShortcut;
+    String pickerReadShortcut;
     String pickerClearShortcut;
 
     /**
@@ -184,6 +185,7 @@ public class UiComponentProperties {
             @DefaultValue("3000") int defaultNotificationDuration,
             String pickerLookupShortcut,
             String pickerOpenShortcut,
+            String pickerReadShortcut,
             String pickerClearShortcut,
             @DefaultValue({"20", "50", "100", "500", "1000", "5000"}) List<Integer> paginationItemsPerPageItems,
             @Nullable Map<String, String> entityFieldFqn,
@@ -217,6 +219,7 @@ public class UiComponentProperties {
 
         this.pickerLookupShortcut = pickerLookupShortcut;
         this.pickerOpenShortcut = pickerOpenShortcut;
+        this.pickerReadShortcut = pickerReadShortcut;
         this.pickerClearShortcut = pickerClearShortcut;
 
         this.paginationItemsPerPageItems = paginationItemsPerPageItems;
@@ -307,6 +310,10 @@ public class UiComponentProperties {
 
     public String getPickerOpenShortcut() {
         return pickerOpenShortcut;
+    }
+
+    public String getPickerReadShortcut() {
+        return pickerReadShortcut;
     }
 
     public String getPickerClearShortcut() {

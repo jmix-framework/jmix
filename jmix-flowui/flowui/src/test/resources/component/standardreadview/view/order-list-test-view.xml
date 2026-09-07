@@ -41,6 +41,10 @@
                 <column property="number"/>
             </columns>
         </dataGrid>
-        <entityPicker id="orderPicker" metaClass="test_Order"/>
+        <entityPicker id="orderPicker" metaClass="test_Order">
+            <actions>
+                <action id="read" type="entity_read"/>
+            </actions>
+        </entityPicker>
     </layout>
 </view>

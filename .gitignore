@@ -5,3 +5,4 @@ build/
 .gradle/
 .jmix
 /jmix-studio.xml
+.DS_Store

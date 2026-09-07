@@ -15,8 +15,8 @@
  */
 
 .dynmod-ai-builder {
-    container-type: inline-size;
-    container-name: dynmod-ai-builder;
+    min-width: 0;
+    min-height: 0;
 }
 
 .dynmod-ai-builder .chat-pane {
@@ -40,7 +40,9 @@
     display: flex;
     flex: 1 1 auto;
     flex-direction: column;
-    justify-content: center;
+    min-height: 0;
+    overflow-y: auto;
+    justify-content: safe center;
 }
 
 .dynmod-ai-builder .chat-pane jmix-ai-message-input {
@@ -49,6 +51,7 @@
 }
 
 .dynmod-ai-builder .chat-empty {
+    flex-shrink: 0;
     gap: var(--vaadin-gap-s);
     padding: 0 var(--vaadin-padding-m) var(--vaadin-padding-m);
     text-align: center;
@@ -83,11 +86,14 @@
     flex: 0 0 30em;
     width: 30em;
     height: 100%;
+    min-width: 0;
+    min-height: 0;
     background: var(--vaadin-background-container);
     box-sizing: border-box;
 }
 
 .dynmod-ai-builder .draft-header {
+    flex-shrink: 0;
     gap: var(--vaadin-gap-s);
     padding: var(--vaadin-padding-s) var(--vaadin-padding-m);
     border-bottom: 1px solid var(--vaadin-border-color);
@@ -253,26 +259,28 @@
 }
 
 .dynmod-ai-builder .actions {
+    flex-shrink: 0;
     padding: var(--vaadin-padding-s) var(--vaadin-padding-m) var(--vaadin-padding-m);
     border-top: 1px solid var(--vaadin-border-color);
     box-sizing: border-box;
 }
 
-@container dynmod-ai-builder (max-width: 640px) {
+@container dynmod-settings-view (max-width: 60rem) {
     .dynmod-ai-builder {
         flex-direction: column;
     }
 
     .dynmod-ai-builder .chat-pane {
+        flex: 1 1 55%;
+        width: 100%;
         height: auto;
         border-inline-end: none;
         border-bottom: 1px solid var(--vaadin-border-color);
     }
 
     .dynmod-ai-builder .draft-panel {
-        flex: 0 0 auto;
+        flex: 1 1 45%;
         width: 100%;
         height: auto;
-        max-height: 45%;
     }
 }

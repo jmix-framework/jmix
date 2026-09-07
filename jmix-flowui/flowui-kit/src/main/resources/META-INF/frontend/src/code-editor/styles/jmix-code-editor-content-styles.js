@@ -566,7 +566,7 @@ export const contentStyles = css `
     display: none;
     width: 11px;
     vertical-align: top;
-    background-image: url("./style/main-9.png");
+    background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAANElEQVR42mWKsQ0AMAzC8ixLlrzQjzmBiEjp0A6WwBCSPgKAXoLkqSot7nN3yMwR7pZ32NzpKkVoDBUxKAAAAABJRU5ErkJggg==");
     background-repeat: no-repeat;
     background-position: center;
     border-radius: 3px;
@@ -579,11 +579,11 @@ export const contentStyles = css `
   }
 
   .ace_fold-widget.ace_end {
-    background-image: url("./style/main-10.png");
+    background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAANElEQVR42m3HwQkAMAhD0YzsRchFKI7sAikeWkrxwScEB0nh5e7KTPWimZki4tYfVbX+MNl4pyZXejUO1QAAAABJRU5ErkJggg==");
   }
 
   .ace_fold-widget.ace_closed {
-    background-image: url("./style/main-11.png");
+    background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAAGCAYAAAAG5SQMAAAAOUlEQVR42jXKwQkAMAgDwKwqKD4EwQ26sSOkVWjgIIHAzPiCgaqiqnJHZnKICBERHN194O5b9vbLuAVRL+l0YWnZAAAAAElFTkSuQmCCXA==");
   }
 
   .ace_fold-widget:hover {
@@ -603,15 +603,15 @@ export const contentStyles = css `
   */
 
   .ace_dark .ace_fold-widget {
-    background-image: url("./style/main-12.png");
+    background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHklEQVQIW2P4//8/AzoGEQ7oGCaLLAhWiSwB146BAQCSTPYocqT0AAAAAElFTkSuQmCC");
   }
 
   .ace_dark .ace_fold-widget.ace_end {
-    background-image: url("./style/main-13.png");
+    background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAH0lEQVQIW2P4//8/AxQ7wNjIAjDMgC4AxjCVKBirIAAF0kz2rlhxpAAAAABJRU5ErkJggg==");
   }
 
   .ace_dark .ace_fold-widget.ace_closed {
-    background-image: url("./style/main-14.png");
+    background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAAFCAYAAACAcVaiAAAAHElEQVQIW2P4//+/AxAzgDADlOOAznHAKgPWAwARji8UIDTfQQAAAABJRU5ErkJggg==");
   }
 
   .ace_dark .ace_fold-widget:hover {
@@ -888,11 +888,11 @@ export const contentStyles = css `
   }
 
   .ace-tm .ace_indent-guide {
-    background: url("./style/main-15.png") right repeat-y;
+    background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAACCAYAAACZgbYnAAAAE0lEQVQImWP4////f4bLly//BwAmVgd1/w11/gAAAABJRU5ErkJggg==") right repeat-y;
   }
 
   .ace-tm .ace_indent-guide-active {
-    background: url("./style/main-16.png") right repeat-y;
+    background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAACCAYAAACZgbYnAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAIGNIUk0AAHolAACAgwAA+f8AAIDpAAB1MAAA6mAAADqYAAAXb5JfxUYAAAAZSURBVHjaYvj///9/hivKyv8BAAAA//8DACLqBhbvk+/eAAAAAElFTkSuQmCC") right repeat-y;
   }
 
   /*error_marker.css*/

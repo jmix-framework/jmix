@@ -30,7 +30,6 @@
 
 .dynmod-ai-builder .chat-pane .jmix-ai-chat {
     min-height: 0;
-    box-sizing: border-box;
 }
 
 .dynmod-ai-builder .chat-pane .jmix-ai-chat[empty] {

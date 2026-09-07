@@ -1,9 +1,35 @@
 @media lumo_components_jmix-ai-upload-trigger {
-  :host([theme~='menuitem']) {
-    width: 100%;
-    justify-content: flex-start;
+  :host([theme~='menu-item']) {
     --vaadin-button-background: transparent;
     --vaadin-button-border-color: transparent;
+    --vaadin-button-font-weight: normal;
+
+    width: 100%;
+    justify-content: flex-start;
+    color: inherit;
+    height: auto;
+    padding: 0;
+    margin: 0;
+  }
+
+  :host([theme~='menu-item'])::before {
+    content: none;
+  }
+
+  :host([theme~='menu-item']) .vaadin-button-container {
+    gap: var(--lumo-space-s);
+  }
+
+  :host([theme~='menu-item']) .vaadin-button-container::before {
+    content: none;
+  }
+
+  :host([theme~='menu-item']) [part='prefix'] {
+    margin: 0;
+  }
+
+  :host([theme~='menu-item']) [part='label'] {
+    padding: 0;
   }
 }
 

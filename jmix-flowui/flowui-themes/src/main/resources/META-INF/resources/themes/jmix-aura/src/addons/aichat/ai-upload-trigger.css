@@ -4,7 +4,7 @@
   outline-offset: calc(var(--vaadin-button-border-width, 1px) * -1);
 }
 
-:is(jmix-ai-upload-trigger):where(:not([theme~='menuitem'])) {
+:is(jmix-ai-upload-trigger):where(:not([theme~='menu-item'])) {
   color: var(--vaadin-button-text-color, var(--aura-accent-text-color));
   border-color: var(--vaadin-button-border-color, var(--aura-accent-border-color));
   box-shadow: var(--vaadin-button-shadow, var(--aura-shadow-xs));
@@ -22,7 +22,7 @@
   background: var(--vaadin-button-background, var(--aura-surface-color) padding-box);
 }
 
-:is(jmix-ai-upload-trigger):has([slot='prefix']) {
+:is(jmix-ai-upload-trigger):where(:not([theme~='menu-item'])):has([slot='prefix']) {
   padding-inline-end: 0.75rem;
 }
 
@@ -46,14 +46,14 @@
 }
 
 @media (any-hover: hover) {
-  :is(jmix-ai-upload-trigger):hover:not([disabled], [active])::before {
+  :is(jmix-ai-upload-trigger):where(:not([theme~='menu-item'])):hover:not([disabled], [active])::before {
     opacity: 0.03;
   }
 }
 
 @media (min-resolution: 2x) {
   /* prettier-ignore */
-  :is(jmix-ai-upload-trigger)[active]:not([disabled]) {
+  :is(jmix-ai-upload-trigger):where(:not([theme~='menu-item']))[active]:not([disabled]) {
     scale: 0.98;
     transition-duration: 50ms;
   }
@@ -63,7 +63,7 @@
   box-shadow: none;
 }
 
-:is(jmix-ai-upload-trigger)[active]:not([disabled])::before {
+:is(jmix-ai-upload-trigger):where(:not([theme~='menu-item']))[active]:not([disabled])::before {
   transition-duration: 0s;
   opacity: 0.08;
   background: oklch(from currentColor min(c, 1 - l + c) calc(c * 0.9) h);

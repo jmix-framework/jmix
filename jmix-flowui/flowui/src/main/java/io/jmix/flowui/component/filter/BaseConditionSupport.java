@@ -64,7 +64,7 @@ public final class BaseConditionSupport {
                                    UnaryOperator<Condition> copy) {
         Condition base = baseCondition;
         if (!baseConditionInitialized
-                || (lastConditionSetByFilter != null && currentLoaderCondition != lastConditionSetByFilter)) {
+                || isReplacedExternally(currentLoaderCondition, lastConditionSetByFilter)) {
             base = currentLoaderCondition != null ? copy.apply(currentLoaderCondition) : null;
         }
 
@@ -81,5 +81,20 @@ public final class BaseConditionSupport {
         }
 
         return new Result(base, loaderCondition);
+    }
+
+    /**
+     * Returns whether the loader condition object differs from the one the filter set last,
+     * i.e. the application has replaced it since the filter's last contribution. The comparison
+     * is by identity: the filter always contributes a freshly composed object, so a different
+     * reference means an external write.
+     *
+     * @param currentLoaderCondition   the loader's current condition
+     * @param lastConditionSetByFilter the condition object the filter set last, if any
+     * @return {@code true} if the loader condition was replaced externally
+     */
+    public static boolean isReplacedExternally(@Nullable Condition currentLoaderCondition,
+                                               @Nullable Condition lastConditionSetByFilter) {
+        return lastConditionSetByFilter != null && currentLoaderCondition != lastConditionSetByFilter;
     }
 }

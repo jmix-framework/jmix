@@ -279,6 +279,11 @@ public class JpaDomainModelIntrospector {
             if (metadataTools.isSecret(property)) {
                 continue;
             }
+            // A non-persistent attribute (a @Transient or getter @JmixProperty) has no column or
+            // association and cannot appear in JPQL.
+            if (!metadataTools.isJpa(property)) {
+                continue;
+            }
             EntityPropertyDescriptor propertyDescriptor = introspectProperty(property);
             if (propertyDescriptor != null) {
                 propertyDescriptors.add(propertyDescriptor);

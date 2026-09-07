@@ -236,6 +236,25 @@ class JpqlValidationServiceTest {
     }
 
     @Test
+    @DisplayName("Rejects a non-persistent attribute path before execution")
+    void testRejectsNonPersistentAttributePath() {
+        // transientNote is a @Transient @JmixProperty: it cannot resolve to a column, so validation
+        // rejects it as an unknown property path before the query reaches SQL compilation.
+        GeneratedJpqlResult result = new GeneratedJpqlResult(
+                "select e.transientNote as note from aitls_Order e",
+                List.of(),
+                "Non-persistent attribute in select",
+                List.of()
+        );
+
+        JpqlValidationResult validationResult = jpqlValidationService.validate(result);
+
+        assertFalse(validationResult.isValid());
+        assertTrue(validationResult.getIssues().stream()
+                .anyMatch(issue -> issue.getCode().equals(PROPERTY_PATH_INVALID_CODE)));
+    }
+
+    @Test
     @DisplayName("Rejects a @Secret attribute path as an unknown property")
     void testRejectsSecretAttributePath() {
         GeneratedJpqlResult result = new GeneratedJpqlResult(

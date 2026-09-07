@@ -178,6 +178,54 @@ class ReadViewOpeningTest extends FlowuiTestSpecification {
         (dialog.view as OrderReadTestView).getEntity().id == order.id
     }
 
+    def "navigator opens the view given by the view class"() {
+        when: "navigating with an explicitly configured view class"
+        def origin = navigateToView(ReadBlankTestView)
+        navigators.readView(origin, Order)
+                .withViewClass(OrderReadTestView)
+                .readEntity(order)
+                .navigate()
+
+        then: "that view is shown with the entity loaded"
+        def view = UiTestUtils.getCurrentView()
+        view instanceof OrderReadTestView
+        (view as OrderReadTestView).getEntity().id == order.id
+    }
+
+    def "dialog opens the view given by the view class"() {
+        when: "opening a dialog with an explicitly configured view class"
+        def origin = navigateToView(ReadBlankTestView)
+        def dialog = dialogWindows.read(origin, Order)
+                .withViewClass(OrderReadTestView)
+                .readEntity(order)
+                .open()
+
+        then: "that view is shown with the entity loaded"
+        dialog.view instanceof OrderReadTestView
+        (dialog.view as OrderReadTestView).getEntity().id == order.id
+    }
+
+    def "a view id cannot be set on top of a view class"() {
+        given: "an origin view"
+        def origin = navigateToView(ReadBlankTestView)
+
+        when: "setting a view id on the navigator that already has a view class"
+        navigators.readView(origin, Order)
+                .withViewClass(OrderReadTestView)
+                .withViewId('test_Order.read')
+
+        then:
+        thrown(UnsupportedOperationException)
+
+        when: "setting a view id on the dialog builder that already has a view class"
+        dialogWindows.read(origin, Order)
+                .withViewClass(OrderReadTestView)
+                .withViewId('test_Order.read')
+
+        then:
+        thrown(UnsupportedOperationException)
+    }
+
     def "navigator requires an entity"() {
         when: "navigating without an entity"
         def origin = navigateToView(ReadBlankTestView)

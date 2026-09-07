@@ -64,9 +64,9 @@ public class ReadWindowClassBuilder<E, V extends View<?> & ReadView<E>> extends 
         return this;
     }
 
+    @Override
     public ReadWindowClassBuilder<E, V> withViewId(@Nullable String viewId) {
-        this.viewId = viewId;
-        return this;
+        throw new UnsupportedOperationException(getClass().getSimpleName() + " doesn't support 'viewId'");
     }
 
     @Override

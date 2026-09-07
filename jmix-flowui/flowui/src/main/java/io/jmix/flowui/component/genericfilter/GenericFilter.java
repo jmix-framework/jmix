@@ -29,6 +29,7 @@ import io.jmix.core.AccessManager;
 import io.jmix.core.Messages;
 import io.jmix.core.Metadata;
 import io.jmix.core.annotation.Experimental;
+import io.jmix.core.annotation.Internal;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.querycondition.Condition;
 import io.jmix.core.querycondition.LogicalCondition;
@@ -318,6 +319,9 @@ public class GenericFilter extends Composite<JmixDetails>
     }
 
     protected void onApplyButtonClick(ClickEvent<MenuItem> clickEvent) {
+        // Same recomposition rule as apply(). Unlike apply(), the button always loads and keeps
+        // the current page.
+        recomposeLoaderConditionIfOutdated();
         getDataLoader().load();
     }
 
@@ -465,9 +469,34 @@ public class GenericFilter extends Composite<JmixDetails>
      */
     public void apply() {
         if (dataLoader != null) {
+            recomposeLoaderConditionIfOutdated();
             setupLoaderFirstResult();
             if (isAutoApply()) dataLoader.load();
         }
+    }
+
+    /**
+     * Recomposes the data loader condition as "base AND the shown configuration" if the
+     * application has replaced the loader condition since the filter's last contribution
+     * (a new base condition); an untouched loader condition is left as is, so applications
+     * that never replace it see exactly the previous behavior. A configuration's root component
+     * receives this method as its recomposition delegate when the configuration is activated;
+     * nested components reach it through their owning group's chain, so their direct loads never
+     * use a replaced base alone.
+     */
+    protected void recomposeLoaderConditionIfOutdated() {
+        if (isLoaderConditionOutdated()) {
+            updateDataLoaderCondition();
+        }
+    }
+
+    /**
+     * Returns whether the loader condition was replaced by the application since this filter
+     * composed it last, so the composition no longer contains the shown configuration.
+     */
+    protected boolean isLoaderConditionOutdated() {
+        return dataLoader != null
+                && BaseConditionSupport.isReplacedExternally(dataLoader.getCondition(), lastConditionSetByFilter);
     }
 
     protected void setupLoaderFirstResult() {
@@ -707,6 +736,15 @@ public class GenericFilter extends Composite<JmixDetails>
         }
 
         LogicalFilterComponent<?> rootComponent = getCurrentConfiguration().getRootLogicalFilterComponent();
+
+        // The adoption point every configuration passes through on activation, whoever built its
+        // root - the filter's own factory, a configuration converter, or application code
+        // registering a hand-built configuration: from here on the root forwards recomposition
+        // requests to this filter.
+        if (rootComponent instanceof GroupFilter rootGroupFilter) {
+            rootGroupFilter.setLoaderConditionRecomposeDelegate(this::recomposeLoaderConditionIfOutdated);
+        }
+
         boolean isAnyFilterComponentVisible = rootComponent.getFilterComponents().stream()
                 .anyMatch(filterComponent -> ((Component) filterComponent).isVisible());
         if (isAnyFilterComponentVisible) {

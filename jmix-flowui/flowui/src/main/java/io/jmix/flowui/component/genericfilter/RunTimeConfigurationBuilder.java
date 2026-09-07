@@ -227,13 +227,7 @@ public class RunTimeConfigurationBuilder {
                     "RunTimeConfigurationBuilder: the filter has no DataLoader; set it before building a configuration");
         }
 
-        // Build the root GroupFilter — mirrors GenericFilter.createConfigurationRootLogicalFilterComponent()
-        GroupFilter root = uiComponents.create(GroupFilter.class);
-        root.setConditionModificationDelegated(true);
-        root.setOperation(operation);
-        root.setOperationTextVisible(false);
-        root.setAutoApply(filter.isAutoApply());
-        root.setDataLoader(filter.getDataLoader());
+        LogicalFilterComponent<?> root = filter.createConfigurationRootLogicalFilterComponent(operation);
 
         RunTimeConfiguration config = new RunTimeConfiguration(id, root, filter);
         config.setName(name);

@@ -17,7 +17,6 @@
 @media lumo_components_jmix-ai-user-message {
   :host {
     align-items: flex-end;
-    /* Redefine the chevron — injection replaced the base styles that carry it. */
     --jmix-ai-user-message-icon-chevron: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='m6 9 6 6 6-6'/></svg>");
   }
 
@@ -33,7 +32,6 @@
     overflow-wrap: anywhere;
   }
 
-  /* Collapse — mirrors the base styles (which Lumo injection replaces). */
   :host([collapsible]:not([expanded])) [part='message'] {
     max-height: var(--jmix-ai-user-message-collapsed-max-height, 12rem);
     overflow: hidden;
@@ -61,8 +59,6 @@
     color: var(--lumo-body-text-color);
   }
 
-  /* Keyboard-only box-shadow ring (Lumo convention; --_focus-ring-* come from
-     the co-injected lumo_components_jmix-ai-message-shared module). */
   :host [part='collapse-toggle']:focus-visible {
     outline: none;
     box-shadow: 0 0 0 var(--_focus-ring-width) var(--_focus-ring-color);

@@ -4,6 +4,18 @@
       title="${viewTitle}"
       focusComponent="dataGrid">
     <#assign properties = templateHelper.getProperties(entityMetaClass, includeProperties![], excludeProperties![])>
+    <#assign detailDialogMode = detailDialogMode!false>
+    <#macro detailAction id type>
+        <#if detailDialogMode>
+                <action id="${id}" type="${type}">
+                    <properties>
+                        <property name="openMode" value="DIALOG"/>
+                    </properties>
+                </action>
+        <#else>
+                <action id="${id}" type="${type}"/>
+        </#if>
+    </#macro>
     <data>
         <collection id="entityDc"
                     class="${entityMetaClass.javaClass.name}">
@@ -50,8 +62,8 @@
                   minHeight="20em"
                   dataContainer="entityDc">
             <actions>
-                <action id="createAction" type="list_create"/>
-                <action id="editAction" type="list_edit"/>
+                <@detailAction id="createAction" type="list_create"/>
+                <@detailAction id="editAction" type="list_edit"/>
                 <action id="removeAction" type="list_remove"/>
             </actions>
             <columns resizable="true">

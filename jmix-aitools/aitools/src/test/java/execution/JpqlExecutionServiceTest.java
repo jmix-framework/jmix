@@ -275,7 +275,7 @@ class JpqlExecutionServiceTest {
         ReflectionTestUtils.setField(executionService, "validateAndRepair", validateAndRepair);
         ReflectionTestUtils.setField(executionService, "jpqlParameterConversionService", jpqlParameterConversionService);
         ReflectionTestUtils.setField(executionService, "dataLoadProperties",
-                new AiToolsDataLoadProperties(true, true, 1, 20, 200, null, null, null, null));
+                new AiToolsDataLoadProperties(true, true, true, 1, 20, 200, null, null, null, null));
         return executionService;
     }
 

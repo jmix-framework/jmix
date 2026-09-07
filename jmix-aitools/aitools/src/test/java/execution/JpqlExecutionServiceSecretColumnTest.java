@@ -25,13 +25,9 @@ import io.jmix.aitools.dataload.execution.JpqlParameterConversionService;
 import io.jmix.aitools.dataload.execution.JpqlValidationAndRepairService;
 import io.jmix.aitools.dataload.execution.JpqlValidationAndRepairService.OperationResult;
 import io.jmix.aitools.dataload.validation.JpqlValidationResult;
-import io.jmix.core.AccessManager;
 import io.jmix.core.Metadata;
-import io.jmix.core.security.AccessDeniedException;
-import io.jmix.core.security.SystemAuthenticator;
+import io.jmix.core.MetadataTools;
 import io.jmix.data.QueryTransformerFactory;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -39,100 +35,72 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.util.ReflectionTestUtils;
-import test_support.DataAccessTestConfiguration;
-import test_support.DenyingLoadValuesConstraint;
+import test_support.AiToolsTestConfiguration;
 
 import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+/**
+ * Verifies the defense-in-depth guard that keeps a {@code @Secret} attribute out of the result rows
+ * even when the query bypasses JPQL validation (here the validate/repair step is stubbed to success).
+ */
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {DataAccessTestConfiguration.class})
-class JpqlExecutionServiceColumnAccessTest {
+@ContextConfiguration(classes = AiToolsTestConfiguration.class)
+class JpqlExecutionServiceSecretColumnTest {
 
-    private static final String TWO_COLUMN_JPQL =
-            "select c.id as cid, c.name as cname from aitls_Customer c";
+    private static final String SECRET_AND_PLAIN_JPQL =
+            "select c.id as cid, c.secretToken as ctoken from aitls_Customer c";
+    private static final String SECRET_ONLY_JPQL =
+            "select c.secretToken as ctoken from aitls_Customer c";
 
-    @Autowired
-    AccessManager accessManager;
     @Autowired
     QueryTransformerFactory queryTransformerFactory;
     @Autowired
     Metadata metadata;
     @Autowired
-    DenyingLoadValuesConstraint denyingConstraint;
-    @Autowired
-    SystemAuthenticator systemAuthenticator;
-
-    @BeforeEach
-    void authenticate() {
-        systemAuthenticator.begin();
-    }
-
-    @AfterEach
-    void tearDown() {
-        systemAuthenticator.end();
-        denyingConstraint.reset();
-    }
+    MetadataTools metadataTools;
 
     @Test
-    @DisplayName("Omits a denied column and keeps the readable ones")
-    void testOmitsDeniedColumnAmongSeveral() {
-        denyingConstraint.denySelectedPath("name");
-
-        TestJpqlExecutionService service = createService(
-                List.of(Map.of("cid", 1L, "cname", "Acme")));
+    @DisplayName("Drops a @Secret column and keeps the readable ones")
+    void testDropsSecretColumnAmongSeveral() {
+        TestJpqlExecutionService service = createService(SECRET_AND_PLAIN_JPQL,
+                List.of(Map.of("cid", 1L, "ctoken", "s3cret")));
 
         JpqlExecutionResult result = service.execute(new JpqlExecutionRequest(
-                "Show customers", TWO_COLUMN_JPQL, List.of(), List.of("cid", "cname"), null, null));
+                "Show customers", SECRET_AND_PLAIN_JPQL, List.of(), List.of("cid", "ctoken"), null, null));
 
         assertTrue(result.isExecuted());
         assertEquals(1, result.getRows().size());
 
         Map<String, Object> row = result.getRows().get(0);
         assertTrue(row.containsKey("cid"));
-        assertFalse(row.containsKey("cname"));
+        assertFalse(row.containsKey("ctoken"));
         assertEquals(1L, row.get("cid"));
     }
 
     @Test
-    @DisplayName("Returns an empty, non-executed result when all columns are denied")
-    void testReturnsNonExecutedResultWhenAllColumnsDenied() {
-        denyingConstraint.denySelectedPath("id");
-        denyingConstraint.denySelectedPath("name");
-
-        TestJpqlExecutionService service = createService(
-                List.of(Map.of("cid", 1L, "cname", "Acme")));
+    @DisplayName("Returns an empty, non-executed result when the only column is @Secret")
+    void testReturnsNonExecutedResultWhenOnlyColumnSecret() {
+        TestJpqlExecutionService service = createService(SECRET_ONLY_JPQL,
+                List.of(Map.of("ctoken", "s3cret")));
 
         JpqlExecutionResult result = service.execute(new JpqlExecutionRequest(
-                "Show customers", TWO_COLUMN_JPQL, List.of(), List.of("cid", "cname"), null, null));
+                "Show customers", SECRET_ONLY_JPQL, List.of(), List.of("ctoken"), null, null));
 
         assertFalse(result.isExecuted());
         assertTrue(result.getRows().isEmpty());
     }
 
-    @Test
-    @DisplayName("Rejects the query when the entity itself is not readable")
-    void testRejectsWhenEntityNotReadable() {
-        denyingConstraint.denyEntity();
-
-        TestJpqlExecutionService service = createService(List.of());
-
-        assertThrows(AccessDeniedException.class, () -> service.execute(new JpqlExecutionRequest(
-                "Show customers", TWO_COLUMN_JPQL, List.of(), List.of("cid", "cname"), null, null)));
-    }
-
-    TestJpqlExecutionService createService(List<Map<String, Object>> stubbedRows) {
-        GeneratedJpqlResult generatedResult = new GeneratedJpqlResult(
-                TWO_COLUMN_JPQL, List.of(), "", List.of());
+    TestJpqlExecutionService createService(String jpql, List<Map<String, Object>> stubbedRows) {
+        GeneratedJpqlResult generatedResult = new GeneratedJpqlResult(jpql, List.of(), "", List.of());
 
         JpqlValidationAndRepairService validateAndRepair = mock(JpqlValidationAndRepairService.class);
         when(validateAndRepair.validateAndRepair(any()))
@@ -145,9 +113,10 @@ class JpqlExecutionServiceColumnAccessTest {
         TestJpqlExecutionService service = new TestJpqlExecutionService(stubbedRows);
         ReflectionTestUtils.setField(service, "validateAndRepair", validateAndRepair);
         ReflectionTestUtils.setField(service, "jpqlParameterConversionService", parameterConversionService);
-        ReflectionTestUtils.setField(service, "accessManager", accessManager);
+        // accessManager is left null: this isolates the @Secret guard from the security column filtering.
         ReflectionTestUtils.setField(service, "queryTransformerFactory", queryTransformerFactory);
         ReflectionTestUtils.setField(service, "metadata", metadata);
+        ReflectionTestUtils.setField(service, "metadataTools", metadataTools);
         ReflectionTestUtils.setField(service, "dataLoadProperties",
                 new AiToolsDataLoadProperties(true, true, true, 1, 20, 200, null, null, null, null));
         return service;

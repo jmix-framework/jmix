@@ -82,9 +82,8 @@ class JpaDomainModelIntrospectorTest {
         assertEquals("Boolean", datatype(properties, "active").getJavaType());
         assertEquals("Integer", datatype(properties, "version").getJavaType());
 
-        DatatypePropertyDescriptor transientNote = datatype(properties, "transientNote");
-        assertEquals(Boolean.FALSE, transientNote.getPersistent());
-        assertEquals(Boolean.FALSE, transientNote.getMandatory());
+        // transientNote is a non-persistent @Transient @JmixProperty: it is not indexed at all.
+        assertFalse(properties.containsKey("transientNote"));
     }
 
     @Test
@@ -247,8 +246,8 @@ class JpaDomainModelIntrospectorTest {
         assertTrue(embeddedString.contains("EmbeddedPropertyDescriptor{name='address'"));
         assertTrue(embeddedString.contains("embedded=true"));
 
-        String datatypeString = datatype(properties("aitls_Order"), "transientNote").toString();
-        assertTrue(datatypeString.contains("persistent=false"));
+        String datatypeString = datatype(properties("aitls_Order"), "id").toString();
+        assertTrue(datatypeString.contains("persistent=true"));
         assertTrue(datatypeString.contains("mandatory=false"));
     }
 
@@ -259,6 +258,43 @@ class JpaDomainModelIntrospectorTest {
         assertTrue(introspector.containsEntity("aitls_Customer"));
         assertFalse(introspector.containsEntity("aitls_Unknown"));
         assertNotNull(introspector.getEntityDescriptor("aitls_Order"));
+    }
+
+    @Test
+    @DisplayName("Never indexes @Secret attributes, keeps @SystemLevel attributes queryable")
+    void testSecretExcludedSystemLevelKeptInIndex() {
+        // @Secret is dropped from the index entirely: hidden from discovery and rejected by JPQL validation.
+        assertFalse(introspector.containsProperty("aitls_Customer", "secretToken"));
+        assertNull(introspector.resolvePropertyPath("aitls_Customer", "secretToken"));
+
+        // @SystemLevel stays in the index so a generated query may still reference it; it is only hidden
+        // from discovery output (see the discovery tests).
+        assertTrue(introspector.containsProperty("aitls_Customer", "systemNote"));
+        assertNotNull(introspector.resolvePropertyPath("aitls_Customer", "systemNote"));
+    }
+
+    @Test
+    @DisplayName("Secret wins when an attribute is both @Secret and @SystemLevel (as User.password)")
+    void testSecretWinsOverSystemLevelWhenBothPresent() {
+        // Mirrors the standard-template User.password (both @Secret and @SystemLevel): @Secret drops the
+        // attribute from the index entirely, so the "kept but hidden" @SystemLevel rule never applies — it
+        // is neither exposed nor queryable.
+        assertFalse(introspector.containsProperty("aitls_Customer", "secretSystemNote"));
+        assertNull(introspector.resolvePropertyPath("aitls_Customer", "secretSystemNote"));
+    }
+
+    @Test
+    @DisplayName("Never indexes non-persistent attributes: cannot appear in JPQL")
+    void testNonPersistentAttributeExcludedFromIndex() {
+        // transientNote is a @Transient @JmixProperty on aitls_Order: it has no column, so it cannot be
+        // used in JPQL. Like @Secret, it is dropped from the index — hidden from discovery and rejected
+        // by JPQL validation (resolvePropertyPath returns null).
+        assertFalse(introspector.containsProperty("aitls_Order", "transientNote"));
+        assertNull(introspector.resolvePropertyPath("aitls_Order", "transientNote"));
+
+        // A persistent sibling on the same entity stays indexed and queryable.
+        assertTrue(introspector.containsProperty("aitls_Order", "number"));
+        assertNotNull(introspector.resolvePropertyPath("aitls_Order", "number"));
     }
 
     @Test

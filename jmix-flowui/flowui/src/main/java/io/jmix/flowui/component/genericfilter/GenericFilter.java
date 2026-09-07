@@ -205,7 +205,6 @@ public class GenericFilter extends Composite<JmixDetails>
             LogicalFilterComponent.Operation rootOperation) {
         GroupFilter rootGroupFilter = uiComponents.create(GroupFilter.class);
         rootGroupFilter.setConditionModificationDelegated(true);
-        rootGroupFilter.setLoaderConditionRecomposeDelegate(this::recomposeLoaderConditionIfOutdated);
         rootGroupFilter.setOperation(rootOperation);
         rootGroupFilter.setOperationTextVisible(false);
 
@@ -481,11 +480,11 @@ public class GenericFilter extends Composite<JmixDetails>
      * application has replaced the loader condition since the filter's last contribution
      * (a new base condition); an untouched loader condition is left as is, so applications
      * that never replace it see exactly the previous behavior. A configuration's root component
-     * receives this method as its recomposition delegate at creation; nested components reach it
-     * through their owning group's chain, so their direct loads never use a replaced base alone.
+     * receives this method as its recomposition delegate when the configuration is activated;
+     * nested components reach it through their owning group's chain, so their direct loads never
+     * use a replaced base alone.
      */
-    @Internal
-    public void recomposeLoaderConditionIfOutdated() {
+    protected void recomposeLoaderConditionIfOutdated() {
         if (isLoaderConditionOutdated()) {
             updateDataLoaderCondition();
         }
@@ -737,6 +736,15 @@ public class GenericFilter extends Composite<JmixDetails>
         }
 
         LogicalFilterComponent<?> rootComponent = getCurrentConfiguration().getRootLogicalFilterComponent();
+
+        // The adoption point every configuration passes through on activation, whoever built its
+        // root - the filter's own factory, a configuration converter, or application code
+        // registering a hand-built configuration: from here on the root forwards recomposition
+        // requests to this filter.
+        if (rootComponent instanceof GroupFilter rootGroupFilter) {
+            rootGroupFilter.setLoaderConditionRecomposeDelegate(this::recomposeLoaderConditionIfOutdated);
+        }
+
         boolean isAnyFilterComponentVisible = rootComponent.getFilterComponents().stream()
                 .anyMatch(filterComponent -> ((Component) filterComponent).isVisible());
         if (isAnyFilterComponentVisible) {

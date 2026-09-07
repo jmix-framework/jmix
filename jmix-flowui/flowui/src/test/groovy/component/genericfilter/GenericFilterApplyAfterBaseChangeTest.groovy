@@ -20,8 +20,11 @@ import component.genericfilter.view.GfBaseConditionAfterActivationTestView
 import component.genericfilter.view.GfConfigsNoActivationTestView
 import component.genericfilter.view.GfGroupFilterBaseConditionTestView
 import io.jmix.core.querycondition.PropertyCondition
+import io.jmix.flowui.UiComponents
 import io.jmix.flowui.component.genericfilter.GenericFilter
+import io.jmix.flowui.component.genericfilter.configuration.RunTimeConfiguration
 import io.jmix.flowui.component.logicalfilter.GroupFilter
+import io.jmix.flowui.component.logicalfilter.LogicalFilterComponent
 import io.jmix.flowui.component.propertyfilter.PropertyFilter
 import org.springframework.boot.test.context.SpringBootTest
 import test_support.spec.FlowuiTestSpecification
@@ -258,6 +261,37 @@ class GenericFilterApplyAfterBaseChangeTest extends FlowuiTestSpecification {
         number.setOperation(PropertyFilter.Operation.CONTAINS)
 
         then: "one load, by the new base AND the shown configuration"
+        loads == 1
+        hasPropertyConditionOn(filter.dataLoader.condition, "total")
+        hasPropertyConditionOn(filter.dataLoader.condition, "number")
+    }
+
+    def "a hand-built configuration recomposes onto a replaced base on a gesture"() {
+        given: "a configuration whose root group is built by application code, not by the filter"
+        GenericFilter filter = navigateToView(GfBaseConditionAfterActivationTestView).genericFilter
+        GroupFilter manualRoot = applicationContext.getBean(UiComponents).create(GroupFilter)
+        manualRoot.setConditionModificationDelegated(true)
+        manualRoot.setOperation(LogicalFilterComponent.Operation.AND)
+        manualRoot.setDataLoader(filter.dataLoader)
+        manualRoot.setAutoApply(filter.autoApply)
+        PropertyFilter<String> number = filter.filterComponentBuilder()
+                .<String>propertyFilter()
+                .property("number")
+                .operation(PropertyFilter.Operation.EQUAL)
+                .build()
+        manualRoot.add(number)
+        filter.addConfiguration(new RunTimeConfiguration("manual", manualRoot, filter))
+
+        and: "the configuration is activated and the application then replaces the loader condition"
+        filter.setCurrentConfiguration(filter.getConfiguration("manual"))
+        int loads = 0
+        filter.dataLoader.addPostLoadListener { loads++ }
+        filter.dataLoader.setCondition(PropertyCondition.greater("total", 0))
+
+        when: "the user changes the condition operation, which applies the delegated root group"
+        number.setOperationInternal(PropertyFilter.Operation.CONTAINS, true)
+
+        then: "one load, by the new base AND the hand-built configuration"
         loads == 1
         hasPropertyConditionOn(filter.dataLoader.condition, "total")
         hasPropertyConditionOn(filter.dataLoader.condition, "number")

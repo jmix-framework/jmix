@@ -26,6 +26,7 @@ import com.vaadin.flow.component.shared.HasTooltip;
 import com.vaadin.flow.dom.PropertyChangeEvent;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.core.annotation.Internal;
+import io.jmix.core.common.event.Subscription;
 import io.jmix.core.querycondition.Condition;
 import io.jmix.core.querycondition.LogicalCondition;
 import io.jmix.flowui.UiComponentProperties;
@@ -61,6 +62,9 @@ public abstract class SingleFilterComponentBase<V> extends CustomField<V>
     protected DataLoader dataLoader;
     protected boolean autoApply;
     protected Condition queryCondition;
+    protected boolean contributesCondition;
+    @Nullable
+    protected Subscription conditionContributorSubscription;
 
     @Internal
     protected boolean conditionModificationDelegated = false;
@@ -93,7 +97,9 @@ public abstract class SingleFilterComponentBase<V> extends CustomField<V>
     }
 
     protected void initComponent() {
-        this.autoApply = applicationContext.getBean(UiComponentProperties.class).isFilterAutoApply();
+        UiComponentProperties componentProperties = applicationContext.getBean(UiComponentProperties.class);
+        this.autoApply = componentProperties.isFilterAutoApply();
+        this.contributesCondition = componentProperties.isStandaloneFilterContributesCondition();
 
         root = createRootComponent();
         initRootComponent(root);
@@ -156,7 +162,14 @@ public abstract class SingleFilterComponentBase<V> extends CustomField<V>
         this.dataLoader = dataLoader;
 
         if (!isConditionModificationDelegated()) {
-            updateDataLoaderCondition();
+            if (contributesCondition) {
+                // The contributor mode: the loader polls the filter for its current condition on
+                // every load, the loader's condition slot stays with the application, and the
+                // contribution cannot be lost when another party replaces or rebuilds the slot.
+                conditionContributorSubscription = dataLoader.addConditionContributor(this::getQueryCondition);
+            } else {
+                updateDataLoaderCondition();
+            }
         }
     }
 
@@ -195,6 +208,13 @@ public abstract class SingleFilterComponentBase<V> extends CustomField<V>
     @Override
     public void setConditionModificationDelegated(boolean conditionModificationDelegated) {
         this.conditionModificationDelegated = conditionModificationDelegated;
+
+        if (conditionModificationDelegated && conditionContributorSubscription != null) {
+            // The owner takes over condition management: a contribution of its own would now
+            // duplicate the owner's composition, which includes this filter's condition.
+            conditionContributorSubscription.remove();
+            conditionContributorSubscription = null;
+        }
     }
 
     @Override

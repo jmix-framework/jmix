@@ -27,6 +27,8 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.flowui.Views;
 import io.jmix.flowui.ViewNavigators;
 import io.jmix.flowui.component.UiComponentUtils;
+import io.jmix.flowui.action.list.CreateAction;
+import io.jmix.flowui.action.list.EditAction;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.menu.MenuConfig;
 import io.jmix.flowui.menu.MenuItem;
@@ -36,6 +38,7 @@ import io.jmix.flowui.testassist.FlowuiTestAssistConfiguration;
 import io.jmix.flowui.testassist.UiTest;
 import io.jmix.flowui.testassist.UiTestUtils;
 import io.jmix.flowui.view.ViewControllerUtils;
+import io.jmix.flowui.view.OpenMode;
 import io.jmix.flowui.view.StandardDetailView;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewInfo;
@@ -77,6 +80,7 @@ public class ViewTemplateIntegrationTest {
     protected static final String PARAMS_VIEW_ID = "test_ViewTemplateParamsEntity.browse";
     protected static final String FILTERED_LIST_VIEW_ID = "test_ViewTemplateFilteringEntity.list";
     protected static final String FILTERED_DETAIL_VIEW_ID = "test_ViewTemplateFilteringEntity.edit";
+    protected static final String DIALOG_MODE_LIST_VIEW_ID = "test_ViewTemplateDialogModeEntity.list";
     protected static final String BINDINGS_LIST_VIEW_ID = "test_ViewTemplateBindingsEntity.list";
     protected static final String BINDINGS_DETAIL_VIEW_ID = "test_ViewTemplateBindingsEntity.detail";
     protected static final String MASTER_DETAIL_VIEW_ID = "test_ViewTemplateMasterEntity.detail";
@@ -285,6 +289,42 @@ public class ViewTemplateIntegrationTest {
         assertFalse(detailDescriptor.contains("id=\"systemValueField\""));
         assertFalse(detailDescriptor.contains("id=\"addressField\""));
         assertFalse(detailDescriptor.contains("id=\"tagsField\""));
+    }
+
+    @Test
+    void testListTemplateOpensDetailInDialogWhenDialogModeParamIsSet() {
+        String listDescriptor = getDescriptor(DIALOG_MODE_LIST_VIEW_ID);
+
+        assertTrue(listDescriptor.contains("<property name=\"openMode\" value=\"DIALOG\"/>"));
+
+        View<?> view = views.create(DIALOG_MODE_LIST_VIEW_ID);
+        DataGrid<?> dataGrid = (DataGrid<?>) UiComponentUtils.getComponent(view, "dataGrid");
+
+        CreateAction<?> createAction = (CreateAction<?>) dataGrid.getAction("createAction");
+        EditAction<?> editAction = (EditAction<?>) dataGrid.getAction("editAction");
+
+        assertNotNull(createAction);
+        assertNotNull(editAction);
+        assertEquals(OpenMode.DIALOG, createAction.getOpenMode());
+        assertEquals(OpenMode.DIALOG, editAction.getOpenMode());
+    }
+
+    @Test
+    void testListTemplateKeepsDefaultOpenModeWithoutDialogModeParam() {
+        String listDescriptor = getDescriptor(LIST_VIEW_ID);
+
+        assertFalse(listDescriptor.contains("openMode"));
+
+        View<?> view = views.create(LIST_VIEW_ID);
+        DataGrid<?> dataGrid = (DataGrid<?>) UiComponentUtils.getComponent(view, "dataGrid");
+
+        CreateAction<?> createAction = (CreateAction<?>) dataGrid.getAction("createAction");
+        EditAction<?> editAction = (EditAction<?>) dataGrid.getAction("editAction");
+
+        assertNotNull(createAction);
+        assertNotNull(editAction);
+        assertNull(createAction.getOpenMode());
+        assertNull(editAction.getOpenMode());
     }
 
     @Test

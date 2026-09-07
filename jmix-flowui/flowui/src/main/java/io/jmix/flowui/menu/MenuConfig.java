@@ -23,6 +23,7 @@ import io.jmix.core.common.xmlparsing.Dom4jTools;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.flowui.UiProperties;
+import io.jmix.flowui.icon.Icons;
 import io.jmix.flowui.kit.component.KeyCombination;
 import io.jmix.flowui.menu.MenuItem.MenuItemParameter;
 import io.jmix.flowui.menu.MenuItem.MenuItemProperty;
@@ -90,6 +91,9 @@ public class MenuConfig {
 
     @Autowired
     protected ViewTemplateDefinitions viewTemplateDefinitions;
+
+    @Autowired
+    protected Icons icons;
 
     @Autowired
     protected ObjectProvider<MenuConfigCustomizer> menuConfigCustomizerProvider;
@@ -305,6 +309,7 @@ public class MenuConfig {
         MenuItem viewItem = new MenuItem(parentItem, definition.getId());
         viewItem.setView(definition.getId());
         viewItem.setTitle(definition.getTitle());
+        loadTemplateMenuItemIcon(definition, viewItem);
 
         if (definition.getType() == ViewTemplateType.DETAIL) {
             viewItem.setRouteParameters(List.of(new MenuItemParameter(
@@ -312,6 +317,20 @@ public class MenuConfig {
         }
 
         return viewItem;
+    }
+
+    protected void loadTemplateMenuItemIcon(ViewTemplateDefinition definition, MenuItem viewItem) {
+        String menuIcon = definition.getMenuIcon();
+        if (StringUtils.isBlank(menuIcon)) {
+            return;
+        }
+
+        try {
+            viewItem.setIcon(icons.get(menuIcon));
+        } catch (Exception e) {
+            log.warn("Cannot resolve menu icon '{}' defined for view template '{}', the icon is ignored",
+                    menuIcon, definition.getId(), e);
+        }
     }
 
     @Nullable

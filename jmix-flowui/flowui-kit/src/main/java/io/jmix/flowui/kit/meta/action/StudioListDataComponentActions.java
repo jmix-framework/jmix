@@ -108,7 +108,7 @@ interface StudioListDataComponentActions {
 
     @StudioAction(
             type = "list_read",
-            description = "Opens a detail view for an entity instance in read-only mode",
+            description = "Shows an entity instance in its read view, or in its detail view opened in read-only mode",
             classFqn = "io.jmix.flowui.action.list.ReadAction",
             documentationLink = "%VERSION%/flow-ui/actions/list-actions.html#list_read",
             availableInViewWizard = true,

@@ -19,6 +19,9 @@ package llm_data_set;
 import io.jmix.aitools.dataload.execution.GeneratedJpqlParameter;
 import io.jmix.aitools.dataload.execution.GeneratedJpqlResult;
 import io.jmix.aitools.dataload.execution.JpqlExecutionRequest;
+import io.jmix.aitools.dataload.generation.EntityDataLoadGenerationRequest;
+import io.jmix.aitools.dataload.generation.EntityDataLoadQueryParameter;
+import io.jmix.aitools.dataload.generation.impl.DefaultEntityDataLoadUserMessageComposer;
 import io.jmix.reports.llm.LlmDataQuery;
 import io.jmix.reports.llm.LlmDataQueryException;
 import io.jmix.reports.llm.LlmQueryGenerationRequest;
@@ -60,6 +63,8 @@ class AiToolsLlmDataQueryServiceTest {
         ReflectionTestUtils.setField(service, "entityDataLoadGenerationService", generationService);
         ReflectionTestUtils.setField(service, "jpqlValidationService", validationService);
         ReflectionTestUtils.setField(service, "jpqlValidationAndRepairService", validationAndRepairService);
+        ReflectionTestUtils.setField(service, "userMessageComposer",
+                new DefaultEntityDataLoadUserMessageComposer());
     }
 
     @Test
@@ -114,6 +119,25 @@ class AiToolsLlmDataQueryServiceTest {
         assertThat(offered.getJpql()).isEqualTo(generationService.getJpql());
         assertThat(offered.getResultProperties()).containsExactly("orderNumber");
         assertThat(offered.getMaxResults()).isNull();
+    }
+
+    @Test
+    void testRepairIsToldTheConstraintsTheQueryWasGeneratedUnder() {
+        // Repair rewrites the text, and renaming an alias or dropping a guard is exactly the kind of rewrite it
+        // makes. Told the prompt alone, it would not know which aliases are required or which conditions are
+        // guarded, so it is given the same constraints the add-on phrased for generation.
+        service.generate(new LlmQueryGenerationRequest(PROMPT, List.of(
+                new LlmQueryParameter("city", "java.lang.String", false, true),
+                new LlmQueryParameter("revenue_dynamic_header_year", "java.lang.Integer", true)),
+                List.of("revenue_dynamic_header_year")));
+
+        String offeredText = validationAndRepairService.getLastRequest().getUserText();
+        assertThat(offeredText).startsWith(PROMPT);
+        assertThat(offeredText).contains("cross-tab");
+        assertThat(offeredText).contains(":city (java.lang.String, may be null)");
+        assertThat(offeredText).contains("(:name is null or e.attribute = :name)");
+        assertThat(offeredText).contains("REQUIRED RESULT COLUMNS");
+        assertThat(offeredText).contains("\n- revenue_dynamic_header_year");
     }
 
     @Test
@@ -174,68 +198,59 @@ class AiToolsLlmDataQueryServiceTest {
     }
 
     @Test
-    void testPromptAndAvailableParametersReachGeneration() {
+    void testPromptAndAvailableParametersReachGenerationAsData() {
         service.generate(new LlmQueryGenerationRequest(PROMPT,
                 List.of(new LlmQueryParameter("dateFrom", "java.time.LocalDate")), List.of()));
 
-        String userText = generationService.getLastUserText();
-        assertThat(userText).contains(PROMPT);
-        assertThat(userText).contains("dateFrom");
-        assertThat(userText).contains("java.time.LocalDate");
-        assertThat(userText).contains(":dateFrom");
+        EntityDataLoadGenerationRequest request = generationService.getLastRequest();
+        assertThat(request.getPrompt()).contains(PROMPT);
+        assertThat(request.getAvailableParameters())
+                .extracting(EntityDataLoadQueryParameter::getName, EntityDataLoadQueryParameter::getJavaType)
+                .containsExactly(tuple("dateFrom", "java.time.LocalDate"));
     }
 
     @Test
-    void testListValuedParameterUsesInWithoutBecomingACrossTabAxis() {
+    void testParameterBindingFlagsAreCarriedAsData() {
         service.generate(new LlmQueryGenerationRequest(PROMPT, List.of(
                 new LlmQueryParameter("customerIds", "java.util.UUID", true),
-                new LlmQueryParameter("dateFrom", "java.time.LocalDate")), List.of()));
-
-        String userText = generationService.getLastUserText();
-        assertThat(userText).contains("several values of this type, matched with IN");
-        assertThat(userText).contains("no parentheses around the parameter name");
-        assertThat(userText).containsPattern(":dateFrom \\(java\\.time\\.LocalDate\\)");
-        assertThat(userText).doesNotContain("REQUIRED RESULT COLUMNS");
-    }
-
-    @Test
-    void testOptionalParameterIsMarkedAndTheGuardIsSpelledOut() {
-        // Told only that a value "may be empty", a model writes a plain comparison, which matches nothing once
-        // null is bound and empties the band. The guard is therefore dictated, not described.
-        service.generate(new LlmQueryGenerationRequest(PROMPT, List.of(
                 new LlmQueryParameter("city", "java.lang.String", false, true),
                 new LlmQueryParameter("dateFrom", "java.time.LocalDate")), List.of()));
 
-        String userText = generationService.getLastUserText();
-        assertThat(userText).containsPattern(":city \\(java\\.lang\\.String, may be empty\\)");
-        assertThat(userText).contains("(:name is null or e.attribute = :name)");
-        // A required parameter carries no such mark.
-        assertThat(userText).containsPattern(":dateFrom \\(java\\.time\\.LocalDate\\)");
+        EntityDataLoadGenerationRequest request = generationService.getLastRequest();
+        assertThat(request.getAvailableParameters())
+                .extracting(EntityDataLoadQueryParameter::getName, EntityDataLoadQueryParameter::isMultiValued,
+                        EntityDataLoadQueryParameter::isOptional)
+                .containsExactly(
+                        tuple("customerIds", true, false),
+                        tuple("city", false, true),
+                        tuple("dateFrom", false, false));
+        // No cross-tab: the prompt carries no axis narrowing.
+        assertThat(request.getRequiredResultProperties()).isEmpty();
+        assertThat(request.getPrompt()).doesNotContain("cross-tab");
     }
 
-
     @Test
-    void testCrossTabRequiredResultColumnsAreDescribedExplicitly() {
+    void testCrossTabRequiredColumnsAreDataAndTheNarrowingStaysInThePrompt() {
         service.generate(new LlmQueryGenerationRequest(PROMPT, List.of(
                 new LlmQueryParameter("revenue_dynamic_header_year", "java.lang.Integer", true)),
                 List.of("revenue_dynamic_header_year")));
 
-        String userText = generationService.getLastUserText();
-        assertThat(userText).contains("REQUIRED RESULT COLUMNS");
-        assertThat(userText).contains("\n- revenue_dynamic_header_year");
-        assertThat(userText).contains("matching that parameter with IN");
+        EntityDataLoadGenerationRequest request = generationService.getLastRequest();
+        assertThat(request.getRequiredResultProperties()).containsExactly("revenue_dynamic_header_year");
+        assertThat(request.getPrompt()).contains("cross-tab");
+        assertThat(request.getPrompt()).contains("matching that parameter with IN");
     }
 
     @Test
-    void testScalarParameterShadowingRequiredColumnDoesNotUseIn() {
+    void testCrossTabWithAScalarAxisParameterAddsNoInNarrowing() {
         service.generate(new LlmQueryGenerationRequest(PROMPT, List.of(
                 new LlmQueryParameter("revenue_dynamic_header_year", "java.lang.Integer")),
                 List.of("revenue_dynamic_header_year")));
 
-        String userText = generationService.getLastUserText();
-        assertThat(userText).contains("REQUIRED RESULT COLUMNS");
-        assertThat(userText).contains("\n- revenue_dynamic_header_year");
-        assertThat(userText).doesNotContain("matching that parameter with IN");
+        EntityDataLoadGenerationRequest request = generationService.getLastRequest();
+        assertThat(request.getRequiredResultProperties()).containsExactly("revenue_dynamic_header_year");
+        assertThat(request.getPrompt()).contains("cross-tab");
+        assertThat(request.getPrompt()).doesNotContain("matching that parameter with IN");
     }
 
 

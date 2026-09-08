@@ -219,7 +219,8 @@ public class ViewTemplateDefinitions {
                 routePath,
                 controllerClass,
                 title,
-                getStringAttribute(attributes, "parentMenu")
+                getStringAttribute(attributes, "parentMenu"),
+                getStringAttribute(attributes, "menuIcon")
         );
     }
 

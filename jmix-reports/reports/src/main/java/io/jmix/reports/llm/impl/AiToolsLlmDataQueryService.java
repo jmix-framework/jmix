@@ -19,7 +19,10 @@ package io.jmix.reports.llm.impl;
 import io.jmix.aitools.ChatClientFactory;
 import io.jmix.aitools.dataload.EntityDataLoadQuery;
 import io.jmix.aitools.dataload.execution.*;
+import io.jmix.aitools.dataload.generation.EntityDataLoadUserMessageComposer;
+import io.jmix.aitools.dataload.generation.EntityDataLoadGenerationRequest;
 import io.jmix.aitools.dataload.generation.EntityDataLoadGenerationService;
+import io.jmix.aitools.dataload.generation.EntityDataLoadQueryParameter;
 import io.jmix.aitools.dataload.validation.JpqlValidationIssue;
 import io.jmix.aitools.dataload.validation.JpqlValidationResult;
 import io.jmix.aitools.dataload.validation.JpqlValidationService;
@@ -61,6 +64,9 @@ public class AiToolsLlmDataQueryService implements LlmDataQueryService {
     @Autowired
     protected ChatClientFactory chatClientFactory;
 
+    @Autowired
+    protected EntityDataLoadUserMessageComposer userMessageComposer;
+
     /**
      * The add-on's data-load beans are declared on properties alone, so they are there even when no model is
      * configured for the application. Generation then fails on the first call, which the designer has no reason
@@ -73,11 +79,11 @@ public class AiToolsLlmDataQueryService implements LlmDataQueryService {
 
     @Override
     public LlmDataQuery generate(LlmQueryGenerationRequest request) {
-        String userText = composeUserText(request);
+        EntityDataLoadGenerationRequest generationRequest = toGenerationRequest(request);
 
         EntityDataLoadQuery generatedQuery;
         try {
-            generatedQuery = entityDataLoadGenerationService.generate(userText);
+            generatedQuery = entityDataLoadGenerationService.generate(generationRequest);
         } catch (RuntimeException e) {
             throw new LlmDataQueryException("Cannot generate a query for the data set prompt", e);
         }
@@ -96,7 +102,63 @@ public class AiToolsLlmDataQueryService implements LlmDataQueryService {
                 generatedQuery.getExplanation(), retainNonNull(generatedQuery.getWarnings()),
                 generatedQuery.getMaxResults(), generatedQuery.getFirstResult());
 
+        // Repair gets the same message generation was sent (prompt + constraints), not just the prompt —
+        // otherwise it wouldn't know the required aliases or optional guards and could undo them.
+        String userText = userMessageComposer.compose(generationRequest);
         return repairIfNeeded(userText, query);
+    }
+
+    /**
+     * Turns the seam request into the add-on's structured generation request: the parameters and their binding
+     * flags become data, and the only prose Reports still owns — the cross-tab narrowing — goes into the prompt
+     * the add-on treats as free text.
+     *
+     * @param request the seam request
+     * @return the add-on generation request carrying the mapped parameters, the required result columns and the
+     *         prompt with any cross-tab intent appended
+     */
+    protected EntityDataLoadGenerationRequest toGenerationRequest(LlmQueryGenerationRequest request) {
+        List<EntityDataLoadQueryParameter> parameters = request.getAvailableParameters().stream()
+                .map(parameter -> new EntityDataLoadQueryParameter(parameter.getName(), parameter.getJavaType())
+                        .setMultiValued(parameter.isMultiValued())
+                        .setOptional(parameter.isOptional()))
+                .toList();
+
+        return new EntityDataLoadGenerationRequest(composePrompt(request))
+                .setAvailableParameters(parameters)
+                .setRequiredResultProperties(request.getRequiredResultProperties());
+    }
+
+    /**
+     * Appends the cross-tab intent to the prompt when the band is one: the required result columns are its axes,
+     * and each row must carry its axis values under those exact names. When an axis parameter is multi-valued,
+     * the query is narrowed to the matrix by matching it with {@code IN}. This is Reports' own framing, so it
+     * stays here rather than in the neutral add-on request.
+     *
+     * @param request the seam request
+     * @return the prompt, with the cross-tab intent appended when there are required result columns
+     */
+    protected String composePrompt(LlmQueryGenerationRequest request) {
+        List<String> requiredColumns = request.getRequiredResultProperties();
+        if (requiredColumns.isEmpty()) {
+            return request.getPrompt();
+        }
+
+        StringBuilder prompt = new StringBuilder(request.getPrompt());
+        prompt.append("\n\nThis band is a cross-tab: the required result columns are its axes, so each row ")
+                .append("must carry its axis values under those exact column names.");
+
+        boolean hasMultiValuedAxisParameter = request.getAvailableParameters().stream()
+                .filter(LlmQueryParameter::isMultiValued)
+                .map(LlmQueryParameter::getName)
+                .anyMatch(requiredColumns::contains);
+
+        if (hasMultiValuedAxisParameter) {
+            prompt.append(" When a required column is also a multi-valued available parameter, narrow the query ")
+                    .append("to the matrix by matching that parameter with IN (no parentheses around the name).");
+        }
+
+        return prompt.toString();
     }
 
     /**
@@ -269,83 +331,6 @@ public class AiToolsLlmDataQueryService implements LlmDataQueryService {
         return values.stream()
                 .filter(Objects::nonNull)
                 .toList();
-    }
-
-    /**
-     * Appends the parameter contract to the prompt. It goes into the user text rather than into a prompt
-     * provider, because the data-load system prompt is a single bean shared by every consumer of generation.
-     * <p>
-     * Only the referenced parameters may be declared: the add-on's {@code ParametersValidator} reports a
-     * declared parameter the query never uses as an issue.
-     */
-    protected String composeUserText(LlmQueryGenerationRequest request) {
-        StringBuilder userText = new StringBuilder(request.getPrompt());
-
-        if (!request.getAvailableParameters().isEmpty()) {
-            userText.append("\n\nAVAILABLE REPORT PARAMETERS:");
-            boolean anyOptional = false;
-            for (LlmQueryParameter parameter : request.getAvailableParameters()) {
-                userText.append("\n- :").append(parameter.getName())
-                        .append(" (").append(parameter.getJavaType());
-                // A collection parameter is bound as a whole, so the query has to match it with IN.
-                if (parameter.isMultiValued()) {
-                    userText.append(", several values of this type, matched with IN and no parentheses ")
-                            .append("around the parameter name");
-                }
-
-                if (parameter.isOptional()) {
-                    anyOptional = true;
-                    userText.append(", may be empty");
-                }
-                userText.append(')');
-            }
-            userText.append("\n\nPARAMETER RULES:")
-                    .append("\n- Reference these as JPQL named parameters, never inline their values.")
-                    .append("\n- Declare in \"parameters\" only the ones the query actually references.")
-                    .append("\n- Use a parameter only where the request calls for it; ignore the rest.");
-
-            if (anyOptional) {
-                userText.append("\n- A parameter marked \"may be empty\" must not be compared directly. Wrap its ")
-                        .append("whole condition so that an empty value switches the condition off, like this: ")
-                        .append("(:name is null or e.attribute = :name). Write that guard for every condition ")
-                        .append("that uses such a parameter.");
-            }
-        }
-
-        appendCrossTabRules(userText, request);
-
-        return userText.toString();
-    }
-
-    /**
-     * States what a cross-tab cell query must return. Every required axis value has to come back as a result
-     * column of the same name — that is how the extraction controller places a row in the matrix. Stated as an
-     * explicit list of required aliases rather than inferred from multi-valued parameters: an ordinary report
-     * parameter may be a collection too, while told only a generic rule, models alias axis columns after their
-     * attributes instead ({@code username}, {@code active}) and the report then renders an empty matrix.
-     */
-    protected void appendCrossTabRules(StringBuilder userText, LlmQueryGenerationRequest request) {
-        List<String> axisNames = request.getRequiredResultProperties();
-        if (axisNames.isEmpty()) {
-            return;
-        }
-
-        userText.append("\n\nREQUIRED RESULT COLUMNS: this band is a cross-tab, so the query MUST select and ")
-                .append("alias one column per name below, holding the value of that row for it:");
-        for (String axisName : axisNames) {
-            userText.append("\n- ").append(axisName);
-        }
-        userText.append("\nUse these exact aliases in addition to the value columns the request asks for.");
-
-        boolean hasMultiValuedAxisParameter = request.getAvailableParameters().stream()
-                .filter(LlmQueryParameter::isMultiValued)
-                .map(LlmQueryParameter::getName)
-                .anyMatch(axisNames::contains);
-        if (hasMultiValuedAxisParameter) {
-            userText.append(" When a required column is also listed as a multi-valued available parameter, narrow ")
-                    .append("the query to the matrix by matching that parameter with IN, and write no parentheses ")
-                    .append("around the parameter name, because parentheses make JPQL expect a single value.");
-        }
     }
 
     /**

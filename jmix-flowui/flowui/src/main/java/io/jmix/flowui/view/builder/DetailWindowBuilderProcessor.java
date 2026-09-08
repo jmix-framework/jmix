@@ -31,6 +31,7 @@ import io.jmix.flowui.Views;
 import io.jmix.flowui.data.*;
 import io.jmix.flowui.kit.component.SupportsUserAction;
 import io.jmix.flowui.model.*;
+import io.jmix.flowui.model.impl.DataContextInternal;
 import io.jmix.flowui.sys.UiAccessChecker;
 import io.jmix.flowui.view.*;
 import io.jmix.flowui.view.DialogWindow.AfterCloseEvent;
@@ -187,7 +188,11 @@ public class DetailWindowBuilderProcessor extends AbstractWindowBuilderProcessor
             ValueSource<?> valueSource = ((SupportsValueSource<?>) field).getValueSource();
             if (valueSource instanceof EntityValueSource) {
                 if (isCompositionProperty((EntityValueSource<?, ?>) valueSource)) {
-                    DataContext originDataContext = getViewData(origin).getDataContext();
+                    DataContext originDataContext =
+                            asParentDataContext(getViewData(origin).getDataContextOrNull());
+                    if (originDataContext == null) {
+                        return null;
+                    }
                     DataContext dataContext = getViewData(view).getDataContextOrNull();
                     checkDataContext(view, dataContext);
                     //noinspection ConstantConditions
@@ -229,7 +234,7 @@ public class DetailWindowBuilderProcessor extends AbstractWindowBuilderProcessor
                 MetaProperty metaProperty = masterMetaClass.getProperty(property);
 
                 if (metaProperty.getType() == MetaProperty.Type.COMPOSITION) {
-                    return getViewData(builder.getOrigin()).getDataContextOrNull();
+                    return asParentDataContext(getViewData(builder.getOrigin()).getDataContextOrNull());
                 }
             }
 
@@ -248,6 +253,23 @@ public class DetailWindowBuilderProcessor extends AbstractWindowBuilderProcessor
         }
 
         return dataContext;
+    }
+
+    /**
+     * Returns the given context if it can be a parent of another {@code DataContext}, otherwise
+     * {@code null}.
+     * <p>
+     * A view whose {@code <data>} section is read-only — which every {@link io.jmix.flowui.view.ReadView}
+     * is, and any view that declares {@code readOnly="true"} — holds a {@code NoopDataContext}. It tracks
+     * nothing and cannot be a parent, so composition editing started from such a view gets no parent
+     * context instead of failing.
+     *
+     * @param dataContext context to check, or {@code null}
+     * @return the context, or {@code null} if it cannot be a parent
+     */
+    @Nullable
+    protected DataContext asParentDataContext(@Nullable DataContext dataContext) {
+        return dataContext instanceof DataContextInternal ? dataContext : null;
     }
 
     protected void checkDataContext(View<?> view, @Nullable DataContext dataContext) {

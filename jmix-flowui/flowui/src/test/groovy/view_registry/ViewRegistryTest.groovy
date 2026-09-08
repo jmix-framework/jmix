@@ -23,14 +23,18 @@ import org.springframework.boot.test.context.SpringBootTest
 import test_support.entity.Foo
 import test_support.entity.sales.*
 import test_support.spec.FlowuiTestSpecification
+import view_registry.view.address.AddressDetailView
 import view_registry.view.customer.CustomerDetailView
+import view_registry.view.customer.CustomerReadView
 import view_registry.view.customer.CustomerLookupView
 import view_registry.view.customer.CustomerPrimaryListView
 import view_registry.view.order.OrderPrimaryListView
 import view_registry.view.product.ProductListView
 import view_registry.view.product.ProductPrimaryDetailView
+import view_registry.view.product.ProductPrimaryReadView
 import view_registry.view.product.ProductPrimaryLookupView
 import view_registry.view.producttag.ProductTagListView
+import view_registry.view.producttag.ProductTagPrimaryDetailView
 
 @SpringBootTest
 class ViewRegistryTest extends FlowuiTestSpecification {
@@ -131,6 +135,48 @@ class ViewRegistryTest extends FlowuiTestSpecification {
     def "no detail view found"() {
         when:
         viewRegistry.getDetailViewInfo(Order)
+
+        then:
+        thrown(NoSuchViewException)
+    }
+
+    /* Read view */
+
+    def "find read view with @PrimaryReadView"() {
+        when:
+        def viewInfo = viewRegistry.getReadViewInfo(Product)
+
+        then:
+        viewInfo.id == ProductPrimaryReadView.VIEW_ID
+    }
+
+    def "find read view with read view id convention"() {
+        when:
+        def viewInfo = viewRegistry.getReadViewInfo(Customer)
+
+        then:
+        viewInfo.id == CustomerReadView.VIEW_ID
+    }
+
+    def "read view resolution falls back to @PrimaryDetailView"() {
+        when:
+        def viewInfo = viewRegistry.getReadViewInfo(ProductTag)
+
+        then:
+        viewInfo.id == ProductTagPrimaryDetailView.VIEW_ID
+    }
+
+    def "read view resolution falls back to the detail view id convention"() {
+        when:
+        def viewInfo = viewRegistry.getReadViewInfo(Address)
+
+        then:
+        viewInfo.id == AddressDetailView.VIEW_ID
+    }
+
+    def "no read view and no detail view found"() {
+        when:
+        viewRegistry.getReadViewInfo(Order)
 
         then:
         thrown(NoSuchViewException)

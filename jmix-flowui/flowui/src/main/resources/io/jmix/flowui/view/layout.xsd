@@ -1270,6 +1270,7 @@
                     <xs:enumeration value="entity_lookup"/>
                     <xs:enumeration value="entity_open"/>
                     <xs:enumeration value="entity_openComposition"/>
+                    <xs:enumeration value="entity_read"/>
                     <xs:enumeration value="list_create"/>
                     <xs:enumeration value="list_edit"/>
                     <xs:enumeration value="list_remove"/>

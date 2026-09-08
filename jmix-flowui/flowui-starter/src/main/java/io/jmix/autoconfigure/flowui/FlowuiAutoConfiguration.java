@@ -29,6 +29,7 @@ import io.jmix.flowui.sys.ViewSupport;
 import io.jmix.flowui.view.ViewAttributes;
 import io.jmix.flowui.view.ViewRegistry;
 import io.jmix.flowui.view.builder.DetailWindowBuilderProcessor;
+import io.jmix.flowui.view.builder.ReadWindowBuilderProcessor;
 import io.jmix.flowui.view.builder.EditedEntityTransformer;
 import io.jmix.flowui.view.builder.LookupWindowBuilderProcessor;
 import io.jmix.flowui.view.builder.WindowBuilderProcessor;
@@ -103,6 +104,15 @@ public class FlowuiAutoConfiguration {
         return new DetailViewNavigationProcessor(viewSupport, viewRegistry, navigationSupport, routeSupport);
     }
 
+    @Bean("flowui_ReadViewNavigationProcessor")
+    @ConditionalOnMissingBean
+    public ReadViewNavigationProcessor readViewNavigationProcessor(ViewSupport viewSupport,
+                                                                   ViewRegistry viewRegistry,
+                                                                   ViewNavigationSupport navigationSupport,
+                                                                   RouteSupport routeSupport) {
+        return new ReadViewNavigationProcessor(viewSupport, viewRegistry, navigationSupport, routeSupport);
+    }
+
     @Bean("flowui_ListViewNavigationProcessor")
     @ConditionalOnMissingBean
     public ListViewNavigationProcessor listViewNavigationProcessor(ViewSupport viewSupport,
@@ -144,6 +154,15 @@ public class FlowuiAutoConfiguration {
             @Nullable List<EditedEntityTransformer> editedEntityTransformers) {
         return new DetailWindowBuilderProcessor(applicationContext, views, viewRegistry, metadata, extendedEntities,
                 viewProperties, uiAccessChecker, editedEntityTransformers);
+    }
+
+    @Bean("flowui_ReadWindowBuilderProcessor")
+    @ConditionalOnMissingBean
+    public ReadWindowBuilderProcessor readWindowBuilderProcessor(ApplicationContext applicationContext,
+                                                                 Views views,
+                                                                 ViewRegistry viewRegistry,
+                                                                 UiAccessChecker uiAccessChecker) {
+        return new ReadWindowBuilderProcessor(applicationContext, views, viewRegistry, uiAccessChecker);
     }
 
     @Bean("flowui_LookupWindowBuilderProcessor")

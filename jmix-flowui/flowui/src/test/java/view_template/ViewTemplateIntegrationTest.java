@@ -18,15 +18,19 @@ package view_template;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.icon.FontIcon;
+import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteConfiguration;
 import com.vaadin.flow.router.RouteParameters;
 import io.jmix.core.DataManager;
 import io.jmix.core.Metadata;
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.flowui.Views;
 import io.jmix.flowui.ViewNavigators;
+import io.jmix.flowui.Views;
 import io.jmix.flowui.component.UiComponentUtils;
+import io.jmix.flowui.action.list.CreateAction;
+import io.jmix.flowui.action.list.EditAction;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.menu.MenuConfig;
 import io.jmix.flowui.menu.MenuItem;
@@ -35,13 +39,7 @@ import io.jmix.flowui.model.InstanceContainer;
 import io.jmix.flowui.testassist.FlowuiTestAssistConfiguration;
 import io.jmix.flowui.testassist.UiTest;
 import io.jmix.flowui.testassist.UiTestUtils;
-import io.jmix.flowui.view.ViewControllerUtils;
-import io.jmix.flowui.view.StandardDetailView;
-import io.jmix.flowui.view.View;
-import io.jmix.flowui.view.ViewInfo;
-import io.jmix.flowui.view.ViewController;
-import io.jmix.flowui.view.ViewDescriptor;
-import io.jmix.flowui.view.ViewRegistry;
+import io.jmix.flowui.view.*;
 import io.jmix.flowui.view.navigation.ViewNavigationSupport;
 import io.jmix.flowui.view.template.impl.TemplateDetailView;
 import io.jmix.flowui.view.template.impl.TemplateListView;
@@ -54,7 +52,6 @@ import org.springframework.test.util.ReflectionTestUtils;
 import test_support.FlowuiTestConfiguration;
 import test_support.entity.viewtemplate.ViewTemplateBindingsEntity;
 import test_support.entity.viewtemplate.ViewTemplateFilteringEntity;
-import test_support.entity.viewtemplate.ViewTemplateLookupEntity;
 import test_support.entity.viewtemplate.ViewTemplateParamsEntity;
 import test_support.entity.viewtemplate.ViewTemplateTestEntity;
 
@@ -77,6 +74,7 @@ public class ViewTemplateIntegrationTest {
     protected static final String PARAMS_VIEW_ID = "test_ViewTemplateParamsEntity.browse";
     protected static final String FILTERED_LIST_VIEW_ID = "test_ViewTemplateFilteringEntity.list";
     protected static final String FILTERED_DETAIL_VIEW_ID = "test_ViewTemplateFilteringEntity.edit";
+    protected static final String DIALOG_MODE_LIST_VIEW_ID = "test_ViewTemplateDialogModeEntity.list";
     protected static final String BINDINGS_LIST_VIEW_ID = "test_ViewTemplateBindingsEntity.list";
     protected static final String BINDINGS_DETAIL_VIEW_ID = "test_ViewTemplateBindingsEntity.detail";
     protected static final String MASTER_DETAIL_VIEW_ID = "test_ViewTemplateMasterEntity.detail";
@@ -189,6 +187,33 @@ public class ViewTemplateIntegrationTest {
     }
 
     @Test
+    void testMenuIconAppliedToTemplateMenuItems() {
+        MenuItem parentItem = findTemplateViewsRootItem().orElseThrow();
+
+        MenuItem listItem = findChildItem(parentItem, LIST_VIEW_ID).orElseThrow();
+        Component listIcon = listItem.getIcon();
+        assertInstanceOf(Icon.class, listIcon);
+        assertEquals("vaadin:table", listIcon.getElement().getAttribute("icon"));
+
+        // A name without the collection prefix is resolved through the predefined icon sets
+        MenuItem detailItem = findChildItem(parentItem, DETAIL_VIEW_ID).orElseThrow();
+        Component detailIcon = detailItem.getIcon();
+        assertInstanceOf(FontIcon.class, detailIcon);
+        assertTrue(List.of(((FontIcon) detailIcon).getIconClassNames()).contains("jmix-font-icon-pencil"));
+    }
+
+    @Test
+    void testMenuIconIsNotAppliedToParentMenuItem() {
+        assertNull(findTemplateViewsRootItem().orElseThrow().getIcon());
+    }
+
+    @Test
+    void testMenuItemHasNoIconWhenMenuIconIsNotSpecified() {
+        MenuItem listItem = findMenuItemByView(MSG_TITLE_LIST_VIEW_ID).orElseThrow();
+        assertNull(listItem.getIcon());
+    }
+
+    @Test
     void testDefaultTemplateViewsCanBeCreatedById() {
         View<?> listView = views.create(LIST_VIEW_ID);
         assertInstanceOf(TemplateListView.class, listView);
@@ -285,6 +310,42 @@ public class ViewTemplateIntegrationTest {
         assertFalse(detailDescriptor.contains("id=\"systemValueField\""));
         assertFalse(detailDescriptor.contains("id=\"addressField\""));
         assertFalse(detailDescriptor.contains("id=\"tagsField\""));
+    }
+
+    @Test
+    void testListTemplateOpensDetailInDialogWhenDialogModeParamIsSet() {
+        String listDescriptor = getDescriptor(DIALOG_MODE_LIST_VIEW_ID);
+
+        assertTrue(listDescriptor.contains("<property name=\"openMode\" value=\"DIALOG\"/>"));
+
+        View<?> view = views.create(DIALOG_MODE_LIST_VIEW_ID);
+        DataGrid<?> dataGrid = (DataGrid<?>) UiComponentUtils.getComponent(view, "dataGrid");
+
+        CreateAction<?> createAction = (CreateAction<?>) dataGrid.getAction("createAction");
+        EditAction<?> editAction = (EditAction<?>) dataGrid.getAction("editAction");
+
+        assertNotNull(createAction);
+        assertNotNull(editAction);
+        assertEquals(OpenMode.DIALOG, createAction.getOpenMode());
+        assertEquals(OpenMode.DIALOG, editAction.getOpenMode());
+    }
+
+    @Test
+    void testListTemplateKeepsDefaultOpenModeWithoutDialogModeParam() {
+        String listDescriptor = getDescriptor(LIST_VIEW_ID);
+
+        assertFalse(listDescriptor.contains("openMode"));
+
+        View<?> view = views.create(LIST_VIEW_ID);
+        DataGrid<?> dataGrid = (DataGrid<?>) UiComponentUtils.getComponent(view, "dataGrid");
+
+        CreateAction<?> createAction = (CreateAction<?>) dataGrid.getAction("createAction");
+        EditAction<?> editAction = (EditAction<?>) dataGrid.getAction("editAction");
+
+        assertNotNull(createAction);
+        assertNotNull(editAction);
+        assertNull(createAction.getOpenMode());
+        assertNull(editAction.getOpenMode());
     }
 
     @Test

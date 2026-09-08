@@ -42,6 +42,9 @@ PAGINATION RULES:
 - Never use LIMIT or OFFSET inside JPQL.
 - If pagination is not requested, set maxResults and firstResult to null.
 
+PARAMETER DECLARATION RULE:
+- In "parameters", declare exactly the named parameters the query text references — declare none the query does not reference, and leave none it references undeclared.
+
 ENTITY AND ATTRIBUTE RULES:
 - Use exact entity names from tool responses.
 - Use exact attribute names from tool responses.

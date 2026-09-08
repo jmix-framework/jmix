@@ -18,17 +18,19 @@ package llm_data_set.test_support;
 
 import io.jmix.aitools.dataload.EntityDataLoadQuery;
 import io.jmix.aitools.dataload.execution.GeneratedJpqlParameter;
+import io.jmix.aitools.dataload.generation.EntityDataLoadGenerationRequest;
 import io.jmix.aitools.dataload.generation.EntityDataLoadGenerationService;
 import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 
 /**
- * Records the text sent to query generation and returns a configurable draft, standing in for the LLM.
+ * Records the request sent to query generation and returns a configurable draft, standing in for the LLM.
  */
 public class TestEntityDataLoadGenerationService implements EntityDataLoadGenerationService {
 
-    protected String lastUserText = "";
+    @Nullable
+    protected EntityDataLoadGenerationRequest lastRequest;
 
     protected String jpql = "select o.number as orderNumber from sales_Order o";
     protected List<GeneratedJpqlParameter> parameters = List.of();
@@ -46,8 +48,8 @@ public class TestEntityDataLoadGenerationService implements EntityDataLoadGenera
     protected RuntimeException failure;
 
     @Override
-    public EntityDataLoadQuery generate(String userText) {
-        lastUserText = userText;
+    public EntityDataLoadQuery generate(EntityDataLoadGenerationRequest request) {
+        lastRequest = request;
         if (failure != null) {
             throw failure;
         }
@@ -55,8 +57,9 @@ public class TestEntityDataLoadGenerationService implements EntityDataLoadGenera
                 maxResults, firstResult);
     }
 
-    public String getLastUserText() {
-        return lastUserText;
+    @Nullable
+    public EntityDataLoadGenerationRequest getLastRequest() {
+        return lastRequest;
     }
 
     public String getJpql() {

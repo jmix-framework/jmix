@@ -17,7 +17,9 @@
 package entity_dataload;
 
 import io.jmix.aitools.dataload.EntityDataLoadQuery;
+import io.jmix.aitools.dataload.generation.EntityDataLoadGenerationRequest;
 import io.jmix.aitools.dataload.generation.EntityDataLoadGenerationService;
+import io.jmix.aitools.dataload.generation.EntityDataLoadQueryParameter;
 import io.jmix.aitools.dataload.tool.DomainModelDiscoveryTool;
 import io.jmix.core.security.SystemAuthenticator;
 import org.junit.jupiter.api.BeforeEach;
@@ -31,6 +33,9 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import repair.test_support.StubChatModel;
 import test_support.AiToolsTestConfiguration;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -79,5 +84,37 @@ class EntityDataLoadGenerationServiceTest {
                         .map(Message::getMessageType)
                         .anyMatch(MessageType.TOOL::equals),
                 "The tool result should have been sent back to the model");
+    }
+
+    @Test
+    @DisplayName("A structured request's constraints reach the user message")
+    void testRequestConstraintsReachTheUserMessage() {
+        stubChatModel.setContent("""
+                {
+                  "jpql": "select e.number as number from aitls_Order e",
+                  "resultProperties": ["number"],
+                  "parameters": [],
+                  "explanation": "All orders"
+                }
+                """);
+
+        systemAuthenticator.begin();
+        try {
+            generationService.generate(new EntityDataLoadGenerationRequest("list orders")
+                    .setAvailableParameters(List.of(new EntityDataLoadQueryParameter("dateFrom", "java.time.LocalDate")))
+                    .setRequiredResultProperties(List.of("year")));
+        } finally {
+            systemAuthenticator.end();
+        }
+
+        String userMessage = stubChatModel.getLastPrompt().getInstructions().stream()
+                .filter(message -> message.getMessageType() == MessageType.USER)
+                .map(Message::getText)
+                .collect(Collectors.joining("\n"));
+
+        assertTrue(userMessage.contains("list orders"));
+        assertTrue(userMessage.contains("AVAILABLE PARAMETERS:"));
+        assertTrue(userMessage.contains(":dateFrom"));
+        assertTrue(userMessage.contains("REQUIRED RESULT COLUMNS"));
     }
 }

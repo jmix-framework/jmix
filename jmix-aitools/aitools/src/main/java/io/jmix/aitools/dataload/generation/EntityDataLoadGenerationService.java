@@ -27,10 +27,20 @@ import io.jmix.aitools.dataload.EntityDataLoadQuery;
 public interface EntityDataLoadGenerationService {
 
     /**
-     * Generates a JPQL query draft from the given natural-language request.
+     * Generates a JPQL query draft for the given request.
+     *
+     * @param request the generation request — a prompt and, optionally, the constraints the query must satisfy
+     * @return generated query draft
+     */
+    EntityDataLoadQuery generate(EntityDataLoadGenerationRequest request);
+
+    /**
+     * Generates a JPQL query draft from a natural-language request with no additional constraints.
      *
      * @param userText user request in natural language
      * @return generated query draft
      */
-    EntityDataLoadQuery generate(String userText);
+    default EntityDataLoadQuery generate(String userText) {
+        return generate(new EntityDataLoadGenerationRequest(userText));
+    }
 }

@@ -20,6 +20,8 @@ import io.jmix.aitools.ChatClientFactory;
 import io.jmix.aitools.ResponseLanguageProvider;
 import io.jmix.aitools.dataload.EntityDataLoadQuery;
 import io.jmix.aitools.dataload.execution.GeneratedJpqlParameter;
+import io.jmix.aitools.dataload.generation.EntityDataLoadUserMessageComposer;
+import io.jmix.aitools.dataload.generation.EntityDataLoadGenerationRequest;
 import io.jmix.aitools.dataload.generation.EntityDataLoadGenerationService;
 import io.jmix.aitools.dataload.generation.EntityDataLoadQueryPayload;
 import io.jmix.aitools.dataload.prompt.EntityDataLoadPromptProvider;
@@ -56,6 +58,8 @@ public class EntityDataLoadGenerationServiceImpl implements EntityDataLoadGenera
     protected AiToolRegistry aiToolRegistry;
     @Autowired
     protected ResponseLanguageProvider responseLanguageProvider;
+    @Autowired
+    protected EntityDataLoadUserMessageComposer userMessageComposer;
 
     @Nullable
     protected ChatClient chatClient;
@@ -69,10 +73,10 @@ public class EntityDataLoadGenerationServiceImpl implements EntityDataLoadGenera
 
     @NullMarked
     @Override
-    public EntityDataLoadQuery generate(String userText) {
-        Preconditions.checkNotEmptyString(userText);
+    public EntityDataLoadQuery generate(EntityDataLoadGenerationRequest request) {
+        Preconditions.checkNotEmptyString(request.getPrompt());
 
-        String content = buildChatClientPrompt(userText)
+        String content = buildChatClientPrompt(request)
                 .call()
                 .content();
         if (content == null || content.isBlank()) {
@@ -89,8 +93,10 @@ public class EntityDataLoadGenerationServiceImpl implements EntityDataLoadGenera
         return mapToQueryDraft(payload);
     }
 
-    protected ChatClient.ChatClientRequestSpec buildChatClientPrompt(String userText) {
+    protected ChatClient.ChatClientRequestSpec buildChatClientPrompt(EntityDataLoadGenerationRequest request) {
         checkChatClient();
+
+        String userText = userMessageComposer.compose(request);
 
         return Objects.requireNonNull(chatClient)
                 .prompt()

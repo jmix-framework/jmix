@@ -19,6 +19,7 @@ package test_support.entity.viewtemplate;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.flowui.view.template.DetailViewTemplate;
 import io.jmix.flowui.view.template.ListViewTemplate;
+import io.jmix.flowui.view.template.ReadViewTemplate;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
@@ -34,6 +35,10 @@ import test_support.entity.TestBaseEntity;
 @DetailViewTemplate(
         path = "view_template/bindings-detail-view.ftl",
         editedEntityContainerId = "customerDc"
+)
+@ReadViewTemplate(
+        path = "view_template/bindings-read-view.ftl",
+        readEntityContainerId = "customerDc"
 )
 public class ViewTemplateBindingsEntity extends TestBaseEntity {
 

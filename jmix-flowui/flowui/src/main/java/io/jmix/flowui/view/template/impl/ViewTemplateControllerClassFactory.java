@@ -41,6 +41,7 @@ import static net.bytebuddy.matcher.ElementMatchers.named;
 public class ViewTemplateControllerClassFactory {
 
     protected static final String GENERATED_PACKAGE_SUFFIX = ".generated_view";
+    protected static final String READ_ROUTE_SUFFIX = "/read";
     protected static final Pattern NON_ROUTE_CHARS = Pattern.compile("[^a-z0-9]+");
     protected static final Pattern EDGE_SEPARATORS = Pattern.compile("(^[-_]+|[-_]+$)");
 
@@ -145,6 +146,57 @@ public class ViewTemplateControllerClassFactory {
         }
     }
 
+    /**
+     * Returns a generated controller class for the specified read template view.
+     *
+     * @param entityMetaClass       entity meta-class that owns the generated view
+     * @param viewId                view id to expose through {@link ViewController}
+     * @param descriptorPath        descriptor path exposed through {@link ViewDescriptor}
+     * @param routePath             route path exposed through {@link Route}
+     * @param readEntityContainerId shown entity container id used by the generated controller
+     * @return generated controller class
+     */
+    public Class<? extends View<?>> createReadViewControllerClass(MetaClass entityMetaClass,
+                                                                  String viewId,
+                                                                  String descriptorPath,
+                                                                  String routePath,
+                                                                  String readEntityContainerId) {
+        String key = ViewTemplateType.READ.name() + ":" + viewId + ":" + routePath + ":"
+                + readEntityContainerId;
+
+        return controllerClasses.computeIfAbsent(key, __ ->
+                createReadViewControllerClassInternal(entityMetaClass, viewId, descriptorPath, routePath,
+                        readEntityContainerId));
+    }
+
+    @SuppressWarnings("unchecked")
+    protected Class<? extends View<?>> createReadViewControllerClassInternal(MetaClass entityMetaClass,
+                                                                             String viewId,
+                                                                             String descriptorPath,
+                                                                             String routePath,
+                                                                             String readEntityContainerId) {
+        String className = createClassName(entityMetaClass, ViewTemplateType.READ);
+        Class<?> loadedClass = findLoadedClass(className, TemplateReadView.class.getClassLoader());
+        if (loadedClass != null) {
+            return (Class<? extends View<?>>) loadedClass;
+        }
+
+        DynamicType.Builder<? extends View<?>> builder = createControllerClassBuilder(
+                entityMetaClass,
+                ViewTemplateType.READ,
+                TemplateReadView.class,
+                viewId,
+                descriptorPath,
+                routePath
+        ).method(named("getReadEntityContainerId"))
+                .intercept(FixedValue.value(readEntityContainerId));
+
+        try (DynamicType.Unloaded<? extends View<?>> unloaded = builder.make()) {
+            return unloaded.load(TemplateReadView.class.getClassLoader(), ClassLoadingStrategy.Default.INJECTION)
+                    .getLoaded();
+        }
+    }
+
     protected DynamicType.Builder<? extends View<?>> createControllerClassBuilder(MetaClass entityMetaClass,
                                                                                   ViewTemplateType type,
                                                                                   Class<? extends View<?>> superclass,
@@ -178,14 +230,40 @@ public class ViewTemplateControllerClassFactory {
      */
     public String createDefaultRoutePath(String viewId, ViewTemplateType type) {
         String routePath = createRouteSlug(viewId);
-        return type == ViewTemplateType.DETAIL
-                ? routePath + "/:" + StandardDetailView.DEFAULT_ROUTE_PARAM
-                : routePath;
+        return switch (type) {
+            case LIST -> routePath;
+            case DETAIL -> routePath + createRouteParamSuffix();
+            case READ -> routePath + createReadRouteSuffix();
+        };
+    }
+
+    /**
+     * Returns the route segment that carries the entity id.
+     *
+     * @return {@code /:id} with the route parameter name of a detail view
+     */
+    public String createRouteParamSuffix() {
+        return "/:" + StandardDetailView.DEFAULT_ROUTE_PARAM;
+    }
+
+    /**
+     * Returns the route suffix of a read view, so that consumers generating read view routes do not
+     * re-spell the grammar.
+     *
+     * @return {@code /:id/read}
+     */
+    public String createReadRouteSuffix() {
+        return createRouteParamSuffix() + READ_ROUTE_SUFFIX;
     }
 
     protected String createClassName(MetaClass entityMetaClass, ViewTemplateType type) {
         Class<?> entityClass = entityMetaClass.getJavaClass();
-        String controllerType = type == ViewTemplateType.LIST ? "ListView" : "DetailView";
+        String controllerType = switch (type) {
+            case LIST -> "ListView";
+            case DETAIL -> "DetailView";
+            case READ -> "ReadView";
+        };
+
         return entityClass.getPackageName()
                 + GENERATED_PACKAGE_SUFFIX
                 + "."

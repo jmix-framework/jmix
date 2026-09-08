@@ -273,10 +273,10 @@ public class ViewRegistry implements ApplicationContextAware {
         MetaClass originalMetaClass = extendedEntities.getOriginalOrThisMetaClass(definition.getEntityMetaClass());
         Class<?> entityClass = originalMetaClass.getJavaClass();
 
-        if (definition.getType() == ViewTemplateType.LIST) {
-            primaryListViews.put(entityClass, viewInfo);
-        } else if (definition.getType() == ViewTemplateType.DETAIL) {
-            primaryDetailViews.put(entityClass, viewInfo);
+        switch (definition.getType()) {
+            case LIST -> primaryListViews.put(entityClass, viewInfo);
+            case DETAIL -> primaryDetailViews.put(entityClass, viewInfo);
+            case READ -> primaryReadViews.put(entityClass, viewInfo);
         }
     }
 

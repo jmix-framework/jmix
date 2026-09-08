@@ -26,29 +26,18 @@ import jakarta.persistence.Table;
 import test_support.entity.TestBaseEntity;
 
 /**
- * Test entity used to verify list and detail views generated from templates.
+ * Test entity used to verify a read view generated from a template with every default in place. The list
+ * template supplies the navigation origin and the menu comparison.
  */
 @JmixEntity
-@Table(name = "TEST_VIEW_TEMPLATE_ENTITY")
-@Entity(name = "test_ViewTemplateEntity")
-@ListViewTemplate(
-        parentMenu = "templateViews",
-        menuIcon = "vaadin:table",
-        viewRoute = "templates/view-template/list"
-)
-@DetailViewTemplate(
-        parentMenu = "templateViews",
-        menuIcon = "PENCIL",
-        viewId = "test_ViewTemplateEntity.edit",
-        viewTitle = "Template entity editor",
-        viewRoute = "templates/view-template/detail"
-)
-@ReadViewTemplate(
-        viewId = "test_ViewTemplateEntity.show",
-        viewTitle = "Template entity card",
-        viewRoute = "templates/view-template/show"
-)
-public class ViewTemplateTestEntity extends TestBaseEntity {
+@Table(name = "TEST_VIEW_TEMPLATE_READ")
+@Entity(name = "test_ViewTemplateReadEntity")
+@ListViewTemplate(parentMenu = "templateViews")
+// The list template's create and edit actions target the entity's detail view, so the fixture declares
+// one: without it the generated list view is half-broken and a later test would fail on the fixture.
+@DetailViewTemplate
+@ReadViewTemplate
+public class ViewTemplateReadEntity extends TestBaseEntity {
 
     @Column(name = "NAME")
     protected String name;
@@ -56,34 +45,18 @@ public class ViewTemplateTestEntity extends TestBaseEntity {
     @Column(name = "ACTIVE")
     protected Boolean active;
 
-    /**
-     * @return entity name
-     */
     public String getName() {
         return name;
     }
 
-    /**
-     * Sets the entity name.
-     *
-     * @param name entity name
-     */
     public void setName(String name) {
         this.name = name;
     }
 
-    /**
-     * @return active flag
-     */
     public Boolean getActive() {
         return active;
     }
 
-    /**
-     * Sets the active flag.
-     *
-     * @param active active flag
-     */
     public void setActive(Boolean active) {
         this.active = active;
     }

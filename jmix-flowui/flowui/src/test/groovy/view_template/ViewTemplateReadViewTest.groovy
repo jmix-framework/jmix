@@ -21,6 +21,9 @@ import com.vaadin.flow.router.RouteConfiguration
 import com.vaadin.flow.router.RouteParameters
 import io.jmix.core.Metadata
 import io.jmix.flowui.Views
+import io.jmix.flowui.action.AdjustWhenViewReadOnly
+import io.jmix.flowui.action.list.ReadAction
+import io.jmix.flowui.component.UiComponentUtils
 import io.jmix.flowui.view.DefaultMainViewParent
 import io.jmix.flowui.view.StandardDetailView
 import io.jmix.flowui.view.StandardReadView
@@ -47,6 +50,8 @@ class ViewTemplateReadViewTest extends FlowuiTestSpecification {
     protected static final String CONFIGURED_READ_VIEW_ID = "test_ViewTemplateEntity.show"
     protected static final String CONFIGURED_READ_VIEW_ROUTE = "templates/view-template/show/:id/read"
     protected static final String BINDINGS_READ_VIEW_ID = "test_ViewTemplateBindingsEntity.read"
+    protected static final String MASTER_READ_VIEW_ID = "test_ViewTemplateMasterEntity.read"
+    protected static final String LOOKUP_READ_VIEW_ID = "test_ViewTemplateLookupEntity.show"
     protected static final String CUSTOM_READ_ENTITY_DC_ID = "customerDc"
 
     @Autowired
@@ -150,6 +155,9 @@ class ViewTemplateReadViewTest extends FlowuiTestSpecification {
         instance.element("fetchPlan").elements("property")*.attributeValue("name").sort() ==
                 ["active", "name"]
 
+        and: "an entity without collections keeps a bare form, with no tab sheet around it"
+        root.element("layout").element("tabSheet") == null
+
         and: "the fields are rendered inside the form bound to that container"
         def form = root.element("layout").element("formLayout")
         form.attributeValue("id") == "form"
@@ -193,6 +201,75 @@ class ViewTemplateReadViewTest extends FlowuiTestSpecification {
 
         and: "so the default container id is not even declared by that template"
         !descriptorOf(BINDINGS_READ_VIEW_ID).contains('<instance id="entityDc"')
+    }
+
+    def "read view template renders composition collections with the read action only"() {
+        when:
+        def descriptor = descriptorOf(MASTER_READ_VIEW_ID)
+        def root = DocumentHelper.parseText(descriptor).rootElement
+        def instance = root.element("data").element("instance")
+
+        then: "the composition is fetched and loaded into a nested container"
+        instance.element("fetchPlan").elements("property")*.attributeValue("name").contains("lines")
+        instance.elements("collection")*.attributeValue("id") == ["linesDc"]
+        instance.element("collection").attributeValue("property") == "lines"
+
+        and: "the form moves into a tab sheet that gets one more tab per composition"
+        def tabSheet = root.element("layout").element("tabSheet")
+        tabSheet != null
+        def tabs = tabSheet.elements("tab")
+        tabs*.attributeValue("id") == ["generalTab", "linesTab"]
+        tabs[0].element("formLayout").attributeValue("dataContainer") == "entityDc"
+
+        and: "the grid is bound to the nested container and shows the line's own properties"
+        def content = tabs[1].element("vbox")
+        def grid = content.element("dataGrid")
+        grid.attributeValue("id") == "linesDataGrid"
+        grid.attributeValue("dataContainer") == "linesDc"
+        grid.element("columns").elements("column")*.attributeValue("property") == ["description", "quantity"]
+
+        and: "reading the line in a dialog is the only action it carries"
+        def actions = grid.element("actions").elements()
+        actions*.attributeValue("type") == ["list_read"]
+        actions[0].element("properties").elements("property").collect {
+            [it.attributeValue("name"), it.attributeValue("value")]
+        } == [["openMode", "DIALOG"]]
+
+        and: "and the only button over the grid"
+        content.element("hbox").elements("button")*.attributeValue("action") == ["linesDataGrid.readAction"]
+
+        and: "an association collection is not rendered at all"
+        !descriptor.contains("relatedCustomers")
+    }
+
+    def "collection grid of a created read view carries a usable read action"() {
+        when: "the descriptor with a tab sheet and a collection grid is loaded"
+        def view = views.create(MASTER_READ_VIEW_ID)
+
+        then: "the grid is bound to the nested container"
+        def grid = UiComponentUtils.getComponent(view, "linesDataGrid")
+        grid.dataProvider != null
+
+        and: "its action is a read action, which the read-only state does not touch"
+        def action = grid.getAction("readAction")
+        action instanceof ReadAction
+        !(action instanceof AdjustWhenViewReadOnly)
+    }
+
+    def "read view template renders a @LookupField reference like the detail template does"() {
+        when:
+        def descriptor = descriptorOf(LOOKUP_READ_VIEW_ID)
+
+        then: "a reference whose entity asks for a dropdown becomes an entityComboBox"
+        descriptor.contains('id="productField"')
+        descriptor.contains('<entityComboBox')
+        descriptor.contains('byInstanceName="true"')
+        !descriptor.contains('<entityPicker')
+
+        and: "an eager dropdown reference also gets its items container, and the field is bound to it"
+        descriptor.contains('<collection id="countryItemsDc"')
+        descriptor.contains('select e from test_LfCountry e')
+        descriptor.contains('itemsContainer="countryItemsDc"')
     }
 
     protected String urlOf(Class controllerClass, String entityId) {

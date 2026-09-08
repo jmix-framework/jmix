@@ -26,6 +26,7 @@ import io.jmix.flowui.testassist.UiTestUtils
 import io.jmix.flowui.view.ViewControllerUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.jdbc.core.JdbcTemplate
 import test_support.entity.sales.Order
 import test_support.entity.sales.OrderLine
 import test_support.spec.FlowuiTestSpecification
@@ -40,6 +41,8 @@ class ReadActionCompositionTest extends FlowuiTestSpecification {
 
     @Autowired
     DataManager dataManager
+    @Autowired
+    JdbcTemplate jdbcTemplate
     @Autowired
     ViewNavigators navigators
 
@@ -63,8 +66,8 @@ class ReadActionCompositionTest extends FlowuiTestSpecification {
 
     @Override
     void cleanup() {
-        dataManager.remove(line)
-        dataManager.remove(order)
+        jdbcTemplate.execute("delete from TEST_ORDER_LINE")
+        jdbcTemplate.execute("delete from TEST_ORDER")
     }
 
     def "read action of a composition grid opens the line from a read view"() {

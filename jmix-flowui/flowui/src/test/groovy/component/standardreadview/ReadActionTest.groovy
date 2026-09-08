@@ -26,6 +26,7 @@ import io.jmix.flowui.testassist.UiTestUtils
 import io.jmix.flowui.view.OpenMode
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.jdbc.core.JdbcTemplate
 import test_support.entity.sales.Customer
 import test_support.entity.sales.Order
 import test_support.spec.FlowuiTestSpecification
@@ -35,6 +36,8 @@ class ReadActionTest extends FlowuiTestSpecification {
 
     @Autowired
     DataManager dataManager
+    @Autowired
+    JdbcTemplate jdbcTemplate
 
     Order order
     Customer customer
@@ -54,8 +57,8 @@ class ReadActionTest extends FlowuiTestSpecification {
 
     @Override
     void cleanup() {
-        dataManager.remove(order)
-        dataManager.remove(customer)
+        jdbcTemplate.execute("delete from TEST_ORDER")
+        jdbcTemplate.execute("delete from TEST_CUSTOMER")
     }
 
     def "action opens the read view when the entity has one"() {

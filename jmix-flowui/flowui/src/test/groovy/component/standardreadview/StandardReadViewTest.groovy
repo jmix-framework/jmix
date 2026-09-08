@@ -31,6 +31,7 @@ import io.jmix.flowui.view.ViewControllerUtils
 import io.jmix.flowui.view.navigation.RouteSupport
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.jdbc.core.JdbcTemplate
 import test_support.entity.sales.Order
 import test_support.spec.FlowuiTestSpecification
 
@@ -43,6 +44,8 @@ class StandardReadViewTest extends FlowuiTestSpecification {
     DialogWindows dialogWindows
     @Autowired
     DataManager dataManager
+    @Autowired
+    JdbcTemplate jdbcTemplate
     @Autowired
     RouteSupport routeSupport
 
@@ -59,7 +62,7 @@ class StandardReadViewTest extends FlowuiTestSpecification {
 
     @Override
     void cleanup() {
-        dataManager.remove(order)
+        jdbcTemplate.execute("delete from TEST_ORDER")
     }
 
     protected OrderReadTestView navigateToReadView(Object entityId) {

@@ -26,6 +26,7 @@ import io.jmix.flowui.ViewNavigators
 import io.jmix.flowui.testassist.UiTestUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.jdbc.core.JdbcTemplate
 import test_support.entity.sales.Customer
 import test_support.entity.sales.Order
 import test_support.spec.FlowuiTestSpecification
@@ -39,6 +40,8 @@ class ReadViewOpeningTest extends FlowuiTestSpecification {
     DialogWindows dialogWindows
     @Autowired
     DataManager dataManager
+    @Autowired
+    JdbcTemplate jdbcTemplate
 
     Order order
 
@@ -53,7 +56,7 @@ class ReadViewOpeningTest extends FlowuiTestSpecification {
 
     @Override
     void cleanup() {
-        dataManager.remove(order)
+        jdbcTemplate.execute("delete from TEST_ORDER")
     }
 
     def "navigator opens the read view resolved for the entity"() {

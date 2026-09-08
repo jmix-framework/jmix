@@ -25,6 +25,7 @@ import io.jmix.flowui.kit.component.KeyCombination
 import io.jmix.flowui.testassist.UiTestUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.jdbc.core.JdbcTemplate
 import test_support.entity.sales.Customer
 import test_support.entity.sales.Order
 import test_support.spec.FlowuiTestSpecification
@@ -34,6 +35,8 @@ class EntityReadActionTest extends FlowuiTestSpecification {
 
     @Autowired
     DataManager dataManager
+    @Autowired
+    JdbcTemplate jdbcTemplate
 
     Order order
 
@@ -48,7 +51,7 @@ class EntityReadActionTest extends FlowuiTestSpecification {
 
     @Override
     void cleanup() {
-        dataManager.remove(order)
+        jdbcTemplate.execute("delete from TEST_ORDER")
     }
 
     def "action opens the read view for the picker value"() {

@@ -97,6 +97,7 @@ dependencies {
         api "ru.kavlab:dataimportaddon-starter:0.9.5"
         api "de.bytestore:plugin-starter:3.0.0"
         api "de.bytestore:swagger-ui-starter:3.0.0"
+        api "io.github.makssent:jmix-firebird-starter:3.0.1"
         // end community add-ons
 
         api "io.jmix.aitools:jmix-aitools:$freeVersion"

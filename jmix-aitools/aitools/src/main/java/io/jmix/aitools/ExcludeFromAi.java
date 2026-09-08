@@ -28,26 +28,15 @@ import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.ElementType.TYPE;
 
 /**
- * Declares that an entity or an attribute must never be exposed to the AI: its data may not reach the
- * model, and a generated query may not read it.
+ * Marks an entity or attribute as off-limits to the AI: its data must never reach the model, and a
+ * generated query may not read it. On a type the whole entity is excluded; on a field or getter only
+ * that attribute is, and the exclusion is inherited by entity subclasses.
  * <p>
- * This is a code-level trust boundary. Unlike the {@code jmix.aitools.dataload.*} include/exclude
- * properties, it cannot be undone at deployment time: an annotated element stays hidden regardless of
- * property overrides, and no force-include rule can bring it back. Use it for data whose exposure
- * decision must survive code review rather than live in overridable configuration &mdash; typically
- * information that is a normal, usable attribute in the application (personally identifiable
- * information, for example) yet must stay out of the model.
- * <p>
- * On a <b>type</b> the entity disappears from domain-model discovery and, having left the introspected
- * index, becomes unqueryable. On a <b>field or getter</b> the single attribute is hidden the same way
- * while the entity itself stays available. Being a {@link MetaAnnotation}, it propagates to entity
- * subclasses and can be overridden through {@code metadata.xml}.
- * <p>
- * Enforced today by the data-load subsystem &mdash; the only AI feature that reads the domain model;
- * any future feature that reads the domain model is expected to honour it too. Prefer it over
- * {@code @Secret} (which hides an attribute everywhere in the framework, not just from the AI) and
- * over {@code @SystemLevel} (which only declutters discovery under an overridable flag) when the
- * intent is precisely &quot;usable in the application, closed to the AI&quot;.
+ * Unlike the {@code jmix.aitools.dataload.*} include/exclude properties, this is a code-level boundary
+ * that cannot be overridden at deployment time &mdash; use it for data whose exposure decision must
+ * live in code, such as PII. Prefer it over {@code @Secret} (which hides an attribute everywhere in
+ * the framework) and {@code @SystemLevel} (an overridable, discovery-only flag) when the intent is
+ * precisely &quot;usable in the application, closed to the AI&quot;.
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)

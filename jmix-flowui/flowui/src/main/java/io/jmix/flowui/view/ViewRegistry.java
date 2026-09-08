@@ -787,6 +787,22 @@ public class ViewRegistry implements ApplicationContextAware {
     }
 
     /**
+     * Registers a primary read view for the given entity class.
+     *
+     * @param entityClass entity class
+     * @param viewInfo    view info to associate as the primary read view
+     */
+    public void setPrimaryReadView(Class<?> entityClass, ViewInfo viewInfo) {
+        lock.writeLock().lock();
+        try {
+            initIfNeeded();
+            primaryReadViews.put(entityClass, viewInfo);
+        } finally {
+            lock.writeLock().unlock();
+        }
+    }
+
+    /**
      * Returns {@code true} if a primary list view is registered for the given entity class.
      *
      * @param entityClass entity class
@@ -811,6 +827,21 @@ public class ViewRegistry implements ApplicationContextAware {
         try {
             checkInitialized();
             return primaryDetailViews.containsKey(entityClass);
+        } finally {
+            lock.readLock().unlock();
+        }
+    }
+
+    /**
+     * Returns {@code true} if a primary read view is registered for the given entity class.
+     *
+     * @param entityClass entity class
+     */
+    public boolean hasPrimaryReadView(Class<?> entityClass) {
+        lock.readLock().lock();
+        try {
+            checkInitialized();
+            return primaryReadViews.containsKey(entityClass);
         } finally {
             lock.readLock().unlock();
         }
@@ -843,6 +874,22 @@ public class ViewRegistry implements ApplicationContextAware {
         try {
             initIfNeeded();
             return primaryDetailViews.remove(entityClass) != null;
+        } finally {
+            lock.writeLock().unlock();
+        }
+    }
+
+    /**
+     * Removes the primary read view registration for the given entity class.
+     *
+     * @param entityClass entity class
+     * @return {@code true} if a primary read view was registered for the entity class
+     */
+    public boolean removePrimaryReadView(Class<?> entityClass) {
+        lock.writeLock().lock();
+        try {
+            initIfNeeded();
+            return primaryReadViews.remove(entityClass) != null;
         } finally {
             lock.writeLock().unlock();
         }

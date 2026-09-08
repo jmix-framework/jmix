@@ -25,6 +25,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.shared.Tooltip;
 import com.vaadin.flow.function.SerializableSupplier;
 import com.vaadin.flow.shared.Registration;
+import io.jmix.aitoolsflowui.AiToolsFlowuiProperties;
 import io.jmix.aitoolsflowui.model.*;
 import io.jmix.aitoolsflowui.service.*;
 import io.jmix.aitoolsflowui.view.chat.support.*;
@@ -91,6 +92,12 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
     protected TimelineItemFactory timelineItemFactory;
     @Autowired
     protected AiChatService chatService;
+    @Autowired
+    protected AiToolsFlowuiProperties properties;
+    @Autowired
+    protected ConversationTitleSupport titleSupport;
+    @Autowired
+    protected AiConversationAutoTitleService autoTitleService;
 
     @ViewComponent
     protected MessageBundle messageBundle;
@@ -122,6 +129,9 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
     protected boolean readOnly;
 
     protected boolean chatUnavailableWarned;
+
+    @Nullable
+    protected AiConversationTitleMode titleModeOverride;
 
     @Nullable
     protected SerializableSupplier<Component> aiAvatarIconSupplier;
@@ -205,6 +215,16 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
     }
 
     /**
+     * Sets the generation title mode for this chat. Overrides the application-level
+     * {@code jmix.aitools.ui.conversation-title-mode}.
+     *
+     * @param titleMode the title mode for this chat, or {@code null} to use the application-level setting
+     */
+    public void setTitleMode(@Nullable AiConversationTitleMode titleMode) {
+        this.titleModeOverride = titleMode;
+    }
+
+    /**
      * Moves keyboard focus to the message composer. No-op if the composer is
      * currently disabled (e.g. while the assistant is still generating a
      * response).
@@ -266,15 +286,26 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
             return;
         }
 
+        String trimmedMessage = userMessage.trim();
         AiChatMessage savedUserMessage;
         try {
-            savedUserMessage = messageService.createMessage(conversation, AiChatMessageType.USER, userMessage.trim());
+            savedUserMessage = messageService.createMessage(conversation, AiChatMessageType.USER, trimmedMessage);
         } catch (Exception e) {
             log.error("Failed to persist user message", e);
             notifications.create(messageBundle.getMessage("aiChatFragment.errorProcessingMessage"))
                     .withType(Notifications.Type.ERROR)
                     .show();
             return;
+        }
+
+        // Auto-titling happens on the first message only.
+        // It is optional and must never break sending.
+        if (timelineItemsDc.getItems().isEmpty()) {
+            try {
+                applyAutoTitle(trimmedMessage);
+            } catch (RuntimeException e) {
+                log.warn("Automatic conversation titling failed; continuing with the message", e);
+            }
         }
 
         composerFragment.clear();
@@ -291,6 +322,71 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
         composerFragment.setSubmitHandler(this::sendMessage);
 
         refreshAll();
+    }
+
+    /**
+     * Titles the conversation by its first message according to the effective {@link AiConversationTitleMode}.
+     *
+     * @param trimmedMessage the trimmed first user message
+     */
+    protected void applyAutoTitle(String trimmedMessage) {
+        if (conversation == null) {
+            return;
+        }
+        AiConversationTitleMode mode = resolveTitleMode();
+        if (mode == AiConversationTitleMode.NONE) {
+            return;
+        }
+        String initialTitle = applyFirstMessageTitle(trimmedMessage);
+        if (initialTitle != null && mode == AiConversationTitleMode.GENERATED) {
+            startTitleGeneration(trimmedMessage, initialTitle);
+        }
+    }
+
+    @Nullable
+    protected String applyFirstMessageTitle(String trimmedMessage) {
+        if (conversation == null) {
+            return null;
+        }
+        String title = titleSupport.buildInitialTitle(trimmedMessage);
+        if (title.isBlank()) {
+            return null;
+        }
+        conversation.setTitle(title);
+        conversation = conversationService.save(conversation);
+        applyConversationTitleText(title);
+        return title;
+    }
+
+    protected void startTitleGeneration(String trimmedMessage, String expectedTitle) {
+        UUID conversationId = Objects.requireNonNull(Objects.requireNonNull(conversation).getId());
+
+        autoTitleService.generateAndApplyAsync(conversationId, trimmedMessage, expectedTitle,
+                appliedTitle -> reflectGeneratedTitle(conversationId, expectedTitle, appliedTitle));
+    }
+
+    /**
+     * Shows the generated title, which is already persisted, unless the fragment was detached or the
+     * conversation was renamed meanwhile.
+     *
+     * @param conversationId id of the conversation that was titled
+     * @param expectedTitle  first-message title the conversation must still carry
+     * @param appliedTitle   the generated title, or {@code null} when nothing was applied
+     */
+    protected void reflectGeneratedTitle(UUID conversationId, String expectedTitle, @Nullable String appliedTitle) {
+        if (appliedTitle == null
+                || !isAttached()
+                || conversation == null
+                || !conversationId.equals(conversation.getId())
+                || !Objects.equals(expectedTitle, conversation.getTitle())) {
+            return;
+        }
+        conversation.setTitle(appliedTitle);
+        applyConversationTitleText(appliedTitle);
+    }
+
+    protected AiConversationTitleMode resolveTitleMode() {
+        return titleModeOverride != null ? titleModeOverride : properties.getConversationTitleMode();
     }
 
     protected void processUserMessage(AiChatMessage savedUserMessage) {

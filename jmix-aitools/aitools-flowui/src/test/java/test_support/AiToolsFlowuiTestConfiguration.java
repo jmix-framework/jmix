@@ -74,4 +74,9 @@ public class AiToolsFlowuiTestConfiguration {
     TestAiChatService chatService() {
         return new TestAiChatService();
     }
+
+    @Bean
+    TestAiConversationTitleGenerator conversationTitleGenerator() {
+        return new TestAiConversationTitleGenerator();
+    }
 }

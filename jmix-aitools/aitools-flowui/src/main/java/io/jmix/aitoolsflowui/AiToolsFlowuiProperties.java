@@ -16,6 +16,7 @@
 
 package io.jmix.aitoolsflowui;
 
+import io.jmix.aitoolsflowui.view.chat.AiConversationTitleMode;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 
@@ -38,17 +39,37 @@ public class AiToolsFlowuiProperties {
      */
     Duration assistantResponseTimeout;
 
+    /**
+     * How the title of a new AI conversation is produced.
+     */
+    AiConversationTitleMode conversationTitleMode;
+
     public AiToolsFlowuiProperties(@DefaultValue("6") int chatHubRecentChatsCount,
-                                   @DefaultValue("5m") Duration assistantResponseTimeout) {
+                                   @DefaultValue("5m") Duration assistantResponseTimeout,
+                                   @DefaultValue("FIRST_MESSAGE") AiConversationTitleMode conversationTitleMode) {
         this.chatHubRecentChatsCount = chatHubRecentChatsCount;
         this.assistantResponseTimeout = assistantResponseTimeout;
+        this.conversationTitleMode = conversationTitleMode;
     }
 
+    /**
+     * @see #chatHubRecentChatsCount
+     */
     public int getChatHubRecentChatsCount() {
         return chatHubRecentChatsCount;
     }
 
+    /**
+     * @see #assistantResponseTimeout
+     */
     public Duration getAssistantResponseTimeout() {
         return assistantResponseTimeout;
+    }
+
+    /**
+     * @see #conversationTitleMode
+     */
+    public AiConversationTitleMode getConversationTitleMode() {
+        return conversationTitleMode;
     }
 }

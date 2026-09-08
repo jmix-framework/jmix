@@ -48,6 +48,15 @@ public @interface ListViewTemplate {
     String parentMenu() default "";
 
     /**
+     * Menu item icon. Accepted values are described in the documentation on default icons,
+     * for example {@code "vaadin:table"} or {@code "TABLE"}.
+     * <p>
+     * If empty, the menu item has no icon. The value is ignored if {@code parentMenu} is empty.
+     * If the value cannot be resolved to an icon, it is ignored and a warning is logged.
+     */
+    String menuIcon() default "";
+
+    /**
      * View id. If empty, the framework uses {@code <entityName>.list}.
      */
     String viewId() default "";

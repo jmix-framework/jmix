@@ -32,10 +32,12 @@ import test_support.entity.TestBaseEntity;
 @Entity(name = "test_ViewTemplateEntity")
 @ListViewTemplate(
         parentMenu = "templateViews",
+        menuIcon = "vaadin:table",
         viewRoute = "templates/view-template/list"
 )
 @DetailViewTemplate(
         parentMenu = "templateViews",
+        menuIcon = "PENCIL",
         viewId = "test_ViewTemplateEntity.edit",
         viewTitle = "Template entity editor",
         viewRoute = "templates/view-template/detail"

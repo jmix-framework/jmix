@@ -32,6 +32,7 @@ public class ViewTemplateDefinition {
     protected Class<? extends View<?>> controllerClass;
     protected String title;
     protected String parentMenu;
+    protected String menuIcon;
 
     /**
      * Creates a template view definition.
@@ -44,6 +45,7 @@ public class ViewTemplateDefinition {
      * @param controllerClass generated controller class
      * @param title          resolved view title
      * @param parentMenu     parent menu item id or an empty string
+     * @param menuIcon       menu item icon id or an empty string
      */
     public ViewTemplateDefinition(String id,
                                   ViewTemplateType type,
@@ -52,7 +54,8 @@ public class ViewTemplateDefinition {
                                   String routePath,
                                   Class<? extends View<?>> controllerClass,
                                   String title,
-                                  String parentMenu) {
+                                  String parentMenu,
+                                  String menuIcon) {
         this.id = id;
         this.type = type;
         this.entityMetaClass = entityMetaClass;
@@ -61,6 +64,7 @@ public class ViewTemplateDefinition {
         this.controllerClass = controllerClass;
         this.title = title;
         this.parentMenu = parentMenu;
+        this.menuIcon = menuIcon;
     }
 
     /**
@@ -117,5 +121,12 @@ public class ViewTemplateDefinition {
      */
     public String getParentMenu() {
         return parentMenu;
+    }
+
+    /**
+     * @return menu item icon id or an empty string if the menu item should have no icon
+     */
+    public String getMenuIcon() {
+        return menuIcon;
     }
 }

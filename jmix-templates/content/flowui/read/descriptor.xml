@@ -8,7 +8,7 @@ nestedCollectionDatasourceProperties.each { prop ->
     def binding = [
         'nestedDcProperty': prop,
         'fetchPlan': readFetchPlan]
-    def tableXml = api.processSnippet('collectionAttributeTable.xml', binding)
+    def tableXml = api.processSnippet('collectionAttributeReadTable.xml', binding)
     if (!binding['isError']) {
         collectionAttributesTable << tableXml
     }

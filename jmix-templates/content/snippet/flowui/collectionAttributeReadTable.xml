@@ -1,0 +1,48 @@
+<%def fetchPlanProperty = fetchPlan.getProperty(nestedDcProperty)
+if (fetchPlanProperty == null) {
+    isError = true
+    return
+}
+def entity = fetchPlan.entity
+ownerEntity = entity
+def attribute = null
+while (ownerEntity != null && attribute == null) {
+    attribute = ownerEntity.getAttribute(nestedDcProperty)
+    if (attribute != null) {
+        break
+    }
+    ownerEntity = ownerEntity.parent
+}
+
+if (attribute == null) {
+    isError = true
+    return
+}
+
+def columns = []
+def fetchPlanPropertyEntity = fetchPlanProperty.getEntity()
+fetchPlanProperty.subProperties.each {p ->
+        def attr = fetchPlanPropertyEntity.getAttribute(p.name)
+        if (attr != null && attr.allowPutToDataAware()) {
+            columns << p.name
+        }
+}
+%>
+<h4 text="msg://${ownerEntity.packageName}/${ownerEntity.className}.${nestedDcProperty}"/>
+<hbox id="${nestedDcProperty}ButtonsPanel" wrap="true" width="100%">
+    <button action="${nestedDcProperty}DataGrid.readAction"/>
+</hbox>
+<dataGrid id="${nestedDcProperty}DataGrid" dataContainer="${nestedDcProperty}Dc" width="100%" minHeight="20em">
+    <actions>
+        <action id="readAction" type="list_read">
+            <properties>
+                <property name="openMode" value="DIALOG"/>
+            </properties>
+        </action>
+    </actions>
+    <columns>
+        <%columns.each {%>
+            <column property="${it}"/>
+        <%}%>
+    </columns>
+</dataGrid>

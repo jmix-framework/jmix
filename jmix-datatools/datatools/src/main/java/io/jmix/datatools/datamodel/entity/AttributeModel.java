@@ -46,12 +46,22 @@ public class AttributeModel {
 
     private Boolean isMandatory;
 
+    private Boolean dynamic;
+
     public void setIsMandatory(Boolean isMandatory) {
         this.isMandatory = isMandatory;
     }
 
     public Boolean getIsMandatory() {
         return isMandatory;
+    }
+
+    public Boolean getDynamic() {
+        return dynamic;
+    }
+
+    public void setDynamic(Boolean dynamic) {
+        this.dynamic = dynamic;
     }
 
     public String getDbType() {

@@ -63,6 +63,16 @@ import javax.sql.DataSource;
 @EnableJmixDataRepositories
 public class EntityInspectorPolicyTestConfiguration {
 
+    @Bean("test_CustomDataStore")
+    CustomDataStore customDataStore() {
+        return new CustomDataStore();
+    }
+
+    @Bean("test_CustomStoreDescriptorProvider")
+    CustomStoreDescriptorProvider customStoreDescriptorProvider() {
+        return new CustomStoreDescriptorProvider();
+    }
+
     @Bean
     public UserRepository userRepository() {
         return new InMemoryUserRepository();

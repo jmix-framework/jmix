@@ -48,6 +48,8 @@ public class PlantUmlDiagramEngine implements DiagramEngine {
     protected final String template;
     protected final String entityTemplate;
     protected final String attributeTemplate;
+    protected final String dynamicAttributeTemplate;
+    protected final String dynamicEntityTemplate;
     protected final String relationTemplate;
     protected final String urlTemplate;
     protected final RestClient restClient;
@@ -64,6 +66,8 @@ public class PlantUmlDiagramEngine implements DiagramEngine {
         this.urlTemplate = createURLTemplate();
         this.entityTemplate = createEntityTemplate();
         this.attributeTemplate = createAttributeTemplate();
+        this.dynamicAttributeTemplate = createDynamicAttributeTemplate();
+        this.dynamicEntityTemplate = createDynamicEntityTemplate();
         this.relationTemplate = createRelationTemplate();
         this.available = resolveAvailable(coreProperties);
 
@@ -123,6 +127,17 @@ public class PlantUmlDiagramEngine implements DiagramEngine {
         return "    %s : %s\n";
     }
 
+    protected String createDynamicAttributeTemplate() {
+        return "    %s : %s <<dynamic>>\n";
+    }
+
+    protected String createDynamicEntityTemplate() {
+        if (dataStoresCount > 1) {
+            return "entity %s:%s <<dynamic>> {\n";
+        }
+        return "entity %s <<dynamic>> {\n";
+    }
+
     protected String createRelationTemplate() {
         if (dataStoresCount > 1) {
             return "\"%s:%s\" %s \"%s:%s\"\n";
@@ -176,16 +191,28 @@ public class PlantUmlDiagramEngine implements DiagramEngine {
 
     @Override
     public String constructEntityDescription(String entityName, String dataStoreName, List<AttributeModel> attributeModelList) {
-        StringBuilder entityDescription;
+        return constructEntityDescription(entityName, dataStoreName, attributeModelList, false);
+    }
 
+    @Override
+    public String constructEntityDescription(String entityName, String dataStoreName,
+                                             List<AttributeModel> attributeModelList, boolean dynamic) {
+        String template = dynamic ? dynamicEntityTemplate : entityTemplate;
+
+        StringBuilder entityDescription;
         if (dataStoresCount > 1) {
-            entityDescription = new StringBuilder(String.format(entityTemplate, entityName, dataStoreName));
+            entityDescription = new StringBuilder(String.format(template, entityName, dataStoreName));
         } else {
-            entityDescription = new StringBuilder(String.format(entityTemplate, entityName));
+            entityDescription = new StringBuilder(String.format(template, entityName));
         }
 
         for (AttributeModel attribute : attributeModelList) {
-            entityDescription.append(String.format(attributeTemplate, attribute.getAttributeName(), attribute.getJavaType()));
+            // A dynamic entity is marked as a whole, so marking each of its attributes adds nothing.
+            String attributeTemplateToUse = !dynamic && Boolean.TRUE.equals(attribute.getDynamic())
+                    ? dynamicAttributeTemplate
+                    : attributeTemplate;
+            entityDescription.append(String.format(attributeTemplateToUse,
+                    attribute.getAttributeName(), attribute.getJavaType()));
         }
 
         entityDescription.append("}\n");

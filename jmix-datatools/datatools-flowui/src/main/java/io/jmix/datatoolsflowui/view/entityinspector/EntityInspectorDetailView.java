@@ -31,6 +31,7 @@ import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.data.PersistenceHints;
+import io.jmix.datatools.EntityInspectorSupport;
 import io.jmix.datatoolsflowui.action.EntityInspectorAddAction;
 import io.jmix.datatoolsflowui.action.EntityInspectorCreateAction;
 import io.jmix.datatoolsflowui.action.EntityInspectorEditAction;
@@ -55,6 +56,7 @@ import org.jspecify.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 
 import static io.jmix.core.metamodel.model.MetaProperty.Type.ASSOCIATION;
 import static io.jmix.core.metamodel.model.MetaProperty.Type.COMPOSITION;
@@ -96,6 +98,8 @@ public class EntityInspectorDetailView extends StandardDetailView<Object> {
     protected UrlParamSerializer urlParamSerializer;
     @Autowired
     protected EntityUpdateDispatcher entityUpdateDispatcher;
+    @Autowired
+    protected EntityInspectorSupport entityInspectorSupport;
 
     @ViewComponent
     protected MessageBundle messageBundle;
@@ -170,17 +174,29 @@ public class EntityInspectorDetailView extends StandardDetailView<Object> {
             if (keyProperty != null) {
                 Class<?> idType = keyProperty.getJavaType();
                 Object deserializedId = urlParamSerializer.deserialize(idType, metadataId);
-                String queryString = SINGLE_SELECT_QUERY.formatted(
-                        metaClass.getName(), metadataTools.getPrimaryKeyName(metaClass), deserializedId
-                );
-                Object entity = dataManager.load(metaClass.getJavaClass())
-                        .query(queryString)
-                        .hint(PersistenceHints.SOFT_DELETION, false)
-                        .one();
 
-                setEntityToEdit(entity);
+                setEntityToEdit(loadEntityById(deserializedId));
             }
         }
+    }
+
+    protected Object loadEntityById(Object entityId) {
+        if (!entityInspectorSupport.supportsJpqlQuery(metaClass)) {
+            // A store that does not accept a JPQL string is loaded by id. A store without soft
+            // deletion ignores the hint, so it is passed on both paths.
+            return dataManager.load(metaClass.getJavaClass())
+                    .id(entityId)
+                    .hint(PersistenceHints.SOFT_DELETION, false)
+                    .one();
+        }
+
+        String queryString = SINGLE_SELECT_QUERY.formatted(
+                metaClass.getName(), metadataTools.getPrimaryKeyName(metaClass), entityId
+        );
+        return dataManager.load(metaClass.getJavaClass())
+                .query(queryString)
+                .hint(PersistenceHints.SOFT_DELETION, false)
+                .one();
     }
 
     protected void createNewItemByMetaClass() {
@@ -377,28 +393,42 @@ public class EntityInspectorDetailView extends StandardDetailView<Object> {
 
         loader.setContainer(container);
         loader.setDataContext(dataContext);
-        loader.setLoadDelegate(loadContext -> {
-            String queryString = metadataTools.isSoftDeletable(meta.getJavaClass())
-                    ? SOFT_DELETABLE_SELECT_QUERY
-                    : BASE_SELECT_QUERY;
-
-            String query = String.format(queryString,
-                    childMeta.getDomain().getName(),
-                    childMeta.getName(),
-                    metadataTools.findDeletedDateProperty(meta.getJavaClass()));
-
-            Collection<?> loadedChild = dataManager.load(meta.getJavaClass())
-                    .query(query)
-                    .parameter("editEntity", parent.getItem())
-                    .fetchPlan(InspectorFetchPlanBuilder.of(getApplicationContext(), meta.getJavaClass())
-                            .build())
-                    .list();
-            return new ArrayList<>(loadedChild);
-        });
+        loader.setLoadDelegate(loadContext -> entityInspectorSupport.supportsJpqlQuery(meta)
+                ? loadChildrenByQuery(parent, childMeta, meta)
+                : readChildrenFromParent(parent, childMeta));
 
         loader.load();
         dataContext.setModified(parent.getItem(), false);
         return container;
+    }
+
+    protected List<Object> loadChildrenByQuery(InstanceContainer parent, MetaProperty childMeta, MetaClass meta) {
+        String queryString = metadataTools.isSoftDeletable(meta.getJavaClass())
+                ? SOFT_DELETABLE_SELECT_QUERY
+                : BASE_SELECT_QUERY;
+
+        String query = String.format(queryString,
+                childMeta.getDomain().getName(),
+                childMeta.getName(),
+                metadataTools.findDeletedDateProperty(meta.getJavaClass()));
+
+        Collection<?> loadedChild = dataManager.load(meta.getJavaClass())
+                .query(query)
+                .parameter("editEntity", parent.getItem())
+                .fetchPlan(InspectorFetchPlanBuilder.of(getApplicationContext(), meta.getJavaClass())
+                        .build())
+                .list();
+        return new ArrayList<>(loadedChild);
+    }
+
+    /**
+     * Reads the children from the edited entity itself, for a store that cannot run the JPQL query
+     * above. The entity is loaded with a fetch plan that includes its collections, so the property
+     * already holds exactly this parent's children.
+     */
+    protected List<Object> readChildrenFromParent(InstanceContainer parent, MetaProperty childMeta) {
+        Collection<?> children = EntityValues.getValue(parent.getItem(), childMeta.getName());
+        return children == null ? new ArrayList<>() : new ArrayList<>(children);
     }
 
     protected String getPropertyTitle(MetaClass metaClass, MetaProperty metaProperty) {

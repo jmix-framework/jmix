@@ -2715,7 +2715,7 @@ public final class StudioPropertyGroups {
                             type = StudioPropertyType.COMPONENT_REF,
                             category = StudioProperty.Category.GENERAL,
                             required = true,
-                            componentRefTags = "genericFilter"),
+                            componentRefTags = StudioXmlElements.GENERIC_FILTER),
                     @StudioProperty(
                             xmlAttribute = StudioXmlAttributes.CONFIGURATION_PARAM,
                             type = StudioPropertyType.STRING),
@@ -2825,7 +2825,7 @@ public final class StudioPropertyGroups {
                             type = StudioPropertyType.COMPONENT_REF,
                             category = StudioProperty.Category.GENERAL,
                             required = true,
-                            componentRefTags = {"simplePagination"}),
+                            componentRefTags = {StudioXmlElements.SIMPLE_PAGINATION}),
                     @StudioProperty(
                             xmlAttribute = StudioXmlAttributes.FIRST_RESULT_PARAM,
                             type = StudioPropertyType.STRING),
@@ -2842,7 +2842,7 @@ public final class StudioPropertyGroups {
             type = StudioPropertyType.COMPONENT_REF,
             category = StudioProperty.Category.GENERAL,
             required = true,
-            componentRefTags = "propertyFilter"))
+            componentRefTags = StudioXmlElements.PROPERTY_FILTER))
     public interface FacetPropertyFilterComponent extends IdAndParam {
     }
 
@@ -2851,7 +2851,7 @@ public final class StudioPropertyGroups {
             type = StudioPropertyType.COMPONENT_REF,
             category = StudioProperty.Category.GENERAL,
             required = true,
-            componentRefTags = {"dataGrid", "treeDataGrid", "groupDataGrid"}))
+            componentRefTags = {StudioXmlElements.DATA_GRID, StudioXmlElements.TREE_DATA_GRID}))
     public interface DataGridFilterComponent extends IdAndParam {
     }
 
@@ -2944,7 +2944,7 @@ public final class StudioPropertyGroups {
             xmlAttribute = StudioXmlAttributes.REF_COLUMN,
             type = StudioPropertyType.COMPONENT_REF,
             required = true,
-            componentRefTags = {"column"}))
+            componentRefTags = {StudioXmlElements.COLUMN}))
     public interface GridColumnVisibilityMenuItemComponent extends Text {
     }
 
@@ -3771,7 +3771,7 @@ public final class StudioPropertyGroups {
                             type = StudioPropertyType.COMPONENT_REF,
                             category = StudioProperty.Category.GENERAL,
                             required = true,
-                            componentRefTags = {"dataGrid", "treeDataGrid"}),
+                            componentRefTags = {StudioXmlElements.DATA_GRID, StudioXmlElements.TREE_DATA_GRID}),
                     @StudioProperty(
                             xmlAttribute = StudioXmlAttributes.EXCLUDE,
                             type = StudioPropertyType.VALUES_LIST),
@@ -3810,7 +3810,7 @@ public final class StudioPropertyGroups {
                             type = StudioPropertyType.COMPONENT_REF,
                             category = StudioProperty.Category.GENERAL,
                             required = true,
-                            componentRefTags = {"listMenu", "horizontalMenu"}),
+                            componentRefTags = {StudioXmlElements.LIST_MENU, StudioXmlElements.HORIZONTAL_MENU}),
                     @StudioProperty(
                             xmlAttribute = StudioXmlAttributes.FILTER_MODE,
                             type = StudioPropertyType.ENUMERATION,

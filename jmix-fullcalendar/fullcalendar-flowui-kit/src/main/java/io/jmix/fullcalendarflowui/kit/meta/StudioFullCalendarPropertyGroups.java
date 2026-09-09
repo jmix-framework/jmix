@@ -457,7 +457,7 @@ final class StudioFullCalendarPropertyGroups {
                             type = StudioPropertyType.COMPONENT_REF,
                             category = StudioProperty.Category.GENERAL,
                             required = true,
-                            componentRefTags = "calendar"),
+                            componentRefTags = StudioXmlElements.CALENDAR),
                     @StudioProperty(
                             xmlAttribute = StudioXmlAttributes.CALENDAR_DISPLAY_MODE,
                             type = StudioPropertyType.STRING),

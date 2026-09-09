@@ -215,6 +215,7 @@ public final class StudioXmlElements {
     public static final String GROUP_BY = "groupBy";
     public static final String GROUP_COLUMN = "groupColumn";
     public static final String GROUP_DATA_GRID = "groupDataGrid";
+    public static final String GROUP_DATA_GRID_FILTER = "groupDataGridFilter";
     public static final String GROUP_FILTER = "groupFilter";
     public static final String H1 = "h1";
     public static final String H2 = "h2";

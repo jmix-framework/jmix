@@ -133,5 +133,18 @@
         <integerSlider id="integerSliderWithValueId" dataContainer="orderLineDc" property="quantity"/>
 
         <decimalSlider id="decimalSliderWithValueId" dataContainer="orderDc" property="total"/>
+
+        <integerSlider id="integerSliderRequiredId" dataContainer="orderLineDc" property="quantity"
+                       min="0" max="1000" required="true" requiredMessage="requiredMessageString"/>
+
+        <decimalSlider id="decimalSliderRequiredId" dataContainer="orderDc" property="total"
+                       min="0" max="1000" required="true" requiredMessage="requiredMessageString"/>
+
+        <integerSlider id="integerSliderUnboundRequiredId" min="0" max="100"
+                       required="true" requiredMessage="requiredMessageString"/>
+
+        <decimalSlider id="decimalSliderUnboundRequiredId" min="0" max="100"
+                       required="true" requiredMessage="requiredMessageString"/>
+
     </layout>
 </view>

@@ -20,6 +20,10 @@ import com.vaadin.flow.component.shared.Tooltip
 import com.vaadin.flow.data.value.ValueChangeMode
 import component_xml_load.screen.SliderView
 import io.jmix.core.DataManager
+import io.jmix.flowui.UiComponents
+import io.jmix.flowui.component.slider.JmixIntegerSlider
+import io.jmix.flowui.data.value.BufferedContainerValueSource
+import io.jmix.flowui.exception.ValidationException
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.jdbc.core.JdbcTemplate
@@ -32,6 +36,9 @@ class IntegerSliderXmlLoadTest extends FlowuiTestSpecification {
 
     @Autowired
     DataManager dataManager
+
+    @Autowired
+    UiComponents uiComponents
 
     @Autowired
     JdbcTemplate jdbcTemplate
@@ -162,5 +169,209 @@ class IntegerSliderXmlLoadTest extends FlowuiTestSpecification {
         then: "Component is not valid"
         slider.invalid
         slider.errorMessage == "errorMessageStringForPositive"
+    }
+
+    def "IntegerSlider with required=true fails validation when the property value is absent"() {
+        given: "The SliderView with a required IntegerSlider bound to a property"
+        def view = navigateToView(SliderView)
+        def slider = view.integerSliderRequiredId
+
+        when: "The property value is absent"
+        view.orderLineDc.item.quantity = null
+        slider.executeValidators()
+
+        then: "Validation fails"
+        def e = thrown(ValidationException)
+        e.detailsMessage == "requiredMessageString"
+
+        and: "Component is not valid and shows the required message"
+        slider.invalid
+        slider.errorMessage == "requiredMessageString"
+    }
+
+    def "IntegerSlider with required=true passes validation when the property value is present"() {
+        given: "The SliderView with a required IntegerSlider bound to a property"
+        def view = navigateToView(SliderView)
+        def slider = view.integerSliderRequiredId
+
+        when: "The property value is present"
+        view.orderLineDc.item.quantity = 42
+        slider.executeValidators()
+
+        then: "Validation passes"
+        noExceptionThrown()
+
+        and: "Component is valid"
+        !slider.invalid
+    }
+
+    def "IntegerSlider with required=true becomes valid when the property value is set to the minimum value"() {
+        given: "The SliderView with a required IntegerSlider bound to a property"
+        def view = navigateToView(SliderView)
+        def slider = view.integerSliderRequiredId
+
+        when: "The property value is absent"
+        view.orderLineDc.item.quantity = null
+
+        then: "Component is not valid"
+        slider.invalid
+
+        when: "The property value is set to the value the component already shows"
+        view.orderLineDc.item.quantity = slider.min
+
+        then: "Component is valid"
+        !slider.invalid
+    }
+
+    def "IntegerSlider with required=true becomes invalid when the property value is cleared at the minimum value"() {
+        given: "The SliderView with a required IntegerSlider bound to a property"
+        def view = navigateToView(SliderView)
+        def slider = view.integerSliderRequiredId
+
+        when: "The property value is the minimum value the component already shows"
+        view.orderLineDc.item.quantity = slider.min
+
+        then: "Component is valid"
+        !slider.invalid
+
+        when: "The property value is cleared without changing the component value"
+        view.orderLineDc.item.quantity = null
+
+        then: "Component is not valid and shows the required message"
+        slider.invalid
+        slider.errorMessage == "requiredMessageString"
+    }
+
+    def "IntegerSlider with required=true and no value source fails validation until a value is set"() {
+        given: "The SliderView with a required IntegerSlider that has no value source"
+        def view = navigateToView(SliderView)
+        def slider = view.integerSliderUnboundRequiredId
+
+        when: "No value has been set to the component"
+        slider.executeValidators()
+
+        then: "Validation fails although the component shows the minimum value"
+        thrown(ValidationException)
+        slider.invalid
+        slider.errorMessage == "requiredMessageString"
+
+        when: "A value is set to the component"
+        slider.value = 55
+        slider.executeValidators()
+
+        then: "Validation passes"
+        noExceptionThrown()
+
+        and: "Component is valid"
+        !slider.invalid
+    }
+
+    def "IntegerSlider with required=true becomes valid when a value is set to the component"() {
+        given: "The SliderView with a required IntegerSlider whose property value is absent"
+        def view = navigateToView(SliderView)
+        def slider = view.integerSliderRequiredId
+        view.orderLineDc.item.quantity = null
+
+        when: "A value is set to the component rather than to the property"
+        slider.value = 42
+
+        then: "The property is updated and the required error is gone"
+        view.orderLineDc.item.quantity == 42
+        !slider.invalid
+    }
+
+    def "IntegerSlider clears the property value instead of writing the minimum value"() {
+        given: "The SliderView with a required IntegerSlider bound to a property that has a value"
+        def view = navigateToView(SliderView)
+        def slider = view.integerSliderRequiredId
+
+        when: "The component is cleared"
+        slider.clear()
+
+        then: "The property value is absent and the component is empty"
+        view.orderLineDc.item.quantity == null
+        slider.isEmpty()
+        slider.value == slider.min
+
+        and: "Component is not valid"
+        slider.invalid
+    }
+
+    def "IntegerSlider with required=true stays required while its value source is inactive"() {
+        given: "The SliderView with a required IntegerSlider bound to a property"
+        def view = navigateToView(SliderView)
+        def slider = view.integerSliderRequiredId
+
+        when: "The container has no item, so the value source cannot be written to"
+        view.orderLineDc.setItem(null)
+
+        then: "The component is empty and flagged, as any other required field bound to it would be"
+        slider.isEmpty()
+        slider.invalid
+    }
+
+    def "IntegerSlider passes the absent value to validators instead of the minimum value"() {
+        given: "The SliderView with an empty IntegerSlider that has a positive validator"
+        def view = navigateToView(SliderView)
+        def slider = view.integerSliderWithValidatorsId
+
+        expect: "The component is empty although it shows the minimum value"
+        slider.isEmpty()
+
+        when: "Validators are executed"
+        slider.executeValidators()
+
+        then: "The absent value is valid, the substituted minimum value is not validated"
+        noExceptionThrown()
+        !slider.invalid
+    }
+
+    def "IntegerSlider writes the minimum value to the property although the component value does not change"() {
+        given: "The SliderView with a required IntegerSlider whose property value is absent"
+        def view = navigateToView(SliderView)
+        def slider = view.integerSliderRequiredId
+        view.orderLineDc.item.quantity = null
+
+        when: "The minimum value the component already shows is set to it"
+        slider.value = slider.min
+
+        then: "The property is updated and the required error is gone"
+        view.orderLineDc.item.quantity == slider.min
+        !slider.isEmpty()
+        !slider.invalid
+    }
+
+    def "IntegerSlider re-runs validators when it becomes empty"() {
+        given: "The SliderView with an IntegerSlider bound to a property and a validator rejecting the absent value"
+        def view = navigateToView(SliderView)
+        def slider = view.integerSliderWithValueId
+        slider.addValidator({ value ->
+            if (value == null) {
+                throw new ValidationException("absentValueMessage")
+            }
+        })
+
+        when: "The component becomes empty without changing the value it shows"
+        slider.clear()
+
+        then: "The component is invalid, the validator has seen the absent value"
+        slider.isEmpty()
+        slider.invalid
+        slider.errorMessage == "absentValueMessage"
+    }
+
+    def "IntegerSlider does not re-enter its binding with a value source that echoes writes"() {
+        given: "A IntegerSlider bound to a buffered value source, which fires a value change event on every write"
+        def view = navigateToView(SliderView)
+        def slider = uiComponents.create(JmixIntegerSlider)
+        slider.setMin(0)
+        slider.setMax(1000)
+        slider.setValueSource(new BufferedContainerValueSource<OrderLine, Integer>(view.orderLineDc, "quantity", true))
+
+        when: "A value is set to the component"
+        slider.value = 42
+
+        then: "The write is not echoed back into the binding"
+        slider.value == 42
     }
 }

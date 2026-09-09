@@ -25,6 +25,8 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import java.util.Objects;
+
 /**
  * Implementation of {@link ValueBinding} for working with slider components.
  * <p>
@@ -37,8 +39,74 @@ import org.springframework.stereotype.Component;
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class SliderValueBinding<V> extends AbstractValueBinding<V> {
 
+    protected Runnable componentValueSetHandler;
+
     public SliderValueBinding(ValueSource<V> valueSource, HasValue<?, V> component) {
         super(valueSource, component);
+    }
+
+    /**
+     * Sets a handler invoked after a value source value has been set to the component.
+     * <p>
+     * The component substitutes an absent value with its minimum value, so a value source value
+     * can change the empty state of the component without changing the component value, i.e.
+     * without firing a value change event.
+     *
+     * @param componentValueSetHandler the handler to set, or {@code null} to remove it
+     */
+    public void setComponentValueSetHandler(@Nullable Runnable componentValueSetHandler) {
+        this.componentValueSetHandler = componentValueSetHandler;
+    }
+
+    @Override
+    protected void onComponentValueChange() {
+        // Intentionally empty: the component writes the value to the value source itself, before
+        // validating it, see AbstractSliderDelegate#onValueSet. A second writer here would also
+        // propagate the minimum value the component substitutes for an absent one.
+    }
+
+    /**
+     * Writes the current component value to the value source.
+     * <p>
+     * The component cannot represent an absent value and shows its minimum value instead, so
+     * setting the value the component already shows fires no value change event, and the binding
+     * has nothing to react to, although the value source value becomes present.
+     */
+    public void writeComponentValueToSource() {
+        V componentValue = getComponentValue();
+
+        // The value source may already hold the value, e.g. when the binding itself is pushing
+        // it. Writing it back would re-enter this binding through a value source that fires a
+        // value change event unconditionally, such as BufferedContainerValueSource.
+        if (!Objects.equals(valueSource.getValue(), componentValue)) {
+            setValueToSource(componentValue);
+        }
+    }
+
+    /**
+     * Clears the value of the component and of the value source.
+     * <p>
+     * The component cannot represent an absent value and falls back to its minimum value, so the
+     * propagation to the value source is suspended while the component is being cleared and the
+     * value source receives {@code null} instead of that fallback.
+     *
+     * @param clearComponentValueAction action that clears the component value
+     */
+    public void clearValue(Runnable clearComponentValueAction) {
+        boolean suspendRequired = !suspended();
+        if (suspendRequired) {
+            suspend();
+        }
+
+        try {
+            clearComponentValueAction.run();
+        } finally {
+            if (suspendRequired) {
+                resume();
+            }
+        }
+
+        setValueToSource(null);
     }
 
     @Nullable
@@ -69,6 +137,10 @@ public class SliderValueBinding<V> extends AbstractValueBinding<V> {
             if (suspendRequired) {
                 resume();
             }
+        }
+
+        if (componentValueSetHandler != null) {
+            componentValueSetHandler.run();
         }
     }
 }

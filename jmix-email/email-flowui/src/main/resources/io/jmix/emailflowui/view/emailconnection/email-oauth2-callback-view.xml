@@ -20,7 +20,7 @@
     <layout>
         <vbox width="60em">
             <span id="statusLabel"/>
-            <button id="openTokenViewButton" text="msg://openTokenViewButton.text" visible="false"/>
+            <button id="continueButton" text="msg://continueButton.text" visible="false"/>
         </vbox>
     </layout>
 </view>

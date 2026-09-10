@@ -16,7 +16,7 @@
   -->
 
 <view xmlns="http://jmix.io/schema/flowui/view"
-      title="msg://emailTokenView.title">
+      title="msg://emailConnectionView.title">
     <data>
         <instance id="refreshTokenDc" class="io.jmix.email.entity.RefreshToken">
             <loader id="refreshTokenDl">

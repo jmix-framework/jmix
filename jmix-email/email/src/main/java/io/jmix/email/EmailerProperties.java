@@ -302,7 +302,7 @@ public class EmailerProperties {
 
         /**
          * Initial refresh token value used to get access token. This value is used only while no refresh token
-         * is stored in the database. Once a token is stored (via the email token view or automatically after
+         * is stored in the database. Once a token is stored (via the email connection view or automatically after
          * provider-side token rotation), the stored value takes precedence.
          */
         protected final String refreshToken;

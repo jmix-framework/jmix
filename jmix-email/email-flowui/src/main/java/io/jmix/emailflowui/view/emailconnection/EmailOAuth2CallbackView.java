@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.emailflowui.view.emailtoken;
+package io.jmix.emailflowui.view.emailconnection;
 
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.html.Span;
@@ -37,7 +37,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Receives the OAuth2 authorization code flow callback initiated from {@link EmailTokenView}.
+ * Receives the OAuth2 authorization code flow callback initiated from {@link EmailConnectionView}.
  * The view route must be registered as a redirect URI of the OAuth client.
  */
 @Route(value = "email/oauth2/callback", layout = DefaultMainViewParent.class)
@@ -53,7 +53,7 @@ public class EmailOAuth2CallbackView extends StandardView {
     @ViewComponent
     protected Span statusLabel;
     @ViewComponent
-    protected JmixButton openTokenViewButton;
+    protected JmixButton continueButton;
 
     @Autowired
     protected ObjectProvider<OAuth2AuthorizationCodeFlow> authorizationCodeFlows;
@@ -72,12 +72,12 @@ public class EmailOAuth2CallbackView extends StandardView {
     @Subscribe
     public void onBeforeShow(final BeforeShowEvent event) {
         processCallback();
-        openTokenViewButton.setVisible(true);
+        continueButton.setVisible(true);
     }
 
-    @Subscribe("openTokenViewButton")
-    public void onOpenTokenViewButtonClick(final ClickEvent<JmixButton> event) {
-        viewNavigators.view(this, EmailTokenView.class).navigate();
+    @Subscribe("continueButton")
+    public void onContinueButtonClick(final ClickEvent<JmixButton> event) {
+        viewNavigators.view(this, EmailConnectionView.class).navigate();
     }
 
     protected void processCallback() {

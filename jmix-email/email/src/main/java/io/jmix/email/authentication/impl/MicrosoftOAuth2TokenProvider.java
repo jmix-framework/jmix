@@ -44,7 +44,7 @@ public class MicrosoftOAuth2TokenProvider extends AbstractOAuth2TokenProvider {
 
     /**
      * Refresh token value the provider considers to be currently persisted. It is used to detect external
-     * token updates (via the email token view or another application node) that require re-initialization
+     * token updates (via the email connection view or another application node) that require re-initialization
      * of the client application.
      */
     protected String currentRefreshToken;

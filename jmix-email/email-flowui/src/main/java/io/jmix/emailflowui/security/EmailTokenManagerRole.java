@@ -25,13 +25,14 @@ import io.jmix.security.role.annotation.ResourceRole;
 import io.jmix.securityflowui.role.annotation.MenuPolicy;
 import io.jmix.securityflowui.role.annotation.ViewPolicy;
 
-@ResourceRole(name = "Email: token manager", code = EmailTokenManagerRole.CODE, scope = "UI")
+@ResourceRole(name = "Email: connection manager", code = EmailTokenManagerRole.CODE, scope = "UI")
 public interface EmailTokenManagerRole {
 
+    // The code is kept for compatibility with existing role assignments
     String CODE = "email-token-manager";
 
-    @MenuPolicy(menuIds = "email_tokenView")
-    @ViewPolicy(viewIds = {"email_tokenView", "email_oauth2CallbackView"})
+    @MenuPolicy(menuIds = "email_connectionView")
+    @ViewPolicy(viewIds = {"email_connectionView", "email_oauth2CallbackView"})
     void views();
 
     @EntityAttributePolicy(entityClass = RefreshToken.class, attributes = "*", action = EntityAttributePolicyAction.MODIFY)

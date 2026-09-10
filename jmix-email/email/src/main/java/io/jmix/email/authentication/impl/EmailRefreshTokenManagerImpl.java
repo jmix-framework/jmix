@@ -92,7 +92,7 @@ public class EmailRefreshTokenManagerImpl implements EmailRefreshTokenManager {
             return initialValue;
         }
 
-        throw new IllegalStateException("No refresh token available. Store it using the email token view" +
+        throw new IllegalStateException("No refresh token available. Store it using the email connection view" +
                 " or set the 'jmix.email.oauth2.refresh-token' application property as an initial value");
     }
 

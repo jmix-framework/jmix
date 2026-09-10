@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.emailflowui.view.emailtoken;
+package io.jmix.emailflowui.view.emailconnection;
 
 import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.button.Button;
@@ -26,6 +26,7 @@ import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.dom.DomListenerRegistration;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.RouteAlias;
 import com.vaadin.flow.router.RouteConfiguration;
 import com.vaadin.flow.server.VaadinServletRequest;
 import com.vaadin.flow.server.VaadinSession;
@@ -65,12 +66,13 @@ import org.springframework.boot.mail.autoconfigure.MailProperties;
 import java.security.SecureRandom;
 import java.util.Base64;
 
-@Route(value = "email/token", layout = DefaultMainViewParent.class)
-@ViewController(id = "email_tokenView")
-@ViewDescriptor(path = "email-token-view.xml")
-public class EmailTokenView extends StandardView {
+@Route(value = "email/connection", layout = DefaultMainViewParent.class)
+@RouteAlias(value = "email/token", layout = DefaultMainViewParent.class)
+@ViewController(id = "email_connectionView")
+@ViewDescriptor(path = "email-connection-view.xml")
+public class EmailConnectionView extends StandardView {
 
-    private static final Logger log = LoggerFactory.getLogger(EmailTokenView.class);
+    private static final Logger log = LoggerFactory.getLogger(EmailConnectionView.class);
 
     protected static final int DEVICE_CODE_POLL_INTERVAL_MS = 2000;
     // Covers the connect (20 s) and read (60 s) timeouts of the underlying transport.
@@ -252,7 +254,7 @@ public class EmailTokenView extends StandardView {
             @Override
             public void done(Void result) {
                 setStatusBadge("statusBadge.connectionVerified", "success");
-                notifications.create(messages.getMessage(EmailTokenView.class,
+                notifications.create(messages.getMessage(EmailConnectionView.class,
                                 "testConnectionSuccessNotification.text"))
                         .withType(Notifications.Type.SUCCESS)
                         .show();
@@ -262,7 +264,7 @@ public class EmailTokenView extends StandardView {
             public boolean handleException(Exception ex) {
                 log.warn("Mail server connection test failed", ex);
                 setStatusBadge("statusBadge.connectionError", "error");
-                notifications.create(messages.formatMessage(EmailTokenView.class,
+                notifications.create(messages.formatMessage(EmailConnectionView.class,
                                 "testConnectionFailedNotification.text", ExceptionUtils.getRootCauseMessage(ex)))
                         .withType(Notifications.Type.ERROR)
                         .show();
@@ -272,7 +274,7 @@ public class EmailTokenView extends StandardView {
             @Override
             public boolean handleTimeoutException() {
                 setStatusBadge("statusBadge.connectionError", "error");
-                notifications.create(messages.getMessage(EmailTokenView.class,
+                notifications.create(messages.getMessage(EmailConnectionView.class,
                                 "testConnectionTimeoutNotification.text"))
                         .withType(Notifications.Type.ERROR)
                         .show();

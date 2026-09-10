@@ -44,6 +44,8 @@
               description="List view fetch plan determines entity attributes and associations to be loaded from the database and displayed in the dataGrid component"/>
         <step name="Entity detail view fetch plan" order="3"
               description="Detail view fetch plan determines entity attributes and associations to be loaded from the database and edited in the view components"/>
+        <step name="Entity list view filter" order="4"
+              description="Select the filter component to be generated for the list view. A property filter additionally defines the entity attributes to filter by."/>
     </steps>
 
     <!--properties-->
@@ -110,11 +112,6 @@
               defaultValue="create,edit,remove"
               propertyType="MULTI_OPTION"
               optionsString="${actionSearch.getWizardTableActions(api.jmixProjectModule)}"/>
-    <property caption="Create generic filter"
-              code="createGenericFilter"
-              step="1"
-              defaultValue="true"
-              propertyType="BOOLEAN"/>
     <property caption="Multiselect"
               code="multiselect"
               step="1"
@@ -147,6 +144,12 @@
               propertyType="VIEW_COMPONENT"
               relatedProperty="entity"
               required="true"/>
+    <property caption="Filter component"
+              code="listFilterType"
+              step="4"
+              propertyType="FILTER_COMPONENT"
+              relatedProperty="listFetchPlan"
+              defaultValue="GENERIC"/>
     <property caption="Detail view fetch plan"
               step="3"
               code="detailFetchPlan"

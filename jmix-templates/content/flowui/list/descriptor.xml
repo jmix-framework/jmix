@@ -31,9 +31,20 @@ def tableXml = api.processSnippet('table.xml',
         'columnReorderingAllowed': columnReorderingAllowed,
         'resizableColumns': resizableColumns,
         'hierarchicalProperty': binding.hasVariable('tableType_hierarchicalProperty') ? binding.getVariable('tableType_hierarchicalProperty') : null])
+
+def viewFilter = api.evaluateScript('viewFilterConfiguration.groovy', ['filterConfiguration': listFilterType])
+def filterType = viewFilter.type
+def propertyFilters = viewFilter.propertyFilters
+
+def propertyFiltersXml = propertyFilters.isEmpty()
+        ? ''
+        : api.processSnippet('property_filters.xml', ['filters': propertyFilters, 'dataLoader': tableDl])
+
+// the full-text filter comes from the Search add-on, which has its own schema
+def searchNamespace = filterType == 'FULL_TEXT' ? ' xmlns:search="http://jmix.io/schema/search/ui"' : ''
 %><?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <view xmlns="http://jmix.io/schema/flowui/view"
-      ${groupDataGridNamespace}
+      ${groupDataGridNamespace}${searchNamespace}
       xmlns:c="http://jmix.io/schema/flowui/jpql-condition"
       title="${messageKeys['viewTitle']}"
       focusComponent="${tableId}">
@@ -51,8 +62,9 @@ def tableXml = api.processSnippet('table.xml',
     </data>
     <facets>
         <dataLoadCoordinator auto="true"/>
-        <urlQueryParameters><%if (createGenericFilter) {%>
-            <genericFilter component="genericFilter"/><%}%>
+        <urlQueryParameters><%if (filterType == 'GENERIC') {%>
+            <genericFilter component="genericFilter"/><%}%><%propertyFilters.each {%>
+            <propertyFilter component="${it.id}"/><%}%>
             <pagination component="pagination"/>
         </urlQueryParameters>
     </facets>
@@ -68,11 +80,14 @@ def tableXml = api.processSnippet('table.xml',
     <%} else {%>
     <layout>
     <%}%>
-        <%if (createGenericFilter) {%>
+        <%if (filterType == 'GENERIC') {%>
         <genericFilter id="genericFilter"
                        dataLoader="${tableDl}">
             <properties include=".*"/>
-        </genericFilter><%}%>
+        </genericFilter><%}%><%if (filterType == 'FULL_TEXT') {%>
+        <search:fullTextFilter id="fullTextFilter"
+                               dataLoader="${tableDl}"/><%}%>
+        ${propertyFiltersXml}
         ${tableXml}
         <%if (listFixedFooter) {%>
         </vbox>

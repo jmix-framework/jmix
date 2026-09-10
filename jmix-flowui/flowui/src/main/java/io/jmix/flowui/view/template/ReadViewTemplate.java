@@ -28,8 +28,9 @@ import java.lang.annotation.Target;
  * Declares that the framework generates a read view for the annotated entity at runtime.
  * <p>
  * The generated view shows the entity and cannot edit it. It is registered as the entity's primary read
- * view, so read view resolution, {@code list_read} and {@code entity_read} open it. Its route requires an
- * entity id, so the view is reached from a list or a link rather than from a menu item.
+ * view, so read view resolution finds it: the read view navigator, a {@code list_read} action and an
+ * {@code entity_read} action all open it. Its route requires an entity id, so the view always opens for an
+ * existing instance. Note that the generated list view carries no {@code list_read} action of its own.
  */
 @Experimental
 @Target(ElementType.TYPE)

@@ -31,6 +31,7 @@ import io.jmix.core.MessageTools;
 import io.jmix.core.Metadata;
 import io.jmix.core.Resources;
 import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.flowui.view.StandardDetailView;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.template.DetailViewTemplate;
 import io.jmix.flowui.view.template.ListViewTemplate;
@@ -52,6 +53,8 @@ import java.util.*;
  */
 @Component("flowui_ViewTemplateDefinitions")
 public class ViewTemplateDefinitions {
+
+    protected static final String READ_ROUTE_SUFFIX = "/read";
 
     protected static final Type TEMPLATE_PARAMS_TYPE = new TypeToken<Map<String, Object>>() {
     }.getType();
@@ -253,9 +256,8 @@ public class ViewTemplateDefinitions {
             return controllerClassFactory.createDefaultRoutePath(viewId, type);
         }
 
-        String routeParamSuffix = controllerClassFactory.createRouteParamSuffix();
-
         if (type == ViewTemplateType.DETAIL) {
+            String routeParamSuffix = "/:" + StandardDetailView.DEFAULT_ROUTE_PARAM;
             if (configuredRoute.endsWith(routeParamSuffix)) {
                 throw new IllegalArgumentException("Detail viewRoute must not end with '" + routeParamSuffix + "'");
             }
@@ -264,7 +266,8 @@ public class ViewTemplateDefinitions {
         }
 
         if (type == ViewTemplateType.READ) {
-            String readRouteSuffix = controllerClassFactory.createReadRouteSuffix();
+            String routeParamSuffix = "/:" + StandardDetailView.DEFAULT_ROUTE_PARAM;
+            String readRouteSuffix = routeParamSuffix + READ_ROUTE_SUFFIX;
             if (configuredRoute.endsWith(routeParamSuffix) || configuredRoute.endsWith(readRouteSuffix)) {
                 throw new IllegalArgumentException("Read viewRoute must not end with '" + routeParamSuffix
                         + "' or '" + readRouteSuffix + "'");

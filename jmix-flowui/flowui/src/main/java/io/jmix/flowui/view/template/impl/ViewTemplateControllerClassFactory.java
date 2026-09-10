@@ -242,17 +242,16 @@ public class ViewTemplateControllerClassFactory {
      *
      * @return {@code /:id} with the route parameter name of a detail view
      */
-    public String createRouteParamSuffix() {
+    protected String createRouteParamSuffix() {
         return "/:" + StandardDetailView.DEFAULT_ROUTE_PARAM;
     }
 
     /**
-     * Returns the route suffix of a read view, so that consumers generating read view routes do not
-     * re-spell the grammar.
+     * Returns the route suffix of a read view.
      *
      * @return {@code /:id/read}
      */
-    public String createReadRouteSuffix() {
+    protected String createReadRouteSuffix() {
         return createRouteParamSuffix() + READ_ROUTE_SUFFIX;
     }
 

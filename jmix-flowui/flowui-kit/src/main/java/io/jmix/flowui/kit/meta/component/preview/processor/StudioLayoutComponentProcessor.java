@@ -18,8 +18,10 @@ package io.jmix.flowui.kit.meta.component.preview.processor;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasComponents;
+import com.vaadin.flow.component.HasSize;
 import com.vaadin.flow.component.accordion.Accordion;
 import com.vaadin.flow.component.accordion.AccordionPanel;
+import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.NativeDetails;
 import com.vaadin.flow.component.orderedlayout.Scroller;
 import com.vaadin.flow.component.splitlayout.SplitLayout;
@@ -90,9 +92,29 @@ public class StudioLayoutComponentProcessor implements StudioPreviewChildProcess
             } else {
                 hasComponents.addComponentAtIndex(index, child);
             }
+            // Studio may attach a FormItem before or after its value component is built.
+            FormLayout form = null;
+            if (parent instanceof FormLayout layout) {
+                form = layout;
+            } else if (parent instanceof FormLayout.FormItem) {
+                form = parent.getParent().filter(FormLayout.class::isInstance).map(FormLayout.class::cast).orElse(null);
+            }
+            if (form != null && !form.getElement().getProperty("autoResponsive", false)) {
+                setFormComponentWidth(child);
+            }
             return true;
         }
         return false;
+    }
+
+    private void setFormComponentWidth(Component component) {
+        if (component instanceof FormLayout.FormItem item) {
+            item.getChildren().filter(child -> !"label".equals(child.getElement().getAttribute("slot")))
+                    .findFirst().ifPresent(this::setFormComponentWidth);
+        } else if (component instanceof HasSize hasSize
+                && !"label".equals(component.getElement().getAttribute("slot"))) {
+            hasSize.setWidthFull();
+        }
     }
 
     @Override

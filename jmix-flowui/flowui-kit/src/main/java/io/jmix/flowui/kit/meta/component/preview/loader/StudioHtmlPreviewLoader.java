@@ -17,9 +17,12 @@
 package io.jmix.flowui.kit.meta.component.preview.loader;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.Focusable;
+import com.vaadin.flow.component.HasAriaLabel;
 import com.vaadin.flow.component.HasText;
 import com.vaadin.flow.component.HasTheme;
 import com.vaadin.flow.component.Html;
+import com.vaadin.flow.component.HtmlComponent;
 import com.vaadin.flow.component.html.*;
 import io.jmix.flowui.kit.meta.StudioXmlElements;
 import io.jmix.flowui.kit.meta.component.preview.StudioPreviewComponentLoader;
@@ -27,6 +30,7 @@ import io.jmix.flowui.kit.meta.component.preview.StudioPreviewEnvironment;
 import org.jspecify.annotations.Nullable;
 import org.dom4j.Element;
 
+import java.util.Arrays;
 import java.util.Map;
 import java.util.function.Supplier;
 
@@ -115,6 +119,47 @@ class StudioHtmlPreviewLoader implements StudioPreviewComponentLoader {
         if (component instanceof NativeDetails nativeDetails) {
             loadLocalizedString(componentElement, "summaryText", environment, nativeDetails::setSummaryText);
             loadBoolean(componentElement, "open", nativeDetails::setOpen);
+        }
+        if (component instanceof HtmlComponent htmlComponent) {
+            loadLocalizedString(componentElement, "title", environment, htmlComponent::setTitle);
+        }
+        if (component instanceof Focusable<?> focusable) {
+            loadInteger(componentElement, "tabIndex", focusable::setTabIndex);
+        }
+        if (component instanceof HasAriaLabel hasAriaLabel) {
+            loadLocalizedString(componentElement, "ariaLabel", environment, hasAriaLabel::setAriaLabel);
+            loadString(componentElement, "ariaLabelledBy", hasAriaLabel::setAriaLabelledBy);
+        }
+        if (component instanceof Anchor anchor) {
+            loadLocalizedString(componentElement, "href", environment, anchor::setHref);
+            loadEnum(componentElement, AnchorTarget.class, "target", anchor::setTarget);
+        } else if (component instanceof IFrame frame) {
+            loadString(componentElement, "resource", frame::setSrc);
+            loadString(componentElement, "resourceDoc", frame::setSrcdoc);
+            loadString(componentElement, "name", frame::setName);
+            loadString(componentElement, "allow", frame::setAllow);
+            loadEnum(componentElement, IFrame.ImportanceType.class, "importance", frame::setImportance);
+            frame.setSandbox(split(loadString(componentElement, "sandbox").orElse("")).stream()
+                    .flatMap(name -> Arrays.stream(IFrame.SandboxType.values())
+                            .filter(type -> type.name().equals(name)))
+                    .toArray(IFrame.SandboxType[]::new));
+        } else if (component instanceof Input input) {
+            loadString(componentElement, "type", input::setType);
+        } else if (component instanceof RangeInput input) {
+            loadDouble(componentElement, "min", input::setMin);
+            loadDouble(componentElement, "max", input::setMax);
+            loadDouble(componentElement, "step", input::setStep);
+            loadEnum(componentElement, RangeInput.Orientation.class, "orientation", input::setOrientation);
+        } else if (component instanceof HtmlObject object) {
+            loadString(componentElement, "data", object::setData);
+            loadString(componentElement, "type", object::setType);
+        } else if (component instanceof Param param) {
+            loadString(componentElement, "name", param::setName);
+            loadString(componentElement, "value", param::setValue);
+        } else if (component instanceof NativeLabel label) {
+            loadString(componentElement, "setFor", label::setFor);
+        } else if (component instanceof OrderedList list) {
+            loadEnum(componentElement, OrderedList.NumberingType.class, "numberingType", list::setType);
         }
         return component;
     }

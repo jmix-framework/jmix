@@ -17,6 +17,7 @@
 package io.jmix.flowui.kit.meta.component.preview.loader;
 
 import io.jmix.flowui.kit.action.BaseAction;
+import io.jmix.flowui.kit.action.ActionVariant;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.kit.icon.JmixFontIcon;
 import io.jmix.flowui.kit.meta.StudioXmlElements;
@@ -70,10 +71,15 @@ public final class PreviewActionSupport {
     public static BaseAction<?> buildAction(Element actionElement, String fallbackId, StudioPreviewEnvironment environment) {
         String actionId = LoaderUtils.loadString(actionElement, "id").orElse(fallbackId);
         BaseAction<?> action = new BaseAction<>(actionId);
+        applyActionDefaults(action, actionElement.attributeValue("type"));
         LoaderUtils.loadString(actionElement, "text")
                 .ifPresent(text -> action.withText(resolveText(environment, text)));
         ComponentLoaderUtils.loadIconSetIcon(actionElement).ifPresent(action::setIcon);
+        LoaderUtils.loadString(actionElement, "description")
+                .ifPresent(description -> action.setDescription(resolveText(environment, description)));
         LoaderUtils.loadBoolean(actionElement, "enabled", action::setEnabled);
+        LoaderUtils.loadBoolean(actionElement, "visible", action::setVisible);
+        LoaderUtils.loadEnum(actionElement, ActionVariant.class, "actionVariant", action::setVariant);
         return action;
     }
 
@@ -127,20 +133,23 @@ public final class PreviewActionSupport {
     }
 
     /** Default text + icon per standard declarative action type, mirroring the runtime actions. */
-    private record ActionDefaults(@Nullable String text, @Nullable JmixFontIcon icon) {
+    private record ActionDefaults(@Nullable String text, @Nullable JmixFontIcon icon, ActionVariant variant) {
+        private ActionDefaults(@Nullable String text, @Nullable JmixFontIcon icon) {
+            this(text, icon, ActionVariant.DEFAULT);
+        }
     }
 
     private static final Map<String, ActionDefaults> ACTION_TYPE_DEFAULTS = Map.ofEntries(
-            Map.entry("list_create", new ActionDefaults("Create", JmixFontIcon.CREATE_ACTION)),
+            Map.entry("list_create", new ActionDefaults("Create", JmixFontIcon.CREATE_ACTION, ActionVariant.PRIMARY)),
             Map.entry("list_edit", new ActionDefaults("Edit", JmixFontIcon.EDIT_ACTION)),
-            Map.entry("list_remove", new ActionDefaults("Remove", JmixFontIcon.REMOVE_ACTION)),
+            Map.entry("list_remove", new ActionDefaults("Remove", JmixFontIcon.REMOVE_ACTION, ActionVariant.DANGER)),
             Map.entry("list_refresh", new ActionDefaults("Refresh", JmixFontIcon.REFRESH_ACTION)),
             Map.entry("list_read", new ActionDefaults("Read", JmixFontIcon.READ_ACTION)),
             Map.entry("list_add", new ActionDefaults("Add", JmixFontIcon.ADD_ACTION)),
-            Map.entry("list_exclude", new ActionDefaults("Exclude", JmixFontIcon.EXCLUDE_ACTION)),
-            Map.entry("lookup_select", new ActionDefaults("Select", JmixFontIcon.LOOKUP_SELECT_ACTION)),
+            Map.entry("list_exclude", new ActionDefaults("Exclude", JmixFontIcon.EXCLUDE_ACTION, ActionVariant.DANGER)),
+            Map.entry("lookup_select", new ActionDefaults("Select", JmixFontIcon.LOOKUP_SELECT_ACTION, ActionVariant.PRIMARY)),
             Map.entry("lookup_discard", new ActionDefaults("Cancel", JmixFontIcon.LOOKUP_DISCARD_ACTION)),
-            Map.entry("detail_saveClose", new ActionDefaults("OK", JmixFontIcon.DETAIL_SAVE_CLOSE_ACTION)),
+            Map.entry("detail_saveClose", new ActionDefaults("OK", JmixFontIcon.DETAIL_SAVE_CLOSE_ACTION, ActionVariant.PRIMARY)),
             Map.entry("detail_save", new ActionDefaults("Save", JmixFontIcon.DETAIL_SAVE_ACTION)),
             Map.entry("detail_close", new ActionDefaults("Close", JmixFontIcon.DETAIL_CLOSE_ACTION)),
             Map.entry("detail_enableEditing", new ActionDefaults("Enable editing",
@@ -182,50 +191,26 @@ public final class PreviewActionSupport {
         String type = actionElement != null
                 ? actionElement.attributeValue("type")
                 : IMPLICIT_ACTION_TYPES.get(actionIdOf(actionRef));
-        ActionDefaults defaults = type != null ? ACTION_TYPE_DEFAULTS.get(type) : null;
-
-        if (button.getText() == null || button.getText().isEmpty()) {
-            String text = actionElement != null
-                    ? LoaderUtils.loadString(actionElement, "text")
-                            .map(value -> resolveText(environment, value))
-                            .orElse(null)
-                    : null;
-            if (text == null && defaults != null) {
-                text = defaults.text();
-            }
-            if (text == null && (type == null || !ICON_ONLY_TYPES.contains(type))) {
-                text = humanizeActionId(actionIdOf(actionRef));
-            }
-            if (text != null) {
-                button.setText(text);
-            }
+        BaseAction<?> action = actionElement != null
+                ? buildAction(actionElement, actionIdOf(actionRef), environment)
+                : new BaseAction<>(actionIdOf(actionRef));
+        if (actionElement == null) {
+            applyActionDefaults(action, type);
         }
-
-        if (button.getIcon() == null) {
-            com.vaadin.flow.component.Component icon = actionElement != null
-                    ? ComponentLoaderUtils.loadIconSetIcon(actionElement).orElse(null)
-                    : null;
-            if (icon == null && defaults != null && defaults.icon() != null) {
-                icon = defaults.icon().create();
-            }
-            if (icon != null) {
-                button.setIcon(icon);
-            }
+        if (action.getText() == null && (type == null || !ICON_ONLY_TYPES.contains(type))) {
+            action.setText(humanizeActionId(actionIdOf(actionRef)));
         }
+        button.setAction(action, true);
+    }
 
-        if (actionElement != null) {
-            LoaderUtils.loadString(actionElement, "description")
-                    .ifPresent(description -> button.setTitle(resolveText(environment, description)));
-            LoaderUtils.loadBoolean(actionElement, "enabled", button::setEnabled);
-            LoaderUtils.loadBoolean(actionElement, "visible", button::setVisible);
-            LoaderUtils.loadString(actionElement, "variant").ifPresent(variant -> {
-                switch (variant) {
-                    case "PRIMARY" -> button.getThemeNames().add("primary");
-                    case "DANGER" -> button.getThemeNames().add("error");
-                    case "SUCCESS" -> button.getThemeNames().add("success");
-                    default -> { /* no theme for unknown variants */ }
-                }
-            });
+    private static void applyActionDefaults(BaseAction<?> action, @Nullable String type) {
+        ActionDefaults defaults = type == null ? null : ACTION_TYPE_DEFAULTS.get(type);
+        if (defaults != null) {
+            action.setText(defaults.text());
+            if (defaults.icon() != null) {
+                action.setIcon(defaults.icon().create());
+            }
+            action.setVariant(defaults.variant());
         }
     }
 

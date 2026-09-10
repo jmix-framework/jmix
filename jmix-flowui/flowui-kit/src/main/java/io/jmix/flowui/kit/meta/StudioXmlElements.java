@@ -30,6 +30,7 @@ public final class StudioXmlElements {
     public static final String ACCORDION = "accordion";
     public static final String ACCORDION_PANEL = "accordionPanel";
     public static final String ACTION = "action";
+    public static final String ACTIONS = "actions";
     public static final String ACTION_ITEM = "actionItem";
     public static final String ADDITIONAL_INFORMATION = "additionalInformation";
     public static final String AGGREGATION = "aggregation";

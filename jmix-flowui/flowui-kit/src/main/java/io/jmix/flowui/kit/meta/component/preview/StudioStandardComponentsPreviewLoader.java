@@ -30,6 +30,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.badge.Badge;
 import com.vaadin.flow.component.accordion.Accordion;
 import com.vaadin.flow.component.accordion.AccordionPanel;
 import com.vaadin.flow.component.applayout.DrawerToggle;
@@ -64,6 +65,7 @@ import com.vaadin.flow.component.listbox.MultiSelectListBox;
 import com.vaadin.flow.component.login.LoginOverlay;
 import com.vaadin.flow.component.markdown.Markdown;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
+import com.vaadin.flow.component.orderedlayout.ThemableLayout;
 import com.vaadin.flow.component.orderedlayout.FlexLayout;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.Scroller;
@@ -87,6 +89,8 @@ import com.vaadin.flow.component.timepicker.TimePicker;
 import com.vaadin.flow.component.upload.Upload;
 import com.vaadin.flow.component.virtuallist.VirtualList;
 import com.vaadin.flow.data.provider.HasListDataView;
+import io.jmix.flowui.kit.action.BaseAction;
+import io.jmix.flowui.kit.component.HasActions;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.kit.component.checkbox.JmixSwitch;
 import io.jmix.flowui.kit.component.codeeditor.JmixCodeEditor;
@@ -132,6 +136,7 @@ final class StudioStandardComponentsPreviewLoader implements StudioPreviewCompon
     private static final String COMBO_BOX_PICKER = "comboBoxPicker";
 
     private static final Map<String, Supplier<Component>> FACTORIES = Map.<String, Supplier<Component>>ofEntries(
+            Map.entry(StudioXmlElements.BADGE, Badge::new),
             // containers
             Map.entry(StudioXmlElements.HBOX, HorizontalLayout::new),
             Map.entry(StudioXmlElements.VBOX, VerticalLayout::new),
@@ -322,6 +327,19 @@ final class StudioStandardComponentsPreviewLoader implements StudioPreviewCompon
         loadComponentBaseAttributes(component, componentElement);
         loadFieldAttributes(component, componentElement, environment);
         loadFactoryComponentAttributes(name, component, componentElement, viewElement, environment);
+        if (environment != StudioPreviewEnvironment.NOOP && component instanceof HasActions hasActions) {
+            Element actions = componentElement.element(StudioXmlElements.ACTIONS);
+            if (actions != null) {
+                for (Element action : actions.elements(StudioXmlElements.ACTION)) {
+                    loadString(action, "id").ifPresent(id -> {
+                        BaseAction<?> previewAction = PreviewActionSupport.buildAction(action, id, environment);
+                        if (previewAction.getIcon() != null) {
+                            hasActions.addAction(previewAction);
+                        }
+                    });
+                }
+            }
+        }
         if (environment != StudioPreviewEnvironment.NOOP && !hasComponentChildren(componentElement)) {
             fillPlaceholders(component, componentElement, environment);
         }
@@ -340,6 +358,28 @@ final class StudioStandardComponentsPreviewLoader implements StudioPreviewCompon
     private void loadFactoryComponentAttributes(String name, Component component, Element element,
                                                 Element viewElement, StudioPreviewEnvironment environment) {
         switch (name) {
+            case StudioXmlElements.BADGE -> {
+                Badge badge = (Badge) component;
+                loadLocalizedString(element, "text", environment, badge::setText);
+                ComponentLoaderUtils.loadWhiteSpace(badge, element);
+                loadInteger(element, "number", badge::setNumber);
+                loadString(element, "role", badge::setRole);
+                ComponentLoaderUtils.loadIconSetIcon(element).ifPresent(badge::setIcon);
+            }
+            case StudioXmlElements.HBOX, StudioXmlElements.VBOX -> {
+                ThemableLayout layout = (ThemableLayout) component;
+                loadBoolean(element, "wrap", layout::setWrap);
+                loadString(element, "themeNames").map(this::split).filter(themes -> !themes.isEmpty())
+                        .ifPresent(themes -> {
+                            layout.setSpacing(false);
+                            component.getElement().getThemeList().addAll(themes);
+                        });
+            }
+            case StudioXmlElements.GRID_LAYOUT -> {
+                JmixGridLayout<?> layout = (JmixGridLayout<?>) component;
+                loadString(element, "columnMinWidth", layout::setColumnMinWidth);
+                loadString(element, "gap", layout::setGap);
+            }
             case StudioXmlElements.BUTTON ->
                     loadButtonAttributes((JmixButton) component, element, viewElement, environment);
             case StudioXmlElements.SPAN ->
@@ -358,6 +398,11 @@ final class StudioStandardComponentsPreviewLoader implements StudioPreviewCompon
                     loadEnum(element, Scroller.ScrollDirection.class, "scrollBarsDirection",
                             ((Scroller) component)::setScrollDirection);
             case StudioXmlElements.FLEX_LAYOUT -> loadFlexLayoutAttributes((FlexLayout) component, element);
+            case StudioXmlElements.SPLIT -> {
+                SplitLayout split = (SplitLayout) component;
+                loadDouble(element, "splitterPosition", split::setSplitterPosition);
+                loadEnum(element, SplitLayout.Orientation.class, "orientation", split::setOrientation);
+            }
             case StudioXmlElements.CHECKBOX -> loadCheckboxAttributes((Checkbox) component, element);
             // Tab is not HasLabel: its label is the element text
             case StudioXmlElements.TAB ->
@@ -416,15 +461,19 @@ final class StudioStandardComponentsPreviewLoader implements StudioPreviewCompon
 
     private void loadButtonAttributes(JmixButton button, Element element, Element viewElement,
                                       StudioPreviewEnvironment environment) {
-        loadLocalizedString(element, "text", environment, button::setText);
-        loadLocalizedString(element, "title", environment, button::setTitle);
+        loadString(element, "action").ifPresent(actionRef ->
+                PreviewActionSupport.applyButtonAction(button, actionRef, viewElement, environment));
+        loadString(element, "text", false).map(value -> PreviewActionSupport.resolveText(environment, value))
+                .ifPresent(button::setText);
+        loadString(element, "title", false).map(value -> PreviewActionSupport.resolveText(environment, value))
+                .ifPresent(button::setTitle);
+        loadBoolean(element, "visible", button::setVisible);
+        loadBoolean(element, "enabled", button::setEnabled);
         loadBoolean(element, "autofocus", button::setAutofocus);
         loadBoolean(element, "iconAfterText", button::setIconAfterText);
         loadBoolean(element, "disableOnClick", button::setDisableOnClick);
         ComponentLoaderUtils.loadWhiteSpace(button, element);
         ComponentLoaderUtils.loadIconSetIcon(element).ifPresent(button::setIcon);
-        loadString(element, "action").ifPresent(actionRef ->
-                PreviewActionSupport.applyButtonAction(button, actionRef, viewElement, environment));
     }
 
     private void loadStringFieldAttributes(TextFieldBase<?, String> field, Element element,
@@ -623,6 +672,9 @@ final class StudioStandardComponentsPreviewLoader implements StudioPreviewCompon
      * The preview approximates the header so the component doesn't collapse to a bare chevron.
      */
     private void loadGenericFilterAttributes(Details details, Element element, StudioPreviewEnvironment environment) {
+        if (loadString(element, "width").isEmpty()) {
+            details.setWidthFull();
+        }
         loadLocalizedString(element, "summaryText", environment, details::setSummaryText);
         if (details.getSummaryText() == null || details.getSummaryText().isEmpty()) {
             details.setSummaryText("Filter");
@@ -748,7 +800,7 @@ final class StudioStandardComponentsPreviewLoader implements StudioPreviewCompon
         return element.elements().stream()
                 .filter(child -> StudioXmlElements.CONTENT.equals(child.getName()))
                 .findFirst()
-                .map(child -> child.getText().trim());
+                .map(Element::getText);
     }
 
     private boolean isFragment(Element element) {
@@ -767,7 +819,12 @@ final class StudioStandardComponentsPreviewLoader implements StudioPreviewCompon
                     .map(environment::resolveFragmentDescriptor)
                     .map(descriptorXml ->
                             StudioPreviewSubtreeBuilder.buildFragmentContent(descriptorXml, environment))
-                    .orElseGet(() -> new Image("icons/studio-fragment-preview.svg", "FRAGMENT"));
+                    .orElseGet(() -> {
+                        Image image = new Image("icons/studio-fragment-preview.svg", "FRAGMENT");
+                        image.setWidth("200px");
+                        image.setHeight("200px");
+                        return image;
+                    });
         }
         loadComponentBaseAttributes(component, fragment);
         return component;
@@ -785,6 +842,8 @@ final class StudioStandardComponentsPreviewLoader implements StudioPreviewCompon
      */
     private Component loadGenericComponent(Element element) {
         Image component = new Image("icons/studio-generic-component-preview.svg", "COMPONENT");
+        component.setWidth("200px");
+        component.setHeight("200px");
         loadComponentBaseAttributes(component, element);
         return component;
     }

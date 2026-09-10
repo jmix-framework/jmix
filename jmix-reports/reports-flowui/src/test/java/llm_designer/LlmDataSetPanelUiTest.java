@@ -18,6 +18,7 @@ package llm_designer;
 
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.badge.Badge;
+import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import io.jmix.core.Messages;
@@ -86,6 +87,10 @@ public class LlmDataSetPanelUiTest {
     protected static final int BANDS_TAB_INDEX = 1;
     protected static final String EDITED_JPQL =
             "select o.number as orderNumber from sales_Order o where o.date >= :dateFrom";
+    protected static final String QUERY_WITH_WARNING = """
+            {"jpql":"select o.number as orderNumber from sales_Order o",\
+            "resultProperties":["orderNumber"],\
+            "warnings":["The date range of the prompt was ignored"]}""";
 
     @Autowired
     protected ViewNavigators viewNavigators;
@@ -135,6 +140,30 @@ public class LlmDataSetPanelUiTest {
         assertThat(this.<CodeEditor>findComponent(view, "llmGeneratedQueryCodeEditor").getValue())
                 .contains("select o.number");
         assertThat(columnNames(view)).containsExactly("orderNumber", "customerName");
+    }
+
+    @Test
+    void testQueryNotesShowTheExplanationOfTheStoredQuery() {
+        View<?> view = openDesignerOnLlmDataSet();
+
+        assertThat(this.<VerticalLayout>findComponent(view, "llmGeneratedQueryNotesBox").isVisible()).isTrue();
+        assertThat(this.<Span>findComponent(view, "llmGeneratedExplanationSpan").getText())
+                .isEqualTo("All order numbers");
+    }
+
+    @Test
+    void testQueryNotesShowAWarningOfTheStoredQueryWithoutAnExplanation() {
+        View<?> view = openDesigner(llmReportUtil.createAndSaveReportWithStoredQuery(QUERY_WITH_WARNING));
+
+        assertThat(this.<VerticalLayout>findComponent(view, "llmGeneratedQueryNotesBox").isVisible()).isTrue();
+        assertThat(this.<Badge>findComponent(view, "llmGeneratedWarningsBadge").isVisible()).isTrue();
+    }
+
+    @Test
+    void testQueryNotesAreHiddenWhenTheStoredQuerySaysNothing() {
+        View<?> view = openDesigner(llmReportUtil.createAndSaveReportWithoutStoredQuery());
+
+        assertThat(this.<VerticalLayout>findComponent(view, "llmGeneratedQueryNotesBox").isVisible()).isFalse();
     }
 
     @Test

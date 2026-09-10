@@ -128,7 +128,7 @@ public class LlmDataSetGenerationSupportTest {
     }
 
     @Test
-    void testUndeclaredParentBandIsNamedSoTheAuthorHearsAboutIt() {
+    void testColumnsOfANonLlmParentBandAreNotOffered() {
         Report report = reportWithParameters();
         BandDefinition parentBand = band(report, "Orders", rootBand(report));
         DataSet parentDataSet = metadata.create(DataSet.class);
@@ -146,25 +146,10 @@ public class LlmDataSetGenerationSupportTest {
         assertThat(generationSupport.createGenerationRequest(linesDataSet).getAvailableParameters())
                 .extracting(LlmQueryParameter::getName)
                 .noneMatch(name -> name.startsWith("Orders_"));
-        assertThat(generationSupport.sourcesWithUndeclaredColumns(linesDataSet)).containsExactly("Orders");
     }
 
     @Test
-    void testParentBandDeclaringItsColumnsIsNotNamed() {
-        Report report = reportWithParameters();
-        BandDefinition parentBand = band(report, "Orders", rootBand(report));
-        DataSet parentDataSet = llmDataSet(parentBand);
-        parentDataSet.setLlmGeneratedQuery(serializer.toJson(new LlmDataQuery(
-                "select o.number as orderNumber from sales_Order o", List.of("orderNumber"), List.of(),
-                null, List.of())));
-
-        DataSet linesDataSet = llmDataSet(band(report, "Lines", parentBand));
-
-        assertThat(generationSupport.sourcesWithUndeclaredColumns(linesDataSet)).isEmpty();
-    }
-
-    @Test
-    void testUndeclaredCrossTabAxisIsNamed() {
+    void testCrossTabAxisWithoutDeclaredColumnsIsNotOfferedToTheCell() {
         Report report = reportWithParameters();
         BandDefinition crossBand = band(report, "Revenue", rootBand(report));
         crossBand.setOrientation(Orientation.CROSS);
@@ -179,8 +164,14 @@ public class LlmDataSetGenerationSupportTest {
         DataSet cellDataSet = llmDataSet(crossBand);
         cellDataSet.setName("Revenue");
 
-        assertThat(generationSupport.sourcesWithUndeclaredColumns(cellDataSet))
-                .containsExactly(AXIS_NAME);
+        // A JPQL axis states its columns inside its own text, so the cell is offered neither the axis values
+        // nor a column to return for linking, and a run of such a matrix fails on the missing column.
+        LlmQueryGenerationRequest request = generationSupport.createGenerationRequest(cellDataSet);
+
+        assertThat(request.getAvailableParameters())
+                .extracting(LlmQueryParameter::getName)
+                .noneMatch(name -> name.startsWith(AXIS_NAME));
+        assertThat(request.getRequiredResultProperties()).isEmpty();
     }
 
 
@@ -203,7 +194,6 @@ public class LlmDataSetGenerationSupportTest {
                 .extracting(LlmQueryParameter::getName)
                 .noneMatch(name -> name.startsWith(AXIS_NAME));
         assertThat(request.getRequiredResultProperties()).isEmpty();
-        assertThat(generationSupport.sourcesWithUndeclaredColumns(otherAxis)).isEmpty();
     }
 
     @Test

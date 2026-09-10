@@ -104,6 +104,14 @@ public class TestLlmReportUtil {
         return createAndSaveReportWithLlmDataSet(STORED_QUERY, true);
     }
 
+    /**
+     * The same report with a stored query the caller writes, so a test can decide what the panel has to say
+     * about it.
+     */
+    public Report createAndSaveReportWithStoredQuery(String storedQuery) {
+        return createAndSaveReportWithLlmDataSet(storedQuery, false);
+    }
+
     protected Report createAndSaveReportWithLlmDataSet(@Nullable String storedQuery, boolean includeJpqlDataSet) {
         Report report = unconstrainedDataManager.create(Report.class);
         report.setName(REPORT_NAME);

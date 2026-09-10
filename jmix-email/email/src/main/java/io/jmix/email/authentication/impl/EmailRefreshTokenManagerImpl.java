@@ -19,6 +19,7 @@ package io.jmix.email.authentication.impl;
 import io.jmix.core.UnconstrainedDataManager;
 import io.jmix.email.EmailerProperties;
 import io.jmix.email.authentication.EmailRefreshTokenManager;
+import io.jmix.email.authentication.OAuth2ClientType;
 import io.jmix.email.entity.RefreshToken;
 import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.NullMarked;
@@ -49,6 +50,11 @@ public class EmailRefreshTokenManagerImpl implements EmailRefreshTokenManager {
 
     @Override
     public RefreshToken storeRefreshTokenValue(String refreshTokenValue) {
+        return storeRefreshTokenValue(refreshTokenValue, OAuth2ClientType.CONFIDENTIAL);
+    }
+
+    @Override
+    public RefreshToken storeRefreshTokenValue(String refreshTokenValue, OAuth2ClientType clientType) {
         log.debug("Storing refresh token to database...");
 
         RefreshToken refreshToken = loadRefreshToken();
@@ -59,7 +65,17 @@ public class EmailRefreshTokenManagerImpl implements EmailRefreshTokenManager {
             refreshToken.setRegistrationId(DEFAULT_REFRESH_TOKEN_REGISTRATION_ID);
         }
         refreshToken.setTokenValue(refreshTokenValue);
+        refreshToken.setClientType(clientType);
         return dataManager.save(refreshToken);
+    }
+
+    @Override
+    public OAuth2ClientType getRefreshTokenClientType() {
+        RefreshToken refreshToken = loadRefreshToken();
+        // An absent or unknown stored value (getClientType() returns null for unknown ids) falls
+        // back to the confidential type — the behavior of versions that predate the column
+        OAuth2ClientType clientType = refreshToken == null ? null : refreshToken.getClientType();
+        return clientType != null ? clientType : OAuth2ClientType.CONFIDENTIAL;
     }
 
     @Override

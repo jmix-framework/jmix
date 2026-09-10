@@ -23,6 +23,7 @@ import com.microsoft.aad.msal4j.PublicClientApplication;
 import io.jmix.core.security.SystemAuthenticator;
 import io.jmix.email.EmailerProperties;
 import io.jmix.email.authentication.EmailRefreshTokenManager;
+import io.jmix.email.authentication.OAuth2ClientType;
 import io.jmix.email.authentication.OAuth2DeviceCodeFlow;
 import io.jmix.email.authentication.OAuth2DeviceCodeSession;
 import org.jspecify.annotations.NullMarked;
@@ -93,6 +94,7 @@ public class MicrosoftOAuth2DeviceCodeFlow extends AbstractOAuth2Flow implements
      * context, so the token is stored under system authentication.
      */
     protected void completeSession(OAuth2DeviceCodeSession session, RefreshTokenCapturingCacheAspect cacheAspect) {
+        log.debug("Complete device code session...");
         String refreshToken = getCapturedRefreshToken(cacheAspect);
         if (refreshToken == null) {
             session.fail("Authentication succeeded but no refresh token was returned."
@@ -100,7 +102,9 @@ public class MicrosoftOAuth2DeviceCodeFlow extends AbstractOAuth2Flow implements
             return;
         }
         try {
-            systemAuthenticator.runWithSystem(() -> refreshTokenManager.storeRefreshTokenValue(refreshToken));
+            // The token was issued to a public client, so it must be redeemed without the secret
+            systemAuthenticator.runWithSystem(
+                    () -> refreshTokenManager.storeRefreshTokenValue(refreshToken, OAuth2ClientType.PUBLIC));
             log.info("Mailbox account has been connected using the device code flow");
             session.complete();
         } catch (Exception e) {

@@ -28,15 +28,12 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URI;
-import java.net.URLEncoder;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * Authorization code flow for Google accounts. The authorization URL requests
@@ -108,12 +105,6 @@ public class GoogleOAuth2AuthorizationCodeFlow extends AbstractOAuth2Flow implem
                     .formatted(response.statusCode(), response.body()));
         }
         return response.body();
-    }
-
-    protected String encodeForm(Map<String, String> parameters) {
-        return parameters.entrySet().stream()
-                .map(entry -> entry.getKey() + "=" + URLEncoder.encode(entry.getValue(), StandardCharsets.UTF_8))
-                .collect(Collectors.joining("&"));
     }
 
     protected String getScope() {

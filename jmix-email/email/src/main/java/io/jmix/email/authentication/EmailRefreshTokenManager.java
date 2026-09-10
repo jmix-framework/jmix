@@ -37,6 +37,27 @@ public interface EmailRefreshTokenManager {
     RefreshToken storeRefreshTokenValue(String refreshTokenValue);
 
     /**
+     * Stores provided token value and the OAuth2 client type the token was issued to.
+     * It will override previous value of refresh token.
+     *
+     * @param refreshTokenValue token value
+     * @param clientType        client type the token was issued to
+     * @return stored {@link RefreshToken} instance
+     */
+    default RefreshToken storeRefreshTokenValue(String refreshTokenValue, OAuth2ClientType clientType) {
+        return storeRefreshTokenValue(refreshTokenValue);
+    }
+
+    /**
+     * Gets the OAuth2 client type the stored refresh token was issued to.
+     *
+     * @return stored client type, or {@link OAuth2ClientType#CONFIDENTIAL} when unknown
+     */
+    default OAuth2ClientType getRefreshTokenClientType() {
+        return OAuth2ClientType.CONFIDENTIAL;
+    }
+
+    /**
      * Gets current value of refresh token.
      *
      * @return token value stored in database. If no token value is stored, the initial value from

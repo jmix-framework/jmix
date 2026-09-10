@@ -17,21 +17,20 @@
 package io.jmix.email.authentication.impl;
 
 import com.microsoft.aad.msal4j.AuthorizationCodeParameters;
-import com.microsoft.aad.msal4j.AuthorizationRequestUrlParameters;
 import com.microsoft.aad.msal4j.ClientCredentialFactory;
 import com.microsoft.aad.msal4j.ConfidentialClientApplication;
 import com.microsoft.aad.msal4j.IAuthenticationResult;
 import io.jmix.email.EmailerProperties;
 import io.jmix.email.authentication.EmailRefreshTokenManager;
 import io.jmix.email.authentication.OAuth2AuthorizationCodeFlow;
+import io.jmix.email.authentication.OAuth2ClientType;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URI;
-import java.util.Collections;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Authorization code flow for Microsoft accounts. MSAL appends the reserved scopes
@@ -47,14 +46,33 @@ public class MicrosoftOAuth2AuthorizationCodeFlow extends AbstractOAuth2Flow imp
         super(emailerProperties, refreshTokenManager);
     }
 
+    /**
+     * The URL is built manually: the authorization response must come back as a GET redirect so
+     * that the callback view can read the query parameters (a POST is also rejected by the CSRF
+     * protection), but MSAL silently overrides {@code ResponseMode.QUERY} with {@code form_post}.
+     * The Entra endpoint itself supports {@code response_mode=query} as defined by the OAuth spec.
+     */
     @Override
     public String buildAuthorizationUrl(String redirectUri, String state) {
-        ConfidentialClientApplication application = buildClientApplication(null);
-        AuthorizationRequestUrlParameters parameters = AuthorizationRequestUrlParameters
-                .builder(redirectUri, getScopes())
-                .state(state)
-                .build();
-        return application.getAuthorizationRequestUrl(parameters).toString();
+        Map<String, String> parameters = new LinkedHashMap<>();
+        parameters.put("client_id", getClientId());
+        parameters.put("response_type", "code");
+        parameters.put("redirect_uri", redirectUri);
+        parameters.put("scope", String.join(" ", getAuthorizationScopes()));
+        parameters.put("response_mode", "query");
+        parameters.put("state", state);
+        return buildAuthorityUrl() + "/oauth2/v2.0/authorize?" + encodeForm(parameters);
+    }
+
+    /**
+     * Scopes requested on the consent page. Unlike MSAL-built requests, the manually built URL
+     * must include the reserved scopes ({@code offline_access} is required to receive a refresh
+     * token) explicitly.
+     */
+    protected Set<String> getAuthorizationScopes() {
+        Set<String> scopes = new LinkedHashSet<>(List.of("openid", "profile", "offline_access"));
+        scopes.addAll(getScopes());
+        return scopes;
     }
 
     @Override
@@ -72,7 +90,7 @@ public class MicrosoftOAuth2AuthorizationCodeFlow extends AbstractOAuth2Flow imp
             throw new IllegalStateException("The token response contains no refresh token."
                     + " Check the OAuth client configuration");
         }
-        refreshTokenManager.storeRefreshTokenValue(refreshToken);
+        refreshTokenManager.storeRefreshTokenValue(refreshToken, OAuth2ClientType.CONFIDENTIAL);
         log.info("Mailbox account has been connected using the authorization code flow");
     }
 

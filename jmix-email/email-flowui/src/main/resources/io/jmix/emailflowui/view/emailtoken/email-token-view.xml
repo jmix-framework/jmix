@@ -36,21 +36,45 @@
     </actions>
     <layout>
         <vbox width="60em">
-            <textField id="refreshTokenValueField"
-                       label="msg://refreshTokenValueField.label"
-                       readOnly="true"
-                       width="100%"/>
-            <textField id="lastModifiedDateField" dataContainer="refreshTokenDc" property="lastModifiedDate"
-                       label="msg://io.jmix.email.entity/RefreshToken.lastModifiedDate"
-                       readOnly="true" width="13em"/>
+            <h4 id="statusHeader" text="msg://statusSection.header"/>
+            <hbox id="statusRow" alignItems="CENTER">
+                <span id="statusBadge"/>
+                <button id="testConnectionButton" text="msg://testConnectionButton.text"/>
+            </hbox>
+            <vbox id="connectionInfoBox" padding="false" spacing="false">
+                <hbox id="typeRow">
+                    <span id="typeLabel" text="msg://connectionInfo.type" width="9em"/>
+                    <span id="typeValue"/>
+                </hbox>
+                <hbox id="mailboxRow">
+                    <span id="mailboxLabel" text="msg://connectionInfo.mailbox" width="9em"/>
+                    <span id="mailboxValue"/>
+                </hbox>
+                <hbox id="serverRow">
+                    <span id="serverLabel" text="msg://connectionInfo.server" width="9em"/>
+                    <span id="serverValue"/>
+                </hbox>
+            </vbox>
+            <h4 id="connectHeader" text="msg://connectSection.header"/>
+            <span id="connectHint"/>
             <hbox id="connectButtonsBox">
                 <button id="authCodeConnectButton" text="msg://authCodeConnectButton.text"
                         enabled="false"/>
                 <button id="deviceCodeConnectButton" text="msg://deviceCodeConnectButton.text"
                         enabled="false"/>
-                <button id="updateRefreshTokenButton" action="updateRefreshTokenAction"/>
-                <button id="testConnectionButton" text="msg://testConnectionButton.text"/>
             </hbox>
+            <details id="advancedDetails" summaryText="msg://advancedDetails.summaryText" width="100%">
+                <vbox padding="false">
+                    <textField id="refreshTokenValueField"
+                               label="msg://refreshTokenValueField.label"
+                               readOnly="true"
+                               width="100%"/>
+                    <textField id="lastModifiedDateField" dataContainer="refreshTokenDc" property="lastModifiedDate"
+                               label="msg://io.jmix.email.entity/RefreshToken.lastModifiedDate"
+                               readOnly="true" width="13em"/>
+                    <button id="updateRefreshTokenButton" action="updateRefreshTokenAction"/>
+                </vbox>
+            </details>
         </vbox>
     </layout>
 </view>

@@ -16,8 +16,7 @@
 
 package io.jmix.emailflowui.view.emailtoken;
 
-import com.vaadin.flow.component.ClickEvent;
-import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.Anchor;
@@ -25,6 +24,7 @@ import com.vaadin.flow.component.html.AnchorTarget;
 import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.dom.DomListenerRegistration;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteConfiguration;
 import com.vaadin.flow.server.VaadinServletRequest;
@@ -41,11 +41,12 @@ import io.jmix.email.authentication.OAuth2DeviceCodeSession;
 import io.jmix.email.entity.RefreshToken;
 import io.jmix.flowui.Dialogs;
 import io.jmix.flowui.Notifications;
-import io.jmix.flowui.backgroundtask.BackgroundTask;
-import io.jmix.flowui.backgroundtask.TaskLifeCycle;
 import io.jmix.flowui.app.inputdialog.DialogActions;
 import io.jmix.flowui.app.inputdialog.DialogOutcome;
 import io.jmix.flowui.app.inputdialog.InputParameter;
+import io.jmix.flowui.backgroundtask.BackgroundTask;
+import io.jmix.flowui.backgroundtask.TaskLifeCycle;
+import io.jmix.flowui.component.details.JmixDetails;
 import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.kit.component.button.JmixButton;
@@ -54,10 +55,12 @@ import io.jmix.flowui.model.InstanceLoader;
 import io.jmix.flowui.view.*;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.mail.autoconfigure.MailProperties;
 
 import java.security.SecureRandom;
 import java.util.Base64;
@@ -76,9 +79,21 @@ public class EmailTokenView extends StandardView {
     // The stored token value must never reach the page as a whole: browsers offer to save the
     // content of password inputs, and any real value in the DOM is exposed to the client.
     // Only a short suffix is rendered so that tokens can be distinguished for diagnostics.
-    protected static final String STORED_TOKEN_PLACEHOLDER = "••••••••••••••••";
+    protected static final String STORED_TOKEN_PLACEHOLDER = "************************";
     protected static final int TOKEN_SUFFIX_LENGTH = 4;
 
+    @ViewComponent
+    protected Span statusBadge;
+    @ViewComponent
+    protected Span typeValue;
+    @ViewComponent
+    protected Span mailboxValue;
+    @ViewComponent
+    protected Span serverValue;
+    @ViewComponent
+    protected Span connectHint;
+    @ViewComponent
+    protected JmixDetails advancedDetails;
     @ViewComponent
     protected TypedTextField<String> refreshTokenValueField;
     @ViewComponent
@@ -102,6 +117,8 @@ public class EmailTokenView extends StandardView {
     @Autowired
     protected EmailerProperties emailerProperties;
     @Autowired
+    protected MailProperties mailProperties;
+    @Autowired
     protected ObjectProvider<OAuth2DeviceCodeFlow> deviceCodeFlows;
     @Autowired
     protected ObjectProvider<OAuth2AuthorizationCodeFlow> authorizationCodeFlows;
@@ -112,6 +129,49 @@ public class EmailTokenView extends StandardView {
         deviceCodeConnectButton.setTooltipText(messages.getMessage(getClass(), "deviceCodeConnectButton.tooltip"));
         authCodeConnectButton.setEnabled(authorizationCodeFlows.getIfAvailable() != null);
         authCodeConnectButton.setTooltipText(messages.getMessage(getClass(), "authCodeConnectButton.tooltip"));
+        initConnectionInfo();
+    }
+
+    protected void initConnectionInfo() {
+        boolean oauth2Enabled = emailerProperties.getOAuth2().isEnabled();
+
+        String provider = emailerProperties.getOAuth2().getProvider();
+        typeValue.setText(oauth2Enabled
+                ? messages.formatMessage(getClass(), "connectionType.oauth2",
+                StringUtils.isBlank(provider) ? "custom" : provider)
+                : messages.getMessage(getClass(), "connectionType.basic"));
+        mailboxValue.setText(StringUtils.defaultIfBlank(mailProperties.getUsername(), "—"));
+        serverValue.setText(buildServerInfo());
+        connectHint.setText(messages.getMessage(getClass(),
+                oauth2Enabled ? "connectSection.oauth2Hint" : "connectSection.basicHint"));
+        advancedDetails.setVisible(oauth2Enabled);
+
+        if (oauth2Enabled) {
+            // Overridden by the data container listener when a stored token is loaded
+            setStatusBadge("statusBadge.notConnected", "contrast");
+        } else if (StringUtils.isBlank(mailProperties.getHost())) {
+            setStatusBadge("statusBadge.notConnected", "contrast");
+        } else {
+            setStatusBadge("statusBadge.connectedNotVerified", null);
+        }
+    }
+
+    protected String buildServerInfo() {
+        if (StringUtils.isBlank(mailProperties.getHost())) {
+            return "—";
+        }
+        return mailProperties.getPort() != null
+                ? mailProperties.getHost() + ":" + mailProperties.getPort()
+                : mailProperties.getHost();
+    }
+
+    protected void setStatusBadge(String messageKey, @Nullable String themeVariant) {
+        statusBadge.setText(messages.getMessage(getClass(), messageKey));
+        statusBadge.getElement().getThemeList().clear();
+        statusBadge.getElement().getThemeList().add("badge");
+        if (themeVariant != null) {
+            statusBadge.getElement().getThemeList().add(themeVariant);
+        }
     }
 
     @Subscribe("deviceCodeConnectButton")
@@ -191,6 +251,7 @@ public class EmailTokenView extends StandardView {
 
             @Override
             public void done(Void result) {
+                setStatusBadge("statusBadge.connectionVerified", "success");
                 notifications.create(messages.getMessage(EmailTokenView.class,
                                 "testConnectionSuccessNotification.text"))
                         .withType(Notifications.Type.SUCCESS)
@@ -200,6 +261,7 @@ public class EmailTokenView extends StandardView {
             @Override
             public boolean handleException(Exception ex) {
                 log.warn("Mail server connection test failed", ex);
+                setStatusBadge("statusBadge.connectionError", "error");
                 notifications.create(messages.formatMessage(EmailTokenView.class,
                                 "testConnectionFailedNotification.text", ExceptionUtils.getRootCauseMessage(ex)))
                         .withType(Notifications.Type.ERROR)
@@ -209,6 +271,7 @@ public class EmailTokenView extends StandardView {
 
             @Override
             public boolean handleTimeoutException() {
+                setStatusBadge("statusBadge.connectionError", "error");
                 notifications.create(messages.getMessage(EmailTokenView.class,
                                 "testConnectionTimeoutNotification.text"))
                         .withType(Notifications.Type.ERROR)
@@ -220,9 +283,21 @@ public class EmailTokenView extends StandardView {
 
     @Subscribe(id = "refreshTokenDc", target = Target.DATA_CONTAINER)
     public void onRefreshTokenDcItemChange(final InstanceContainer.ItemChangeEvent<RefreshToken> event) {
-        refreshTokenValueField.setValue(event.getItem() != null
-                ? STORED_TOKEN_PLACEHOLDER + tokenSuffix(event.getItem().getTokenValue())
+        RefreshToken token = event.getItem();
+        refreshTokenValueField.setValue(token != null
+                ? STORED_TOKEN_PLACEHOLDER + tokenSuffix(token.getTokenValue())
                 : "");
+
+        if (!emailerProperties.getOAuth2().isEnabled()) {
+            return;
+        }
+        if (token != null) {
+            // A stored token alone does not prove the connection works: the green (success) badge
+            // is reserved for a passed connection test
+            setStatusBadge("statusBadge.connectedNotVerified", null);
+        } else {
+            setStatusBadge("statusBadge.notConnected", "contrast");
+        }
     }
 
     /**
@@ -264,7 +339,8 @@ public class EmailTokenView extends StandardView {
         UI ui = UI.getCurrent();
         int previousPollInterval = ui.getPollInterval();
         ui.setPollInterval(DEVICE_CODE_POLL_INTERVAL_MS);
-        Registration pollRegistration = ui.addPollListener(pollEvent -> onDeviceCodePoll(session, status, dialog));
+        //WA for enabled modality. Normally it should be ui.addPollListener(...);
+        Registration pollRegistration = registerPollListener(ui, pollEvent -> onDeviceCodePoll(session, status, dialog));
         dialog.addOpenedChangeListener(openedChangeEvent -> {
             if (!openedChangeEvent.isOpened()) {
                 pollRegistration.remove();
@@ -289,6 +365,10 @@ public class EmailTokenView extends StandardView {
             default -> {
             }
         }
+    }
+
+    protected Registration registerPollListener(UI ui, ComponentEventListener<PollEvent> listener) {
+        return ComponentUtil.addListener(ui, PollEvent.class, listener, DomListenerRegistration::allowInert);
     }
 
     protected void showConnectionFailedNotification(String errorMessage) {

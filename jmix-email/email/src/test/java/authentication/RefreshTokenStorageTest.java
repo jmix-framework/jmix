@@ -18,6 +18,7 @@ package authentication;
 
 import io.jmix.core.security.SystemAuthenticator;
 import io.jmix.email.authentication.EmailRefreshTokenManager;
+import io.jmix.email.authentication.OAuth2ClientType;
 import io.jmix.email.entity.RefreshToken;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -60,5 +61,15 @@ public class RefreshTokenStorageTest {
         RefreshToken updated = tokenManager.storeRefreshTokenValue("rt-2");
         assertEquals(stored.getId(), updated.getId());
         assertEquals("rt-2", tokenManager.getRefreshTokenValue());
+    }
+
+    @Test
+    void testClientTypeRoundTrip() {
+        tokenManager.storeRefreshTokenValue("rt-public", OAuth2ClientType.PUBLIC);
+        assertEquals(OAuth2ClientType.PUBLIC, tokenManager.getRefreshTokenClientType());
+
+        // The single-argument overload defaults to the confidential client type
+        tokenManager.storeRefreshTokenValue("rt-manual");
+        assertEquals(OAuth2ClientType.CONFIDENTIAL, tokenManager.getRefreshTokenClientType());
     }
 }

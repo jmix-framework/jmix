@@ -22,6 +22,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 /**
  * Base class for mailbox connection flow implementations.
  */
@@ -50,5 +55,11 @@ public abstract class AbstractOAuth2Flow {
                     "'%s' must be set when OAuth2 authentication is enabled".formatted(propertyName));
         }
         return value;
+    }
+
+    protected String encodeForm(Map<String, String> parameters) {
+        return parameters.entrySet().stream()
+                .map(entry -> entry.getKey() + "=" + URLEncoder.encode(entry.getValue(), StandardCharsets.UTF_8))
+                .collect(Collectors.joining("&"));
     }
 }

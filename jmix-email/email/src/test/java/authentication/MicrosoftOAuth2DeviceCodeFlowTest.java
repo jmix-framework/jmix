@@ -21,6 +21,7 @@ import com.microsoft.aad.msal4j.IAuthenticationResult;
 import io.jmix.core.security.SystemAuthenticator;
 import io.jmix.email.EmailerProperties;
 import io.jmix.email.authentication.EmailRefreshTokenManager;
+import io.jmix.email.authentication.OAuth2ClientType;
 import io.jmix.email.authentication.OAuth2DeviceCodeSession;
 import io.jmix.email.authentication.impl.MicrosoftOAuth2DeviceCodeFlow;
 import io.jmix.email.authentication.impl.RefreshTokenCapturingCacheAspect;
@@ -79,6 +80,7 @@ class MicrosoftOAuth2DeviceCodeFlowTest {
 
         assertEquals(OAuth2DeviceCodeSession.Status.COMPLETED, session.getStatus());
         assertEquals("device-rt", tokenManager.getRefreshTokenValue());
+        assertEquals(OAuth2ClientType.PUBLIC, tokenManager.getStoredClientType());
         verify(systemAuthenticator).runWithSystem(any(Runnable.class));
     }
 

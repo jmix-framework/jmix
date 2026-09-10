@@ -66,6 +66,10 @@ class MicrosoftOAuth2AuthorizationCodeFlowTest {
         assertTrue(url.contains("state=state-123"));
         assertTrue(url.contains("SMTP.Send"));
         assertTrue(url.contains("app.example.com"));
+        // The authorization response must come back as a GET redirect, not a form POST
+        assertTrue(url.contains("response_mode=query"), url);
+        // offline_access is required to receive a refresh token
+        assertTrue(url.contains("offline_access"));
     }
 
     @Test

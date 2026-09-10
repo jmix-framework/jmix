@@ -1017,6 +1017,17 @@ interface StudioElements {
 
     @StudioElement(
             name = "Property",
+            classFqn = "io.jmix.flowui.kit.stub.StudioActionPropertyElement",
+            xmlElement = StudioXmlElements.PROPERTY,
+            icon = "io/jmix/flowui/kit/meta/icon/element/property.svg",
+            propertyGroups = {
+                    StudioPropertyGroups.RequiredStringName.class,
+                    StudioPropertyGroups.StringValue.class
+            })
+    void actionProperty();
+
+    @StudioElement(
+            name = "Property",
             classFqn = "io.jmix.flowui.kit.stub.StudioFragmentPropertyElement",
             xmlElement = StudioXmlElements.PROPERTY,
             icon = "io/jmix/flowui/kit/meta/icon/element/property.svg",

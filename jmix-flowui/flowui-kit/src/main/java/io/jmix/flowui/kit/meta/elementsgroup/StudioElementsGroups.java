@@ -135,6 +135,15 @@ interface StudioElementsGroups {
 
     @StudioElementsGroup(
             name = "Properties",
+            elementClassFqn = "io.jmix.flowui.kit.stub.StudioActionPropertyElement",
+            xmlElement = StudioXmlElements.PROPERTIES,
+            icon = "io/jmix/flowui/kit/meta/icon/elementsgroup/properties.svg",
+            target = {"io.jmix.flowui.kit.action.Action"}
+    )
+    void actionProperties();
+
+    @StudioElementsGroup(
+            name = "Properties",
             elementClassFqn = "io.jmix.flowui.kit.stub.StudioFragmentPropertyElement",
             xmlElement = StudioXmlElements.PROPERTIES,
             icon = "io/jmix/flowui/kit/meta/icon/elementsgroup/properties.svg",

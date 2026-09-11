@@ -25,10 +25,9 @@ import io.jmix.security.role.annotation.ResourceRole;
 import io.jmix.securityflowui.role.annotation.MenuPolicy;
 import io.jmix.securityflowui.role.annotation.ViewPolicy;
 
-@ResourceRole(name = "Email: connection manager", code = EmailTokenManagerRole.CODE, scope = "UI")
+@ResourceRole(name = "Email: token manager", code = EmailTokenManagerRole.CODE, scope = "UI")
 public interface EmailTokenManagerRole {
 
-    // The code is kept for compatibility with existing role assignments
     String CODE = "email-token-manager";
 
     @MenuPolicy(menuIds = "email_connectionView")

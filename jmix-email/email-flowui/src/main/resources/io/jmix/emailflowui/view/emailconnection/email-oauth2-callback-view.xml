@@ -1,5 +1,6 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!--
-  ~ Copyright 2023 Haulmont.
+  ~ Copyright 2026 Haulmont.
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -14,11 +15,12 @@
   ~ limitations under the License.
   -->
 
-<menu-config xmlns="http://jmix.io/schema/flowui/menu" order="1900">
-    <menu id="email">
-        <item view="email_sendingMessageView"
-              title="msg://io.jmix.emailflowui.view.sendingmessage/sendingMessageView.menu"/>
-        <item view="email_connectionView"
-              title="msg://io.jmix.emailflowui.view.emailconnection/emailConnectionView.menu"/>
-    </menu>
-</menu-config>
+<view xmlns="http://jmix.io/schema/flowui/view"
+      title="msg://emailOAuth2CallbackView.title">
+    <layout>
+        <vbox width="60em">
+            <span id="statusLabel"/>
+            <button id="continueButton" text="msg://continueButton.text" visible="false"/>
+        </vbox>
+    </layout>
+</view>

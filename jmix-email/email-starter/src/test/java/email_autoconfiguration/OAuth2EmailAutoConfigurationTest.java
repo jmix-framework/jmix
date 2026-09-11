@@ -17,10 +17,14 @@
 package email_autoconfiguration;
 
 import io.jmix.autoconfigure.email.EmailAutoConfiguration;
+import io.jmix.core.security.SystemAuthenticator;
 import io.jmix.email.EmailerProperties;
 import io.jmix.email.authentication.EmailRefreshTokenManager;
+import io.jmix.email.authentication.OAuth2AuthorizationCodeFlow;
+import io.jmix.email.authentication.OAuth2DeviceCodeFlow;
 import io.jmix.email.authentication.OAuth2TokenProvider;
 import io.jmix.email.entity.RefreshToken;
+import org.mockito.Mockito;
 import org.junit.jupiter.api.Test;
 import org.jspecify.annotations.Nullable;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -150,6 +154,36 @@ class OAuth2EmailAutoConfigurationTest {
     }
 
     @Test
+    void testOnboardingFlowBeansForGoogle() {
+        contextRunner
+                .withPropertyValues(
+                        "jmix.email.oauth2.enabled=true",
+                        "jmix.email.oauth2.provider=google",
+                        "jmix.email.oauth2.client-id=test-client",
+                        "jmix.email.oauth2.secret=test-secret",
+                        "spring.mail.username=mailbox@example.com")
+                .run(context -> {
+                    assertThat(context).hasSingleBean(OAuth2AuthorizationCodeFlow.class);
+                    assertThat(context).doesNotHaveBean(OAuth2DeviceCodeFlow.class);
+                });
+    }
+
+    @Test
+    void testOnboardingFlowBeansForMicrosoft() {
+        contextRunner
+                .withPropertyValues(
+                        "jmix.email.oauth2.enabled=true",
+                        "jmix.email.oauth2.provider=microsoft",
+                        "jmix.email.oauth2.client-id=test-client",
+                        "jmix.email.oauth2.secret=test-secret",
+                        "spring.mail.username=mailbox@example.com")
+                .run(context -> {
+                    assertThat(context).hasSingleBean(OAuth2AuthorizationCodeFlow.class);
+                    assertThat(context).hasSingleBean(OAuth2DeviceCodeFlow.class);
+                });
+    }
+
+    @Test
     void testCustomTokenProviderIsRespected() {
         contextRunner
                 .withUserConfiguration(CustomTokenProviderConfiguration.class)
@@ -166,6 +200,11 @@ class OAuth2EmailAutoConfigurationTest {
     @Configuration(proxyBeanMethods = false)
     @EnableConfigurationProperties({MailProperties.class, EmailerProperties.class})
     static class TestBaseConfiguration {
+
+        @Bean
+        SystemAuthenticator systemAuthenticator() {
+            return Mockito.mock(SystemAuthenticator.class);
+        }
 
         @Bean
         EmailRefreshTokenManager emailRefreshTokenManager() {

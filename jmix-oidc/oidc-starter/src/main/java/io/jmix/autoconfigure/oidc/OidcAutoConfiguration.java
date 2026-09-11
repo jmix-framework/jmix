@@ -147,7 +147,7 @@ public class OidcAutoConfiguration {
     @EnableWebSecurity
     @ConditionalOnProperty(value = "jmix.oidc.use-default-ui-configuration", havingValue = "true", matchIfMissing = true)
     @ConditionalOnBean(ClientRegistrationRepository.class)
-    public static class DefaulOidcVaadinWebSecurity extends OidcVaadinWebSecurity {
+    public static class DefaultOidcVaadinWebSecurity extends OidcVaadinWebSecurity {
 
         @Bean("oidc_OidcVaadinSecurityFilterChainCustomizer")
         public SecurityFilterChainCustomizer oidcVaadinSecurityFilterChainCustomizer(ClientDetailsSourceSupport clientDetailsSourceSupport,

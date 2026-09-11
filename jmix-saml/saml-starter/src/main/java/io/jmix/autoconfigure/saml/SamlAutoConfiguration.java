@@ -48,10 +48,10 @@ public class SamlAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean(SamlAssertionRolesMapper.class)
     @ConditionalOnBean(ResourceRoleRepository.class)
-    public SamlAssertionRolesMapper claimsRoleMapper(ResourceRoleRepository resourceRoleRepository,
-                                                     RowLevelRoleRepository rowLevelRoleRepository,
-                                                     SamlProperties samlProperties,
-                                                     RoleGrantedAuthorityUtils roleGrantedAuthorityUtils) {
+    public SamlAssertionRolesMapper samlAssertionRolesMapper(ResourceRoleRepository resourceRoleRepository,
+                                                             RowLevelRoleRepository rowLevelRoleRepository,
+                                                             SamlProperties samlProperties,
+                                                             RoleGrantedAuthorityUtils roleGrantedAuthorityUtils) {
         DefaultSamlAssertionRolesMapper mapper = new DefaultSamlAssertionRolesMapper();
         mapper.setRolesAttributeName(samlProperties.getDefaultSamlAssertionRolesMapper().getRolesAssertionAttribute());
         mapper.setResourceRolePrefix(samlProperties.getDefaultSamlAssertionRolesMapper().getResourceRolePrefix());
@@ -73,7 +73,7 @@ public class SamlAutoConfiguration {
     @EnableWebSecurity
     @ConditionalOnProperty(value = "jmix.saml.use-default-ui-configuration", havingValue = "true", matchIfMissing = true)
     @ConditionalOnBean(RelyingPartyRegistrationRepository.class)
-    public static class DefaulSamlVaadinWebSecurity extends SamlVaadinWebSecurity {
+    public static class DefaultSamlVaadinWebSecurity extends SamlVaadinWebSecurity {
 
         @Bean("saml_SamlVaadinSecurityFilterChainCustomizer")
         public SecurityFilterChainCustomizer samlVaadinSecurityFilterChainCustomizer(ClientDetailsSourceSupport clientDetailsSourceSupport,

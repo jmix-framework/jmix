@@ -510,9 +510,9 @@ class GenericFilterReNavigationTest extends FlowuiTestSpecification {
             binder.updateState(QueryParameters.empty())
         }
 
-        and: "the user changes the baseline operation once"
+        and: "the user changes the baseline operation once (client-driven: the group applies only on isFromClient)"
         loadCount.set(0)
-        nameFilter.setOperation(PropertyFilter.Operation.CONTAINS)
+        nameFilter.setOperationInternal(PropertyFilter.Operation.CONTAINS, true)
 
         then: "the loader is loaded exactly once — not once per accumulated (leaked) listener"
         loadCount.get() == 1
@@ -536,9 +536,9 @@ class GenericFilterReNavigationTest extends FlowuiTestSpecification {
             rootGroup.add(nameFilter)
         }
 
-        and: "the user changes the baseline operation once"
+        and: "the user changes the baseline operation once (a client-driven gesture)"
         loadCount.set(0)
-        nameFilter.setOperation(PropertyFilter.Operation.CONTAINS)
+        nameFilter.setOperationInternal(PropertyFilter.Operation.CONTAINS, true)
 
         then: "the loader is loaded exactly once — removeAll detached the stale listeners"
         loadCount.get() == 1

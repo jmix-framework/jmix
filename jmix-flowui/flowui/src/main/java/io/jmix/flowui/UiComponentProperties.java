@@ -136,6 +136,16 @@ public class UiComponentProperties {
     boolean filterConfigurationUniqueNamesEnabled;
 
     /**
+     * Whether a standalone filter component ({@link io.jmix.flowui.component.propertyfilter.PropertyFilter},
+     * {@link io.jmix.flowui.component.jpqlfilter.JpqlFilter}, a {@code DataGrid} header filter) participates
+     * in loading as a condition contributor of its data loader instead of appending its condition into the
+     * loader's condition tree. With contributors the loader's condition stays with the application, the
+     * contribution cannot be lost when another party replaces or rebuilds the loader condition, and it is
+     * not visible in {@code DataLoader#getCondition()} - only in {@code DataLoader#getEffectiveCondition()}.
+     */
+    boolean standaloneFilterContributesCondition;
+
+    /**
      * Whether error message should be shown below the field or not.
      */
     boolean showErrorMessageBelowField;
@@ -197,6 +207,7 @@ public class UiComponentProperties {
             @DefaultValue("false") boolean filterShowConfigurationIdField,
             @DefaultValue("true") boolean filterShowNonJpaProperties,
             @DefaultValue("true") boolean filterConfigurationUniqueNamesEnabled,
+            @DefaultValue("false") boolean standaloneFilterContributesCondition,
             @DefaultValue("true") boolean showErrorMessageBelowField,
             @DefaultValue("true") boolean immediateRequiredValidationEnabled,
             @DefaultValue("true") boolean defaultTrimEnabled,
@@ -234,6 +245,7 @@ public class UiComponentProperties {
         this.filterShowConfigurationIdField = filterShowConfigurationIdField;
         this.filterShowNonJpaProperties = filterShowNonJpaProperties;
         this.filterConfigurationUniqueNamesEnabled = filterConfigurationUniqueNamesEnabled;
+        this.standaloneFilterContributesCondition = standaloneFilterContributesCondition;
 
         this.showErrorMessageBelowField = showErrorMessageBelowField;
         this.immediateRequiredValidationEnabled = immediateRequiredValidationEnabled;
@@ -388,6 +400,13 @@ public class UiComponentProperties {
      */
     public boolean isFilterConfigurationUniqueNamesEnabled() {
         return filterConfigurationUniqueNamesEnabled;
+    }
+
+    /**
+     * @see #standaloneFilterContributesCondition
+     */
+    public boolean isStandaloneFilterContributesCondition() {
+        return standaloneFilterContributesCondition;
     }
 
     /**

@@ -73,6 +73,7 @@ public class CollectionLoaderImpl<E> implements CollectionLoader<E> {
     protected CollectionContainer<E> container;
     protected String query;
     protected Condition condition;
+    protected List<ConditionContributor> conditionContributors = new ArrayList<>();
     protected Map<String, Object> parameters = new HashMap<>();
     protected int firstResult = 0;
     protected int maxResults = Integer.MAX_VALUE;
@@ -165,12 +166,13 @@ public class CollectionLoaderImpl<E> implements CollectionLoader<E> {
 
         LoadContext.Query query = loadContext.setQueryString(queryString);
 
-        query.setCondition(condition);
+        Condition effectiveCondition = getEffectiveCondition();
+        query.setCondition(effectiveCondition);
         query.setSort(sort);
         query.setParameters(parameters);
 
         query.setCacheable(cacheable);
-        query.setDistinct(canLeadToDuplicateResultsRecursive(condition));
+        query.setDistinct(canLeadToDuplicateResultsRecursive(effectiveCondition));
 
         if (firstResult > 0)
             query.setFirstResult(firstResult);
@@ -285,6 +287,19 @@ public class CollectionLoaderImpl<E> implements CollectionLoader<E> {
     @Override
     public void setCondition(@Nullable Condition condition) {
         this.condition = condition;
+    }
+
+    @Override
+    public Subscription addConditionContributor(ConditionContributor conditionContributor) {
+        Preconditions.checkNotNullArgument(conditionContributor);
+        conditionContributors.add(conditionContributor);
+        return () -> conditionContributors.remove(conditionContributor);
+    }
+
+    @Nullable
+    @Override
+    public Condition getEffectiveCondition() {
+        return DataLoadersHelper.composeEffectiveCondition(condition, conditionContributors);
     }
 
     @Override

@@ -35,7 +35,7 @@
         <dataLoadCoordinator auto="true"/>
     </facets>
     <actions>
-        <action id="closeAction" type="view_close"/>
+        <action id="closeAction" type="view_close" text="msg:///actions.Close" icon="CLOSE"/>
     </actions>
     <layout>
         <#if collectionProperties?has_content>

@@ -73,7 +73,7 @@ public class EmailRefreshTokenManagerImpl implements EmailRefreshTokenManager {
     public OAuth2ClientType getRefreshTokenClientType() {
         RefreshToken refreshToken = loadRefreshToken();
         // An absent or unknown stored value (getClientType() returns null for unknown ids) falls
-        // back to the confidential type — the behavior of versions that predate the column
+        // back to the confidential type - the behavior of versions that predate the column
         OAuth2ClientType clientType = refreshToken == null ? null : refreshToken.getClientType();
         return clientType != null ? clientType : OAuth2ClientType.CONFIDENTIAL;
     }

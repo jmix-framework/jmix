@@ -157,7 +157,7 @@ public class MicrosoftOAuth2TokenProvider extends AbstractOAuth2TokenProvider {
 
     /**
      * Entra binds a refresh token to the client type it was issued to (a token obtained by the
-     * device code flow is rejected when redeemed with a client secret — AADSTS700025), so the
+     * device code flow is rejected when redeemed with a client secret - AADSTS700025), so the
      * client application flavor must match the stored token.
      */
     protected AbstractClientApplicationBase buildClientApplication(OAuth2ClientType clientType) {

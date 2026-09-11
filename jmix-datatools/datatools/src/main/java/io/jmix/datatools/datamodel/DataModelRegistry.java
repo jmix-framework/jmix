@@ -52,6 +52,7 @@ import java.sql.SQLException;
 import java.util.*;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -84,10 +85,24 @@ public class DataModelRegistry {
     @Autowired
     protected MetadataGenerationManager metadataGenerationManager;
 
+    @Autowired(required = false)
+    protected List<DataModelContributor> contributors = List.of();
+
     protected final GenerationStateStore<State> stateStore = new GenerationStateStore<>();
 
     protected State getState() {
         return stateStore.getOrCreate(metadataGenerationManager.getPinnedOrCurrentGenerationId(), State::new);
+    }
+
+    /**
+     * Returns whether any module contributes entities or attributes the JPA metadata cannot describe.
+     * When nothing does, the data model holds only JPA entities and the {@code dynamic} flag of every
+     * entity and attribute is {@code false}.
+     *
+     * @return {@code true} if at least one {@link DataModelContributor} is registered
+     */
+    public boolean hasContributors() {
+        return !contributors.isEmpty();
     }
 
     /**
@@ -143,18 +158,72 @@ public class DataModelRegistry {
                 createEntityDescription(state, metaClass, false);
             }
         }
+
+        for (DataModelContributor contributor : contributors) {
+            Collection<MetaClass> additionalEntities =
+                    callContributor(contributor, "getAdditionalEntities", DataModelContributor::getAdditionalEntities);
+            if (additionalEntities == null) {
+                continue;
+            }
+            for (MetaClass metaClass : additionalEntities) {
+                if (findDataModel(state, metaClass) == null) {
+                    createEntityDescription(state, metaClass, false);
+                }
+            }
+        }
+    }
+
+    /**
+     * Invokes a contributor, isolating the rest of the data model from its failure.
+     *
+     * @return the contributor's result, or {@code null} if it returned {@code null} or threw
+     */
+    @Nullable
+    protected <R> R callContributor(DataModelContributor contributor, String operation,
+                                    Function<DataModelContributor, R> call) {
+        try {
+            return call.apply(contributor);
+        } catch (RuntimeException e) {
+            log.warn("Data model contributor '{}' failed in {}, skipping its contribution",
+                    contributor.getClass().getName(), operation, e);
+            return null;
+        }
+    }
+
+    @Nullable
+    protected DataModel findDataModel(State state, MetaClass metaClass) {
+        return state.dataModels.values().stream()
+                .map(models -> models.get(metaClass.getName()))
+                .filter(Objects::nonNull)
+                .findFirst()
+                .orElse(null);
+    }
+
+    protected EntityDescriptor resolveEntityDescriptor(MetaClass entity) {
+        for (DataModelContributor contributor : contributors) {
+            EntityDescriptor descriptor = callContributor(contributor, "describeEntity",
+                    c -> c.describeEntity(entity));
+            if (descriptor != null) {
+                return descriptor;
+            }
+        }
+        Table tableAnnotation = entity.getJavaClass().getAnnotation(Table.class);
+        return new EntityDescriptor(entity.getStore().getName(),
+                tableAnnotation != null ? tableAnnotation.name() : "", false);
     }
 
     protected DataModel createEntityDescription(State state, MetaClass entity, boolean isEmbeddable) {
         List<AttributeModel> attributeModelsList = new ArrayList<>();
         List<MetaProperty> fields = entity.getProperties().stream().toList();
         Map<RelationType, List<Relation>> relationsMap = new HashMap<>();
-        String dataStoreName = entity.getStore().getName();
+        EntityDescriptor entityDescriptor = resolveEntityDescriptor(entity);
+        String dataStoreName = entityDescriptor.storeName();
 
         for (MetaProperty field : fields) {
             String fieldName = field.getName();
 
             if (!metadataTools.isJpa(field)) {
+                addContributedAttribute(entity, field, entityDescriptor, attributeModelsList, relationsMap);
                 continue;
             }
 
@@ -192,12 +261,13 @@ public class DataModelRegistry {
 
         String currentEntityType = entity.getName();
         String entityDescription = diagramEngine
-                .constructEntityDescription(currentEntityType, dataStoreName, attributeModelsList);
+                .constructEntityDescription(currentEntityType, dataStoreName, attributeModelsList,
+                        entityDescriptor.dynamic());
 
-        EntityModel entityModel = constructEntityModel(entity, isSystem);
+        EntityModel entityModel = constructEntityModel(entity, isSystem, entityDescriptor);
         DataModel dataModel = new DataModel(
                 currentEntityType,
-                entity.getStore().getName(),
+                dataStoreName,
                 entityModel,
                 relationsMap,
                 entityDescription,
@@ -207,6 +277,64 @@ public class DataModelRegistry {
         putDataModel(state, dataModel);
 
         return dataModel;
+    }
+
+    protected void addContributedAttribute(MetaClass entity, MetaProperty field,
+                                           EntityDescriptor entityDescriptor,
+                                           List<AttributeModel> attributeModelsList,
+                                           Map<RelationType, List<Relation>> relationsMap) {
+        AttributeDescriptor descriptor = null;
+        for (DataModelContributor contributor : contributors) {
+            descriptor = callContributor(contributor, "describeAttribute",
+                    c -> c.describeAttribute(entity, field));
+            if (descriptor != null) {
+                break;
+            }
+        }
+        if (descriptor == null) {
+            log.debug("No data model contributor describes '{}'", field);
+            return;
+        }
+
+        attributeModelsList.add(constructContributedAttribute(descriptor, entityDescriptor));
+
+        AttributeDescriptor.RelationDescriptor relation = descriptor.relation();
+        if (relation != null) {
+            String dataStoreName = entityDescriptor.storeName();
+            String relationDescription = diagramEngine.constructRelationDescription(
+                    entity.getName(), relation.entityName(), relation.type(), dataStoreName);
+            putRelation(relationsMap, relation.type(),
+                    new Relation(dataStoreName, relation.entityName(), relationDescription));
+        }
+    }
+
+    protected AttributeModel constructContributedAttribute(AttributeDescriptor descriptor,
+                                                           EntityDescriptor entityDescriptor) {
+        AttributeModel attributeModel =
+                createAttributeModel(descriptor.name(), descriptor.javaType(), descriptor.dynamic());
+        attributeModel.setIsMandatory(descriptor.mandatory());
+
+        AttributeDescriptor.ColumnDescriptor column = descriptor.column();
+        if (column == null) {
+            attributeModel.setColumnName(descriptor.noColumnText());
+            attributeModel.setDbType("");
+            return attributeModel;
+        }
+
+        attributeModel.setColumnName(column.tableName().equals(entityDescriptor.tableName())
+                ? column.columnName()
+                : column.tableName() + "." + column.columnName());
+        attributeModel.setDbType(column.dbType() != null
+                ? column.dbType()
+                : getContributedColumnType(entityDescriptor.storeName(), column.tableName(),
+                        column.columnName()));
+
+        return attributeModel;
+    }
+
+    protected String getContributedColumnType(String storeName, String tableName, String columnName) {
+        return getDatabaseColumnType(storeName, null, null,
+                applyRegister(tableName, storeName), applyRegister(columnName, storeName));
     }
 
     protected void addDatatypeAttribute(MetaClass entity, boolean isEmbeddable, MetaProperty field,
@@ -403,15 +531,15 @@ public class DataModelRegistry {
         attributeModelsList.add(attributeModel);
     }
 
-    protected EntityModel constructEntityModel(MetaClass entity, boolean isSystem) {
+    protected EntityModel constructEntityModel(MetaClass entity, boolean isSystem,
+                                               EntityDescriptor descriptor) {
         EntityModel entityModel = metadata.create(EntityModel.class);
 
         entityModel.setName(entity.getName());
-        entityModel.setDataStore(entity.getStore().getName());
+        entityModel.setDataStore(descriptor.storeName());
         entityModel.setIsSystem(isSystem);
-        entityModel.setTableName(entity.getJavaClass().isAnnotationPresent(Table.class)
-                ? entity.getJavaClass().getAnnotation(Table.class).name()
-                : "");
+        entityModel.setTableName(descriptor.tableName());
+        entityModel.setDynamic(descriptor.dynamic());
 
         return entityModel;
     }
@@ -426,10 +554,15 @@ public class DataModelRegistry {
     }
 
     protected AttributeModel constructAttribute(String fieldName, String fieldType) {
+        return createAttributeModel(fieldName, fieldType, false);
+    }
+
+    protected AttributeModel createAttributeModel(String fieldName, String fieldType, boolean dynamic) {
         AttributeModel attributeModel = metadata.create(AttributeModel.class);
 
         attributeModel.setAttributeName(fieldName);
         attributeModel.setJavaType(fieldType);
+        attributeModel.setDynamic(dynamic);
 
         return attributeModel;
     }

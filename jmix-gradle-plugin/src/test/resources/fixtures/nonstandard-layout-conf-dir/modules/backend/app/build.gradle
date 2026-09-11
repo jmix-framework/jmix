@@ -1,0 +1,11 @@
+plugins {
+    id 'io.jmix'
+    id 'java'
+}
+
+jmix {
+    useBom = false
+    entitiesEnhancing {
+        enabled = false
+    }
+}

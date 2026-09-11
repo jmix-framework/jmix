@@ -35,6 +35,7 @@ import io.jmix.core.LoadContext;
 import io.jmix.core.Messages;
 import io.jmix.email.EmailConnectionTester;
 import io.jmix.email.EmailerProperties;
+import io.jmix.email.ExceptionMessagesSupport;
 import io.jmix.email.authentication.EmailRefreshTokenManager;
 import io.jmix.email.authentication.OAuth2AuthorizationCodeFlow;
 import io.jmix.email.authentication.OAuth2DeviceCodeFlow;
@@ -262,7 +263,8 @@ public class EmailConnectionView extends StandardView {
 
             @Override
             public boolean handleException(Exception ex) {
-                log.warn("Mail server connection test failed", ex);
+                log.warn("Mail server connection test failed: {}", ExceptionMessagesSupport.flatten(ex));
+                log.debug("Mail server connection test failure", ex);
                 setStatusBadge("statusBadge.connectionError", "error");
                 notifications.create(messages.formatMessage(EmailConnectionView.class,
                                 "testConnectionFailedNotification.text", ExceptionUtils.getRootCauseMessage(ex)))

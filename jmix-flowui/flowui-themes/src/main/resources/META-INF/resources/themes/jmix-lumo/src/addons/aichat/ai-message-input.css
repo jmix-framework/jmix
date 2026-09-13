@@ -8,6 +8,8 @@
     max-width: var(--jmix-ai-message-input-max-width);
     margin-inline: auto;
     flex-shrink: 0;
+    --_focus-ring-color: var(--vaadin-focus-ring-color, var(--lumo-primary-color-50pct));
+    --_focus-ring-width: var(--vaadin-focus-ring-width, 2px);
     --jmix-ai-message-input-icon-send: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M12 19V5'/><path d='m5 12 7-7 7 7'/></svg>");
     --jmix-ai-message-input-icon-stop: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='currentColor'><rect x='6' y='6' width='12' height='12' rx='2'/></svg>");
   }
@@ -34,8 +36,7 @@
   }
 
   :host([focus-ring]:not([disabled])) [part='input-container']:focus-within {
-    box-shadow: 0 0 0 var(--vaadin-focus-ring-width, 2px)
-      var(--vaadin-focus-ring-color, var(--lumo-primary-color-50pct));
+    box-shadow: 0 0 0 var(--_focus-ring-width) var(--_focus-ring-color);
   }
 
   :host([disabled]) {
@@ -47,8 +48,8 @@
   }
 
   :host([dragover]) [part='input-container'] {
-    outline: 2px dashed var(--vaadin-border-color-strong, var(--lumo-contrast-50pct));
-    outline-offset: -2px;
+    outline: var(--_focus-ring-width) dashed var(--_focus-ring-color);
+    outline-offset: calc(var(--_focus-ring-width) * -1);
   }
 
   [part='input-container'][dragover]::after {

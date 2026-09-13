@@ -173,6 +173,24 @@
     height: var(--jmix-ai-message-action-icon-size, var(--lumo-font-size-l));
   }
 
+  [part='actions'] vaadin-icon[icon-class~='jmix-font-icon'] {
+    --_jmix-ai-message-action-font-icon-size: var(--jmix-ai-message-action-icon-size, var(--lumo-font-size-l));
+    --vaadin-icon-visual-size: var(--_jmix-ai-message-action-font-icon-size);
+  }
+
+  [part='actions'] vaadin-icon[icon-class~='jmix-font-icon']:not([font-icon-content])::before {
+    font-family: var(--jmix-font-icon-font-family);
+    content: var(--_jmix-ai-font-icon-glyph, '');
+  }
+
+  [part='actions'] vaadin-icon[icon-class~='jmix-font-icon-lumo'] {
+    --vaadin-icon-visual-size: calc(1.5 * var(--_jmix-ai-message-action-font-icon-size));
+  }
+
+  [part='actions'] vaadin-icon[icon-class~='jmix-font-icon-lumo']::before {
+    font-family: lumo-icons;
+  }
+
   [part='action'].jmix-ai-message-action-copy {
     display: inline-grid;
     place-items: center;

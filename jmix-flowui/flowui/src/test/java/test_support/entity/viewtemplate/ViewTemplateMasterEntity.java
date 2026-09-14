@@ -21,6 +21,7 @@ import io.jmix.core.entity.annotation.OnDelete;
 import io.jmix.core.metamodel.annotation.Composition;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.flowui.view.template.DetailViewTemplate;
+import io.jmix.flowui.view.template.ReadViewTemplate;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinTable;
@@ -35,12 +36,13 @@ import java.util.List;
 /**
  * Parent entity with a composition collection ({@code lines}) and an association collection
  * ({@code relatedCustomers}), used to verify that only composition collections become tabs
- * in the generated detail view.
+ * in the generated detail and read views.
  */
 @JmixEntity
 @Table(name = "TEST_VIEW_TEMPLATE_MASTER")
 @Entity(name = "test_ViewTemplateMasterEntity")
 @DetailViewTemplate(viewId = "test_ViewTemplateMasterEntity.detail")
+@ReadViewTemplate(viewId = "test_ViewTemplateMasterEntity.read")
 public class ViewTemplateMasterEntity extends TestBaseEntity {
 
     @Column(name = "NAME")

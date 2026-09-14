@@ -18,6 +18,7 @@ package test_support.entity.viewtemplate;
 
 import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.flowui.view.template.DetailViewTemplate;
+import io.jmix.flowui.view.template.ReadViewTemplate;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -43,6 +44,10 @@ import test_support.entity.lookup_field.LfProduct;
 @DetailViewTemplate(
         viewId = "test_ViewTemplateLookupEntity.edit",
         viewRoute = "templates/view-template-lookup/detail"
+)
+@ReadViewTemplate(
+        viewId = "test_ViewTemplateLookupEntity.show",
+        viewRoute = "templates/view-template-lookup/show"
 )
 public class ViewTemplateLookupEntity extends TestBaseEntity {
 

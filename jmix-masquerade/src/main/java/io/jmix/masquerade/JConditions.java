@@ -303,6 +303,19 @@ public class JConditions {
     }
 
     /**
+     * Creates and returns a {@link WebElementCondition condition} that checks the start and end values of
+     * web-element wrappers for range components (e.g. {@link RangeSlider}).
+     *
+     * @param startValue expected start value as a string presentation value
+     * @param endValue   expected end value as a string presentation value
+     * @return {@link WebElementCondition condition} that checks the range values, which can be checked by
+     * web-element wrapper for range components
+     */
+    public static WebElementCondition rangeValue(String startValue, String endValue) {
+        return new RangeValue(startValue, endValue);
+    }
+
+    /**
      * Creates and returns a {@link WebElementCondition condition} that checks the label value of web-element wrappers
      * for field components.
      *

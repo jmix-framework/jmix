@@ -18,6 +18,7 @@ package facet.url_query_parameters
 
 import com.vaadin.flow.router.QueryParameters
 import facet.url_query_parameters.view.GenericFilterUrlQueryParamsTestView
+import io.jmix.flowui.component.filter.FilterComponent
 import io.jmix.flowui.component.propertyfilter.PropertyFilter
 import io.jmix.flowui.facet.urlqueryparameters.GenericFilterUrlQueryParametersBinder
 import org.springframework.boot.test.context.SpringBootTest
@@ -26,11 +27,12 @@ import test_support.spec.FlowuiTestSpecification
 import static facet.url_query_parameters.TestGenericFilterUrlBinders.getBinder
 
 /**
- * Sanity check that {@link GenericFilterUrlQueryParametersBinder} does not suffer from the
- * underscore-in-value issue. A property condition serialized by the generic filter uses the
- * shape {@code property:propertyName_operation_value}; the parser uses
- * {@code substring(separatorIndex + 1)} to grab the value (everything past the second
- * underscore), so underscores inside the value are preserved.
+ * Checks how {@link GenericFilterUrlQueryParametersBinder} deserializes property conditions from
+ * the URL. A property condition serialized by the generic filter uses the shape
+ * {@code property:propertyName_operation_value}: the parser uses
+ * {@code substring(separatorIndex + 1)} to grab the value (everything past the second underscore),
+ * so underscores inside the value are preserved, and a condition that cannot be applied to the
+ * loaded entity is skipped instead of failing the navigation.
  */
 @SpringBootTest
 class GenericFilterUrlQueryParametersBinderTest extends FlowuiTestSpecification {
@@ -70,16 +72,43 @@ class GenericFilterUrlQueryParametersBinderTest extends FlowuiTestSpecification 
         propertyFilter.value == "a_b"
     }
 
-    private PropertyFilter<?> applyConditionAndGetPropertyFilter(String conditionString) {
-        def screen = navigateToView(GenericFilterUrlQueryParamsTestView)
-        def binder = getBinder(screen)
-        QueryParameters qp = QueryParameters.simple([(binder.conditionParam): conditionString])
-        binder.updateState(qp)
+    def "ignores condition on unknown attribute"() {
+        when:
+        def components = applyConditionsAndGetFilterComponents("property:doesNotExist_equal_x")
 
-        def root = screen.ownersFilter.currentConfiguration.rootLogicalFilterComponent
-        def components = root.filterComponents
+        then:
+        noExceptionThrown()
+        components.empty
+    }
+
+    def "ignores condition on unknown attribute and keeps the valid ones"() {
+        when:
+        def components = applyConditionsAndGetFilterComponents(
+                "property:doesNotExist_equal_x", "property:name_contains_abc")
+
+        then:
+        components.size() == 1
+
+        and:
+        def propertyFilter = components.first() as PropertyFilter<?>
+        propertyFilter.property == "name"
+        propertyFilter.operation == PropertyFilter.Operation.CONTAINS
+        propertyFilter.value == "abc"
+    }
+
+    private PropertyFilter<?> applyConditionAndGetPropertyFilter(String conditionString) {
+        def components = applyConditionsAndGetFilterComponents(conditionString)
         assert !components.empty: "expected one filter component, got none"
         return components.first() as PropertyFilter<?>
+    }
+
+    private List<FilterComponent> applyConditionsAndGetFilterComponents(String... conditionStrings) {
+        def screen = navigateToView(GenericFilterUrlQueryParamsTestView)
+        def binder = getBinder(screen)
+        QueryParameters qp = new QueryParameters([(binder.conditionParam): conditionStrings.toList()])
+        binder.updateState(qp)
+
+        return screen.ownersFilter.currentConfiguration.rootLogicalFilterComponent.filterComponents
     }
 
 }

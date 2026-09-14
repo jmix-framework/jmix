@@ -392,7 +392,7 @@ public class GenericFilterUrlQueryParametersBinder extends AbstractUrlQueryParam
         List<FilterComponent> conditions = new ArrayList<>(conditionParams.size());
         for (String conditionString : conditionParams) {
             FilterComponent filterComponent = parseCondition(conditionString, dataLoader);
-            if (isPermitted(dataLoader, filterComponent)) {
+            if (filterComponent != null && isPermitted(dataLoader, filterComponent)) {
                 conditions.add(filterComponent);
             }
         }
@@ -492,6 +492,7 @@ public class GenericFilterUrlQueryParametersBinder extends AbstractUrlQueryParam
         return null;
     }
 
+    @Nullable
     protected FilterComponent parseCondition(String conditionString, DataLoader dataLoader) {
         if (conditionString.startsWith(PROPERTY_CONDITION_PREFIX)) {
             String propertyConditionString = conditionString.substring(PROPERTY_CONDITION_PREFIX.length());
@@ -502,6 +503,7 @@ public class GenericFilterUrlQueryParametersBinder extends AbstractUrlQueryParam
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
+    @Nullable
     protected PropertyFilter<?> parsePropertyCondition(String conditionString, DataLoader dataLoader) {
         int separatorIndex = conditionString.indexOf(SEPARATOR);
         if (separatorIndex == -1) {
@@ -511,6 +513,13 @@ public class GenericFilterUrlQueryParametersBinder extends AbstractUrlQueryParam
         String propertyString = conditionString.substring(0, separatorIndex);
         String property = urlParamSerializer.deserialize(String.class,
                 filterUrlQueryParametersSupport.restoreSeparatorValue(propertyString));
+
+        MetaClass entityMetaClass = dataLoader.getContainer().getEntityMetaClass();
+        if (getMetadataTools().resolveMetaPropertyPathOrNull(entityMetaClass, property) == null) {
+            log.info("Cannot apply URL condition. Attribute '{}' is not found in the '{}' entity",
+                    property, entityMetaClass.getName());
+            return null;
+        }
 
         conditionString = conditionString.substring(separatorIndex + 1);
         separatorIndex = conditionString.indexOf(SEPARATOR);
@@ -542,8 +551,7 @@ public class GenericFilterUrlQueryParametersBinder extends AbstractUrlQueryParam
         if (!Strings.isNullOrEmpty(valueString)) {
             try {
                 Object parsedValue = filterUrlQueryParametersSupport
-                        .parseValue(dataLoader.getContainer().getEntityMetaClass(),
-                                property, operation.getType(), valueString);
+                        .parseValue(entityMetaClass, property, operation.getType(), valueString);
                 propertyFilter.setValue(parsedValue);
             } catch (Exception e) {
                 log.info("Cannot parse URL parameter. {}", e.toString());

@@ -21,11 +21,11 @@ import com.vaadin.flow.component.Composite;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.card.Card;
 import com.vaadin.flow.component.card.CardVariant;
+import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.shared.Tooltip;
 import io.jmix.flowui.theme.StyleUtility;
 import org.jspecify.annotations.NullMarked;
@@ -35,9 +35,12 @@ import static java.util.Objects.requireNonNull;
 
 /**
  * Outlined card for a single conversation in the chat hub's recent list and
- * history side panel. Clicking the card body opens the conversation. The trash
- * delete button is rendered only when a delete handler is supplied (history
- * panel); without one the card shows no delete button.
+ * history side panel. The card body is a real link to the conversation, so it
+ * supports opening in a new browser tab, copying the address and keyboard
+ * activation; a plain click is handled in-app by the open handler instead of
+ * following the link. The trash delete button is rendered only when a delete
+ * handler is supplied (history panel); without one the card shows no delete
+ * button.
  * <p>
  * Configure the card through the setters, then call {@link #build()} to
  * (re)assemble its content from the current property values.
@@ -55,6 +58,7 @@ public class AiConversationCard extends Composite<Card> {
 
     protected String title;
     protected Component icon;
+    protected String href;
     protected Runnable openHandler;
 
     @Nullable
@@ -101,10 +105,22 @@ public class AiConversationCard extends Composite<Card> {
     }
 
     /**
-     * Sets the handler invoked when the card body is clicked (required). Call
-     * {@link #build()} afterwards to apply the change.
+     * Sets the address the card body links to (required) — the conversation's own route. It is what the
+     * browser uses for "open in new tab" and "copy link address"; a plain click goes to
+     * {@link #setOpenHandler(Runnable)} instead. Call {@link #build()} afterwards to apply the change.
      *
-     * @param openHandler handler invoked when the card body is clicked
+     * @param href address of the conversation
+     */
+    public void setHref(String href) {
+        this.href = href;
+    }
+
+    /**
+     * Sets the handler invoked on a plain click on the card body (required), so that the click stays an
+     * in-app navigation instead of a page load. Modified and non-primary clicks are left to the browser.
+     * Call {@link #build()} afterwards to apply the change.
+     *
+     * @param openHandler handler invoked on a plain click on the card body
      */
     public void setOpenHandler(Runnable openHandler) {
         this.openHandler = openHandler;
@@ -136,17 +152,19 @@ public class AiConversationCard extends Composite<Card> {
     /**
      * (Re)assembles the card content from the currently configured properties.
      * Call after the setters; {@link #setIcon(Component)},
-     * {@link #setTitle(String)} and {@link #setOpenHandler(Runnable)} are
-     * required and must be set beforehand.
+     * {@link #setTitle(String)}, {@link #setHref(String)} and
+     * {@link #setOpenHandler(Runnable)} are required and must be set
+     * beforehand.
      */
     public void build() {
         Component icon = requireNonNull(this.icon, "icon must be set before build()");
         String title = requireNonNull(this.title, "title must be set before build()");
+        String href = requireNonNull(this.href, "href must be set before build()");
         Runnable openHandler = requireNonNull(this.openHandler, "openHandler must be set before build()");
 
         getContent().removeAll();
 
-        VerticalLayout body = createBody(icon, title, openHandler, createdDate);
+        Anchor body = createBody(icon, title, href, openHandler, createdDate);
         HorizontalLayout row = createRow(body);
 
         if (deleteHandler != null) {
@@ -157,32 +175,57 @@ public class AiConversationCard extends Composite<Card> {
     }
 
     /**
-     * Stacks the title row and (optionally) the date as the clickable body of
-     * the card. The whole body is the open-conversation hit area.
+     * Stacks the title row and (optionally) the date as the link body of the
+     * card. The whole body is the open-conversation hit area.
      *
      * @param icon        title-row icon
      * @param title       conversation title
-     * @param openHandler handler invoked when the body is clicked
+     * @param href        address of the conversation
+     * @param openHandler handler invoked on a plain click on the body
      * @param createdDate formatted creation date, or {@code null} to omit the date line
      * @return the assembled card body
      */
-    protected VerticalLayout createBody(Component icon,
-                                        String title,
-                                        Runnable openHandler,
-                                        @Nullable String createdDate) {
-        VerticalLayout body = new VerticalLayout(createTitleRow(icon, title));
-        body.setPadding(false);
-        body.setSpacing(false);
-        body.setWidthFull();
+    protected Anchor createBody(Component icon,
+                                String title,
+                                String href,
+                                Runnable openHandler,
+                                @Nullable String createdDate) {
+        Anchor body = new Anchor(href);
         body.addClassName(BODY_CN);
-        body.getStyle().set("cursor", "pointer");
-        body.addClickListener(e -> openHandler.run());
+        body.add(createTitleRow(icon, title));
 
         if (createdDate != null) {
             body.add(createDate(createdDate));
         }
 
+        bindOpenHandler(body, openHandler);
+
         return body;
+    }
+
+    /**
+     * Routes a plain click on the link to the open handler instead of letting the browser load the address.
+     * Everything else — a modified click, a middle click (which fires {@code auxclick}, not {@code click}),
+     * the context menu — is left to the browser, which is what makes "open in new tab" and "copy link
+     * address" work.
+     * <p>
+     * Suppressing the default action is part of the filter expression on purpose: Flow evaluates every
+     * event-data expression before it checks the filter, so {@code preventDefault} passed as event data
+     * would also cancel the modified clicks that must reach the browser. The filter is evaluated once per
+     * event, so folding {@code preventDefault} into the guard cancels exactly the clicks that are handled
+     * here.
+     *
+     * @param body        the link body of the card
+     * @param openHandler handler invoked on a plain click
+     */
+    protected void bindOpenHandler(Anchor body, Runnable openHandler) {
+        body.getElement()
+                .addEventListener("click", event -> openHandler.run())
+                .setFilter("""
+                        event.button === 0 && !event.ctrlKey && !event.metaKey
+                            && !event.shiftKey && !event.altKey
+                            && (event.preventDefault() || true)
+                        """);
     }
 
     /**
@@ -216,13 +259,14 @@ public class AiConversationCard extends Composite<Card> {
     }
 
     /**
-     * Outer row that lets the clickable body grow and parks an optional
-     * delete button alongside it.
+     * Outer row that lets the link body grow and parks an optional delete
+     * button alongside it — outside the link, so deleting is not a click on
+     * the conversation.
      *
-     * @param body the clickable card body
+     * @param body the link body of the card
      * @return the assembled outer row
      */
-    protected HorizontalLayout createRow(VerticalLayout body) {
+    protected HorizontalLayout createRow(Anchor body) {
         HorizontalLayout row = new HorizontalLayout(body);
         row.setWidthFull();
         row.setAlignItems(FlexComponent.Alignment.CENTER);

@@ -38,7 +38,6 @@
     }
 
     .chat-title-layout {
-        border-bottom: 1px solid var(--vaadin-border-color.chat-content-layout);
         box-sizing: border-box;
         padding-bottom: var(--vaadin-padding-s);
         gap: var(--vaadin-gap-xs);

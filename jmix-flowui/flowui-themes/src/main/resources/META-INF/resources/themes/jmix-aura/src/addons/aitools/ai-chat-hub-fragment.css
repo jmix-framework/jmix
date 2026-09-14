@@ -82,8 +82,21 @@
     --vaadin-card-gap: var(--vaadin-gap-xs);
 }
 
+/* The card body is a link now: drop the link look, keep the stacked layout the
+   layout component used to give it, and show a focus ring - the body became
+   keyboard-reachable. */
 .chat-hub-card-body {
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
     padding: 0;
+    text-decoration: none;
+}
+
+.chat-hub-card-body:focus-visible {
+    outline: var(--vaadin-focus-ring-width) solid var(--vaadin-focus-ring-color);
+    outline-offset: var(--vaadin-focus-ring-width);
 }
 
 .chat-hub-card-title-row {

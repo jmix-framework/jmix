@@ -78,8 +78,29 @@
     --vaadin-card-gap: var(--lumo-space-xs);
 }
 
+/* The card body is a link now: drop the link look, keep the stacked layout the
+   layout component used to give it, and show a focus ring - the body became
+   keyboard-reachable. */
 .chat-hub-card-body {
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
     padding: 0;
+    text-decoration: none;
+}
+
+/* Lumo re-underlines links on hover through `a:where(:any-link):hover`. Its `:where()` adds no
+   specificity, but the remaining `a:hover` still outweighs the single class above, so the reset has to
+   be restated for the hover state. Aura needs no counterpart - it underlines links nowhere. */
+.chat-hub-card-body:hover {
+    text-decoration: none;
+}
+
+.chat-hub-card-body:focus-visible {
+    outline: var(--vaadin-focus-ring-width, 2px) solid
+        var(--vaadin-focus-ring-color, var(--lumo-primary-color-50pct));
+    outline-offset: var(--vaadin-focus-ring-width, 2px);
 }
 
 .chat-hub-card-title-row {

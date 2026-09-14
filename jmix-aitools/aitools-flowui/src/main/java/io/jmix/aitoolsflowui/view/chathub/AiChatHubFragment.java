@@ -23,6 +23,7 @@ import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.function.SerializableSupplier;
+import com.vaadin.flow.router.RouteConfiguration;
 import io.jmix.aitoolsflowui.AiToolsFlowuiProperties;
 import io.jmix.aitoolsflowui.icon.AiIconProvider;
 import io.jmix.aitoolsflowui.model.AiConversation;
@@ -272,6 +273,7 @@ public class AiChatHubFragment extends Fragment<VerticalLayout> {
         card.setIcon(resolveMarkIcon());
         card.setTitle(metadataTools.getInstanceName(conversation));
         card.setCreatedDate(formatDateTime(conversation.getCreatedDate()));
+        card.setHref(createConversationHref(conversation));
         card.setOpenHandler(() -> openConversation(conversation));
         if (deletable) {
             card.setDeleteHandler(() -> confirmDelete(conversation));
@@ -286,6 +288,19 @@ public class AiChatHubFragment extends Fragment<VerticalLayout> {
                 .withRouteParameters(routeSupport.createRouteParameters(
                         AiChatView.ROUTE_PARAM_ID, conversation.getId()))
                 .navigate();
+    }
+
+    /**
+     * Builds the address of a conversation's chat route, used as the {@code href} of its card so that the
+     * card behaves as a regular link.
+     *
+     * @param conversation conversation to link to
+     * @return the conversation's route address
+     */
+    protected String createConversationHref(AiConversation conversation) {
+        return RouteConfiguration.forSessionScope()
+                .getUrl(AiChatView.class, routeSupport.createRouteParameters(
+                        AiChatView.ROUTE_PARAM_ID, conversation.getId()));
     }
 
     protected void confirmDelete(AiConversation conversation) {

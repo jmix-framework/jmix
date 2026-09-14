@@ -18,10 +18,13 @@ package io.jmix.aitoolsflowui.view.chat;
 
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.ComponentEvent;
+import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.shared.Tooltip;
 import com.vaadin.flow.function.SerializableSupplier;
+import com.vaadin.flow.shared.Registration;
 import io.jmix.aitoolsflowui.model.*;
 import io.jmix.aitoolsflowui.service.*;
 import io.jmix.aitoolsflowui.view.chat.support.*;
@@ -173,6 +176,32 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
     public void setReadOnly(boolean readOnly) {
         this.readOnly = readOnly;
         refreshComposerVisibility();
+    }
+
+    /**
+     * Hides the conversation title, for a host that already names the conversation in its own chrome — a
+     * view title, a tab, a dialog header — and would otherwise show the same name twice. The title row
+     * itself stays, carrying the title-edit button.
+     * <p>
+     * {@link TitleChangeEvent} fires either way, so a hidden title still keeps the host's own title in sync
+     * with renames. The fragment stores no flag of its own, so the choice survives conversation reloads.
+     *
+     * @param titleVisible {@code false} to hide the conversation title; visible by default
+     */
+    public void setTitleVisible(boolean titleVisible) {
+        conversationTitle.setVisible(titleVisible);
+    }
+
+    /**
+     * Adds a listener notified whenever the displayed conversation title changes — when a conversation is
+     * bound and after it is renamed. Hosts use it to keep their own title in sync (page title, tab title).
+     *
+     * @param listener listener to add
+     * @return a registration for removing the listener
+     */
+    public Registration addTitleChangeListener(
+            ComponentEventListener<TitleChangeEvent> listener) {
+        return getEventBus().addListener(TitleChangeEvent.class, listener);
     }
 
     /**
@@ -388,6 +417,8 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
         }
         // An empty tooltip text is not displayed, so a cleared header shows none.
         conversationTitleTooltip.setText(text);
+
+        fireEvent(new TitleChangeEvent(this, title));
     }
 
     protected void warnIfAiUnavailable() {
@@ -589,5 +620,31 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
                     "aiChatFragment.editConversationTitleDialog.titleTooLong", AiConversation.TITLE_MAX_LENGTH));
         }
         return ValidationErrors.none();
+    }
+
+    /**
+     * Fired when the title of the displayed conversation changes: a conversation is bound to the fragment,
+     * or the bound conversation is renamed.
+     */
+    public static class TitleChangeEvent extends ComponentEvent<AiChatFragment> {
+
+        @Nullable
+        protected final String title;
+
+        public TitleChangeEvent(AiChatFragment source, @Nullable String title) {
+            super(source, false);
+
+            this.title = title;
+        }
+
+        /**
+         * Returns the new conversation title.
+         *
+         * @return the new title, or {@code null} when no conversation is bound or it has no title
+         */
+        @Nullable
+        public String getTitle() {
+            return title;
+        }
     }
 }

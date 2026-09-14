@@ -1,0 +1,6 @@
+// The Jmix application is a subproject of the root build with a custom projectDir,
+// so the application module dir differs from the build root dir.
+rootProject.name = 'jmix-gradle-plugin-conf-dir'
+
+include ':app'
+project(':app').projectDir = file('modules/backend/app')

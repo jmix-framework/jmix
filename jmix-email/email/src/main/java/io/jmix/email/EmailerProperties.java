@@ -302,7 +302,7 @@ public class EmailerProperties {
 
         /**
          * Initial refresh token value used to get access token. This value is used only while no refresh token
-         * is stored in the database. Once a token is stored (via the email token view or automatically after
+         * is stored in the database. Once a token is stored (via the email connection view or automatically after
          * provider-side token rotation), the stored value takes precedence.
          */
         protected final String refreshToken;
@@ -312,18 +312,28 @@ public class EmailerProperties {
          */
         protected final String tenantId;
 
+        /**
+         * Redirect URI used by the authorization code flow when connecting a mailbox account.
+         * If not set, the URI is derived from the current request. Set it explicitly when the
+         * application is behind a reverse proxy and the derived URI is wrong. The value must be
+         * registered as a redirect URI of the OAuth client.
+         */
+        protected final String redirectUri;
+
         public OAuth2(@DefaultValue("false") boolean enabled,
                       @Nullable String provider,
                       @Nullable String clientId,
                       @Nullable String secret,
                       @Nullable String refreshToken,
-                      @DefaultValue("common") String tenantId) {
+                      @DefaultValue("common") String tenantId,
+                      @Nullable String redirectUri) {
             this.enabled = enabled;
             this.provider = provider;
             this.clientId = clientId;
             this.secret = secret;
             this.refreshToken = refreshToken;
             this.tenantId = tenantId;
+            this.redirectUri = redirectUri;
         }
 
         /**
@@ -370,6 +380,14 @@ public class EmailerProperties {
          */
         public String getTenantId() {
             return tenantId;
+        }
+
+        /**
+         * @see #redirectUri
+         */
+        @Nullable
+        public String getRedirectUri() {
+            return redirectUri;
         }
     }
 }

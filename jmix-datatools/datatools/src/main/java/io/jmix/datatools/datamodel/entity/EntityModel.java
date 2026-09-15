@@ -48,6 +48,8 @@ public class EntityModel {
 
     private Boolean isSystem;
 
+    private Boolean dynamic;
+
     public String getDataStore() {
         return dataStore;
     }
@@ -62,6 +64,14 @@ public class EntityModel {
 
     public void setIsSystem(Boolean isSystem) {
         this.isSystem = isSystem;
+    }
+
+    public Boolean getDynamic() {
+        return dynamic;
+    }
+
+    public void setDynamic(Boolean dynamic) {
+        this.dynamic = dynamic;
     }
 
     public String getTableName() {

@@ -214,7 +214,10 @@ public class InspectorFormLayoutBuilder {
 
             isReadonly = isReadonly || (disabledProperties != null && disabledProperties.contains(metaProperty.getName()));
             if (range.isClass() && metaProperty.getType() != MetaProperty.Type.EMBEDDED) {
-                pickerField.setReadOnly(!metadataTools.isOwningSide(metaProperty) || isReadonly);
+                // isOwningSide() reads JPA annotations, which a non-JPA store's property lacks.
+                boolean notOwningSide = metadataTools.isJpa(metaProperty)
+                        && !metadataTools.isOwningSide(metaProperty);
+                pickerField.setReadOnly(notOwningSide || isReadonly);
             } else {
                 pickerField.setReadOnly(isReadonly);
             }

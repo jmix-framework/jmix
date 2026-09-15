@@ -27,6 +27,7 @@ import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
+import io.jmix.datatools.EntityInspectorSupport;
 import io.jmix.datatoolsflowui.DatatoolsUiProperties;
 import io.jmix.datatoolsflowui.view.entityinspector.EntityFormLayoutUtils;
 import io.jmix.datatoolsflowui.view.entityinspector.EntityInspectorListView;
@@ -55,6 +56,7 @@ public class InspectorDataGridBuilder {
     protected UiComponents uiComponents;
     protected DatatoolsUiProperties datatoolsUiProperties;
     protected Messages messages;
+    protected EntityInspectorSupport entityInspectorSupport;
 
     private final MetaClass metaClass;
     private final CollectionContainer<?> collectionContainer;
@@ -91,6 +93,11 @@ public class InspectorDataGridBuilder {
         this.messages = messages;
     }
 
+    @Autowired
+    public void setEntityInspectorSupport(EntityInspectorSupport entityInspectorSupport) {
+        this.entityInspectorSupport = entityInspectorSupport;
+    }
+
     public static InspectorDataGridBuilder from(ApplicationContext applicationContext,
                                                 CollectionContainer<?> collectionContainer) {
         return applicationContext.getBean(InspectorDataGridBuilder.class, collectionContainer);
@@ -110,7 +117,8 @@ public class InspectorDataGridBuilder {
         List<MetaProperty> systemProperties = new ArrayList<>(10);
         for (MetaProperty metaProperty : metaClass.getProperties()) {
             //don't show embedded, transient & multiple referred entities
-            if (EntityFormLayoutUtils.isEmbedded(metaProperty) || !metadataTools.isJpa(metaProperty)) {
+            if (EntityFormLayoutUtils.isEmbedded(metaProperty)
+                    || !entityInspectorSupport.isStoredProperty(metaProperty)) {
                 continue;
             }
 
@@ -118,7 +126,9 @@ public class InspectorDataGridBuilder {
                 continue;
             }
 
-            if (metadataTools.isAnnotationPresent(metaClass.getJavaClass(), metaProperty.getName(), Convert.class)) {
+            if (metadataTools.isJpa(metaProperty)
+                    && metadataTools.isAnnotationPresent(metaClass.getJavaClass(),
+                    metaProperty.getName(), Convert.class)) {
                 continue;
             }
 

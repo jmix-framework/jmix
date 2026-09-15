@@ -54,6 +54,16 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @JmixModule
 public class EntityInspectorUiTestConfiguration {
 
+    @Bean("test_CustomDataStore")
+    CustomDataStore customDataStore() {
+        return new CustomDataStore();
+    }
+
+    @Bean("test_CustomStoreDescriptorProvider")
+    CustomStoreDescriptorProvider customStoreDescriptorProvider() {
+        return new CustomStoreDescriptorProvider();
+    }
+
     @Bean
     UserRepository userRepository() {
         return new InMemoryUserRepository();

@@ -39,6 +39,15 @@
         </createTable>
     </changeSet>
 
+    <changeSet author="test" id="data-model-host-entity">
+        <createTable tableName="TEST_DATA_MODEL_HOST_ENTITY">
+            <column name="ID" type="${uuid.type}">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="NAME" type="varchar(255)"/>
+        </createTable>
+    </changeSet>
+
     <changeSet author="test" id="inspector-policy-related-entity">
         <createTable tableName="TEST_INSPECTOR_POLICY_RELATED_ENTITY">
             <column name="ID" type="${uuid.type}">

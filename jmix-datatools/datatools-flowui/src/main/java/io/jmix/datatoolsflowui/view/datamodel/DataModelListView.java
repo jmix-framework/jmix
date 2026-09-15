@@ -75,6 +75,8 @@ public class DataModelListView extends StandardView {
     @ViewComponent
     protected DataGrid<EntityModel> entityModelsDataGrid;
     @ViewComponent
+    protected DataGrid<AttributeModel> attributeModelsDataGrid;
+    @ViewComponent
     protected JmixCheckbox showSystemCheckBox;
     @ViewComponent
     protected TypedTextField<String> entityFilter;
@@ -118,7 +120,26 @@ public class DataModelListView extends StandardView {
         urlQueryParametersFacet.registerBinder(new EntityNameUrlQueryParametersBinder());
         initDataStoreNames();
         initDataStoreColumnVisibility();
+        initDynamicColumnVisibility();
         initDiagramButtonAvailability();
+    }
+
+    /**
+     * Hides the {@code dynamic} columns unless a module contributes entities or attributes that JPA
+     * metadata cannot describe. With no contributor every entity and attribute is a static one, and
+     * the column would be a constant.
+     */
+    protected void initDynamicColumnVisibility() {
+        boolean visible = dataModelRegistry.hasContributors();
+        setColumnVisible(entityModelsDataGrid, "dynamic", visible);
+        setColumnVisible(attributeModelsDataGrid, "dynamic", visible);
+    }
+
+    protected void setColumnVisible(DataGrid<?> dataGrid, String columnKey, boolean visible) {
+        Grid.Column<?> column = dataGrid.getColumnByKey(columnKey);
+        if (column != null) {
+            column.setVisible(visible);
+        }
     }
 
     protected void initDiagramButtonAvailability() {

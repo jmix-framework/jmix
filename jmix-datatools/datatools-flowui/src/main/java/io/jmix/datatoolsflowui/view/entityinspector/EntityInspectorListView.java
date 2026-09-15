@@ -40,6 +40,7 @@ import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.Session;
 import io.jmix.core.security.EntityOp;
 import io.jmix.data.PersistenceHints;
+import io.jmix.datatools.EntityInspectorSupport;
 import io.jmix.datatools.EntityRestore;
 import io.jmix.datatoolsflowui.DatatoolsUiProperties;
 import io.jmix.datatoolsflowui.accesscontext.UiImportExportEntityContext;
@@ -187,6 +188,8 @@ public class EntityInspectorListView extends StandardListView<Object> {
     protected InspectorExportHelper exportHelper;
     @Autowired
     protected EntityUpdateDispatcher entityUpdateDispatcher;
+    @Autowired
+    protected EntityInspectorSupport entityInspectorSupport;
 
     protected DataGrid<Object> entitiesDataGrid;
     protected GenericFilter entitiesGenericFilter;
@@ -288,7 +291,7 @@ public class EntityInspectorListView extends StandardListView<Object> {
     protected Map<MetaClass, String> getEntitiesLookupFieldOptions() {
         Map<MetaClass, String> options = new TreeMap<>(Comparator.comparing(MetaClass::getName));
 
-        for (MetaClass metaClass : metadataTools.getAllJpaEntityMetaClasses()) {
+        for (MetaClass metaClass : entityInspectorSupport.getInspectableEntityMetaClasses()) {
             if (readPermitted(metaClass)) {
                 options.put(metaClass,
                         messageTools.getEntityCaption(metaClass) + " (" + metaClass.getName() + ")");
@@ -442,17 +445,23 @@ public class EntityInspectorListView extends StandardListView<Object> {
         entitiesDl.setFetchPlan(fetchPlan);
         entitiesDl.setContainer(entitiesDc);
 
+        boolean supportsJpqlQuery = entityInspectorSupport.supportsJpqlQuery(meta);
+
         switch (Objects.requireNonNull(showMode.getValue())) {
             case ALL:
                 entitiesDl.setHint(PersistenceHints.SOFT_DELETION, false);
-                entitiesDl.setQuery(String.format(BASE_SELECT_QUERY, meta.getName()));
+                if (supportsJpqlQuery) {
+                    entitiesDl.setQuery(String.format(BASE_SELECT_QUERY, meta.getName()));
+                }
                 break;
             case NON_REMOVED:
                 entitiesDl.setHint(PersistenceHints.SOFT_DELETION, true);
-                entitiesDl.setQuery(String.format(BASE_SELECT_QUERY, meta.getName()));
+                if (supportsJpqlQuery) {
+                    entitiesDl.setQuery(String.format(BASE_SELECT_QUERY, meta.getName()));
+                }
                 break;
             case REMOVED:
-                if (metadataTools.isSoftDeletable(meta.getJavaClass())) {
+                if (supportsJpqlQuery && metadataTools.isSoftDeletable(meta.getJavaClass())) {
                     entitiesDl.setHint(PersistenceHints.SOFT_DELETION, false);
                     entitiesDl.setQuery(
                             String.format(
@@ -582,7 +591,8 @@ public class EntityInspectorListView extends StandardListView<Object> {
         initExcelExportAction(dataGrid, button ->
                 buttonsPanel.addComponentAtIndex(buttonsPanel.indexOf(exportDropdownButton), button));
 
-        if (metadataTools.isSoftDeletable(selectedMeta.getJavaClass())) {
+        if (entityInspectorSupport.supportsJpqlQuery(selectedMeta)
+                && metadataTools.isSoftDeletable(selectedMeta.getJavaClass())) {
             JmixButton restoreButton = createRestoreButton(dataGrid);
             JmixButton wipeOutButton = createWipeOutButton(dataGrid);
             buttonsPanel.addToStart(restoreButton, wipeOutButton);

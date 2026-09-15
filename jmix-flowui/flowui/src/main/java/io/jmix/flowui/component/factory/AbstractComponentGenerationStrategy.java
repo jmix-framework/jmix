@@ -47,13 +47,11 @@ import io.jmix.flowui.component.upload.FileStorageUploadField;
 import io.jmix.flowui.component.upload.FileUploadField;
 import io.jmix.flowui.component.valuepicker.JmixMultiValuePicker;
 import io.jmix.flowui.data.SupportsValueSource;
-import jakarta.persistence.Lob;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.jspecify.annotations.Nullable;
+import org.springframework.beans.factory.annotation.Autowired;
 
-import java.lang.annotation.Annotation;
 import java.sql.Time;
 import java.time.*;
 import java.util.Date;
@@ -160,8 +158,7 @@ public abstract class AbstractComponentGenerationStrategy implements ComponentGe
     protected Component createStringField(ComponentGenerationContext context, MetaPropertyPath mpp) {
         Component textField;
 
-        Annotation lob = mpp.getMetaProperty().getAnnotatedElement().getAnnotation(Lob.class);
-        if (lob != null) {
+        if (metadataTools.isLob(mpp.getMetaProperty())) {
             textField = uiComponents.create(JmixTextArea.class);
         } else {
             textField = uiComponents.create(TypedTextField.class);

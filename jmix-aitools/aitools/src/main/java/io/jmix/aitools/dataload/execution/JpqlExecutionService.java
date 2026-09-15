@@ -17,6 +17,7 @@
 package io.jmix.aitools.dataload.execution;
 
 import io.jmix.aitools.AiToolsDataLoadProperties;
+import io.jmix.aitools.ExcludeFromAi;
 import io.jmix.aitools.dataload.execution.JpqlValidationAndRepairService.OperationResult;
 import io.jmix.aitools.dataload.validation.JpqlValidationResult;
 import io.jmix.core.AccessManager;
@@ -27,6 +28,7 @@ import io.jmix.core.MetadataTools;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.entity.KeyValueEntity;
 import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.metamodel.model.MetadataObject;
 import io.jmix.core.security.AccessDeniedException;
@@ -173,10 +175,11 @@ public class JpqlExecutionService {
 
     /**
      * Resolves the positions of the selected columns that must be dropped from the result: those the
-     * current user is not allowed to read, plus those mapping to a {@link io.jmix.core.annotation.Secret}
-     * attribute. The secret guard is defense in depth — a secret attribute is already unknown to
-     * introspection and rejected by JPQL validation — so a secret value is never returned even if a
-     * query reaches execution through another path.
+     * current user is not allowed to read, plus those mapping to an attribute hidden from the AI
+     * (annotated {@link io.jmix.core.annotation.Secret} or {@link ExcludeFromAi}). The hidden-attribute
+     * guard is defense in depth — such an attribute is already unknown to introspection and rejected by
+     * JPQL validation — so its value is never returned even if a query reaches execution through another
+     * path.
      *
      * @param jpqlQuery query whose selected columns are being resolved
      * @return positions (in select-clause order) of the columns to drop, without duplicates
@@ -184,54 +187,59 @@ public class JpqlExecutionService {
      */
     protected List<Integer> resolveExcludedSelectedIndexes(String jpqlQuery) {
         List<Integer> excluded = new ArrayList<>(resolveDeniedSelectedIndexes(jpqlQuery));
-        for (Integer secretIndex : resolveSecretSelectedIndexes(jpqlQuery)) {
-            if (!excluded.contains(secretIndex)) {
-                excluded.add(secretIndex);
+        for (Integer hiddenIndex : resolveHiddenSelectedIndexes(jpqlQuery)) {
+            if (!excluded.contains(hiddenIndex)) {
+                excluded.add(hiddenIndex);
             }
         }
         return excluded;
     }
 
     /**
-     * Resolves the positions of the selected columns that map to a {@link io.jmix.core.annotation.Secret}
-     * attribute.
+     * Resolves the positions of the selected columns that map to an attribute hidden from the AI
+     * (annotated {@link io.jmix.core.annotation.Secret} or {@link ExcludeFromAi}).
      *
      * @param jpqlQuery query whose selected columns are being inspected
-     * @return positions (in select-clause order) of the secret columns, or an empty list when the
+     * @return positions (in select-clause order) of the hidden columns, or an empty list when the
      * metadata collaborators are unavailable or the query cannot be parsed
      */
-    protected List<Integer> resolveSecretSelectedIndexes(String jpqlQuery) {
+    protected List<Integer> resolveHiddenSelectedIndexes(String jpqlQuery) {
         if (metadataTools == null || queryTransformerFactory == null || metadata == null) {
             return List.of();
         }
 
         try {
             QueryParser queryParser = queryTransformerFactory.parser(jpqlQuery);
-            List<Integer> secretIndexes = new ArrayList<>();
+            List<Integer> hiddenIndexes = new ArrayList<>();
             int selectedIndex = 0;
             for (QueryParser.QueryPath queryPath : queryParser.getQueryPaths()) {
                 if (queryPath.isSelectedPath()) {
-                    if (isSecretSelectedPath(queryPath)) {
-                        secretIndexes.add(selectedIndex);
+                    if (isHiddenSelectedPath(queryPath)) {
+                        hiddenIndexes.add(selectedIndex);
                     }
                     selectedIndex++;
                 }
             }
-            return secretIndexes;
+            return hiddenIndexes;
         } catch (RuntimeException e) {
             return List.of();
         }
     }
 
-    protected boolean isSecretSelectedPath(QueryParser.QueryPath queryPath) {
+    protected boolean isHiddenSelectedPath(QueryParser.QueryPath queryPath) {
         MetaClass metaClass = metadata.getClass(queryPath.getEntityName());
         MetaPropertyPath propertyPath = metaClass.getPropertyPath(queryPath.getPropertyPath());
-        return propertyPath != null && metadataTools.isSecret(propertyPath.getMetaProperty());
+        if (propertyPath == null) {
+            return false;
+        }
+        MetaProperty metaProperty = propertyPath.getMetaProperty();
+        return metadataTools.isSecret(metaProperty)
+                || metaProperty.getAnnotations().containsKey(ExcludeFromAi.class.getName());
     }
 
     /**
      * Returns the result properties that stay in the result, dropping the ones at the excluded select
-     * positions (denied by security or mapping to a secret attribute).
+     * positions (denied by security or mapping to an attribute hidden from the AI).
      *
      * @param resultProperties        result property names in select-clause order
      * @param excludedSelectedIndexes positions of the columns to drop

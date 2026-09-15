@@ -17,6 +17,9 @@
 package io.jmix.flowui.model.impl;
 
 import com.google.common.base.Strings;
+import io.jmix.core.querycondition.Condition;
+import io.jmix.core.querycondition.LogicalCondition;
+import io.jmix.flowui.model.ConditionContributor;
 import io.jmix.flowui.model.DataLoader;
 import io.jmix.flowui.model.HasLoader;
 import io.jmix.flowui.model.InstanceContainer;
@@ -34,6 +37,40 @@ import java.util.regex.Pattern;
 public class DataLoadersHelper {
 
     public static final Pattern PARAM_PATTERN = Pattern.compile(":([\\w$]+)");
+
+    /**
+     * Composes the effective condition of a loader: the conjunction of the loader's own condition
+     * and the current contributions of the registered contributors. Both the loader's condition
+     * and the contributions enter the composed tree as copies, so it shares no nodes with anyone.
+     * With no non-null contributions the loader's own condition is returned as is - the same
+     * instance, so the behavior of a loader without contributors is untouched.
+     *
+     * @param condition    the loader's own condition
+     * @param contributors registered contributors, polled in registration order
+     * @return the composed condition, or {@code null} if there is nothing to compose
+     */
+    @Nullable
+    public static Condition composeEffectiveCondition(@Nullable Condition condition,
+                                                      List<ConditionContributor> contributors) {
+        List<Condition> contributions = new ArrayList<>(contributors.size());
+        for (ConditionContributor contributor : contributors) {
+            Condition contribution = contributor.getCondition();
+            if (contribution != null) {
+                contributions.add(contribution.copy());
+            }
+        }
+
+        if (contributions.isEmpty()) {
+            return condition;
+        }
+
+        LogicalCondition effective = LogicalCondition.and();
+        if (condition != null) {
+            effective.add(condition.copy());
+        }
+        contributions.forEach(effective::add);
+        return effective;
+    }
 
     /**
      * Returns the loader of master entity instance.

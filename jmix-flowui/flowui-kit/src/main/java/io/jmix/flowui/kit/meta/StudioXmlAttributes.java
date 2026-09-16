@@ -835,6 +835,7 @@ public final class StudioXmlAttributes {
     public static final String SIDE_PANEL_LAYOUT_ID = "sidePanelLayoutId";
     public static final String SIDE_PANEL_OVERLAY = "sidePanelOverlay";
     public static final String SIDE_PANEL_POSITION = "sidePanelPosition";
+    public static final String SIDE_PANEL_RESIZABLE = "sidePanelResizable";
     public static final String SIDE_PANEL_VERTICAL_MAX_SIZE = "sidePanelVerticalMaxSize";
     public static final String SIDE_PANEL_VERTICAL_MIN_SIZE = "sidePanelVerticalMinSize";
     public static final String SIDE_PANEL_VERTICAL_SIZE = "sidePanelVerticalSize";

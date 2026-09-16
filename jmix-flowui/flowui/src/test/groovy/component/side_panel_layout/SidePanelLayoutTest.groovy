@@ -17,11 +17,17 @@
 package component.side_panel_layout
 
 import component.side_panel_layout.view.SidePanelLayoutInjectionTestView
+import io.jmix.flowui.UiComponents
+import io.jmix.flowui.component.sidepanellayout.SidePanelLayout
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import test_support.spec.FlowuiTestSpecification
 
 @SpringBootTest
 class SidePanelLayoutTest extends FlowuiTestSpecification {
+
+    @Autowired
+    UiComponents uiComponents
 
     @Override
     void setup() {
@@ -37,5 +43,21 @@ class SidePanelLayoutTest extends FlowuiTestSpecification {
         view.closeButton != null
         view.closeButton.text == "Close"
         view.testAddressFragment != null
+    }
+
+    def "sidePanelResizable defaults to false"() {
+        expect:
+        !uiComponents.create(SidePanelLayout).sidePanelResizable
+    }
+
+    def "addSidePanelAfterResizeListener returns a registration"() {
+        given:
+        def layout = uiComponents.create(SidePanelLayout)
+
+        when:
+        def registration = layout.addSidePanelAfterResizeListener(event -> {})
+
+        then:
+        registration != null
     }
 }

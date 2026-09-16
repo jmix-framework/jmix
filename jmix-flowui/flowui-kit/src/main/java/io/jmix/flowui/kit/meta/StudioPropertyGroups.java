@@ -3960,6 +3960,10 @@ public final class StudioPropertyGroups {
                             defaultValue = "RIGHT",
                             options = {"LEFT", "RIGHT", "INLINE_START", "INLINE_END", "TOP", "BOTTOM"}),
                     @StudioProperty(
+                            xmlAttribute = StudioXmlAttributes.SIDE_PANEL_RESIZABLE,
+                            type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "false"),
+                    @StudioProperty(
                             xmlAttribute = StudioXmlAttributes.SIDE_PANEL_VERTICAL_MAX_SIZE,
                             type = StudioPropertyType.STRING,
                             category = StudioProperty.Category.SIZE,
@@ -3986,7 +3990,12 @@ public final class StudioPropertyGroups {
                             defaultValue = "true"),
                     @StudioProperty(
                             xmlAttribute = StudioXmlAttributes.OVERLAY_ARIA_LABEL,
-                            type = StudioPropertyType.LOCALIZED_STRING)
+                            type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(
+                            xmlAttribute = StudioXmlAttributes.THEME_NAMES,
+                            type = StudioPropertyType.VALUES_LIST,
+                            category = StudioProperty.Category.LOOK_AND_FEEL,
+                            options = {"resizer-small"})
             }
     )
     public interface SidePanelLayoutComponent extends BaseComponent, MinAndMaxWidth, MinAndMaxHeight,

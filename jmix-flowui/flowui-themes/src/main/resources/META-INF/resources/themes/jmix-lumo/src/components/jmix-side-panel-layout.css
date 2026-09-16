@@ -243,9 +243,193 @@
 
     @media (forced-colors: active) {
 
-        [part='sidePanel'] {
+        [part='sidePanel'],
+        [part='resizeHandle'] {
             border: 1px solid;
         }
+    }
+
+    /* Resize handle */
+
+    /*
+     * The handle mirrors the SplitLayout splitter: a band on the side panel's inner edge with a grip
+     * in the middle. The band reserves space on the panel (see the padding rules below) so it does
+     * not cover the panel content. The 'resizer-small' variant turns the band into a hairline and
+     * shows the grip on hover/active only, like SplitLayout's 'small' variant.
+     *
+     * The private --_* variables are declared on the side panel so that the handle and the padding
+     * read the same values. A variant redeclares them with other fallbacks; a user overrides the
+     * public --jmix-side-panel-layout-* variables, which always win.
+     */
+    [part='sidePanel'] {
+        --_splitter-size: var(--jmix-side-panel-layout-splitter-size, 0.5rem);
+        --_splitter-target-size: var(--jmix-side-panel-layout-splitter-target-size, 0.5rem);
+        --_handle-size: var(--jmix-side-panel-layout-handle-size, 0.25rem);
+        --_handle-target-size: var(--jmix-side-panel-layout-handle-target-size, 2rem);
+    }
+
+    :host([theme~='resizer-small']) [part='sidePanel'] {
+        --_splitter-size: var(--jmix-side-panel-layout-splitter-size, 1px);
+        --_splitter-target-size: var(--jmix-side-panel-layout-splitter-target-size, 0.3rem);
+        --_handle-size: var(--jmix-side-panel-layout-handle-size, 0.2rem);
+    }
+
+    [part='resizeHandle'] {
+        position: absolute;
+        z-index: 1;
+        box-sizing: border-box;
+        touch-action: none;
+        background: var(--jmix-side-panel-layout-splitter-background, var(--vaadin-background-container-strong));
+    }
+
+    /* Pointer hit target; extends beyond the visible band when the target size is larger */
+    [part='resizeHandle']::before {
+        content: '';
+        position: absolute;
+    }
+
+    /* Grip in the middle of the band */
+    [part='resizeHandle']::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        border-radius: var(--vaadin-radius-m);
+        background: var(--jmix-side-panel-layout-handle-background, var(--vaadin-text-color-secondary));
+    }
+
+    /* 'resizer-small' variant: the grip is shown on hover/active only */
+    :host([theme~='resizer-small']) [part='resizeHandle']::after {
+        opacity: 0;
+    }
+
+    :host([theme~='resizer-small']) [part='resizeHandle']:active::after,
+    :host([theme~='resizer-small'][resizing]) [part='resizeHandle']::after {
+        opacity: 1;
+    }
+
+    @media (any-hover: hover) {
+
+        :host([theme~='resizer-small']) [part='resizeHandle']:hover::after {
+            opacity: 1;
+        }
+    }
+
+    /* Resize: horizontal positions */
+
+    :host([side-panel-position='']) [part='resizeHandle'],
+    :host([side-panel-position='right']) [part='resizeHandle'],
+    :host([side-panel-position='left']) [part='resizeHandle'],
+    :host([side-panel-position='inline-start']) [part='resizeHandle'],
+    :host([side-panel-position='inline-end']) [part='resizeHandle'] {
+        top: 0;
+        height: 100%;
+        width: var(--_splitter-size);
+        cursor: ew-resize;
+    }
+
+    :host([side-panel-position='']) [part='resizeHandle']::before,
+    :host([side-panel-position='right']) [part='resizeHandle']::before,
+    :host([side-panel-position='left']) [part='resizeHandle']::before,
+    :host([side-panel-position='inline-start']) [part='resizeHandle']::before,
+    :host([side-panel-position='inline-end']) [part='resizeHandle']::before {
+        inset: 0 calc((var(--_splitter-target-size) - var(--_splitter-size)) / -2);
+    }
+
+    :host([side-panel-position='']) [part='resizeHandle']::after,
+    :host([side-panel-position='right']) [part='resizeHandle']::after,
+    :host([side-panel-position='left']) [part='resizeHandle']::after,
+    :host([side-panel-position='inline-start']) [part='resizeHandle']::after,
+    :host([side-panel-position='inline-end']) [part='resizeHandle']::after {
+        width: var(--_handle-size);
+        height: var(--_handle-target-size);
+        max-height: 50%;
+    }
+
+    :host([side-panel-position='']) [part='resizeHandle'],
+    :host([side-panel-position='right']) [part='resizeHandle'] {
+        left: 0;
+    }
+
+    :host([side-panel-position='left']) [part='resizeHandle'] {
+        right: 0;
+    }
+
+    :host([side-panel-position='inline-start']) [part='resizeHandle'] {
+        inset-inline-end: 0;
+    }
+
+    :host([side-panel-position='inline-end']) [part='resizeHandle'] {
+        inset-inline-start: 0;
+    }
+
+    /* Resize: vertical positions */
+
+    :host([side-panel-position='top']) [part='resizeHandle'],
+    :host([side-panel-position='bottom']) [part='resizeHandle'] {
+        left: 0;
+        width: 100%;
+        height: var(--_splitter-size);
+        cursor: ns-resize;
+    }
+
+    :host([side-panel-position='top']) [part='resizeHandle']::before,
+    :host([side-panel-position='bottom']) [part='resizeHandle']::before {
+        inset: calc((var(--_splitter-target-size) - var(--_splitter-size)) / -2) 0;
+    }
+
+    :host([side-panel-position='top']) [part='resizeHandle']::after,
+    :host([side-panel-position='bottom']) [part='resizeHandle']::after {
+        width: var(--_handle-target-size);
+        max-width: 50%;
+        height: var(--_handle-size);
+    }
+
+    :host([side-panel-position='top']) [part='resizeHandle'] {
+        bottom: 0;
+    }
+
+    :host([side-panel-position='bottom']) [part='resizeHandle'] {
+        top: 0;
+    }
+
+    /*
+     * Reserve space for the band on the panel's inner edge, only while the handle is rendered
+     * (not in the small-device 'overlay' mode, where the panel content moves into a side dialog).
+     */
+    :host([side-panel-resizable]:not([overlay])[side-panel-position='']) [part='sidePanel'],
+    :host([side-panel-resizable]:not([overlay])[side-panel-position='right']) [part='sidePanel'] {
+        padding-left: var(--_splitter-size);
+    }
+
+    :host([side-panel-resizable]:not([overlay])[side-panel-position='left']) [part='sidePanel'] {
+        padding-right: var(--_splitter-size);
+    }
+
+    :host([side-panel-resizable]:not([overlay])[side-panel-position='inline-start']) [part='sidePanel'] {
+        padding-inline-end: var(--_splitter-size);
+    }
+
+    :host([side-panel-resizable]:not([overlay])[side-panel-position='inline-end']) [part='sidePanel'] {
+        padding-inline-start: var(--_splitter-size);
+    }
+
+    :host([side-panel-resizable]:not([overlay])[side-panel-position='top']) [part='sidePanel'] {
+        padding-bottom: var(--_splitter-size);
+    }
+
+    :host([side-panel-resizable]:not([overlay])[side-panel-position='bottom']) [part='sidePanel'] {
+        padding-top: var(--_splitter-size);
+    }
+
+    /* Disable size transition during a live drag */
+    :host([resizing]) [part='sidePanel'] {
+        transition: none;
+    }
+
+    :host([resizing]) [part='content'] {
+        transition: none;
     }
 
     /*
@@ -288,5 +472,44 @@
 
     :host([side-panel-opened][side-panel-position='bottom']) [part='sidePanel'] {
         border-block-start: 1px solid var(--lumo-contrast-10pct);
+    }
+
+    /* Resize handle: Lumo tokens, hover and active, mirrors vaadin-split-layout's Lumo styles */
+
+    [part='sidePanel'] {
+        --_splitter-size: var(--jmix-side-panel-layout-splitter-size, var(--lumo-space-s));
+        --_splitter-target-size: var(--jmix-side-panel-layout-splitter-target-size, var(--lumo-space-s));
+        --_handle-size: var(--jmix-side-panel-layout-handle-size, var(--lumo-space-xs));
+        --_handle-target-size: var(--jmix-side-panel-layout-handle-target-size, var(--lumo-size-m));
+    }
+
+    :host([theme~='resizer-small']) [part='sidePanel'] {
+        --_handle-size: var(--jmix-side-panel-layout-handle-size, 0.3rem);
+    }
+
+    [part='resizeHandle'] {
+        background: var(--jmix-side-panel-layout-splitter-background, var(--lumo-contrast-5pct));
+    }
+
+    :host([theme~='resizer-small']) [part='resizeHandle'] {
+        background: var(--jmix-side-panel-layout-splitter-background, var(--lumo-contrast-10pct));
+    }
+
+    [part='resizeHandle']::after {
+        background: var(--jmix-side-panel-layout-handle-background, var(--lumo-contrast-30pct));
+        border-radius: var(--lumo-border-radius-s);
+        transition: 0.1s background-color;
+    }
+
+    @media (any-hover: hover) {
+
+        [part='resizeHandle']:hover::after {
+            background: var(--lumo-contrast-40pct);
+        }
+    }
+
+    [part='resizeHandle']:active::after,
+    :host([resizing]) [part='resizeHandle']::after {
+        background: var(--lumo-contrast-50pct);
     }
 }

@@ -2047,6 +2047,19 @@
         </xs:union>
     </xs:simpleType>
 
+    <xs:simpleType name="sidePanelLayoutThemeNames">
+        <xs:union>
+            <xs:simpleType>
+                <xs:restriction base="xs:string"/>
+            </xs:simpleType>
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="resizer-small"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:union>
+    </xs:simpleType>
+
     <xs:simpleType name="detailsThemeNames">
         <xs:union>
             <xs:simpleType>
@@ -4556,6 +4569,8 @@
                 <xs:attribute name="sidePanelVerticalSize" type="componentSize"/>
                 <xs:attribute name="modal" type="xs:boolean"/>
                 <xs:attribute name="overlayAriaLabel" type="resourceString"/>
+                <xs:attribute name="sidePanelResizable" type="xs:boolean"/>
+                <xs:attribute name="themeNames" type="sidePanelLayoutThemeNames"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>

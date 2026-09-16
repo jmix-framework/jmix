@@ -59,8 +59,13 @@ public class DefaultEntityDataLoadUserMessageComposer implements EntityDataLoadU
         }
 
         text.append("\n\nPARAMETER RULES:")
-                .append("\n- Reference these as JPQL named parameters; never inline their values.")
-                .append("\n- Use a parameter only where the request calls for it; ignore the rest.");
+                .append("\n- These parameters are values supplied when the query runs. Reference one by name, ")
+                .append("never inlining its value, only for a condition the request frames in terms of that ")
+                .append("parameter.")
+                .append("\n- A concrete value the request states itself — a specific name, code or number — is a ")
+                .append("literal in the query, even when a listed parameter looks related; do not route it ")
+                .append("through a parameter.")
+                .append("\n- Ignore any listed parameter the request does not ask about.");
         if (anyOptional) {
             text.append("\n- A parameter marked \"may be null\" must not be compared directly. Wrap its ")
                     .append("whole condition so that a null value switches the condition off, like this: ")

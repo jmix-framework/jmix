@@ -195,6 +195,31 @@ export const JmixSidePanelLayoutMixin = (superClass) =>
     _sidePanelOpenedChanged(opened, oldOpened) {
         this._updateModalityCurtainHidden();
         this._updateContentSize();
+
+        if (opened) {
+            this._forceSidePanelContentRepaint();
+        }
+    }
+
+    /**
+     * Works around a Chromium bug where the slotted side panel content can rasterize empty when the
+     * panel becomes visible, appearing only after a full-page repaint (e.g. a browser zoom). Nudging
+     * the CSS {@code zoom} of the content for a single painted frame and then removing it forces the
+     * content to paint, and leaves no transform or zoom on the element afterwards.
+     *
+     * @private
+     */
+    _forceSidePanelContentRepaint() {
+        const content = this.$.sidePanelContent;
+        if (!content) {
+            return;
+        }
+        requestAnimationFrame(() => {
+            content.style.zoom = '1.0001';
+            requestAnimationFrame(() => {
+                content.style.zoom = '';
+            });
+        });
     }
 
     /**

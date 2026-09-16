@@ -31,6 +31,14 @@
             <![CDATA[${studioUtils.makeScreenNaturalCaption(entity.className.concat('.browse'), null)}]]>
         </message>
     </locMessages>
+    <locMessages key="fullTextFilterTitle" expressionKey="${studioUtils.decapitalize(viewControllerName)}.fullTextFilter">
+        <message lang="default">
+            <![CDATA[Search]]>
+        </message>
+        <condition source="${listFilterType.type.name().equals(&quot;FULL_TEXT&quot;)}">
+            <dependency code="listFilterType"/>
+        </condition>
+    </locMessages>
     <steps>
         <step name="Entity list view" order="0"/>
         <step name="Entity list view fetch plan" order="1"

@@ -25,7 +25,6 @@
     min-height: 0;
     height: 100%;
     overflow: hidden;
-    border-inline-end: 1px solid var(--lumo-contrast-10pct);
 }
 
 .dynmod-ai-builder .chat-pane .jmix-ai-chat {
@@ -95,7 +94,6 @@
     flex-shrink: 0;
     gap: var(--lumo-space-s);
     padding: var(--lumo-space-s) var(--lumo-space-m);
-    border-bottom: 1px solid var(--lumo-contrast-10pct);
     box-sizing: border-box;
 }
 
@@ -128,8 +126,6 @@
     color: var(--lumo-secondary-text-color);
     font-size: var(--lumo-font-size-xs);
     font-weight: 600;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
 }
 
 .dynmod-ai-builder .draft-body.centered {
@@ -265,7 +261,6 @@
 .dynmod-ai-builder .actions {
     flex-shrink: 0;
     padding: var(--lumo-space-s) var(--lumo-space-m) var(--lumo-space-m);
-    border-top: 1px solid var(--lumo-contrast-10pct);
     box-sizing: border-box;
 }
 
@@ -279,12 +274,57 @@
         width: 100%;
         height: auto;
         border-inline-end: none;
-        border-bottom: 1px solid var(--lumo-contrast-10pct);
     }
 
     .dynmod-ai-builder .draft-panel {
+        border-inline-start: none;
+        border-block-start: 1px solid var(--lumo-contrast-10pct);
         flex: 1 1 45%;
         width: 100%;
         height: auto;
     }
 }
+/* Builder-local presentation; shared AiChat styles are intentionally unchanged. */
+.dynmod-ai-builder .dmagent-activity-summary { --dmagent-activity-link-color: var(--lumo-primary-text-color); }
+.dynmod-ai-builder .conversation-header { flex: 0 0 auto; padding-inline: 1rem; }
+.dynmod-ai-builder .draft-panel { background: var(--lumo-base-color); }
+.dynmod-ai-builder .draft-header { flex-wrap: nowrap; align-items: center; }
+.dynmod-ai-builder .draft-header > :not(.draft-title) { flex-shrink: 0; }
+.dynmod-ai-builder .draft-title { flex: 1 1 0; white-space: normal; overflow-wrap: anywhere; font-size: 1rem; }
+.dynmod-ai-builder .primary-name { font-weight: 600; }
+.dynmod-ai-builder .step-row { padding-block: .5rem; line-height: 1.5; border-bottom: 1px solid var(--lumo-contrast-10pct); }
+.dynmod-ai-builder .step-properties { color: var(--lumo-secondary-text-color); font-size: .875em; }
+.dynmod-ai-builder vaadin-details.plan-technical { margin: .5rem 0 0; padding: 0; min-width: 0; box-sizing: border-box; }
+.dynmod-ai-builder .plan-technical > vaadin-details-summary { padding: .25rem 0; }
+.dynmod-ai-builder .plan-technical::part(content) { padding: .5rem 0 0; }
+.dynmod-ai-builder .plan-technical-content { margin: 0; max-width: 100%; min-width: 0; font-size: .75rem; }
+.dynmod-ai-builder .card-details { border: 0; padding: 0; background: transparent; }
+.dynmod-ai-builder .card-details::part(content) { padding-inline: 0; }
+.dynmod-ai-builder .preview-attribute { display: flex; flex-direction: column; gap: .15rem; padding: .4rem 0; border-bottom: 1px solid var(--lumo-contrast-10pct); }
+.dynmod-ai-builder .preview-attribute > span:last-child { color: var(--lumo-secondary-text-color); font-size: .85em; }
+.dynmod-ai-builder .finding-row { border-inline-start: 3px solid currentColor; padding: .5rem .65rem; margin-block: .35rem; align-items: flex-start; }
+.dynmod-ai-builder .finding-row > vaadin-icon { flex: 0 0 1rem; width: 1rem; height: 1rem; margin-block-start: .15rem; }
+.dynmod-ai-builder .finding-error { color: var(--lumo-error-text-color); }
+.dynmod-ai-builder .finding-warning { color: var(--lumo-warning-text-color); }
+.dynmod-ai-builder .finding-level { display: block; font-weight: 600; margin-bottom: .2rem; }
+.dynmod-ai-builder .run-activity { font-size: .8125rem; width: 100%; max-width: 40rem; min-width: 0; }
+.dynmod-ai-builder .activity-row { display: flex; align-items: baseline; gap: .4rem; padding-block: .2rem; min-width: 0; }
+.dynmod-ai-builder .activity-row > vaadin-icon { width: .85rem; height: .85rem; flex: 0 0 auto; }
+.dynmod-ai-builder .activity-row > span:first-of-type { overflow-wrap: anywhere; }
+.dynmod-ai-builder .activity-duration { margin-inline-start: auto; white-space: nowrap; color: var(--lumo-secondary-text-color); font-variant-numeric: tabular-nums; }
+.dynmod-ai-builder .activity-started > vaadin-icon { animation: dmagent-activity-spin 1.5s linear infinite; }
+.dynmod-ai-builder .activity-completed > vaadin-icon { color: var(--lumo-success-text-color); }
+.dynmod-ai-builder .activity-failed > vaadin-icon { color: var(--lumo-error-text-color); }
+.dynmod-ai-builder .activity-waiting > vaadin-icon { color: var(--lumo-warning-text-color); }
+.dynmod-ai-builder .activity-payload { white-space: pre-wrap; overflow-wrap: anywhere; max-height: 20rem; overflow: auto; font-size: .75rem; }
+.dynmod-ai-builder .activity-card { border: none; border-radius: 0; padding: 0; background: transparent; }
+.dynmod-ai-builder .activity-details { width: 100%; margin: 0; }
+.dynmod-ai-builder .activity-details > vaadin-details-summary { padding-block: .2rem; }
+.dynmod-ai-builder .activity-details .activity-row { flex: 1; }
+.dynmod-ai-builder .activity-open { display: block; width: 100%; height: auto; margin: 0; padding: 0; border: 0; border-radius: 0; box-shadow: none; background: transparent; text-align: start; white-space: normal; color: inherit; font: inherit; }
+.dynmod-ai-builder .activity-open::part(label) { display: block; width: 100%; white-space: normal; }
+.dynmod-ai-builder .activity-open .activity-row { width: 100%; box-sizing: border-box; }
+.dynmod-ai-builder .activity-open:hover .activity-row > span:first-of-type { color: var(--lumo-primary-text-color); text-decoration: underline; }
+.dynmod-ai-builder .activity-open:focus-visible { outline: 2px solid var(--lumo-primary-color); outline-offset: 2px; }
+@keyframes dmagent-activity-spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .dynmod-ai-builder .activity-started > vaadin-icon { animation: none; } }

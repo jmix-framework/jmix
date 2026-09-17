@@ -16,12 +16,10 @@
 
 package io.jmix.email.authentication.impl;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import com.microsoft.aad.msal4j.*;
 import io.jmix.email.EmailerProperties;
 import io.jmix.email.authentication.EmailRefreshTokenManager;
+import io.jmix.email.authentication.OAuth2ClientType;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
@@ -29,9 +27,7 @@ import org.slf4j.Logger;
 import java.net.MalformedURLException;
 import java.util.Collections;
 import java.util.Date;
-import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicReference;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
@@ -43,15 +39,20 @@ public class MicrosoftOAuth2TokenProvider extends AbstractOAuth2TokenProvider {
 
     protected final RefreshTokenCapturingCacheAspect cacheAspect = new RefreshTokenCapturingCacheAspect();
 
-    protected ConfidentialClientApplication clientApplication;
+    protected AbstractClientApplicationBase clientApplication;
     protected IAuthenticationResult cachedResult;
 
     /**
      * Refresh token value the provider considers to be currently persisted. It is used to detect external
-     * token updates (via the email token view or another application node) that require re-initialization
+     * token updates (via the email connection view or another application node) that require re-initialization
      * of the client application.
      */
     protected String currentRefreshToken;
+
+    /**
+     * Client type the stored refresh token was issued to (see {@link #buildClientApplication(OAuth2ClientType)}).
+     */
+    protected OAuth2ClientType currentClientType;
 
     public MicrosoftOAuth2TokenProvider(EmailerProperties emailerProperties, EmailRefreshTokenManager refreshTokenManager) {
         super(emailerProperties, refreshTokenManager);
@@ -62,10 +63,13 @@ public class MicrosoftOAuth2TokenProvider extends AbstractOAuth2TokenProvider {
     public synchronized String getAccessToken() {
         try {
             String storedRefreshToken = getRefreshToken();
-            if (clientApplication == null || !storedRefreshToken.equals(currentRefreshToken)) {
-                log.debug("Initializing Microsoft client application");
-                clientApplication = buildClientApplication(createCredential());
+            OAuth2ClientType clientType = refreshTokenManager.getRefreshTokenClientType();
+            if (clientApplication == null || !storedRefreshToken.equals(currentRefreshToken)
+                    || clientType != currentClientType) {
+                log.debug("Initializing Microsoft client application ({})", clientType);
+                clientApplication = buildClientApplication(clientType);
                 currentRefreshToken = storedRefreshToken;
+                currentClientType = clientType;
                 cachedResult = null;
             }
 
@@ -131,7 +135,9 @@ public class MicrosoftOAuth2TokenProvider extends AbstractOAuth2TokenProvider {
             return;
         }
         try {
-            refreshTokenManager.storeRefreshTokenValue(rotatedToken);
+            // The rotated token keeps the client type of the original one
+            refreshTokenManager.storeRefreshTokenValue(rotatedToken,
+                    currentClientType != null ? currentClientType : OAuth2ClientType.CONFIDENTIAL);
             currentRefreshToken = rotatedToken;
             log.debug("Rotated refresh token has been stored");
         } catch (Exception e) {
@@ -147,6 +153,29 @@ public class MicrosoftOAuth2TokenProvider extends AbstractOAuth2TokenProvider {
 
     protected IClientCredential createCredential() {
         return ClientCredentialFactory.createFromSecret(getSecret());
+    }
+
+    /**
+     * Entra binds a refresh token to the client type it was issued to (a token obtained by the
+     * device code flow is rejected when redeemed with a client secret - AADSTS700025), so the
+     * client application flavor must match the stored token.
+     */
+    protected AbstractClientApplicationBase buildClientApplication(OAuth2ClientType clientType) {
+        return clientType == OAuth2ClientType.PUBLIC
+                ? buildPublicClientApplication()
+                : buildClientApplication(createCredential());
+    }
+
+    protected PublicClientApplication buildPublicClientApplication() {
+        try {
+            return PublicClientApplication
+                    .builder(getClientId())
+                    .authority(buildAuthorityUrl())
+                    .setTokenCacheAccessAspect(cacheAspect)
+                    .build();
+        } catch (MalformedURLException e) {
+            throw new RuntimeException("Unable to build client application", e);
+        }
     }
 
     protected ConfidentialClientApplication buildClientApplication(IClientCredential credential) {
@@ -177,44 +206,4 @@ public class MicrosoftOAuth2TokenProvider extends AbstractOAuth2TokenProvider {
         return emailerProperties.getOAuth2().getTenantId();
     }
 
-    /**
-     * Captures the latest refresh token from the MSAL token cache. The cache itself is kept in memory
-     * within the client application instance, so nothing is loaded on {@code beforeCacheAccess}.
-     */
-    protected static class RefreshTokenCapturingCacheAspect implements ITokenCacheAccessAspect {
-
-        protected final AtomicReference<String> latestRefreshToken = new AtomicReference<>();
-
-        @Override
-        public void beforeCacheAccess(ITokenCacheAccessContext context) {
-        }
-
-        @Override
-        public void afterCacheAccess(ITokenCacheAccessContext context) {
-            if (!context.hasCacheChanged()) {
-                return;
-            }
-            try {
-                JsonObject root = JsonParser.parseString(context.tokenCache().serialize()).getAsJsonObject();
-                JsonElement refreshTokens = root.get("RefreshToken");
-                if (refreshTokens == null || !refreshTokens.isJsonObject()) {
-                    return;
-                }
-                for (Map.Entry<String, JsonElement> entry : refreshTokens.getAsJsonObject().entrySet()) {
-                    JsonElement tokenValue = entry.getValue().getAsJsonObject().get("secret");
-                    if (tokenValue != null && !tokenValue.getAsString().isEmpty()) {
-                        latestRefreshToken.set(tokenValue.getAsString());
-                        return;
-                    }
-                }
-            } catch (Exception e) {
-                log.warn("Unable to extract refresh token from MSAL token cache", e);
-            }
-        }
-
-        @Nullable
-        public String getLatestRefreshToken() {
-            return latestRefreshToken.get();
-        }
-    }
 }

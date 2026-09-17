@@ -47,9 +47,20 @@ public class TestAiConversationService implements AiConversationService {
      * @return the registered conversation
      */
     public AiConversation addConversation(String title) {
+        return addConversation(title, OffsetDateTime.now());
+    }
+
+    /**
+     * Creates a conversation with the given title and creation date and registers it.
+     *
+     * @param title       title of the conversation
+     * @param createdDate creation date of the conversation
+     * @return the registered conversation
+     */
+    public AiConversation addConversation(String title, OffsetDateTime createdDate) {
         AiConversation conversation = metadata.create(AiConversation.class);
         conversation.setTitle(title);
-        conversation.setCreatedDate(OffsetDateTime.now());
+        conversation.setCreatedDate(createdDate);
         conversations.put(conversation.getId(), conversation);
         return conversation;
     }

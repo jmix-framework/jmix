@@ -62,7 +62,7 @@ public class AiConversationCard extends Composite<Card> {
     protected Runnable openHandler;
 
     @Nullable
-    protected String createdDate;
+    protected String activityDate;
     @Nullable
     protected Runnable deleteHandler;
     @Nullable
@@ -94,14 +94,14 @@ public class AiConversationCard extends Composite<Card> {
     }
 
     /**
-     * Sets the formatted creation date; when {@code null} the date line is
+     * Sets the formatted last-activity date shown under the title; when {@code null} the date line is
      * omitted. Call {@link #build()} afterwards to apply the change.
      *
-     * @param createdDate formatted creation date, or {@code null} to omit the date line
+     * @param activityDate formatted last-activity date, or {@code null} to omit the date line
      */
     @NullMarked
-    public void setCreatedDate(@Nullable String createdDate) {
-        this.createdDate = createdDate;
+    public void setActivityDate(@Nullable String activityDate) {
+        this.activityDate = activityDate;
     }
 
     /**
@@ -164,7 +164,7 @@ public class AiConversationCard extends Composite<Card> {
 
         getContent().removeAll();
 
-        Anchor body = createBody(icon, title, href, openHandler, createdDate);
+        Anchor body = createBody(icon, title, href, openHandler, activityDate);
         HorizontalLayout row = createRow(body);
 
         if (deleteHandler != null) {
@@ -178,24 +178,24 @@ public class AiConversationCard extends Composite<Card> {
      * Stacks the title row and (optionally) the date as the link body of the
      * card. The whole body is the open-conversation hit area.
      *
-     * @param icon        title-row icon
-     * @param title       conversation title
-     * @param href        address of the conversation
-     * @param openHandler handler invoked on a plain click on the body
-     * @param createdDate formatted creation date, or {@code null} to omit the date line
+     * @param icon         title-row icon
+     * @param title        conversation title
+     * @param href         address of the conversation
+     * @param openHandler  handler invoked on a plain click on the body
+     * @param activityDate formatted last-activity date, or {@code null} to omit the date line
      * @return the assembled card body
      */
     protected Anchor createBody(Component icon,
                                 String title,
                                 String href,
                                 Runnable openHandler,
-                                @Nullable String createdDate) {
+                                @Nullable String activityDate) {
         Anchor body = new Anchor(href);
         body.addClassName(BODY_CN);
         body.add(createTitleRow(icon, title));
 
-        if (createdDate != null) {
-            body.add(createDate(createdDate));
+        if (activityDate != null) {
+            body.add(createDate(activityDate));
         }
 
         bindOpenHandler(body, openHandler);
@@ -252,8 +252,8 @@ public class AiConversationCard extends Composite<Card> {
         return titleSpan;
     }
 
-    protected Span createDate(String createdDate) {
-        Span dateSpan = new Span(createdDate);
+    protected Span createDate(String activityDate) {
+        Span dateSpan = new Span(activityDate);
         dateSpan.addClassName(DATE_CN);
         return dateSpan;
     }

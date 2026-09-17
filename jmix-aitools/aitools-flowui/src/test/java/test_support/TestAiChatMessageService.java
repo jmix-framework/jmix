@@ -27,6 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -72,5 +73,31 @@ public class TestAiChatMessageService implements AiChatMessageService {
     @Override
     public Collection<AiChatMessage> loadMessages(AiConversation conversation) {
         return List.copyOf(messagesByConversation.getOrDefault(conversation.getId(), List.of()));
+    }
+
+    @Override
+    public Map<AiConversation, AiChatMessage> loadLatestMessages(Collection<AiConversation> conversations,
+                                                                 @Nullable AiChatMessageType type) {
+        Map<AiConversation, AiChatMessage> result = new LinkedHashMap<>();
+        for (AiConversation conversation : conversations) {
+            messagesByConversation.getOrDefault(conversation.getId(), List.of()).stream()
+                    .filter(message -> type == null || type.equals(message.getType()))
+                    .max(Comparator.comparing(AiChatMessage::getCreatedDate))
+                    .ifPresent(message -> result.put(conversation, message));
+        }
+        return result;
+    }
+
+    /**
+     * Registers a user message with an explicit creation date, so tests can control conversation activity.
+     *
+     * @param conversation conversation the message belongs to
+     * @param createdDate  creation date of the message
+     * @return the registered message
+     */
+    public AiChatMessage addMessage(AiConversation conversation, OffsetDateTime createdDate) {
+        AiChatMessage chatMessage = createMessage(conversation, AiChatMessageType.USER, "message");
+        chatMessage.setCreatedDate(createdDate);
+        return chatMessage;
     }
 }

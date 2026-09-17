@@ -22,6 +22,7 @@ import io.jmix.aitoolsflowui.model.AiChatMessageType;
 import org.jspecify.annotations.Nullable;
 
 import java.util.Collection;
+import java.util.Map;
 
 /**
  * Provides access to the messages of the current user's AI conversations.
@@ -50,6 +51,18 @@ public interface AiChatMessageService {
      */
     @Nullable
     AiChatMessage loadLatestMessage(AiConversation conversation, @Nullable AiChatMessageType type);
+
+    /**
+     * Loads the latest message of each of the given conversations, keyed by the conversation
+     * instances passed in. A conversation with no matching message, or one not accessible to
+     * the current user, is absent from the result.
+     *
+     * @param conversations conversations whose latest messages are loaded
+     * @param type          message type to match, or {@code null} for any type
+     * @return the latest matching message by conversation; empty if none of them has a matching message
+     */
+    Map<AiConversation, AiChatMessage> loadLatestMessages(Collection<AiConversation> conversations,
+                                                          @Nullable AiChatMessageType type);
 
     /**
      * Loads all messages of the conversation, oldest first.

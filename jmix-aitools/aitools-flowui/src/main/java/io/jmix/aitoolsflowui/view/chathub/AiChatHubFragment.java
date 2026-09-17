@@ -26,7 +26,9 @@ import com.vaadin.flow.function.SerializableSupplier;
 import com.vaadin.flow.router.RouteConfiguration;
 import io.jmix.aitoolsflowui.AiToolsFlowuiProperties;
 import io.jmix.aitoolsflowui.icon.AiIconProvider;
+import io.jmix.aitoolsflowui.model.AiChatMessage;
 import io.jmix.aitoolsflowui.model.AiConversation;
+import io.jmix.aitoolsflowui.service.AiChatMessageService;
 import io.jmix.aitoolsflowui.service.AiChatService;
 import io.jmix.aitoolsflowui.service.AiConversationService;
 import io.jmix.aitoolsflowui.view.chat.AiChatView;
@@ -35,7 +37,6 @@ import io.jmix.aitoolsflowui.view.chathub.component.AiConversationCard;
 import io.jmix.aitoolsflowui.view.chathub.component.AiConversationHistoryGroup;
 import io.jmix.aitoolsflowui.view.input.AiChatInputFragment;
 import io.jmix.aitoolsflowui.view.chathub.component.HistoryBucket;
-import io.jmix.core.LoadContext;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.annotation.Experimental;
 import io.jmix.flowui.Dialogs;
@@ -52,7 +53,6 @@ import io.jmix.flowui.fragment.FragmentDescriptor;
 import io.jmix.flowui.kit.action.ActionVariant;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.model.CollectionContainer;
-import io.jmix.flowui.model.CollectionLoader;
 import io.jmix.flowui.view.navigation.RouteSupport;
 import io.jmix.flowui.view.*;
 import org.jspecify.annotations.Nullable;
@@ -64,6 +64,7 @@ import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -93,11 +94,7 @@ public class AiChatHubFragment extends Fragment<VerticalLayout> {
     @ViewComponent
     protected CollectionContainer<AiConversation> recentConversationsDc;
     @ViewComponent
-    protected CollectionLoader<AiConversation> recentConversationsDl;
-    @ViewComponent
     protected CollectionContainer<AiConversation> historyConversationsDc;
-    @ViewComponent
-    protected CollectionLoader<AiConversation> historyConversationsDl;
     @ViewComponent
     protected GridLayout<AiConversation> recentConversationsGridLayout;
     @ViewComponent
@@ -124,11 +121,18 @@ public class AiChatHubFragment extends Fragment<VerticalLayout> {
     @Autowired
     protected AiConversationService conversationService;
     @Autowired
+    protected AiChatMessageService messageService;
+    @Autowired
     protected AiChatService chatService;
     @Autowired
     protected AiToolsFlowuiProperties properties;
     @Autowired
     protected AiIconProvider iconProvider;
+
+    /**
+     * Latest message of each listed conversation; refreshed together with the conversations.
+     */
+    protected Map<AiConversation, AiChatMessage> latestMessages = Map.of();
 
     @Nullable
     protected Integer recentChatsCount;
@@ -172,18 +176,6 @@ public class AiChatHubFragment extends Fragment<VerticalLayout> {
         renderHistoryList();
         refreshComposerAvailability();
         composerFragment.focus();
-    }
-
-    @Install(to = "recentConversationsDl", target = Target.DATA_LOADER)
-    public List<AiConversation> recentConversationsLoadDelegate(LoadContext<AiConversation> loadContext) {
-        return conversationService.loadConversations().stream()
-                .limit(resolveRecentChatsCount())
-                .toList();
-    }
-
-    @Install(to = "historyConversationsDl", target = Target.DATA_LOADER)
-    public List<AiConversation> historyConversationsLoadDelegate(LoadContext<AiConversation> loadContext) {
-        return conversationService.loadConversations();
     }
 
     @Supply(to = "recentConversationsGridLayout", subject = "renderer")
@@ -256,8 +248,15 @@ public class AiChatHubFragment extends Fragment<VerticalLayout> {
     }
 
     protected void loadConversations() {
-        recentConversationsDl.load();
-        historyConversationsDl.load();
+        List<AiConversation> conversations = conversationService.loadConversations();
+        latestMessages = messageService.loadLatestMessages(conversations, null);
+
+        List<AiConversation> ordered = orderByActivity(conversations);
+
+        historyConversationsDc.setItems(ordered);
+        recentConversationsDc.setItems(ordered.stream()
+                .limit(resolveRecentChatsCount())
+                .toList());
     }
 
     protected AiConversationCard createRecentCard(AiConversation conversation) {
@@ -272,7 +271,7 @@ public class AiChatHubFragment extends Fragment<VerticalLayout> {
         AiConversationCard card = new AiConversationCard();
         card.setIcon(resolveMarkIcon());
         card.setTitle(metadataTools.getInstanceName(conversation));
-        card.setCreatedDate(formatDateTime(conversation.getCreatedDate()));
+        card.setActivityDate(formatDateTime(resolveActivity(conversation)));
         card.setHref(createConversationHref(conversation));
         card.setOpenHandler(() -> openConversation(conversation));
         if (deletable) {
@@ -371,7 +370,7 @@ public class AiChatHubFragment extends Fragment<VerticalLayout> {
         }
         for (AiConversation conversation : conversations) {
             HistoryBucket bucket = HistoryBucket.of(
-                    conversation.getCreatedDate(), today, zone);
+                    resolveActivity(conversation), today, zone);
             grouped.get(bucket).add(conversation);
         }
         grouped.values().removeIf(List::isEmpty);
@@ -406,5 +405,34 @@ public class AiChatHubFragment extends Fragment<VerticalLayout> {
     @Nullable
     protected String formatDateTime(@Nullable OffsetDateTime dateTime) {
         return dateTime != null ? chatDateTimeSupport.formatInUserZone(dateTime) : null;
+    }
+
+    /**
+     * Orders conversations most recently active first; conversations with equal activity keep their
+     * incoming order.
+     *
+     * @param conversations conversations to order
+     * @return a new list, most recently active first
+     */
+    protected List<AiConversation> orderByActivity(List<AiConversation> conversations) {
+        List<AiConversation> ordered = new ArrayList<>(conversations);
+        ordered.sort(Comparator.comparing(this::resolveActivity,
+                Comparator.nullsLast(Comparator.reverseOrder())));
+        return ordered;
+    }
+
+    /**
+     * Resolves when a conversation was last active: the date of its latest message, or its creation date
+     * when it has no messages.
+     *
+     * @param conversation the conversation
+     * @return the last-activity time, or {@code null} when the conversation has neither
+     */
+    @Nullable
+    protected OffsetDateTime resolveActivity(AiConversation conversation) {
+        AiChatMessage latestMessage = latestMessages.get(conversation);
+        return latestMessage != null && latestMessage.getCreatedDate() != null
+                ? latestMessage.getCreatedDate()
+                : conversation.getCreatedDate();
     }
 }

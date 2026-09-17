@@ -27,6 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.time.OffsetDateTime;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 /**
  * No-op implementation.
@@ -55,5 +56,11 @@ public class AiChatMessageEmptyService implements AiChatMessageService {
     @Override
     public Collection<AiChatMessage> loadMessages(AiConversation conversation) {
         return List.of();
+    }
+
+    @Override
+    public Map<AiConversation, AiChatMessage> loadLatestMessages(Collection<AiConversation> conversations,
+                                                                 @Nullable AiChatMessageType type) {
+        return Map.of();
     }
 }

@@ -15,6 +15,7 @@
  */
 
 @import '../../../../shared/src/addons/aichat/ai-chat.css';
+@import '../../../../shared/src/addons/aichat/ai-message-actions.css';
 @import './ai-code-block.css';
 @import './ai-markdown.css';
 @import './ai-message.css';

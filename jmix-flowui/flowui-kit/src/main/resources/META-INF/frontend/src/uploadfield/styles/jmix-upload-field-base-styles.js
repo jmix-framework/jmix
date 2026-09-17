@@ -42,6 +42,22 @@ const jmixUploadField = css`
         opacity: 0;
     }
 
+    /*
+     * The input field is a vaadin-upload-drop-zone, which paints its own dragover
+     * overlay (a translucent ::after). Suppress it so the dashed outline below is
+     * the only highlight. The element's own dragover attribute is not used for the
+     * highlight either: it sticks when the pointer leaves through a child, so the
+     * host attribute driven by the field's depth counter is what keys the outline.
+     */
+    [part='input-field'][dragover]::after {
+        content: none;
+    }
+
+    :host([dragover]) [part='input-field'] {
+        outline: var(--vaadin-focus-ring-width) dashed var(--vaadin-focus-ring-color);
+        border-radius: var(--vaadin-radius-m);
+    }
+
     ::slotted(:not([slot$='fix'])) {
         padding: 0;
         -webkit-mask-image: 0;

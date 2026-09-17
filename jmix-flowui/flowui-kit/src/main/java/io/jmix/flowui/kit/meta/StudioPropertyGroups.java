@@ -2444,7 +2444,7 @@ public final class StudioPropertyGroups {
     public interface FileUploadFieldDefaultProperties extends BaseSizedEnabledComponentWithClassName,
             HasRequiredAndValidationAttributes, AcceptedFileTypes, AcceptedMimeTypes, AcceptedFileExtensions,
             ClearButtonAriaLabel, ClearButtonVisible,
-            ConnectingStatusText, CollectionOrInstanceDataContainer, DropAllowed, FileNameVisible,
+            ConnectingStatusText, CollectionOrInstanceDataContainer, DropAllowedWithTrueDefaultValue, FileNameVisible,
             FileNotSelectedText, FileTooBigText, HelperText, IncorrectFileTypeText, Label, MaxFileSize,
             ProcessingStatusText, Property, ReadOnly, RemainingTimeText, RemainingTimeUnknownText,
             UploadDialogCancelText, UploadDialogTitle, UploadIcon, UploadText {

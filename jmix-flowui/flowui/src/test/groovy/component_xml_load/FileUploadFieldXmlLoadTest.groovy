@@ -109,6 +109,28 @@ class FileUploadFieldXmlLoadTest extends FlowuiTestSpecification {
         !view.disabledFileUploadField.enabled
     }
 
+    def "Load FileUploadField drop zone state"() {
+        when: "Open view with FileUploadFields"
+        def view = navigateToView(FileUploadFieldView)
+
+        then: "Dropping is offered by default"
+        def field = view.localizedFileUploadField
+        field.dropAllowed
+        field.element.getProperty("dropAllowed", false)
+
+        and: "Dropping is not offered when it is turned off in XML"
+        !view.xmlFileUploadField.element.getProperty("dropAllowed", true)
+
+        and: "Dropping is not offered by a read-only or a disabled field that allows it"
+        view.readOnlyFileUploadField.dropAllowed
+        !view.readOnlyFileUploadField.element.getProperty("dropAllowed", true)
+        view.disabledFileUploadField.dropAllowed
+        !view.disabledFileUploadField.element.getProperty("dropAllowed", true)
+
+        and: "The upload button does not handle drops on its own"
+        !field.uploadButton.dropAllowed
+    }
+
     def "Load default I18N"() {
         when: "Open view with FileUploadFields"
         def view = navigateToView(FileUploadFieldView)

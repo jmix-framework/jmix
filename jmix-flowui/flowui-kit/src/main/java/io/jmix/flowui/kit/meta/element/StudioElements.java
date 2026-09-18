@@ -1022,7 +1022,7 @@ interface StudioElements {
             icon = "io/jmix/flowui/kit/meta/icon/element/property.svg",
             propertyGroups = {
                     StudioPropertyGroups.RequiredStringName.class,
-                    StudioPropertyGroups.StringValue.class
+                    StudioPropertyGroups.LocalizedStringValue.class
             })
     void actionProperty();
 

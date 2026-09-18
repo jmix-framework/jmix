@@ -35,6 +35,7 @@ import io.jmix.flowui.component.validation.ValidationErrors;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.view.*;
+import io.jmix.quartz.exception.QuartzJobSaveException;
 import io.jmix.quartz.model.*;
 import io.jmix.quartz.service.QuartzService;
 import io.jmix.quartz.util.QuartzJobClassFinder;
@@ -44,6 +45,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.quartz.JobKey;
 import org.quartz.TriggerKey;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -90,12 +93,19 @@ public class JobModelDetailView extends StandardDetailView<JobModel> {
     @Autowired
     protected AccessManager accessManager;
 
+    protected TransactionTemplate transactionTemplate;
+
     protected boolean replaceJobIfExists = true;
     protected String obsoleteJobName = null;
     protected String obsoleteJobGroup = null;
     protected List<String> jobGroupNames;
 
     protected boolean administrationPermitted;
+
+    @Autowired
+    protected void setTransactionManager(PlatformTransactionManager transactionManager) {
+        transactionTemplate = new TransactionTemplate(transactionManager);
+    }
 
     @Subscribe
     protected void onInit(View.InitEvent event) {
@@ -308,10 +318,23 @@ public class JobModelDetailView extends StandardDetailView<JobModel> {
     @Subscribe
     protected void onBeforeCommitChanges(BeforeSaveEvent event) {
         if (isJobKeyChanged()) {
-            quartzService.deleteJob(obsoleteJobName, obsoleteJobGroup);
+            //delete under the old key and re-create under the new key in one transaction:
+            //with the JDBC job store a failure of the update rolls the delete back, so the job is not lost
+            transactionTemplate.executeWithoutResult(status -> {
+                quartzService.deleteJob(obsoleteJobName, obsoleteJobGroup);
+                if (quartzService.checkJobExists(obsoleteJobName, obsoleteJobGroup)) {
+                    //deleteJob swallows engine errors - stop before creating a duplicate under the new key
+                    throw new QuartzJobSaveException(String.format(
+                            "Unable to delete job '%s' of group '%s' under its previous key",
+                            obsoleteJobName, obsoleteJobGroup));
+                }
+                quartzService.updateQuartzJob(getEditedEntity(), jobDataParamsDc.getItems(),
+                        triggerModelDc.getItems(), replaceJobIfExists);
+            });
+        } else {
+            quartzService.updateQuartzJob(getEditedEntity(), jobDataParamsDc.getItems(),
+                    triggerModelDc.getItems(), replaceJobIfExists);
         }
-
-        quartzService.updateQuartzJob(getEditedEntity(), jobDataParamsDc.getItems(), triggerModelDc.getItems(), replaceJobIfExists);
     }
 
     @Install(target = Target.DATA_CONTEXT)

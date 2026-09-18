@@ -25,16 +25,15 @@ import io.jmix.datatools.datamodel.engine.plantuml.PlantUmlEncoder;
 import io.jmix.datatools.datamodel.entity.AttributeModel;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
-import org.springframework.http.HttpStatusCode;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.MediaType;
 import org.springframework.http.client.JdkClientHttpRequestFactory;
-import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestClient;
+import org.springframework.web.client.RestClientException;
 
 import java.io.ByteArrayOutputStream;
 import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
-import java.time.Duration;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.zip.Deflater;
@@ -52,6 +51,7 @@ public class PlantUmlDiagramEngine implements DiagramEngine {
     protected final String dynamicEntityTemplate;
     protected final String relationTemplate;
     protected final String urlTemplate;
+    protected final String pingEndpoint;
     protected final RestClient restClient;
     protected final int dataStoresCount;
     protected final boolean available;
@@ -64,6 +64,7 @@ public class PlantUmlDiagramEngine implements DiagramEngine {
         this.plantUmlEncoder = createEncoder();
         this.template = createTemplate();
         this.urlTemplate = createURLTemplate();
+        this.pingEndpoint = createPingEndpoint();
         this.entityTemplate = createEntityTemplate();
         this.attributeTemplate = createAttributeTemplate();
         this.dynamicAttributeTemplate = createDynamicAttributeTemplate();
@@ -113,7 +114,23 @@ public class PlantUmlDiagramEngine implements DiagramEngine {
     }
 
     protected String createURLTemplate() {
-        return "/plantuml/png/%s";
+        return createPathPrefix() + "/png/%s";
+    }
+
+    protected String createPingEndpoint() {
+        return createPathPrefix() + "/";
+    }
+
+    /**
+     * @return the configured path as a URL prefix: either empty or starting with a slash and not ending with one
+     */
+    protected String createPathPrefix() {
+        String path = datatoolsProperties.getDataModelDiagram().getPath();
+        String trimmedPath = StringUtils.strip(path, "/");
+
+        return StringUtils.isEmpty(trimmedPath)
+                ? ""
+                : "/" + trimmedPath;
     }
 
     protected String createEntityTemplate() {
@@ -147,7 +164,7 @@ public class PlantUmlDiagramEngine implements DiagramEngine {
 
     protected RestClient configureClient(String baseUrl) {
         JdkClientHttpRequestFactory factory = new JdkClientHttpRequestFactory();
-        factory.setReadTimeout(Duration.ofSeconds(10));
+        factory.setReadTimeout(datatoolsProperties.getDataModelDiagram().getReadTimeout());
 
         return RestClient.builder()
                 .requestFactory(factory)
@@ -241,18 +258,16 @@ public class PlantUmlDiagramEngine implements DiagramEngine {
             return false;
         }
 
-        HttpStatusCode responseStatus;
         try {
-            responseStatus = restClient
+            // Any HTTP response means the service is reachable. The status says nothing about
+            // availability: a server may answer the ping with 404 or 406 and still render diagrams.
+            return restClient
                     .head()
-                    .retrieve()
-                    .toBodilessEntity()
-                    .getStatusCode();
-        } catch (ResourceAccessException exception) {
+                    .uri(pingEndpoint)
+                    .exchange((request, response) -> true);
+        } catch (RestClientException exception) {
             return false;
         }
-
-        return responseStatus.is2xxSuccessful() || responseStatus.is3xxRedirection();
     }
 
     @Override

@@ -239,15 +239,15 @@ public class DataModelListView extends StandardView {
 
     @Subscribe(id = "diagramButton", subject = "clickListener")
     public void onDiagramButtonClick(final ClickEvent<JmixButton> event) {
-        if (!diagramEngine.pingService()) {
-            notifications.create(messageBundle.getMessage("diagramGeneration.error.serviceUnavailable.message"))
-                    .withType(Notifications.Type.ERROR)
-                    .show();
-
-            return;
-        }
-
         try {
+            if (!diagramEngine.pingService()) {
+                notifications.create(messageBundle.getMessage("diagramGeneration.error.serviceUnavailable.message"))
+                        .withType(Notifications.Type.ERROR)
+                        .show();
+
+                return;
+            }
+
             byte[] diagramData = generateDiagram(entityModelsDc.getItems());
             dataModelDiagramViewSupport.open(this, diagramData);
         } catch (Exception e) {

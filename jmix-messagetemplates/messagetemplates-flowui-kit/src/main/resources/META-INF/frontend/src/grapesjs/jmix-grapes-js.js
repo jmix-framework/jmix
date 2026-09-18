@@ -158,15 +158,34 @@ export class JmixGrapesJs extends ResizeMixin(ThemableMixin(ElementMixin(Polylit
     async loadPlugins(plugins) {
         for (let plugin of plugins) {
             let loadedPlugin = await this.loadPlugin(plugin.name);
+            let pluginFunction = this.resolvePluginFunction(loadedPlugin);
 
-            if (loadedPlugin !== null) {
+            if (typeof pluginFunction === 'function') {
                 this._plugins.push({
                     name: plugin.name,
-                    instance: loadedPlugin.default,
+                    instance: pluginFunction,
                     options: plugin.options !== undefined ? JSON.parse(plugin.options) : undefined
                 });
+            } else if (loadedPlugin !== null) {
+                console.error(`Cannot resolve the plugin function: ${plugin.name}`);
             }
         }
+    }
+
+    /**
+     * Unwraps the plugin function from the loaded module. Depending on how the bundler interops
+     * a CommonJS plugin, the function can be nested in one or several 'default' properties.
+     *
+     * @private
+     */
+    resolvePluginFunction(loadedPlugin) {
+        let plugin = loadedPlugin;
+
+        while (plugin && typeof plugin !== 'function') {
+            plugin = plugin.default;
+        }
+
+        return plugin;
     }
 
     /**
@@ -309,7 +328,9 @@ export class JmixGrapesJs extends ResizeMixin(ThemableMixin(ElementMixin(Polylit
 
     /** @private */
     getPluginOpts() {
-        const optionMap = new Map();
+        // GrapesJS reads options by the plugin itself used as a key, so they must be
+        // held by a plain object: the plugin function is converted to a string key.
+        const optionMap = {};
         for (let plugin of this._plugins) {
             optionMap[plugin.instance] = plugin.options;
         }

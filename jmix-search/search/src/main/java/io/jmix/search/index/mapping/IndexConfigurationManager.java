@@ -59,6 +59,10 @@ import java.util.stream.Stream;
  *   <li>Determining the extent to which entities are indexed</li>
  *   <li>Providing metadata on dependencies between entities in the indexing process</li>
  * </ul>
+ *
+ * <p>Definitions contributed by {@link IndexDefinitionContributor} beans are merged with the annotated Java ones on
+ * every (re)build: a contribution for an entity without a Java definition creates a configuration, one for an entity
+ * that has a Java definition appends its fields.
  */
 @Component("search_IndexConfigurationManager")
 public class IndexConfigurationManager {
@@ -82,6 +86,9 @@ public class IndexConfigurationManager {
 
     @Autowired
     protected MetadataGenerationManager metadataGenerationManager;
+
+    @Autowired(required = false)
+    protected List<IndexDefinitionContributor> indexDefinitionContributors = Collections.emptyList();
 
     public IndexConfigurationManager(JmixModulesClasspathScanner classpathScanner,
                                      AnnotatedIndexDefinitionProcessor indexDefinitionProcessor,
@@ -190,7 +197,8 @@ public class IndexConfigurationManager {
     public Collection<String> getAllIndexedEntities() {
         State state = getState();
         ensureInitialized(state);
-        return optimisticRead(state, state.registry::getAllIndexedEntities);
+        // A snapshot, so that a caller iterating the result is unaffected by a concurrent registry rebuild.
+        return optimisticRead(state, () -> List.copyOf(state.registry.getAllIndexedEntities()));
     }
 
     /**
@@ -299,11 +307,27 @@ public class IndexConfigurationManager {
      * the definitions specified by the provided class names.
      */
     protected void initializeIndexDefinitions(State state) {
-        List<IndexConfiguration> configurations = new ArrayList<>();
-        classNames.forEach(className ->
-                configurations.add(indexDefinitionProcessor.createIndexConfiguration(className)));
-
-        replaceConfigurations(state, configurations);
+        Map<String, IndexConfiguration> configurations = new LinkedHashMap<>();
+        for (String className : classNames) {
+            IndexConfiguration configuration = indexDefinitionProcessor.createIndexConfiguration(className);
+            if (configurations.putIfAbsent(configuration.getEntityName(), configuration) != null) {
+                log.warn("Multiple Index Definitions are detected for entity '{}'", configuration.getEntityName());
+            }
+        }
+        for (IndexDefinitionContributor contributor : indexDefinitionContributors) {
+            Collection<ContributedIndexDefinition> definitions = contributor.getIndexDefinitions();
+            if (definitions == null) {
+                throw new IllegalStateException(
+                        "getIndexDefinitions() of " + contributor.getClass().getName() + " returned null " +
+                                "instead of an empty collection");
+            }
+            for (ContributedIndexDefinition definition : definitions) {
+                configurations.compute(definition.entityName(), (entityName, existing) -> existing == null
+                        ? indexDefinitionProcessor.createIndexConfiguration(definition)
+                        : indexDefinitionProcessor.appendContributedFields(existing, definition));
+            }
+        }
+        replaceConfigurations(state, new ArrayList<>(configurations.values()));
     }
 
     /**
@@ -512,13 +536,9 @@ public class IndexConfigurationManager {
 
         private void registerInMainRegistries(IndexConfiguration indexConfiguration) {
             String entityName = indexConfiguration.getEntityName();
-            if (indexConfigurationsByEntityName.containsKey(entityName)) {
-                log.warn("Multiple Index Definitions are detected for entity '{}'", entityName);
-            } else {
-                indexConfigurationsByEntityName.put(entityName, indexConfiguration);
-                indexConfigurationsByIndexName.put(indexConfiguration.getIndexName(), indexConfiguration);
-                registeredEntityClasses.addAll(indexConfiguration.getAffectedEntityClasses());
-            }
+            indexConfigurationsByEntityName.put(entityName, indexConfiguration);
+            indexConfigurationsByIndexName.put(indexConfiguration.getIndexName(), indexConfiguration);
+            registeredEntityClasses.addAll(indexConfiguration.getAffectedEntityClasses());
         }
 
         private void processProperty(MetaPropertyPath propertyPath) {

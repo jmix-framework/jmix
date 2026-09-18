@@ -55,6 +55,9 @@ public class EntityIdsLoaderProvider {
 
     public EntityIdsLoader getLoader(String entityName) {
         MetaClass entityClass = metadata.getClass(entityName);
+        if (!metadataTools.isJpaEntity(entityClass)) {
+            return registry.get(NonJpaEntityIdsLoader.class);
+        }
         Store store = entityClass.getStore();
         String dbType = dbmsType.getType(store.getName());
         if ("ORACLE".equalsIgnoreCase(dbType)) {

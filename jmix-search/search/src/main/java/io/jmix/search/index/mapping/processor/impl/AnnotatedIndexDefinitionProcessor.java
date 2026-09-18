@@ -126,6 +126,60 @@ public class AnnotatedIndexDefinitionProcessor {
         return indexConfiguration;
     }
 
+    /**
+     * Creates an index configuration for an entity that has no annotated Java definition.
+     *
+     * @param definition contributed definition
+     * @return index configuration
+     */
+    public IndexConfiguration createIndexConfiguration(ContributedIndexDefinition definition) {
+        MetaClass metaClass = metadata.getClass(definition.entityName());
+        String indexName = createIndexName(definition.indexName(), metaClass);
+        ExtendedSearchSettings extendedSearchSettings = ExtendedSearchSettings.empty();
+        Map<String, MappingFieldDescriptor> fields = processMappingDefinition(
+                metaClass, definition.mappingDefinition(), extendedSearchSettings);
+        IndexMappingConfiguration mapping = new IndexMappingConfiguration(
+                metaClass, fields, createDisplayedNameDescriptor(metaClass));
+        return new IndexConfiguration(
+                metaClass.getName(),
+                metaClass.getJavaClass(),
+                indexName,
+                mapping,
+                getAffectedEntityClasses(mapping),
+                obj -> true,
+                extendedSearchSettings);
+    }
+
+    /**
+     * Adds the fields of a contributed definition to an existing configuration. Fields already present
+     * in the existing configuration win over contributed ones with the same name.
+     *
+     * @param base       configuration built from the annotated Java definition
+     * @param definition contributed definition for the same entity
+     * @return a new index configuration with the merged fields
+     */
+    public IndexConfiguration appendContributedFields(IndexConfiguration base, ContributedIndexDefinition definition) {
+        if (definition.indexName() != null) {
+            log.warn("Index name '{}' contributed for entity '{}' is dropped, the entity is already mapped " +
+                            "to index '{}'", definition.indexName(), definition.entityName(), base.getIndexName());
+        }
+        IndexMappingConfiguration baseMapping = base.getMapping();
+        MetaClass metaClass = baseMapping.getEntityMetaClass();
+        Map<String, MappingFieldDescriptor> fields = new HashMap<>(baseMapping.getFields());
+        processMappingDefinition(metaClass, definition.mappingDefinition(), base.getExtendedSearchSettings())
+                .forEach(fields::putIfAbsent);
+        IndexMappingConfiguration mapping = new IndexMappingConfiguration(
+                metaClass, fields, baseMapping.getDisplayedNameDescriptor());
+        return new IndexConfiguration(
+                base.getEntityName(),
+                base.getEntityClass(),
+                base.getIndexName(),
+                mapping,
+                getAffectedEntityClasses(mapping),
+                base.getIndexablePredicate(),
+                base.getExtendedSearchSettings());
+    }
+
     protected Class<?> resolveClass(String className) {
         try {
             return Class.forName(className);
@@ -173,12 +227,13 @@ public class AnnotatedIndexDefinitionProcessor {
     }
 
     protected String createIndexName(ParsedIndexDefinition parsedIndexDefinition) {
-        String indexName;
-        if (StringUtils.isNotEmpty(parsedIndexDefinition.getIndexName())) {
-            indexName = parsedIndexDefinition.getIndexName().toLowerCase();
-        } else {
-            indexName = searchProperties.getSearchIndexNamePrefix() + parsedIndexDefinition.getMetaClass().getName();
-        }
+        return createIndexName(parsedIndexDefinition.getIndexName(), parsedIndexDefinition.getMetaClass());
+    }
+
+    protected String createIndexName(@Nullable String explicitIndexName, MetaClass metaClass) {
+        String indexName = StringUtils.isNotEmpty(explicitIndexName)
+                ? explicitIndexName
+                : searchProperties.getSearchIndexNamePrefix() + metaClass.getName();
         return indexName.toLowerCase();
     }
 

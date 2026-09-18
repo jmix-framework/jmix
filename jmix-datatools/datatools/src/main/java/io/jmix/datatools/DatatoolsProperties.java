@@ -39,11 +39,10 @@ public class DatatoolsProperties {
         protected final String host;
 
         /**
-         * The path under which the diagramming server serves its endpoints, appended to {@link #host}. For example,
-         * the official {@code plantuml/plantuml-server} image started with {@code BASE_URL=plantuml} serves
-         * {@code /plantuml/png/...}, which is the default. Set the property to an empty value when the server is
-         * deployed at the root context or when {@link #host} already contains the path: the path of the host is not
-         * replaced but prepended, so keeping both results in a doubled prefix.
+         * The path under which the diagramming server serves its endpoints, appended to {@link #host}.
+         * Set the property to an empty value when the server is deployed at the root context or when
+         * {@link #host} already contains the path: the path of the host is not replaced but prepended,
+         * so keeping both results in a doubled prefix.
          */
         protected final String path;
 

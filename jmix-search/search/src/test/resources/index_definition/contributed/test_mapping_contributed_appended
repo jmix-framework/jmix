@@ -1,0 +1,16 @@
+{
+	"properties": {
+		"firstTextValue": {
+			"type": "text"
+		},
+		"name": {
+			"type": "text"
+		},
+		"secondTextValue": {
+			"type": "text"
+		},
+		"_instance_name": {
+			"type": "text"
+		}
+	}
+}

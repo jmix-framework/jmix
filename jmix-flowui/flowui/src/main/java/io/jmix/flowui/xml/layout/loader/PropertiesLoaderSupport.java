@@ -96,7 +96,7 @@ public class PropertiesLoaderSupport {
             Class<?> parameterType = method.getParameterTypes()[0];
             Type genericParameterType = method.getGenericParameterTypes()[0];
 
-            String stringValue = loaderSupport.loadString(element, "value")
+            String stringValue = loaderSupport.loadResourceString(element, "value", context.getMessageGroup())
                     .orElseThrow(() -> new GuiDevelopmentException("Missing required 'value' attribute", context));
 
             Object value = loaderSupport.loadString(element, "type")

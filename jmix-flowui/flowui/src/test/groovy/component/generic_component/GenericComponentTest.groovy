@@ -65,6 +65,9 @@ class GenericComponentTest extends FlowuiTestSpecification {
         testComponent.stringsArray == new String[]{"a", "b", "c"}
         testComponent.strings == new String[]{"a", "b", "c"}
         testComponent.dataContainer == view.productsDc
+        testComponent.localizedString == "Localized string"
+        testComponent.fullFormLocalizedString == "Full form localized string"
+        testComponent.localizedStringsList == List.of("x", "y", "z")
     }
 
     @Nullable

@@ -3031,7 +3031,7 @@
 
     <xs:complexType name="actionProperty">
         <xs:attribute name="name" type="xs:string" use="required"/>
-        <xs:attribute name="value" type="xs:string"/>
+        <xs:attribute name="value" type="resourceString"/>
     </xs:complexType>
 
     <xs:complexType name="tooltipElement">
@@ -5111,7 +5111,7 @@
 
     <xs:complexType name="genericComponentProperty">
         <xs:attribute name="name" type="xs:string" use="required"/>
-        <xs:attribute name="value" type="xs:string" use="required"/>
+        <xs:attribute name="value" type="resourceString" use="required"/>
         <xs:attribute name="type" type="genericComponentPropertyValueType"/>
     </xs:complexType>
 

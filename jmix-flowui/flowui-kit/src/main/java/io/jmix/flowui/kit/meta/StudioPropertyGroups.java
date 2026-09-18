@@ -1209,9 +1209,24 @@ public final class StudioPropertyGroups {
 
     @StudioPropertyGroup(properties = @StudioProperty(
             xmlAttribute = StudioXmlAttributes.VALUE,
+            type = StudioPropertyType.LOCALIZED_STRING,
+            category = StudioProperty.Category.GENERAL,
+            required = true))
+    public interface RequiredLocalizedStringValue {
+    }
+
+    @StudioPropertyGroup(properties = @StudioProperty(
+            xmlAttribute = StudioXmlAttributes.VALUE,
             type = StudioPropertyType.STRING,
             category = StudioProperty.Category.GENERAL))
     public interface StringValue {
+    }
+
+    @StudioPropertyGroup(properties = @StudioProperty(
+            xmlAttribute = StudioXmlAttributes.VALUE,
+            type = StudioPropertyType.LOCALIZED_STRING,
+            category = StudioProperty.Category.GENERAL))
+    public interface LocalizedStringValue {
     }
 
     @StudioPropertyGroup(properties = @StudioProperty(
@@ -2587,8 +2602,8 @@ public final class StudioPropertyGroups {
     }
 
     @StudioPropertyGroup
-    public interface RequiredStringNameAndValueAndType extends RequiredStringNameAndValue,
-            TypeContainerRefLoaderRefIcon {
+    public interface RequiredStringNameAndValueAndType extends RequiredStringName,
+            RequiredLocalizedStringValue, TypeContainerRefLoaderRefIcon {
     }
 
     @StudioPropertyGroup

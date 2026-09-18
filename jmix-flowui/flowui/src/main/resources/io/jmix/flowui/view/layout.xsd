@@ -4096,6 +4096,7 @@
                 <xs:attributeGroup ref="hasIcon"/>
                 <xs:attributeGroup ref="hasSize"/>
                 <xs:attributeGroup ref="hasClassNames"/>
+                <xs:attributeGroup ref="hasDataContainer"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>

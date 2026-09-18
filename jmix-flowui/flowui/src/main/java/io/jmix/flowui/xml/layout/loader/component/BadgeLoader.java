@@ -16,13 +16,18 @@
 
 package io.jmix.flowui.xml.layout.loader.component;
 
+import com.google.common.base.Strings;
 import com.vaadin.flow.component.badge.Badge;
+import io.jmix.flowui.data.binding.TextComponentReadonlyDataBinding;
 import io.jmix.flowui.xml.layout.loader.AbstractComponentLoader;
+import io.jmix.flowui.xml.layout.support.DataLoaderSupport;
 import io.jmix.flowui.xml.layout.support.IconLoaderSupport;
 
 public class BadgeLoader extends AbstractComponentLoader<Badge> {
 
     protected IconLoaderSupport iconLoaderSupport;
+    protected DataLoaderSupport dataLoaderSupport;
+    protected TextComponentReadonlyDataBinding textComponentReadonlyDataBinding;
 
     @Override
     protected Badge createComponent() {
@@ -42,6 +47,16 @@ public class BadgeLoader extends AbstractComponentLoader<Badge> {
         componentLoader().loadSizeAttributes(resultComponent, element);
 
         iconLoaderSupport().loadIcon(element, resultComponent::setIcon);
+
+        loadData();
+    }
+
+    protected void loadData() {
+        String property = element.attributeValue("property");
+        if (!Strings.isNullOrEmpty(property)) {
+            getDataLoaderSupport().loadContainer(element, property)
+                    .ifPresent(container -> getTextComponentDataBinding().bind(resultComponent, container, property));
+        }
     }
 
     protected IconLoaderSupport iconLoaderSupport() {
@@ -49,5 +64,19 @@ public class BadgeLoader extends AbstractComponentLoader<Badge> {
             iconLoaderSupport = applicationContext.getBean(IconLoaderSupport.class, context);
         }
         return iconLoaderSupport;
+    }
+
+    protected DataLoaderSupport getDataLoaderSupport() {
+        if (dataLoaderSupport == null) {
+            dataLoaderSupport = applicationContext.getBean(DataLoaderSupport.class, context);
+        }
+        return dataLoaderSupport;
+    }
+
+    protected TextComponentReadonlyDataBinding getTextComponentDataBinding() {
+        if (textComponentReadonlyDataBinding == null) {
+            textComponentReadonlyDataBinding = applicationContext.getBean(TextComponentReadonlyDataBinding.class);
+        }
+        return textComponentReadonlyDataBinding;
     }
 }

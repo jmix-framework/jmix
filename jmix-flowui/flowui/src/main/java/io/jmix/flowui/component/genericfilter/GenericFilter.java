@@ -1120,17 +1120,70 @@ public class GenericFilter extends Composite<JmixDetails>
         return getEventBus().addListener(ConfigurationRefreshEvent.class, listener);
     }
 
+    /**
+     * Loads the stored configurations available to the current user and applies the one that is
+     * default for all users.
+     * <p>
+     * Configurations are loaded after the view is initialized, so a configuration registered earlier
+     * can already have the id of a stored one: this happens when the user saves a configuration that
+     * the application registers in the view's {@code InitEvent} handler. A stored configuration is the
+     * state the user saved for that id, so it is applied to the registered configuration instead of
+     * being added next to it. A configuration that cannot be modified, such as a
+     * {@link DesignTimeConfiguration} declared by the view itself, is kept as it is.
+     */
     public void loadConfigurationsAndApplyDefault() {
         Map<Configuration, Boolean> configurationsMap = genericFilterSupport.getConfigurationsMap(this);
         boolean defaultForAllConfigurationApplied = false;
 
         for (Map.Entry<Configuration, Boolean> entry : configurationsMap.entrySet()) {
-            addConfiguration(entry.getKey());
+            Configuration storedConfiguration = entry.getKey();
+            Configuration registeredConfiguration = getConfiguration(storedConfiguration.getId());
+
+            Configuration configuration;
+            if (registeredConfiguration instanceof RunTimeConfiguration runTimeConfiguration) {
+                applyStoredConfiguration(runTimeConfiguration, storedConfiguration);
+                configuration = runTimeConfiguration;
+            } else if (registeredConfiguration != null) {
+                log.warn("Stored configuration '{}' is ignored: the filter has a configuration with the same id "
+                        + "that cannot be modified.", storedConfiguration.getId());
+                continue;
+            } else {
+                addConfiguration(storedConfiguration);
+                configuration = storedConfiguration;
+            }
 
             if (!defaultForAllConfigurationApplied && entry.getValue()) {
-                setCurrentConfiguration(entry.getKey());
+                setCurrentConfiguration(configuration);
                 defaultForAllConfigurationApplied = true;
             }
+        }
+    }
+
+    /**
+     * Applies the state loaded from the storage to a configuration that is already registered: the
+     * conditions, the name and the default values the user saved for that id replace the registered
+     * ones. The registered instance itself is kept, so a reference to it held by the application
+     * stays valid.
+     *
+     * @param registeredConfiguration a configuration registered before the stored ones were loaded
+     * @param storedConfiguration     a configuration loaded from the storage
+     */
+    protected void applyStoredConfiguration(RunTimeConfiguration registeredConfiguration,
+                                            Configuration storedConfiguration) {
+        // Reset the modification flags while they still refer to the configuration's own components:
+        // they are kept in a set, so flags left from the replaced components would never be cleared.
+        registeredConfiguration.setModified(false);
+
+        registeredConfiguration.setRootLogicalFilterComponent(storedConfiguration.getRootLogicalFilterComponent());
+        registeredConfiguration.setName(storedConfiguration.getName());
+        registeredConfiguration.setAvailableForAllUsers(storedConfiguration.isAvailableForAllUsers());
+        genericFilterSupport.refreshConfigurationDefaultValues(registeredConfiguration);
+
+        // The name is part of the stored state, so the dropdown is rebuilt in any case.
+        updateSelectConfigurationDropdown();
+
+        if (registeredConfiguration == currentConfiguration) {
+            refreshCurrentConfigurationLayout();
         }
     }
 

@@ -21,10 +21,12 @@ import com.vaadin.flow.component.page.AppShellConfigurator;
 import com.vaadin.flow.component.page.Push;
 import com.vaadin.flow.server.VaadinSession;
 import com.vaadin.flow.server.VaadinSessionState;
+import com.vaadin.flow.server.WrappedSession;
 import io.jmix.core.cluster.ClusterApplicationEvent;
 import io.jmix.core.cluster.ClusterApplicationEventPublisher;
 import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.core.security.SystemAuthenticator;
+import io.jmix.core.security.ThreadSecurityContextOverride;
 import io.jmix.core.usersubstitution.CurrentUserSubstitution;
 import io.jmix.flowui.sys.SessionHolder;
 import io.jmix.flowui.sys.event.UiEventsManager;
@@ -34,6 +36,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.event.EventListener;
 import org.jspecify.annotations.Nullable;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -96,21 +101,54 @@ public class UiEventPublisher {
         log.debug("Sending {} to {} Vaadin sessions", event, userSessions.values().stream().mapToLong(List::size).sum());
 
         for (Map.Entry<String, List<VaadinSession>> usernameSessionEntry : userSessions.entrySet()) {
-            // Without 'VaadinAwareSecurityContextHolderStrategyConfiguration' configuration
-            // when we get access to another user session, the security context is still the same as
-            // in VaadinSession of sender user. I.e. if "admin" send notification to "user1", the
-            // "CurrentAuthentication#getUser()" under VaadinSession of "user1" will return "admin".
-
-            // To avoid the problem we should perform access to VaadinSession of recipient behalf of
-            // recipient.
             String sessionUsername = usernameSessionEntry.getKey();
             List<VaadinSession> sessions = usernameSessionEntry.getValue();
             for (VaadinSession session : sessions) {
-                systemAuthenticator.runWithUser(sessionUsername,
-                        // obtain lock on session state
-                        () -> session.access(() -> onSessionAccess(session, event)));
+                // obtain lock on session state
+                Runnable access = () -> session.access(() -> onSessionAccess(session, event));
+
+                // Inside session.access() the security context must be the recipient's one, i.e. if "admin" sends
+                // a notification to "user1", "CurrentAuthentication#getUser()" under VaadinSession of "user1"
+                // must return "user1".
+                SecurityContext recipientContext = getSessionSecurityContext(session);
+                if (recipientContext != null
+                        && SecurityContextHolder.getContextHolderStrategy() instanceof ThreadSecurityContextOverride override) {
+                    // Run under the recipient's own security context, as stored in their HTTP session. This keeps
+                    // the recipient's real authentication (with locale, time zone, etc.) and also takes precedence
+                    // over an outer SystemAuthenticator block of the sender.
+                    override.pushContext(recipientContext);
+                    try {
+                        access.run();
+                    } finally {
+                        override.popContext();
+                    }
+                } else {
+                    // Fall back to the system authentication on behalf of the recipient.
+                    systemAuthenticator.runWithUser(sessionUsername, access);
+                }
             }
         }
+    }
+
+    /**
+     * Returns the security context stored in the HTTP session of the given Vaadin session, or null if there is none.
+     */
+    @Nullable
+    protected SecurityContext getSessionSecurityContext(VaadinSession session) {
+        WrappedSession wrappedSession = session.getSession();
+        if (wrappedSession == null) {
+            return null;
+        }
+        try {
+            Object attribute = wrappedSession.getAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY);
+            if (attribute instanceof SecurityContext securityContext && securityContext.getAuthentication() != null) {
+                return securityContext;
+            }
+        } catch (IllegalStateException e) {
+            // the HTTP session is invalidated
+            log.debug("Cannot read security context of an invalidated session", e);
+        }
+        return null;
     }
 
     protected void onSessionAccess(VaadinSession session, ApplicationEvent event) {

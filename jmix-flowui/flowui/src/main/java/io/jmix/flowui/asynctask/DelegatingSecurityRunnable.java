@@ -18,6 +18,7 @@ package io.jmix.flowui.asynctask;
 
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.context.SecurityContextImpl;
 
 /**
  * Wraps a delegate {@link Runnable} with logic for setting up an {@link SecurityContext} before invoking the delegate
@@ -32,7 +33,7 @@ public class DelegatingSecurityRunnable implements Runnable {
     private final SecurityContext securityContext;
 
     public DelegatingSecurityRunnable(Runnable delegate) {
-        this(delegate, SecurityContextHolder.getContext());
+        this(delegate, copyOfCurrentContext());
     }
 
     public DelegatingSecurityRunnable(Runnable delegate, SecurityContext securityContext) {
@@ -49,5 +50,13 @@ public class DelegatingSecurityRunnable implements Runnable {
         } finally {
             SecurityContextHolder.setContext(originalSecurityContext);
         }
+    }
+
+    /**
+     * The current context instance may be shared with the HTTP session and other threads, so the delegate gets a
+     * copy holding the same {@link org.springframework.security.core.Authentication}.
+     */
+    private static SecurityContext copyOfCurrentContext() {
+        return new SecurityContextImpl(SecurityContextHolder.getContext().getAuthentication());
     }
 }

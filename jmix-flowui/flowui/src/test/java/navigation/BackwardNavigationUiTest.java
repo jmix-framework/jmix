@@ -16,7 +16,10 @@
 
 package navigation;
 
+import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.router.QueryParameters;
+import com.vaadin.flow.router.RouteConfiguration;
+import com.vaadin.flow.router.RouterLayout;
 import component.standarddetailview.view.BlankTestView;
 import io.jmix.flowui.ViewNavigators;
 import io.jmix.flowui.testassist.FlowuiTestAssistConfiguration;
@@ -37,7 +40,8 @@ import test_support.FlowuiTestConfiguration;
 import test_support.entity.sales.Customer;
 
 @UiTest(viewBasePackages = {"component.standarddetailview.view", "navigation.view"})
-@SpringBootTest(classes = {FlowuiTestConfiguration.class, FlowuiTestAssistConfiguration.class})
+@SpringBootTest(classes = {FlowuiTestConfiguration.class, FlowuiTestAssistConfiguration.class},
+        properties = "jmix.ui.default-view-id=BlankTestView")
 public class BackwardNavigationUiTest {
 
     @Autowired
@@ -159,5 +163,30 @@ public class BackwardNavigationUiTest {
     protected <T extends View<?>> T navigateTo(Class<T> view) {
         navigationSupport.navigate(view);
         return UiTestUtils.getCurrentView();
+    }
+
+    @Test
+    public void closeViewWithUnroutedParentNavigatesToDefaultView() {
+        assertCloseWithUnroutedParent(StandardOutcome.CLOSE);
+    }
+
+    @Test
+    public void discardViewWithUnroutedParentNavigatesToDefaultView() {
+        assertCloseWithUnroutedParent(StandardOutcome.DISCARD);
+    }
+
+    private void assertCloseWithUnroutedParent(StandardOutcome outcome) {
+        RouteConfiguration routes = RouteConfiguration.forSessionScope();
+        routes.removeRoute(BackwardNavigationStandardView.class);
+        routes.setRoute("unrouted-parent", BackwardNavigationStandardView.class, UnroutedLayout.class);
+        BackwardNavigationStandardView view = navigateTo(BackwardNavigationStandardView.class);
+
+        view.close(outcome);
+
+        Assertions.assertInstanceOf(BlankTestView.class, UiTestUtils.getCurrentView());
+        Assertions.assertFalse(view.isAttached());
+    }
+
+    public static class UnroutedLayout extends Div implements RouterLayout {
     }
 }

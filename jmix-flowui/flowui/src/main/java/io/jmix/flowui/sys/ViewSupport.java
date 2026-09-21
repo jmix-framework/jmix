@@ -25,6 +25,7 @@ import com.vaadin.flow.server.VaadinSession;
 import io.jmix.core.MessageTools;
 import io.jmix.core.annotation.Internal;
 import io.jmix.core.security.CurrentAuthentication;
+import io.jmix.flowui.UiProperties;
 import io.jmix.flowui.event.view.ViewInitializedEvent;
 import io.jmix.flowui.model.ViewData;
 import io.jmix.flowui.observation.UiObservationSupport;
@@ -392,9 +393,19 @@ public class ViewSupport {
                 .ifPresent(routeData -> {
                     Class<? extends RouterLayout> parentLayout = routeData.getParentLayout();
                     findRouteData(parentLayout, routes)
-                            .ifPresent(data ->
-                                    navigationSupport.navigate(data.getNavigationTarget(),
-                                            RouteParameters.empty(), returnParams));
+                            .ifPresentOrElse(
+                                    data -> navigationSupport.navigate(data.getNavigationTarget(),
+                                            RouteParameters.empty(), returnParams),
+                                    () -> {
+                                        // A main layout need not have a route of its own: applications can
+                                        // put their home view inside it and configure default-view-id.
+                                        String defaultViewId = applicationContext.getBean(UiProperties.class)
+                                                .getDefaultViewId();
+                                        if (!Strings.isNullOrEmpty(defaultViewId)) {
+                                            navigationSupport.navigate(defaultViewId,
+                                                    RouteParameters.empty(), returnParams);
+                                        }
+                                    });
                 });
     }
 

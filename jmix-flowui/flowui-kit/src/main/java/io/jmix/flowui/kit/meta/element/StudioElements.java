@@ -291,6 +291,32 @@ interface StudioElements {
     void detailButtonRenderer();
 
     @StudioElement(
+            name = "PopoverRenderer",
+            classFqn = "io.jmix.flowui.component.grid.renderer.PopoverRenderer",
+            xmlElement = "popoverRenderer",
+            target = {"com.vaadin.flow.component.grid.Grid.Column"},
+            unsupportedTarget = {"io.jmix.flowui.kit.component.grid.EditorActionsColumn"},
+            documentationLink = "%VERSION%/flow-ui/vc/components/dataGrid.html#renderers",
+            properties = {
+                    @StudioProperty(xmlAttribute = "position",
+                            type = StudioPropertyType.ENUMERATION,
+                            classFqn = "com.vaadin.flow.component.popover.PopoverPosition",
+                            defaultValue = "BOTTOM_START",
+                            options = {"TOP_START", "TOP", "TOP_END",
+                                    "BOTTOM_START", "BOTTOM", "BOTTOM_END",
+                                    "START_TOP", "START", "START_BOTTOM",
+                                    "END_TOP", "END", "END_BOTTOM"}),
+                    @StudioProperty(xmlAttribute = "classNames",
+                            category = StudioProperty.Category.LOOK_AND_FEEL,
+                            type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "css",
+                            category = StudioProperty.Category.LOOK_AND_FEEL,
+                            type = StudioPropertyType.STRING)
+            }
+    )
+    void popoverRenderer();
+
+    @StudioElement(
             name = "ComponentItem",
             classFqn = "io.jmix.flowui.kit.component.dropdownbutton.ComponentItem",
             xmlElement = StudioXmlElements.COMPONENT_ITEM,

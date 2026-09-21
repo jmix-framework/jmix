@@ -162,6 +162,19 @@
             </columns>
         </dataGrid>
 
+        <dataGrid id="popoverRendererDataGrid" dataContainer="ordersDc">
+            <columns>
+                <column property="number">
+                    <popoverRenderer position="TOP_START"
+                                     classNames="popover-cell, test-popover"
+                                     css="font-weight: 600;"/>
+                </column>
+                <column property="date">
+                    <popoverRenderer/>
+                </column>
+            </columns>
+        </dataGrid>
+
         <treeDataGrid id="treeDataGrid"
                       aggregatable="true"
                       aggregationPosition="BOTTOM"

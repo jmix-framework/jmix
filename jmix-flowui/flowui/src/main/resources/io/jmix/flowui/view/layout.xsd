@@ -2472,6 +2472,10 @@
         <xs:union memberTypes="openModeType"/>
     </xs:simpleType>
 
+    <xs:simpleType name="popoverRendererPositionType">
+        <xs:union memberTypes="tooltipPosition"/>
+    </xs:simpleType>
+
     <!-- Interfaces -->
     <xs:attributeGroup name="hasId">
         <xs:attribute name="id" type="xs:string"/>
@@ -3089,6 +3093,13 @@
         </xs:complexContent>
     </xs:complexType>
 
+    <xs:complexType name="popoverRendererType">
+        <xs:attribute name="position" type="popoverRendererPositionType"/>
+        <xs:attribute name="css" type="xs:string"/>
+
+        <xs:attributeGroup ref="hasClassNames"/>
+    </xs:complexType>
+
     <xs:group name="renderers">
         <xs:sequence>
             <xs:choice>
@@ -3097,6 +3108,7 @@
                 <xs:element name="localDateTimeRenderer" minOccurs="0" type="formattableRendererType"/>
                 <xs:element name="detailLinkRenderer" minOccurs="0" type="detailLinkRendererType"/>
                 <xs:element name="detailButtonRenderer" minOccurs="0" type="detailButtonRendererType"/>
+                <xs:element name="popoverRenderer" minOccurs="0" type="popoverRendererType"/>
             </xs:choice>
         </xs:sequence>
     </xs:group>

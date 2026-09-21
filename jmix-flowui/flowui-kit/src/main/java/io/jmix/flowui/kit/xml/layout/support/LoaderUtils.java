@@ -22,6 +22,7 @@ import org.dom4j.Element;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 /**
@@ -88,5 +89,34 @@ public final class LoaderUtils {
         return Arrays.stream(names.split("[\\s,]+"))
                 .filter(split -> !Strings.isNullOrEmpty(split))
                 .toList();
+    }
+
+    /**
+     * Parses CSS declarations separated by semicolons and passes every property to the given setter.
+     *
+     * @param css    CSS declarations separated by semicolons
+     * @param setter consumer of a property name and its value
+     * @throws IllegalArgumentException if a declaration has no separator or an empty property name
+     */
+    public static void applyCss(String css, BiConsumer<String, String> setter) {
+        for (String propertyStatement : css.split(";")) {
+            if (propertyStatement.isBlank()) {
+                continue;
+            }
+
+            int separatorIndex = propertyStatement.indexOf(':');
+            if (separatorIndex < 0) {
+                throw new IllegalArgumentException("Incorrect CSS string: " + css);
+            }
+
+            String propertyName = propertyStatement.substring(0, separatorIndex).trim();
+            String propertyValue = propertyStatement.substring(separatorIndex + 1).trim();
+
+            if (propertyName.isEmpty()) {
+                throw new IllegalArgumentException("Incorrect CSS string, empty property name: " + css);
+            }
+
+            setter.accept(propertyName, propertyValue);
+        }
     }
 }

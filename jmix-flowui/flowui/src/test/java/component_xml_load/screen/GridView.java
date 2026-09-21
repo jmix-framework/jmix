@@ -50,6 +50,9 @@ public class GridView extends StandardView {
     public DataGrid<?> detailRenderersDataGrid;
 
     @ViewComponent
+    public DataGrid<?> popoverRendererDataGrid;
+
+    @ViewComponent
     public TreeDataGrid<?> treeDataGrid;
 
     @ViewComponent

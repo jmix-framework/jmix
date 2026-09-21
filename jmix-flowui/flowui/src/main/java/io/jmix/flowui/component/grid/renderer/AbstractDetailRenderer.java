@@ -22,14 +22,11 @@ import com.vaadin.flow.component.HasText;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.function.SerializableSupplier;
 import com.vaadin.flow.function.ValueProvider;
+import io.jmix.flowui.kit.xml.layout.support.LoaderUtils;
 import io.jmix.flowui.view.View;
-import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.Nullable;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.Objects;
-import java.util.function.BiConsumer;
 
 /**
  * Base class for component renderers that create controls for opening an entity detail view.
@@ -90,40 +87,14 @@ public abstract class AbstractDetailRenderer<
 
     protected void applyClassNames(C component) {
         if (classNames != null) {
-            split(classNames).forEach(component::addClassName);
+            LoaderUtils.split(classNames, component::addClassName);
         }
     }
 
     protected void applyCss(C component) {
         if (css != null) {
-            applyCss(css, component.getStyle()::set);
+            LoaderUtils.applyCss(css, component.getStyle()::set);
         }
-    }
-
-    protected List<String> split(String names) {
-        return Arrays.stream(names.split("[\\s,]+"))
-                .filter(StringUtils::isNotBlank)
-                .toList();
-    }
-
-    protected void applyCss(String css, BiConsumer<String, String> setter) {
-        Arrays.stream(StringUtils.split(css, ';'))
-                .filter(StringUtils::isNotBlank)
-                .forEach(propertyStatement -> {
-                    int separatorIndex = propertyStatement.indexOf(':');
-                    if (separatorIndex < 0) {
-                        throw new IllegalArgumentException("Incorrect CSS string: " + css);
-                    }
-
-                    String propertyName = StringUtils.trimToEmpty(propertyStatement.substring(0, separatorIndex));
-                    String propertyValue = StringUtils.trimToEmpty(propertyStatement.substring(separatorIndex + 1));
-
-                    if (StringUtils.isBlank(propertyName)) {
-                        throw new IllegalArgumentException("Incorrect CSS string, empty property name: " + css);
-                    }
-
-                    setter.accept(propertyName, propertyValue);
-                });
     }
 
     /**

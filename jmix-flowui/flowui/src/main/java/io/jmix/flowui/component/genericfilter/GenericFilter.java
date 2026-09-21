@@ -805,7 +805,7 @@ public class GenericFilter extends Composite<JmixDetails>
         String removeButtonId = removeButtonPrefix + CONDITION_REMOVE_BUTTON_ID_SUFFIX;
 
         HorizontalLayout singleFilterLayout = singleFilter.getRoot();
-        Optional<Component> existingRemoveButton = UiComponentUtils.findComponent(singleFilterLayout, removeButtonId);
+        Optional<Component> existingRemoveButton = findConditionRemoveButton(singleFilterLayout, removeButtonId);
 
         if (getCurrentConfiguration().isFilterComponentModified(singleFilter)) {
             // If the removeButton is added to the singleFilterLayout
@@ -832,7 +832,7 @@ public class GenericFilter extends Composite<JmixDetails>
 
         if (summaryComponent != null) {
             String removeButtonId = CONDITION_REMOVE_BUTTON_ID_SUFFIX;
-            Optional<Component> existingRemoveButton = UiComponentUtils.findComponent(summaryComponent, removeButtonId);
+            Optional<Component> existingRemoveButton = findConditionRemoveButton(summaryComponent, removeButtonId);
 
             if (getCurrentConfiguration().isFilterComponentModified(groupFilter)) {
 
@@ -843,6 +843,26 @@ public class GenericFilter extends Composite<JmixDetails>
                 existingRemoveButton.ifPresent(summaryComponent::remove);
             }
         }
+    }
+
+    /**
+     * Finds a condition remove button previously created by
+     * {@link #createConditionRemoveButton(FilterComponent, String)}.
+     * <p>
+     * The button is created at run time and gets an actual component id, so it must be looked up by
+     * that id. The two-argument {@link UiComponentUtils#findComponent(Component, String)} cannot be
+     * used here: if the filter is placed inside a fragment, it switches to the fragment id
+     * comparator, which never matches a run-time created component.
+     * <p>
+     * An overriding method must return a direct child of the container: the callers rely on it
+     * to reposition and remove the button.
+     *
+     * @param container      a container to find the button in
+     * @param removeButtonId an id of the button to find
+     * @return an {@link Optional} describing the found button, or an empty {@link Optional}
+     */
+    protected Optional<Component> findConditionRemoveButton(Component container, String removeButtonId) {
+        return UiComponentUtils.findComponent(container, removeButtonId, UiComponentUtils::sameId);
     }
 
     protected Component createConditionRemoveButton(FilterComponent filterComponent, String removeButtonId) {

@@ -127,6 +127,20 @@ public abstract class SingleFilterComponentBase<V> extends CustomField<V>
     }
 
     @Override
+    public void setValue(@Nullable V value) {
+        V oldValue = getValue();
+
+        super.setValue(value);
+
+        if (valueComponent != null
+                && valueEquals(value, oldValue)
+                && valueEquals(value, getEmptyValue())
+                && isInvalid()) {
+            setPresentationValue(value);
+        }
+    }
+
+    @Override
     protected V generateModelValue() {
         checkValueComponentState();
         //noinspection DataFlowIssue

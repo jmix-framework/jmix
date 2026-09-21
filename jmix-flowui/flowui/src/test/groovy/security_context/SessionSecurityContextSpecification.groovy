@@ -39,6 +39,9 @@ import org.springframework.security.core.userdetails.User
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository
 import test_support.spec.FlowuiTestSpecification
 
+import java.util.concurrent.locks.Lock
+import java.util.concurrent.locks.ReentrantLock
+
 /**
  * Runs with {@link JmixSecurityContextHolderStrategy} installed, as in a FlowUI application with Spring Security,
  * and with a Vaadin session whose HTTP session holds the security context of the logged-in user 'admin'.
@@ -113,5 +116,23 @@ abstract class SessionSecurityContextSpecification extends FlowuiTestSpecificati
         newUi.doInit(new TestVaadinRequest(session.getService()), uiId, "testAppId" + uiId)
         session.addUI(newUi)
         return newUi
+    }
+
+    protected VaadinSession createSessionWithLock(SecurityContext securityContext) {
+        VaadinSession session = new VaadinSession(vaadinSession.getService()) {
+            private final ReentrantLock sessionLock = new ReentrantLock()
+
+            @Override
+            Lock getLockInstance() {
+                return sessionLock
+            }
+
+            @Override
+            boolean hasLock() {
+                return sessionLock.isHeldByCurrentThread()
+            }
+        }
+        bindHttpSession(session, securityContext)
+        return session
     }
 }

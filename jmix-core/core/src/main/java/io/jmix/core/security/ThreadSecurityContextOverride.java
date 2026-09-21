@@ -30,10 +30,10 @@ import org.springframework.security.core.context.SecurityContextHolderStrategy;
  * If the installed strategy does not implement this interface, {@link SystemAuthenticator} falls back to
  * {@link SecurityContextHolder#setContext(SecurityContext)}, which is sufficient for a plain thread-local strategy.
  * <p>
- * Implementations must keep a per-thread stack so that nested overrides work, and must clear the stack in
- * {@link SecurityContextHolderStrategy#setContext(SecurityContext)} and
- * {@link SecurityContextHolderStrategy#clearContext()}, so that an unbalanced {@code begin()} cannot leak the override
- * to the next unit of work executed on a pooled thread.
+ * Implementations must keep a per-thread stack so that nested overrides work.
+ * {@link SecurityContextHolderStrategy#setContext(SecurityContext)} must replace the current override without
+ * discarding the enclosing scopes. {@link SecurityContextHolderStrategy#clearContext()} must clear the stack
+ * when a request or task releases its thread.
  */
 @NullMarked
 public interface ThreadSecurityContextOverride {

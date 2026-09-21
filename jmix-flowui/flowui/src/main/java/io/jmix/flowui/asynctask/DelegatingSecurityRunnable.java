@@ -48,7 +48,11 @@ public class DelegatingSecurityRunnable implements Runnable {
             SecurityContextHolder.setContext(securityContext);
             delegate.run();
         } finally {
-            SecurityContextHolder.setContext(originalSecurityContext);
+            if (SecurityContextHolder.createEmptyContext().equals(originalSecurityContext)) {
+                SecurityContextHolder.clearContext();
+            } else {
+                SecurityContextHolder.setContext(originalSecurityContext);
+            }
         }
     }
 

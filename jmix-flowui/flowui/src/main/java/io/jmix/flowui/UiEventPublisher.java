@@ -25,8 +25,8 @@ import com.vaadin.flow.server.WrappedSession;
 import io.jmix.core.cluster.ClusterApplicationEvent;
 import io.jmix.core.cluster.ClusterApplicationEventPublisher;
 import io.jmix.core.security.CurrentAuthentication;
+import io.jmix.core.security.SecurityContextHelper;
 import io.jmix.core.security.SystemAuthenticator;
-import io.jmix.core.security.ThreadSecurityContextOverride;
 import io.jmix.core.usersubstitution.CurrentUserSubstitution;
 import io.jmix.flowui.sys.SessionHolder;
 import io.jmix.flowui.sys.event.UiEventsManager;
@@ -104,28 +104,24 @@ public class UiEventPublisher {
             String sessionUsername = usernameSessionEntry.getKey();
             List<VaadinSession> sessions = usernameSessionEntry.getValue();
             for (VaadinSession session : sessions) {
-                // obtain lock on session state
-                Runnable access = () -> session.access(() -> onSessionAccess(session, event));
-
-                // Inside session.access() the security context must be the recipient's one, i.e. if "admin" sends
-                // a notification to "user1", "CurrentAuthentication#getUser()" under VaadinSession of "user1"
-                // must return "user1".
-                SecurityContext recipientContext = getSessionSecurityContext(session);
-                if (recipientContext != null
-                        && SecurityContextHolder.getContextHolderStrategy() instanceof ThreadSecurityContextOverride override) {
-                    // Run under the recipient's own security context, as stored in their HTTP session. This keeps
-                    // the recipient's real authentication (with locale, time zone, etc.) and also takes precedence
-                    // over an outer SystemAuthenticator block of the sender.
-                    override.pushContext(recipientContext);
-                    try {
-                        access.run();
-                    } finally {
-                        override.popContext();
+                session.access(() -> {
+                    if (session.getState() != VaadinSessionState.OPEN) {
+                        return;
                     }
-                } else {
-                    // Fall back to the system authentication on behalf of the recipient.
-                    systemAuthenticator.runWithUser(sessionUsername, access);
-                }
+                    // Resolve and install the recipient's context when the queued callback actually runs.
+                    SecurityContext recipientContext = getSessionSecurityContext(session);
+                    if (recipientContext != null) {
+                        SecurityContext previousContext = SecurityContextHolder.getContext();
+                        SecurityContextHelper.installContext(recipientContext);
+                        try {
+                            onSessionAccess(session, event);
+                        } finally {
+                            SecurityContextHelper.restoreContext(previousContext);
+                        }
+                    } else {
+                        systemAuthenticator.runWithUser(sessionUsername, () -> onSessionAccess(session, event));
+                    }
+                });
             }
         }
     }

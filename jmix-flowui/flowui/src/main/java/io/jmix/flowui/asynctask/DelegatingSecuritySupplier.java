@@ -50,7 +50,11 @@ public class DelegatingSecuritySupplier<T> implements Supplier<T> {
             SecurityContextHolder.setContext(securityContext);
             return delegate.get();
         } finally {
-            SecurityContextHolder.setContext(originalSecurityContext);
+            if (SecurityContextHolder.createEmptyContext().equals(originalSecurityContext)) {
+                SecurityContextHolder.clearContext();
+            } else {
+                SecurityContextHolder.setContext(originalSecurityContext);
+            }
         }
     }
 

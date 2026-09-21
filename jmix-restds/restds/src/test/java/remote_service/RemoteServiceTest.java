@@ -178,6 +178,22 @@ public class RemoteServiceTest extends BaseRestDsIntegrationTest {
     }
 
     @Test
+    void testStringWithSpecialCharacters() {
+        List<String> values = List.of(
+                "say \"hi\"",
+                "C:\\temp",
+                "C:\\new",
+                "C:\\xyz",
+                "ends with \\",
+                "line1\nline2",
+                "col1\tcol2");
+
+        for (String value : values) {
+            assertThat(sampleService.stringMethod(value)).isEqualTo(value);
+        }
+    }
+
+    @Test
     void testOtherTypes() throws Exception{
         FileRef fileRef = FileRef.create("fileStorage1", "/path1", "file1.txt");
         FileRef resultFileRef = sampleService.fileRefMethod(fileRef);

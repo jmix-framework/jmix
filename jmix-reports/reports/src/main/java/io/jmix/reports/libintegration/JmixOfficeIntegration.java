@@ -50,9 +50,12 @@ public class JmixOfficeIntegration extends OfficeIntegration {
         try {
             Callable<Void> task = () -> {
                 SecurityContextHolder.setContext(securityContext);
-                connection.open();
-                officeTask.processTaskInOpenOffice(connection.getOOResourceProvider());
-                SecurityContextHolder.clearContext();
+                try {
+                    connection.open();
+                    officeTask.processTaskInOpenOffice(connection.getOOResourceProvider());
+                } finally {
+                    SecurityContextHolder.clearContext();
+                }
                 return null;
             };
             future = executor.submit(task);

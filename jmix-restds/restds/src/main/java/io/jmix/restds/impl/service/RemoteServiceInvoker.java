@@ -16,6 +16,10 @@
 
 package io.jmix.restds.impl.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.util.RawValue;
 import io.jmix.core.EntitySerialization;
 import io.jmix.core.EntitySerializationOption;
 import io.jmix.core.Metadata;
@@ -43,6 +47,8 @@ public class RemoteServiceInvoker {
     protected final EntitySerialization entitySerialization;
     protected final Metadata metadata;
     protected final DatatypeRegistry datatypeRegistry;
+
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     public RemoteServiceInvoker(Environment environment, RestDataStoreUtils restDataStoreUtils, EntitySerialization entitySerialization, Metadata metadata, DatatypeRegistry datatypeRegistry) {
         this.environment = environment;
@@ -80,37 +86,37 @@ public class RemoteServiceInvoker {
         if (parameters.length != args.length)
             throw new IllegalArgumentException("Number of parameters does not match number of arguments");
 
-        StringBuilder paramsJson = new StringBuilder("{");
+        ObjectNode rootNode = objectMapper.createObjectNode();
         for (int i = 0; i < parameters.length; i++) {
             String paramName = parameters[i].getName();
             Object paramValue = args[i];
-            String paramJson;
 
             if (paramValue == null) {
-                paramJson = "null";
+                rootNode.putNull(paramName);
             } else if (EntityValues.isEntity(paramValue)) {
-                paramJson = entitySerialization.toJson(paramValue, null, EntitySerializationOption.IGNORE_ENTITY_NAME);
+                rootNode.putRawValue(paramName, new RawValue(
+                        entitySerialization.toJson(paramValue, null, EntitySerializationOption.IGNORE_ENTITY_NAME)));
             } else {
                 Datatype<?> datatype = datatypeRegistry.find(paramValue.getClass());
                 if (datatype != null) {
                     String formatted = datatype.format(paramValue);
                     if (paramValue instanceof Boolean || paramValue instanceof Number) {
-                        paramJson = formatted;
+                        rootNode.putRawValue(paramName, new RawValue(formatted));
                     } else {
-                        paramJson = "\"" + formatted + "\"";
+                        rootNode.put(paramName, formatted);
                     }
                 } else {
-                    paramJson = entitySerialization.objectToJson(paramValue, EntitySerializationOption.IGNORE_ENTITY_NAME);
+                    rootNode.putRawValue(paramName, new RawValue(
+                            entitySerialization.objectToJson(paramValue, EntitySerializationOption.IGNORE_ENTITY_NAME)));
                 }
             }
-            paramsJson.append("\"").append(paramName).append("\":").append(paramJson);
-            if (i < parameters.length - 1) {
-                paramsJson.append(",");
-            }
         }
-        paramsJson.append("}");
 
-        return paramsJson.toString();
+        try {
+            return objectMapper.writeValueAsString(rootNode);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("Error creating request body", e);
+        }
     }
 
     @Nullable

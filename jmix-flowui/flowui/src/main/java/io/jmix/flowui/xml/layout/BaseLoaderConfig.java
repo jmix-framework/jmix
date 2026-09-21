@@ -122,6 +122,7 @@ public abstract class BaseLoaderConfig {
         loaders.put("twinColumn", TwinColumnLoader.class);
         loaders.put("markdown", MarkdownLoader.class);
         loaders.put("markdownEditor", MarkdownEditorLoader.class);
+        loaders.put("svg", SvgLoader.class);
 
         /* HTML components */
         loaders.put("param", ParamLoader.class);

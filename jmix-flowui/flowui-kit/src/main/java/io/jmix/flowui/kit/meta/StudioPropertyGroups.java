@@ -3873,9 +3873,16 @@ public final class StudioPropertyGroups {
 
     @StudioPropertyGroup(properties = @StudioProperty(
             xmlAttribute = StudioXmlAttributes.FILE,
-            type = StudioPropertyType.STRING,
+            type = StudioPropertyType.LOCALIZED_STRING,
             category = StudioProperty.Category.GENERAL))
     public interface HtmlComponent extends BaseComponentWithClassNames, Content {
+    }
+
+    @StudioPropertyGroup(properties = @StudioProperty(
+            xmlAttribute = StudioXmlAttributes.FILE,
+            type = StudioPropertyType.STRING,
+            category = StudioProperty.Category.GENERAL))
+    public interface SvgComponent extends BaseComponentWithClassNames {
     }
 
     @StudioPropertyGroup(

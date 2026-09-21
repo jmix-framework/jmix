@@ -30,6 +30,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.Svg;
 import com.vaadin.flow.component.badge.Badge;
 import com.vaadin.flow.component.accordion.Accordion;
 import com.vaadin.flow.component.accordion.AccordionPanel;
@@ -246,6 +247,13 @@ final class StudioStandardComponentsPreviewLoader implements StudioPreviewCompon
             StudioXmlElements.MARKDOWN, (element, environment) -> new Markdown(inlineContent(element)
                     .or(() -> LoaderUtils.loadString(element, StudioXmlElements.CONTENT))
                     .orElse("")),
+            // Only inline content renders: the runtime reads "file" through Resources (classpath/file/web),
+            // which a spring-free kit loader cannot do. An empty Svg is the honest placeholder.
+            StudioXmlElements.SVG, (element, environment) -> inlineContent(element)
+                    .map(String::trim)
+                    .filter(content -> content.contains("<svg"))
+                    .map(Svg::new)
+                    .orElseGet(Svg::new),
             // "resource" is the attribute the runtime ImageLoader maps onto setSrc. Absolute URLs are
             // applied as-is; classpath/theme resources are resolved to data URLs by the environment.
             // Unlike svgIcon, an unresolvable classpath resource is NOT applied as a raw src:

@@ -17,6 +17,7 @@
 package io.jmix.flowui.kit.meta.component;
 
 import com.vaadin.flow.component.Html;
+import com.vaadin.flow.component.Svg;
 import com.vaadin.flow.component.applayout.DrawerToggle;
 import com.vaadin.flow.component.avatar.Avatar;
 import com.vaadin.flow.component.badge.Badge;
@@ -1197,6 +1198,21 @@ interface StudioComponents {
             }
     )
     JmixMarkdownEditor markdownEditor();
+
+    @StudioComponent(
+            name = "Svg",
+            classFqn = "com.vaadin.flow.component.Svg",
+            category = "Components",
+            xmlElement = StudioXmlElements.SVG,
+            icon = "io/jmix/flowui/kit/meta/icon/component/svg.svg",
+            availableChildren = @StudioAvailableChildrenInfo(
+                    availableTags = @StudioAvailableChildrenInfo.TagInfo(
+                            qualifiedName = "content",
+                            maxCount = 1
+                    )
+            ),
+            propertyGroups = StudioPropertyGroups.SvgComponent.class)
+    Svg svg();
 
     @StudioComponent(
             name = "IntegerSlider",

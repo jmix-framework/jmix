@@ -3848,6 +3848,23 @@
         </xs:complexContent>
     </xs:complexType>
 
+    <!-- Svg -->
+    <xs:complexType name="svgComponent">
+        <xs:complexContent>
+            <xs:extension base="baseComponent">
+                <xs:sequence>
+                    <xs:element name="content" minOccurs="0">
+                        <xs:complexType mixed="true"/>
+                    </xs:element>
+                </xs:sequence>
+
+                <xs:attribute name="file" type="xs:string"/>
+
+                <xs:attributeGroup ref="hasClassNames"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
     <!-- ActionItem-->
     <xs:complexType name="dropdownActionItemType">
         <xs:choice>
@@ -5786,6 +5803,7 @@
                 <xs:element name="fragment" type="fragmentComponent"/>
                 <xs:element name="markdown" type="markdownComponent"/>
                 <xs:element name="markdownEditor" type="markdownEditorComponent"/>
+                <xs:element name="svg" type="svgComponent"/>
                 <xs:element name="sidePanelLayout" type="sidePanelLayoutComponent"/>
                 <xs:element name="sidePanelLayoutCloser" type="sidePanelLayoutCloserComponent"/>
                 <xs:element name="integerSlider" type="integerSliderComponent"/>

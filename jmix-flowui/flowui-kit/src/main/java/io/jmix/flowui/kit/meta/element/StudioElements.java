@@ -1257,4 +1257,11 @@ interface StudioElements {
             target = "com.vaadin.flow.component.markdown.Markdown"
     )
     void markdownContent();
+
+    @StudioElement(
+            name = "Svg Content",
+            xmlElement = StudioXmlElements.CONTENT,
+            target = "com.vaadin.flow.component.Svg"
+    )
+    void svgContent();
 }

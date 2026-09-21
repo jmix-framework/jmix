@@ -440,6 +440,7 @@ public final class StudioXmlElements {
     public static final String SUBTEXT_STYLE = "subtextStyle";
     public static final String SUBTITLE = "subtitle";
     public static final String SUFFIX = "suffix";
+    public static final String SVG = "svg";
     public static final String SVG_ICON = "svgIcon";
     public static final String SWIMLANE = "swimlane";
     public static final String SWIMLANES = "swimlanes";

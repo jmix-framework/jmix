@@ -16,6 +16,7 @@
 package io.jmix.flowui.kit.meta.component.preview;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.Svg;
 import com.vaadin.flow.component.badge.Badge;
 import com.vaadin.flow.component.details.Details;
 import com.vaadin.flow.component.formlayout.FormLayout;
@@ -158,6 +159,21 @@ class StudioPreviewParityTest {
         Element view = view("<markdown><content>" + body + "</content></markdown>");
         Markdown markdown = assertInstanceOf(Markdown.class, load(view.element("markdown"), view));
         assertEquals(body, markdown.getContent());
+    }
+
+    @Test
+    void svg_rendersInlineContentAndStaysEmptyWithoutIt() {
+        Element view = view("<svg id='logo' classNames='logo-svg'><content><![CDATA["
+                + "<svg xmlns='http://www.w3.org/2000/svg'><circle r='4'/></svg>]]></content></svg>");
+        Svg svg = assertInstanceOf(Svg.class, load(view.element("svg"), view));
+        assertEquals("logo", svg.getId().orElseThrow());
+        assertTrue(svg.hasClassName("logo-svg"));
+        assertTrue(svg.getElement().getProperty("innerHTML").contains("<circle r='4'/>"));
+
+        // The runtime resolves "file" through Resources, which a spring-free kit loader cannot do.
+        view = view("<svg file='icons/logo.svg'/>");
+        svg = assertInstanceOf(Svg.class, load(view.element("svg"), view));
+        assertNull(svg.getElement().getProperty("innerHTML"));
     }
 
     @Test

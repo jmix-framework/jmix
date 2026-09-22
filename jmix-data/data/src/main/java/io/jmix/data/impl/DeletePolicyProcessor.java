@@ -23,6 +23,7 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.Range;
 import io.jmix.data.StoreAwareLocator;
+import io.jmix.data.persistence.DbTypeConverter;
 import io.jmix.data.persistence.DbmsSpecifics;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
@@ -224,14 +225,14 @@ public class DeletePolicyProcessor {
                                 + " set " + column + " = null where "
                                 + metadataTools.getPrimaryKeyName(metaClass) + " = ?";
                         log.debug("Hard delete un-fetched reference: {}, bind: [{}]", updateMasterSql, EntityValues.getId(entity));
-                        getJdbcTemplate().update(updateMasterSql, dbmsSpecifics.getDbTypeConverter().getSqlObject(EntityValues.getId(entity)));
+                        getJdbcTemplate().update(updateMasterSql, getDbTypeConverter().getSqlObject(EntityValues.getId(entity)));
                     }
 
                     MetaClass refMetaClass = property.getRange().asClass();
                     String deleteRefSql = "delete from " + metadataTools.getDatabaseTable(refMetaClass) + " where "
                             + metadataTools.getPrimaryKeyName(refMetaClass) + " = ?";
                     log.debug("Hard delete un-fetched reference: {}, bind: [{}]", deleteRefSql, EntityValues.getId(reference));
-                    getJdbcTemplate().update(deleteRefSql, dbmsSpecifics.getDbTypeConverter().getSqlObject(EntityValues.getId(reference)));
+                    getJdbcTemplate().update(deleteRefSql, getDbTypeConverter().getSqlObject(EntityValues.getId(reference)));
                 } catch (DataAccessException e) {
                     throw new RuntimeException("Error processing deletion of " + entity, e);
                 }
@@ -241,6 +242,10 @@ public class DeletePolicyProcessor {
 
     protected JdbcTemplate getJdbcTemplate() {
         return storeAwareLocator.getJdbcTemplate(metaClass.getStore().getName());
+    }
+
+    protected DbTypeConverter getDbTypeConverter() {
+        return dbmsSpecifics.getDbTypeConverter(metaClass.getStore().getName());
     }
 
     protected void setReferenceNull(Object entity, MetaProperty property) {
@@ -275,7 +280,7 @@ public class DeletePolicyProcessor {
                         metadataTools.getPrimaryKeyName(entityMetaClass));
                 try {
                     log.debug("Set reference to null: {}, bind: [{}]", sql, EntityValues.getId(entity));
-                    getJdbcTemplate().update(sql, dbmsSpecifics.getDbTypeConverter().getSqlObject(EntityValues.getId(entity)));
+                    getJdbcTemplate().update(sql, getDbTypeConverter().getSqlObject(EntityValues.getId(entity)));
                 } catch (DataAccessException e) {
                     throw new RuntimeException("Error processing deletion of " + entity, e);
                 }

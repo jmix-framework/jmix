@@ -214,13 +214,15 @@ public class View<T extends Component> extends Composite<T>
                     return;
                 }
 
+                // ViewClosedEvent is published first, so that AfterCloseEvent handlers observe
+                // the view as already closed, e.g. unregistered in OpenedDialogWindows.
+                ViewClosedEvent viewClosedEvent = new ViewClosedEvent(this);
+                applicationContext.publishEvent(viewClosedEvent);
+
                 AfterCloseEvent afterCloseEvent = new AfterCloseEvent(this, closeAction);
 
                 getUiObservationSupport().observeViewLifecycle(this, ViewLifecycle.AFTER_CLOSE,
                         () -> fireEvent(afterCloseEvent));
-
-                ViewClosedEvent viewClosedEvent = new ViewClosedEvent(this);
-                applicationContext.publishEvent(viewClosedEvent);
             }
 
             // for cases when the navigation to the same view with different query parameters
@@ -337,12 +339,14 @@ public class View<T extends Component> extends Composite<T>
 
         closeDelegate.accept(this);
 
+        // ViewClosedEvent is published first, so that AfterCloseEvent handlers observe
+        // the view as already closed, e.g. unregistered in OpenedDialogWindows.
+        ViewClosedEvent viewClosedEvent = new ViewClosedEvent(this);
+        applicationContext.publishEvent(viewClosedEvent);
+
         AfterCloseEvent afterCloseEvent = new AfterCloseEvent(this, closeAction);
         getUiObservationSupport().observeViewLifecycle(this, ViewLifecycle.AFTER_CLOSE,
                 () -> fireEvent(afterCloseEvent));
-
-        ViewClosedEvent viewClosedEvent = new ViewClosedEvent(this);
-        applicationContext.publishEvent(viewClosedEvent);
 
         return OperationResult.success();
     }

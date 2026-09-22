@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Haulmont.
+ * Copyright 2026 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,16 +14,13 @@
  * limitations under the License.
  */
 
-package io.jmix.gradle;
+package sample.app;
 
-import org.gradle.api.Project;
-import org.gradle.api.tasks.SourceSet;
+import io.jmix.core.annotation.JmixModule;
+import io.jmix.eclipselink.EclipselinkConfiguration;
+import org.springframework.context.annotation.Configuration;
 
-import java.util.Set;
-
-/**
- * Used in {@link EnhancingAction} to run provider-specific enhancing logic.
- */
-public interface PersistenceProviderEnhancing {
-    void run(Project project, SourceSet sourceSet, String enhancedDir, Set<String> allStores);
+@Configuration
+@JmixModule(id = "sample-app", dependsOn = EclipselinkConfiguration.class)
+public class AppConfiguration {
 }

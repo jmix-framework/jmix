@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Haulmont.
+ * Copyright 2026 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,16 +14,9 @@
  * limitations under the License.
  */
 
-package io.jmix.gradle;
+package sample.app
 
-import org.gradle.api.Project;
-import org.gradle.api.tasks.SourceSet;
-
-import java.util.Set;
-
-/**
- * Used in {@link EnhancingAction} to run provider-specific enhancing logic.
- */
-public interface PersistenceProviderEnhancing {
-    void run(Project project, SourceSet sourceSet, String enhancedDir, Set<String> allStores);
-}
+// Top-level Kotlin declaration (an extension function). Such declarations live in a synthetic
+// file facade class and are discoverable by the Kotlin compiler only via the module metadata
+// (META-INF/*.kotlin_module). Used from a test source to prove that metadata survives enhancement.
+fun AppEntity.describe(): String = "AppEntity[$id]"

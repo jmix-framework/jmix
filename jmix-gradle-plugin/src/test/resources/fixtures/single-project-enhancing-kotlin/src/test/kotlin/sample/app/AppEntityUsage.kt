@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Haulmont.
+ * Copyright 2026 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,16 +14,11 @@
  * limitations under the License.
  */
 
-package io.jmix.gradle;
+package sample.app
 
-import org.gradle.api.Project;
-import org.gradle.api.tasks.SourceSet;
-
-import java.util.Set;
-
-/**
- * Used in {@link EnhancingAction} to run provider-specific enhancing logic.
- */
-public interface PersistenceProviderEnhancing {
-    void run(Project project, SourceSet sourceSet, String enhancedDir, Set<String> allStores);
+// A test source that calls a main top-level declaration. It compiles against the enhanced main
+// output dir (sourceSets.main.output is redirected there), so it fails with "Unresolved reference"
+// unless the enhanced dir carries the Kotlin module metadata.
+object AppEntityUsage {
+    fun run(): String = AppEntity().describe()
 }

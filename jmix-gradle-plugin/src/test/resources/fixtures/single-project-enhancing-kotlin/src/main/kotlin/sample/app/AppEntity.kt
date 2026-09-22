@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Haulmont.
+ * Copyright 2026 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,16 +14,21 @@
  * limitations under the License.
  */
 
-package io.jmix.gradle;
+package sample.app
 
-import org.gradle.api.Project;
-import org.gradle.api.tasks.SourceSet;
+import io.jmix.core.entity.annotation.JmixGeneratedValue
+import io.jmix.core.metamodel.annotation.JmixEntity
+import jakarta.persistence.Entity
+import jakarta.persistence.Id
+import jakarta.persistence.Table
+import java.util.UUID
 
-import java.util.Set;
+@JmixEntity
+@Entity(name = "sample_AppEntity")
+@Table(name = "SAMPLE_APP_ENTITY")
+open class AppEntity {
 
-/**
- * Used in {@link EnhancingAction} to run provider-specific enhancing logic.
- */
-public interface PersistenceProviderEnhancing {
-    void run(Project project, SourceSet sourceSet, String enhancedDir, Set<String> allStores);
+    @Id
+    @JmixGeneratedValue
+    var id: UUID? = null
 }

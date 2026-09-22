@@ -20,7 +20,8 @@ import {jmixValuePickerActionsShared} from "../../styles/value-picker-actions-sh
 
 const jmixMultiSelectComboBoxPicker = css`
     [part="input-field"] {
-        padding: 0;
+        padding-block: 0;
+        padding-inline-end: 0;
     }
 
     :host([has-actions]) [part="input-field"] {
@@ -29,7 +30,7 @@ const jmixMultiSelectComboBoxPicker = css`
 
     [part='input-field'] ::slotted(:is(input, textarea)) {
         padding: var(--vaadin-input-field-padding, var(--vaadin-padding-block-container) var(--vaadin-padding-inline-container));
-        padding-inline-end: 0;
+        padding-inline: 0;
     }
 `;
 

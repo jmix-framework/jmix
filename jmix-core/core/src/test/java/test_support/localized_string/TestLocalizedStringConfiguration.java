@@ -14,19 +14,16 @@
  * limitations under the License.
  */
 
-package io.jmix.core.metamodel.annotation;
+package test_support.localized_string;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import io.jmix.core.CoreConfiguration;
+import io.jmix.core.annotation.JmixModule;
+import org.springframework.context.annotation.Configuration;
 
 /**
- * Explicitly defined datatype that overrides a datatype inferred from the attribute Java type.
+ * A tiny Jmix module: its package carries the message bundle and the test entity of the localized string tests.
  */
-@Target({ElementType.METHOD, ElementType.FIELD, ElementType.ANNOTATION_TYPE})
-@Retention(RetentionPolicy.RUNTIME)
-public @interface PropertyDatatype {
-
-    String value() default "";
+@Configuration
+@JmixModule(dependsOn = CoreConfiguration.class)
+public class TestLocalizedStringConfiguration {
 }

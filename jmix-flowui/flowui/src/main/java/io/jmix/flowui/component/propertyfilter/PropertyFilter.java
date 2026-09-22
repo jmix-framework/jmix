@@ -24,8 +24,10 @@ import com.vaadin.flow.component.HasValueAndElement;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.core.QueryUtils;
+import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.metamodel.datatype.EnumClass;
+import io.jmix.core.metamodel.datatype.impl.StringDatatype;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.querycondition.PropertyCondition;
@@ -291,7 +293,8 @@ public class PropertyFilter<V> extends SingleFilterComponentBase<V> {
             return false;
         }
 
-        return datatypeRegistry.get(String.class).equals(propertyPath.getRange().asDatatype());
+        Datatype<?> datatype = propertyPath.getRange().asDatatype();
+        return datatypeRegistry.get(String.class).equals(datatype) || datatype instanceof StringDatatype;
     }
 
     protected boolean isStringBasedOperation(Operation operation) {

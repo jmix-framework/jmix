@@ -127,6 +127,16 @@ public class DatatypeRegistryImpl implements DatatypeRegistry {
 
     @Override
     public Optional<String> getIdByJavaClassOptional(Class<?> javaClass) {
+        // The datatype registered as default for the class wins over any other datatype of the same class.
+        // It may have been replaced under its id since, in which case the scan below still answers.
+        Datatype<?> defaultDatatype = datatypeByClass.get(javaClass);
+        if (defaultDatatype != null) {
+            Optional<String> defaultId = getIdOptional(defaultDatatype);
+            if (defaultId.isPresent()) {
+                return defaultId;
+            }
+        }
+
         for (Map.Entry<String, Datatype> entry : datatypeById.entrySet()) {
             if (entry.getValue().getJavaClass().equals(javaClass))
                 return Optional.of(entry.getKey());

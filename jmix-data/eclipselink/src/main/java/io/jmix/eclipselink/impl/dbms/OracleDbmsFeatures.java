@@ -83,6 +83,11 @@ public class OracleDbmsFeatures implements DbmsFeatures {
     }
 
     @Override
+    public String getCharFunctionName() {
+        return "chr";
+    }
+
+    @Override
     public String getTypeAndVersion() {
         return "oracle";
     }

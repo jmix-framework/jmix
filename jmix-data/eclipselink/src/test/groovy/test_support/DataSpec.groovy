@@ -17,6 +17,9 @@
 package test_support
 
 import io.jmix.core.CoreConfiguration
+import io.jmix.core.security.ClientDetails
+import io.jmix.core.security.SecurityContextHelper
+import io.jmix.core.security.SystemAuthenticationToken
 import io.jmix.data.DataConfiguration
 import io.jmix.eclipselink.EclipselinkConfiguration
 import org.springframework.beans.factory.annotation.Autowired
@@ -41,7 +44,26 @@ class DataSpec extends Specification {
         transaction.executeWithoutResult {}
     }
 
+    private boolean authenticated
+
+    /**
+     * Makes {@code CurrentAuthentication.getLocale()} return the given locale for the current thread. The
+     * authentication is dropped after the test, and only for a spec that asked for one.
+     */
+    void authenticateWithLocale(Locale locale) {
+        def token = new SystemAuthenticationToken(null)
+        token.details = ClientDetails.builder().locale(locale).build()
+        SecurityContextHelper.setAuthentication(token)
+        authenticated = true
+    }
+
     void cleanup() {
+        if (authenticated) {
+            SecurityContextHelper.setAuthentication(null)
+        }
+        jdbc.update('delete from TEST_LOCALIZED_NAME_HOLDER')
+        jdbc.update('delete from TEST_LOCALIZED_NAME_ENTITY')
+        jdbc.update('delete from TEST_LOCALIZED_NAME_GROUP')
         jdbc.update('delete from SEC_USER_ROLE')
         jdbc.update('delete from SEC_ROLE')
         jdbc.update('delete from SEC_USER')

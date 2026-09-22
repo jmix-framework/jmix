@@ -83,6 +83,14 @@ public interface DbmsFeatures {
         return null;
     }
 
+    /**
+     * @return name of the DBMS function returning the character with the given code, used to build control
+     * characters in generated queries
+     */
+    default String getCharFunctionName() {
+        return "char";
+    }
+
 
     /**
      * Provides information about {@code jmix.data.dbmsType} and {@code jmix.data.dbmsVersion} this bean designed for. Version can be empty.

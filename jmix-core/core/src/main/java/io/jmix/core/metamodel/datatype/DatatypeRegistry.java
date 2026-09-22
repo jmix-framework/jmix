@@ -68,14 +68,16 @@ public interface DatatypeRegistry {
     Optional<String> getIdOptional(Datatype<?> datatype);
 
     /**
-     * Returns an ID of a first datatype handling the given Java class.
+     * Returns an ID of the datatype handling the given Java class: the one registered as the default for the
+     * class, or any other datatype of that class when none is the default.
      * @throws IllegalArgumentException if no datatypes handle the given Java class
      */
     String getIdByJavaClass(Class<?> javaClass);
 
     /**
-     * @return the ID of a first datatype handling the given Java class wrapped in
-     * {@link Optional} if it found, otherwise an empty {@link Optional}.
+     * @return the ID of the datatype handling the given Java class, wrapped in {@link Optional}, or an empty
+     * {@link Optional} if none handles it. The datatype registered as the default for the class wins; when
+     * none is the default, any other datatype of that class answers.
      */
     Optional<String> getIdByJavaClassOptional(Class<?> javaClass);
 

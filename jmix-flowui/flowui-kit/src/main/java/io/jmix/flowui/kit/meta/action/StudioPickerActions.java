@@ -42,6 +42,14 @@ interface StudioPickerActions {
     void valueClearAction();
 
     @StudioAction(
+            type = "value_localizedStringEdit",
+            description = "Opens a dialog that edits a localized string value per locale",
+            classFqn = "io.jmix.flowui.action.valuepicker.LocalizedStringEditAction",
+            documentationLink = "%VERSION%/flow-ui/actions/value-picker-actions.html#value_localizedStringEdit",
+            propertyGroups = StudioActionPropertyGroups.BaseActionComponent.class)
+    void localizedStringEditAction();
+
+    @StudioAction(
             type = "entity_clear",
             description = "Clears the value of entity picker component",
             classFqn = "io.jmix.flowui.action.entitypicker.EntityClearAction",

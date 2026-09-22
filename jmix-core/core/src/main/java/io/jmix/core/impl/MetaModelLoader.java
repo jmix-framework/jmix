@@ -49,6 +49,7 @@ import org.hibernate.validator.constraints.Length;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
@@ -888,7 +889,7 @@ public class MetaModelLoader {
 
     @Nullable
     protected Datatype getAdaptiveDatatype(AnnotatedElement annotatedElement) {
-        PropertyDatatype annotation = annotatedElement.getAnnotation(PropertyDatatype.class);
+        PropertyDatatype annotation = AnnotatedElementUtils.getMergedAnnotation(annotatedElement, PropertyDatatype.class);
         return annotation != null && !annotation.value().equals("") ? datatypes.get(annotation.value()) : null;
     }
 

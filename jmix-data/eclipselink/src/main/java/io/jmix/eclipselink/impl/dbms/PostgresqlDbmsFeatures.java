@@ -66,6 +66,11 @@ public class PostgresqlDbmsFeatures implements DbmsFeatures {
     }
 
     @Override
+    public String getCharFunctionName() {
+        return "chr";
+    }
+
+    @Override
     public String getTypeAndVersion() {
         return "postgresql";
     }

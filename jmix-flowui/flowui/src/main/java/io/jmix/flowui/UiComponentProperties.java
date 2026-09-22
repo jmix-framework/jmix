@@ -77,6 +77,7 @@ public class UiComponentProperties {
     String pickerOpenShortcut;
     String pickerReadShortcut;
     String pickerClearShortcut;
+    String pickerLocalizedStringEditShortcut;
 
     /**
      * Items for rows per page component.
@@ -187,6 +188,7 @@ public class UiComponentProperties {
             String pickerOpenShortcut,
             String pickerReadShortcut,
             String pickerClearShortcut,
+            String pickerLocalizedStringEditShortcut,
             @DefaultValue({"20", "50", "100", "500", "1000", "5000"}) List<Integer> paginationItemsPerPageItems,
             @Nullable Map<String, String> entityFieldFqn,
             @Nullable Map<String, List<String>> entityFieldActions,
@@ -221,6 +223,7 @@ public class UiComponentProperties {
         this.pickerOpenShortcut = pickerOpenShortcut;
         this.pickerReadShortcut = pickerReadShortcut;
         this.pickerClearShortcut = pickerClearShortcut;
+        this.pickerLocalizedStringEditShortcut = pickerLocalizedStringEditShortcut;
 
         this.paginationItemsPerPageItems = paginationItemsPerPageItems;
 
@@ -318,6 +321,13 @@ public class UiComponentProperties {
 
     public String getPickerClearShortcut() {
         return pickerClearShortcut;
+    }
+
+    /**
+     * @return the shortcut of the {@code value_localizedStringEdit} action, not bound by default
+     */
+    public String getPickerLocalizedStringEditShortcut() {
+        return pickerLocalizedStringEditShortcut;
     }
 
     /**

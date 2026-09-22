@@ -37,6 +37,7 @@ import com.vaadin.flow.component.login.LoginOverlay;
 import com.vaadin.flow.component.markdown.Markdown;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.popover.Popover;
 import com.vaadin.flow.component.progressbar.ProgressBar;
 import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
 import com.vaadin.flow.component.select.Select;
@@ -611,6 +612,15 @@ interface StudioComponents {
             }
     )
     PasswordField passwordField();
+
+    @StudioComponent(
+            name = "Popover",
+            classFqn = "com.vaadin.flow.component.popover.Popover",
+            category = "Components",
+            xmlElement = StudioXmlElements.POPOVER,
+            icon = "io/jmix/flowui/kit/meta/icon/component/popover.svg",
+            propertyGroups = StudioPropertyGroups.PopoverComponent.class)
+    Popover popover();
 
     @StudioComponent(
             name = "ProgressBar",

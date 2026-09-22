@@ -71,6 +71,8 @@ import com.vaadin.flow.component.orderedlayout.FlexLayout;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.Scroller;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.popover.Popover;
+import com.vaadin.flow.component.popover.PopoverPosition;
 import com.vaadin.flow.component.progressbar.ProgressBar;
 import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
 import com.vaadin.flow.component.select.Select;
@@ -202,6 +204,7 @@ final class StudioStandardComponentsPreviewLoader implements StudioPreviewCompon
 
             Map.entry(StudioXmlElements.LOGIN_FORM, EnhancedLoginForm::new),
             Map.entry(StudioXmlElements.LOGIN_OVERLAY, LoginOverlay::new),
+            Map.entry(StudioXmlElements.POPOVER, Popover::new),
 
             Map.entry(StudioXmlElements.SIMPLE_PAGINATION, JmixSimplePagination::new),
             Map.entry(StudioXmlElements.FILE_UPLOAD_FIELD, JmixFileUploadField::new),
@@ -374,6 +377,7 @@ final class StudioStandardComponentsPreviewLoader implements StudioPreviewCompon
                 loadString(element, "role", badge::setRole);
                 ComponentLoaderUtils.loadIconSetIcon(element).ifPresent(badge::setIcon);
             }
+            case StudioXmlElements.POPOVER -> loadPopoverAttributes((Popover) component, element);
             case StudioXmlElements.HBOX, StudioXmlElements.VBOX -> {
                 ThemableLayout layout = (ThemableLayout) component;
                 loadBoolean(element, "wrap", layout::setWrap);
@@ -465,6 +469,28 @@ final class StudioStandardComponentsPreviewLoader implements StudioPreviewCompon
                 // No additional attributes are loaded for this component yet.
             }
         }
+    }
+
+    private void loadPopoverAttributes(Popover popover, Element element) {
+        loadEnum(element, PopoverPosition.class, "position", popover::setPosition);
+        loadBoolean(element, "modal", popover::setModal);
+        loadBoolean(element, "backdropVisible", popover::setBackdropVisible);
+        loadBoolean(element, "autofocus", popover::setAutofocus);
+        loadBoolean(element, "tabFocusEnabled", popover::setTabFocusEnabled);
+        loadBoolean(element, "closeOnEsc", popover::setCloseOnEsc);
+        loadBoolean(element, "closeOnOutsideClick", popover::setCloseOnOutsideClick);
+        loadBoolean(element, "openOnClick", popover::setOpenOnClick);
+        loadBoolean(element, "openOnFocus", popover::setOpenOnFocus);
+        loadBoolean(element, "openOnHover", popover::setOpenOnHover);
+        loadInteger(element, "focusDelay", popover::setFocusDelay);
+        loadInteger(element, "hoverDelay", popover::setHoverDelay);
+        loadInteger(element, "hideDelay", popover::setHideDelay);
+        loadString(element, "role", popover::setRole);
+        loadString(element, "width", popover::setWidth);
+        loadString(element, "height", popover::setHeight);
+
+        // 'target' is deliberately not loaded: the preview builds one component at a time from a
+        // detached element and has no view tree to resolve an id against.
     }
 
     private void loadButtonAttributes(JmixButton button, Element element, Element viewElement,

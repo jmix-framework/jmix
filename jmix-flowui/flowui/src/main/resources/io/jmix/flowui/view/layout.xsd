@@ -2472,8 +2472,22 @@
         <xs:union memberTypes="openModeType"/>
     </xs:simpleType>
 
-    <xs:simpleType name="popoverRendererPositionType">
+    <xs:simpleType name="popoverPositionType">
         <xs:union memberTypes="tooltipPosition"/>
+    </xs:simpleType>
+
+    <xs:simpleType name="popoverThemeNames">
+        <xs:union>
+            <xs:simpleType>
+                <xs:restriction base="xs:string"/>
+            </xs:simpleType>
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="arrow"/>
+                    <xs:enumeration value="no-padding"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:union>
     </xs:simpleType>
 
     <!-- Interfaces -->
@@ -3094,10 +3108,50 @@
     </xs:complexType>
 
     <xs:complexType name="popoverRendererType">
-        <xs:attribute name="position" type="popoverRendererPositionType"/>
+        <xs:attribute name="position" type="popoverPositionType"/>
         <xs:attribute name="css" type="xs:string"/>
 
         <xs:attributeGroup ref="hasClassNames"/>
+    </xs:complexType>
+
+    <!--
+        Deliberately does not extend baseComponent: Popover.getStyle() throws UnsupportedOperationException
+        because the overlay is teleported, so 'css' cannot work, and 'colspan'/'alignSelf'/'justifySelf' are
+        meaningless for a component that occupies no space in its parent. XSD cannot remove inherited
+        attributes, so the applicable ones are declared here directly.
+    -->
+    <xs:complexType name="popoverComponent">
+        <xs:sequence minOccurs="0">
+            <xs:group ref="layoutOrComponent"/>
+        </xs:sequence>
+
+        <xs:attribute name="target" type="xs:string"/>
+        <xs:attribute name="position" type="popoverPositionType"/>
+        <xs:attribute name="modal" type="xs:boolean"/>
+        <xs:attribute name="backdropVisible" type="xs:boolean"/>
+        <xs:attribute name="autofocus" type="xs:boolean"/>
+        <xs:attribute name="tabFocusEnabled" type="xs:boolean"/>
+        <xs:attribute name="closeOnEsc" type="xs:boolean"/>
+        <xs:attribute name="closeOnOutsideClick" type="xs:boolean"/>
+        <xs:attribute name="openOnClick" type="xs:boolean"/>
+        <xs:attribute name="openOnFocus" type="xs:boolean"/>
+        <xs:attribute name="openOnHover" type="xs:boolean"/>
+        <xs:attribute name="focusDelay" type="xs:integer"/>
+        <xs:attribute name="hoverDelay" type="xs:integer"/>
+        <xs:attribute name="hideDelay" type="xs:integer"/>
+        <xs:attribute name="role" type="xs:string"/>
+        <xs:attribute name="width" type="xs:string"/>
+        <xs:attribute name="height" type="xs:string"/>
+        <xs:attribute name="visible" type="xs:boolean"/>
+        <xs:attribute name="themeNames" type="popoverThemeNames"/>
+
+        <xs:attributeGroup ref="hasId"/>
+        <xs:attributeGroup ref="hasEnabled"/>
+        <xs:attributeGroup ref="hasClassNames"/>
+        <xs:attributeGroup ref="hasAriaLabel"/>
+
+        <!-- enable XSD extension here -->
+        <xs:anyAttribute namespace="##other" processContents="lax"/>
     </xs:complexType>
 
     <xs:group name="renderers">
@@ -5779,6 +5833,7 @@
                 <xs:element name="multiSelectListBox" type="multiSelectListBoxComponent"/>
                 <xs:element name="badge" type="badgeComponent"/>
                 <xs:element name="progressBar" type="progressBarComponent"/>
+                <xs:element name="popover" type="popoverComponent"/>
                 <xs:element name="dataGrid" type="dataGridComponent"/>
                 <xs:element name="treeDataGrid" type="treeDataGridComponent"/>
                 <xs:element name="loginForm" type="loginFormComponent"/>

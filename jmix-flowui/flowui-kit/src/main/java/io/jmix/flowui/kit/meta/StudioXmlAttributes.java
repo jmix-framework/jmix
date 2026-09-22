@@ -107,6 +107,7 @@ public final class StudioXmlAttributes {
     public static final String AXIS = "axis";
     public static final String AXIS_ORIENTATION = "axisOrientation";
     public static final String BACK = "back";
+    public static final String BACKDROP_VISIBLE = "backdropVisible";
     public static final String BACKGROUND = "background";
     public static final String BACKGROUND_COLOR = "backgroundColor";
     public static final String BAR = "bar";
@@ -172,6 +173,7 @@ public final class StudioXmlAttributes {
     public static final String CLIP = "clip";
     public static final String CLOCKWISE = "clockwise";
     public static final String CLOSE_HINT = "closeHint";
+    public static final String CLOSE_ON_ESC = "closeOnEsc";
     public static final String CLOSE_ON_OUTSIDE_CLICK = "closeOnOutsideClick";
     public static final String CODE = "code";
     public static final String COLLAPSE_CHIPS = "collapseChips";
@@ -645,6 +647,8 @@ public final class StudioXmlAttributes {
     public static final String OPEN = "open";
     public static final String OPENED = "opened";
     public static final String OPEN_MODE = "openMode";
+    public static final String OPEN_ON_CLICK = "openOnClick";
+    public static final String OPEN_ON_FOCUS = "openOnFocus";
     public static final String OPEN_ON_HOVER = "openOnHover";
     public static final String OPERATION = "operation";
     public static final String OPERATIONS_LIST = "operationsList";
@@ -900,6 +904,7 @@ public final class StudioXmlAttributes {
     public static final String SYMBOL_TYPE = "symbolType";
     public static final String SYMBOL_TYPES = "symbolTypes";
     public static final String TABS_DRAGGABLE = "tabsDraggable";
+    public static final String TAB_FOCUS_ENABLED = "tabFocusEnabled";
     public static final String TAB_INDEX = "tabIndex";
     public static final String TAB_NAVIGATION = "tabNavigation";
     public static final String TAB_SIZE = "tabSize";

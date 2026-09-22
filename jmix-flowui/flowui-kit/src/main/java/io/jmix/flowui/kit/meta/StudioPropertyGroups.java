@@ -1830,6 +1830,14 @@ public final class StudioPropertyGroups {
             xmlAttribute = StudioXmlAttributes.THEME_NAMES,
             type = StudioPropertyType.VALUES_LIST,
             category = StudioProperty.Category.LOOK_AND_FEEL,
+            options = {"arrow", "no-padding"}))
+    public interface PopoverThemeNames {
+    }
+
+    @StudioPropertyGroup(properties = @StudioProperty(
+            xmlAttribute = StudioXmlAttributes.THEME_NAMES,
+            type = StudioPropertyType.VALUES_LIST,
+            category = StudioProperty.Category.LOOK_AND_FEEL,
             options = {"contrast", "error", "success"}))
     public interface ProgressBarThemeNames {
     }
@@ -2398,6 +2406,63 @@ public final class StudioPropertyGroups {
 
     @StudioPropertyGroup
     public interface EntityPickerComponent extends ValuePickerComponent, MetaClassTypeParameterV {
+    }
+
+    @StudioPropertyGroup(properties = {
+            @StudioProperty(xmlAttribute = StudioXmlAttributes.TARGET,
+                    type = StudioPropertyType.COMPONENT_REF,
+                    category = StudioProperty.Category.GENERAL),
+            @StudioProperty(xmlAttribute = StudioXmlAttributes.POSITION,
+                    type = StudioPropertyType.ENUMERATION,
+                    classFqn = "com.vaadin.flow.component.popover.PopoverPosition",
+                    defaultValue = "BOTTOM_START",
+                    category = StudioProperty.Category.GENERAL,
+                    options = {"TOP_START", "TOP", "TOP_END",
+                            "BOTTOM_START", "BOTTOM", "BOTTOM_END",
+                            "START_TOP", "START", "START_BOTTOM",
+                            "END_TOP", "END", "END_BOTTOM"}),
+            @StudioProperty(xmlAttribute = StudioXmlAttributes.MODAL,
+                    type = StudioPropertyType.BOOLEAN, defaultValue = "false",
+                    category = StudioProperty.Category.GENERAL),
+            @StudioProperty(xmlAttribute = StudioXmlAttributes.BACKDROP_VISIBLE,
+                    type = StudioPropertyType.BOOLEAN, defaultValue = "false",
+                    category = StudioProperty.Category.GENERAL),
+            @StudioProperty(xmlAttribute = StudioXmlAttributes.AUTOFOCUS,
+                    type = StudioPropertyType.BOOLEAN, defaultValue = "false",
+                    category = StudioProperty.Category.GENERAL),
+            @StudioProperty(xmlAttribute = StudioXmlAttributes.TAB_FOCUS_ENABLED,
+                    type = StudioPropertyType.BOOLEAN, defaultValue = "true",
+                    category = StudioProperty.Category.GENERAL),
+            @StudioProperty(xmlAttribute = StudioXmlAttributes.CLOSE_ON_ESC,
+                    type = StudioPropertyType.BOOLEAN, defaultValue = "true",
+                    category = StudioProperty.Category.GENERAL),
+            @StudioProperty(xmlAttribute = StudioXmlAttributes.CLOSE_ON_OUTSIDE_CLICK,
+                    type = StudioPropertyType.BOOLEAN, defaultValue = "true",
+                    category = StudioProperty.Category.GENERAL),
+            @StudioProperty(xmlAttribute = StudioXmlAttributes.OPEN_ON_CLICK,
+                    type = StudioPropertyType.BOOLEAN, defaultValue = "true",
+                    category = StudioProperty.Category.GENERAL),
+            @StudioProperty(xmlAttribute = StudioXmlAttributes.OPEN_ON_FOCUS,
+                    type = StudioPropertyType.BOOLEAN, defaultValue = "false",
+                    category = StudioProperty.Category.GENERAL),
+            @StudioProperty(xmlAttribute = StudioXmlAttributes.OPEN_ON_HOVER,
+                    type = StudioPropertyType.BOOLEAN, defaultValue = "false",
+                    category = StudioProperty.Category.GENERAL),
+            @StudioProperty(xmlAttribute = StudioXmlAttributes.FOCUS_DELAY,
+                    type = StudioPropertyType.INTEGER,
+                    category = StudioProperty.Category.GENERAL),
+            @StudioProperty(xmlAttribute = StudioXmlAttributes.HOVER_DELAY,
+                    type = StudioPropertyType.INTEGER,
+                    category = StudioProperty.Category.GENERAL),
+            @StudioProperty(xmlAttribute = StudioXmlAttributes.HIDE_DELAY,
+                    type = StudioPropertyType.INTEGER,
+                    category = StudioProperty.Category.GENERAL),
+            @StudioProperty(xmlAttribute = StudioXmlAttributes.ROLE,
+                    type = StudioPropertyType.STRING, defaultValue = "dialog",
+                    category = StudioProperty.Category.GENERAL)
+    })
+    public interface PopoverComponent extends Id, Visible, Enabled, ClassNames, HasAriaLabel,
+            Width, Height, PopoverThemeNames {
     }
 
     @StudioPropertyGroup

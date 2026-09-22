@@ -371,6 +371,7 @@ public final class StudioXmlElements {
     public static final String POINTER = "pointer";
     public static final String POINT_PAIR = "pointPair";
     public static final String POLAR = "polar";
+    public static final String POPOVER = "popover";
     public static final String POSITIVE = "positive";
     public static final String POSITIVE_OR_ZERO = "positiveOrZero";
     public static final String PRE = "pre";

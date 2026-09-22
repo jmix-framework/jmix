@@ -26,6 +26,8 @@ import com.vaadin.flow.component.listbox.ListBox;
 import com.vaadin.flow.component.markdown.Markdown;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.Scroller;
+import com.vaadin.flow.component.popover.Popover;
+import com.vaadin.flow.component.popover.PopoverPosition;
 import com.vaadin.flow.component.slider.DecimalSlider;
 import com.vaadin.flow.component.slider.IntegerRangeSlider;
 import com.vaadin.flow.component.slider.IntegerSlider;
@@ -377,5 +379,33 @@ class StudioStandardComponentsFactoryPreviewLoaderTest {
         assertNotNull(rangeSlider);
         assertEquals(0, rangeSlider.getValue().start());
         assertEquals(100, rangeSlider.getValue().end());
+    }
+
+    @Test
+    void testPopoverWithAttributes() {
+        BaseElement element = element("popover");
+        element.addAttribute("id", "infoPopover");
+        element.addAttribute("position", "BOTTOM_END");
+        element.addAttribute("openOnHover", "true");
+        element.addAttribute("openOnClick", "false");
+        element.addAttribute("modal", "true");
+        element.addAttribute("hoverDelay", "200");
+        element.addAttribute("role", "tooltip");
+        element.addAttribute("width", "20em");
+        element.addAttribute("classNames", "my-popover");
+
+        Component component = loader.load(element, element("view"));
+
+        assertInstanceOf(Popover.class, component);
+        Popover popover = (Popover) component;
+        assertEquals("infoPopover", popover.getId().orElse(null));
+        assertEquals(PopoverPosition.BOTTOM_END, popover.getPosition());
+        assertTrue(popover.isOpenOnHover());
+        assertFalse(popover.isOpenOnClick());
+        assertTrue(popover.isModal());
+        assertEquals(200, popover.getHoverDelay());
+        assertEquals("tooltip", popover.getRole());
+        assertEquals("20em", popover.getElement().getProperty("width"));
+        assertTrue(popover.getClassNames().contains("my-popover"));
     }
 }

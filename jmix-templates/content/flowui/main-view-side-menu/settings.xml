@@ -16,7 +16,7 @@
   -->
 
 <template xmlns="http://schemas.haulmont.com/studio/template-settings.xsd"
-          icon="resource://template/template_main_window.svg"
+          icon="resource://template/template_side_menu.svg"
           name="Main view with side menu"
           order="80"
           enabled="true">

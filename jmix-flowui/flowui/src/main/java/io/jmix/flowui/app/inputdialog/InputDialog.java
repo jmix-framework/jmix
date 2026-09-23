@@ -31,7 +31,9 @@ import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.flowui.Actions;
 import io.jmix.flowui.Dialogs;
 import io.jmix.flowui.Dialogs.InputDialogBuilder.LabelsPosition;
+import io.jmix.flowui.UiComponentProperties;
 import io.jmix.flowui.UiComponents;
+import io.jmix.flowui.UiViewProperties;
 import io.jmix.flowui.action.DialogAction;
 import io.jmix.flowui.action.inputdialog.InputDialogAction;
 import io.jmix.flowui.component.HasRequired;
@@ -42,6 +44,7 @@ import io.jmix.flowui.component.factory.InputDialogGenerationContext;
 import io.jmix.flowui.component.validation.ValidationErrors;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.action.ActionVariant;
+import io.jmix.flowui.kit.component.KeyCombination;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.view.*;
 import org.apache.commons.lang3.StringUtils;
@@ -98,6 +101,12 @@ public class InputDialog extends StandardView {
 
     @Autowired
     protected UiComponentsGenerator uiComponentsGenerator;
+
+    @Autowired
+    protected UiComponentProperties uiComponentProperties;
+
+    @Autowired
+    protected UiViewProperties uiViewProperties;
 
     protected FormLayout formLayout;
     protected HorizontalLayout actionBox;
@@ -217,10 +226,12 @@ public class InputDialog extends StandardView {
     }
 
     /**
-     * @return input parameters from dialog
+     * @return unmodifiable list of input parameters from dialog
+     * @see #setParameter(InputParameter)
+     * @see #setParameters(InputParameter...)
      */
     public List<InputParameter> getParameters() {
-        return parameters;
+        return Collections.unmodifiableList(parameters);
     }
 
     /**
@@ -277,10 +288,10 @@ public class InputDialog extends StandardView {
     }
 
     /**
-     * @return actions list
+     * @return unmodifiable list of actions set by {@link #setActions(InputDialogAction...)}
      */
     public List<Action> getActions() {
-        return actionsList;
+        return Collections.unmodifiableList(actionsList);
     }
 
     /**
@@ -448,7 +459,50 @@ public class InputDialog extends StandardView {
                 actions.add(createDialogAction(DialogAction.Type.CANCEL, INPUT_DIALOG_CANCEL_ACTION));
                 break;
         }
+        initDialogActionShortcuts(actions);
         initActions(actions);
+    }
+
+    protected void initDialogActionShortcuts(List<Action> actions) {
+        String confirmShortcut = StringUtils.defaultIfBlank(
+                uiComponentProperties.getInputDialogConfirmShortcut(), uiViewProperties.getSaveShortcut());
+        initDialogActionShortcut(findDialogAction(actions, DialogAction.Type.OK, DialogAction.Type.YES),
+                confirmShortcut);
+
+        // CANCEL is preferred to NO: the cancel shortcut dismisses the dialog without answering it.
+        String cancelShortcut = StringUtils.defaultIfBlank(
+                uiComponentProperties.getInputDialogCancelShortcut(), uiViewProperties.getCloseShortcut());
+        initDialogActionShortcut(findDialogAction(actions, DialogAction.Type.CANCEL, DialogAction.Type.NO),
+                cancelShortcut);
+    }
+
+    protected void initDialogActionShortcut(@Nullable DialogAction action, @Nullable String shortcut) {
+        // An action that already has a shortcut, e.g. from an overridden createDialogAction, keeps it.
+        if (action == null || action.getShortcutCombination() != null) {
+            return;
+        }
+
+        KeyCombination kc = KeyCombination.create(shortcut);
+        if (kc != null) {
+            // Commit a pending field value before the action handler validates it.
+            kc.setResetFocusOnActiveElement(true);
+            action.setShortcutCombination(kc);
+        }
+    }
+
+    /**
+     * Returns the first action of the given types, trying the types in the order they are passed.
+     */
+    @Nullable
+    protected DialogAction findDialogAction(List<Action> actions, DialogAction.Type... types) {
+        for (DialogAction.Type type : types) {
+            for (Action action : actions) {
+                if (action instanceof DialogAction dialogAction && dialogAction.getType() == type) {
+                    return dialogAction;
+                }
+            }
+        }
+        return null;
     }
 
     protected void initResponsiveSteps() {

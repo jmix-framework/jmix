@@ -25,6 +25,7 @@ import com.vaadin.flow.server.VaadinSession;
 import io.jmix.core.TimeSource;
 import io.jmix.core.impl.session.ThreadLocalSessionData;
 import io.jmix.core.security.CurrentAuthentication;
+import io.jmix.core.impl.logging.LogMdc;
 import io.jmix.core.security.SecurityContextHelper;
 import io.jmix.flowui.backgroundtask.*;
 import io.jmix.flowui.event.BackgroundTaskUnhandledExceptionEvent;
@@ -37,6 +38,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.lang.Nullable;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
@@ -193,9 +196,10 @@ public class BackgroundWorkerImpl implements BackgroundWorker {
             this.future = new FutureTask<>(this) {
                 @Override
                 protected void done() {
-                    Authentication previousAuth = SecurityContextHelper.getAuthentication();
+                    // may run on the task thread or, on cancel, on a UI thread
+                    SecurityContext previousContext = SecurityContextHolder.getContext();
 
-                    SecurityContextHelper.setAuthentication(authentication);
+                    SecurityContextHelper.installContext(createSecurityContext());
                     ThreadLocalSessionData.setAttributes(sessionAttributes);
                     ThreadLocalVaadinRequestHolder.setRequest(vaadinRequest);
                     try {
@@ -207,12 +211,21 @@ public class BackgroundWorkerImpl implements BackgroundWorker {
                                 "to canceling task after session is invalidated");
                         cancelExecution();
                     } finally {
-                        SecurityContextHelper.setAuthentication(previousAuth);
+                        SecurityContextHelper.restoreContext(previousContext);
                         ThreadLocalSessionData.clear();
                         ThreadLocalVaadinRequestHolder.clear();
                     }
                 }
             };
+        }
+
+        /**
+         * Creates a new context holding the authentication the task was started with.
+         */
+        private SecurityContext createSecurityContext() {
+            SecurityContext context = SecurityContextHolder.createEmptyContext();
+            context.setAuthentication(authentication);
+            return context;
         }
 
         @Override
@@ -223,7 +236,10 @@ public class BackgroundWorkerImpl implements BackgroundWorker {
                 Thread.currentThread().setName(THREAD_NAME_PREFIX + matcher.group(1) + "-" + username);
             }
 
-            SecurityContextHelper.setAuthentication(authentication);
+            // The task thread gets its own context instance; the one captured on the UI thread may be shared
+            // with the HTTP session and must not be modified.
+            SecurityContextHolder.setContext(createSecurityContext());
+            LogMdc.setup(authentication);
             ThreadLocalSessionData.setAttributes(sessionAttributes);
             try {
                 // do not run any activity if canceled before start
@@ -254,7 +270,8 @@ public class BackgroundWorkerImpl implements BackgroundWorker {
                     }
                 });
             } finally {
-                SecurityContextHelper.setAuthentication(null);
+                SecurityContextHolder.clearContext();
+                LogMdc.setup(null);
                 ThreadLocalSessionData.clear();
             }
         }
@@ -262,7 +279,17 @@ public class BackgroundWorkerImpl implements BackgroundWorker {
         @SafeVarargs
         @Override
         public final void handleProgress(T... changes) {
-            ui.access(() -> process(Arrays.asList(changes)));
+            ui.access(() -> {
+                // Progress handlers always run under the authentication the task was started with, regardless of
+                // the thread that executes the access command and of any SystemAuthenticator block in the task.
+                SecurityContext previousContext = SecurityContextHolder.getContext();
+                SecurityContextHelper.installContext(createSecurityContext());
+                try {
+                    process(Arrays.asList(changes));
+                } finally {
+                    SecurityContextHelper.restoreContext(previousContext);
+                }
+            });
         }
 
         @ExecutedOnUIThread
@@ -295,12 +322,12 @@ public class BackgroundWorkerImpl implements BackgroundWorker {
             unregister();
 
             // As "handleDone()" can be processed under BackgroundTask thread or under UI thread from which
-            // the task starts, we should save previous security context (that can be null)
-            // to restore it when "done()" is finished.
-            Authentication previousAuth = SecurityContextHelper.getAuthentication();
+            // the task starts, we should save the previous security context to restore it when "done()" is finished.
+            // The previous context instance may be shared with the HTTP session and must not be modified.
+            SecurityContext previousContext = SecurityContextHolder.getContext();
 
             try {
-                SecurityContextHelper.setAuthentication(authentication);
+                SecurityContextHelper.installContext(createSecurityContext());
 
                 V result = future.get();
 
@@ -329,7 +356,7 @@ public class BackgroundWorkerImpl implements BackgroundWorker {
                     }
                 }
             } finally {
-                SecurityContextHelper.setAuthentication(previousAuth);
+                SecurityContextHelper.restoreContext(previousContext);
 
                 if (finalizer != null) {
                     finalizer.run();

@@ -23,6 +23,7 @@ import io.jmix.flowui.component.groupgrid.adapter.DefaultGroupDataGridAdapterFac
 import io.jmix.flowui.component.groupgrid.adapter.GroupDataGridAdapterFactory;
 import io.jmix.flowui.component.groupgrid.adapter.GroupDataGridAdapterProvider;
 import io.jmix.flowui.sys.ActionsConfiguration;
+import io.jmix.flowui.sys.SecurityContextHolderStrategyPostProcessor;
 import io.jmix.flowui.sys.UiAccessChecker;
 import io.jmix.flowui.sys.ViewControllersConfiguration;
 import io.jmix.flowui.sys.ViewSupport;
@@ -54,6 +55,11 @@ import java.util.List;
 @AutoConfiguration
 @Import({CoreConfiguration.class, FlowuiConfiguration.class})
 public class FlowuiAutoConfiguration {
+
+    @Bean("flowui_SecurityContextHolderStrategyPostProcessor")
+    public static SecurityContextHolderStrategyPostProcessor securityContextHolderStrategyPostProcessor() {
+        return new SecurityContextHolderStrategyPostProcessor();
+    }
 
     @Bean("jmix_AppUiControllers")
     @ConditionalOnMissingBean(name = "jmix_AppUiControllers")

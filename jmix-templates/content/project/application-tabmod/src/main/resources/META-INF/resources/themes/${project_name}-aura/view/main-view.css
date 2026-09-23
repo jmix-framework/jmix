@@ -67,6 +67,10 @@ vaadin-app-layout.jmix-main-view-app-layout[has-drawer][drawer-opened]:not([over
 
 .jmix-main-view-title {
     font-size: var(--aura-font-size-xl);
+    min-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 
 .jmix-main-view-section {

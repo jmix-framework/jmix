@@ -16,28 +16,31 @@
 
 package io.jmix.core.security.impl;
 
-import io.jmix.core.security.SystemAuthenticationToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
 
 import javax.annotation.Nullable;
 import java.util.ArrayDeque;
 import java.util.Deque;
 
+/**
+ * Keeps a per-thread stack of {@link SecurityContext} instances that were current before each
+ * {@code begin()} call, so that {@code end()} can reinstall the exact previous instance.
+ * <p>
+ * The stored instances are never modified.
+ */
 public abstract class SystemAuthenticatorSupport {
 
     private static final Logger log = LoggerFactory.getLogger(SystemAuthenticatorSupport.class);
 
-    protected static final Authentication NULL_AUTHENTICATION = new NullAuthentication();
-
-    protected ThreadLocal<Deque<Authentication>> threadLocalStack = new ThreadLocal<>();
+    protected ThreadLocal<Deque<SecurityContext>> threadLocalStack = new ThreadLocal<>();
 
     public SystemAuthenticatorSupport() {
     }
 
-    protected void pushAuthentication(@Nullable Authentication authentication) {
-        Deque<Authentication> stack = threadLocalStack.get();
+    protected void pushSecurityContext(SecurityContext securityContext) {
+        Deque<SecurityContext> stack = threadLocalStack.get();
         if (stack == null) {
             stack = new ArrayDeque<>();
             threadLocalStack.set(stack);
@@ -46,24 +49,16 @@ public abstract class SystemAuthenticatorSupport {
                 log.warn("Stack is too big: {}. Check correctness of begin/end invocations.", stack.size());
             }
         }
-        if (authentication == null) {
-            stack.push(NULL_AUTHENTICATION);
-        } else {
-            stack.push(authentication);
-        }
+        stack.push(securityContext);
     }
 
     @Nullable
-    protected Authentication pollAuthentication() {
-        Deque<Authentication> stack = threadLocalStack.get();
+    protected SecurityContext pollSecurityContext() {
+        Deque<SecurityContext> stack = threadLocalStack.get();
         if (stack != null) {
-            Authentication authentication = stack.poll();
-            if (authentication != null) {
-                if (authentication == NULL_AUTHENTICATION) {
-                    return null;
-                } else {
-                    return authentication;
-                }
+            SecurityContext securityContext = stack.poll();
+            if (securityContext != null) {
+                return securityContext;
             } else {
                 log.warn("Stack is empty. Check correctness of begin/end invocations.");
             }
@@ -72,14 +67,4 @@ public abstract class SystemAuthenticatorSupport {
         }
         return null;
     }
-
-    protected static class NullAuthentication extends SystemAuthenticationToken {
-
-        private static final long serialVersionUID = 5437664860036209641L;
-
-        public NullAuthentication() {
-            super();
-        }
-    }
-
 }

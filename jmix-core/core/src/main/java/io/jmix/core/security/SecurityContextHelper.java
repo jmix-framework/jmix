@@ -42,6 +42,10 @@ public class SecurityContextHelper {
 
     /**
      * Sets the Authentication in the current {@link SecurityContext}.
+     * <p>
+     * Note that this method modifies the current {@link SecurityContext} instance, which may be shared with other
+     * threads of the same HTTP session. To execute code on behalf of another user for a limited time,
+     * use {@link SystemAuthenticator} instead.
      */
     public static void setAuthentication(@Nullable Authentication authentication) {
         if (authentication != null) {

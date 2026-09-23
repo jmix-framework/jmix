@@ -1,0 +1,87 @@
+/*
+ * Copyright 2026 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+.uirec-draft-list-hint,
+.uirec-draft-list-empty {
+    color: var(--lumo-secondary-text-color);
+    font-size: var(--lumo-font-size-s);
+}
+
+.uirec-draft-list-buttons {
+    gap: var(--lumo-space-s);
+}
+
+.uirec-draft-grid::part(items) {
+    grid-gap: var(--lumo-space-s);
+}
+
+.uirec-draft-card {
+    background: var(--lumo-base-color);
+    border: 1px solid var(--lumo-contrast-10pct);
+    border-radius: var(--lumo-border-radius-l);
+    box-sizing: border-box;
+    gap: var(--lumo-space-s);
+    margin: 0;
+    padding: var(--lumo-space-s);
+}
+
+.uirec-draft-card-body {
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+    gap: var(--lumo-space-xs);
+    min-width: 0;
+    padding: 0;
+    text-decoration: none;
+}
+
+/* Lumo re-underlines links on hover, so the reset has to be restated for that state. */
+.uirec-draft-card-body:hover {
+    text-decoration: none;
+}
+
+.uirec-draft-card-body:focus-visible {
+    outline: var(--vaadin-focus-ring-width, 2px) solid
+        var(--vaadin-focus-ring-color, var(--lumo-primary-color-50pct));
+    outline-offset: var(--vaadin-focus-ring-width, 2px);
+}
+
+.uirec-draft-card-title {
+    font-size: var(--lumo-font-size-m);
+    font-weight: 600;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.uirec-draft-card-record {
+    color: var(--lumo-body-text-color);
+    font-size: var(--lumo-font-size-s);
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.uirec-draft-card-date {
+    color: var(--lumo-secondary-text-color);
+    font-size: var(--lumo-font-size-xs);
+}
+
+.uirec-draft-card-discard {
+    flex: none;
+}

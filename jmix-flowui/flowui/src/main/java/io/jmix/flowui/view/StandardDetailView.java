@@ -686,8 +686,23 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
     }
 
     private boolean doNotReloadEditedEntity() {
+        return doNotReloadEditedEntity(getEditedEntityContainer());
+    }
+
+    /**
+     * Returns whether the entity passed to {@link #setEntityToEdit(Object)} should be set to the container as is
+     * instead of being reloaded from the data store. It is the case when the entity is modified in a parent data
+     * context and its loaded attributes cover the container's fetch plan. If the entity is not modified in a
+     * parent data context, the entity is used as is only when reloading is turned off by
+     * {@link #setReloadEdited(boolean)}.
+     * <p>
+     * A view that creates the edited entity container itself can invoke this method with the created container
+     * to make the same decision. The method must be invoked after {@link #setEntityToEdit(Object)}.
+     *
+     * @param container container the edited entity is going to be set to
+     */
+    protected boolean doNotReloadEditedEntity(InstanceContainer<T> container) {
         if (isEntityModifiedInParentContext()) {
-            InstanceContainer<T> container = getEditedEntityContainer();
             FetchPlan fetchPlan = container.getFetchPlan();
             if (fetchPlan == null) {
                 MetadataTools metadataTools = getMetadataTools();

@@ -36,6 +36,8 @@
                          minWidth="100px"
                          modal="false"
                          overlayAriaLabel="overlayAriaLabel"
+                         sidePanelResizable="true"
+                         themeNames="resizer-small"
                          width="100px">
             <span/>
             <span/>

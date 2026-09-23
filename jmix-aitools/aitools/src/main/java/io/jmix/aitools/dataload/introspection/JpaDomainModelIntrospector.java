@@ -17,6 +17,7 @@
 package io.jmix.aitools.dataload.introspection;
 
 import io.jmix.aitools.AiToolsDataLoadProperties;
+import io.jmix.aitools.ExcludeFromAi;
 import io.jmix.core.MessageTools;
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
@@ -70,7 +71,9 @@ public class JpaDomainModelIntrospector {
      * <p>
      * Each entity is checked against the rules below, in order; the first matching rule wins:
      * <ol>
-     *     <li>listed in {@code excludeEntities} — excluded (takes precedence over everything else);</li>
+     *     <li>annotated {@link ExcludeFromAi} — excluded unconditionally (a code-level trust boundary,
+     *     above every rule below, so no configuration can bring it back);</li>
+     *     <li>listed in {@code excludeEntities} — excluded (takes precedence over every include rule);</li>
      *     <li>listed in {@code includeEntities} or matching {@code includePackages} — included,
      *     overriding the system-level, DTO and {@code excludePackages} rules below;</li>
      *     <li>system-level entity while {@code excludeSystemLevelEntities} is enabled — excluded;</li>
@@ -274,6 +277,11 @@ public class JpaDomainModelIntrospector {
     protected List<EntityPropertyDescriptor> introspectProperties(MetaClass metaClass) {
         List<EntityPropertyDescriptor> propertyDescriptors = new ArrayList<>();
         for (MetaProperty property : metaClass.getProperties()) {
+            // A @ExcludeFromAi attribute is a code-level trust boundary: like @Secret it is never
+            // indexed, so it is hidden from discovery and rejected by JPQL validation.
+            if (isExcludedFromAi(property)) {
+                continue;
+            }
             // A @Secret attribute is never indexed: it is hidden from discovery and, because the index
             // also backs JPQL validation, rejected if a generated query references it anyway.
             if (metadataTools.isSecret(property)) {
@@ -320,7 +328,13 @@ public class JpaDomainModelIntrospector {
     }
 
     protected boolean shouldInclude(MetaClass metaClass) {
-        // Explicit exclude takes precedence over everything.
+        // A @ExcludeFromAi entity is a code-level trust boundary: excluded unconditionally, above every
+        // rule below (including force-include), so a deployment-time property override cannot expose it.
+        if (isExcludedFromAi(metaClass)) {
+            return false;
+        }
+
+        // Explicit exclude takes precedence over every include rule.
         if (isExplicitlyExcluded(metaClass)) {
             return false;
         }
@@ -345,6 +359,14 @@ public class JpaDomainModelIntrospector {
         }
 
         return true;
+    }
+
+    protected boolean isExcludedFromAi(MetaClass metaClass) {
+        return metaClass.getAnnotations().containsKey(ExcludeFromAi.class.getName());
+    }
+
+    protected boolean isExcludedFromAi(MetaProperty metaProperty) {
+        return metaProperty.getAnnotations().containsKey(ExcludeFromAi.class.getName());
     }
 
     protected boolean isExplicitlyIncluded(MetaClass metaClass) {

@@ -92,6 +92,71 @@ public class QuartzService {
     }
 
     /**
+     * Saves the job in the Quartz engine. Job data parameters and triggers are taken from the {@link JobModel}
+     * collections; existing triggers of the job are replaced with the provided ones, an empty collection removes
+     * all triggers of the job.
+     * <p>
+     * The behavior is defined by the original job key of the context
+     * (see {@link JobSaveContext#setOriginalJobKey(JobKey)}) and the target key built from the job model name
+     * and group (an empty group means the default group):
+     * <ul>
+     *     <li>the original key is not set — the job is created under the target key; if a job with this key
+     *     already exists, {@link QuartzJobSaveException} is thrown and the existing job is not touched;</li>
+     *     <li>the original key equals the target key — the existing job is updated in place (or created,
+     *     if it no longer exists in the engine);</li>
+     *     <li>the original key differs from the target key — the job is recreated under the target key and
+     *     removed under the original one; if a job with the target key already exists,
+     *     {@link QuartzJobSaveException} is thrown and nothing is changed.</li>
+     * </ul>
+     *
+     * @param context the job model to save and the save options
+     * @throws QuartzJobSaveException if the job cannot be saved; with a JDBC job store all performed operations
+     *                                are rolled back, so a failed rename leaves the original job intact
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public void saveJob(JobSaveContext context) {
+        JobModel jobModel = context.getJobModel();
+        List<JobDataParameterModel> jobDataParameterModels = jobModel.getJobDataParameters();
+        List<TriggerModel> triggerModels = jobModel.getTriggers();
+        JobKey originalJobKey = context.getOriginalJobKey();
+
+        JobKey jobKey = JobKey.jobKey(jobModel.getJobName(), Strings.emptyToNull(jobModel.getJobGroup()));
+        if (originalJobKey == null || originalJobKey.equals(jobKey)) {
+            updateQuartzJob(jobModel, jobDataParameterModels, triggerModels, originalJobKey != null);
+            return;
+        }
+
+        log.debug("moving job {} to new key {}", originalJobKey, jobKey);
+        try {
+            JobDetail jobDetail = buildJobDetail(jobModel, scheduler.getJobDetail(originalJobKey), jobDataParameterModels)
+                    .getJobBuilder()
+                    .withIdentity(jobKey)
+                    .storeDurably()
+                    .build();
+            scheduler.addJob(jobDetail, false);
+
+            //unschedule triggers of the original job before scheduling new ones - they usually share trigger keys
+            for (Trigger trigger : scheduler.getTriggersOfJob(originalJobKey)) {
+                scheduler.unscheduleJob(trigger.getKey());
+            }
+            if (!CollectionUtils.isEmpty(triggerModels)) {
+                for (TriggerModel triggerModel : triggerModels) {
+                    scheduler.scheduleJob(buildTrigger(jobDetail, triggerModel));
+                }
+            }
+
+            //delete the original job last, so that it survives any failure above even on a non-transactional job store
+            scheduler.deleteJob(originalJobKey);
+        } catch (SchedulerException e) {
+            log.warn("Unable to save job {} under new key {}", originalJobKey, jobKey, e);
+            throw new QuartzJobSaveException(e.getMessage(), e);
+        } catch (ClassNotFoundException e) {
+            log.warn("Unable to find job class {}", jobModel.getJobClass());
+            throw new QuartzJobSaveException("Job class " + jobModel.getJobClass() + " not found");
+        }
+    }
+
+    /**
      * Updates job in the Quartz engine
      *
      * @param jobModel               job to edit

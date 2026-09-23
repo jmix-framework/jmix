@@ -219,6 +219,8 @@ public class ReportDetailView extends StandardDetailView<Report> {
     @ViewComponent
     protected JmixButton llmRemoveColumnBtn;
     @ViewComponent
+    protected VerticalLayout llmGeneratedQueryNotesBox;
+    @ViewComponent
     protected Span llmGeneratedExplanationSpan;
     @ViewComponent
     protected Badge llmGeneratedWarningsBadge;
@@ -2000,9 +2002,10 @@ public class ReportDetailView extends StandardDetailView<Report> {
 
         llmGeneratedQueryCodeEditor.setValue(storedQuery != null ? storedQuery.getJpql() : "");
         fillLlmQueryColumns(storedQuery);
-        llmGeneratedExplanationSpan.setText(storedQuery != null
+        String explanation = storedQuery != null
                 ? StringUtils.defaultString(storedQuery.getExplanation())
-                : "");
+                : "";
+        llmGeneratedExplanationSpan.setText(explanation);
 
         // A badge with no text would still paint its background and its icon, hence the visibility.
         boolean warningsExists = !warnings.isEmpty();
@@ -2010,6 +2013,8 @@ public class ReportDetailView extends StandardDetailView<Report> {
         if (warningsExists) {
             llmGeneratedWarningsBadge.setText(String.join("; ", warnings));
         }
+
+        llmGeneratedQueryNotesBox.setVisible(StringUtils.isNotEmpty(explanation) || warningsExists);
     }
 
     /**
@@ -2234,8 +2239,6 @@ public class ReportDetailView extends StandardDetailView<Report> {
             return;
         }
 
-        warnAboutUndeclaredColumns(dataSet);
-
         LlmQueryGenerationRequest request = llmDataSetGenerationSupport.createGenerationRequest(dataSet);
         BackgroundTask<Integer, LlmDataQuery> task = createLlmGenerationTask(request, dataSet);
 
@@ -2244,23 +2247,6 @@ public class ReportDetailView extends StandardDetailView<Report> {
                 .withText(messageBundle.getMessage("bandsTab.dataSetTypeLayout.llmGenerationDialog.text"))
                 .withCancelAllowed(true)
                 .open();
-    }
-
-    /**
-     * Says which bands and axes the query being generated will not be able to reference, because their own data
-     * sets do not declare their columns. Said before generation rather than after, so that an author who meant
-     * the query to filter by a master row can stop and write the reference by hand instead.
-     */
-    protected void warnAboutUndeclaredColumns(DataSet dataSet) {
-        List<String> sources = llmDataSetGenerationSupport.sourcesWithUndeclaredColumns(dataSet);
-        if (sources.isEmpty()) {
-            return;
-        }
-
-        notifications.create(messageBundle.formatMessage(
-                        "bandsTab.dataSetTypeLayout.llmUndeclaredColumns", String.join(", ", sources)))
-                .withType(Notifications.Type.WARNING)
-                .show();
     }
 
     /**

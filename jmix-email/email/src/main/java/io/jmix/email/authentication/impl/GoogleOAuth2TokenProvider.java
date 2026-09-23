@@ -37,7 +37,7 @@ public class GoogleOAuth2TokenProvider extends AbstractOAuth2TokenProvider {
 
     /**
      * Refresh token value the current {@link #credentials} instance was built with. It is used to detect
-     * external token updates (via the email token view or another application node) that require
+     * external token updates (via the email connection view or another application node) that require
      * re-initialization of the credentials.
      */
     @Nullable

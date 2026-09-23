@@ -17,6 +17,7 @@
 package io.jmix.flowui.kit.meta.component;
 
 import com.vaadin.flow.component.Html;
+import com.vaadin.flow.component.Svg;
 import com.vaadin.flow.component.applayout.DrawerToggle;
 import com.vaadin.flow.component.avatar.Avatar;
 import com.vaadin.flow.component.badge.Badge;
@@ -36,6 +37,7 @@ import com.vaadin.flow.component.login.LoginOverlay;
 import com.vaadin.flow.component.markdown.Markdown;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.popover.Popover;
 import com.vaadin.flow.component.progressbar.ProgressBar;
 import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
 import com.vaadin.flow.component.select.Select;
@@ -610,6 +612,15 @@ interface StudioComponents {
             }
     )
     PasswordField passwordField();
+
+    @StudioComponent(
+            name = "Popover",
+            classFqn = "com.vaadin.flow.component.popover.Popover",
+            category = "Components",
+            xmlElement = StudioXmlElements.POPOVER,
+            icon = "io/jmix/flowui/kit/meta/icon/component/popover.svg",
+            propertyGroups = StudioPropertyGroups.PopoverComponent.class)
+    Popover popover();
 
     @StudioComponent(
             name = "ProgressBar",
@@ -1197,6 +1208,21 @@ interface StudioComponents {
             }
     )
     JmixMarkdownEditor markdownEditor();
+
+    @StudioComponent(
+            name = "Svg",
+            classFqn = "com.vaadin.flow.component.Svg",
+            category = "Components",
+            xmlElement = StudioXmlElements.SVG,
+            icon = "io/jmix/flowui/kit/meta/icon/component/svg.svg",
+            availableChildren = @StudioAvailableChildrenInfo(
+                    availableTags = @StudioAvailableChildrenInfo.TagInfo(
+                            qualifiedName = "content",
+                            maxCount = 1
+                    )
+            ),
+            propertyGroups = StudioPropertyGroups.SvgComponent.class)
+    Svg svg();
 
     @StudioComponent(
             name = "IntegerSlider",

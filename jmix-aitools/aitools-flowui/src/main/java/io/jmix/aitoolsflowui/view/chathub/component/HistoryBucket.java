@@ -34,21 +34,21 @@ public enum HistoryBucket {
     EARLIER;
 
     /**
-     * Classifies the given creation date into a bucket relative to {@code today}.
+     * Classifies the given activity timestamp into a bucket relative to {@code today}.
      * Boundaries: today (or future) → {@link #TODAY}, the calendar day before
      * → {@link #YESTERDAY}, within the previous 7 days → {@link #LAST_WEEK},
      * anything older (or missing) → {@link #EARLIER}.
      *
-     * @param created creation timestamp to classify, or {@code null}
-     * @param today   reference "today" date
-     * @param zone    time zone used to convert {@code created} to a local date
-     * @return the matching bucket ({@link #EARLIER} if {@code created} is {@code null})
+     * @param timestamp activity timestamp to classify, or {@code null}
+     * @param today     reference "today" date
+     * @param zone      time zone used to convert {@code timestamp} to a local date
+     * @return the matching bucket ({@link #EARLIER} if {@code timestamp} is {@code null})
      */
-    public static HistoryBucket of(@Nullable OffsetDateTime created, LocalDate today, ZoneId zone) {
-        if (created == null) {
+    public static HistoryBucket of(@Nullable OffsetDateTime timestamp, LocalDate today, ZoneId zone) {
+        if (timestamp == null) {
             return EARLIER;
         }
-        LocalDate date = created.atZoneSameInstant(zone).toLocalDate();
+        LocalDate date = timestamp.atZoneSameInstant(zone).toLocalDate();
         if (!date.isBefore(today)) {
             return TODAY;
         }

@@ -45,7 +45,7 @@ class OidcAutoConfigurationTest {
                 .withBean(OidcUserMapper.class, () -> mock(OidcUserMapper.class))
                 .run(context -> {
                     assertThat(context).hasNotFailed();
-                    assertThat(context).doesNotHaveBean(OidcAutoConfiguration.DefaulOidcVaadinWebSecurity.class);
+                    assertThat(context).doesNotHaveBean(OidcAutoConfiguration.DefaultOidcVaadinWebSecurity.class);
                 });
     }
 
@@ -64,7 +64,7 @@ class OidcAutoConfigurationTest {
     }
 
     /**
-     * Mimics {@link OidcAutoConfiguration.DefaulOidcVaadinWebSecurity} without building the Vaadin filter chain:
+     * Mimics {@link OidcAutoConfiguration.DefaultOidcVaadinWebSecurity} without building the Vaadin filter chain:
      * the inherited dependencies are injected regardless of how the chain is configured.
      */
     @EnableWebSecurity

@@ -28,6 +28,9 @@ dependencies {
     compileOnly project(":security-flowui")
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api'
+    testImplementation project(':flowui-test-assist')
+    testImplementation project(':framework-test-support')
+
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }

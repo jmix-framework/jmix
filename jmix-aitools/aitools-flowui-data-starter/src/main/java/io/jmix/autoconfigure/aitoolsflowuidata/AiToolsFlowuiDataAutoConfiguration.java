@@ -19,12 +19,16 @@ package io.jmix.autoconfigure.aitoolsflowuidata;
 import io.jmix.aitoolsflowui.service.AiChatService;
 import io.jmix.aitoolsflowui.service.AiConversationService;
 import io.jmix.aitoolsflowui.service.AiChatMessageService;
+import io.jmix.aitoolsflowui.service.AiConversationTitleGenerator;
 import io.jmix.aitoolsflowuidata.AiToolsFlowuiDataConfiguration;
 import io.jmix.aitoolsflowuidata.service.impl.AiChatDataService;
 import io.jmix.aitoolsflowuidata.service.impl.AiConversationDataService;
+import io.jmix.aitoolsflowuidata.service.impl.AiConversationTitleDataGenerator;
 import io.jmix.aitoolsflowuidata.service.impl.AiChatMessageDataService;
 import io.jmix.aitoolsflowuidata.service.prompt.AiChatSystemPromptProvider;
+import io.jmix.aitoolsflowuidata.service.prompt.AiConversationTitleSystemPromptProvider;
 import io.jmix.aitoolsflowuidata.service.prompt.impl.DefaultAiChatSystemPromptProvider;
+import io.jmix.aitoolsflowuidata.service.prompt.impl.DefaultAiConversationTitleSystemPromptProvider;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBooleanProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -77,5 +81,17 @@ public class AiToolsFlowuiDataAutoConfiguration {
     @ConditionalOnMissingBean(AiChatSystemPromptProvider.class)
     public AiChatSystemPromptProvider aiChatSystemPromptProvider() {
         return new DefaultAiChatSystemPromptProvider();
+    }
+
+    @Bean("aitls_DefaultAiConversationTitleSystemPromptProvider")
+    @ConditionalOnMissingBean(AiConversationTitleSystemPromptProvider.class)
+    public AiConversationTitleSystemPromptProvider aiConversationTitleSystemPromptProvider() {
+        return new DefaultAiConversationTitleSystemPromptProvider();
+    }
+
+    @Bean("aitls_AiConversationTitleDataGenerator")
+    @ConditionalOnMissingBean(AiConversationTitleGenerator.class)
+    public AiConversationTitleGenerator aiConversationTitleGenerator() {
+        return new AiConversationTitleDataGenerator();
     }
 }

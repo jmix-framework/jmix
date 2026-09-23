@@ -22,7 +22,7 @@ def formXml = api.processSnippet('dto_form.xml',
         <dataLoadCoordinator auto="true"/>
     </facets>
     <actions>
-        <action id="closeAction" type="view_close"/>
+        <action id="closeAction" type="view_close" text="msg:///actions.Close" icon="CLOSE"/>
     </actions>
     <%if (readFixedFooter) {%>
     <layout alignItems="STRETCH"

@@ -18,6 +18,7 @@
     <menu id="email">
         <item view="email_sendingMessageView"
               title="msg://io.jmix.emailflowui.view.sendingmessage/sendingMessageView.menu"/>
-        <item view="email_tokenView" title="msg://io.jmix.emailflowui.view.emailtoken/emailTokenView.menu"/>
+        <item view="email_connectionView"
+              title="msg://io.jmix.emailflowui.view.emailconnection/emailConnectionView.menu"/>
     </menu>
 </menu-config>

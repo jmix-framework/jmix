@@ -19,8 +19,10 @@ package authentication;
 import com.microsoft.aad.msal4j.ConfidentialClientApplication;
 import com.microsoft.aad.msal4j.IAuthenticationResult;
 import com.microsoft.aad.msal4j.IClientCredential;
+import com.microsoft.aad.msal4j.PublicClientApplication;
 import io.jmix.email.EmailerProperties;
 import io.jmix.email.authentication.EmailRefreshTokenManager;
+import io.jmix.email.authentication.OAuth2ClientType;
 import io.jmix.email.authentication.impl.MicrosoftOAuth2TokenProvider;
 import org.junit.jupiter.api.Test;
 import org.jspecify.annotations.Nullable;
@@ -40,7 +42,7 @@ class MicrosoftOAuth2TokenProviderTest {
     TestEmailRefreshTokenManager tokenManager = new TestEmailRefreshTokenManager("initial-rt");
     TestMicrosoftOAuth2TokenProvider provider = new TestMicrosoftOAuth2TokenProvider(
             TestEmailerProperties.create(new EmailerProperties.OAuth2(
-                    true, "microsoft", "test-client", "test-secret", null, "test-tenant")),
+                    true, "microsoft", "test-client", "test-secret", null, "test-tenant", null)),
             tokenManager);
 
     @Test
@@ -74,6 +76,19 @@ class MicrosoftOAuth2TokenProviderTest {
         // The stored value matches the one known to the provider, no re-initialization happens
         provider.getAccessToken();
         assertEquals(1, provider.initializationCount);
+    }
+
+    @Test
+    void testPublicTokenUsesPublicClientApplication() {
+        tokenManager.storeRefreshTokenValue("device-rt", OAuth2ClientType.PUBLIC);
+        provider.refreshTokenResult = authResult("token-1", hoursFromNow(1));
+        provider.capturedRefreshToken = "rotated-rt";
+
+        assertEquals("token-1", provider.getAccessToken());
+        assertEquals(1, provider.publicInitializationCount);
+        assertEquals(0, provider.initializationCount);
+        // The rotated token keeps the client type of the original one
+        assertEquals(OAuth2ClientType.PUBLIC, tokenManager.getStoredClientType());
     }
 
     @Test
@@ -111,6 +126,7 @@ class MicrosoftOAuth2TokenProviderTest {
         String capturedRefreshToken;
         List<String> refreshTokenCalls = new ArrayList<>();
         int initializationCount;
+        int publicInitializationCount;
 
         TestMicrosoftOAuth2TokenProvider(EmailerProperties emailerProperties,
                                          EmailRefreshTokenManager refreshTokenManager) {
@@ -121,6 +137,12 @@ class MicrosoftOAuth2TokenProviderTest {
         protected ConfidentialClientApplication buildClientApplication(IClientCredential credential) {
             initializationCount++;
             return super.buildClientApplication(credential);
+        }
+
+        @Override
+        protected PublicClientApplication buildPublicClientApplication() {
+            publicInitializationCount++;
+            return super.buildPublicClientApplication();
         }
 
         @Override

@@ -55,6 +55,10 @@
                 <property name="stringsArray" value="a b ,c"/>
                 <property name="strings" value="a b ,c"/>
                 <property name="dataContainer" value="productsDc" type="CONTAINER_REF"/>
+                <property name="localizedString" value="msg://testComponent.localizedString"/>
+                <property name="fullFormLocalizedString"
+                          value="msg://test_support/genericComponent.fullFormLocalizedString"/>
+                <property name="localizedStringsList" value="msg://testComponent.localizedStringsList"/>
             </properties>
         </component>
     </layout>

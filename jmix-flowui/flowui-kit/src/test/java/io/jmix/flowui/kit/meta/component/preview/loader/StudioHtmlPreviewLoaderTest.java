@@ -17,14 +17,19 @@
 package io.jmix.flowui.kit.meta.component.preview.loader;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H1;
+import com.vaadin.flow.component.html.IFrame;
 import com.vaadin.flow.component.html.Paragraph;
+import com.vaadin.flow.component.html.RangeInput;
 import com.vaadin.flow.component.html.Span;
 import io.jmix.flowui.kit.meta.component.preview.StudioPreviewEnvironment;
 import org.dom4j.Namespace;
 import org.dom4j.tree.BaseElement;
 import org.junit.jupiter.api.Test;
+
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -109,6 +114,54 @@ class StudioHtmlPreviewLoaderTest {
 
         assertInstanceOf(Span.class, component);
         assertEquals("B2B CRM", ((Span) component).getText());
+    }
+
+    @Test
+    void testNativeHtmlAttributesMatchRuntime() {
+        for (var entry : Map.of(
+                "param", Map.of("name", "quality", "value", "high"),
+                "htmlObject", Map.of("data", "example.svg", "type", "image/svg+xml"),
+                "input", Map.of("type", "email", "placeholder", "Email")
+        ).entrySet()) {
+            BaseElement element = element(entry.getKey());
+            entry.getValue().forEach(element::addAttribute);
+            Component component = loader.load(element, element("view"));
+            assertNotNull(component);
+            entry.getValue().forEach((name, value) ->
+                    assertEquals(value, component.getElement().getAttribute(name), entry.getKey() + "." + name));
+        }
+
+        BaseElement anchor = element("anchor");
+        anchor.addAttribute("href", "msg://url").addAttribute("target", "BLANK")
+                .addAttribute("title", "msg://title").addAttribute("tabIndex", "3")
+                .addAttribute("ariaLabel", "msg://aria");
+        Anchor link = assertInstanceOf(Anchor.class, loader.load(anchor, element("view"), environment("Resolved")));
+        assertEquals("Resolved", link.getHref());
+        assertEquals("_blank", link.getElement().getAttribute("target"));
+        assertEquals("Resolved", link.getTitle().orElseThrow());
+        assertEquals("Resolved", link.getAriaLabel().orElseThrow());
+        assertEquals(3, link.getTabIndex());
+
+        BaseElement range = element("rangeInput");
+        range.addAttribute("min", "2").addAttribute("max", "20").addAttribute("step", "2")
+                .addAttribute("orientation", "VERTICAL");
+        RangeInput slider = assertInstanceOf(RangeInput.class, loader.load(range, element("view")));
+        assertEquals(2, slider.getMin());
+        assertEquals(20, slider.getMax());
+        assertEquals(2, slider.getStep());
+        assertEquals(RangeInput.Orientation.VERTICAL, slider.getOrientation());
+    }
+
+    @Test
+    void testFrameLoadsDocumentAndSandboxWithoutFailingOnIncompleteValue() {
+        BaseElement element = element("iframe");
+        element.addAttribute("resourceDoc", "<p>Example</p>").addAttribute("name", "example")
+                .addAttribute("allow", "fullscreen").addAttribute("sandbox", "ALLOW_SCRIPTS, incomplete");
+        IFrame frame = assertInstanceOf(IFrame.class, loader.load(element, element("view")));
+        assertEquals("<p>Example</p>", frame.getSrcdoc().orElseThrow());
+        assertEquals("example", frame.getName().orElseThrow());
+        assertEquals("fullscreen", frame.getAllow().orElseThrow());
+        assertEquals("allow-scripts", frame.getElement().getAttribute("sandbox"));
     }
 
     @Test

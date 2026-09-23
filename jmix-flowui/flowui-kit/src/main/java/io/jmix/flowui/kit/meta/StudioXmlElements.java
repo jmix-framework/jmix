@@ -30,6 +30,7 @@ public final class StudioXmlElements {
     public static final String ACCORDION = "accordion";
     public static final String ACCORDION_PANEL = "accordionPanel";
     public static final String ACTION = "action";
+    public static final String ACTIONS = "actions";
     public static final String ACTION_ITEM = "actionItem";
     public static final String ADDITIONAL_INFORMATION = "additionalInformation";
     public static final String AGGREGATION = "aggregation";
@@ -215,6 +216,7 @@ public final class StudioXmlElements {
     public static final String GROUP_BY = "groupBy";
     public static final String GROUP_COLUMN = "groupColumn";
     public static final String GROUP_DATA_GRID = "groupDataGrid";
+    public static final String GROUP_DATA_GRID_FILTER = "groupDataGridFilter";
     public static final String GROUP_FILTER = "groupFilter";
     public static final String H1 = "h1";
     public static final String H2 = "h2";
@@ -369,6 +371,7 @@ public final class StudioXmlElements {
     public static final String POINTER = "pointer";
     public static final String POINT_PAIR = "pointPair";
     public static final String POLAR = "polar";
+    public static final String POPOVER = "popover";
     public static final String POSITIVE = "positive";
     public static final String POSITIVE_OR_ZERO = "positiveOrZero";
     public static final String PRE = "pre";
@@ -438,6 +441,7 @@ public final class StudioXmlElements {
     public static final String SUBTEXT_STYLE = "subtextStyle";
     public static final String SUBTITLE = "subtitle";
     public static final String SUFFIX = "suffix";
+    public static final String SVG = "svg";
     public static final String SVG_ICON = "svgIcon";
     public static final String SWIMLANE = "swimlane";
     public static final String SWIMLANES = "swimlanes";

@@ -43,6 +43,7 @@ PAGINATION RULES:
 - If pagination is not requested, set maxResults and firstResult to null.
 
 PARAMETER DECLARATION RULE:
+- A value the request states itself — a literal name, prefix or number — stays a literal in the query; do not turn such a constant into a named parameter. Use a named parameter only for a value supplied when the query runs.
 - In "parameters", declare exactly the named parameters the query text references — declare none the query does not reference, and leave none it references undeclared.
 
 ENTITY AND ATTRIBUTE RULES:

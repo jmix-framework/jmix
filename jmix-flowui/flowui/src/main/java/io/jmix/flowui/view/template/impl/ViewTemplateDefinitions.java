@@ -35,6 +35,7 @@ import io.jmix.flowui.view.StandardDetailView;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.template.DetailViewTemplate;
 import io.jmix.flowui.view.template.ListViewTemplate;
+import io.jmix.flowui.view.template.ReadViewTemplate;
 import io.jmix.flowui.view.template.ViewTemplateHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -53,10 +54,13 @@ import java.util.*;
 @Component("flowui_ViewTemplateDefinitions")
 public class ViewTemplateDefinitions {
 
+    protected static final String READ_ROUTE_SUFFIX = "/read";
+
     protected static final Type TEMPLATE_PARAMS_TYPE = new TypeToken<Map<String, Object>>() {
     }.getType();
     protected static final String LOOKUP_COMPONENT_ID = "lookupComponentId";
     protected static final String EDITED_ENTITY_CONTAINER_ID = "editedEntityContainerId";
+    protected static final String READ_ENTITY_CONTAINER_ID = "readEntityContainerId";
 
     @Autowired
     protected Metadata metadata;
@@ -127,6 +131,9 @@ public class ViewTemplateDefinitions {
                     getTemplateAttributes(metaClass, DetailViewTemplate.class)
                             .ifPresent(attributes -> addDefinition(result, viewIds,
                                     createDetailDefinition(metaClass, attributes)));
+                    getTemplateAttributes(metaClass, ReadViewTemplate.class)
+                            .ifPresent(attributes -> addDefinition(result, viewIds,
+                                    createReadDefinition(metaClass, attributes)));
                 });
 
         return result;
@@ -178,6 +185,20 @@ public class ViewTemplateDefinitions {
         return createDefinition(viewId, ViewTemplateType.DETAIL, metaClass, attributes, title);
     }
 
+    protected ViewTemplateDefinition createReadDefinition(MetaClass metaClass, Map<String, Object> attributes) {
+        String viewId = getStringAttribute(attributes, "viewId");
+        if (Strings.isNullOrEmpty(viewId)) {
+            viewId = metaClass.getName() + ".read";
+        }
+
+        String title = getStringAttribute(attributes, "viewTitle");
+        if (Strings.isNullOrEmpty(title)) {
+            title = metaClass.getName();
+        }
+
+        return createDefinition(viewId, ViewTemplateType.READ, metaClass, attributes, title);
+    }
+
     protected ViewTemplateDefinition createDefinition(String viewId,
                                                      ViewTemplateType type,
                                                      MetaClass metaClass,
@@ -192,24 +213,29 @@ public class ViewTemplateDefinitions {
         String descriptorPath = descriptorRegistry.createPath(viewId);
         descriptorRegistry.put(descriptorPath, descriptor);
 
-        Class<? extends View<?>> controllerClass;
-        if (type == ViewTemplateType.LIST) {
-            controllerClass = controllerClassFactory.createListViewControllerClass(
+        Class<? extends View<?>> controllerClass = switch (type) {
+            case LIST -> controllerClassFactory.createListViewControllerClass(
                     metaClass,
                     viewId,
                     descriptorPath,
                     routePath,
                     resolveLookupComponentId(attributes)
             );
-        } else {
-            controllerClass = controllerClassFactory.createDetailViewControllerClass(
+            case DETAIL -> controllerClassFactory.createDetailViewControllerClass(
                     metaClass,
                     viewId,
                     descriptorPath,
                     routePath,
                     resolveEditedEntityContainerId(attributes)
             );
-        }
+            case READ -> controllerClassFactory.createReadViewControllerClass(
+                    metaClass,
+                    viewId,
+                    descriptorPath,
+                    routePath,
+                    resolveReadEntityContainerId(attributes)
+            );
+        };
 
         return new ViewTemplateDefinition(
                 viewId,
@@ -239,6 +265,17 @@ public class ViewTemplateDefinitions {
             return configuredRoute + routeParamSuffix;
         }
 
+        if (type == ViewTemplateType.READ) {
+            String routeParamSuffix = "/:" + StandardDetailView.DEFAULT_ROUTE_PARAM;
+            String readRouteSuffix = routeParamSuffix + READ_ROUTE_SUFFIX;
+            if (configuredRoute.endsWith(routeParamSuffix) || configuredRoute.endsWith(readRouteSuffix)) {
+                throw new IllegalArgumentException("Read viewRoute must not end with '" + routeParamSuffix
+                        + "' or '" + readRouteSuffix + "'");
+            }
+
+            return configuredRoute + readRouteSuffix;
+        }
+
         return configuredRoute;
     }
 
@@ -254,6 +291,7 @@ public class ViewTemplateDefinitions {
         Map<String, Object> model = new HashMap<>(templateParams);
         model.remove(LOOKUP_COMPONENT_ID);
         model.remove(EDITED_ENTITY_CONTAINER_ID);
+        model.remove(READ_ENTITY_CONTAINER_ID);
         model.put("entityMetaClass", metaClass);
         model.put("viewTitle", title);
         model.put("componentXmlFactory", componentXmlFactory);
@@ -286,6 +324,11 @@ public class ViewTemplateDefinitions {
 
     protected String resolveLookupComponentId(Map<String, Object> attributes) {
         return resolveControllerIdAttribute(attributes, LOOKUP_COMPONENT_ID, TemplateListView.DEFAULT_LOOKUP_COMPONENT_ID);
+    }
+
+    protected String resolveReadEntityContainerId(Map<String, Object> attributes) {
+        return resolveControllerIdAttribute(attributes, READ_ENTITY_CONTAINER_ID,
+                TemplateReadView.DEFAULT_READ_ENTITY_CONTAINER_ID);
     }
 
     protected String resolveEditedEntityContainerId(Map<String, Object> attributes) {

@@ -56,6 +56,8 @@ class SidePanelLayoutXmlLoadTest extends FlowuiTestSpecification {
             minWidth == "100px"
             !modal
             overlayAriaLabel == "overlayAriaLabel"
+            sidePanelResizable
+            themeNames.contains("resizer-small")
             visible
             width == "100px"
         }

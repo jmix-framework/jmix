@@ -107,17 +107,19 @@ class StudioGridColumnVisibilityPreviewLoader implements StudioPreviewComponentL
     }
 
     /**
-     * Root item: {@code icon} attribute (added as a component, no text) takes precedence over
-     * {@code text} (resolved via {@link PreviewActionSupport#resolveText}); with neither, an
-     * empty-text root is added, matching {@code JmixGridColumnVisibility}'s own bare-root look.
+     * Root item text and icon follow {@code JmixGridColumnVisibility}: an icon is inserted before
+     * the text, and the icon theme is added only when there is no text.
      */
     protected JmixMenuItem loadRootItem(JmixMenuBar menuBar, Element componentElement,
                                         StudioPreviewEnvironment environment) {
-        return ComponentLoaderUtils.loadIconSetIcon(componentElement)
-                .<JmixMenuItem>map(menuBar::addItem)
-                .orElseGet(() -> loadString(componentElement, TEXT_ATTRIBUTE)
-                        .map(text -> menuBar.addItem(PreviewActionSupport.resolveText(environment, text)))
-                        .orElseGet(() -> menuBar.addItem("")));
+        String text = loadString(componentElement, TEXT_ATTRIBUTE)
+                .map(value -> PreviewActionSupport.resolveText(environment, value)).orElse("");
+        JmixMenuItem item = menuBar.addItem(text);
+        ComponentLoaderUtils.loadIconSetIcon(componentElement).ifPresent(icon -> {
+            item.addComponentAsFirst(icon);
+            menuBar.getThemeNames().set("icon", text.isEmpty());
+        });
+        return item;
     }
 
     /**

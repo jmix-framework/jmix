@@ -181,4 +181,31 @@ class ViewRegistryTest extends FlowuiTestSpecification {
         then:
         thrown(NoSuchViewException)
     }
+
+    def "primary read view can be registered and removed at runtime"() {
+        given: "an entity whose read view is found by the convention, and another read view to point at"
+        def replacement = viewRegistry.getViewInfo(ProductPrimaryReadView.VIEW_ID)
+
+        expect: "nothing is registered for it yet"
+        !viewRegistry.hasPrimaryReadView(Customer)
+        viewRegistry.getReadViewInfo(Customer).id == CustomerReadView.VIEW_ID
+
+        when: "the replacement is registered as the entity's primary read view"
+        viewRegistry.setPrimaryReadView(Customer, replacement)
+
+        then: "resolution returns it instead of the conventional one"
+        viewRegistry.hasPrimaryReadView(Customer)
+        viewRegistry.getReadViewInfo(Customer).id == ProductPrimaryReadView.VIEW_ID
+
+        when: "the registration is removed"
+        def removed = viewRegistry.removePrimaryReadView(Customer)
+
+        then: "resolution falls back to the convention again"
+        removed
+        !viewRegistry.hasPrimaryReadView(Customer)
+        viewRegistry.getReadViewInfo(Customer).id == CustomerReadView.VIEW_ID
+
+        and: "removing it twice reports that there was nothing to remove"
+        !viewRegistry.removePrimaryReadView(Customer)
+    }
 }

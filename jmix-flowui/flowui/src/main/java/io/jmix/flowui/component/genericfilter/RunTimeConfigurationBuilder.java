@@ -214,6 +214,10 @@ public class RunTimeConfigurationBuilder {
             throw new IllegalStateException(
                     "RunTimeConfigurationBuilder: 'id' is required — call .id(\"...\") before .buildAndRegister()");
         }
+        if (id.equals(filter.getEmptyConfiguration().getId())) {
+            throw new IllegalStateException(String.format(
+                    "RunTimeConfigurationBuilder: 'id' must not be the reserved empty-configuration id '%s'", id));
+        }
         if (filter.getConfiguration(id) != null) {
             throw new IllegalStateException(String.format(
                     "RunTimeConfigurationBuilder: a configuration with id '%s' is already registered in this filter", id));
@@ -223,13 +227,7 @@ public class RunTimeConfigurationBuilder {
                     "RunTimeConfigurationBuilder: the filter has no DataLoader; set it before building a configuration");
         }
 
-        // Build the root GroupFilter — mirrors GenericFilter.createConfigurationRootLogicalFilterComponent()
-        GroupFilter root = uiComponents.create(GroupFilter.class);
-        root.setConditionModificationDelegated(true);
-        root.setOperation(operation);
-        root.setOperationTextVisible(false);
-        root.setAutoApply(filter.isAutoApply());
-        root.setDataLoader(filter.getDataLoader());
+        LogicalFilterComponent<?> root = filter.createConfigurationRootLogicalFilterComponent(operation);
 
         RunTimeConfiguration config = new RunTimeConfiguration(id, root, filter);
         config.setName(name);

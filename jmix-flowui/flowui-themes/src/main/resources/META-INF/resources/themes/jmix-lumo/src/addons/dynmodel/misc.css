@@ -85,3 +85,13 @@ vaadin-radio-group.tab-list vaadin-radio-button[focus-ring] {
         color: var(--lumo-body-text-color);
     }
 }
+
+.dynmod-icon-renderer {
+    display: flex;
+    align-items: center;
+    gap: var(--vaadin-gap-s);
+}
+
+.dynmod-icon-renderer-icon {
+    margin-inline-end: var(--vaadin-padding-xs);
+}

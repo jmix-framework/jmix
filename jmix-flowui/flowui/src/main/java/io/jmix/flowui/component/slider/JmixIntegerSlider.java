@@ -32,6 +32,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
+import java.util.Objects;
 import java.util.function.Consumer;
 
 public class JmixIntegerSlider extends IntegerSlider implements SupportsValueSource<Integer>,
@@ -60,7 +61,13 @@ public class JmixIntegerSlider extends IntegerSlider implements SupportsValueSou
         fieldDelegate.setMin(getMin());
         fieldDelegate.setMax(getMax());
 
-        addValueChangeListener(__ -> validate());
+        addValueChangeListener(__ -> {
+            // The value can be changed on the client side, bypassing setValue(). The value
+            // reaches the value source here, before validation, which reads it.
+            fieldDelegate.onValueSet();
+
+            validate();
+        });
     }
 
     protected IntegerSliderDelegate createFieldDelegate() {
@@ -103,6 +110,11 @@ public class JmixIntegerSlider extends IntegerSlider implements SupportsValueSou
         fieldDelegate.setValueSource(valueSource);
     }
 
+    @Override
+    public boolean isEmpty() {
+        return fieldDelegate.isEmpty();
+    }
+
     /**
      * {@inheritDoc}
      * <p>
@@ -117,7 +129,34 @@ public class JmixIntegerSlider extends IntegerSlider implements SupportsValueSou
             clear();
         } else {
             super.setValue(value);
+
+            // Method is called from constructor so bean can be null: the initial minimum
+            // value must not be treated as a value set to the component. A listener may have
+            // replaced the value in the meantime, and then it is not the value being set here.
+            if (fieldDelegate != null && Objects.equals(value, getValue())) {
+                fieldDelegate.onValueSet();
+            }
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Sets the value to the minimum value and makes the component empty. A bound component
+     * clears its value source as well.
+     *
+     * @see #isEmpty()
+     */
+    @Override
+    public void clear() {
+        // Method is called from constructor so bean can be null
+        if (fieldDelegate == null) {
+            super.clear();
+            return;
+        }
+
+        // The minimum value is set directly, so that clearing is not recorded as setting a value
+        fieldDelegate.clearValue(() -> super.setValue(getMin()));
     }
 
     @Override

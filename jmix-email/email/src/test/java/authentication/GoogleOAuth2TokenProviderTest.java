@@ -84,7 +84,7 @@ class GoogleOAuth2TokenProviderTest {
 
     private EmailerProperties createProperties() {
         return TestEmailerProperties.create(new EmailerProperties.OAuth2(
-                true, "google", "test-client", "test-secret", null, "common"));
+                true, "google", "test-client", "test-secret", null, "common", null));
     }
 
     static class TestTokenServerTransport extends MockHttpTransport {

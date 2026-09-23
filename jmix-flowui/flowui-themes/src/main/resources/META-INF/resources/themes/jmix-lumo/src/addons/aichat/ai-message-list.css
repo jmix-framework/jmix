@@ -39,9 +39,6 @@
     display: flex;
     flex-direction: column;
     align-items: stretch;
-    /* No gap here — the status list is always rendered (so its aria-live
-       container exists before the first status lands) and would otherwise open
-       a gap while empty. It carries its own bottom margin when non-empty. */
     box-sizing: border-box;
     width: 100%;
     max-width: var(--jmix-ai-message-list-max-width);
@@ -69,31 +66,16 @@
   }
 
   [part='thinking-status-list'] {
-    /* border-box so the fade padding stays inside the cap: the knob names a
-       max-height, and a consumer setting 7.5rem must get 7.5rem, not 9rem. */
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
     gap: calc(var(--lumo-space-s) / 2);
     max-height: var(--jmix-ai-thinking-status-max-height, 7.5rem);
     overflow-y: auto;
-    /* Scroll anchoring would compensate for a row resizing above the scroll
-       position by shifting scrollTop, which is exactly the movement the JS
-       follow arithmetic assumes never happens. Off, so a push leaves scrollTop
-       untouched and the growth it measures is the whole story. */
     overflow-anchor: none;
-    /* Fade the top edge so a clipped list reads as clipped; the scroll behind it
-       is what actually makes older statuses reachable. The padding keeps the
-       oldest visible row out of the fade once scrolled to the top — mask-image
-       masks the box, not the content, so it does not scroll away. */
     padding-block-start: 1.5rem;
     mask-image: linear-gradient(to bottom, transparent 0, black 1.5rem);
   }
-
-  /* No justify-content: flex-end here, however tempting: in a scrolling flex
-     column, content pushed past the start edge by alignment cannot be scrolled
-     back to. Staying pinned to the newest status is done in JS instead — see
-     __thinkingStatusesChanged in the mixin. */
 
   [part='thinking-status-list']:not(:empty) {
     margin-block-end: var(--lumo-space-s);

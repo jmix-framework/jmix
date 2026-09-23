@@ -30,6 +30,7 @@
     <xs:complexType name="locMessagesType">
         <xs:sequence>
             <xs:element name="message" type="messageType" minOccurs="1" maxOccurs="unbounded"/>
+            <xs:element name="condition" type="conditionType" minOccurs="0" maxOccurs="1"/>
         </xs:sequence>
         <xs:attribute name="key" type="xs:string" use="required"/>
         <xs:attribute name="expressionKey" type="xs:string"/>
@@ -99,6 +100,13 @@
             <xs:element name="dependency" type="dependencyType" minOccurs="0" maxOccurs="unbounded"/>
         </xs:sequence>
         <xs:attribute name="name" type="xs:string"/>
+        <xs:attribute name="source" type="xs:string"/>
+    </xs:complexType>
+
+    <xs:complexType name="conditionType">
+        <xs:sequence minOccurs="0" maxOccurs="unbounded">
+            <xs:element name="dependency" type="dependencyType" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
         <xs:attribute name="source" type="xs:string"/>
     </xs:complexType>
 

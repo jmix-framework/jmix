@@ -165,15 +165,27 @@ class StudioGridColumnVisibilityPreviewLoaderTest {
     }
 
     @Test
-    void testRootItemIconAttributeAddsIconIgnoringText() {
-        Element visibility = withAttributes(visibilityElement("missingGrid"), "icon", "CHECK", "text", "Ignored");
+    void testRootItemPreservesTextAlongsideIcon() {
+        Element visibility = withAttributes(visibilityElement("missingGrid"), "icon", "CHECK", "text", "Columns");
 
         Component component = loader.load(visibility, element("view"), new FakeEnv());
 
         JmixMenuBar menuBar = (JmixMenuBar) component;
         assertEquals(1, menuBar.getItems().size());
-        String text = rootItem(menuBar).getText();
-        assertTrue(text == null || text.isEmpty());
+        assertEquals("Columns", rootItem(menuBar).getText());
+        assertEquals(1, rootItem(menuBar).getChildren().count());
+        assertFalse(menuBar.getThemeNames().contains("icon"));
+    }
+
+    @Test
+    void testIconOnlyRootUsesIconTheme() {
+        Element visibility = withAttributes(visibilityElement("missingGrid"), "icon", "CHECK");
+
+        JmixMenuBar menuBar = (JmixMenuBar) loader.load(visibility, element("view"), new FakeEnv());
+
+        assertNotNull(menuBar);
+        assertEquals("", rootItem(menuBar).getText());
+        assertTrue(menuBar.getThemeNames().contains("icon"));
     }
 
     @Test

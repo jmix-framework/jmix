@@ -112,6 +112,15 @@ public class AiChatView extends StandardView {
     }
 
     @Subscribe
+    public void onInit(final InitEvent event) {
+        // This view titles itself after the conversation, and the host chrome (view title, tab,
+        // dialog header) renders that title - so the fragment must not repeat it.
+        chatFragment.setTitleVisible(false);
+        chatFragment.addTitleChangeListener(
+                titleChangeEvent -> applyPageTitle(titleChangeEvent.getTitle()));
+    }
+
+    @Subscribe
     public void onReady(final ReadyEvent event) {
         contentInitialized = true;
         applyConversation();
@@ -258,7 +267,21 @@ public class AiChatView extends StandardView {
         if (hasConversation) {
             chatFragment.setConversation(conversation);
             syncUrl();
+        } else {
+            // The fragment is not re-bound here, so no title change event
+            // arrives - fall back to the static view title explicitly.
+            applyPageTitle(null);
         }
+    }
+
+    /**
+     * Makes the conversation title the title of this view, so that the browser page title and, in Tabbed
+     * Mode, the tab title identify the conversation. A blank title falls back to the static view title.
+     *
+     * @param title conversation title, or {@code null} to fall back to the static view title
+     */
+    protected void applyPageTitle(@Nullable String title) {
+        setPageTitle(title == null || title.isBlank() ? null : title);
     }
 
     protected void syncUrl() {

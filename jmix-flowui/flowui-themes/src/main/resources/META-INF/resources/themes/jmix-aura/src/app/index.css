@@ -15,5 +15,6 @@
  */
 
 @import './data-grid-empty-state-by-permissions-fragment.css';
+@import './data-grid-renderers.css';
 @import './date-interval-dialog.css';
 @import './exception-dialog-window.css';

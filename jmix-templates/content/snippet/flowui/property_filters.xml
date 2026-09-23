@@ -1,0 +1,27 @@
+<%
+/*
+ * Generates the propertyFilter components configured in the view creation wizard.
+ *
+ * Expected bindings:
+ *   filters    - list of maps with 'id', 'property', 'operation' and 'operationEditable' keys
+ *   dataLoader - id of the data loader the filters are bound to
+ *
+ * A single filter is emitted on its own, several are wrapped in a container so that they share one row.
+ */
+def elements = filters.collect { f ->
+    def operationEditable = f.operationEditable ? " operationEditable=\"true\"" : ""
+    "<propertyFilter id=\"${f.id}\" property=\"${f.property}\" operation=\"${f.operation}\"" +
+            " dataLoader=\"${dataLoader}\"${operationEditable}/>"
+}
+
+def result
+if (elements.isEmpty()) {
+    result = ""
+} else if (elements.size() == 1) {
+    result = elements[0]
+} else {
+    result = "<hbox id=\"filterBox\" wrap=\"true\" alignItems=\"BASELINE\">\n" +
+            elements.collect { "    ${it}" }.join("\n") +
+            "\n</hbox>"
+}
+%>${result}

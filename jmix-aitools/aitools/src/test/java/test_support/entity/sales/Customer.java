@@ -16,6 +16,7 @@
 
 package test_support.entity.sales;
 
+import io.jmix.aitools.ExcludeFromAi;
 import io.jmix.core.annotation.Secret;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.Comment;
@@ -49,6 +50,10 @@ public class Customer {
     @SystemLevel
     @Column(name = "SECRET_SYSTEM_NOTE")
     private String secretSystemNote;
+
+    @ExcludeFromAi
+    @Column(name = "PII_PHONE")
+    private String piiPhone;
 
     @OneToMany(mappedBy = "customer")
     private List<Order> orders;
@@ -94,6 +99,14 @@ public class Customer {
 
     public void setSecretSystemNote(String secretSystemNote) {
         this.secretSystemNote = secretSystemNote;
+    }
+
+    public String getPiiPhone() {
+        return piiPhone;
+    }
+
+    public void setPiiPhone(String piiPhone) {
+        this.piiPhone = piiPhone;
     }
 
     public List<Order> getOrders() {

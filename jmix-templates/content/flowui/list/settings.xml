@@ -31,10 +31,20 @@
             <![CDATA[${studioUtils.makeScreenNaturalCaption(entity.className.concat('.browse'), null)}]]>
         </message>
     </locMessages>
+    <locMessages key="fullTextFilterTitle" expressionKey="${studioUtils.decapitalize(viewControllerName)}.fullTextFilter">
+        <message lang="default">
+            <![CDATA[Search]]>
+        </message>
+        <condition source="${listFilterType.type.name().equals(&quot;FULL_TEXT&quot;)}">
+            <dependency code="listFilterType"/>
+        </condition>
+    </locMessages>
     <steps>
         <step name="Entity list view" order="0"/>
         <step name="Entity list view fetch plan" order="1"
               description="List view fetch plan determines entity attributes and associations to be loaded from the database and displayed in the dataGrid component"/>
+        <step name="Entity list view filter" order="2"
+              description="Select the filter component to be generated for the list view. A property filter additionally defines the entity attributes to filter by."/>
     </steps>
     <property caption="Entity"
               code="entity"
@@ -87,6 +97,12 @@
               propertyType="VIEW_COMPONENT"
               relatedProperty="entity"
               required="true"/>
+    <property caption="Filter component"
+              code="listFilterType"
+              step="2"
+              propertyType="FILTER_COMPONENT"
+              relatedProperty="listFetchPlan"
+              defaultValue="GENERIC"/>
     <property caption="Table type"
               code="tableType"
               propertyType="FLOW_TABLE_TYPE"
@@ -103,11 +119,6 @@
               propertyType="MULTI_OPTION"
               preferences="true"
               optionsString="${actionSearch.getWizardTableActions(api.jmixProjectModule)}"/>
-    <property caption="Create generic filter"
-              code="createGenericFilter"
-              defaultValue="true"
-              propertyType="BOOLEAN"
-              preferences="true"/>
     <property caption="Multiselect"
               code="multiselect"
               propertyType="BOOLEAN"

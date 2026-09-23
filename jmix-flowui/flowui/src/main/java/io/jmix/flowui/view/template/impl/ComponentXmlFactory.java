@@ -30,7 +30,6 @@ import io.jmix.flowui.component.factory.EffectiveLookupConfig;
 import io.jmix.flowui.component.factory.EffectiveLookupConfig.ItemsMode;
 import io.jmix.flowui.component.factory.ItemsFetchCallbackSupport;
 import io.jmix.flowui.component.factory.LookupFieldSupport;
-import jakarta.persistence.Lob;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.jspecify.annotations.Nullable;
@@ -39,11 +38,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.sql.Time;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.OffsetDateTime;
-import java.time.OffsetTime;
+import java.time.*;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -266,7 +261,7 @@ public class ComponentXmlFactory {
         Class<?> type = metaProperty.getRange().asDatatype().getJavaClass();
 
         if (type.equals(String.class) || type.equals(UUID.class)) {
-            return isLob(metaProperty) ? "textArea" : "textField";
+            return metadataTools.isLob(metaProperty) ? "textArea" : "textField";
         } else if (type.equals(Boolean.class)) {
             return "checkbox";
         } else if (type.equals(java.sql.Date.class) || type.equals(LocalDate.class)) {
@@ -283,11 +278,7 @@ public class ComponentXmlFactory {
             return "fileUploadField";
         }
 
-        return isLob(metaProperty) ? "textArea" : "textField";
-    }
-
-    protected boolean isLob(MetaProperty metaProperty) {
-        return metaProperty.getAnnotatedElement().getAnnotation(Lob.class) != null;
+        return metadataTools.isLob(metaProperty) ? "textArea" : "textField";
     }
 
     protected void initDataBinding(Element element, MetaProperty metaProperty, @Nullable String dataContainerId) {

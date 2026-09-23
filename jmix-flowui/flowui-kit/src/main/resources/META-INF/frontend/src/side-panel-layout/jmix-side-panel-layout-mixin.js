@@ -63,6 +63,13 @@ export const JmixSidePanelLayoutMixin = (superClass) =>
                 notify: true,
                 sync: true,
             },
+            sidePanelResizable: {
+                type: Boolean,
+                reflectToAttribute: true,
+                value: false,
+                notify: true,
+                sync: true,
+            },
             overlayAriaLabel: {
                 type: String,
                 notify: true,
@@ -195,6 +202,31 @@ export const JmixSidePanelLayoutMixin = (superClass) =>
     _sidePanelOpenedChanged(opened, oldOpened) {
         this._updateModalityCurtainHidden();
         this._updateContentSize();
+
+        if (opened) {
+            this._forceSidePanelContentRepaint();
+        }
+    }
+
+    /**
+     * Works around a Chromium bug where the slotted side panel content can rasterize empty when the
+     * panel becomes visible, appearing only after a full-page repaint (e.g. a browser zoom). Nudging
+     * the CSS {@code zoom} of the content for a single painted frame and then removing it forces the
+     * content to paint, and leaves no transform or zoom on the element afterwards.
+     *
+     * @private
+     */
+    _forceSidePanelContentRepaint() {
+        const content = this.$.sidePanelContent;
+        if (!content) {
+            return;
+        }
+        requestAnimationFrame(() => {
+            content.style.zoom = '1.0001';
+            requestAnimationFrame(() => {
+                content.style.zoom = '';
+            });
+        });
     }
 
     /**
@@ -423,5 +455,120 @@ export const JmixSidePanelLayoutMixin = (superClass) =>
       return Array.from(this.children).filter(
         (node) => node.nodeType === Node.ELEMENT_NODE && node.slot === 'sidePanelContentSlot',
       );
+    }
+
+    /**
+     * @private
+     */
+    _isHorizontalPosition() {
+        const p = this.sidePanelPosition;
+        return p === 'right' || p === 'left' || p === 'inline-start' || p === 'inline-end';
+    }
+
+    /**
+     * Returns the sign to apply to the pointer delta so that dragging the inner edge toward the
+     * content grows the panel, accounting for position and RTL.
+     *
+     * @private
+     */
+    _resolveResizeSign() {
+        const rtl = this.getAttribute('dir') === 'rtl';
+        switch (this.sidePanelPosition) {
+            case 'left': return 1;
+            case 'inline-start': return rtl ? -1 : 1;
+            case 'inline-end': return rtl ? 1 : -1;
+            case 'top': return 1;
+            case 'bottom': return -1;
+            case 'right':
+            default: return -1;
+        }
+    }
+
+    /**
+     * @private
+     */
+    _onResizeHandlePointerDown(e) {
+        // Primary button of the primary pointer only; ignore extra pointers while a drag is in progress
+        if (!this.sidePanelResizable || e.button !== 0 || !e.isPrimary || this._resizeState) {
+            return;
+        }
+
+        e.preventDefault();
+        const handle = e.currentTarget;
+        handle.setPointerCapture(e.pointerId);
+
+        const rect = this.$.sidePanel.getBoundingClientRect();
+        this._resizeState = {
+            x: e.clientX,
+            y: e.clientY,
+            width: rect.width,
+            height: rect.height,
+            horizontal: this._isHorizontalPosition(),
+            sign: this._resolveResizeSign(),
+        };
+        this.toggleAttribute('resizing', true);
+
+        this._boundResizeMove = (ev) => this._onResizeHandlePointerMove(ev);
+        this._boundResizeUp = (ev) => this._onResizeHandlePointerUp(ev);
+        handle.addEventListener('pointermove', this._boundResizeMove);
+        handle.addEventListener('pointerup', this._boundResizeUp);
+        handle.addEventListener('pointercancel', this._boundResizeUp);
+    }
+
+    /**
+     * @private
+     */
+    _onResizeHandlePointerMove(e) {
+        const s = this._resizeState;
+        if (!s) {
+            return;
+        }
+        if (s.horizontal) {
+            const newWidth = s.width + (e.clientX - s.x) * s.sign;
+            this.$.sidePanel.style.width = `${newWidth}px`;
+        } else {
+            const newHeight = s.height + (e.clientY - s.y) * s.sign;
+            this.$.sidePanel.style.height = `${newHeight}px`;
+        }
+    }
+
+    /**
+     * @private
+     */
+    _onResizeHandlePointerUp(e) {
+        const s = this._resizeState;
+        if (!s) {
+            return;
+        }
+
+        const handle = e.currentTarget;
+        handle.removeEventListener('pointermove', this._boundResizeMove);
+        handle.removeEventListener('pointerup', this._boundResizeUp);
+        handle.removeEventListener('pointercancel', this._boundResizeUp);
+
+        if (handle.hasPointerCapture(e.pointerId)) {
+            handle.releasePointerCapture(e.pointerId);
+        }
+
+        this.toggleAttribute('resizing', false);
+        this._resizeState = null;
+
+        const rect = this.$.sidePanel.getBoundingClientRect();
+        // Skip when the size did not actually change: a click without a drag, or a drag clamped at min/max.
+        if (s.horizontal ? rect.width === s.width : rect.height === s.height) {
+            return;
+        }
+
+        const size = `${s.horizontal ? rect.width : rect.height}px`;
+
+        if (s.horizontal) {
+            this.sidePanelHorizontalSize = size;
+        } else {
+            this.sidePanelVerticalSize = size;
+        }
+
+        this.dispatchEvent(new CustomEvent('jmix-side-panel-layout-after-resize-event', {
+            detail: { size },
+        }));
     }
 }

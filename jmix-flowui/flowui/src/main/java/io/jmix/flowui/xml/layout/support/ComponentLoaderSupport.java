@@ -63,14 +63,11 @@ import org.springframework.stereotype.Component;
 import java.lang.reflect.InvocationTargetException;
 import java.time.Duration;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
-
-import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 
 @Component("flowui_ComponentLoaderSupport")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
@@ -649,22 +646,10 @@ public class ComponentLoaderSupport implements ApplicationContextAware {
     }
 
     protected void applyCss(String css, BiConsumer<String, String> setter) {
-        Arrays.stream(StringUtils.split(css, ';'))
-                .filter(StringUtils::isNotBlank)
-                .forEach(propertyStatement -> {
-                    int separatorIndex = propertyStatement.indexOf(':');
-                    if (separatorIndex < 0) {
-                        throw new GuiDevelopmentException("Incorrect CSS string: " + css, context);
-                    }
-
-                    String propertyName = trimToEmpty(propertyStatement.substring(0, separatorIndex));
-                    String propertyValue = trimToEmpty(propertyStatement.substring(separatorIndex + 1));
-
-                    if (StringUtils.isBlank(propertyName)) {
-                        throw new GuiDevelopmentException("Incorrect CSS string, empty property name: " + css, context);
-                    }
-
-                    setter.accept(propertyName, propertyValue);
-                });
+        try {
+            LoaderUtils.applyCss(css, setter);
+        } catch (IllegalArgumentException e) {
+            throw new GuiDevelopmentException(e.getMessage(), context);
+        }
     }
 }

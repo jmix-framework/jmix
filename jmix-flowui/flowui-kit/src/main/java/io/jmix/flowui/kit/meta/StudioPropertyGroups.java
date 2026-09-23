@@ -1209,9 +1209,24 @@ public final class StudioPropertyGroups {
 
     @StudioPropertyGroup(properties = @StudioProperty(
             xmlAttribute = StudioXmlAttributes.VALUE,
+            type = StudioPropertyType.LOCALIZED_STRING,
+            category = StudioProperty.Category.GENERAL,
+            required = true))
+    public interface RequiredLocalizedStringValue {
+    }
+
+    @StudioPropertyGroup(properties = @StudioProperty(
+            xmlAttribute = StudioXmlAttributes.VALUE,
             type = StudioPropertyType.STRING,
             category = StudioProperty.Category.GENERAL))
     public interface StringValue {
+    }
+
+    @StudioPropertyGroup(properties = @StudioProperty(
+            xmlAttribute = StudioXmlAttributes.VALUE,
+            type = StudioPropertyType.LOCALIZED_STRING,
+            category = StudioProperty.Category.GENERAL))
+    public interface LocalizedStringValue {
     }
 
     @StudioPropertyGroup(properties = @StudioProperty(
@@ -1815,6 +1830,14 @@ public final class StudioPropertyGroups {
             xmlAttribute = StudioXmlAttributes.THEME_NAMES,
             type = StudioPropertyType.VALUES_LIST,
             category = StudioProperty.Category.LOOK_AND_FEEL,
+            options = {"arrow", "no-padding"}))
+    public interface PopoverThemeNames {
+    }
+
+    @StudioPropertyGroup(properties = @StudioProperty(
+            xmlAttribute = StudioXmlAttributes.THEME_NAMES,
+            type = StudioPropertyType.VALUES_LIST,
+            category = StudioProperty.Category.LOOK_AND_FEEL,
             options = {"contrast", "error", "success"}))
     public interface ProgressBarThemeNames {
     }
@@ -2385,6 +2408,63 @@ public final class StudioPropertyGroups {
     public interface EntityPickerComponent extends ValuePickerComponent, MetaClassTypeParameterV {
     }
 
+    @StudioPropertyGroup(properties = {
+            @StudioProperty(xmlAttribute = StudioXmlAttributes.TARGET,
+                    type = StudioPropertyType.COMPONENT_REF,
+                    category = StudioProperty.Category.GENERAL),
+            @StudioProperty(xmlAttribute = StudioXmlAttributes.POSITION,
+                    type = StudioPropertyType.ENUMERATION,
+                    classFqn = "com.vaadin.flow.component.popover.PopoverPosition",
+                    defaultValue = "BOTTOM_START",
+                    category = StudioProperty.Category.GENERAL,
+                    options = {"TOP_START", "TOP", "TOP_END",
+                            "BOTTOM_START", "BOTTOM", "BOTTOM_END",
+                            "START_TOP", "START", "START_BOTTOM",
+                            "END_TOP", "END", "END_BOTTOM"}),
+            @StudioProperty(xmlAttribute = StudioXmlAttributes.MODAL,
+                    type = StudioPropertyType.BOOLEAN, defaultValue = "false",
+                    category = StudioProperty.Category.GENERAL),
+            @StudioProperty(xmlAttribute = StudioXmlAttributes.BACKDROP_VISIBLE,
+                    type = StudioPropertyType.BOOLEAN, defaultValue = "false",
+                    category = StudioProperty.Category.GENERAL),
+            @StudioProperty(xmlAttribute = StudioXmlAttributes.AUTOFOCUS,
+                    type = StudioPropertyType.BOOLEAN, defaultValue = "false",
+                    category = StudioProperty.Category.GENERAL),
+            @StudioProperty(xmlAttribute = StudioXmlAttributes.TAB_FOCUS_ENABLED,
+                    type = StudioPropertyType.BOOLEAN, defaultValue = "true",
+                    category = StudioProperty.Category.GENERAL),
+            @StudioProperty(xmlAttribute = StudioXmlAttributes.CLOSE_ON_ESC,
+                    type = StudioPropertyType.BOOLEAN, defaultValue = "true",
+                    category = StudioProperty.Category.GENERAL),
+            @StudioProperty(xmlAttribute = StudioXmlAttributes.CLOSE_ON_OUTSIDE_CLICK,
+                    type = StudioPropertyType.BOOLEAN, defaultValue = "true",
+                    category = StudioProperty.Category.GENERAL),
+            @StudioProperty(xmlAttribute = StudioXmlAttributes.OPEN_ON_CLICK,
+                    type = StudioPropertyType.BOOLEAN, defaultValue = "true",
+                    category = StudioProperty.Category.GENERAL),
+            @StudioProperty(xmlAttribute = StudioXmlAttributes.OPEN_ON_FOCUS,
+                    type = StudioPropertyType.BOOLEAN, defaultValue = "false",
+                    category = StudioProperty.Category.GENERAL),
+            @StudioProperty(xmlAttribute = StudioXmlAttributes.OPEN_ON_HOVER,
+                    type = StudioPropertyType.BOOLEAN, defaultValue = "false",
+                    category = StudioProperty.Category.GENERAL),
+            @StudioProperty(xmlAttribute = StudioXmlAttributes.FOCUS_DELAY,
+                    type = StudioPropertyType.INTEGER,
+                    category = StudioProperty.Category.GENERAL),
+            @StudioProperty(xmlAttribute = StudioXmlAttributes.HOVER_DELAY,
+                    type = StudioPropertyType.INTEGER,
+                    category = StudioProperty.Category.GENERAL),
+            @StudioProperty(xmlAttribute = StudioXmlAttributes.HIDE_DELAY,
+                    type = StudioPropertyType.INTEGER,
+                    category = StudioProperty.Category.GENERAL),
+            @StudioProperty(xmlAttribute = StudioXmlAttributes.ROLE,
+                    type = StudioPropertyType.STRING, defaultValue = "dialog",
+                    category = StudioProperty.Category.GENERAL)
+    })
+    public interface PopoverComponent extends Id, Visible, Enabled, ClassNames, HasAriaLabel,
+            Width, Height, PopoverThemeNames {
+    }
+
     @StudioPropertyGroup
     public interface ProgressBarComponent extends BaseSizedComponentWithClassNames, Indeterminate,
             ValidationDoubleMax, ValidationDoubleMin, ProgressBarThemeNames, StringValue {
@@ -2444,7 +2524,7 @@ public final class StudioPropertyGroups {
     public interface FileUploadFieldDefaultProperties extends BaseSizedEnabledComponentWithClassName,
             HasRequiredAndValidationAttributes, AcceptedFileTypes, AcceptedMimeTypes, AcceptedFileExtensions,
             ClearButtonAriaLabel, ClearButtonVisible,
-            ConnectingStatusText, CollectionOrInstanceDataContainer, DropAllowed, FileNameVisible,
+            ConnectingStatusText, CollectionOrInstanceDataContainer, DropAllowedWithTrueDefaultValue, FileNameVisible,
             FileNotSelectedText, FileTooBigText, HelperText, IncorrectFileTypeText, Label, MaxFileSize,
             ProcessingStatusText, Property, ReadOnly, RemainingTimeText, RemainingTimeUnknownText,
             UploadDialogCancelText, UploadDialogTitle, UploadIcon, UploadText {
@@ -2587,8 +2667,8 @@ public final class StudioPropertyGroups {
     }
 
     @StudioPropertyGroup
-    public interface RequiredStringNameAndValueAndType extends RequiredStringNameAndValue,
-            TypeContainerRefLoaderRefIcon {
+    public interface RequiredStringNameAndValueAndType extends RequiredStringName,
+            RequiredLocalizedStringValue, TypeContainerRefLoaderRefIcon {
     }
 
     @StudioPropertyGroup
@@ -2715,7 +2795,7 @@ public final class StudioPropertyGroups {
                             type = StudioPropertyType.COMPONENT_REF,
                             category = StudioProperty.Category.GENERAL,
                             required = true,
-                            componentRefTags = "genericFilter"),
+                            componentRefTags = StudioXmlElements.GENERIC_FILTER),
                     @StudioProperty(
                             xmlAttribute = StudioXmlAttributes.CONFIGURATION_PARAM,
                             type = StudioPropertyType.STRING),
@@ -2825,7 +2905,7 @@ public final class StudioPropertyGroups {
                             type = StudioPropertyType.COMPONENT_REF,
                             category = StudioProperty.Category.GENERAL,
                             required = true,
-                            componentRefTags = {"simplePagination"}),
+                            componentRefTags = {StudioXmlElements.SIMPLE_PAGINATION}),
                     @StudioProperty(
                             xmlAttribute = StudioXmlAttributes.FIRST_RESULT_PARAM,
                             type = StudioPropertyType.STRING),
@@ -2842,7 +2922,7 @@ public final class StudioPropertyGroups {
             type = StudioPropertyType.COMPONENT_REF,
             category = StudioProperty.Category.GENERAL,
             required = true,
-            componentRefTags = "propertyFilter"))
+            componentRefTags = StudioXmlElements.PROPERTY_FILTER))
     public interface FacetPropertyFilterComponent extends IdAndParam {
     }
 
@@ -2851,7 +2931,7 @@ public final class StudioPropertyGroups {
             type = StudioPropertyType.COMPONENT_REF,
             category = StudioProperty.Category.GENERAL,
             required = true,
-            componentRefTags = {"dataGrid", "treeDataGrid", "groupDataGrid"}))
+            componentRefTags = {StudioXmlElements.DATA_GRID, StudioXmlElements.TREE_DATA_GRID}))
     public interface DataGridFilterComponent extends IdAndParam {
     }
 
@@ -2944,7 +3024,7 @@ public final class StudioPropertyGroups {
             xmlAttribute = StudioXmlAttributes.REF_COLUMN,
             type = StudioPropertyType.COMPONENT_REF,
             required = true,
-            componentRefTags = {"column"}))
+            componentRefTags = {StudioXmlElements.COLUMN}))
     public interface GridColumnVisibilityMenuItemComponent extends Text {
     }
 
@@ -3771,7 +3851,7 @@ public final class StudioPropertyGroups {
                             type = StudioPropertyType.COMPONENT_REF,
                             category = StudioProperty.Category.GENERAL,
                             required = true,
-                            componentRefTags = {"dataGrid", "treeDataGrid"}),
+                            componentRefTags = {StudioXmlElements.DATA_GRID, StudioXmlElements.TREE_DATA_GRID}),
                     @StudioProperty(
                             xmlAttribute = StudioXmlAttributes.EXCLUDE,
                             type = StudioPropertyType.VALUES_LIST),
@@ -3810,7 +3890,7 @@ public final class StudioPropertyGroups {
                             type = StudioPropertyType.COMPONENT_REF,
                             category = StudioProperty.Category.GENERAL,
                             required = true,
-                            componentRefTags = {"listMenu", "horizontalMenu"}),
+                            componentRefTags = {StudioXmlElements.LIST_MENU, StudioXmlElements.HORIZONTAL_MENU}),
                     @StudioProperty(
                             xmlAttribute = StudioXmlAttributes.FILTER_MODE,
                             type = StudioPropertyType.ENUMERATION,
@@ -3858,9 +3938,16 @@ public final class StudioPropertyGroups {
 
     @StudioPropertyGroup(properties = @StudioProperty(
             xmlAttribute = StudioXmlAttributes.FILE,
-            type = StudioPropertyType.STRING,
+            type = StudioPropertyType.LOCALIZED_STRING,
             category = StudioProperty.Category.GENERAL))
     public interface HtmlComponent extends BaseComponentWithClassNames, Content {
+    }
+
+    @StudioPropertyGroup(properties = @StudioProperty(
+            xmlAttribute = StudioXmlAttributes.FILE,
+            type = StudioPropertyType.STRING,
+            category = StudioProperty.Category.GENERAL))
+    public interface SvgComponent extends BaseComponentWithClassNames {
     }
 
     @StudioPropertyGroup(
@@ -3960,6 +4047,10 @@ public final class StudioPropertyGroups {
                             defaultValue = "RIGHT",
                             options = {"LEFT", "RIGHT", "INLINE_START", "INLINE_END", "TOP", "BOTTOM"}),
                     @StudioProperty(
+                            xmlAttribute = StudioXmlAttributes.SIDE_PANEL_RESIZABLE,
+                            type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "false"),
+                    @StudioProperty(
                             xmlAttribute = StudioXmlAttributes.SIDE_PANEL_VERTICAL_MAX_SIZE,
                             type = StudioPropertyType.STRING,
                             category = StudioProperty.Category.SIZE,
@@ -3986,7 +4077,12 @@ public final class StudioPropertyGroups {
                             defaultValue = "true"),
                     @StudioProperty(
                             xmlAttribute = StudioXmlAttributes.OVERLAY_ARIA_LABEL,
-                            type = StudioPropertyType.LOCALIZED_STRING)
+                            type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(
+                            xmlAttribute = StudioXmlAttributes.THEME_NAMES,
+                            type = StudioPropertyType.VALUES_LIST,
+                            category = StudioProperty.Category.LOOK_AND_FEEL,
+                            options = {"resizer-small"})
             }
     )
     public interface SidePanelLayoutComponent extends BaseComponent, MinAndMaxWidth, MinAndMaxHeight,

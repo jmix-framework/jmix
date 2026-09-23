@@ -34,6 +34,9 @@ public class TestComponent extends Component {
     private String[] stringsArray;
     private String[] strings;
     private CollectionContainer<Product> dataContainer;
+    private String localizedString;
+    private String fullFormLocalizedString;
+    private List<String> localizedStringsList;
 
     public List<String> getStringsList() {
         return stringsList;
@@ -73,5 +76,29 @@ public class TestComponent extends Component {
 
     public void setDataContainer(CollectionContainer<Product> dataContainer) {
         this.dataContainer = dataContainer;
+    }
+
+    public String getLocalizedString() {
+        return localizedString;
+    }
+
+    public void setLocalizedString(String localizedString) {
+        this.localizedString = localizedString;
+    }
+
+    public String getFullFormLocalizedString() {
+        return fullFormLocalizedString;
+    }
+
+    public void setFullFormLocalizedString(String fullFormLocalizedString) {
+        this.fullFormLocalizedString = fullFormLocalizedString;
+    }
+
+    public List<String> getLocalizedStringsList() {
+        return localizedStringsList;
+    }
+
+    public void setLocalizedStringsList(List<String> localizedStringsList) {
+        this.localizedStringsList = localizedStringsList;
     }
 }

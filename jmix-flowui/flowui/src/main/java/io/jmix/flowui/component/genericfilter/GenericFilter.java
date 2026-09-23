@@ -29,6 +29,7 @@ import io.jmix.core.AccessManager;
 import io.jmix.core.Messages;
 import io.jmix.core.Metadata;
 import io.jmix.core.annotation.Experimental;
+import io.jmix.core.annotation.Internal;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.querycondition.Condition;
 import io.jmix.core.querycondition.LogicalCondition;
@@ -318,6 +319,9 @@ public class GenericFilter extends Composite<JmixDetails>
     }
 
     protected void onApplyButtonClick(ClickEvent<MenuItem> clickEvent) {
+        // Same recomposition rule as apply(). Unlike apply(), the button always loads and keeps
+        // the current page.
+        recomposeLoaderConditionIfOutdated();
         getDataLoader().load();
     }
 
@@ -465,9 +469,34 @@ public class GenericFilter extends Composite<JmixDetails>
      */
     public void apply() {
         if (dataLoader != null) {
+            recomposeLoaderConditionIfOutdated();
             setupLoaderFirstResult();
             if (isAutoApply()) dataLoader.load();
         }
+    }
+
+    /**
+     * Recomposes the data loader condition as "base AND the shown configuration" if the
+     * application has replaced the loader condition since the filter's last contribution
+     * (a new base condition); an untouched loader condition is left as is, so applications
+     * that never replace it see exactly the previous behavior. A configuration's root component
+     * receives this method as its recomposition delegate when the configuration is activated;
+     * nested components reach it through their owning group's chain, so their direct loads never
+     * use a replaced base alone.
+     */
+    protected void recomposeLoaderConditionIfOutdated() {
+        if (isLoaderConditionOutdated()) {
+            updateDataLoaderCondition();
+        }
+    }
+
+    /**
+     * Returns whether the loader condition was replaced by the application since this filter
+     * composed it last, so the composition no longer contains the shown configuration.
+     */
+    protected boolean isLoaderConditionOutdated() {
+        return dataLoader != null
+                && BaseConditionSupport.isReplacedExternally(dataLoader.getCondition(), lastConditionSetByFilter);
     }
 
     protected void setupLoaderFirstResult() {
@@ -707,6 +736,15 @@ public class GenericFilter extends Composite<JmixDetails>
         }
 
         LogicalFilterComponent<?> rootComponent = getCurrentConfiguration().getRootLogicalFilterComponent();
+
+        // The adoption point every configuration passes through on activation, whoever built its
+        // root - the filter's own factory, a configuration converter, or application code
+        // registering a hand-built configuration: from here on the root forwards recomposition
+        // requests to this filter.
+        if (rootComponent instanceof GroupFilter rootGroupFilter) {
+            rootGroupFilter.setLoaderConditionRecomposeDelegate(this::recomposeLoaderConditionIfOutdated);
+        }
+
         boolean isAnyFilterComponentVisible = rootComponent.getFilterComponents().stream()
                 .anyMatch(filterComponent -> ((Component) filterComponent).isVisible());
         if (isAnyFilterComponentVisible) {
@@ -767,7 +805,7 @@ public class GenericFilter extends Composite<JmixDetails>
         String removeButtonId = removeButtonPrefix + CONDITION_REMOVE_BUTTON_ID_SUFFIX;
 
         HorizontalLayout singleFilterLayout = singleFilter.getRoot();
-        Optional<Component> existingRemoveButton = UiComponentUtils.findComponent(singleFilterLayout, removeButtonId);
+        Optional<Component> existingRemoveButton = findConditionRemoveButton(singleFilterLayout, removeButtonId);
 
         if (getCurrentConfiguration().isFilterComponentModified(singleFilter)) {
             // If the removeButton is added to the singleFilterLayout
@@ -794,7 +832,7 @@ public class GenericFilter extends Composite<JmixDetails>
 
         if (summaryComponent != null) {
             String removeButtonId = CONDITION_REMOVE_BUTTON_ID_SUFFIX;
-            Optional<Component> existingRemoveButton = UiComponentUtils.findComponent(summaryComponent, removeButtonId);
+            Optional<Component> existingRemoveButton = findConditionRemoveButton(summaryComponent, removeButtonId);
 
             if (getCurrentConfiguration().isFilterComponentModified(groupFilter)) {
 
@@ -805,6 +843,26 @@ public class GenericFilter extends Composite<JmixDetails>
                 existingRemoveButton.ifPresent(summaryComponent::remove);
             }
         }
+    }
+
+    /**
+     * Finds a condition remove button previously created by
+     * {@link #createConditionRemoveButton(FilterComponent, String)}.
+     * <p>
+     * The button is created at run time and gets an actual component id, so it must be looked up by
+     * that id. The two-argument {@link UiComponentUtils#findComponent(Component, String)} cannot be
+     * used here: if the filter is placed inside a fragment, it switches to the fragment id
+     * comparator, which never matches a run-time created component.
+     * <p>
+     * An overriding method must return a direct child of the container: the callers rely on it
+     * to reposition and remove the button.
+     *
+     * @param container      a container to find the button in
+     * @param removeButtonId an id of the button to find
+     * @return an {@link Optional} describing the found button, or an empty {@link Optional}
+     */
+    protected Optional<Component> findConditionRemoveButton(Component container, String removeButtonId) {
+        return UiComponentUtils.findComponent(container, removeButtonId, UiComponentUtils::sameId);
     }
 
     protected Component createConditionRemoveButton(FilterComponent filterComponent, String removeButtonId) {
@@ -1062,17 +1120,70 @@ public class GenericFilter extends Composite<JmixDetails>
         return getEventBus().addListener(ConfigurationRefreshEvent.class, listener);
     }
 
+    /**
+     * Loads the stored configurations available to the current user and applies the one that is
+     * default for all users.
+     * <p>
+     * Configurations are loaded after the view is initialized, so a configuration registered earlier
+     * can already have the id of a stored one: this happens when the user saves a configuration that
+     * the application registers in the view's {@code InitEvent} handler. A stored configuration is the
+     * state the user saved for that id, so it is applied to the registered configuration instead of
+     * being added next to it. A configuration that cannot be modified, such as a
+     * {@link DesignTimeConfiguration} declared by the view itself, is kept as it is.
+     */
     public void loadConfigurationsAndApplyDefault() {
         Map<Configuration, Boolean> configurationsMap = genericFilterSupport.getConfigurationsMap(this);
         boolean defaultForAllConfigurationApplied = false;
 
         for (Map.Entry<Configuration, Boolean> entry : configurationsMap.entrySet()) {
-            addConfiguration(entry.getKey());
+            Configuration storedConfiguration = entry.getKey();
+            Configuration registeredConfiguration = getConfiguration(storedConfiguration.getId());
+
+            Configuration configuration;
+            if (registeredConfiguration instanceof RunTimeConfiguration runTimeConfiguration) {
+                applyStoredConfiguration(runTimeConfiguration, storedConfiguration);
+                configuration = runTimeConfiguration;
+            } else if (registeredConfiguration != null) {
+                log.warn("Stored configuration '{}' is ignored: the filter has a configuration with the same id "
+                        + "that cannot be modified.", storedConfiguration.getId());
+                continue;
+            } else {
+                addConfiguration(storedConfiguration);
+                configuration = storedConfiguration;
+            }
 
             if (!defaultForAllConfigurationApplied && entry.getValue()) {
-                setCurrentConfiguration(entry.getKey());
+                setCurrentConfiguration(configuration);
                 defaultForAllConfigurationApplied = true;
             }
+        }
+    }
+
+    /**
+     * Applies the state loaded from the storage to a configuration that is already registered: the
+     * conditions, the name and the default values the user saved for that id replace the registered
+     * ones. The registered instance itself is kept, so a reference to it held by the application
+     * stays valid.
+     *
+     * @param registeredConfiguration a configuration registered before the stored ones were loaded
+     * @param storedConfiguration     a configuration loaded from the storage
+     */
+    protected void applyStoredConfiguration(RunTimeConfiguration registeredConfiguration,
+                                            Configuration storedConfiguration) {
+        // Reset the modification flags while they still refer to the configuration's own components:
+        // they are kept in a set, so flags left from the replaced components would never be cleared.
+        registeredConfiguration.setModified(false);
+
+        registeredConfiguration.setRootLogicalFilterComponent(storedConfiguration.getRootLogicalFilterComponent());
+        registeredConfiguration.setName(storedConfiguration.getName());
+        registeredConfiguration.setAvailableForAllUsers(storedConfiguration.isAvailableForAllUsers());
+        genericFilterSupport.refreshConfigurationDefaultValues(registeredConfiguration);
+
+        // The name is part of the stored state, so the dropdown is rebuilt in any case.
+        updateSelectConfigurationDropdown();
+
+        if (registeredConfiguration == currentConfiguration) {
+            refreshCurrentConfigurationLayout();
         }
     }
 

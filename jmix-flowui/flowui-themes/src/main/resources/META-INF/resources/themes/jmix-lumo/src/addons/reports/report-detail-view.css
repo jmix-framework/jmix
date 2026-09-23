@@ -71,3 +71,15 @@
 .report-detail-view .llm-editor-block {
     flex: 1 1 0;
 }
+
+.report-detail-view .llm-data-set-panel vaadin-badge {
+    max-width: 100%;
+    height: auto;
+    white-space: normal;
+    align-items: flex-start;
+}
+
+.report-detail-view .llm-query-notes {
+    max-height: 8em;
+    overflow-y: auto;
+}

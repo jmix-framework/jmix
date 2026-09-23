@@ -458,7 +458,7 @@ dependencies {
         api "org.flowable:flowable-spring-boot-starter-process-rest:$flowableVersion"
         api "org.flowable:flowable-spring-boot-starter-dmn-rest:$flowableVersion"
 
-        def tomcatEmbedVersion = '11.0.22'
+        def tomcatEmbedVersion = '11.0.25'
         api "org.apache.tomcat.embed:tomcat-embed-core:$tomcatEmbedVersion"
         api "org.apache.tomcat.embed:tomcat-embed-el:$tomcatEmbedVersion"
         api "org.apache.tomcat.embed:tomcat-embed-websocket:$tomcatEmbedVersion"

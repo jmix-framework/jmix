@@ -43,11 +43,12 @@ dependencies {
     testImplementation 'org.liquibase:liquibase-core'
     testImplementation 'org.springframework:spring-orm'
     testImplementation project(':eclipselink')
+    testImplementation project(':flowui-test-assist')
+    testImplementation project(':framework-test-support')
     testImplementation project(':security')
     testImplementation project(':security-data')
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     testRuntimeOnly 'org.junit.vintage:junit-vintage-engine'
     testRuntimeOnly 'org.hsqldb:hsqldb'
-    testRuntimeOnly 'org.slf4j:slf4j-simple'
 }

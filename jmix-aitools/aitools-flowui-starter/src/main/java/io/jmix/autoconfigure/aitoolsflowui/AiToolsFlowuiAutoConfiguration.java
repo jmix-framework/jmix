@@ -22,9 +22,11 @@ import io.jmix.aitoolsflowui.icon.impl.DefaultAiIconProvider;
 import io.jmix.aitoolsflowui.service.AiChatService;
 import io.jmix.aitoolsflowui.service.AiConversationService;
 import io.jmix.aitoolsflowui.service.AiChatMessageService;
+import io.jmix.aitoolsflowui.service.AiConversationTitleGenerator;
 import io.jmix.aitoolsflowui.service.impl.AiChatEmptyService;
 import io.jmix.aitoolsflowui.service.impl.AiConversationEmptyService;
 import io.jmix.aitoolsflowui.service.impl.AiChatMessageEmptyService;
+import io.jmix.aitoolsflowui.service.impl.AiConversationTitleEmptyGenerator;
 import io.jmix.flowui.FlowuiConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -57,5 +59,11 @@ public class AiToolsFlowuiAutoConfiguration {
     @ConditionalOnMissingBean(AiChatMessageService.class)
     public AiChatMessageService userAiMessageService() {
         return new AiChatMessageEmptyService();
+    }
+
+    @Bean("aitls_AiConversationTitleEmptyGenerator")
+    @ConditionalOnMissingBean(AiConversationTitleGenerator.class)
+    public AiConversationTitleGenerator aiConversationTitleGenerator() {
+        return new AiConversationTitleEmptyGenerator();
     }
 }

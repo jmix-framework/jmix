@@ -17,6 +17,7 @@
 package test_support;
 
 import io.jmix.email.authentication.EmailRefreshTokenManager;
+import io.jmix.email.authentication.OAuth2ClientType;
 import io.jmix.email.entity.RefreshToken;
 import org.jspecify.annotations.Nullable;
 
@@ -27,6 +28,7 @@ public class TestEmailRefreshTokenManager implements EmailRefreshTokenManager {
 
     private final String initialValue;
     private String storedValue;
+    private OAuth2ClientType storedClientType = OAuth2ClientType.CONFIDENTIAL;
 
     public TestEmailRefreshTokenManager(@Nullable String initialValue) {
         this.initialValue = initialValue;
@@ -34,10 +36,26 @@ public class TestEmailRefreshTokenManager implements EmailRefreshTokenManager {
 
     @Override
     public RefreshToken storeRefreshTokenValue(String refreshTokenValue) {
+        return storeRefreshTokenValue(refreshTokenValue, OAuth2ClientType.CONFIDENTIAL);
+    }
+
+    @Override
+    public RefreshToken storeRefreshTokenValue(String refreshTokenValue, OAuth2ClientType clientType) {
         storedValue = refreshTokenValue;
+        storedClientType = clientType;
         RefreshToken token = new RefreshToken();
         token.setTokenValue(refreshTokenValue);
+        token.setClientType(clientType);
         return token;
+    }
+
+    @Override
+    public OAuth2ClientType getRefreshTokenClientType() {
+        return storedClientType;
+    }
+
+    public OAuth2ClientType getStoredClientType() {
+        return storedClientType;
     }
 
     @Override

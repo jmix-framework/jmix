@@ -310,42 +310,6 @@ public class LlmDataSetGenerationSupport {
     }
 
     /**
-     * Names the data sets around this one whose columns generation is not told about: a parent band's fields and a
-     * cross-tab axis's columns are known here only from a stored LLM query. A query generated without them fails
-     * differently on each side — a detail band prints the same rows under every master row, silently, while a
-     * cross-tab cell fails the run — so both are said out loud before the model is called.
-     *
-     * @param dataSet data set a query is about to be generated for
-     * @return names of the bands and axes whose columns stay unknown, in the order they are met
-     */
-    public List<String> sourcesWithUndeclaredColumns(DataSet dataSet) {
-        List<String> sources = new ArrayList<>();
-
-        BandDefinition band = dataSet.getBandDefinition();
-        for (BandDefinition parentBand = band != null ? band.getParentBandDefinition() : null;
-             parentBand != null && parentBand.getParentBandDefinition() != null;
-             parentBand = parentBand.getParentBandDefinition()) {
-
-            if (storedColumnsOf(parentBand).isEmpty()) {
-                sources.add(parentBand.getName());
-            }
-        }
-
-        if (band != null && band.getOrientation() == Orientation.CROSS && band.getDataSets() != null
-                && !isCrossTabAxis(dataSet)) {
-            for (DataSet axis : band.getDataSets()) {
-                String axisName = axis.getName();
-                if (axis != dataSet && axisName != null && LlmQueryParameterNames.isCrossTabAxis(axisName)
-                        && storedColumnsOf(axis).isEmpty()) {
-                    sources.add(axisName);
-                }
-            }
-        }
-
-        return sources;
-    }
-
-    /**
      * Tells an axis data set of a cross-tab band from the cell data set of that band, by the name the extraction
      * controller recognises its axes by. Only a cell query is given the columns of the axes: a run of an axis
      * itself receives no axis rows at all, so a query generated for one against another axis would reference a

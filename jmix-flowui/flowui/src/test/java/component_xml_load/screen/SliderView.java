@@ -55,4 +55,16 @@ public class SliderView extends StandardView {
 
     @ViewComponent
     public JmixDecimalSlider decimalSliderWithValueId;
+
+    @ViewComponent
+    public JmixIntegerSlider integerSliderRequiredId;
+
+    @ViewComponent
+    public JmixDecimalSlider decimalSliderRequiredId;
+
+    @ViewComponent
+    public JmixIntegerSlider integerSliderUnboundRequiredId;
+
+    @ViewComponent
+    public JmixDecimalSlider decimalSliderUnboundRequiredId;
 }

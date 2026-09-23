@@ -45,6 +45,11 @@ class JmixSidePanelLayout extends JmixSidePanelLayoutMixin(ElementMixin(Themable
                 </div>
                 <div id="modalityCurtain" part="modalityCurtain" ?hidden="${this._modalityCurtainHidden}"></div>
                 <div id="sidePanel" part="sidePanel">
+                    ${this.sidePanelResizable && !this._displayAsOverlay
+                        ? html`<div part="resizeHandle"
+                                    @pointerdown="${this._onResizeHandlePointerDown}">
+                               </div>`
+                        : nothing}
                     <div id="sidePanelContent" part="sidePanelContent">
                          ${this._displayAsOverlay ? nothing : html`<slot name="sidePanelContentSlot"></slot>`}
                     </div>

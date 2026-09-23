@@ -21,6 +21,20 @@
     justify-content: center;
 }
 
+.dynmod-settings-view .dynmod-attribute-features {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: var(--vaadin-gap-xs);
+    align-items: center;
+    overflow: hidden;
+}
+
+/* Badges keep their own width and stay on one line, so a row never grows past the standard height. */
+.dynmod-settings-view .dynmod-attribute-features > * {
+    flex: 0 0 auto;
+    white-space: nowrap;
+}
+
 .dynmod-settings-view {
     container-type: inline-size;
     container-name: dynmod-settings-view;

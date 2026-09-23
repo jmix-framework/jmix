@@ -71,6 +71,6 @@ class EmailRefreshTokenManagerTest {
 
     private EmailerProperties createProperties(@Nullable String refreshToken) {
         return TestEmailerProperties.create(new EmailerProperties.OAuth2(
-                true, "google", "test-client", "test-secret", refreshToken, "common"));
+                true, "google", "test-client", "test-secret", refreshToken, "common", null));
     }
 }

@@ -27,6 +27,8 @@ import java.util.jar.Manifest
 
 class JmixPlugin implements Plugin<Project> {
 
+    public static final String DEFAULT_CONF_DIR = '.jmix/conf'
+
     public static final String PROVIDED_RUNTIME_CONFIGURATION_NAME = 'providedRuntime'
     public static final String PRODUCTION_RUNTIME_CLASSPATH_CONFIGURATION_NAME = 'productionRuntimeClasspath'
 
@@ -314,7 +316,7 @@ class JmixPlugin implements Plugin<Project> {
                         def confDir = resolveConfDir(project, mainProperties)
 
                         project.logger.lifecycle("Delete directory: {}", confDir)
-                        delete "${confDir}"
+                        delete confDir
                     } else {
                         project.logger.lifecycle("Resource directory not found")
                         return
@@ -396,7 +398,15 @@ class JmixPlugin implements Plugin<Project> {
         }
     }
 
-    private static String resolveConfDir(Project project, Properties mainProperties) {
+    /**
+     * Resolves the directory used by the application as 'jmix.core.conf-dir' at runtime.
+     *
+     * The runtime resolves this property against its working directory, which is the project directory
+     * both for the Gradle 'bootRun' task and for Studio run configurations. So relative paths and the
+     * '${user.dir}' placeholder are resolved against the project directory, not the build root directory:
+     * these are different directories when the application is a subproject with a custom 'projectDir'.
+     */
+    private static File resolveConfDir(Project project, Properties mainProperties) {
         def profilesList = resolveActiveProfiles(project, mainProperties)
 
         def confDir = null
@@ -404,7 +414,7 @@ class JmixPlugin implements Plugin<Project> {
             for (def profileName : profilesList) {
                 project.logger.lifecycle("Check profile: {}", profileName)
                 def profileProperties = loadProperties(project, profileName)
-                confDir = profileProperties.getProperty("jmix.core.conf-dir") ?: profileProperties.getProperty("jmix.core.confDir") ?: null
+                confDir = getConfDirProperty(profileProperties)
                 if (confDir != null) {
                     break
                 }
@@ -412,10 +422,23 @@ class JmixPlugin implements Plugin<Project> {
         }
 
         if (confDir == null) {
-            confDir = mainProperties.getProperty("jmix.core.conf-dir") ?: mainProperties.getProperty("jmix.core.confDir") ?: "${project.rootDir}/.jmix/conf"
+            confDir = getConfDirProperty(mainProperties) ?: DEFAULT_CONF_DIR
         }
 
-        return confDir
+        return project.file(expandPathPlaceholders(project, confDir))
+    }
+
+    private static String getConfDirProperty(Properties properties) {
+        return properties.getProperty("jmix.core.conf-dir") ?: properties.getProperty("jmix.core.confDir") ?: null
+    }
+
+    /**
+     * Replaces the placeholders that the running application resolves in path properties.
+     * '${user.dir}' becomes the project directory because that is the working directory of the application.
+     */
+    private static String expandPathPlaceholders(Project project, String path) {
+        return path.replace('${user.dir}', project.projectDir.absolutePath)
+                .replace('${user.home}', System.getProperty('user.home'))
     }
 
     private static List<String> resolveActiveProfiles(Project project, Properties mainProperties) {

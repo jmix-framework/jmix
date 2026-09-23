@@ -37,12 +37,13 @@
                       width="100%"
                       spacing="false"
                       alignItems="CENTER"
+                      justifyContent="END"
                       classNames="chat-title-layout">
                     <h3 id="conversationTitle" classNames="chat-title"/>
                     <button id="editConversationTitleBtn"
                             icon="PENCIL"
-                            themeNames="tertiary icon small"
-                            ariaLabel="msg://aiChatFragment.editConversationTitleAction"/>
+                            text="msg://aiChatFragment.editConversationTitleAction"
+                            themeNames="tertiary small"/>
                 </hbox>
                 <vbox id="conversationContentLayout"
                       width="100%"

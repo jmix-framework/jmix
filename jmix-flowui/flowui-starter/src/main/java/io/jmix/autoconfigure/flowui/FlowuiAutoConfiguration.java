@@ -23,6 +23,7 @@ import io.jmix.flowui.component.groupgrid.adapter.DefaultGroupDataGridAdapterFac
 import io.jmix.flowui.component.groupgrid.adapter.GroupDataGridAdapterFactory;
 import io.jmix.flowui.component.groupgrid.adapter.GroupDataGridAdapterProvider;
 import io.jmix.flowui.sys.ActionsConfiguration;
+import io.jmix.flowui.sys.JmixSecurityContextHolderStrategy;
 import io.jmix.flowui.sys.UiAccessChecker;
 import io.jmix.flowui.sys.ViewControllersConfiguration;
 import io.jmix.flowui.sys.ViewSupport;
@@ -38,11 +39,13 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Scope;
+import org.springframework.security.core.context.SecurityContextHolderStrategy;
 import org.jspecify.annotations.Nullable;
 
 import java.util.Collections;
@@ -50,8 +53,22 @@ import java.util.List;
 
 
 @AutoConfiguration
+// Must be processed before Vaadin's SpringSecurityAutoConfiguration, so that its @ConditionalOnMissingBean
+// SecurityContextHolderStrategy backs off in favor of the Jmix one defined below.
+@AutoConfigureBefore(name = "com.vaadin.flow.spring.SpringSecurityAutoConfiguration")
 @Import({CoreConfiguration.class, FlowuiConfiguration.class})
 public class FlowuiAutoConfiguration {
+
+    /**
+     * Replaces Vaadin's {@code VaadinAwareSecurityContextHolderStrategy} with a wrapper that lets
+     * {@link io.jmix.core.security.SystemAuthenticator} override the security context for the current thread only.
+     * Vaadin's {@code SpringSecurityAutoConfiguration} installs this bean into {@code SecurityContextHolder}.
+     */
+    @Bean("flowui_SecurityContextHolderStrategy")
+    @ConditionalOnMissingBean(SecurityContextHolderStrategy.class)
+    public SecurityContextHolderStrategy securityContextHolderStrategy() {
+        return new JmixSecurityContextHolderStrategy();
+    }
 
     @Bean("jmix_AppUiControllers")
     @ConditionalOnMissingBean(name = "jmix_AppUiControllers")

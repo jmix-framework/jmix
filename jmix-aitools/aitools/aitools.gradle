@@ -30,13 +30,16 @@ dependencies {
     implementation 'org.springframework.ai:spring-ai-model'
 
     implementation 'com.fasterxml.jackson.core:jackson-databind'
+    implementation 'org.antlr:antlr-runtime'
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api'
     testImplementation 'org.mockito:mockito-junit-jupiter'
     testImplementation 'org.springframework:spring-test'
     testImplementation project(':framework-test-support')
+    testImplementation project(':security-data')
 
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    testRuntimeOnly 'org.hsqldb:hsqldb'
     testRuntimeOnly 'org.slf4j:slf4j-simple'
 }

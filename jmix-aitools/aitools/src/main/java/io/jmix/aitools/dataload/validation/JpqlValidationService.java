@@ -48,6 +48,7 @@ public class JpqlValidationService {
      *     <li>{@link PagingValidator}</li>
      *     <li>{@link JpqlSyntaxValidator}</li>
      *     <li>{@link ReservedWordAliasValidator}</li>
+     *     <li>{@link SelectedValuesValidator}</li>
      *     <li>{@link RootEntityValidator}</li>
      *     <li>{@link UsedEntitiesValidator}</li>
      *     <li>{@link UsedPropertyPathsValidator}</li>

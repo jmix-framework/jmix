@@ -69,4 +69,15 @@ public class MysqlDbmsFeatures implements DbmsFeatures {
     public String getTypeAndVersion() {
         return "mysql";
     }
+
+    /**
+     * MySQL {@code CHAR()} returns a binary string unless a character set is named, which the JPQL
+     * {@code FUNCTION} form cannot express, so a case-insensitive comparison has to lower-case the column
+     * before the concatenation instead of lower-casing the result.
+     */
+    @Override
+    public boolean isCharFunctionBinary() {
+        return true;
+    }
+
 }

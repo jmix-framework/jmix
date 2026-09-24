@@ -25,10 +25,12 @@ import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.metamodel.datatype.Enumeration;
+import io.jmix.core.metamodel.datatype.impl.LocalizedStringDatatype;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.flowui.Actions;
 import io.jmix.flowui.UiComponents;
+import io.jmix.flowui.action.multivaluepicker.MultiValueSelectAction;
 import io.jmix.flowui.action.valuepicker.DateIntervalAction;
 import io.jmix.flowui.action.valuepicker.ValueClearAction;
 import io.jmix.flowui.app.propertyfilter.dateinterval.model.BaseDateInterval;
@@ -38,6 +40,7 @@ import io.jmix.flowui.component.datepicker.TypedDatePicker;
 import io.jmix.flowui.component.propertyfilter.PropertyFilter;
 import io.jmix.flowui.component.propertyfilter.PropertyFilter.Operation;
 import io.jmix.flowui.component.select.JmixSelect;
+import io.jmix.flowui.component.valuepicker.JmixMultiValuePicker;
 import io.jmix.flowui.component.valuepicker.JmixValuePicker;
 import io.jmix.flowui.data.SupportsValueSource;
 import io.jmix.flowui.kit.component.ComponentUtils;
@@ -142,11 +145,35 @@ public class PropertyFilterComponentGenerationStrategy extends AbstractComponent
         Component field = super.createDatatypeField(context, mpp);
 
         if (field instanceof SupportsDatatype datatypeField) {
-            Datatype datatype = mpp.getRange().asDatatype();
-            datatypeField.setDatatype(datatype);
+            datatypeField.setDatatype(getValueDatatype(mpp));
         }
 
         return field;
+    }
+
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    @Nullable
+    @Override
+    protected Component createCollectionField(ComponentGenerationContext context, MetaPropertyPath mpp) {
+        Component field = super.createCollectionField(context, mpp);
+
+        if (mpp.getRange().isDatatype()
+                && field instanceof JmixMultiValuePicker<?> picker
+                && picker.getAction(MultiValueSelectAction.ID) instanceof MultiValueSelectAction selectAction) {
+            selectAction.setDatatype(getValueDatatype(mpp));
+        }
+
+        return field;
+    }
+
+    /**
+     * A localized string is filtered by the text it shows, so its filter value is entered as a plain string.
+     *
+     * @return the datatype the value component of the property works with
+     */
+    protected Datatype<?> getValueDatatype(MetaPropertyPath mpp) {
+        Datatype<?> datatype = mpp.getRange().asDatatype();
+        return datatype instanceof LocalizedStringDatatype ? datatypeRegistry.get(String.class) : datatype;
     }
 
     protected boolean isStringBasedOperation(ComponentGenerationContext context) {

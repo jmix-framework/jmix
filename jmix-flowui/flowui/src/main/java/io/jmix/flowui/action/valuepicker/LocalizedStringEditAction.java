@@ -19,6 +19,7 @@ package io.jmix.flowui.action.valuepicker;
 import com.google.common.base.Preconditions;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasValue;
+import io.jmix.core.LocalizedStringSupport;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.Messages;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
@@ -33,6 +34,7 @@ import io.jmix.flowui.data.EntityValueSource;
 import io.jmix.flowui.data.ValueSource;
 import io.jmix.flowui.icon.Icons;
 import io.jmix.flowui.kit.component.KeyCombination;
+import io.jmix.flowui.kit.component.SupportsFormatter;
 import io.jmix.flowui.kit.icon.JmixFontIcon;
 import io.jmix.flowui.view.DialogWindow;
 import io.jmix.flowui.view.StandardOutcome;
@@ -56,6 +58,7 @@ public class LocalizedStringEditAction
 
     protected MetadataTools metadataTools;
     protected DialogWindows dialogWindows;
+    protected LocalizedStringSupport localizedStringSupport;
 
     protected boolean multiline;
 
@@ -83,6 +86,11 @@ public class LocalizedStringEditAction
     }
 
     @Autowired
+    public void setLocalizedStringSupport(LocalizedStringSupport localizedStringSupport) {
+        this.localizedStringSupport = localizedStringSupport;
+    }
+
+    @Autowired
     protected void setUiComponentProperties(UiComponentProperties uiComponentProperties) {
         setShortcutCombination(KeyCombination.create(
                 uiComponentProperties.getPickerLocalizedStringEditShortcut()));
@@ -100,6 +108,16 @@ public class LocalizedStringEditAction
         Preconditions.checkArgument(target == null || target instanceof HasValue,
                 "Target must implement " + HasValue.class.getName());
         super.setTarget(target);
+
+        // A picker bound to an entity property shows the text through the datatype of the property; any other
+        // picker would format the value as a plain string and show the stored one. A value of another type is
+        // formatted the default way, so that execute() can report it.
+        if (target instanceof SupportsFormatter<?> picker && picker.getFormatter() == null) {
+            //noinspection unchecked
+            ((SupportsFormatter<Object>) picker).setFormatter(value -> value instanceof String raw
+                    ? localizedStringSupport.resolve(raw)
+                    : metadataTools.format(value));
+        }
     }
 
     /**
@@ -127,6 +145,8 @@ public class LocalizedStringEditAction
     @Override
     public void execute() {
         checkTarget();
+        // Before the view is built, so that a wrong target does not leave a half-opened dialog behind.
+        targetValue();
 
         dialogWindows.view(findOrigin(), LocalizedStringEditDialog.class)
                 .withViewConfigurer(this::configureDialog)
@@ -138,9 +158,8 @@ public class LocalizedStringEditAction
         return UiComponentUtils.getView((Component) target);
     }
 
-    @SuppressWarnings("unchecked")
     protected void configureDialog(LocalizedStringEditDialog dialog) {
-        dialog.setValue(((HasValue<?, String>) target).getValue());
+        dialog.setValue(targetValue());
         dialog.setMultiline(isMultilineEffective());
         dialog.setMaxLength(resolveMaxLength());
         dialog.setRequired(target instanceof HasRequired hasRequired && hasRequired.isRequired());
@@ -150,6 +169,22 @@ public class LocalizedStringEditAction
         if (event.closedWith(StandardOutcome.SAVE)) {
             target.setValueFromClient(event.getView().getValue());
         }
+    }
+
+    /**
+     * The target is only known to be a {@link HasValue}, so a target holding another type is reported here
+     * rather than through a cast that fails at the first click.
+     */
+    @Nullable
+    protected String targetValue() {
+        Object value = ((HasValue<?, ?>) target).getValue();
+        if (value != null && !(value instanceof String)) {
+            throw new IllegalStateException(String.format(
+                    "Action '%s' requires a target holding a String value, but the target holds %s",
+                    getId(), value.getClass().getName()));
+        }
+
+        return (String) value;
     }
 
     protected boolean isMultilineEffective() {

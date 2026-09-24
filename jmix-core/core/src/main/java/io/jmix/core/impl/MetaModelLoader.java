@@ -38,6 +38,7 @@ import io.jmix.core.metamodel.datatype.FormatStringsRegistry;
 import io.jmix.core.metamodel.datatype.impl.AdaptiveNumberDatatype;
 import io.jmix.core.metamodel.datatype.EnumClass;
 import io.jmix.core.metamodel.datatype.impl.EnumerationImpl;
+import io.jmix.core.metamodel.datatype.impl.LocalizedStringDatatype;
 import io.jmix.core.metamodel.model.Store;
 import io.jmix.core.metamodel.model.*;
 import io.jmix.core.metamodel.model.impl.*;
@@ -973,6 +974,7 @@ public class MetaModelLoader {
         Datatype datatype = (Datatype) map.get("datatype");
         if (datatype != null) {
             // A datatype is assigned explicitly
+            checkLocalizedStringType(metaProperty, datatype, type);
             return new MetadataObjectInfo<>(new DatatypeRange(datatype));
         }
 
@@ -1002,6 +1004,22 @@ public class MetaModelLoader {
 
         } else {
             return new MetadataObjectInfo<>(null, Collections.singletonList(new RangeInitTask(session, metaProperty, type, map)));
+        }
+    }
+
+    /**
+     * The localized string datatype reads and writes a {@code String}: on a property of another type it would fail
+     * at the first read or write of the property, far from the declaration that caused it, so the mismatch is
+     * reported while the metamodel is built. Other explicitly assigned datatypes are not checked, because some of
+     * them, such as {@code date} and {@code time}, declare a narrower Java class than the property types they work
+     * with.
+     */
+    protected void checkLocalizedStringType(MetaProperty metaProperty, Datatype<?> datatype, Class<?> type) {
+        if (datatype instanceof LocalizedStringDatatype && !String.class.equals(type)) {
+            throw new IllegalStateException(String.format(
+                    "Property %s.%s is of type %s, but a localized string must be a %s",
+                    metaProperty.getDomain().getName(), metaProperty.getName(), type.getName(),
+                    String.class.getName()));
         }
     }
 

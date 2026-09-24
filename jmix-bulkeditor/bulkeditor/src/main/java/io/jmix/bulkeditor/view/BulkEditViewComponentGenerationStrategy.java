@@ -25,6 +25,7 @@ import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
+import io.jmix.core.metamodel.datatype.impl.LocalizedStringDatatype;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.metamodel.model.Range;
@@ -66,7 +67,31 @@ public class BulkEditViewComponentGenerationStrategy extends AbstractComponentGe
             return null;
         }
 
+        if (isLocalizedString(context)) {
+            return null;
+        }
+
         return createComponentInternal(context);
+    }
+
+    /**
+     * A localized string keeps a text per locale in a single column, so a plain field bound to it would replace
+     * every locale with what the user typed, on every edited entity. Declining lets the strategy that knows the
+     * datatype answer instead, the way it does for an ordinary form.
+     */
+    protected boolean isLocalizedString(ComponentGenerationContext context) {
+        MetaClass metaClass = context.getMetaClass();
+        if (metaClass == null || context.getProperty() == null) {
+            return false;
+        }
+
+        MetaPropertyPath mpp = resolveMetaPropertyPath(metaClass, context.getProperty());
+        if (mpp == null || !mpp.getRange().isDatatype()) {
+            return false;
+        }
+
+        Datatype<?> datatype = mpp.getRange().asDatatype();
+        return datatype instanceof LocalizedStringDatatype;
     }
 
     @Nullable

@@ -31,6 +31,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
@@ -139,27 +141,55 @@ public class LocalizedStringConditionGenerator extends PropertyConditionGenerato
             return String.format("%s %s", column, PropertyConditionUtils.getJpqlOperation(propertyCondition));
         }
 
-        boolean caseInsensitive = PropertyConditionUtils.isCaseInsensitiveOperation(propertyCondition);
-        // The expression itself is lower-cased for like-operations, see the builder, so no outer lower(...).
-        String expression = expressionSupport.buildResolvedValueExpression(path, column,
-                expressionSupport.getCurrentLocale(), caseInsensitive);
-        String where = String.format("%s %s :%s%s",
-                expression,
-                PropertyConditionUtils.getJpqlOperation(propertyCondition),
-                propertyCondition.getParameterName(),
-                getLikeEscapeClause(propertyCondition));
+        Locale locale = expressionSupport.getCurrentLocale();
+        String where;
+        if (isInListOperation(operation)) {
+            // The resolved text is searched for in the listed values joined into one string, see
+            // generateParameterValue, instead of being the left operand of IN: IN accepts only a function
+            // invocation there, which takes the parser seconds for an expression of this size.
+            where = String.format("%s locate(%s, :%s)",
+                    PropertyCondition.Operation.IN_LIST.equals(operation) ? "0 <" : "0 =",
+                    expressionSupport.buildResolvedValueSearchExpression(path, column, locale),
+                    propertyCondition.getParameterName());
+        } else {
+            boolean caseInsensitive = PropertyConditionUtils.isCaseInsensitiveOperation(propertyCondition);
+            // The builder lower-cases the expression itself for like-operations, so no outer lower(...).
+            where = String.format("%s %s :%s%s",
+                    expressionSupport.buildResolvedValueExpression(path, column, locale, caseInsensitive),
+                    PropertyConditionUtils.getJpqlOperation(propertyCondition),
+                    propertyCondition.getParameterName(),
+                    getLikeEscapeClause(propertyCondition));
+        }
 
         if (dataProperties.isIncludeNullClauseInNotConditions() && isNegativeComparison(operation)) {
-            where = String.format("(%s or %s is null)", where, expression);
+            // The resolved text is null only when the column is: a column that holds anything yields a text,
+            // an empty one at worst. The clause therefore asks the column, which the parser reads at once,
+            // rather than the resolved expression, which IS NULL accepts only in the slow function form. On
+            // Oracle an empty text is null as well, and a row whose text resolves to empty is not rescued; the
+            // editor never stores such a value, since it requires a default value or the application locale.
+            where = String.format("(%s or %s is null)", where, column);
         }
 
         return where;
+    }
+
+    protected boolean isInListOperation(String operation) {
+        return PropertyCondition.Operation.IN_LIST.equals(operation)
+                || PropertyCondition.Operation.NOT_IN_LIST.equals(operation);
     }
 
     @Nullable
     @Override
     public Object generateParameterValue(@Nullable Condition condition, @Nullable Object parameterValue,
                                          @Nullable String entityName) {
+        if (condition instanceof PropertyCondition propertyCondition
+                && isInListOperation(propertyCondition.getOperation())) {
+            Collection<?> values = parameterValue instanceof Collection<?> collection
+                    ? collection
+                    : parameterValue == null ? List.of() : List.of(parameterValue);
+            return expressionSupport.buildSearchList(values);
+        }
+
         if (condition instanceof PropertyCondition propertyCondition
                 && parameterValue instanceof String value
                 && PropertyConditionUtils.isCaseInsensitiveOperation(propertyCondition)) {

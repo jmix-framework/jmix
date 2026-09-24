@@ -27,7 +27,7 @@ import io.jmix.core.QueryUtils;
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.metamodel.datatype.EnumClass;
-import io.jmix.core.metamodel.datatype.impl.StringDatatype;
+import io.jmix.core.metamodel.datatype.impl.LocalizedStringDatatype;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.querycondition.PropertyCondition;
@@ -293,8 +293,9 @@ public class PropertyFilter<V> extends SingleFilterComponentBase<V> {
             return false;
         }
 
+        // A localized string is filtered by the text it shows, so its filter value is a plain string
         Datatype<?> datatype = propertyPath.getRange().asDatatype();
-        return datatypeRegistry.get(String.class).equals(datatype) || datatype instanceof StringDatatype;
+        return datatypeRegistry.get(String.class).equals(datatype) || datatype instanceof LocalizedStringDatatype;
     }
 
     protected boolean isStringBasedOperation(Operation operation) {

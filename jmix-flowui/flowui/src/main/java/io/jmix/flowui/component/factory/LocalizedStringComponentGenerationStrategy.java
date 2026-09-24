@@ -17,6 +17,7 @@
 package io.jmix.flowui.component.factory;
 
 import com.vaadin.flow.component.Component;
+import io.jmix.core.CoreProperties;
 import io.jmix.core.JmixOrder;
 import io.jmix.core.Messages;
 import io.jmix.core.Metadata;
@@ -26,6 +27,7 @@ import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.metamodel.datatype.impl.LocalizedStringDatatype;
 import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.metamodel.model.Range;
 import io.jmix.flowui.Actions;
@@ -46,14 +48,18 @@ import org.springframework.core.Ordered;
 public class LocalizedStringComponentGenerationStrategy extends AbstractComponentGenerationStrategy
         implements Ordered {
 
+    protected final CoreProperties coreProperties;
+
     public LocalizedStringComponentGenerationStrategy(UiComponents uiComponents,
                                                       Metadata metadata,
                                                       MetadataTools metadataTools,
                                                       Actions actions,
                                                       DatatypeRegistry datatypeRegistry,
                                                       Messages messages,
-                                                      EntityFieldCreationSupport entityFieldCreationSupport) {
+                                                      EntityFieldCreationSupport entityFieldCreationSupport,
+                                                      CoreProperties coreProperties) {
         super(uiComponents, metadata, metadataTools, actions, datatypeRegistry, messages, entityFieldCreationSupport);
+        this.coreProperties = coreProperties;
     }
 
     @Nullable
@@ -66,21 +72,32 @@ public class LocalizedStringComponentGenerationStrategy extends AbstractComponen
         }
 
         MetaPropertyPath mpp = resolveMetaPropertyPath(metaClass, property);
-        if (mpp == null) {
-            return null;
-        }
-
-        Range range = mpp.getRange();
-        if (!range.isDatatype() || range.getCardinality().isMany()) {
-            return null;
-        }
-
-        Datatype<?> datatype = range.asDatatype();
-        if (!(datatype instanceof LocalizedStringDatatype)) {
+        if (mpp == null || !isEditedPerLocale(mpp.getMetaProperty())) {
             return null;
         }
 
         return createLocalizedStringField(context);
+    }
+
+    /**
+     * Whether the property is edited per locale, through the picker this strategy generates, rather than through
+     * the plain field its Java class would get. The view templates build their XML by the same rule, so that a
+     * generated form and a generated view give the property the same component.
+     */
+    public boolean isEditedPerLocale(MetaProperty metaProperty) {
+        // An application with a single locale has nothing to localize: the attribute keeps one text, and a
+        // modal editor would only stand between the user and the plain field the property would get anyway.
+        if (coreProperties.getAvailableLocales().size() < 2) {
+            return false;
+        }
+
+        Range range = metaProperty.getRange();
+        if (!range.isDatatype() || range.getCardinality().isMany()) {
+            return false;
+        }
+
+        Datatype<?> datatype = range.asDatatype();
+        return datatype instanceof LocalizedStringDatatype;
     }
 
     protected Component createLocalizedStringField(ComponentGenerationContext context) {

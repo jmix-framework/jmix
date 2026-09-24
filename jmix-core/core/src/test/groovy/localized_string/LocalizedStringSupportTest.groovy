@@ -19,6 +19,7 @@ package localized_string
 import io.jmix.core.CoreConfiguration
 import io.jmix.core.LocalizedStringSupport
 import io.jmix.core.LocalizedStringValue
+import io.jmix.core.MessageTools
 import io.jmix.core.security.ClientDetails
 import io.jmix.core.security.SecurityContextHelper
 import io.jmix.core.security.SystemAuthenticationToken
@@ -37,6 +38,8 @@ class LocalizedStringSupportTest extends Specification {
 
     @Autowired
     LocalizedStringSupport support
+    @Autowired
+    MessageTools messageTools
 
     void cleanup() {
         SecurityContextHelper.setAuthentication(null)
@@ -51,9 +54,9 @@ class LocalizedStringSupportTest extends Specification {
         support.parse('') == LocalizedStringValue.EMPTY
     }
 
-    def "entries are read after the default, with tolerant whitespace and canonical keys"() {
+    def "entries are read after the default, whitespace after the sign belonging to the text"() {
         when:
-        def value = support.parse('Meine Rolle\nen=My role\n pt_BR = Minha função')
+        def value = support.parse('Meine Rolle\nen=My role\npt_BR= Minha função')
 
         then:
         value.defaultValue() == 'Meine Rolle'
@@ -89,11 +92,68 @@ class LocalizedStringSupportTest extends Specification {
         support.parse('D\nde=a\nde=b\ncontinued').getValue('de') == 'a'
     }
 
-    def "a line that only looks like an entry is not one"() {
-        expect: "'note=' has more than three letters before '=', 'x=' fewer than two"
-        support.parse('D\nnote=1\nx=2').defaultValue() == 'D\nnote=1\nx=2'
-        !support.containsEntryLine('a note=1 b')
+    def "a line that only looks like an entry continues the value it follows"() {
+        expect:
+        support.parse('D\n' + line).defaultValue() == 'D\n' + line
+        !support.containsEntryLine(line)
+
+        where: "no locale key, a key not in its canonical case, or whitespace before the sign"
+        line << ['note=1', 'x=2', 'ID=42', 'VAT=20%', 'Key=Value', 'key=value', 'max-age=3600', 'Tax = 20%',
+                 ' en=text', 'en =text', 'DE=Deutsch', 'pt_br=texto', 'en-US=text', 'iw=text']
+    }
+
+    def "a line opens an entry with the key of a locale"() {
+        expect:
         support.containsEntryLine('text\nen=x')
+        !support.containsEntryLine('a note=1 b')
+    }
+
+    def "an entry key is the key LocaleResolver writes for a locale of a known language"() {
+        expect:
+        support.isEntryKey(key) == entry
+
+        where:
+        key             || entry
+        'en'            || true
+        'pt_BR'         || true
+        'es_419'        || true
+        'ca__valencia'  || true
+        'sr-Latn-RS'    || true
+        'fil'           || true
+        'id'            || true
+        'DE'            || false
+        'pt_br'         || false
+        'en-US'         || false
+        'iw'            || false
+        'key'           || false
+        'tlh'           || false
+        "en_US_o'brien" || false
+    }
+
+    def "the text of an entry keeps a line separator other than a line break"() {
+        given: "the format breaks lines at \\n only, the way the database expression does"
+        def stored = "Default\nen=Hello${separator}World"
+
+        expect:
+        support.parse(stored).getValue('en') == "Hello${separator}World"
+        support.resolve(stored, Locale.ENGLISH) == "Hello${separator}World"
+        support.containsEntryLine("en=Hello${separator}World")
+
+        where:
+        name                   | separator
+        'a line separator'     | ' '
+        'a paragraph separator' | ' '
+        'a next line'          | '\u0085'
+        'a carriage return'    | '\r'
+    }
+
+    def "text that only looks like an entry is shown as written"() {
+        expect: "a value already in a column that becomes localized keeps showing what it held"
+        support.resolve(value, DE) == value
+        !support.isLocalized(value)
+
+        where:
+        value << ['ID=42', 'Tax = 20%', 'Terms\nVAT=20%']
     }
 
     def "format writes the canonical form and keeps a plain string plain"() {
@@ -136,8 +196,9 @@ class LocalizedStringSupportTest extends Specification {
     }
 
     def "a msg:// reference resolves through the message bundle of the given locale"() {
-        given: "a flat key is global, a group/key pair addresses the bundle of a package"
+        given: "a flat key and a key with an empty group are global, a group/key pair addresses the bundle of a package"
         def flat = 'msg://roles.manager.name'
+        def global = 'msg:///roles.manager.name'
         def grouped = 'msg://test_support.localized_string/roles.admin.name'
 
         expect:
@@ -145,8 +206,37 @@ class LocalizedStringSupportTest extends Specification {
         !support.isLocalized(flat)
         support.resolve(flat, Locale.ENGLISH) == 'Manager'
         support.resolve(flat, DE) == 'Leiter'
+        support.isMessageReference(global)
+        support.resolve(global, DE) == 'Leiter'
         support.resolve(grouped, Locale.ENGLISH) == 'Administrator'
         support.resolve(grouped, DE) == 'Verwalter'
+    }
+
+    def "a msg:// value in a form MessageTools does not read is a literal"() {
+        expect: "the value is shown as written instead of failing every display of the entity"
+        !support.isMessageReference(value)
+        support.resolve(value, DE) == value
+
+        where: "more than two path segments, or no key at all"
+        value << ['msg://com/company/app/roleName', 'msg://a//b', 'msg:///']
+    }
+
+    def "a value is a message reference exactly when MessageTools can load it"() {
+        expect:
+        support.isMessageReference(value) == loadable(value)
+
+        where:
+        value << ['msg://key', 'msg:///key', 'msg://group/key', 'msg://group/key/', 'msg://key//', 'msg://',
+                  'msg:///', 'msg:////', 'msg://a//b', 'msg:///a/b', 'msg://a/b/c', 'msg://a b/c d']
+    }
+
+    boolean loadable(String value) {
+        try {
+            messageTools.loadString(value, DE)
+            return true
+        } catch (UnsupportedOperationException ignored) {
+            return false
+        }
     }
 
     def "resolve without a locale uses the current user's locale, else the application default locale"() {

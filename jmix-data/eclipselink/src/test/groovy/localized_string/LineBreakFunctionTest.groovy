@@ -25,9 +25,10 @@ import io.jmix.eclipselink.impl.dbms.SqlServerDbmsFeatures
 import spock.lang.Specification
 
 /**
- * The name of the function that produces the line break separating the locale entries. Only HSQLDB is reachable
- * from the test suite, so the per-database names are pinned here: a wrong name breaks every sort and every
- * filter on a localized property, and on the database it breaks nothing else would show it.
+ * The name of the function that produces the line break separating the locale entries, and whether it returns a
+ * binary string. Only HSQLDB is reachable from the test suite, so the per-database answers are pinned here: a wrong
+ * name breaks every sort and every filter on a localized property, and on the database it breaks nothing else would
+ * show it.
  */
 class LineBreakFunctionTest extends Specification {
 
@@ -43,5 +44,19 @@ class LineBreakFunctionTest extends Specification {
         new SqlServerDbmsFeatures()   || 'char'
         new PostgresqlDbmsFeatures()  || 'chr'
         new OracleDbmsFeatures()      || 'chr'
+    }
+
+    def "only the char function of MySQL returns a binary string"() {
+        expect: "the expression lower-cases the column for a case-insensitive comparison on such a database"
+        features.charFunctionBinary == binary
+
+        where:
+        features                      || binary
+        new HsqlDbmsFeatures()        || false
+        new H2DbmsFeatures()          || false
+        new MysqlDbmsFeatures()       || true
+        new SqlServerDbmsFeatures()   || false
+        new PostgresqlDbmsFeatures()  || false
+        new OracleDbmsFeatures()      || false
     }
 }

@@ -20,6 +20,8 @@ import io.jmix.core.DataManager
 import io.jmix.core.querycondition.Condition
 import io.jmix.core.querycondition.LogicalCondition
 import io.jmix.core.querycondition.PropertyCondition
+import io.jmix.data.impl.JpqlQueryBuilder
+import org.springframework.beans.factory.BeanFactory
 import org.springframework.beans.factory.annotation.Autowired
 import test_support.DataSpec
 import test_support.entity.TestLocalizedNameEntity
@@ -32,6 +34,8 @@ class LocalizedStringConditionTest extends DataSpec {
 
     @Autowired
     DataManager dataManager
+    @Autowired
+    BeanFactory beanFactory
 
     void setup() {
         dataManager.save(
@@ -51,6 +55,15 @@ class LocalizedStringConditionTest extends DataSpec {
 
     List<String> codes(Condition condition) {
         dataManager.load(TestLocalizedNameEntity).condition(condition).list()*.code.sort()
+    }
+
+    String jpqlOf(Condition condition) {
+        def queryBuilder = beanFactory.getBean(JpqlQueryBuilder)
+        queryBuilder.setQueryString('select e from test_LocalizedNameEntity e')
+                .setEntityName('test_LocalizedNameEntity')
+                .setCondition(condition)
+                .setQueryParameters([:])
+        return queryBuilder.getResultQueryString()
     }
 
     def "EQUAL and NOT_EQUAL compare the text of the current locale"() {
@@ -92,6 +105,50 @@ class LocalizedStringConditionTest extends DataSpec {
         expect:
         codes(PropertyCondition.inList('name', ['Bericht', 'Plain literal'])) == ['1', '2']
         codes(PropertyCondition.createWithValue('name', PropertyCondition.Operation.NOT_IN_LIST, ['Bericht'])) == ['2', '3', '4']
+    }
+
+    def "IN_LIST searches the listed values instead of taking the resolved text as the operand of IN"() {
+        when:
+        def jpql = jpqlOf(PropertyCondition.inList('name', ['Bericht']))
+
+        then: "IN accepts only a function invocation as its operand, which takes the parser seconds at this size"
+        !jpql.contains("function('coalesce'")
+        !jpql.contains(' in ')
+
+        and: "the search starts with the literal, not with locate: inside the parentheses a query with a where " +
+                "clause puts around the condition, a numeric function first is read as arithmetic and re-parsed"
+        jpql.replaceAll(/\s+/, '').contains('0<locate(')
+    }
+
+    def "IN_LIST matches a whole text only"() {
+        expect: "a part of a text, a text that contains it and a text in another case are not the text"
+        codes(PropertyCondition.inList('name', ['Beric', 'richt', 'Plain', 'literal'])) == []
+        codes(PropertyCondition.inList('name', ['Bericht und mehr'])) == []
+        codes(PropertyCondition.inList('name', ['bericht'])) == []
+
+        and: "nor is the text of another locale"
+        codes(PropertyCondition.inList('name', ['Report', 'Draft'])) == []
+    }
+
+    def "a listed value that can match nothing is left out of the search"() {
+        expect: "a resolved text never holds a line break, and never is null when it is compared"
+        codes(PropertyCondition.inList('name', ['Bericht\nPlain literal'])) == []
+        codes(PropertyCondition.inList('name', ['x\nBericht', 'Plain literal'])) == ['2']
+        codes(PropertyCondition.inList('name', [null, 'Bericht'])) == ['1']
+        codes(PropertyCondition.createWithValue('name', PropertyCondition.Operation.NOT_IN_LIST, ['x\nBericht'])) ==
+                ['1', '2', '3', '4']
+    }
+
+    def "an empty list matches nothing for IN_LIST and everything for NOT_IN_LIST"() {
+        given: "an empty list is kept on purpose: by default actualization drops such a condition from the query"
+        def inEmpty = PropertyCondition.inList('name', [])
+        inEmpty.skipNullOrEmpty = false
+        def notInEmpty = PropertyCondition.createWithValue('name', PropertyCondition.Operation.NOT_IN_LIST, [])
+        notInEmpty.skipNullOrEmpty = false
+
+        expect:
+        codes(inEmpty) == []
+        codes(notInEmpty) == ['1', '2', '3', '4']
     }
 
     def "IS_SET checks the column itself"() {
@@ -189,7 +246,7 @@ class LocalizedStringConditionTest extends DataSpec {
     }
 
     def "a case-insensitive search finds an entry whose key carries a region"() {
-        given: "the key is mixed-case, and the expression compares it inside a lower-cased column"
+        given: "a mixed-case key, looked for in the column as stored before the resolved text is lower-cased"
         def entity = dataManager.create(TestLocalizedNameEntity)
         entity.code = '8'
         entity.name = 'Report\npt_BR=Relatório mensal'
@@ -225,10 +282,11 @@ class LocalizedStringConditionTest extends DataSpec {
     }
 
     def "localized and plain conditions combine in one logical condition"() {
-        expect:
+        expect: "the stored string of item 1 is not 'Bericht', so compared as stored it would match; and each " +
+                "condition rejects a row the other one accepts"
         codes(LogicalCondition.and(
-                PropertyCondition.contains('name', 'ntw'),
-                PropertyCondition.equal('code', '3'))) == ['3']
+                PropertyCondition.notEqual('name', 'Bericht'),
+                PropertyCondition.notEqual('code', '3'))) == ['2', '4']
     }
 
     def "operations that make no sense for a string are refused with a clear message"() {

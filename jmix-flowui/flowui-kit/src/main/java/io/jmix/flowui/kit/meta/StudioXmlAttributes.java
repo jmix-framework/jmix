@@ -611,6 +611,7 @@ public final class StudioXmlAttributes {
     public static final String MOVE_ON_MOUSE_MOVE = "moveOnMouseMove";
     public static final String MOVE_ON_MOUSE_WHEEL = "moveOnMouseWheel";
     public static final String MOVE_OVERLAP = "moveOverlap";
+    public static final String MULTILINE = "multiline";
     public static final String MULTI_MONTH_MAX_COLUMNS = "multiMonthMaxColumns";
     public static final String MULTI_MONTH_MIN_WIDTH = "multiMonthMinWidth";
     public static final String MULTI_MONTH_TITLE_FORMAT = "multiMonthTitleFormat";

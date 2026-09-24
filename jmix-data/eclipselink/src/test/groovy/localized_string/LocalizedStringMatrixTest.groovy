@@ -53,7 +53,8 @@ class LocalizedStringMatrixTest extends DataSpec {
                 item('07', 'Default seven\nde='),
                 item('08', 'msg://roles.manager.name'),
                 item('09', null),
-                item('10', ''))
+                item('10', ''),
+                item('17', 'Default seventeen\nde=Zeile siebzehn'))
     }
 
     TestLocalizedNameEntity item(String code, String name) {
@@ -87,10 +88,12 @@ class LocalizedStringMatrixTest extends DataSpec {
         'no default value, not canonical'  | '06' | DE     || 'Deutsch sechs'
         'an empty entry counts as absent'  | '07' | EN     || 'Default seven'
         'an empty entry counts as absent'  | '07' | DE     || 'Default seven'
+        'an entry with a line separator'   | '17' | EN     || 'Default seventeen'
+        'an entry with a line separator'   | '17' | DE     || 'Zeile siebzehn'
     }
 
-    def "a multi-line value is compared by its first line only"() {
-        when: "the one divergence the value format itself carries"
+    def "a multi-line default value is compared by its first line only"() {
+        when: "a divergence the value format itself carries"
         authenticateWithLocale(DE)
 
         then:
@@ -108,7 +111,7 @@ class LocalizedStringMatrixTest extends DataSpec {
         codes(PropertyCondition.equal('name', 'msg://roles.manager.name')) == ['08']
     }
 
-    def "an entry written with whitespace around the key is read by the parser but not by the database"() {
+    def "a line written with whitespace around the key is text to the parser and to the database alike"() {
         given:
         def entity = dataManager.create(TestLocalizedNameEntity)
         entity.code = '11'
@@ -118,13 +121,77 @@ class LocalizedStringMatrixTest extends DataSpec {
         when:
         authenticateWithLocale(EN)
 
-        then: "the parser tolerates the whitespace, the database marker matches the canonical form only"
-        localizedStringSupport.resolve(entity.name, EN) == 'Book eleven'
+        then: "neither side reads an entry: the parser shows the whole value and the database compares its first " +
+                "line, as it does for any multi-line value"
+        localizedStringSupport.resolve(entity.name, EN) == 'Report eleven\nen = Book eleven'
         codes(PropertyCondition.equal('name', 'Book eleven')) == []
         codes(PropertyCondition.equal('name', 'Report eleven')) == ['11']
     }
 
-    def "an entry whose key is not in the canonical case is read by a case-insensitive search, not by the parser"() {
+    def "a first line whose key is not in the canonical case is the default value, not an entry"() {
+        given: "the key in another case than the canonical one"
+        def entity = dataManager.create(TestLocalizedNameEntity)
+        entity.code = '16'
+        entity.name = 'DE=Bericht sechzehn'
+        dataManager.save(entity)
+
+        when:
+        authenticateWithLocale(EN)
+
+        then: "the parser and the first-line guard both read an entry in the canonical case only"
+        localizedStringSupport.resolve(entity.name, EN) == 'DE=Bericht sechzehn'
+        codes(PropertyCondition.equal('name', 'DE=Bericht sechzehn')) == ['16']
+        codes(PropertyCondition.contains('name', 'sechzehn')) == ['16']
+    }
+
+    def "a space after the sign is stripped by the parser and by the database alike"() {
+        given:
+        def entity = dataManager.create(TestLocalizedNameEntity)
+        entity.code = '13'
+        entity.name = 'Report thirteen\nde=  Bericht dreizehn'
+        dataManager.save(entity)
+
+        when:
+        authenticateWithLocale(DE)
+
+        then:
+        localizedStringSupport.resolve(entity.name, DE) == 'Bericht dreizehn'
+        codes(PropertyCondition.equal('name', 'Bericht dreizehn')) == ['13']
+    }
+
+    def "a tab after the sign is stripped by the parser but not by the database"() {
+        given:
+        def entity = dataManager.create(TestLocalizedNameEntity)
+        entity.code = '14'
+        entity.name = 'Report fourteen\nde=\tBericht vierzehn'
+        dataManager.save(entity)
+
+        when:
+        authenticateWithLocale(DE)
+
+        then: "TRIM strips spaces only, while the parser strips any whitespace"
+        localizedStringSupport.resolve(entity.name, DE) == 'Bericht vierzehn'
+        codes(PropertyCondition.equal('name', 'Bericht vierzehn')) == []
+        codes(PropertyCondition.equal('name', '\tBericht vierzehn')) == ['14']
+    }
+
+    def "a multi-line entry is compared by its first line only"() {
+        given:
+        def entity = dataManager.create(TestLocalizedNameEntity)
+        entity.code = '15'
+        entity.name = 'Report fifteen\nde=Zeile eins\nZeile zwei'
+        dataManager.save(entity)
+
+        when:
+        authenticateWithLocale(DE)
+
+        then: "the parser appends a continuation line to the entry, the database ends the entry at the line break"
+        localizedStringSupport.resolve(entity.name, DE) == 'Zeile eins\nZeile zwei'
+        codes(PropertyCondition.equal('name', 'Zeile eins')) == ['15']
+        codes(PropertyCondition.equal('name', 'Zeile eins\nZeile zwei')) == []
+    }
+
+    def "a line whose key is not in the canonical case continues the value on both sides"() {
         given:
         def entity = dataManager.create(TestLocalizedNameEntity)
         entity.code = '12'
@@ -134,16 +201,15 @@ class LocalizedStringMatrixTest extends DataSpec {
         when:
         authenticateWithLocale(DE)
 
-        then: "the parser keeps the key as written and looks it up case-sensitively, so it reads the default value"
-        localizedStringSupport.resolve(entity.name, DE) == 'Default twelve'
+        then: "the parser reads the line as a continuation of the default value"
+        localizedStringSupport.resolve(entity.name, DE) == 'Default twelve\nDE=Deutsch zwoelf'
 
-        and: "an operation that compares the stored case agrees with the parser"
+        and: "the database finds no entry either and compares the first line, as it does for any multi-line " +
+                "value. A collation that ignores case, or MySQL, where the column is lower-cased for a " +
+                "case-insensitive search, lets the marker find the line and read an entry instead"
         codes(PropertyCondition.equal('name', 'Default twelve')) == ['12']
-
-        and: "a case-insensitive operation lower-cases the column and the marker alike, so the entry wins there: " +
-                "the row is found by a text the user never sees and not by the one they do"
-        codes(PropertyCondition.contains('name', 'zwoelf')) == ['12']
-        codes(PropertyCondition.contains('name', 'twelve')) == []
+        codes(PropertyCondition.contains('name', 'twelve')) == ['12']
+        codes(PropertyCondition.contains('name', 'zwoelf')) == []
     }
 
     def "an empty text is null in the database when the column is null"() {

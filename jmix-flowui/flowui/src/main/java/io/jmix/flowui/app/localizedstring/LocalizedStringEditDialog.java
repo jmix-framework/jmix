@@ -99,6 +99,11 @@ public class LocalizedStringEditDialog extends StandardView {
 
     @Nullable
     protected String initialValue;
+    /**
+     * The canonical form of {@link #initialValue}. The stored value may be written in any of the shapes the
+     * format tolerates, so only its canonical form can tell an edit from a rewrite.
+     */
+    protected String initialCanonicalValue = "";
     @Nullable
     protected String value;
 
@@ -121,6 +126,7 @@ public class LocalizedStringEditDialog extends StandardView {
 
     protected void setupInitialValue() {
         LocalizedStringValue parsed = localizedStringSupport.parse(initialValue);
+        initialCanonicalValue = localizedStringSupport.format(parsed);
         storedKeys.addAll(parsed.values().keySet());
 
         boolean pureReference = localizedStringSupport.isMessageReference(initialValue) && !parsed.isLocalized();
@@ -148,15 +154,14 @@ public class LocalizedStringEditDialog extends StandardView {
     }
 
     /**
-     * @return the locale keys to show: every available locale when more than one is configured, plus every
-     * locale the stored value carries, so that no entry is edited without being visible
+     * @return the locale keys to show: every available locale, plus every locale the stored value carries, so
+     * that no entry is edited without being visible. Every available locale gets a field even when only one is
+     * configured, because the rule that the application locale must carry a value needs a field to satisfy it.
      */
     protected Set<String> fieldKeys(LocalizedStringValue value) {
         Set<String> keys = new LinkedHashSet<>();
-        if (coreProperties.getAvailableLocales().size() > 1) {
-            for (Locale locale : coreProperties.getAvailableLocales()) {
-                keys.add(localizedStringSupport.localeKey(locale));
-            }
+        for (Locale locale : coreProperties.getAvailableLocales()) {
+            keys.add(localizedStringSupport.localeKey(locale));
         }
 
         keys.addAll(value.values().keySet());
@@ -231,7 +236,7 @@ public class LocalizedStringEditDialog extends StandardView {
         }
 
         String formatted = localizedStringSupport.format(collected);
-        if (formatted.equals(Strings.nullToEmpty(initialValue))) {
+        if (formatted.equals(initialCanonicalValue)) {
             close(StandardOutcome.CLOSE);
             return;
         }
@@ -271,6 +276,8 @@ public class LocalizedStringEditDialog extends StandardView {
             return;
         }
 
+        // Not trimmed here: the fields trim what the user types, and trimming a value loaded from storage would
+        // make a value that was not edited look edited.
         String text = Strings.nullToEmpty(field.getValue());
         if (!text.isBlank()) {
             values.put(key, text);
@@ -321,9 +328,15 @@ public class LocalizedStringEditDialog extends StandardView {
         return errors;
     }
 
+    /**
+     * A message without arguments is not formatted, so that a percent sign in an application's translation is
+     * shown as written; a message with arguments is formatted by {@link Messages#formatMessage}, which falls
+     * back to the key when the translation does not fit the arguments.
+     */
     protected String message(String key, Object... params) {
-        String message = messages.getMessage(LocalizedStringEditDialog.class, MESSAGE_KEY_PREFIX + key);
-        return params.length == 0 ? message : String.format(message, params);
+        return params.length == 0
+                ? messages.getMessage(LocalizedStringEditDialog.class, MESSAGE_KEY_PREFIX + key)
+                : messages.formatMessage(LocalizedStringEditDialog.class, MESSAGE_KEY_PREFIX + key, params);
     }
 
     public void setValue(@Nullable String value) {

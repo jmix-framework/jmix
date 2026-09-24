@@ -26,9 +26,12 @@ import io.jmix.core.metamodel.model.Range;
 import io.jmix.flowui.action.entitypicker.EntityClearAction;
 import io.jmix.flowui.action.entitypicker.EntityLookupAction;
 import io.jmix.flowui.action.entitypicker.EntityOpenCompositionAction;
+import io.jmix.flowui.action.valuepicker.LocalizedStringEditAction;
+import io.jmix.flowui.action.valuepicker.ValueClearAction;
 import io.jmix.flowui.component.factory.EffectiveLookupConfig;
 import io.jmix.flowui.component.factory.EffectiveLookupConfig.ItemsMode;
 import io.jmix.flowui.component.factory.ItemsFetchCallbackSupport;
+import io.jmix.flowui.component.factory.LocalizedStringComponentGenerationStrategy;
 import io.jmix.flowui.component.factory.LookupFieldSupport;
 import jakarta.persistence.Lob;
 import org.dom4j.DocumentHelper;
@@ -62,13 +65,16 @@ public class ComponentXmlFactory {
     protected final LookupFieldSupport lookupFieldSupport;
     protected final ItemsFetchCallbackSupport itemsFetchCallbackSupport;
     protected final MetadataTools metadataTools;
+    protected final LocalizedStringComponentGenerationStrategy localizedStringComponentGenerationStrategy;
 
     public ComponentXmlFactory(LookupFieldSupport lookupFieldSupport,
                                 ItemsFetchCallbackSupport itemsFetchCallbackSupport,
-                                MetadataTools metadataTools) {
+                                MetadataTools metadataTools,
+                                LocalizedStringComponentGenerationStrategy localizedStringComponentGenerationStrategy) {
         this.lookupFieldSupport = lookupFieldSupport;
         this.itemsFetchCallbackSupport = itemsFetchCallbackSupport;
         this.metadataTools = metadataTools;
+        this.localizedStringComponentGenerationStrategy = localizedStringComponentGenerationStrategy;
     }
 
     /**
@@ -78,7 +84,9 @@ public class ComponentXmlFactory {
      * the effective {@code @LookupField} configuration is resolved and used to choose between an
      * {@code entityComboBox} and an {@code entityPicker}, with actions added accordingly. An eager
      * {@code entityComboBox} is bound to a data container via {@code itemsContainer} (see
-     * {@link #createItemsContainerXml(MetaProperty)}); a lazy one carries an {@code itemsQuery}.
+     * {@link #createItemsContainerXml(MetaProperty)}); a lazy one carries an {@code itemsQuery}. A localized
+     * string property gets a {@code valuePicker} with the localized string edit and clear actions when several
+     * locales are available, as a generated form gives it.
      *
      * @param metaProperty    the entity property for which to create a component
      * @param dataContainerId optional data container identifier for data binding, may be null
@@ -253,6 +261,12 @@ public class ComponentXmlFactory {
     protected Element createElement(MetaProperty metaProperty) {
         Range range = metaProperty.getRange();
 
+        // A plain field would show the text of the current locale and save the edited text as the whole value,
+        // dropping the other locales.
+        if (localizedStringComponentGenerationStrategy.isEditedPerLocale(metaProperty)) {
+            return createLocalizedStringElement();
+        }
+
         if (range.isDatatype()) {
             return DocumentHelper.createElement(getDatatypeComponentName(metaProperty));
         } else if (range.isEnum()) {
@@ -260,6 +274,14 @@ public class ComponentXmlFactory {
         }
 
         return DocumentHelper.createElement("textField");
+    }
+
+    protected Element createLocalizedStringElement() {
+        Element element = DocumentHelper.createElement("valuePicker");
+        Element actions = element.addElement("actions");
+        addAction(actions, "valueLocalizedStringEdit", LocalizedStringEditAction.ID);
+        addAction(actions, "valueClear", ValueClearAction.ID);
+        return element;
     }
 
     protected String getDatatypeComponentName(MetaProperty metaProperty) {

@@ -68,8 +68,8 @@ public abstract class AbstractComparator<T> implements Comparator<T> {
             } else {
                 c = 0;
                 for (MetaProperty property : namePatternProperties) {
-                    Object v1 = EntityValues.getValue(o1, property.getName());
-                    Object v2 = EntityValues.getValue(o2, property.getName());
+                    Object v1 = getInstanceNamePropertyValue(o1, property);
+                    Object v2 = getInstanceNamePropertyValue(o2, property);
                     c = compareAsc(v1, v2);
                     if (c != 0)
                         break;
@@ -83,5 +83,17 @@ public abstract class AbstractComparator<T> implements Comparator<T> {
             c = -nullsLast;
         }
         return c;
+    }
+
+    /**
+     * Returns the value of an instance name property by which two entities are compared.
+     *
+     * @param entity   the compared entity
+     * @param property a property of the instance name of the entity
+     * @return the value to compare
+     */
+    @Nullable
+    protected Object getInstanceNamePropertyValue(Object entity, MetaProperty property) {
+        return EntityValues.getValue(entity, property.getName());
     }
 }

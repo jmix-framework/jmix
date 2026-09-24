@@ -55,6 +55,7 @@ class LocalizedStringMatrixTest extends Specification {
         'no default value, canonical'      | '\nen=English five'                                 || 'English five'         | 'English five'
         'no default value, not canonical'  | 'de=Deutsch sechs\nfr=Francais six'                 || ''                     | 'Deutsch sechs'
         'an empty entry counts as absent'  | 'Default seven\nde='                                || 'Default seven'        | 'Default seven'
+        'an entry with a line separator'   | 'Default eight\nde=Zeile acht'                 || 'Default eight'        | 'Zeile acht'
         'a message reference'              | 'msg://roles.manager.name'                          || 'Manager'              | 'Leiter'
         'null'                             | null                                                || ''                     | ''
         'an empty string'                  | ''                                                  || ''                     | ''
@@ -73,6 +74,7 @@ class LocalizedStringMatrixTest extends Specification {
         'no default value, canonical'      | '\nen=English five'                                 || '\nen=English five'
         'no default value, not canonical'  | 'de=Deutsch sechs\nfr=Francais six'                 || '\nde=Deutsch sechs\nfr=Francais six'
         'an empty entry counts as absent'  | 'Default seven\nde='                                || 'Default seven'
+        'an entry with a line separator'   | 'Default eight\nde=Zeile acht'                 || 'Default eight\nde=Zeile acht'
         'a message reference'              | 'msg://roles.manager.name'                          || 'msg://roles.manager.name'
         'null'                             | null                                                || ''
         'an empty string'                  | ''                                                  || ''

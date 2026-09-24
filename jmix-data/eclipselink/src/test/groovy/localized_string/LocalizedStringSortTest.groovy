@@ -54,16 +54,25 @@ class LocalizedStringSortTest extends DataSpec {
         def jpql = queryBuilder.getResultQueryString()
         def compact = jpql.replaceAll(/\s+/, '')
 
-        then: "one coalesce over: de entry, en entry (application default locale), first line; the line break comes from char(10)"
-        compact.startsWith("selectefromtest_LocalizedNameEntityeorderbyfunction('coalesce',")
-        compact.count("nullif(casewhenlocate(") == 2
+        then: "one coalesce over: de entry, en entry (application default locale), first line; the line break comes " +
+                "from char(10). It is the built-in coalesce wrapped in concat(..., ''), which the parser reads in a " +
+                "fraction of the time it takes over a bare coalesce or over function('coalesce', ...)"
+        compact.startsWith("selectefromtest_LocalizedNameEntityeorderbyconcat(coalesce(")
+        compact.count("nullif(trim(leadingfromsubstring(") == 2
         compact.contains("concat(function('char',10),'de=')")
         compact.contains("concat(function('char',10),'en=')")
-        compact.contains("whenlocate(function('char',10),e.name)>0thensubstring(e.name,1,")
+        compact.contains("substring(concat(e.name,function('char',10)),1," +
+                "locate(function('char',10),concat(e.name,function('char',10)))-1)")
 
-        and: "the first line is not taken as the default value when it opens an entry of an available locale"
+        and: "an entry carries no case of its own: the padded column ends with an empty entry of the key, so the " +
+                "marker is always found. A case in every entry is what kept the parser backtracking for seconds"
+        !compact.contains("nullif(casewhen")
+        compact.contains("concat(function('char',10),e.name,function('char',10),'de=',function('char',10))")
+
+        and: "the first line is not taken as the default value when it opens an entry of an available locale, " +
+                "the key compared in its canonical case, the only one the parser reads an entry in"
         compact.contains("casewhenlocate('en=',e.name)=1orlocate('de=',e.name)=1" +
-                "orlocate('pt_BR=',e.name)=1orlocate('pt=',e.name)=1then''")
+                "orlocate('pt_BR=',e.name)=1orlocate('pt=',e.name)=1then''else")
         !jpql.contains('\n')
         jpql.endsWith(' asc, e.id asc')
     }

@@ -495,6 +495,30 @@ final class StudioActionPropertyGroups {
                             xmlAttribute = StudioXmlAttributes.ICON,
                             type = StudioPropertyType.ICON,
                             category = StudioProperty.Category.LOOK_AND_FEEL,
+                            defaultValue = "GLOBE",
+                            setParameterFqn = "com.vaadin.flow.component.Component"),
+                    @StudioProperty(
+                            xmlAttribute = StudioXmlAttributes.ID,
+                            type = StudioPropertyType.COMPONENT_ID,
+                            category = StudioProperty.Category.GENERAL,
+                            required = true,
+                            initialValue = "valueLocalizedStringEdit"),
+                    @StudioProperty(
+                            xmlAttribute = StudioXmlAttributes.TEXT,
+                            type = StudioPropertyType.LOCALIZED_STRING,
+                            category = StudioProperty.Category.GENERAL,
+                            defaultValue = "msg:///actions.valuePicker.localizedStringEdit.description")
+            }
+    )
+    public interface LocalizedStringEditActionComponent extends BaseAction {
+    }
+
+    @StudioPropertyGroup(
+            properties = {
+                    @StudioProperty(
+                            xmlAttribute = StudioXmlAttributes.ICON,
+                            type = StudioPropertyType.ICON,
+                            category = StudioProperty.Category.LOOK_AND_FEEL,
                             defaultValue = "CLOSE",
                             setParameterFqn = "com.vaadin.flow.component.Component"),
                     @StudioProperty(

@@ -46,6 +46,11 @@ import java.util.StringJoiner;
 @Component("data_LocalizedStringJpqlExpressionSupport")
 public class LocalizedStringJpqlExpressionSupport {
 
+    /**
+     * The separator the database produces with {@link #lineBreakExpression(String)}.
+     */
+    protected static final String LINE_BREAK = "\n";
+
     @Autowired
     protected LocalizedStringSupport localizedStringSupport;
     @Autowired
@@ -54,6 +59,8 @@ public class LocalizedStringJpqlExpressionSupport {
     protected DbmsSpecifics dbmsSpecifics;
     @Autowired
     protected CoreProperties coreProperties;
+
+
 
     /**
      * @return true if the path ends in a JPA, non-collection, non-LOB property of the localized string datatype.
@@ -74,41 +81,91 @@ public class LocalizedStringJpqlExpressionSupport {
     }
 
     /**
-     * @param path      the localized string property; its store decides how the line break is produced
+     * Builds the expression for an {@code order by} item and for a comparison operand.
+     * <p>
+     * The expression is a built-in {@code coalesce(...)} wrapped in {@code concat(..., '')}, or in
+     * {@code lower(...)} for a case-insensitive comparison. The wrapper does not change the value, but it lets
+     * the Jmix JPQL parser commit to a string expression at the first token: a bare {@code coalesce(...)} or
+     * {@code function('coalesce', ...)} of this size makes it backtrack for seconds on every query.
+     *
+     * @param path      the localized string property; the store of its entity decides how the line break is
+     *                  produced. The store of the entity rather than of the enclosing class, because an
+     *                  embeddable belongs to the main store however many stores embed it, while the query runs
+     *                  against the store of the entity.
      * @param column    JPQL path of the column, e.g. {@code e.name} or {@code {E}.name}
      * @param locale    the locale whose text is extracted
-     * @param lowerCase whether the result must be lower-cased for a case-insensitive comparison. The column is
-     *                  lower-cased before the concatenation and the locale keys of the markers are lower-cased
-     *                  too, because on MySQL {@code CHAR()} yields a binary string and {@code LOWER} over the
-     *                  concatenated result would not change case.
-     * @return {@code function('coalesce', entry(key1), entry(key2), ..., firstLine)}. The {@code FUNCTION} form
-     * is used instead of a plain {@code coalesce(...)} because the Jmix JPQL grammar accepts a function
-     * invocation, but not an arbitrary scalar expression, as the left operand of {@code IN}; EclipseLink prints
-     * both forms as the same SQL.
+     * @param lowerCase whether the result must be lower-cased for a case-insensitive comparison
      */
     public String buildResolvedValueExpression(MetaPropertyPath path, String column, Locale locale, boolean lowerCase) {
-        String lineBreak = lineBreakExpression(metadataTools.getPropertyEnclosingMetaClass(path).getStore().getName());
-        String source = lowerCase ? "lower(" + column + ")" : column;
+        String storeName = path.getMetaClass().getStore().getName();
 
-        String defaultValue = buildDefaultValueExpression(source, lineBreak, lowerCase);
-        StringBuilder sb = new StringBuilder("function('coalesce', ");
+        // Where the line-break function yields a binary string, LOWER over the concatenation would not change
+        // case, so the column is lower-cased before it and the markers are lower-cased with it. Everywhere else
+        // only the result is lower-cased: the entry keys of the stored value then keep the case the parser
+        // reads them with, and the expression carries one LOWER instead of one per column reference.
+        boolean lowerCaseSource = lowerCase && dbmsSpecifics.getDbmsFeatures(storeName).isCharFunctionBinary();
+        String coalesce = "coalesce(" + buildResolutionChain(storeName, column, locale, lowerCaseSource) + ")";
 
-        int entries = 0;
-        for (String key : entryKeys(localizedStringSupport.resolutionKeys(locale))) {
-            String markerKey = lowerCase ? key.toLowerCase(Locale.ROOT) : key;
-            sb.append(buildEntryValueExpression(source, markerKey, lineBreak)).append(", ");
-            entries++;
+        return lowerCase && !lowerCaseSource
+                ? "lower(" + coalesce + ")"
+                : "concat(" + coalesce + ", '')";
+    }
+
+    /**
+     * Builds the resolved text framed by line breaks, to be searched for in the list that
+     * {@link #buildSearchList(Collection)} produces. This is how {@code IN} is expressed: the Jmix JPQL grammar
+     * accepts only a path or a function invocation as its left operand, and a function invocation of this size
+     * takes the parser seconds, while a search reads as fast as any comparison.
+     */
+    public String buildResolvedValueSearchExpression(MetaPropertyPath path, String column, Locale locale) {
+        String storeName = path.getMetaClass().getStore().getName();
+        String lineBreak = lineBreakExpression(storeName);
+        return "concat(" + lineBreak + ", coalesce(" + buildResolutionChain(storeName, column, locale, false) + "), "
+                + lineBreak + ")";
+    }
+
+    /**
+     * Joins the values of an {@code IN} list into one string for {@link #buildResolvedValueSearchExpression}:
+     * every value framed by line breaks, so that only a whole resolved text matches one of them.
+     * <p>
+     * A null value and a value holding a line break are left out: a resolved text is never null when it is
+     * compared and never holds a line break, so neither can match. An empty list becomes a single line break,
+     * which no framed text is found in, so that {@code IN} matches nothing and {@code NOT IN} everything.
+     */
+    public String buildSearchList(Collection<?> values) {
+        StringBuilder list = new StringBuilder(LINE_BREAK);
+        for (Object value : values) {
+            if (value != null && !value.toString().contains(LINE_BREAK)) {
+                list.append(value).append(LINE_BREAK);
+            }
+        }
+        return list.toString();
+    }
+
+    /**
+     * @return the arguments of the coalesce: the entries of the resolution keys, then the first line
+     */
+    protected String buildResolutionChain(String storeName, String column, Locale locale, boolean lowerCaseSource) {
+        String lineBreak = lineBreakExpression(storeName);
+        String source = lowerCaseSource ? "lower(" + column + ")" : column;
+        String defaultValue = buildDefaultValueExpression(source, lineBreak, lowerCaseSource);
+
+        StringJoiner chain = new StringJoiner(", ");
+        List<String> keys = entryKeys(localizedStringSupport.resolutionKeys(locale));
+        for (String key : keys) {
+            String markerKey = lowerCaseSource ? key.toLowerCase(Locale.ROOT) : key;
+            chain.add(buildEntryValueExpression(source, markerKey, lineBreak));
         }
 
-        if (entries == 0) {
+        if (keys.isEmpty()) {
             // Reached only when no resolution key can open an entry, which takes an application whose default
-            // locale has an unusual key, because that key is always one of them. COALESCE needs two arguments
-            // and the FUNCTION form is what an IN operand accepts, so the default value is repeated.
-            sb.append(defaultValue).append(", ");
+            // locale has an unusual key, because that key is always one of them. COALESCE needs two arguments,
+            // so the default value is repeated.
+            chain.add(defaultValue);
         }
-        sb.append(defaultValue).append(")");
+        chain.add(defaultValue);
 
-        return sb.toString();
+        return chain.toString();
     }
 
     public Locale getCurrentLocale() {
@@ -128,15 +185,20 @@ public class LocalizedStringJpqlExpressionSupport {
      * so that the first line and the last line need no special handling.
      */
     protected String buildEntryValueExpression(String column, String key, String lineBreak) {
-        String padded = "concat(" + lineBreak + ", " + column + ", " + lineBreak + ")";
+        // The padded column ends with an empty entry of the key, so the marker is always found: an absent entry is
+        // found there and yields an empty text, which needs no case to guard the arithmetic below.
+        String padded = "concat(" + lineBreak + ", " + column + ", " + lineBreak + ", '" + key + "=', " + lineBreak + ")";
         String marker = "concat(" + lineBreak + ", '" + key + "=')";
         String position = "locate(" + marker + ", " + padded + ")";
         String start = "(" + position + " + " + (key.length() + 2) + ")";
         String end = "locate(" + lineBreak + ", " + padded + ", " + start + ")";
 
-        return "nullif(case when " + position + " > 0"
-                + " then substring(" + padded + ", " + start + ", " + end + " - " + start + ")"
-                + " else '' end, '')";
+        // The parser strips the whitespace that follows the sign, so the database does too. TRIM strips spaces
+        // only, which leaves a tab after the sign as a divergence of the kind whitespace before the sign is.
+        // It runs before the emptiness test, so that an entry of nothing but spaces answers null on both sides.
+        String text = "trim(leading from substring(" + padded + ", " + start + ", " + end + " - " + start + "))";
+
+        return "nullif(" + text + ", '')";
     }
 
     /**
@@ -147,33 +209,30 @@ public class LocalizedStringJpqlExpressionSupport {
      * imported from another format looks. Its first line is an entry, not a default value, so it is reported as
      * an empty text, the way {@link LocalizedStringSupport#parse(String)} reads it.
      */
-    protected String buildDefaultValueExpression(String column, String lineBreak, boolean lowerCase) {
-        String position = "locate(" + lineBreak + ", " + column + ")";
-        // One flat case: EclipseLink prints a case nested in the else branch of another case as invalid SQL.
-        StringBuilder expression = new StringBuilder("case");
-        String entryOnFirstLine = buildEntryOnFirstLineCondition(column, lowerCase);
+    protected String buildDefaultValueExpression(String column, String lineBreak, boolean lowerCaseSource) {
+        // The column is followed by a line break, so the first line is found without a case for a value that has
+        // no line break at all.
+        String terminated = "concat(" + column + ", " + lineBreak + ")";
+        String firstLine = "substring(" + terminated + ", 1, locate(" + lineBreak + ", " + terminated + ") - 1)";
 
-        if (!entryOnFirstLine.isEmpty()) {
-            expression.append(" when ").append(entryOnFirstLine).append(" then ''");
-        }
-
-        return expression
-                .append(" when ").append(position).append(" > 0")
-                .append(" then substring(").append(column).append(", 1, ").append(position).append(" - 1)")
-                .append(" else ").append(column).append(" end")
-                .toString();
+        String entryOnFirstLine = buildEntryOnFirstLineCondition(column, lowerCaseSource);
+        return entryOnFirstLine.isEmpty()
+                ? firstLine
+                : "case when " + entryOnFirstLine + " then '' else " + firstLine + " end";
     }
 
     /**
      * @return the condition that the first line of the column opens an entry of an available locale, or an
-     * empty string when no locale is configured. Only the available locales can be tested: the keys a value
-     * actually carries are unknown when the query is built.
+     * empty string when no key can open one. Only the available locales can be tested: the keys a value actually
+     * carries are unknown when the query is built. The key is compared in its canonical case, the only one the
+     * parser reads an entry in; a column lower-cased for a case-insensitive search is compared with the key
+     * lower-cased along with it.
      */
-    protected String buildEntryOnFirstLineCondition(String column, boolean lowerCase) {
+    protected String buildEntryOnFirstLineCondition(String column, boolean lowerCaseSource) {
         StringJoiner condition = new StringJoiner(" or ");
         for (String key : entryKeys(keysOfAvailableLocales())) {
-            String marker = lowerCase ? key.toLowerCase(Locale.ROOT) : key;
-            condition.add("locate('" + marker + "=', " + column + ") = 1");
+            String markerKey = lowerCaseSource ? key.toLowerCase(Locale.ROOT) : key;
+            condition.add("locate('" + markerKey + "=', " + column + ") = 1");
         }
         return condition.toString();
     }

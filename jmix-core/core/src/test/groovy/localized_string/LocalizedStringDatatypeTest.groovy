@@ -19,8 +19,13 @@ package localized_string
 import io.jmix.core.CoreConfiguration
 import io.jmix.core.Metadata
 import io.jmix.core.MetadataTools
+import io.jmix.core.impl.MetaModelLoader
+import io.jmix.core.metamodel.model.impl.SessionImpl
+import localized_string.misassigned.ExplicitDateDatatypeEntity
+import localized_string.misassigned.MisassignedLocalizedStringEntity
 import io.jmix.core.metamodel.annotation.LocalizedString
 import io.jmix.core.metamodel.datatype.DatatypeRegistry
+import io.jmix.core.metamodel.datatype.impl.DateDatatype
 import io.jmix.core.metamodel.datatype.impl.LocalizedStringDatatype
 import io.jmix.core.metamodel.datatype.impl.StringDatatype
 import io.jmix.core.security.ClientDetails
@@ -44,6 +49,8 @@ class LocalizedStringDatatypeTest extends Specification {
     Metadata metadata
     @Autowired
     MetadataTools metadataTools
+    @Autowired
+    MetaModelLoader metaModelLoader
 
     void cleanup() {
         SecurityContextHelper.setAuthentication(null)
@@ -54,6 +61,27 @@ class LocalizedStringDatatypeTest extends Specification {
         datatypeRegistry.get(LocalizedStringDatatype.ID) instanceof LocalizedStringDatatype
         datatypeRegistry.find(String).class == StringDatatype
         datatypeRegistry.getIdByJavaClass(String) == 'string'
+    }
+
+    def "a localized string on a property that is not a String fails while the metamodel is built"() {
+        when:
+        metaModelLoader.loadModel(new SessionImpl(), [MisassignedLocalizedStringEntity.name] as Set)
+
+        then: "the declaration is reported, instead of a ClassCastException at the first read of the property"
+        def e = thrown(IllegalStateException)
+        e.message.contains('test_MisassignedLocalizedString.count')
+        e.message.contains(Integer.name)
+    }
+
+    def "an explicitly assigned datatype other than the localized string is not checked against the property type"() {
+        given: "date declares java.sql.Date as its Java class and works with java.util.Date properties"
+        def session = new SessionImpl()
+
+        when:
+        metaModelLoader.loadModel(session, [ExplicitDateDatatypeEntity.name] as Set)
+
+        then:
+        session.getClass(ExplicitDateDatatypeEntity).getProperty('day').range.asDatatype() instanceof DateDatatype
     }
 
     def "format with a locale resolves, format without a locale returns the raw value, parse returns a literal"() {

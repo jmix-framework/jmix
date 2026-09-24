@@ -45,8 +45,14 @@ interface StudioPickerActions {
             type = "value_localizedStringEdit",
             description = "Opens a dialog that edits a localized string value per locale",
             classFqn = "io.jmix.flowui.action.valuepicker.LocalizedStringEditAction",
+            target = {"io.jmix.flowui.component.valuepicker.JmixValuePicker"},
             documentationLink = "%VERSION%/flow-ui/actions/value-picker-actions.html#value_localizedStringEdit",
-            propertyGroups = StudioActionPropertyGroups.BaseActionComponent.class)
+            propertyGroups = StudioActionPropertyGroups.LocalizedStringEditActionComponent.class,
+            items = {
+                    @StudioPropertiesItem(xmlAttribute = StudioXmlAttributes.MULTILINE, type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "false")
+            }
+    )
     void localizedStringEditAction();
 
     @StudioAction(

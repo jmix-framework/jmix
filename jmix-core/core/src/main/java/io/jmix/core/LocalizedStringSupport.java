@@ -23,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -31,6 +32,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Reads, writes and resolves localized string values: a default value followed by {@code locale=value}
@@ -43,25 +46,39 @@ public class LocalizedStringSupport {
     protected static final String LINE_SEPARATOR = "\n";
 
     /**
-     * A locale key in the form of {@link LocaleResolver#localeToString(Locale)}.
+     * A candidate locale key: a lower-case language followed by parts joined with an underscore, the way
+     * {@link Locale#toString()} writes a locale, or with a hyphen, the way a language tag writes a locale with a
+     * script. {@link #isEntryKey(String)} decides whether a candidate really is the key of a locale.
      */
-    protected static final String ENTRY_KEY_REGEX = "[A-Za-z]{2,3}(?:[_-][A-Za-z0-9]{2,8})*";
+    protected static final String ENTRY_KEY_REGEX = "[a-z]{2,3}(?:[_-][A-Za-z0-9]*)*";
 
     protected static final Pattern ENTRY_KEY_PATTERN = Pattern.compile("^" + ENTRY_KEY_REGEX + "$");
 
     /**
-     * A line that opens a locale entry: a locale key followed by {@code =}. Whitespace around the key and the
-     * sign is tolerated on reading, so that a value written by hand or imported from another format is still
-     * displayed correctly. Such an entry is invisible to database sorting and filtering, which match the
-     * canonical {@code key=value} form only.
+     * A line that may open a locale entry: a candidate key right before {@code =}, the way the editor writes an
+     * entry, so that a line such as {@code Tax = 20%} stays text. Whitespace after the sign belongs to the text of
+     * the entry and is stripped. Only {@code \n} breaks lines, so the text takes any other line separator, such as
+     * U+2028 or a lone carriage return, as it is.
      */
     protected static final Pattern ENTRY_PATTERN =
-            Pattern.compile("^\\s*(" + ENTRY_KEY_REGEX + ")\\s*=(.*)$");
+            Pattern.compile("^(" + ENTRY_KEY_REGEX + ")=(.*)$", Pattern.DOTALL);
+
+    /**
+     * The languages of ISO 639 and of the locales the JDK knows. The languages of the available locales are
+     * checked apart, since an application may configure one the JDK does not know.
+     */
+    protected static final Set<String> KNOWN_LANGUAGES = Stream.concat(
+                    Arrays.stream(Locale.getISOLanguages()),
+                    Arrays.stream(Locale.getAvailableLocales()).map(Locale::getLanguage))
+            .filter(language -> !language.isEmpty())
+            .collect(Collectors.toUnmodifiableSet());
 
     @Autowired
     protected CurrentAuthentication currentAuthentication;
     @Autowired
     protected MessageTools messageTools;
+    @Autowired
+    protected CoreProperties coreProperties;
 
     public LocalizedStringValue parse(@Nullable String raw) {
         if (raw == null || raw.isEmpty()) {
@@ -75,9 +92,9 @@ public class LocalizedStringSupport {
         StringBuilder current = null;
 
         for (String line : splitLines(raw)) {
-            Matcher matcher = ENTRY_PATTERN.matcher(line);
+            Matcher matcher = matchEntry(line);
 
-            if (matcher.matches()) {
+            if (matcher != null) {
                 String key = matcher.group(1);
 
                 if (entries.containsKey(key)) {
@@ -182,15 +199,40 @@ public class LocalizedStringSupport {
     }
 
     /**
-     * @return true if a line starting with this key and {@code =} would be read as a locale entry. A key that
-     * fails the check cannot occur in a stored value, so nothing has to look for it.
+     * @return true if a line starting with this key and {@code =} is read as a locale entry: the key is written
+     * exactly the way {@link #localeKey(Locale)} writes the locale {@link LocaleResolver#resolve(String)} reads
+     * from it, and the language of that locale is known. Text that merely looks like an entry, such as
+     * {@code ID=42} or {@code key=value}, is therefore text. A key that fails the check cannot occur in a stored
+     * value, so nothing has to look for it.
      */
     public boolean isEntryKey(String key) {
-        return ENTRY_KEY_PATTERN.matcher(key).matches();
+        if (!ENTRY_KEY_PATTERN.matcher(key).matches()) {
+            return false;
+        }
+
+        Locale locale;
+        try {
+            locale = LocaleResolver.resolve(key);
+        } catch (IllegalArgumentException e) {
+            return false;
+        }
+
+        return key.equals(localeKey(locale)) && isKnownLanguage(locale.getLanguage());
     }
 
+    /**
+     * @return true if the value is a {@code msg://} reference in a form {@link MessageTools#loadString} reads: a
+     * key alone ({@code msg://key}), or a group and a key ({@code msg://group/key}, where an empty group, as in
+     * {@code msg:///key}, is the main message bundle). Any other text starting with {@code msg://} is a literal.
+     */
     public boolean isMessageReference(@Nullable String raw) {
-        return raw != null && raw.startsWith(MessageTools.MARK);
+        if (raw == null || !messageTools.isMessageKey(raw)) {
+            return false;
+        }
+
+        // The split MessageTools.loadString makes; it throws for any other number of path segments
+        int segments = raw.substring(MessageTools.MARK.length()).split("/").length;
+        return segments == 1 || segments == 2;
     }
 
     public boolean isLocalized(@Nullable String raw) {
@@ -206,7 +248,7 @@ public class LocalizedStringSupport {
         }
 
         for (String line : splitLines(text)) {
-            if (ENTRY_PATTERN.matcher(line).matches()) {
+            if (matchEntry(line) != null) {
                 return true;
             }
         }
@@ -218,6 +260,22 @@ public class LocalizedStringSupport {
         return currentAuthentication.isSet()
                 ? currentAuthentication.getLocale()
                 : messageTools.getDefaultLocale();
+    }
+
+    /**
+     * @return the matcher of a line that opens a locale entry, holding the key in group 1 and the text in
+     * group 2, or null for any other line
+     */
+    @Nullable
+    protected Matcher matchEntry(String line) {
+        Matcher matcher = ENTRY_PATTERN.matcher(line);
+        return matcher.matches() && isEntryKey(matcher.group(1)) ? matcher : null;
+    }
+
+    protected boolean isKnownLanguage(String language) {
+        return KNOWN_LANGUAGES.contains(language)
+                || coreProperties.getAvailableLocales().stream()
+                .anyMatch(locale -> locale.getLanguage().equals(language));
     }
 
     protected String[] splitLines(String text) {

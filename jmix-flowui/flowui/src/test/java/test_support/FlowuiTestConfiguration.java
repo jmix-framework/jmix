@@ -44,6 +44,7 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
+import test_support.localized_string.StrictCodeDatatype;
 
 import javax.sql.DataSource;
 
@@ -51,7 +52,7 @@ import javax.sql.DataSource;
 @Import({FlowuiConfiguration.class, EclipselinkConfiguration.class, DataConfiguration.class,
         CoreConfiguration.class, CommonCoreTestConfiguration.class,
         HsqlMemDataSourceTestConfiguration.class, JpaMainStoreTestConfiguration.class,
-        FlowuiServletTestBeans.class, CoreSecurityTestConfiguration.class})
+        FlowuiServletTestBeans.class, CoreSecurityTestConfiguration.class, StrictCodeDatatype.class})
 @PropertySource("classpath:/test_support/test-flowui-app.properties")
 @JmixModule
 public class FlowuiTestConfiguration {

@@ -91,6 +91,15 @@ public interface DbmsFeatures {
         return "char";
     }
 
+    /**
+     * @return true if {@link #getCharFunctionName()} yields a binary string rather than a character string, so
+     * that a comparison against a concatenation containing it goes byte by byte and {@code LOWER} over that
+     * concatenation does not change case. True on MySQL and MariaDB.
+     */
+    default boolean isCharFunctionBinary() {
+        return false;
+    }
+
 
     /**
      * Provides information about {@code jmix.data.dbmsType} and {@code jmix.data.dbmsVersion} this bean designed for. Version can be empty.

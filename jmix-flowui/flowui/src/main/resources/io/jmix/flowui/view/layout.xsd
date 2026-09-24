@@ -1287,6 +1287,7 @@
                     <xs:enumeration value="lookup_select"/>
                     <xs:enumeration value="view_close"/>
                     <xs:enumeration value="value_clear"/>
+                    <xs:enumeration value="value_localizedStringEdit"/>
                     <xs:enumeration value="list_itemTracking"/>
                     <xs:enumeration value="multi_value_select"/>
                 </xs:restriction>

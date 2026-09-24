@@ -95,3 +95,22 @@
 .uirec-draft-card-discard {
     flex: none;
 }
+
+/* Forced colors remove box-shadow, so the focus ring is drawn as an outline there. They also replace the
+   hover border colour with the palette colour; a system colour is kept, so Highlight marks the hover,
+   with an extra outline to make it visible next to the black or white border. */
+@media (forced-colors: active) {
+    .uirec-draft-card:has(.uirec-draft-card-body:focus-visible) {
+        outline: var(--vaadin-focus-ring-width, 2px) solid;
+        outline-offset: 1px;
+    }
+
+    .uirec-draft-card:has(.uirec-draft-card-body:hover) {
+        border-color: Highlight;
+    }
+
+    /* Together with the border it gives a 2px line. Not applied to a focused card, to keep its focus ring. */
+    .uirec-draft-card:has(.uirec-draft-card-body:hover:not(:focus-visible)) {
+        outline: 1px solid Highlight;
+    }
+}

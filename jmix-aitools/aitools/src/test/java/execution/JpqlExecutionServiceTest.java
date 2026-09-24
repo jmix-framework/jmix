@@ -22,6 +22,11 @@ import io.jmix.aitools.dataload.execution.JpqlValidationAndRepairService.Operati
 import io.jmix.aitools.dataload.repair.JpqlRepairResult;
 import io.jmix.aitools.dataload.validation.JpqlValidationIssue;
 import io.jmix.aitools.dataload.validation.JpqlValidationResult;
+import io.jmix.core.AccessManager;
+import io.jmix.core.Metadata;
+import io.jmix.core.MetadataTools;
+import io.jmix.data.QueryParser;
+import io.jmix.data.QueryTransformerFactory;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -37,7 +42,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyCollection;
 import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -48,6 +56,24 @@ class JpqlExecutionServiceTest {
 
     @Mock
     JpqlParameterConversionService jpqlParameterConversionService;
+
+    @Mock
+    JpqlAccessSupport accessSupport;
+
+    @Mock
+    AccessManager accessManager;
+
+    @Mock
+    QueryTransformerFactory queryTransformerFactory;
+
+    @Mock
+    QueryParser queryParser;
+
+    @Mock
+    Metadata metadata;
+
+    @Mock
+    MetadataTools metadataTools;
 
     @Test
     @DisplayName("Repairs and executes JPQL request")
@@ -255,6 +281,16 @@ class JpqlExecutionServiceTest {
     TestJpqlExecutionService createService() {
         TestJpqlExecutionService executionService = new TestJpqlExecutionService();
         ReflectionTestUtils.setField(executionService, "validateAndRepair", validateAndRepair);
+        // Access constraints are covered in execution_access; here every query passes unchanged.
+        lenient().when(accessSupport.applyAccessConstraints(anyString(), anyCollection()))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+        ReflectionTestUtils.setField(executionService, "accessSupport", accessSupport);
+        // Column access and hidden columns are covered by the column tests; here no path and no denial is found.
+        lenient().when(queryTransformerFactory.parser(anyString())).thenReturn(queryParser);
+        ReflectionTestUtils.setField(executionService, "accessManager", accessManager);
+        ReflectionTestUtils.setField(executionService, "queryTransformerFactory", queryTransformerFactory);
+        ReflectionTestUtils.setField(executionService, "metadata", metadata);
+        ReflectionTestUtils.setField(executionService, "metadataTools", metadataTools);
         ReflectionTestUtils.setField(executionService, "jpqlParameterConversionService", jpqlParameterConversionService);
         ReflectionTestUtils.setField(executionService, "dataLoadProperties",
                 new AiToolsDataLoadProperties(true, true, true, 1, 20, 200, null, null, null, null));

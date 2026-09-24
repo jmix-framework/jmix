@@ -92,7 +92,7 @@ public class JpqlExecutorTool implements DataLoadAiTool {
             - Use JPQL syntax only, never SQL syntax or vendor-specific SQL functions
             - Produce JPQL suitable for Jmix DataManager
             - Always select explicit scalar or property expressions that can be returned as tabular values
-            - Do not return the root entity alias itself as the selected value
+            - Do not return an entity itself as a selected value - neither an alias (e) nor a reference attribute (e.customer); select its attributes instead
             - You may select properties of the root entity, properties reached through joins, and aggregate expressions
             
             PAGINATION RULES:

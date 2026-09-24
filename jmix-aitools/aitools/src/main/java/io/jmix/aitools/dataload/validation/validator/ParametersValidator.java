@@ -17,10 +17,12 @@
 package io.jmix.aitools.dataload.validation.validator;
 
 import io.jmix.core.JmixOrder;
+import io.jmix.core.impl.QueryParamValuesManager;
 import io.jmix.aitools.dataload.execution.GeneratedJpqlParameter;
 import io.jmix.aitools.dataload.execution.GeneratedJpqlResult;
 import io.jmix.aitools.dataload.validation.JpqlResultValidator;
 import io.jmix.aitools.dataload.validation.JpqlValidationIssue;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.Ordered;
 import org.springframework.stereotype.Component;
 
@@ -34,6 +36,10 @@ import static io.jmix.aitools.dataload.validation.validator.JpqlValidatorSupport
  * Checks that the JPQL named parameters and the declared parameters match — flagging both
  * parameters used in the query but missing from the declaration, and declared parameters that the
  * query never uses.
+ * <p>
+ * Also rejects a declared parameter whose value the application supplies ({@code current_user_*},
+ * {@code session_*}, {@code current_locale}): row-level policies refer to those, and a declared value would
+ * take the place of the application's.
  */
 @Component("aitls_ParametersValidator")
 public class ParametersValidator implements JpqlResultValidator, Ordered {
@@ -45,7 +51,14 @@ public class ParametersValidator implements JpqlResultValidator, Ordered {
     public static final String PARAMETER_UNUSED_CODE = "parameter.unusedInJpql";
     public static final String PARAMETER_UNUSED_GUIDANCE = "Remove parameters that are not used in the JPQL text.";
 
+    public static final String PARAMETER_RESERVED_CODE = "parameter.reserved";
+    public static final String PARAMETER_RESERVED_GUIDANCE = "The application supplies the value of this parameter:"
+            + " give the parameter another name.";
+
     protected static final Pattern PARAMETER_PATTERN = Pattern.compile(":([A-Za-z_][A-Za-z0-9_]*)");
+
+    @Autowired
+    protected QueryParamValuesManager queryParamValuesManager;
 
     @Override
     public List<JpqlValidationIssue> validate(GeneratedJpqlResult result) {
@@ -74,6 +87,13 @@ public class ParametersValidator implements JpqlResultValidator, Ordered {
             if (!jpqlParameters.contains(parameterName)) {
                 issues.add(new JpqlValidationIssue(PARAMETER_UNUSED_CODE,
                         "DTO parameter is not used in JPQL: " + parameterName, PARAMETER_UNUSED_GUIDANCE));
+            }
+        }
+
+        for (String parameterName : dtoParameters) {
+            if (queryParamValuesManager.supports(parameterName)) {
+                issues.add(new JpqlValidationIssue(PARAMETER_RESERVED_CODE,
+                        "Parameter is reserved: " + parameterName, PARAMETER_RESERVED_GUIDANCE));
             }
         }
 

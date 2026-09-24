@@ -80,4 +80,29 @@ class EntityDataLoadGenerationServiceTest {
                         .anyMatch(MessageType.TOOL::equals),
                 "The tool result should have been sent back to the model");
     }
+
+    @Test
+    @DisplayName("Parses a generation response wrapped in a Markdown code fence")
+    void testParsesResponseWrappedInCodeFence() {
+        stubChatModel.setContent("""
+                Here is the query:
+                ```json
+                {
+                  "jpql": "select e.number as number from aitls_Order e",
+                  "resultProperties": ["number"],
+                  "parameters": [],
+                  "explanation": "All orders"
+                }
+                ```
+                """);
+
+        systemAuthenticator.begin();
+        try {
+            EntityDataLoadQuery query = generationService.generate("list orders");
+
+            assertEquals("select e.number as number from aitls_Order e", query.getJpql());
+        } finally {
+            systemAuthenticator.end();
+        }
+    }
 }

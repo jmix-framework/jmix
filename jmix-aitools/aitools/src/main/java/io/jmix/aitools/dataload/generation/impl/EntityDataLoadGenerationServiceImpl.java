@@ -35,6 +35,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import tools.jackson.core.JacksonException;
+import tools.jackson.databind.DeserializationFeature;
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.json.JsonMapper;
 
@@ -79,9 +80,14 @@ public class EntityDataLoadGenerationServiceImpl implements EntityDataLoadGenera
             throw new IllegalStateException("LLM returned an empty response");
         }
 
+        int jsonStart = content.indexOf('{');
+        if (jsonStart < 0) {
+            throw new IllegalStateException("LLM response contains no JSON object: " + content);
+        }
+
         EntityDataLoadQueryPayload payload;
         try {
-            payload = objectMapper.readValue(content, EntityDataLoadQueryPayload.class);
+            payload = objectMapper.readValue(content.substring(jsonStart), EntityDataLoadQueryPayload.class);
         } catch (JacksonException e) {
             throw new IllegalStateException("Cannot parse LLM response as JSON: " + content, e);
         }
@@ -153,6 +159,8 @@ public class EntityDataLoadGenerationServiceImpl implements EntityDataLoadGenera
     }
 
     protected ObjectMapper createObjectMapper() {
-        return JsonMapper.builder().build();
+        return JsonMapper.builder()
+                .disable(DeserializationFeature.FAIL_ON_TRAILING_TOKENS)
+                .build();
     }
 }

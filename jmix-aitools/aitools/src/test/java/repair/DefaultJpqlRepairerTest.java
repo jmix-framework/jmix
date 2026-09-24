@@ -37,6 +37,7 @@ import java.util.List;
 
 import static io.jmix.aitools.dataload.validation.validator.UsedPropertyPathsValidator.PROPERTY_PATH_INVALID_CODE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {AiToolsTestConfiguration.class, SpringAiJpqlRepairerTestConfiguration.class})
@@ -119,5 +120,69 @@ class DefaultJpqlRepairerTest {
         assertEquals("select c from aitls_Customer c", repaired.getJpql());
         assertEquals(List.of(), repaired.getParameters());
         assertEquals(List.of(), repaired.getWarnings());
+    }
+
+    @Test
+    @DisplayName("Parses a repair response wrapped in a Markdown code fence")
+    void testParsesResponseWrappedInCodeFence() {
+        String content = """
+                Sure, here is the corrected query:
+                ```json
+                {
+                  "jpql": "select e from aitls_Order e where e.customer.name like :customerName",
+                  "parameters": [
+                    {"name": "customerName", "type": "String", "value": "%Acme%"}
+                  ],
+                  "explanation": "Fixed property path",
+                  "warnings": []
+                }
+                ```
+                """;
+
+        stubChatModel.setContent(content);
+
+        JpqlExecutionRequest executionRequest = new JpqlExecutionRequest();
+        executionRequest.setUserText("orders by customer name");
+
+        GeneratedJpqlResult repaired = repairer.repair(new JpqlRepairRequest(
+                executionRequest,
+                new GeneratedJpqlResult(
+                        "select e from aitls_Order e where e.customer.fullTitle like :customerName",
+                        List.of(new GeneratedJpqlParameter("customerName", "String", "%Acme%")),
+                        "Broken query",
+                        List.of()
+                ),
+                new JpqlValidationResult(false, List.of(
+                        new JpqlValidationIssue(PROPERTY_PATH_INVALID_CODE, "Unknown property path: customer.fullTitle")
+                )),
+                1
+        ));
+
+        assertEquals("select e from aitls_Order e where e.customer.name like :customerName", repaired.getJpql());
+    }
+
+    @Test
+    @DisplayName("Returns null when the repair response cannot be parsed as JSON")
+    void testReturnsNullForUnparseableResponse() {
+        stubChatModel.setContent("I could not repair this query, sorry.");
+
+        JpqlExecutionRequest executionRequest = new JpqlExecutionRequest();
+        executionRequest.setUserText("orders by customer name");
+
+        GeneratedJpqlResult repaired = repairer.repair(new JpqlRepairRequest(
+                executionRequest,
+                new GeneratedJpqlResult(
+                        "select e from aitls_Order e where e.customer.fullTitle like :customerName",
+                        List.of(new GeneratedJpqlParameter("customerName", "String", "%Acme%")),
+                        "Broken query",
+                        List.of()
+                ),
+                new JpqlValidationResult(false, List.of(
+                        new JpqlValidationIssue(PROPERTY_PATH_INVALID_CODE, "Unknown property path: customer.fullTitle")
+                )),
+                1
+        ));
+
+        assertNull(repaired);
     }
 }

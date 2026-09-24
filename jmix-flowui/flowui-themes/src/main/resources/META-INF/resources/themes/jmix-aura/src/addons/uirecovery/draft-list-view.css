@@ -33,24 +33,35 @@
     border: 1px solid var(--vaadin-border-color);
     border-radius: var(--vaadin-radius-m);
     box-sizing: border-box;
-    gap: var(--vaadin-gap-s);
+    gap: 0;
     margin: 0;
-    padding: var(--vaadin-padding-s);
+    /* The body link carries the padding, so it covers the whole card except the discard button. */
+    padding: 0 var(--vaadin-padding-s) 0 0;
 }
 
 .uirec-draft-card-body {
+    align-self: stretch;
     color: inherit;
     display: flex;
     flex-direction: column;
     gap: var(--vaadin-gap-xs);
     min-width: 0;
-    padding: 0;
+    padding: var(--vaadin-padding-s);
     text-decoration: none;
 }
 
-.uirec-draft-card-body:focus-visible {
+/* The body link takes the keyboard focus, but the ring is drawn around the whole card. */
+.uirec-draft-card:has(.uirec-draft-card-body:focus-visible) {
     outline: var(--vaadin-focus-ring-width) solid var(--vaadin-focus-ring-color);
-    outline-offset: var(--vaadin-focus-ring-width);
+    outline-offset: 1px;
+}
+
+.uirec-draft-card-body:focus-visible {
+    outline: none;
+}
+
+.uirec-draft-card:has(.uirec-draft-card-body:hover) {
+    border-color: var(--vaadin-focus-ring-color);
 }
 
 .uirec-draft-card-title {

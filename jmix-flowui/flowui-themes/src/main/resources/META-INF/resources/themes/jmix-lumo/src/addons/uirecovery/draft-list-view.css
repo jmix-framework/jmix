@@ -33,18 +33,20 @@
     border: 1px solid var(--lumo-contrast-10pct);
     border-radius: var(--lumo-border-radius-l);
     box-sizing: border-box;
-    gap: var(--lumo-space-s);
+    gap: 0;
     margin: 0;
-    padding: var(--lumo-space-s);
+    /* The body link carries the padding, so it covers the whole card except the discard button. */
+    padding: 0 var(--lumo-space-s) 0 0;
 }
 
 .uirec-draft-card-body {
+    align-self: stretch;
     color: inherit;
     display: flex;
     flex-direction: column;
     gap: var(--lumo-space-xs);
     min-width: 0;
-    padding: 0;
+    padding: var(--lumo-space-s);
     text-decoration: none;
 }
 
@@ -53,10 +55,18 @@
     text-decoration: none;
 }
 
-.uirec-draft-card-body:focus-visible {
-    outline: var(--vaadin-focus-ring-width, 2px) solid
+/* The body link takes the keyboard focus, but the ring is drawn around the whole card. */
+.uirec-draft-card:has(.uirec-draft-card-body:focus-visible) {
+    box-shadow: 0 0 0 var(--vaadin-focus-ring-width, 2px)
         var(--vaadin-focus-ring-color, var(--lumo-primary-color-50pct));
-    outline-offset: var(--vaadin-focus-ring-width, 2px);
+}
+
+.uirec-draft-card-body:focus-visible {
+    outline: none;
+}
+
+.uirec-draft-card:has(.uirec-draft-card-body:hover) {
+    border-color: var(--vaadin-focus-ring-color, var(--lumo-primary-color-50pct));
 }
 
 .uirec-draft-card-title {

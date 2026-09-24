@@ -20,6 +20,7 @@ import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentEvent;
 import com.vaadin.flow.component.ComponentEventListener;
+import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.shared.Tooltip;
@@ -70,6 +71,7 @@ import java.util.*;
  */
 @Experimental
 @FragmentDescriptor("ai-chat-fragment.xml")
+@JsModule("./aitools/ai-chat-timeline-scroll.js")
 public class AiChatFragment extends Fragment<VerticalLayout> {
 
     private static final Logger log = LoggerFactory.getLogger(AiChatFragment.class);
@@ -594,55 +596,13 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
             // for the conditional case — it would yank a user who scrolled up.
             timelineList.scrollToIndex(size - 1);
         }
-        // Rows have variable height and, crucially, assistant answers render
-        // through the <vaadin-markdown> web component which parses and lays
-        // out its content asynchronously *after* the row's initial render,
-        // in bursts. A one-shot re-pin fires before that growth lands; an
-        // "until scrollHeight is stable" loop exits during a lull between
-        // bursts (leaving the scroll "lower, but not at the bottom"). Instead
-        // we react to the actual cause: a MutationObserver re-pins on every
-        // DOM change (markdown rendering, row recycling) and we also re-pin
-        // every frame for a bounded window, then disconnect.
-        //
-        // "Stick to bottom" intent lives in l.__stick, kept up to date by a
-        // one-shot user-scroll listener: content growth alone fires no scroll
-        // event (so it never clears the flag), and our own pins land at the
-        // bottom (so they keep it set) — only a genuine user scroll-up clears
-        // it. force=true resets the flag; force=false honours it and bails out
-        // when the user is reading higher up. The per-element stop handle
-        // cancels an in-flight pin when a new scroll request arrives (e.g.
-        // back-to-back streaming updates) so loops don't stack.
-        timelineList.getElement().executeJs("""
-                        const l = this;
-                        const force = $0;
-                        const THRESHOLD = 50;
-                        if (!l.__stickInit) {
-                          l.__stickInit = true;
-                          l.__stick = true;
-                          l.addEventListener('scroll', () => {
-                            l.__stick = l.scrollTop + l.clientHeight >= l.scrollHeight - THRESHOLD;
-                          }, { passive: true });
-                        }
-                        if (force) { l.__stick = true; }
-                        if (!l.__stick) { return; }
-                        if (l.__scrollPinStop) { l.__scrollPinStop(); }
-                        const toBottom = () => { if (l.__stick) { l.scrollTop = l.scrollHeight; } };
-                        const mo = new MutationObserver(toBottom);
-                        mo.observe(l, { childList: true, subtree: true,
-                                        characterData: true, attributes: true });
-                        const stop = () => { l.__scrollPinStop = null; mo.disconnect(); };
-                        l.__scrollPinStop = stop;
-                        let frames = 0;
-                        const tick = () => {
-                          if (l.__scrollPinStop !== stop) { return; }
-                          if (!l.__stick) { stop(); return; }
-                          toBottom();
-                          if (++frames < 120) { requestAnimationFrame(tick); }
-                          else { stop(); }
-                        };
-                        requestAnimationFrame(tick);
-                        """,
-                force);
+        // The client-side sticking (pin to the bottom while the answer's markdown
+        // lays out asynchronously; detach synchronously on a user scroll gesture)
+        // lives in the ai-chat-timeline-scroll.js module (imported via @JsModule),
+        // which registers window.jmixAiTools.stickToBottom. Called here with the
+        // list element and the force flag. See that file and
+        // docs/features/aitools/specs/chat-timeline-auto-scroll.md.
+        timelineList.getElement().executeJs("window.jmixAiTools.stickToBottom(this, $0)", force);
     }
 
     protected AiChatMessage createTransientAssistantMessage(String content) {

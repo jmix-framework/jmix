@@ -3544,8 +3544,8 @@ public final class StudioPropertyGroups {
     }
 
     @StudioPropertyGroup
-    public interface ImageHtmlComponent extends BaseSizedComponentWithClassNames, Title, Enabled, DataBindingAttributes,
-            TextAttributes, ClickShortcut, HasAriaLabel, AlternateText, ImageResource, ImageThemeNames {
+    public interface ImageHtmlComponent extends BaseSizedComponentWithClassNames, Title, DataBindingAttributes,
+            ClickShortcut, HasAriaLabel, AlternateText, ImageResource, ImageThemeNames {
     }
 
     @StudioPropertyGroup(

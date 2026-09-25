@@ -130,11 +130,12 @@ class StudioHtmlPreviewLoader implements StudioPreviewComponentLoader {
             loadLocalizedString(componentElement, "ariaLabel", environment, hasAriaLabel::setAriaLabel);
             loadString(componentElement, "ariaLabelledBy", hasAriaLabel::setAriaLabelledBy);
         }
+        // URL-validating setters need a VaadinSession (and the servlet API), which the preview does not have.
         if (component instanceof Anchor anchor) {
-            loadLocalizedString(componentElement, "href", environment, anchor::setHref);
+            loadLocalizedString(componentElement, "href", environment, anchor::setUnsafeHref);
             loadEnum(componentElement, AnchorTarget.class, "target", anchor::setTarget);
         } else if (component instanceof IFrame frame) {
-            loadString(componentElement, "resource", frame::setSrc);
+            loadString(componentElement, "resource", frame::setUnsafeSrc);
             loadString(componentElement, "resourceDoc", frame::setSrcdoc);
             loadString(componentElement, "name", frame::setName);
             loadString(componentElement, "allow", frame::setAllow);

@@ -4965,22 +4965,8 @@
     <!-- Image as Icon -->
     <xs:complexType name="imageIconComponent">
         <xs:complexContent>
-            <xs:extension base="baseHtmlComponent">
-                <!-- imageComponent -->
+            <xs:extension base="imageHtmlComponent">
                 <xs:attribute name="themeNames" type="imageThemeNames"/>
-
-                <!-- imageHtmlComponent -->
-                <xs:attribute name="resource" type="xs:string"/>
-                <xs:attribute name="alternateText" type="resourceString"/>
-
-                <xs:attributeGroup ref="hasAriaLabel"/>
-
-                <!-- baseClickableHtmlContainer -->
-                <xs:attributeGroup ref="hasClickNotifierAttributes"/>
-
-                <!-- baseHtmlContainer -->
-                <xs:attributeGroup ref="hasText"/>
-                <xs:attributeGroup ref="hasEnabled"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -5283,11 +5269,12 @@
     <!-- Image-->
     <xs:complexType name="imageHtmlComponent">
         <xs:complexContent>
-            <xs:extension base="baseClickableHtmlContainer">
+            <xs:extension base="baseHtmlComponent">
                 <xs:attribute name="resource" type="xs:string"/>
                 <xs:attribute name="alternateText" type="resourceString"/>
 
                 <xs:attributeGroup ref="hasAriaLabel"/>
+                <xs:attributeGroup ref="hasClickNotifierAttributes"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>

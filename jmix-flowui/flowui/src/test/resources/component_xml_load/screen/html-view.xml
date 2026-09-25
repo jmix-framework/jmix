@@ -421,19 +421,23 @@
                ariaLabel="ariaLabelString"
                classNames="cssClassName1, cssClassName2"
                css="color: red;"
-               enabled="true"
                height="50px"
                maxHeight="55px"
                maxWidth="120px"
                minHeight="40px"
                minWidth="80px"
                resource="resourceString"
-               themeNames="primary, small"
+               themeNames="cover"
                title="imageTitle"
                visible="true"
-               whiteSpace="PRE"
-               width="100px">
-            <image text="imageChild"/>
+               width="100px"/>
+
+        <!-- Image is a void HTML element: legacy container attributes and nested components must be ignored -->
+        <image id="legacyImageId"
+               enabled="false"
+               text="legacyText"
+               whiteSpace="PRE">
+            <span text="legacyChild"/>
         </image>
 
         <main id="mainId"

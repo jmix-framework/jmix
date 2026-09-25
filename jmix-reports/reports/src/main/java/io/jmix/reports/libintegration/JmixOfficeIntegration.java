@@ -24,6 +24,7 @@ import io.jmix.reports.yarg.formatters.impl.doc.connector.OfficeTask;
 import com.sun.star.comp.helper.BootstrapException;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.context.SecurityContextImpl;
 
 import jakarta.annotation.PreDestroy;
 import java.util.List;
@@ -41,15 +42,20 @@ public class JmixOfficeIntegration extends OfficeIntegration {
 
     @Override
     public void runTaskWithTimeout(final OfficeTask officeTask, int timeoutInSeconds) throws NoFreePortsException {
-        final SecurityContext securityContext = SecurityContextHolder.getContext();
+        // the current context instance may be shared with the HTTP session, so the task gets a copy
+        final SecurityContext securityContext =
+                new SecurityContextImpl(SecurityContextHolder.getContext().getAuthentication());
         final OfficeConnection connection = acquireConnection();
         Future future = null;
         try {
             Callable<Void> task = () -> {
                 SecurityContextHolder.setContext(securityContext);
-                connection.open();
-                officeTask.processTaskInOpenOffice(connection.getOOResourceProvider());
-                SecurityContextHolder.clearContext();
+                try {
+                    connection.open();
+                    officeTask.processTaskInOpenOffice(connection.getOOResourceProvider());
+                } finally {
+                    SecurityContextHolder.clearContext();
+                }
                 return null;
             };
             future = executor.submit(task);

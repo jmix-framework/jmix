@@ -210,7 +210,9 @@
                     <xs:enumeration value="ACCESSIBILITY"/>
                     <xs:enumeration value="ACCORDION_MENU"/>
                     <xs:enumeration value="ADD_DOCK"/>
+                    <xs:enumeration value="DOCK"/>
                     <xs:enumeration value="ADJUST"/>
+                    <xs:enumeration value="CONTRAST"/>
                     <xs:enumeration value="ADOBE_FLASH"/>
                     <xs:enumeration value="AIRPLANE"/>
                     <xs:enumeration value="ALARM"/>
@@ -281,6 +283,7 @@
                     <xs:enumeration value="BOOK"/>
                     <xs:enumeration value="BOOKMARK_O"/>
                     <xs:enumeration value="BOOKMARK"/>
+                    <xs:enumeration value="BRANCH"/>
                     <xs:enumeration value="BRIEFCASE"/>
                     <xs:enumeration value="BROWSER"/>
                     <xs:enumeration value="BUG_O"/>
@@ -305,9 +308,13 @@
                     <xs:enumeration value="CARET_LEFT"/>
                     <xs:enumeration value="CARET_RIGHT"/>
                     <xs:enumeration value="CARET_SQUARE_DOWN_O"/>
+                    <xs:enumeration value="CARET_SQUARE_DOWN"/>
                     <xs:enumeration value="CARET_SQUARE_LEFT_O"/>
+                    <xs:enumeration value="CARET_SQUARE_LEFT"/>
                     <xs:enumeration value="CARET_SQUARE_RIGHT_O"/>
+                    <xs:enumeration value="CARET_SQUARE_RIGHT"/>
                     <xs:enumeration value="CARET_SQUARE_UP_O"/>
+                    <xs:enumeration value="CARET_SQUARE_UP"/>
                     <xs:enumeration value="CARET_UP"/>
                     <xs:enumeration value="CART_O"/>
                     <xs:enumeration value="CART"/>
@@ -370,12 +377,14 @@
                     <xs:enumeration value="COIN_PILES"/>
                     <xs:enumeration value="COINS"/>
                     <xs:enumeration value="COMBOBOX"/>
+                    <xs:enumeration value="COMMAND"/>
                     <xs:enumeration value="COMMENT_ELLIPSIS_O"/>
                     <xs:enumeration value="COMMENT_ELLIPSIS"/>
                     <xs:enumeration value="COMMENT_O"/>
                     <xs:enumeration value="COMMENT"/>
                     <xs:enumeration value="COMMENTS_O"/>
                     <xs:enumeration value="COMMENTS"/>
+                    <xs:enumeration value="COMPASS"/>
                     <xs:enumeration value="COMPILE"/>
                     <xs:enumeration value="COMPRESS_SQUARE"/>
                     <xs:enumeration value="COMPRESS"/>
@@ -506,9 +515,11 @@
                     <xs:enumeration value="FOLDER_SEARCH"/>
                     <xs:enumeration value="FOLDER"/>
                     <xs:enumeration value="FONT"/>
+                    <xs:enumeration value="FORKLIFT"/>
                     <xs:enumeration value="FORM"/>
                     <xs:enumeration value="FORWARD"/>
                     <xs:enumeration value="FROWN_O"/>
+                    <xs:enumeration value="FROWN"/>
                     <xs:enumeration value="FUNCTION"/>
                     <xs:enumeration value="FUNNEL"/>
                     <xs:enumeration value="GAMEPAD"/>
@@ -606,11 +617,13 @@
                     <xs:enumeration value="MEDAL"/>
                     <xs:enumeration value="MEGAPHONE"/>
                     <xs:enumeration value="MEH_O"/>
+                    <xs:enumeration value="MEH"/>
                     <xs:enumeration value="MENU"/>
                     <xs:enumeration value="MICROPHONE"/>
                     <xs:enumeration value="MINUS_CIRCLE_O"/>
                     <xs:enumeration value="MINUS_CIRCLE"/>
                     <xs:enumeration value="MINUS_SQUARE_O"/>
+                    <xs:enumeration value="MINUS_SQUARE"/>
                     <xs:enumeration value="MINUS"/>
                     <xs:enumeration value="MOBILE_BROWSER"/>
                     <xs:enumeration value="MOBILE_RETRO"/>
@@ -637,6 +650,7 @@
                     <xs:enumeration value="OPTION"/>
                     <xs:enumeration value="OPTIONS"/>
                     <xs:enumeration value="ORIENTATION"/>
+                    <xs:enumeration value="OUTDENT"/>
                     <xs:enumeration value="OUT"/>
                     <xs:enumeration value="OUTBOX"/>
                     <xs:enumeration value="PACKAGE"/>
@@ -657,6 +671,7 @@
                     <xs:enumeration value="PASTE"/>
                     <xs:enumeration value="PAUSE"/>
                     <xs:enumeration value="PENCIL"/>
+                    <xs:enumeration value="PERSON"/>
                     <xs:enumeration value="PHONE_LANDLINE"/>
                     <xs:enumeration value="PHONE"/>
                     <xs:enumeration value="PICTURE"/>
@@ -676,6 +691,7 @@
                     <xs:enumeration value="PLUS_CIRCLE"/>
                     <xs:enumeration value="PLUS_MINUS"/>
                     <xs:enumeration value="PLUS_SQUARE_O"/>
+                    <xs:enumeration value="PLUS_SQUARE"/>
                     <xs:enumeration value="PLUS"/>
                     <xs:enumeration value="POINTER"/>
                     <xs:enumeration value="POWER_OFF"/>
@@ -738,6 +754,7 @@
                     <xs:enumeration value="SLIDER"/>
                     <xs:enumeration value="SLIDERS"/>
                     <xs:enumeration value="SMILEY_O"/>
+                    <xs:enumeration value="SMILEY"/>
                     <xs:enumeration value="SORT"/>
                     <xs:enumeration value="SOUND_DISABLE"/>
                     <xs:enumeration value="SPARK_LINE"/>
@@ -752,10 +769,12 @@
                     <xs:enumeration value="SPLIT"/>
                     <xs:enumeration value="SPOON"/>
                     <xs:enumeration value="SQUARE_SHADOW"/>
+                    <xs:enumeration value="SQUARE"/>
                     <xs:enumeration value="STAR_HALF_LEFT_O"/>
                     <xs:enumeration value="STAR_HALF_LEFT"/>
                     <xs:enumeration value="STAR_HALF_RIGHT_O"/>
                     <xs:enumeration value="STAR_HALF_RIGHT"/>
+                    <xs:enumeration value="STAR_HALF"/>
                     <xs:enumeration value="STAR_O"/>
                     <xs:enumeration value="STAR"/>
                     <xs:enumeration value="START_COG"/>
@@ -772,6 +791,7 @@
                     <xs:enumeration value="SUITCASE"/>
                     <xs:enumeration value="SUN_DOWN"/>
                     <xs:enumeration value="SUN_O"/>
+                    <xs:enumeration value="SUN"/>
                     <xs:enumeration value="SUN_RISE"/>
                     <xs:enumeration value="SUPERSCRIPT"/>
                     <xs:enumeration value="SWORD"/>

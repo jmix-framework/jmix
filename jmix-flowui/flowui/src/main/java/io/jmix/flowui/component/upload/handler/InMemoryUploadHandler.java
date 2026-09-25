@@ -40,8 +40,8 @@ import java.io.UncheckedIOException;
 @Component("flowui_InMemoryUploadHandler")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class InMemoryUploadHandler
-        extends TransferProgressAwareHandler<UploadEvent, InMemoryUploadHandler>
-        implements UploadHandler, TransferProgressNotifier, SupportUploadSuccessHandler<byte[]> {
+        extends AbstractUploadHandler<InMemoryUploadHandler>
+        implements TransferProgressNotifier, SupportUploadSuccessHandler<byte[]> {
 
     protected UploadSuccessHandler<byte[]> successHandler;
 
@@ -51,18 +51,37 @@ public class InMemoryUploadHandler
     @Override
     public void handleUploadRequest(UploadEvent event) throws IOException {
         // CAUTION: copied from com.vaadin.flow.server.streams.InMemoryUploadHandler [last update Vaadin 25.3.0]
-        byte[] data;
+        setTransferUI(event.getUI());
+        byte[] data = null;
         try {
-            try (InputStream inputStream = event.getInputStream();
-                 ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
-                TransferUtil.transfer(inputStream, outputStream,
-                        getTransferContext(event), getListeners());
-                data = outputStream.toByteArray();
-            }
+            data = readContent(event);
         } catch (IOException e) {
             notifyError(event, e);
             throw e;
         }
+        if (hasValidators() && data != null && !event.isRejected()) {
+            // Complete phase runs after the transfer's onComplete has already
+            // fired, so any failure here is reported via onError.
+            try {
+                runCompleteValidators(event, new ByteArrayUploadContent(data));
+            } catch (IOException e) {
+                notifyError(event, e);
+                throw e;
+            } catch (RuntimeException e) {
+                notifyError(event, new IOException(e));
+                throw e;
+            }
+        }
+        // A validator may reject the upload during any phase (metadata, header
+        // or complete); all of them converge here. The transfer's own onComplete
+        // may already have fired, so the rejection is surfaced as a terminal
+        // onError, and the accumulated data is never delivered.
+        if (event.isRejected()) {
+            notifyError(event,
+                    new UploadRejectedException(event.getRejectionMessage()));
+            return;
+        }
+        final byte[] delivered = data;
         // The success callback runs via UI.access() from the upload handler thread, without an active
         // VaadinServletRequest. Provide the upload request through the thread-local holder so that opening
         // a view-based dialog or window from the success handler can perform the view access check, which
@@ -75,7 +94,7 @@ public class InMemoryUploadHandler
                     try {
                         successHandler.complete(new UploadSuccessContext<>(
                                 new UploadMetadata(event.getFileName(), event.getContentType(), event.getFileSize()),
-                                data));
+                                delivered));
                     } finally {
                         ThreadLocalVaadinRequestHolder.clear();
                     }
@@ -88,6 +107,31 @@ public class InMemoryUploadHandler
         });
     }
 
+    /**
+     * Runs the metadata and header validators and reads the whole upload into memory.
+     *
+     * @param event the upload being handled
+     * @return the uploaded data, or {@code null} if a validator rejected the upload before it was read
+     * @throws IOException if reading the upload or a validator fails
+     */
+    protected byte @Nullable [] readContent(UploadEvent event) throws IOException {
+        // CAUTION: copied from com.vaadin.flow.server.streams.InMemoryUploadHandler [last update Vaadin 25.3.0]
+        runMetadataValidators(event);
+        if (event.isRejected()) {
+            return null;
+        }
+        try (InputStream raw = event.getInputStream();
+             ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+            InputStream in = applyHeaderValidators(event, raw);
+            if (event.isRejected()) {
+                return null;
+            }
+            TransferUtil.transfer(in, outputStream, getTransferContext(event),
+                    getListeners());
+            return outputStream.toByteArray();
+        }
+    }
+
     @Override
     public Registration addTransferProgressListener(TransferProgressListener listener) {
         return super.addTransferProgressListener(listener);
@@ -96,14 +140,5 @@ public class InMemoryUploadHandler
     @Override
     public void setUploadSuccessHandler(@Nullable UploadSuccessHandler<byte[]> handler) {
         this.successHandler = handler;
-    }
-
-    @Override
-    protected TransferContext getTransferContext(UploadEvent transferEvent) {
-        // CAUTION: copied from com.vaadin.flow.server.streams.InMemoryUploadHandler [last update Vaadin 25.3.0]
-        return new TransferContext(transferEvent.getRequest(),
-                transferEvent.getResponse(), transferEvent.getSession(),
-                transferEvent.getFileName(), transferEvent.getOwningElement(),
-                transferEvent.getFileSize());
     }
 }

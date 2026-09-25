@@ -52,8 +52,10 @@ public class SendingMessage implements Serializable {
 
     private static final long serialVersionUID = -8156998515878702538L;
 
+    public static final int FROM_LENGTH = 100;
     public static final int SUBJECT_LENGTH = 500;
     public static final int BODY_CONTENT_TYPE_LENGTH = 50;
+    public static final int HEADERS_LENGTH = 500;
     public static final String HEADERS_SEPARATOR = "\n";
 
     @Id
@@ -89,15 +91,18 @@ public class SendingMessage implements Serializable {
     @Column(name = "DELETED_BY", length = 50)
     private String deletedBy;
 
+    @Lob
     @Column(name = "ADDRESS_TO")
     protected String address;
 
-    @Column(name = "ADDRESS_FROM")
+    @Column(name = "ADDRESS_FROM", length = FROM_LENGTH)
     protected String from;
 
+    @Lob
     @Column(name = "ADDRESS_CC")
     protected String cc;
 
+    @Lob
     @Column(name = "ADDRESS_BCC")
     protected String bcc;
 
@@ -107,6 +112,7 @@ public class SendingMessage implements Serializable {
     /**
      * Email body is stored either in this field or in {@link #contentTextFile}.
      */
+    @Lob
     @Column(name = "CONTENT_TEXT")
     protected String contentText;
 
@@ -120,6 +126,7 @@ public class SendingMessage implements Serializable {
     @Column(name = "DATE_SENT")
     protected Date dateSent;
 
+    @Lob
     @Column(name = "ATTACHMENTS_NAME")
     protected String attachmentsName;
 
@@ -137,7 +144,7 @@ public class SendingMessage implements Serializable {
     @OneToMany(mappedBy = "message")
     protected List<SendingAttachment> attachments;
 
-    @Column(name = "EMAIL_HEADERS")
+    @Column(name = "EMAIL_HEADERS", length = HEADERS_LENGTH)
     protected String headers;
 
     @Column(name = "BODY_CONTENT_TYPE", length = BODY_CONTENT_TYPE_LENGTH)

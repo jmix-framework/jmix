@@ -42,10 +42,14 @@
 
 .dynmod-settings-view .header-box {
     align-items: end;
-    justify-content: space-between;
     flex-wrap: wrap-reverse;
     gap: var(--vaadin-gap-s);
     width: 100%;
+}
+
+/* The buttons stay next to the fields before them, and the editor mode switch goes to the end. */
+.dynmod-settings-view .header-box .tab-list {
+    margin-inline-start: auto;
 }
 
 .dynmod-settings-view .entities-layout {
@@ -74,6 +78,7 @@
 
     .dynmod-settings-view .header-box .tab-list {
         align-self: stretch;
+        margin-inline-start: 0;
     }
 }
 

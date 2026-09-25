@@ -19,13 +19,7 @@
                     <property name="${property.name}"<#if property.range.isClass()> fetchPlan="_base"</#if>/>
                     </#list>
                     <#list collectionProperties as collectionProperty>
-                    <property name="${collectionProperty.name}" fetchPlan="_base">
-                        <#list templateHelper.getProperties(collectionProperty.range.asClass(), [], []) as column>
-                        <#if column.range.isClass()>
-                        <property name="${column.name}" fetchPlan="_instance_name"/>
-                        </#if>
-                        </#list>
-                    </property>
+                    <property name="${collectionProperty.name}" fetchPlan="_base"/>
                     </#list>
                 </fetchPlan>
             <#list collectionProperties as collectionProperty>

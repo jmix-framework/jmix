@@ -368,7 +368,7 @@ public class ViewTemplateIntegrationTest {
         String detailDescriptor = getDescriptor(MASTER_DETAIL_VIEW_ID);
 
         // Composition collection is fetched and gets a nested container
-        assertTrue(detailDescriptor.contains("<property name=\"lines\" fetchPlan=\"_base\">"));
+        assertTrue(detailDescriptor.contains("<property name=\"lines\" fetchPlan=\"_base\"/>"));
         assertTrue(detailDescriptor.contains("<collection id=\"linesDc\" property=\"lines\"/>"));
 
         // TabSheet with a general tab holding the form

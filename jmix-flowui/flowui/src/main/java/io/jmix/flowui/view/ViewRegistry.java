@@ -172,12 +172,7 @@ public class ViewRegistry implements ApplicationContextAware {
      * Make the registry to reload views on next request.
      */
     public void reset() {
-        lock.writeLock().lock();
-        try {
-            initialized = false;
-        } finally {
-            lock.writeLock().unlock();
-        }
+        initialized = false;
     }
 
     protected void checkInitialized() {
@@ -418,13 +413,13 @@ public class ViewRegistry implements ApplicationContextAware {
     }
 
     /**
-     * @return a snapshot of registration info of all known views
+     * @return registration info of all known views
      */
     public Collection<ViewInfo> getViewInfos() {
         lock.readLock().lock();
         try {
             checkInitialized();
-            return new ArrayList<>(views.values());
+            return views.values();
         } finally {
             lock.readLock().unlock();
         }
@@ -718,16 +713,11 @@ public class ViewRegistry implements ApplicationContextAware {
 
         controllersConfiguration.setExplicitDefinitions(Collections.singletonList(viewControllerDefinition));
 
-        lock.writeLock().lock();
-        try {
-            configurations.add(controllersConfiguration);
-            reset();
-        } finally {
-            lock.writeLock().unlock();
-        }
+        configurations.add(controllersConfiguration);
 
-        // Route registration can query this registry and notify Vaadin listeners.
         registerRoute(viewClass);
+
+        reset();
     }
 
     /**

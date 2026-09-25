@@ -45,5 +45,5 @@
 }
 
 .jmix-popover-renderer-button:hover {
-    color: oklch(from var(--_color) calc(l - 0.15) c h);
+    color: light-dark(oklch(from var(--_color) calc(l - 0.15) c h), oklch(from var(--_color) calc(l + 0.15) c h));
 }

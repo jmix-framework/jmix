@@ -18,6 +18,7 @@ package io.jmix.flowui;
 
 import com.vaadin.flow.component.notification.Notification;
 import io.jmix.flowui.app.filter.condition.AddConditionView;
+import io.jmix.flowui.app.inputdialog.InputDialog;
 import io.jmix.flowui.component.SupportsTrimming;
 import io.jmix.flowui.component.checkbox.JmixCheckbox;
 import io.jmix.flowui.component.factory.EntityFieldCreationSupport;
@@ -171,6 +172,18 @@ public class UiComponentProperties {
      */
     SideDialogPosition sideDialogDefaultPlacement;
 
+    /**
+     * Shortcut for the predefined OK or YES action of {@link InputDialog}. If not set or blank,
+     * {@link UiViewProperties#getSaveShortcut()} is used.
+     */
+    String inputDialogConfirmShortcut;
+
+    /**
+     * Shortcut for the predefined CANCEL action of {@link InputDialog}, or the NO action if there is no CANCEL one.
+     * If not set or blank, {@link UiViewProperties#getCloseShortcut()} is used.
+     */
+    String inputDialogCancelShortcut;
+
     public UiComponentProperties(
             String gridCreateShortcut,
             String gridAddShortcut,
@@ -203,7 +216,9 @@ public class UiComponentProperties {
             @DefaultValue("true") boolean checkboxRequiredStateInitializationEnabled,
             @DefaultValue("false") boolean gridRefreshAllOnItemReplace,
             @DefaultValue("RIGHT") SidePanelPosition sidePanelLayoutDefaultPlacement,
-            @DefaultValue("RIGHT") SideDialogPosition sideDialogDefaultPlacement) {
+            @DefaultValue("RIGHT") SideDialogPosition sideDialogDefaultPlacement,
+            @Nullable String inputDialogConfirmShortcut,
+            @Nullable String inputDialogCancelShortcut) {
         this.gridCreateShortcut = gridCreateShortcut;
         this.gridAddShortcut = gridAddShortcut;
         this.gridRemoveShortcut = gridRemoveShortcut;
@@ -246,6 +261,9 @@ public class UiComponentProperties {
 
         this.sidePanelLayoutDefaultPlacement = sidePanelLayoutDefaultPlacement;
         this.sideDialogDefaultPlacement = sideDialogDefaultPlacement;
+
+        this.inputDialogConfirmShortcut = inputDialogConfirmShortcut;
+        this.inputDialogCancelShortcut = inputDialogCancelShortcut;
     }
 
     public String getGridCreateShortcut() {
@@ -437,5 +455,21 @@ public class UiComponentProperties {
      */
     public SideDialogPosition getSideDialogDefaultPlacement() {
         return sideDialogDefaultPlacement;
+    }
+
+    /**
+     * @see #inputDialogConfirmShortcut
+     */
+    @Nullable
+    public String getInputDialogConfirmShortcut() {
+        return inputDialogConfirmShortcut;
+    }
+
+    /**
+     * @see #inputDialogCancelShortcut
+     */
+    @Nullable
+    public String getInputDialogCancelShortcut() {
+        return inputDialogCancelShortcut;
     }
 }

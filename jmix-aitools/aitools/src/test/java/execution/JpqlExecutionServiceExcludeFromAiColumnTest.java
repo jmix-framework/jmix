@@ -18,6 +18,7 @@ package execution;
 
 import io.jmix.aitools.AiToolsDataLoadProperties;
 import io.jmix.aitools.dataload.execution.GeneratedJpqlResult;
+import io.jmix.aitools.dataload.execution.JpqlAccessSupport;
 import io.jmix.aitools.dataload.execution.JpqlExecutionRequest;
 import io.jmix.aitools.dataload.execution.JpqlExecutionResult;
 import io.jmix.aitools.dataload.execution.JpqlExecutionService;
@@ -25,6 +26,7 @@ import io.jmix.aitools.dataload.execution.JpqlParameterConversionService;
 import io.jmix.aitools.dataload.execution.JpqlValidationAndRepairService;
 import io.jmix.aitools.dataload.execution.JpqlValidationAndRepairService.OperationResult;
 import io.jmix.aitools.dataload.validation.JpqlValidationResult;
+import io.jmix.core.AccessManager;
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
 import io.jmix.data.QueryTransformerFactory;
@@ -62,6 +64,10 @@ class JpqlExecutionServiceExcludeFromAiColumnTest {
     private static final String HIDDEN_ONLY_JPQL =
             "select c.piiPhone as cphone from aitls_Customer c";
 
+    @Autowired
+    AccessManager accessManager;
+    @Autowired
+    JpqlAccessSupport accessSupport;
     @Autowired
     QueryTransformerFactory queryTransformerFactory;
     @Autowired
@@ -113,8 +119,11 @@ class JpqlExecutionServiceExcludeFromAiColumnTest {
 
         TestJpqlExecutionService service = new TestJpqlExecutionService(stubbedRows);
         ReflectionTestUtils.setField(service, "validateAndRepair", validateAndRepair);
+        ReflectionTestUtils.setField(service, "accessSupport", accessSupport);
         ReflectionTestUtils.setField(service, "jpqlParameterConversionService", parameterConversionService);
-        // accessManager is left null: this isolates the @ExcludeFromAi guard from the security column filtering.
+        // No value-load constraint is registered in this context, so the real AccessManager denies no column:
+        // this isolates the @ExcludeFromAi guard from the security column filtering.
+        ReflectionTestUtils.setField(service, "accessManager", accessManager);
         ReflectionTestUtils.setField(service, "queryTransformerFactory", queryTransformerFactory);
         ReflectionTestUtils.setField(service, "metadata", metadata);
         ReflectionTestUtils.setField(service, "metadataTools", metadataTools);

@@ -18,6 +18,7 @@ package execution;
 
 import io.jmix.aitools.AiToolsDataLoadProperties;
 import io.jmix.aitools.dataload.execution.GeneratedJpqlResult;
+import io.jmix.aitools.dataload.execution.JpqlAccessSupport;
 import io.jmix.aitools.dataload.execution.JpqlExecutionRequest;
 import io.jmix.aitools.dataload.execution.JpqlExecutionResult;
 import io.jmix.aitools.dataload.execution.JpqlExecutionService;
@@ -27,6 +28,7 @@ import io.jmix.aitools.dataload.execution.JpqlValidationAndRepairService.Operati
 import io.jmix.aitools.dataload.validation.JpqlValidationResult;
 import io.jmix.core.AccessManager;
 import io.jmix.core.Metadata;
+import io.jmix.core.MetadataTools;
 import io.jmix.core.security.AccessDeniedException;
 import io.jmix.core.security.SystemAuthenticator;
 import io.jmix.data.QueryTransformerFactory;
@@ -64,9 +66,13 @@ class JpqlExecutionServiceColumnAccessTest {
     @Autowired
     AccessManager accessManager;
     @Autowired
+    JpqlAccessSupport accessSupport;
+    @Autowired
     QueryTransformerFactory queryTransformerFactory;
     @Autowired
     Metadata metadata;
+    @Autowired
+    MetadataTools metadataTools;
     @Autowired
     DenyingLoadValuesConstraint denyingConstraint;
     @Autowired
@@ -144,10 +150,12 @@ class JpqlExecutionServiceColumnAccessTest {
 
         TestJpqlExecutionService service = new TestJpqlExecutionService(stubbedRows);
         ReflectionTestUtils.setField(service, "validateAndRepair", validateAndRepair);
+        ReflectionTestUtils.setField(service, "accessSupport", accessSupport);
         ReflectionTestUtils.setField(service, "jpqlParameterConversionService", parameterConversionService);
         ReflectionTestUtils.setField(service, "accessManager", accessManager);
         ReflectionTestUtils.setField(service, "queryTransformerFactory", queryTransformerFactory);
         ReflectionTestUtils.setField(service, "metadata", metadata);
+        ReflectionTestUtils.setField(service, "metadataTools", metadataTools);
         ReflectionTestUtils.setField(service, "dataLoadProperties",
                 new AiToolsDataLoadProperties(true, true, true, 1, 20, 200, null, null, null, null));
         return service;

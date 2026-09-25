@@ -50,7 +50,7 @@ public class ElasticsearchIndexSettingsProvider {
 
     protected final ElasticsearchIndexSettingsConfigurationContext context;
 
-    protected final Map<Class<?>, IndexSettings> effectiveIndexSettings;
+    protected final Map<String, IndexSettings> effectiveIndexSettings;
 
     protected final IndexSettings commonIndexSettings;
     protected final IndexSettingsAnalysis commonAnalysisSettings;
@@ -73,8 +73,11 @@ public class ElasticsearchIndexSettingsProvider {
     }
 
     public IndexSettings getSettingsForIndex(IndexConfiguration indexConfiguration) {
+        // Cached by entity name: a dynamic entity gets a new Java class on every metadata generation,
+        // while its settings only depend on the configurers, which do not change at runtime.
+        String cacheKey = indexConfiguration.getEntityName();
         Class<?> entityClass = indexConfiguration.getEntityClass();
-        IndexSettings resultIndexSettings = this.effectiveIndexSettings.get(entityClass);
+        IndexSettings resultIndexSettings = this.effectiveIndexSettings.get(cacheKey);
         if (resultIndexSettings == null) {
             Map<Class<?>, IndexSettings.Builder> indexSettingsBuilders = context.getAllSpecificIndexSettingsBuilders();
             IndexSettings entityIndexSettings;
@@ -153,7 +156,7 @@ public class ElasticsearchIndexSettingsProvider {
             }
 
             resultIndexSettings = deserializeIndexSettings(resultIndexSettingsNode.toString());
-            this.effectiveIndexSettings.put(entityClass, resultIndexSettings);
+            this.effectiveIndexSettings.put(cacheKey, resultIndexSettings);
         }
         return resultIndexSettings;
     }

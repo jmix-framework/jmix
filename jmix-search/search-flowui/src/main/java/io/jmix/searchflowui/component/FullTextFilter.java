@@ -19,8 +19,11 @@ package io.jmix.searchflowui.component;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import io.jmix.core.Id;
 import io.jmix.core.IdSerialization;
+import io.jmix.core.MetadataTools;
+import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.querycondition.Condition;
 import io.jmix.core.querycondition.JpqlCondition;
+import io.jmix.core.querycondition.PropertyCondition;
 import io.jmix.flowui.component.filter.SingleFilterComponentBase;
 import io.jmix.flowui.model.CollectionLoader;
 import io.jmix.flowui.model.DataLoader;
@@ -46,6 +49,7 @@ public class FullTextFilter extends SingleFilterComponentBase<String> {
     protected String parameterName;
     protected String searchStrategy;
     protected SearchProperties searchProperties;
+    protected MetadataTools metadataTools;
     protected String correctWhere;
 
     @Override
@@ -54,6 +58,7 @@ public class FullTextFilter extends SingleFilterComponentBase<String> {
         idSerialization = applicationContext.getBean(IdSerialization.class);
         entitySearcher = applicationContext.getBean(EntitySearcher.class);
         searchProperties = applicationContext.getBean(SearchProperties.class);
+        metadataTools = applicationContext.getBean(MetadataTools.class);
     }
 
     @Override
@@ -72,10 +77,12 @@ public class FullTextFilter extends SingleFilterComponentBase<String> {
     public void setParameterName(String parameterName) {
         checkState(this.parameterName == null, "Parameter name has already been initialized");
         checkNotNullArgument(parameterName);
-        String where = getQueryCondition().getWhere();
-        if (StringUtils.isNotEmpty(where)) {
-            correctWhere = where.replace("?", ":" + parameterName);
-            getQueryCondition().setWhere(correctWhere);
+        if (queryCondition instanceof JpqlCondition jpqlCondition) {
+            String where = jpqlCondition.getWhere();
+            if (StringUtils.isNotEmpty(where)) {
+                correctWhere = where.replace("?", ":" + parameterName);
+                jpqlCondition.setWhere(correctWhere);
+            }
         }
         this.parameterName = parameterName;
     }
@@ -89,14 +96,26 @@ public class FullTextFilter extends SingleFilterComponentBase<String> {
         return fullTextCondition;
     }
 
-    @Override
-    public JpqlCondition getQueryCondition() {
-        return (JpqlCondition) queryCondition;
+    /**
+     * Creates the condition for an entity whose store cannot run the JPQL of {@link #createQueryCondition()}. Such a
+     * store supports an {@code IN} condition on the primary key.
+     *
+     * @param metaClass meta class of the entity the data loader selects
+     * @return condition restricting the primary key to the ids returned by the full text search
+     */
+    protected Condition createNonJpaQueryCondition(MetaClass metaClass) {
+        PropertyCondition condition = PropertyCondition.inList(
+                metadataTools.getPrimaryKeyName(metaClass), Collections.emptyList());
+        // Skippable while empty, so an unfilled filter does not restrict the loader.
+        condition.setSkipNullOrEmpty(true);
+        return condition;
     }
 
     @Override
     protected void updateQueryCondition(@Nullable String newValue) {
         if (StringUtils.isEmpty(newValue)) {
+            // An earlier search that found nothing left the condition always false.
+            enableCorrectWhereClause();
             setQueryConditionParameterValue(Collections.emptyList());
         }
     }
@@ -105,6 +124,11 @@ public class FullTextFilter extends SingleFilterComponentBase<String> {
     public void setDataLoader(DataLoader dataLoader) {
         if (!(dataLoader instanceof CollectionLoader)) {
             throw new RuntimeException(FullTextFilter.NAME + " component can only work with CollectionLoader");
+        }
+        // The condition is handed to the loader below, so its shape must suit the entity's store.
+        MetaClass metaClass = ((CollectionLoader<?>) dataLoader).getContainer().getEntityMetaClass();
+        if (!metadataTools.isJpaEntity(metaClass)) {
+            queryCondition = createNonJpaQueryCondition(metaClass);
         }
         super.setDataLoader(dataLoader);
         registerDataLoaderPreLoadListener((CollectionLoader<?>) dataLoader);
@@ -149,22 +173,38 @@ public class FullTextFilter extends SingleFilterComponentBase<String> {
 
     /**
      * When no data is returned by full-text search we must make the condition return false. We set invalid where
-     * clause for that purpose.
+     * clause for that purpose. A property condition instead stops being skippable with an empty list of ids.
      */
     private void enableAlwaysFalseWhereClause() {
-        getQueryCondition().setWhere("1 <> 1");
+        if (queryCondition instanceof JpqlCondition jpqlCondition) {
+            jpqlCondition.setWhere("1 <> 1");
+        } else {
+            ((PropertyCondition) queryCondition).setSkipNullOrEmpty(false);
+        }
     }
 
     private void enableCorrectWhereClause() {
-        getQueryCondition().setWhere(correctWhere);
+        if (queryCondition instanceof JpqlCondition jpqlCondition) {
+            jpqlCondition.setWhere(correctWhere);
+        } else {
+            ((PropertyCondition) queryCondition).setSkipNullOrEmpty(true);
+        }
     }
 
     private void setQueryConditionParameterValue(List<Object> value) {
-        getQueryCondition().setParameterValuesMap(Collections.singletonMap(parameterName, value));
+        if (queryCondition instanceof JpqlCondition jpqlCondition) {
+            jpqlCondition.setParameterValuesMap(Collections.singletonMap(parameterName, value));
+        } else {
+            ((PropertyCondition) queryCondition).setParameterValue(value);
+        }
     }
 
     private void clearConditionParameterValuesMap() {
-        getQueryCondition().setParameterValuesMap(Collections.emptyMap());
+        if (queryCondition instanceof JpqlCondition jpqlCondition) {
+            jpqlCondition.setParameterValuesMap(Collections.emptyMap());
+        } else {
+            ((PropertyCondition) queryCondition).setParameterValue(Collections.emptyList());
+        }
     }
 
     @Override

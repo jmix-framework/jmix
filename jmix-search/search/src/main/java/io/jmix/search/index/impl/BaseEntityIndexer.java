@@ -22,6 +22,7 @@ import com.fasterxml.jackson.databind.node.*;
 import io.jmix.core.*;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.core.querycondition.PropertyCondition;
 import io.jmix.dynattr.DynAttrQueryHints;
 import io.jmix.search.SearchProperties;
 import io.jmix.search.index.EntityIndexer;
@@ -237,6 +238,14 @@ public abstract class BaseEntityIndexer implements EntityIndexer {
                             .filter(Optional::isPresent)
                             .map(Optional::get)
                             .collect(Collectors.toList());
+                } else if (!metadataTools.isJpaEntity(metaClass)) {
+                    // A non-JPA store cannot run the JPQL below; its own query path supports an IN condition.
+                    String primaryKeyName = metadataTools.getPrimaryKeyName(metaClass);
+                    loaded = dataManager
+                            .load(metaClass.getJavaClass())
+                            .condition(PropertyCondition.inList(primaryKeyName, entityIds))
+                            .fetchPlan(fetchPlan)
+                            .list();
                 } else {
                     String primaryKeyName = metadataTools.getPrimaryKeyName(metaClass);
                     String discriminatorCondition = metaClass.getDescendants().isEmpty() ? "" : " and TYPE(e) = " + metaClass.getName();

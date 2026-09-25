@@ -16,6 +16,7 @@
 
 package io.jmix.search.index.impl;
 
+import io.jmix.core.JmixOrder;
 import io.jmix.search.SearchProperties;
 import io.jmix.search.index.IndexManager;
 import io.jmix.search.index.IndexConfiguration;
@@ -24,9 +25,10 @@ import io.jmix.search.index.queue.IndexingQueueManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.event.ApplicationStartedEvent;
+import org.springframework.context.event.EventListener;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
-
-import jakarta.annotation.PostConstruct;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +36,10 @@ import java.util.Map;
 
 /**
  * Synchronizes search indexes on application startup.
+ * <p>
+ * Runs at {@link JmixOrder#LOWEST_PRECEDENCE} so that add-ons contributing metadata have published it first: an index
+ * mapping is built from the metadata, and an incomplete one makes the default {@code create-or-recreate} strategy drop
+ * the index.
  */
 @Component("search_StartupIndexSynchronizer")
 public class StartupIndexSynchronizer {
@@ -49,8 +55,9 @@ public class StartupIndexSynchronizer {
     @Autowired
     protected IndexStateRegistry indexStateRegistry;
 
-    @PostConstruct
-    protected void postConstruct() {
+    @EventListener(ApplicationStartedEvent.class)
+    @Order(JmixOrder.LOWEST_PRECEDENCE)
+    public void onApplicationStarted() {
         try {
             if (!searchProperties.isEnabled()) {
                 log.info("Unable to start index synchronization: Search add-on is disabled");

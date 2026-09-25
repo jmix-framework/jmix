@@ -25,6 +25,7 @@ import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.MapPropertySource;
 import org.springframework.core.env.MutablePropertySources;
 import org.springframework.core.env.PropertySource;
+import org.jspecify.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -64,18 +65,75 @@ public class QuartzEnvironmentPostProcessor implements EnvironmentPostProcessor 
     private static final String QUARTZ_MS_SQL_DRIVER_DELEGATE_CLASS = "org.quartz.impl.jdbcjobstore.MSSQLDelegate";
     private static final String QUARTZ_ORACLE_DRIVER_DELEGATE_CLASS = "org.quartz.impl.jdbcjobstore.oracle.OracleDelegate";
 
+    private static final String SPRING_QUARTZ_JOB_STORE_TYPE_PROPERTY = "spring.quartz.job-store-type";
+    private static final String JDBC_JOB_STORE_TYPE = "jdbc";
+
+    /**
+     * With the JDBC job store the TRIGGER_ACCESS lock must be a database row lock ({@code StdRowLockSemaphore}):
+     * the default in-JVM semaphore is released after every job store operation while transactional job store
+     * writes stay uncommitted, so a saving transaction and the scheduler polling thread deadlock on databases
+     * where writers block readers (HSQLDB, SQL Server in lock-based read committed mode).
+     */
+    private static final String SPRING_QUARTZ_PROPERTY_JOB_STORE_USE_DB_LOCKS =
+            "spring.quartz.properties.org.quartz.jobStore.useDBLocks";
+
+    /**
+     * The Jmix job store honors 'useDBLocks' on HSQLDB, which Spring's {@code LocalDataSourceJobStore}
+     * unconditionally downgrades to the deadlock-prone in-JVM semaphore.
+     */
+    private static final String SPRING_QUARTZ_PROPERTY_JOB_STORE_CLASS =
+            "spring.quartz.properties.org.quartz.jobStore.class";
+    private static final String JMIX_JOB_STORE_CLASS = "io.jmix.quartz.impl.JmixLocalDataSourceJobStore";
+
     @Override
     public void postProcessEnvironment(ConfigurableEnvironment environment, SpringApplication application) {
-        //get value of 'main.datasource.url' application property
+        Map<String, Object> quartzProperties = new HashMap<>();
+
+        //if driverDelegateClass is not defined 'org.quartz.impl.jdbcjobstore.StdJDBCDelegate' will be used by default
+        String driverDelegateClass = resolveDriverDelegateClass(environment);
+        if (!Strings.isNullOrEmpty(driverDelegateClass)) {
+            log.debug("Property '{}' will have the value '{}'",
+                    SPRING_QUARTZ_PROPERTY_JOB_STORE_DRIVER_DELEGATE_CLASS, driverDelegateClass);
+            quartzProperties.put(SPRING_QUARTZ_PROPERTY_JOB_STORE_DRIVER_DELEGATE_CLASS, driverDelegateClass);
+        }
+
+        if (isJdbcJobStore(environment)) {
+            if (environment.getProperty(SPRING_QUARTZ_PROPERTY_JOB_STORE_USE_DB_LOCKS) == null) {
+                log.debug("Property '{}' will have the value 'true'", SPRING_QUARTZ_PROPERTY_JOB_STORE_USE_DB_LOCKS);
+                quartzProperties.put(SPRING_QUARTZ_PROPERTY_JOB_STORE_USE_DB_LOCKS, "true");
+            }
+            if (environment.getProperty(SPRING_QUARTZ_PROPERTY_JOB_STORE_CLASS) == null) {
+                log.debug("Property '{}' will have the value '{}'",
+                        SPRING_QUARTZ_PROPERTY_JOB_STORE_CLASS, JMIX_JOB_STORE_CLASS);
+                quartzProperties.put(SPRING_QUARTZ_PROPERTY_JOB_STORE_CLASS, JMIX_JOB_STORE_CLASS);
+            }
+        }
+
+        if (quartzProperties.isEmpty()) {
+            return;
+        }
         MutablePropertySources propertySources = environment.getPropertySources();
-        Object datasourceUrlObj = propertySources.stream()
+        if (propertySources.contains(QUARTZ_PROPERTY_SOURCE)) {
+            PropertySource<?> propertySource = propertySources.get(QUARTZ_PROPERTY_SOURCE);
+            if (propertySource instanceof MapPropertySource) {
+                ((MapPropertySource) propertySource).getSource().putAll(quartzProperties);
+            }
+        } else {
+            propertySources.addLast(new MapPropertySource(QUARTZ_PROPERTY_SOURCE, quartzProperties));
+        }
+    }
+
+    @Nullable
+    private String resolveDriverDelegateClass(ConfigurableEnvironment environment) {
+        //get value of 'main.datasource.url' application property
+        Object datasourceUrlObj = environment.getPropertySources().stream()
                 .filter(propertySource -> propertySource.containsProperty(JMIX_MAIN_DATASOURCE_URL_PROPERTY))
                 .map(propertySource -> propertySource.getProperty(JMIX_MAIN_DATASOURCE_URL_PROPERTY))
                 .findFirst().orElse(null);
 
         if (datasourceUrlObj == null) {
             log.warn("Property '{}' not found in application properties", JMIX_MAIN_DATASOURCE_URL_PROPERTY);
-            return;
+            return null;
         }
 
         //define value for driverDelegateClass based on value of main datasource url
@@ -88,22 +146,18 @@ public class QuartzEnvironmentPostProcessor implements EnvironmentPostProcessor 
         } else if (datasourceUrl.startsWith(DATASOURCE_URL_ORACLE_STARTS_WITH)) {
             driverDelegateClass = QUARTZ_ORACLE_DRIVER_DELEGATE_CLASS;
         }
+        return driverDelegateClass;
+    }
 
-        //if driverDelegateClass is not defined 'org.quartz.impl.jdbcjobstore.StdJDBCDelegate' will be used by default
-        if (!Strings.isNullOrEmpty(driverDelegateClass)) {
-            log.debug("Property '{}' will have the value '{}'",
-                    SPRING_QUARTZ_PROPERTY_JOB_STORE_DRIVER_DELEGATE_CLASS, driverDelegateClass);
-            Map<String, Object> driverDelegatePropMap = new HashMap<>();
-            driverDelegatePropMap.put(SPRING_QUARTZ_PROPERTY_JOB_STORE_DRIVER_DELEGATE_CLASS, driverDelegateClass);
-            if (propertySources.contains(QUARTZ_PROPERTY_SOURCE)) {
-                PropertySource<?> propertySource = propertySources.get(QUARTZ_PROPERTY_SOURCE);
-                if (propertySource instanceof MapPropertySource) {
-                    ((MapPropertySource) propertySource).getSource().putAll(driverDelegatePropMap);
-                }
-            } else {
-                propertySources.addLast(new MapPropertySource(QUARTZ_PROPERTY_SOURCE, driverDelegatePropMap));
-            }
-        }
+    /**
+     * Database locking and the Jmix job store are set up for the JDBC job store only, unless the user
+     * configured them explicitly. The module default job store type is JDBC ('module.properties' is not
+     * loaded at this point, so an absent property means the default); for the RAM job store the properties
+     * are not applicable and would break the scheduler initialization.
+     */
+    private boolean isJdbcJobStore(ConfigurableEnvironment environment) {
+        String jobStoreType = environment.getProperty(SPRING_QUARTZ_JOB_STORE_TYPE_PROPERTY, JDBC_JOB_STORE_TYPE);
+        return JDBC_JOB_STORE_TYPE.equalsIgnoreCase(jobStoreType);
     }
 
 }

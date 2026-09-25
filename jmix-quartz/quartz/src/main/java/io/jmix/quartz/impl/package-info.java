@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Haulmont.
+ * Copyright 2026 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,18 +14,7 @@
  * limitations under the License.
  */
 
-group 'io.jmix.quartz'
-base {
-    archivesName = 'jmix-quartz-starter'
-}
+@Internal
+package io.jmix.quartz.impl;
 
-dependencies {
-    api project(':quartz')
-
-    implementation 'org.springframework.boot:spring-boot-autoconfigure'
-
-    testImplementation 'org.springframework:spring-test'
-    testImplementation 'org.junit.jupiter:junit-jupiter-api'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
-    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-}
+import io.jmix.core.annotation.Internal;

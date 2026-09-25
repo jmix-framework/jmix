@@ -61,7 +61,10 @@ public class DatabaseFilterConfigurationPersistence implements FilterConfigurati
 
     @Override
     public void remove(FilterConfigurationModel configurationModel) {
-        dataManager.remove(modelToEntity(configurationModel, null));
+        dataManager.load(FilterConfiguration.class)
+                .id(configurationModel.getId())
+                .optional()
+                .ifPresent(dataManager::remove);
     }
 
     @Override

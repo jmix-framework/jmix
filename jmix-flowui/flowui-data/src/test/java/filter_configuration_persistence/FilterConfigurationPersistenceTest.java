@@ -23,6 +23,9 @@ import io.jmix.flowui.component.genericfilter.GenericFilter;
 import io.jmix.core.DataManager;
 import io.jmix.core.EntityStates;
 import io.jmix.core.querycondition.*;
+import io.jmix.core.security.SystemAuthenticator;
+import io.jmix.core.security.event.UserRemovedEvent;
+import io.jmix.data.PersistenceHints;
 import io.jmix.flowui.component.genericfilter.Configuration;
 import io.jmix.flowui.component.genericfilter.FilterConfigurationPersistence;
 import io.jmix.flowui.component.genericfilter.model.FilterConfigurationModel;
@@ -35,14 +38,17 @@ import io.jmix.flowui.testassist.FlowuiTestAssistConfiguration;
 import io.jmix.flowui.testassist.UiTest;
 import io.jmix.flowui.testassist.UiTestUtils;
 import io.jmix.flowui.view.navigation.ViewNavigationSupport;
+import io.jmix.flowuidata.entity.FilterConfiguration;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.jdbc.core.JdbcTemplate;
 import test_support.FlowuiDataTestConfiguration;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @UiTest(viewBasePackages = "filter_configuration_persistence.view", authenticator = FilterConfigurationPersistenceTestAuthenticator.class)
 @SpringBootTest(classes = {FlowuiDataTestConfiguration.class, FlowuiTestAssistConfiguration.class})
@@ -61,6 +67,10 @@ public class FilterConfigurationPersistenceTest {
     JdbcTemplate jdbcTemplate;
     @Autowired
     EntityStates entityStates;
+    @Autowired
+    SystemAuthenticator systemAuthenticator;
+    @Autowired
+    ApplicationEventPublisher eventPublisher;
 
     @AfterEach
     public void afterEach() {
@@ -209,6 +219,165 @@ public class FilterConfigurationPersistenceTest {
         Configuration lazyConfiguration = lazyTabFilter.getConfiguration("lazyTabConfiguration");
         Assertions.assertNotNull(lazyConfiguration);
         assertNameCondition(lazyConfiguration);
+    }
+
+    @Test
+    @DisplayName("Save new FilterConfiguration with creation audit")
+    public void saveNewFilterConfigurationWithCreationAudit() {
+        String componentId = "[FilterConfigurationPersistenceTestView]genericFilter";
+        String configurationId = "projectConfiguration";
+        String username = FilterConfigurationPersistenceTestAuthenticator.simpleUser;
+
+        FilterConfigurationModel configurationModel = createNewConfiguration(configurationId, componentId, username);
+        configurationPersistence.save(configurationModel);
+
+        FilterConfiguration configuration = loadConfigurationEntity(configurationModel.getId());
+        Assertions.assertEquals(username, configuration.getCreatedBy());
+        Assertions.assertNotNull(configuration.getCreatedDate());
+    }
+
+    @Test
+    @DisplayName("Update FilterConfiguration available for all users by another user")
+    public void updateGlobalFilterConfigurationByAnotherUser() {
+        String componentId = "[FilterConfigurationPersistenceTestView]genericFilter";
+        String configurationId = "globalConfiguration";
+        String anotherUser = FilterConfigurationPersistenceTestAuthenticator.anotherUser;
+
+        /*
+         * Save new configuration available for all users.
+         */
+        FilterConfigurationModel configurationModel = createNewConfiguration(configurationId, componentId, null);
+        configurationPersistence.save(configurationModel);
+
+        FilterConfiguration createdConfiguration = loadConfigurationEntity(configurationModel.getId());
+
+        /*
+         * Update the configuration on behalf of another user.
+         */
+        systemAuthenticator.runWithUser(anotherUser, () -> {
+            FilterConfigurationModel loadedModel =
+                    configurationPersistence.load(configurationId, componentId, anotherUser);
+            Assertions.assertNotNull(loadedModel);
+
+            loadedModel.setName("Updated name");
+            configurationPersistence.save(loadedModel);
+        });
+
+        /*
+         * Creation audit is kept, modification audit refers to another user.
+         */
+        FilterConfiguration updatedConfiguration = loadConfigurationEntity(configurationModel.getId());
+        Assertions.assertEquals(FilterConfigurationPersistenceTestAuthenticator.simpleUser,
+                updatedConfiguration.getCreatedBy());
+        Assertions.assertEquals(createdConfiguration.getCreatedDate(), updatedConfiguration.getCreatedDate());
+        Assertions.assertEquals(anotherUser, updatedConfiguration.getLastModifiedBy());
+        Assertions.assertNotNull(updatedConfiguration.getLastModifiedDate());
+    }
+
+    @Test
+    @DisplayName("Remove FilterConfiguration softly")
+    public void removeFilterConfigurationSoftly() {
+        String componentId = "[FilterConfigurationPersistenceTestView]genericFilter";
+        String configurationId = "projectConfiguration";
+        String username = FilterConfigurationPersistenceTestAuthenticator.simpleUser;
+
+        FilterConfigurationModel configurationModel = createNewConfiguration(configurationId, componentId, username);
+        configurationPersistence.save(configurationModel);
+
+        removeConfiguration(configurationId, componentId, username);
+
+        /*
+         * The removed configuration is not loaded, but it is kept in the database with creation and deletion audit.
+         */
+        Assertions.assertTrue(configurationPersistence.load(componentId, username).isEmpty());
+
+        FilterConfiguration removedConfiguration = loadConfigurationEntity(configurationModel.getId());
+        Assertions.assertEquals(username, removedConfiguration.getDeletedBy());
+        Assertions.assertNotNull(removedConfiguration.getDeletedDate());
+        Assertions.assertEquals(username, removedConfiguration.getCreatedBy());
+        Assertions.assertNotNull(removedConfiguration.getCreatedDate());
+    }
+
+    @Test
+    @DisplayName("Remove already removed FilterConfiguration")
+    public void removeAlreadyRemovedFilterConfiguration() {
+        String componentId = "[FilterConfigurationPersistenceTestView]genericFilter";
+        String configurationId = "projectConfiguration";
+        String username = FilterConfigurationPersistenceTestAuthenticator.simpleUser;
+
+        configurationPersistence.save(createNewConfiguration(configurationId, componentId, username));
+
+        FilterConfigurationModel configurationModel =
+                configurationPersistence.load(configurationId, componentId, username);
+        Assertions.assertNotNull(configurationModel);
+        configurationPersistence.remove(configurationModel);
+
+        /*
+         * The model is stale now, so removing it again should do nothing.
+         */
+        Assertions.assertDoesNotThrow(() -> configurationPersistence.remove(configurationModel));
+    }
+
+    @Test
+    @DisplayName("Remove FilterConfiguration softly on user removal")
+    public void removeFilterConfigurationSoftlyOnUserRemoval() {
+        String componentId = "[FilterConfigurationPersistenceTestView]genericFilter";
+        String username = FilterConfigurationPersistenceTestAuthenticator.simpleUser;
+        String anotherUser = FilterConfigurationPersistenceTestAuthenticator.anotherUser;
+
+        configurationPersistence.save(createNewConfiguration("ownConfiguration", componentId, username));
+
+        FilterConfigurationModel anotherUserConfiguration =
+                createNewConfiguration("anotherUserConfiguration", componentId, anotherUser);
+        configurationPersistence.save(anotherUserConfiguration);
+
+        eventPublisher.publishEvent(new UserRemovedEvent(anotherUser));
+
+        /*
+         * Only the configuration of the removed user is removed, and it is kept in the database with deletion audit.
+         */
+        Assertions.assertTrue(configurationPersistence.load(componentId, anotherUser).isEmpty());
+        Assertions.assertEquals(1, configurationPersistence.load(componentId, username).size());
+
+        FilterConfiguration removedConfiguration = loadConfigurationEntity(anotherUserConfiguration.getId());
+        Assertions.assertEquals(username, removedConfiguration.getDeletedBy());
+        Assertions.assertNotNull(removedConfiguration.getDeletedDate());
+    }
+
+    @Test
+    @DisplayName("Save new FilterConfiguration with configuration id of removed one")
+    public void saveNewFilterConfigurationWithConfigurationIdOfRemovedOne() {
+        String componentId = "[FilterConfigurationPersistenceTestView]genericFilter";
+        String configurationId = "projectConfiguration";
+        String username = FilterConfigurationPersistenceTestAuthenticator.simpleUser;
+
+        configurationPersistence.save(createNewConfiguration(configurationId, componentId, username));
+        removeConfiguration(configurationId, componentId, username);
+
+        /*
+         * Save new configuration with the same configuration id. Only the new configuration should be loaded.
+         */
+        FilterConfigurationModel newConfiguration = createNewConfiguration(configurationId, componentId, username);
+        configurationPersistence.save(newConfiguration);
+
+        List<FilterConfigurationModel> configurations = configurationPersistence.load(componentId, username);
+        Assertions.assertEquals(1, configurations.size());
+        Assertions.assertEquals(newConfiguration.getId(), configurations.get(0).getId());
+    }
+
+    private void removeConfiguration(String configurationId, String componentId, String username) {
+        FilterConfigurationModel configurationModel =
+                configurationPersistence.load(configurationId, componentId, username);
+        Assertions.assertNotNull(configurationModel);
+
+        configurationPersistence.remove(configurationModel);
+    }
+
+    private FilterConfiguration loadConfigurationEntity(UUID id) {
+        return dataManager.load(FilterConfiguration.class)
+                .id(id)
+                .hint(PersistenceHints.SOFT_DELETION, false)
+                .one();
     }
 
     private void assertNameCondition(Configuration configuration) {

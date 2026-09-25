@@ -29,16 +29,19 @@ import java.util.Collections;
 public class FilterConfigurationPersistenceTestAuthenticator implements UiTestAuthenticator {
 
     public static final String simpleUser = "simpleUser";
+    public static final String anotherUser = "anotherUser";
 
     @Override
     public void setupAuthentication(ApplicationContext context) {
         addUser(context, simpleUser);
+        addUser(context, anotherUser);
         context.getBean(SystemAuthenticator.class).begin(simpleUser);
     }
 
     @Override
     public void removeAuthentication(ApplicationContext context) {
         context.getBean(SystemAuthenticator.class).end();
+        removeUser(context, anotherUser);
         removeUser(context, simpleUser);
     }
 

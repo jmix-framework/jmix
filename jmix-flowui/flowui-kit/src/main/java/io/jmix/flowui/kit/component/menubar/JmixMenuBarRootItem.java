@@ -18,7 +18,7 @@ package io.jmix.flowui.kit.component.menubar;
 
 import com.vaadin.flow.function.SerializableRunnable;
 
-// CAUTION: copied from com.vaadin.flow.component.menubar.MenuBarRootItem [last update Vaadin 25.2.1]
+// CAUTION: copied from com.vaadin.flow.component.menubar.MenuBarRootItem [last update Vaadin 25.3.0]
 public class JmixMenuBarRootItem extends JmixMenuBarItem {
 
     JmixMenuBarRootItem(JmixMenuBar menuBar, SerializableRunnable contentReset) {

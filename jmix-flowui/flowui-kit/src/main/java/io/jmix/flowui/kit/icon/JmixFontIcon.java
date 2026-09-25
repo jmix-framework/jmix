@@ -33,7 +33,7 @@ public enum JmixFontIcon implements IconFactory<FontIcon> {
 
     /*
      * Vaadin icons
-     * CAUTION: copied from com.vaadin.flow.component.icon.VaadinIcon [last update Vaadin 25.2.1]
+     * CAUTION: copied from com.vaadin.flow.component.icon.VaadinIcon [last update Vaadin 25.3.0]
      */
     ABACUS,
     ABSOLUTE_POSITION,
@@ -674,7 +674,7 @@ public enum JmixFontIcon implements IconFactory<FontIcon> {
 
     /*
      * Lumo icons (missing in Vaadin icons)
-     * CAUTION: copied from com.vaadin.flow.theme.lumo.LumoIcon [last update Vaadin 25.2.1]
+     * CAUTION: copied from com.vaadin.flow.theme.lumo.LumoIcon [last update Vaadin 25.3.0]
      */
     PHOTO("jmix-font-icon-lumo"),
     REDO("jmix-font-icon-lumo"),

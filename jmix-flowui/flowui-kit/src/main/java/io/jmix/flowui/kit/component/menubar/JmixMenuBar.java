@@ -31,7 +31,7 @@ import io.jmix.flowui.kit.component.contextmenu.JmixMenuManager;
 import java.util.List;
 import java.util.stream.Stream;
 
-// CAUTION: copied from com.vaadin.flow.component.menubar.MenuBar [last update Vaadin 25.2.1]
+// CAUTION: copied from com.vaadin.flow.component.menubar.MenuBar [last update Vaadin 25.3.0]
 public class JmixMenuBar extends MenuBar
         implements HasMenuItemsEnhanced, Focusable<JmixMenuBar>, HasTooltip {
 
@@ -154,10 +154,10 @@ public class JmixMenuBar extends MenuBar
             return;
         }
         runBeforeClientResponse(ui -> {
-            // When calling `generateItems` without providing a node id, it will
-            // use the previously generated items tree, only updating the
-            // disabled and hidden properties of the root items = the menu bar
-            // buttons.
+            // When calling `generateItems` without providing a node id, it
+            // will use the previously generated items tree, re-filtering
+            // hidden items and re-rendering the root items = the menu bar
+            // buttons, which snapshot the item properties on render.
             getElement().executeJs("this.$connector.generateItems()");
             updateScheduled = false;
         });

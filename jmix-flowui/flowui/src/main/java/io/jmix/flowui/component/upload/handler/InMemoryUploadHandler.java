@@ -50,7 +50,7 @@ public class InMemoryUploadHandler
 
     @Override
     public void handleUploadRequest(UploadEvent event) throws IOException {
-        // CAUTION: copied from com.vaadin.flow.server.streams.InMemoryUploadHandler [last update Vaadin 25.2.1]
+        // CAUTION: copied from com.vaadin.flow.server.streams.InMemoryUploadHandler [last update Vaadin 25.3.0]
         byte[] data;
         try {
             try (InputStream inputStream = event.getInputStream();
@@ -100,7 +100,7 @@ public class InMemoryUploadHandler
 
     @Override
     protected TransferContext getTransferContext(UploadEvent transferEvent) {
-        // CAUTION: copied from com.vaadin.flow.server.streams.InMemoryUploadHandler [last update Vaadin 25.2.1]
+        // CAUTION: copied from com.vaadin.flow.server.streams.InMemoryUploadHandler [last update Vaadin 25.3.0]
         return new TransferContext(transferEvent.getRequest(),
                 transferEvent.getResponse(), transferEvent.getSession(),
                 transferEvent.getFileName(), transferEvent.getOwningElement(),

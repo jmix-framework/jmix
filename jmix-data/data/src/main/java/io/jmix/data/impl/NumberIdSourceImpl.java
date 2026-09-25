@@ -16,6 +16,7 @@
 
 package io.jmix.data.impl;
 
+import io.jmix.core.metamodel.model.MetaProperty;
 import org.springframework.stereotype.Component;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,14 +26,31 @@ public class NumberIdSourceImpl implements NumberIdSource {
     @Autowired
     protected NumberIdCache cache;
 
+    @Deprecated(since = "3.2", forRemoval = true)
+    @SuppressWarnings("removal")
     @Override
     public Long createLongId(String entityName) {
         return cache.createLongId(entityName);
     }
 
+    @Deprecated(since = "3.2", forRemoval = true)
+    @SuppressWarnings("removal")
     @Override
     public Integer createIntegerId(String entityName) {
-        long nextLong = createLongId(entityName);
+        return toIntegerId(createLongId(entityName), entityName);
+    }
+
+    @Override
+    public Long createLongId(String entityName, MetaProperty property) {
+        return cache.createLongId(entityName, property);
+    }
+
+    @Override
+    public Integer createIntegerId(String entityName, MetaProperty property) {
+        return toIntegerId(createLongId(entityName, property), entityName);
+    }
+
+    protected Integer toIntegerId(long nextLong, String entityName) {
         int nextInt = (int) nextLong;
         if (nextInt != nextLong)
             throw new IllegalStateException("Error creating a new Integer ID for entity " + entityName

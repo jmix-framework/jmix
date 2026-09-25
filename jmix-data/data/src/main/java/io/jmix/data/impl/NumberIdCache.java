@@ -113,7 +113,10 @@ public class NumberIdCache {
      *
      * @param entityName entity name
      * @return next id
+     * @deprecated takes the sequence parameters from the first attribute annotated with {@link JmixGeneratedValue},
+     * use {@link #createLongId(String, MetaProperty)} instead
      */
+    @Deprecated(since = "3.2", forRemoval = true)
     public Long createLongId(String entityName) {
         MetaClass metaClass = metadata.findClass(entityName);
         SequenceParams sequenceParams;
@@ -122,7 +125,21 @@ public class NumberIdCache {
         } else {
             sequenceParams = new SequenceParams();
         }
+        return createLongIdInternal(entityName, sequenceParams);
+    }
 
+    /**
+     * Generates next value for an attribute annotated with {@link JmixGeneratedValue}.
+     *
+     * @param entityName entity name
+     * @param property   attribute whose annotation defines the sequence parameters
+     * @return next value
+     */
+    public Long createLongId(String entityName, MetaProperty property) {
+        return createLongIdInternal(entityName, getSequenceParams(property));
+    }
+
+    protected Long createLongIdInternal(String entityName, SequenceParams sequenceParams) {
         Generator gen = cache.computeIfAbsent(
                 getCacheKey(entityName, sequenceParams.name),
                 s -> new Generator(entityName, sequenceParams.name, sequenceParams.cached)
@@ -130,20 +147,28 @@ public class NumberIdCache {
         return gen.getNext();
     }
 
+    /**
+     * @deprecated use {@link #getSequenceParams(MetaProperty)} instead
+     */
+    @Deprecated(since = "3.2", forRemoval = true)
     protected SequenceParams getSequenceParams(MetaClass metaClass) {
         Optional<MetaProperty> generatedIdPropertyOpt = metaClass.getProperties().stream()
                 .filter(property -> property.getAnnotatedElement().isAnnotationPresent(JmixGeneratedValue.class))
                 .findFirst();
         if (generatedIdPropertyOpt.isPresent()) {
-            Map<String, Object> attributes = metadataTools.getMetaAnnotationAttributes(generatedIdPropertyOpt.get().getAnnotations(), JmixGeneratedValue.class);
-            String sequenceName = Strings.emptyToNull((String) attributes.get("sequenceName"));
-            return new SequenceParams(
-                    sequenceName,
-                    sequenceName == null || Boolean.TRUE.equals(attributes.get("sequenceCache"))
-            );
+            return getSequenceParams(generatedIdPropertyOpt.get());
         } else {
             return new SequenceParams();
         }
+    }
+
+    protected SequenceParams getSequenceParams(MetaProperty property) {
+        Map<String, Object> attributes = metadataTools.getMetaAnnotationAttributes(property.getAnnotations(), JmixGeneratedValue.class);
+        String sequenceName = Strings.emptyToNull((String) attributes.get("sequenceName"));
+        return new SequenceParams(
+                sequenceName,
+                sequenceName == null || Boolean.TRUE.equals(attributes.get("sequenceCache"))
+        );
     }
 
     /**

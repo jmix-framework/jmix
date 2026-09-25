@@ -19,6 +19,8 @@ package number_id_generation
 import test_support.entity.number_id_generation.NumberIdJoinedChild
 import test_support.entity.number_id_generation.NumberIdJoinedRoot
 import test_support.entity.number_id_generation.NumberIdSeqNameFirst
+import test_support.entity.number_id_generation.NumberIdSeqNameIdAndProperty
+import test_support.entity.number_id_generation.NumberIdSeqNameProperties
 import test_support.entity.number_id_generation.NumberIdSeqNameSecond
 import test_support.entity.number_id_generation.NumberIdSingleTableChild
 import test_support.entity.number_id_generation.NumberIdSingleTableGrandChild
@@ -146,6 +148,52 @@ class NumberIdGenerationTest extends DataSpec {
         sequenceExistsByName('seq_number_id_name')
         getCurrentSequenceValue('seq_number_id_name') == second.id
         first.id + 1 == second.id
+    }
+
+    def "sequence name annotations of several attributes"() {
+
+        when:
+
+        def first = metadata.create(NumberIdSeqNameProperties)
+
+        then: "all generated number attributes are assigned"
+
+        first.longNumber != null
+        first.integerNumber != null
+
+        and: "each attribute uses the sequence from its own annotation"
+
+        !sequenceExistsByEntityName(metadata.getClass(NumberIdSeqNameProperties).getName())
+        sequenceExistsByName('seq_number_id_props_long')
+        sequenceExistsByName('seq_number_id_props_integer')
+        getCurrentSequenceValue('seq_number_id_props_long') == first.longNumber
+        getCurrentSequenceValue('seq_number_id_props_integer') == first.integerNumber
+
+        when:
+
+        def second = metadata.create(NumberIdSeqNameProperties)
+
+        then:
+
+        second.longNumber == first.longNumber + 1
+        second.integerNumber == first.integerNumber + 1
+    }
+
+    def "sequence name annotations of id and attribute"() {
+
+        when:
+
+        def entity = metadata.create(NumberIdSeqNameIdAndProperty)
+
+        then:
+
+        entity.id != null
+        entity.number != null
+        !sequenceExistsByEntityName(metadata.getClass(NumberIdSeqNameIdAndProperty).getName())
+        sequenceExistsByName('seq_number_id_id_and_prop_id')
+        sequenceExistsByName('seq_number_id_id_and_prop_number')
+        getCurrentSequenceValue('seq_number_id_id_and_prop_id') == entity.id
+        getCurrentSequenceValue('seq_number_id_id_and_prop_number') == entity.number
     }
 
     private boolean sequenceExistsByEntityName(String entityName) {

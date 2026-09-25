@@ -16,12 +16,48 @@
 
 package io.jmix.data.impl;
 
+import io.jmix.core.entity.annotation.JmixGeneratedValue;
+import io.jmix.core.metamodel.model.MetaProperty;
 import org.jspecify.annotations.NullMarked;
 
 @NullMarked
 public interface NumberIdSource {
 
+    /**
+     * @deprecated takes the sequence parameters from the first attribute annotated with {@link JmixGeneratedValue},
+     * use {@link #createLongId(String, MetaProperty)} instead
+     */
+    @Deprecated(since = "3.2", forRemoval = true)
     Long createLongId(String entityName);
 
+    /**
+     * @deprecated takes the sequence parameters from the first attribute annotated with {@link JmixGeneratedValue},
+     * use {@link #createIntegerId(String, MetaProperty)} instead
+     */
+    @Deprecated(since = "3.2", forRemoval = true)
     Integer createIntegerId(String entityName);
+
+    /**
+     * Generates next value for an attribute annotated with {@link JmixGeneratedValue}, using the sequence
+     * parameters of the annotation of this attribute.
+     *
+     * @param entityName entity name that defines the default sequence name and the data store
+     * @param property   attribute annotated with {@link JmixGeneratedValue}
+     * @return next value
+     */
+    default Long createLongId(String entityName, MetaProperty property) {
+        return createLongId(entityName);
+    }
+
+    /**
+     * Generates next value for an attribute annotated with {@link JmixGeneratedValue}, using the sequence
+     * parameters of the annotation of this attribute.
+     *
+     * @param entityName entity name that defines the default sequence name and the data store
+     * @param property   attribute annotated with {@link JmixGeneratedValue}
+     * @return next value
+     */
+    default Integer createIntegerId(String entityName, MetaProperty property) {
+        return createIntegerId(entityName);
+    }
 }

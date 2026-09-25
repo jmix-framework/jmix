@@ -52,14 +52,13 @@ public class GeneratedNumberIdEntityInitializer implements EntityInitializer, Or
 
         metaClass.getProperties().stream()
                 .filter(property -> property.getAnnotations().get(JmixGeneratedValue.class.getName()) != null && isNumberType(property))
-                .findFirst()
-                .ifPresent(property -> {
+                .forEach(property -> {
                     if (EntityValues.getValue(entity, property.getName()) == null) {
                         String entityName = getEntityNameForIdGeneration(metaClass);
                         if (property.getRange().asDatatype().getJavaClass().equals(Long.class)) {
-                            EntityValues.setValue(entity, property.getName(), numberIdSource.createLongId(entityName));
+                            EntityValues.setValue(entity, property.getName(), numberIdSource.createLongId(entityName, property));
                         } else {
-                            EntityValues.setValue(entity, property.getName(), numberIdSource.createIntegerId(entityName));
+                            EntityValues.setValue(entity, property.getName(), numberIdSource.createIntegerId(entityName, property));
                         }
                     }
                 });

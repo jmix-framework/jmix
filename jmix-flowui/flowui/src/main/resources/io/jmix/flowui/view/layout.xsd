@@ -3159,7 +3159,7 @@
         <xs:attribute name="focusDelay" type="xs:integer"/>
         <xs:attribute name="hoverDelay" type="xs:integer"/>
         <xs:attribute name="hideDelay" type="xs:integer"/>
-        <xs:attribute name="role" type="xs:string"/>
+        <xs:attribute name="ariaRole" type="xs:string"/>
         <xs:attribute name="width" type="xs:string"/>
         <xs:attribute name="height" type="xs:string"/>
         <xs:attribute name="visible" type="xs:boolean"/>
@@ -4192,7 +4192,7 @@
                 </xs:sequence>
 
                 <xs:attribute name="number" type="xs:int"/>
-                <xs:attribute name="role" type="xs:string"/>
+                <xs:attribute name="ariaRole" type="xs:string"/>
                 <xs:attribute name="themeNames" type="badgeComponentThemeNames"/>
 
                 <xs:attributeGroup ref="hasText"/>

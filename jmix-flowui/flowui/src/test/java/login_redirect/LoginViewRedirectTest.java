@@ -17,6 +17,7 @@
 package login_redirect;
 
 import com.vaadin.flow.component.UI;
+import com.vaadin.flow.server.UIInitEvent;
 import com.vaadin.flow.server.VaadinService;
 import io.jmix.core.security.SecurityContextHelper;
 import io.jmix.flowui.testassist.FlowuiTestAssistConfiguration;
@@ -52,7 +53,8 @@ public class LoginViewRedirectTest {
 
     @BeforeEach
     void setUp() {
-        VaadinService.getCurrent().fireUIInitListeners(UI.getCurrent());
+        VaadinService service = VaadinService.getCurrent();
+        service.getEventBus().fireEvent(new UIInitEvent(UI.getCurrent(), service));
     }
 
     @Test

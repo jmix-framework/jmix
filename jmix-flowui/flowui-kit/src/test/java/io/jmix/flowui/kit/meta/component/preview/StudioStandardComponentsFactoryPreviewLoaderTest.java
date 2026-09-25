@@ -390,7 +390,7 @@ class StudioStandardComponentsFactoryPreviewLoaderTest {
         element.addAttribute("openOnClick", "false");
         element.addAttribute("modal", "true");
         element.addAttribute("hoverDelay", "200");
-        element.addAttribute("role", "tooltip");
+        element.addAttribute("ariaRole", "tooltip");
         element.addAttribute("width", "20em");
         element.addAttribute("classNames", "my-popover");
 
@@ -404,7 +404,7 @@ class StudioStandardComponentsFactoryPreviewLoaderTest {
         assertFalse(popover.isOpenOnClick());
         assertTrue(popover.isModal());
         assertEquals(200, popover.getHoverDelay());
-        assertEquals("tooltip", popover.getRole());
+        assertEquals("tooltip", popover.getAriaRole().orElse(null));
         assertEquals("20em", popover.getElement().getProperty("width"));
         assertTrue(popover.getClassNames().contains("my-popover"));
     }

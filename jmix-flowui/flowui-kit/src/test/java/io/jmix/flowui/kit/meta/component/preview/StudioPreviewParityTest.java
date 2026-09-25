@@ -65,13 +65,13 @@ class StudioPreviewParityTest {
 
     @Test
     void badge_hasFrameworkLoaderAndRuntimeAttributes() {
-        Element view = view("<badge id='badge' text='msg://custom' number='7' role='status' "
+        Element view = view("<badge id='badge' text='msg://custom' number='7' ariaRole='status' "
                 + "icon='CHECK' themeNames='success pill' whiteSpace='PRE'/>");
         Badge badge = assertInstanceOf(Badge.class, load(view.element("badge"), view));
         assertEquals("badge", badge.getId().orElseThrow());
         assertEquals("Custom", badge.getText());
         assertEquals(7, badge.getNumber());
-        assertEquals("status", badge.getRole());
+        assertEquals("status", badge.getAriaRole().orElseThrow());
         assertTrue(badge.getThemeNames().containsAll(List.of("success", "pill")));
         assertEquals("pre", badge.getStyle().get("white-space"));
         assertEquals("vaadin:check", badge.getIcon().getElement().getAttribute("icon"));

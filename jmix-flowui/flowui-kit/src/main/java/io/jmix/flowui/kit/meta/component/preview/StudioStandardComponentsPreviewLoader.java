@@ -374,7 +374,7 @@ final class StudioStandardComponentsPreviewLoader implements StudioPreviewCompon
                 loadLocalizedString(element, "text", environment, badge::setText);
                 ComponentLoaderUtils.loadWhiteSpace(badge, element);
                 loadInteger(element, "number", badge::setNumber);
-                loadString(element, "role", badge::setRole);
+                loadString(element, "ariaRole", badge::setAriaRole);
                 ComponentLoaderUtils.loadIconSetIcon(element).ifPresent(badge::setIcon);
             }
             case StudioXmlElements.POPOVER -> loadPopoverAttributes((Popover) component, element);
@@ -485,7 +485,7 @@ final class StudioStandardComponentsPreviewLoader implements StudioPreviewCompon
         loadInteger(element, "focusDelay", popover::setFocusDelay);
         loadInteger(element, "hoverDelay", popover::setHoverDelay);
         loadInteger(element, "hideDelay", popover::setHideDelay);
-        loadString(element, "role", popover::setRole);
+        loadString(element, "ariaRole", popover::setAriaRole);
         loadString(element, "width", popover::setWidth);
         loadString(element, "height", popover::setHeight);
 

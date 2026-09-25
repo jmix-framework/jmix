@@ -2457,7 +2457,7 @@ public final class StudioPropertyGroups {
             @StudioProperty(xmlAttribute = StudioXmlAttributes.HIDE_DELAY,
                     type = StudioPropertyType.INTEGER,
                     category = StudioProperty.Category.GENERAL),
-            @StudioProperty(xmlAttribute = StudioXmlAttributes.ROLE,
+            @StudioProperty(xmlAttribute = StudioXmlAttributes.ARIA_ROLE,
                     type = StudioPropertyType.STRING, defaultValue = "dialog",
                     category = StudioProperty.Category.GENERAL)
     })
@@ -3106,7 +3106,7 @@ public final class StudioPropertyGroups {
                             type = StudioPropertyType.INTEGER,
                             category = StudioProperty.Category.GENERAL),
                     @StudioProperty(
-                            xmlAttribute = StudioXmlAttributes.ROLE,
+                            xmlAttribute = StudioXmlAttributes.ARIA_ROLE,
                             type = StudioPropertyType.STRING,
                             category = StudioProperty.Category.GENERAL),
                     @StudioProperty(

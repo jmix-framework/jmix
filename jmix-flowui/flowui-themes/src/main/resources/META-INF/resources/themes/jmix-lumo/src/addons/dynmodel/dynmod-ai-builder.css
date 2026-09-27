@@ -328,3 +328,7 @@
 .dynmod-ai-builder .activity-open:focus-visible { outline: 2px solid var(--lumo-primary-color); outline-offset: 2px; }
 @keyframes dmagent-activity-spin { to { transform: rotate(360deg); } }
 @media (prefers-reduced-motion: reduce) { .dynmod-ai-builder .activity-started > vaadin-icon { animation: none; } }
+/* While the assistant works, the AI mode shows a pulsing dot: Visual and Code stay viewable but read-only. */
+.dynmod-settings-view .editor-mode-renderer.ai-busy::after { content: ""; flex: none; width: .45em; height: .45em; border-radius: 50%; background: var(--lumo-primary-color); animation: dmagent-mode-busy 1.6s ease-in-out infinite; }
+@keyframes dmagent-mode-busy { 50% { opacity: .35; transform: scale(.75); } }
+@media (prefers-reduced-motion: reduce) { .dynmod-settings-view .editor-mode-renderer.ai-busy::after { animation: none; } }

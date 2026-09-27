@@ -44,9 +44,23 @@ dependencies {
     api('org.slf4j:slf4j-nop:2.0.7')
 }
 
-shadowJar {
-    dependsOn(jar)
+// The shadow jar is the module's only artifact. With an empty classifier it is written to the same
+// file as the plain jar, and if both tasks run, each one finds its output changed by the other, so both
+// run again on every build. Therefore the plain jar is not built, and the Java variants (which define
+// the POM dependencies) publish the shadow jar instead. shadowJar takes the classes from the main
+// source set, not from the plain jar.
+jar {
+    enabled = false
+}
 
+['apiElements', 'runtimeElements'].each {
+    configurations.named(it) {
+        outgoing.artifacts.clear()
+        outgoing.artifact(tasks.named('shadowJar'))
+    }
+}
+
+shadowJar {
     // Shadow 9.x defaults duplicatesStrategy to EXCLUDE, which drops duplicate
     // META-INF/services files before mergeServiceFiles() can concatenate them.
     // Use INCLUDE so service files are merged, then EXCLUDE duplicates of everything else.

@@ -247,9 +247,13 @@ final class StudioStandardComponentsPreviewLoader implements StudioPreviewCompon
                 return svgIcon;
             },
             StudioXmlElements.FONT_ICON, (element, environment) -> new FontIcon(),
-            StudioXmlElements.MARKDOWN, (element, environment) -> new Markdown(inlineContent(element)
-                    .or(() -> LoaderUtils.loadString(element, StudioXmlElements.CONTENT))
-                    .orElse("")),
+            StudioXmlElements.MARKDOWN, (element, environment) -> {
+                Markdown markdown = new Markdown(inlineContent(element)
+                        .or(() -> LoaderUtils.loadString(element, StudioXmlElements.CONTENT))
+                        .orElse(""));
+                LoaderUtils.loadBoolean(element, "lineBreaks", markdown::setLineBreaks);
+                return markdown;
+            },
             // Only inline content renders: the runtime reads "file" through Resources (classpath/file/web),
             // which a spring-free kit loader cannot do. An empty Svg is the honest placeholder.
             StudioXmlElements.SVG, (element, environment) -> inlineContent(element)

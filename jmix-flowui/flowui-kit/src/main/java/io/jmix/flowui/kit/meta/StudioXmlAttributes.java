@@ -524,6 +524,7 @@ public final class StudioXmlAttributes {
     public static final String LIGATURE = "ligature";
     public static final String LIKE_CLAUSE = "likeClause";
     public static final String LINE = "line";
+    public static final String LINE_BREAKS = "lineBreaks";
     public static final String LINE_HEIGHT = "lineHeight";
     public static final String LINE_X = "lineX";
     public static final String LINE_Y = "lineY";

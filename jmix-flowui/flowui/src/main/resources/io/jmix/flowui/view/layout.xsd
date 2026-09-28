@@ -3954,6 +3954,7 @@
                 </xs:sequence>
 
                 <xs:attribute name="content" type="resourceString"/>
+                <xs:attribute name="lineBreaks" type="xs:boolean"/>
 
                 <xs:attributeGroup ref="hasClassNames"/>
                 <xs:attributeGroup ref="hasSize"/>

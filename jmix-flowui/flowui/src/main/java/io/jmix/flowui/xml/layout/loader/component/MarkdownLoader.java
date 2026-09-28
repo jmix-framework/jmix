@@ -42,6 +42,8 @@ public class MarkdownLoader extends AbstractComponentLoader<Markdown> {
 
     @Override
     public void loadComponent() {
+        loadBoolean(element, "lineBreaks", resultComponent::setLineBreaks);
+
         componentLoader().loadClassNames(resultComponent, element);
         componentLoader().loadSizeAttributes(resultComponent, element);
     }

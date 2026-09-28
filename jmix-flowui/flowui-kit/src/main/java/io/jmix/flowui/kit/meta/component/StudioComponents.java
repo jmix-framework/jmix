@@ -1183,7 +1183,11 @@ interface StudioComponents {
             propertyGroups = {
                     StudioPropertyGroups.BaseSizedComponentWithClassNames.class,
                     StudioPropertyGroups.Content.class
-            })
+            },
+            properties = @StudioProperty(
+                    xmlAttribute = StudioXmlAttributes.LINE_BREAKS,
+                    type = StudioPropertyType.BOOLEAN,
+                    defaultValue = "false"))
     Markdown markdown();
 
     @StudioComponent(

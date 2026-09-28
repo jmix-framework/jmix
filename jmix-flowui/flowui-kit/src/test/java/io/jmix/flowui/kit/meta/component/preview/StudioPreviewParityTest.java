@@ -162,6 +162,13 @@ class StudioPreviewParityTest {
     }
 
     @Test
+    void markdown_loadsLineBreaks() {
+        Element view = view("<markdown content='first line' lineBreaks='true'/>");
+        Markdown markdown = assertInstanceOf(Markdown.class, load(view.element("markdown"), view));
+        assertTrue(markdown.isLineBreaks());
+    }
+
+    @Test
     void svg_rendersInlineContentAndStaysEmptyWithoutIt() {
         Element view = view("<svg id='logo' classNames='logo-svg'><content><![CDATA["
                 + "<svg xmlns='http://www.w3.org/2000/svg'><circle r='4'/></svg>]]></content></svg>");

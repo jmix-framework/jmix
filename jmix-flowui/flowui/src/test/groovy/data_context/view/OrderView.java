@@ -111,4 +111,12 @@ public class OrderView extends StandardView implements HasUrlParameter<String> {
         }
         return builder.open().getView();
     }
+
+    public LineView buildLineScreenForEdit(OrderLine line) {
+        itemsDataGrid.select(linesDc.getItem(line.getId()));
+        return dialogWindows.detail(itemsDataGrid)
+                .withViewClass(LineView.class)
+                .open()
+                .getView();
+    }
 }

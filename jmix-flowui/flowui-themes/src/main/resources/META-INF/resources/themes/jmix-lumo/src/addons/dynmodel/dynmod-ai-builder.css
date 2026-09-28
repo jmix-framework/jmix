@@ -332,3 +332,10 @@
 .dynmod-settings-view .editor-mode-renderer.ai-busy::after { content: ""; flex: none; width: .45em; height: .45em; border-radius: 50%; background: var(--lumo-primary-color); animation: dmagent-mode-busy 1.6s ease-in-out infinite; }
 @keyframes dmagent-mode-busy { 50% { opacity: .35; transform: scale(.75); } }
 @media (prefers-reduced-motion: reduce) { .dynmod-settings-view .editor-mode-renderer.ai-busy::after { animation: none; } }
+/* The agent puts the Visual / Code / AI switch first: it stays at the start, also when the header wraps. */
+.dynmod-settings-view .header-box.dmagent-header-box { flex-wrap: wrap; }
+.dynmod-settings-view .header-box.dmagent-header-box .tab-list { margin-inline-start: 0; margin-inline-end: auto; }
+@container dynmod-settings-view (max-width: 640px) {
+    .dynmod-settings-view .header-box.dmagent-header-box { flex-direction: column; }
+    .dynmod-settings-view .header-box.dmagent-header-box .tab-list { margin-inline-end: 0; }
+}

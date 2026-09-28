@@ -69,7 +69,7 @@ javaPlatform {
 dependencies {
     api platform("org.springframework.boot:spring-boot-dependencies:3.5.16")
     api platform('software.amazon.awssdk:bom:2.25.70')
-    api platform("io.netty:netty-bom:4.1.136.Final")
+    api platform("io.netty:netty-bom:4.1.138.Final")
 
     def freeVersion = version
     def premiumVersion = version
@@ -418,9 +418,10 @@ dependencies {
         api "com.openhtmltopdf:openhtmltopdf-rtl-support:$openhtmltopdfVersion"
         api "com.openhtmltopdf:openhtmltopdf-pdfbox:$openhtmltopdfVersion"
 
-        def bouncycastleVersion = '1.84'
+        def bouncycastleVersion = '1.86'
         api "org.bouncycastle:bcprov-jdk18on:$bouncycastleVersion"
         api "org.bouncycastle:bcpkix-jdk18on:$bouncycastleVersion"
+        api "org.bouncycastle:bcutil-jdk18on:$bouncycastleVersion"
         api "org.bouncycastle:bcjmail-jdk18on:$bouncycastleVersion"
 
         api 'org.apache.pdfbox:pdfbox:3.0.5'
@@ -449,7 +450,7 @@ dependencies {
         api "org.flowable:flowable-spring-boot-starter-process-rest:$flowableVersion"
         api "org.flowable:flowable-spring-boot-starter-dmn-rest:$flowableVersion"
 
-        def tomcatEmbedVersion = '10.1.55'
+        def tomcatEmbedVersion = '10.1.60'
         api "org.apache.tomcat.embed:tomcat-embed-core:$tomcatEmbedVersion"
         api "org.apache.tomcat.embed:tomcat-embed-el:$tomcatEmbedVersion"
         api "org.apache.tomcat.embed:tomcat-embed-websocket:$tomcatEmbedVersion"
@@ -486,6 +487,7 @@ dependencies {
         api 'commons-beanutils:commons-beanutils:1.11.0'
         api 'com.github.junrar:junrar:7.5.10'
         api 'com.nimbusds:nimbus-jose-jwt:10.9'
+        api 'org.freemarker:freemarker:2.3.35'
 
         api 'org.postgresql:postgresql:42.7.13'
     }

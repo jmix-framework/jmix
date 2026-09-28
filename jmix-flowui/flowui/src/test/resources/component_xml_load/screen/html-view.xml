@@ -551,6 +551,7 @@
                css="color: red;"
                enabled="true"
                height="50px"
+               inputMode="EMAIL"
                maxHeight="55px"
                maxWidth="120px"
                minHeight="40px"

@@ -57,6 +57,7 @@ public abstract class AbstractMultiSelectComboBoxLoader<C extends MultiSelectCom
         componentLoader().loadValidationAttributes(resultComponent, element, context);
         componentLoader().loadAllowedCharPattern(resultComponent, element, context);
         componentLoader().loadAriaLabel(resultComponent, element);
+        componentLoader().loadAriaDescription(resultComponent, element);
 
         componentLoader().loadFragmentRenderer(element, resultComponent::setRenderer);
     }

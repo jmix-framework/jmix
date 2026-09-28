@@ -1,0 +1,42 @@
+<!--
+  ~ Copyright 2026 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<view xmlns="http://jmix.io/schema/flowui/view">
+    <layout>
+        <span id="description" text="Description"/>
+
+        <textField id="textField" ariaDescribedBy="description"/>
+        <textArea id="textArea" ariaDescribedBy="description"/>
+        <emailField id="emailField" ariaDescribedBy="description"/>
+        <passwordField id="passwordField" ariaDescribedBy="description"/>
+        <integerField id="integerField" ariaDescribedBy="description"/>
+        <numberField id="numberField" ariaDescribedBy="description"/>
+        <bigDecimalField id="bigDecimalField" ariaDescribedBy="description"/>
+        <datePicker id="datePicker" ariaDescribedBy="description"/>
+        <timePicker id="timePicker" ariaDescribedBy="description"/>
+        <comboBox id="comboBox" ariaDescribedBy="description"/>
+        <entityComboBox id="entityComboBox" metaClass="test_Order" ariaDescribedBy="description"/>
+        <multiSelectComboBox id="multiSelectComboBox" ariaDescribedBy="description"/>
+        <multiSelectComboBoxPicker id="multiSelectComboBoxPicker" metaClass="test_Order"
+                                   ariaDescribedBy="description"/>
+        <select id="select" ariaDescribedBy="description"/>
+        <checkbox id="checkbox" ariaDescribedBy="description"/>
+        <checkboxGroup id="checkboxGroup" ariaDescribedBy="description"/>
+        <radioButtonGroup id="radioButtonGroup" ariaDescribedBy="description"/>
+        <integerSlider id="integerSlider" ariaDescribedBy="description"/>
+        <decimalSlider id="decimalSlider" ariaDescribedBy="description"/>
+    </layout>
+</view>

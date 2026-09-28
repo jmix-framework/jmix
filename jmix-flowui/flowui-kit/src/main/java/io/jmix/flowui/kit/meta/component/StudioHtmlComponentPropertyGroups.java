@@ -150,7 +150,7 @@ final class StudioHtmlComponentPropertyGroups {
                     "week"}))
     public interface InputComponent extends BaseHtmlComponent,
             StudioPropertyGroups.HasAriaLabelAndFocusableAttributes, StudioPropertyGroups.ValueChangeModeAttributesWithGeneralCategory,
-            StudioPropertyGroups.Enabled, StudioPropertyGroups.Placeholder {
+            StudioPropertyGroups.Enabled, StudioPropertyGroups.Placeholder, StudioPropertyGroups.InputMode {
     }
 
     @StudioPropertyGroup(properties = @StudioProperty(

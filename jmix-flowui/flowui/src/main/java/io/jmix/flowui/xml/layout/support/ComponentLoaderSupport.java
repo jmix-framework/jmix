@@ -319,6 +319,10 @@ public class ComponentLoaderSupport implements ApplicationContextAware {
         loaderSupport.loadResourceString(element, "ariaLabelledBy", context.getMessageGroup(), component::setAriaLabelledBy);
     }
 
+    public void loadAriaDescription(HasAriaDescription component, Element element) {
+        loaderSupport.loadString(element, "ariaDescribedBy", component::setAriaDescribedBy);
+    }
+
     public void loadTrimming(SupportsTrimming component, Element element) {
         loaderSupport.loadBoolean(element, "trimEnabled", component::setTrimEnabled);
     }

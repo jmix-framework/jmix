@@ -76,6 +76,7 @@ public final class StudioXmlAttributes {
     public static final String APPEND_TO_BODY = "appendToBody";
     public static final String APPLY_COLUMN_COLOR_TO_TASKS = "applyColumnColorToTasks";
     public static final String APPLY_SHORTCUT = "applyShortcut";
+    public static final String ARIA_DESCRIBED_BY = "ariaDescribedBy";
     public static final String ARIA_LABEL = "ariaLabel";
     public static final String ARIA_LABELLED_BY = "ariaLabelledBy";
     public static final String ARIA_ROLE = "ariaRole";
@@ -468,6 +469,7 @@ public final class StudioXmlAttributes {
     public static final String INDICATOR_SIZE = "indicatorSize";
     public static final String INITIAL_DATE = "initialDate";
     public static final String INITIAL_DISPLAY_MODE = "initialDisplayMode";
+    public static final String INPUT_MODE = "inputMode";
     public static final String INSIDE = "inside";
     public static final String INTEGER = "integer";
     public static final String INTERACTIVE = "interactive";

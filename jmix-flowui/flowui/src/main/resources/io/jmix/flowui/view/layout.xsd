@@ -1382,6 +1382,19 @@
         </xs:restriction>
     </xs:simpleType>
 
+    <xs:simpleType name="inputModeEnum">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="NONE"/>
+            <xs:enumeration value="TEXT"/>
+            <xs:enumeration value="DECIMAL"/>
+            <xs:enumeration value="NUMERIC"/>
+            <xs:enumeration value="TEL"/>
+            <xs:enumeration value="SEARCH"/>
+            <xs:enumeration value="EMAIL"/>
+            <xs:enumeration value="URL"/>
+        </xs:restriction>
+    </xs:simpleType>
+
     <xs:simpleType name="whiteSpaceEnum">
         <xs:restriction base="xs:string">
             <xs:enumeration value="NORMAL"/>
@@ -2549,6 +2562,10 @@
         <xs:attribute name="autocapitalize" type="autocapitalizeEnum"/>
     </xs:attributeGroup>
 
+    <xs:attributeGroup name="hasInputMode">
+        <xs:attribute name="inputMode" type="inputModeEnum"/>
+    </xs:attributeGroup>
+
     <xs:attributeGroup name="hasAutocorrect">
         <xs:attribute name="autocorrect" type="xs:boolean"/>
     </xs:attributeGroup>
@@ -2578,6 +2595,10 @@
     <xs:attributeGroup name="hasAriaLabel">
         <xs:attribute name="ariaLabel" type="resourceString"/>
         <xs:attribute name="ariaLabelledBy" type="resourceString"/>
+    </xs:attributeGroup>
+
+    <xs:attributeGroup name="hasAriaDescription">
+        <xs:attribute name="ariaDescribedBy" type="xs:string"/>
     </xs:attributeGroup>
 
     <xs:attributeGroup name="hasTrimming">
@@ -2834,6 +2855,7 @@
                 <xs:attributeGroup ref="hasValueChangeMode"/>
                 <xs:attributeGroup ref="hasFocusableAttributes"/>
                 <xs:attributeGroup ref="hasAriaLabel"/>
+                <xs:attributeGroup ref="hasAriaDescription"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -2846,6 +2868,7 @@
 
                 <xs:attributeGroup ref="hasRequired"/>
                 <xs:attributeGroup ref="hasAriaLabel"/>
+                <xs:attributeGroup ref="hasAriaDescription"/>
                 <xs:attributeGroup ref="hasValidation"/>
                 <xs:attributeGroup ref="hasValueChangeMode"/>
                 <xs:attributeGroup ref="hasFocusableAttributes"/>
@@ -2916,6 +2939,7 @@
                 <xs:attributeGroup ref="hasPlaceholder"/>
                 <xs:attributeGroup ref="hasValueAndElement"/>
                 <xs:attributeGroup ref="hasAriaLabel"/>
+                <xs:attributeGroup ref="hasAriaDescription"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -3661,6 +3685,7 @@
 
                 <xs:attributeGroup ref="hasRequired"/>
                 <xs:attributeGroup ref="hasTrimming"/>
+                <xs:attributeGroup ref="hasInputMode"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -3835,6 +3860,7 @@
                 <xs:attributeGroup ref="hasFocusableAttributes"/>
                 <xs:attributeGroup ref="hasEnabled"/>
                 <xs:attributeGroup ref="hasAriaLabel"/>
+                <xs:attributeGroup ref="hasAriaDescription"/>
                 <xs:attributeGroup ref="hasDataContainer"/>
                 <xs:attributeGroup ref="hasValueAndElement"/>
                 <xs:attributeGroup ref="hasClickNotifierAttributes"/>
@@ -4020,6 +4046,7 @@
                 <xs:attributeGroup ref="hasPlaceholder"/>
                 <xs:attributeGroup ref="hasOverlayWidth"/>
                 <xs:attributeGroup ref="hasAriaLabel"/>
+                <xs:attributeGroup ref="hasAriaDescription"/>
                 <xs:attributeGroup ref="hasValidation"/>
             </xs:extension>
         </xs:complexContent>
@@ -4057,6 +4084,7 @@
                 <xs:attributeGroup ref="hasPlaceholder"/>
                 <xs:attributeGroup ref="hasOverlayWidth"/>
                 <xs:attributeGroup ref="hasAriaLabel"/>
+                <xs:attributeGroup ref="hasAriaDescription"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -4122,6 +4150,7 @@
                 <xs:attributeGroup ref="hasPlaceholder"/>
                 <xs:attributeGroup ref="hasFocusableAttributes"/>
                 <xs:attributeGroup ref="hasAriaLabel"/>
+                <xs:attributeGroup ref="hasAriaDescription"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -4152,6 +4181,7 @@
                 <xs:attributeGroup ref="hasFocusableAttributes"/>
                 <xs:attributeGroup ref="hasPlaceholder"/>
                 <xs:attributeGroup ref="hasAriaLabel"/>
+                <xs:attributeGroup ref="hasAriaDescription"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -4244,6 +4274,7 @@
                 <xs:attributeGroup ref="hasValueAndElement"/>
                 <xs:attributeGroup ref="hasDataContainer"/>
                 <xs:attributeGroup ref="hasAriaLabel"/>
+                <xs:attributeGroup ref="hasAriaDescription"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -4271,6 +4302,7 @@
                 <xs:attributeGroup ref="hasValueAndElement"/>
                 <xs:attributeGroup ref="hasDataContainer"/>
                 <xs:attributeGroup ref="hasAriaLabel"/>
+                <xs:attributeGroup ref="hasAriaDescription"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -4355,6 +4387,7 @@
                 <xs:attributeGroup ref="hasValueAndElement"/>
                 <xs:attributeGroup ref="hasDataContainer"/>
                 <xs:attributeGroup ref="hasAriaLabel"/>
+                <xs:attributeGroup ref="hasAriaDescription"/>
                 <xs:attributeGroup ref="hasTrimming"/>
             </xs:extension>
         </xs:complexContent>
@@ -4626,6 +4659,7 @@
                 <xs:attributeGroup ref="hasValueAndElement"/>
                 <xs:attributeGroup ref="hasDataContainer"/>
                 <xs:attributeGroup ref="hasAriaLabel"/>
+                <xs:attributeGroup ref="hasAriaDescription"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -5312,6 +5346,7 @@
                 <xs:attributeGroup ref="hasAriaLabel"/>
                 <xs:attributeGroup ref="hasPlaceholder"/>
                 <xs:attributeGroup ref="hasValueChangeMode"/>
+                <xs:attributeGroup ref="hasInputMode"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>

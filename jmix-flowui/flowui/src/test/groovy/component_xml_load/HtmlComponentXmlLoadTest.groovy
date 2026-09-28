@@ -19,6 +19,7 @@ package component_xml_load
 import com.vaadin.flow.component.HasText
 import com.vaadin.flow.component.HtmlComponent
 import com.vaadin.flow.component.HtmlContainer
+import com.vaadin.flow.component.InputMode
 import com.vaadin.flow.component.html.AnchorTarget
 import com.vaadin.flow.component.html.IFrame
 import com.vaadin.flow.component.html.OrderedList
@@ -198,6 +199,7 @@ class HtmlComponentXmlLoadTest extends FlowuiTestSpecification {
             style.get("color") == "red"
             enabled
             height == "50px"
+            inputMode == InputMode.EMAIL
             maxHeight == "55px"
             maxWidth == "120px"
             minHeight == "40px"

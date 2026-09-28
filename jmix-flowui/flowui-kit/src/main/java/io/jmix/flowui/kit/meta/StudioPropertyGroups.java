@@ -3536,16 +3536,30 @@ public final class StudioPropertyGroups {
                             xmlAttribute = StudioXmlAttributes.LOCALES_VISIBLE,
                             type = StudioPropertyType.BOOLEAN,
                             category = StudioProperty.Category.GENERAL,
-                            defaultValue = "true")
+                            defaultValue = "true"),
+                    @StudioProperty(
+                            xmlAttribute = StudioXmlAttributes.HEADING_LEVEL,
+                            type = StudioPropertyType.INTEGER,
+                            category = StudioProperty.Category.GENERAL,
+                            defaultValue = "1")
             }
     )
     public interface LoginFormComponent extends BaseComponentWithClassNames, Enabled {
     }
 
-    @StudioPropertyGroup(properties = @StudioProperty(
-            xmlAttribute = StudioXmlAttributes.FORGOT_PASSWORD_BUTTON_VISIBLE,
-            type = StudioPropertyType.BOOLEAN,
-            category = StudioProperty.Category.GENERAL))
+    @StudioPropertyGroup(
+            properties = {
+                    @StudioProperty(
+                            xmlAttribute = StudioXmlAttributes.FORGOT_PASSWORD_BUTTON_VISIBLE,
+                            type = StudioPropertyType.BOOLEAN,
+                            category = StudioProperty.Category.GENERAL),
+                    @StudioProperty(
+                            xmlAttribute = StudioXmlAttributes.HEADING_LEVEL,
+                            type = StudioPropertyType.INTEGER,
+                            category = StudioProperty.Category.GENERAL,
+                            defaultValue = "1")
+            }
+    )
     public interface LoginOverlayComponent extends BaseComponentWithClassNames, Opened, Enabled {
     }
 

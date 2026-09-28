@@ -4471,6 +4471,8 @@
                     </xs:element>
                 </xs:sequence>
 
+                <xs:attribute name="headingLevel" type="xs:integer"/>
+
                 <xs:attributeGroup ref="hasSize"/>
                 <xs:attributeGroup ref="hasClassNames"/>
             </xs:extension>
@@ -4857,6 +4859,7 @@
                 </xs:sequence>
 
                 <xs:attribute name="forgotPasswordButtonVisible" type="xs:boolean"/>
+                <xs:attribute name="headingLevel" type="xs:integer"/>
 
                 <xs:attributeGroup ref="hasEnabled"/>
                 <xs:attributeGroup ref="hasClassNames"/>

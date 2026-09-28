@@ -435,6 +435,7 @@ public final class StudioXmlAttributes {
     public static final String HAS_IN_EXPRESSION = "hasInExpression";
     public static final String HEADER = "header";
     public static final String HEADER_FILTER_APPLY_SHORTCUT = "headerFilterApplyShortcut";
+    public static final String HEADING_LEVEL = "headingLevel";
     public static final String HEIGHT = "height";
     public static final String HELPER_TEXT = "helperText";
     public static final String HIDE_ALL_ENABLED = "hideAllEnabled";

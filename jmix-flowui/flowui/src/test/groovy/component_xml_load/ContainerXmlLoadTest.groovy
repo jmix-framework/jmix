@@ -130,6 +130,7 @@ class ContainerXmlLoadTest extends FlowuiTestSpecification {
             id.get() == "accordionId"
             classNames.containsAll(["cssClassName1", "cssClassName2"])
             style.get("color") == "red"
+            headingLevel == 3
             height == "50px"
             maxHeight == "55px"
             maxWidth == "120px"

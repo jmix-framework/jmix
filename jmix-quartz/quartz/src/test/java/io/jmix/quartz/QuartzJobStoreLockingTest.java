@@ -73,10 +73,14 @@ import java.util.stream.Collectors;
 )
 //the job store properties are contributed by QuartzEnvironmentPostProcessor in real applications,
 //environment post-processors do not run for plain @ContextConfiguration tests;
-//JMX is disabled because this context is the second one in the test JVM and MBean names would collide
+//this context is the second one in the test JVM, so it must not clash with the default context:
+//JMX is disabled (MBean names would collide) and the scheduler name is unique - LocalDataSourceJobStore
+//registers connection providers in the JVM-global DBConnectionManager under keys derived from the
+//scheduler name, and with equal names this context would hijack the connections of the other one
 @TestPropertySource(properties = {
         "spring.quartz.properties.org.quartz.jobStore.class=io.jmix.quartz.impl.JmixLocalDataSourceJobStore",
         "spring.quartz.properties.org.quartz.jobStore.useDBLocks=true",
+        "spring.quartz.scheduler-name=quartzLockingTestScheduler",
         "spring.jmx.enabled=false"})
 public class QuartzJobStoreLockingTest {
 

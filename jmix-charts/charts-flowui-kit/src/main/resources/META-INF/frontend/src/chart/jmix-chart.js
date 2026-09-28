@@ -79,15 +79,6 @@ export class JmixChart extends ResizeMixin(ElementMixin(PolylitMixin(LumoInjecti
         ];
     }
 
-    /**
-     * @protected
-     */
-    ready() {
-        super.ready();
-
-        this.initApplicationThemeObserver();
-    }
-
     _forwardEvents() {
         for (let eventName of JmixChart.forwardedEventNames) {
             this._root.on(eventName, (params) => {
@@ -103,16 +94,25 @@ export class JmixChart extends ResizeMixin(ElementMixin(PolylitMixin(LumoInjecti
         // Apply current application theme as initial value
         this._applyTheme()
 
-        this._applicationThemeObserver = new MutationObserver(mutations => {
-            if (mutations.filter(mutation =>
-                mutation.type === "attributes" && mutation.attributeName === "theme").length !== 0) {
-                this._applyTheme()
-            }
-        });
+        // The observer is created on every attach, so the previous one must be released
+        this._disconnectApplicationThemeObserver();
+
+        this._applicationThemeObserver = new MutationObserver(() => this._applyTheme());
 
         this._applicationThemeObserver.observe(document.documentElement, {
-            attributes: true
+            attributes: true,
+            attributeFilter: ['theme']
         });
+    }
+
+    /**
+     * @private
+     */
+    _disconnectApplicationThemeObserver() {
+        if (this._applicationThemeObserver !== undefined) {
+            this._applicationThemeObserver.disconnect();
+            this._applicationThemeObserver = undefined;
+        }
     }
 
     _applyTheme() {
@@ -122,6 +122,8 @@ export class JmixChart extends ResizeMixin(ElementMixin(PolylitMixin(LumoInjecti
     }
 
     _onThemeChange() {
+        // Not ECharts#setTheme(): it loses the options applied by previous setOption() calls,
+        // see https://github.com/apache/echarts/issues/21200
         this._recreateChart();
     }
 
@@ -130,15 +132,31 @@ export class JmixChart extends ResizeMixin(ElementMixin(PolylitMixin(LumoInjecti
     }
 
     _recreateChart() {
-        if (this._root === undefined) {
+        if (this._root == null) {
             return;
         }
 
         this._destroyChart();
-        const chart = this.shadowRoot.querySelector('[part="root"]');
-        this._root = echarts.init(chart, this.theme, {renderer: this.renderer});
+        this._restoreChart();
+    }
+
+    /**
+     * Creates the chart from the last received options and dataset.
+     *
+     * @private
+     */
+    _restoreChart() {
+        this._initChart();
         this._resetOptions();
         this._resetDataSet();
+    }
+
+    /**
+     * @private
+     */
+    _initChart() {
+        const chart = this.shadowRoot.querySelector('[part="root"]');
+        this._root = echarts.init(chart, this.theme, {renderer: this.renderer});
         this._forwardEvents();
     }
 
@@ -167,6 +185,15 @@ export class JmixChart extends ResizeMixin(ElementMixin(PolylitMixin(LumoInjecti
      */
     connectedCallback() {
         super.connectedCallback();
+
+        this.initApplicationThemeObserver();
+
+        // The chart is disposed on detach. If the element is attached again without the server resending
+        // the options, e.g. after it has been moved within the DOM, restore the chart from the last state.
+        if (this._root == null && this._options !== undefined) {
+            this._restoreChart();
+        }
+
         // waiting for initialization
         setTimeout(() => this.$server.ready(), 200);
     }
@@ -177,6 +204,8 @@ export class JmixChart extends ResizeMixin(ElementMixin(PolylitMixin(LumoInjecti
      */
     disconnectedCallback() {
         super.disconnectedCallback();
+
+        this._disconnectApplicationThemeObserver();
         this._destroyChart();
     }
 
@@ -194,9 +223,7 @@ export class JmixChart extends ResizeMixin(ElementMixin(PolylitMixin(LumoInjecti
 
     _updateChart(changes) {
         if (this._root == null) {
-            const chart = this.shadowRoot.querySelector('[part="root"]');
-            this._root = echarts.init(chart, this.theme, {renderer: this.renderer});
-            this._forwardEvents();
+            this._initChart();
         }
 
         // merge native json if exist
@@ -213,9 +240,7 @@ export class JmixChart extends ResizeMixin(ElementMixin(PolylitMixin(LumoInjecti
 
     _updateChartDataset(changes) {
         if (this._root == null) {
-            const chart = this.shadowRoot.querySelector('[part="root"]');
-            this._root = echarts.init(chart, this.theme, {renderer: this.renderer});
-            this._forwardEvents();
+            this._initChart();
         }
 
         this._dataset = changes.dataset

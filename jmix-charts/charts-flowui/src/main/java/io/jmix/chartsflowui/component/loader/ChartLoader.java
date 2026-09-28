@@ -1947,6 +1947,8 @@ public class ChartLoader extends AbstractComponentLoader<Chart> {
         loadString(element, "width", grid::setWidth);
         loadString(element, "height", grid::setHeight);
         loadBoolean(element, "containLabel", grid::setContainLabel);
+        loadEnum(element, Grid.OuterBoundsMode.class, "outerBoundsMode", grid::setOuterBoundsMode);
+        loadEnum(element, Grid.OuterBoundsContain.class, "outerBoundsContain", grid::setOuterBoundsContain);
         loadInteger(element, "borderWidth", grid::setBorderWidth);
 
         chartLoaderSupport().loadColor(element, "backgroundColor", grid::setBackgroundColor);
@@ -2822,6 +2824,7 @@ public class ChartLoader extends AbstractComponentLoader<Chart> {
         loadBoolean(element, "alignTicks", axis::setAlignTicks);
         loadEnum(element, AbstractCartesianAxis.Position.class, "position", axis::setPosition);
         loadInteger(element, "offset", axis::setOffset);
+        loadBoolean(element, "nameMoveOverlap", axis::setNameMoveOverlap);
     }
 
     protected void loadPolarAxis(AbstractPolarAxis<?> axis, Element element) {
@@ -2834,6 +2837,7 @@ public class ChartLoader extends AbstractComponentLoader<Chart> {
         loadString(element, "id", axis::setId);
         loadEnum(element, AxisType.class, "type", axis::setType);
         loadBoolean(element, "categoryBoundaryGap", axis::setBoundaryGap);
+        loadBoolean(element, "containShape", axis::setContainShape);
         loadString(element, "min", axis::setMin);
         chartLoaderSupport().loadJsFunction(element, "minFunction", axis::setMinFunction);
         loadString(element, "max", axis::setMax);

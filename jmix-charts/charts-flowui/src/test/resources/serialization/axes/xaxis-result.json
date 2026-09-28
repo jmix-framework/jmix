@@ -66,11 +66,13 @@
       },
       "nameGap": 18,
       "nameRotate": 90,
+      "nameMoveOverlap": false,
       "inverse": true,
       "boundaryGap": [
         "20%",
         "20%"
       ],
+      "containShape": false,
       "min": "12",
       "max": "14",
       "scale": true,

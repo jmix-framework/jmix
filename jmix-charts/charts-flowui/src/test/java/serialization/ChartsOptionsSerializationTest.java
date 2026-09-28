@@ -462,6 +462,8 @@ public class ChartsOptionsSerializationTest extends AbstractSerializationTest {
                 .withWidth("50%")
                 .withHeight("50%")
                 .withContainLabel(true)
+                .withOuterBoundsMode(Grid.OuterBoundsMode.SAME)
+                .withOuterBoundsContain(Grid.OuterBoundsContain.AXIS_LABEL)
                 .withBackgroundColor(Color.IVORY)
                 .withBorderColor(Color.IVORY)
                 .withBorderWidth(13)

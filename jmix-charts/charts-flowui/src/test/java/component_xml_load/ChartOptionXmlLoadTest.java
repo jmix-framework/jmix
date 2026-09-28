@@ -408,6 +408,8 @@ public class ChartOptionXmlLoadTest extends AbstractXmlLoadTest {
         assertEquals("200", grid.getWidth());
         assertEquals("100", grid.getHeight());
         assertTrue(grid.getContainLabel());
+        assertEquals(Grid.OuterBoundsMode.SAME, grid.getOuterBoundsMode());
+        assertEquals(Grid.OuterBoundsContain.AXIS_LABEL, grid.getOuterBoundsContain());
         assertEquals(WHITE, grid.getBackgroundColor());
         assertEquals(BLACK, grid.getBorderColor());
         assertEquals(200, grid.getBorderWidth());

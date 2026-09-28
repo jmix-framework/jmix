@@ -225,6 +225,7 @@ public final class StudioXmlAttributes {
     public static final String CONTAINER = "container";
     public static final String CONTAINER_PREFIX = "containerPrefix";
     public static final String CONTAIN_LABEL = "containLabel";
+    public static final String CONTAIN_SHAPE = "containShape";
     public static final String CONTENT = "content";
     public static final String CONTENT_ALIGNMENT = "contentAlignment";
     public static final String COORDINATE_SYSTEM = "coordinateSystem";
@@ -622,6 +623,7 @@ public final class StudioXmlAttributes {
     public static final String NAME = "name";
     public static final String NAME_GAP = "nameGap";
     public static final String NAME_LOCATION = "nameLocation";
+    public static final String NAME_MOVE_OVERLAP = "nameMoveOverlap";
     public static final String NAME_ROTATE = "nameRotate";
     public static final String NATURAL_VERSION_ID = "naturalVersionId";
     public static final String NAVIGATION_LINKS_ENABLED = "navigationLinksEnabled";
@@ -659,6 +661,8 @@ public final class StudioXmlAttributes {
     public static final String ORIGIN_TYPE = "originType";
     public static final String ORIGIN_VALUE = "originValue";
     public static final String OUTCOME = "outcome";
+    public static final String OUTER_BOUNDS_CONTAIN = "outerBoundsContain";
+    public static final String OUTER_BOUNDS_MODE = "outerBoundsMode";
     public static final String OVERFLOW = "overflow";
     public static final String OVERLAP = "overlap";
     public static final String OVERLAPS = "overlaps";

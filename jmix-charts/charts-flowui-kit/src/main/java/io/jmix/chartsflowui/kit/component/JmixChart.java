@@ -55,7 +55,7 @@ import java.util.*;
 @Tag("jmix-chart")
 @NpmPackage(
         value = "echarts",
-        version = "5.4.3"
+        version = "6.1.0"
 )
 @JsModule("./src/chart/jmix-chart.js")
 public class JmixChart extends Component implements HasSize {

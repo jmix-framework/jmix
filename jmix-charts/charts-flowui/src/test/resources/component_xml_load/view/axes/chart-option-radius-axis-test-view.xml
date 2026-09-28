@@ -27,6 +27,7 @@
                     nameLocation="CENTER"
                     polarIndex="0"
                     nonCategoryBoundaryGap="0 10"
+                    containShape="false"
                     min="0"
                     minInterval="1"
                     maxInterval="10"

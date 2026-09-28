@@ -36,7 +36,7 @@
                  openOnFocus="true"
                  openOnHover="true"
                  position="BOTTOM_END"
-                 role="tooltip"
+                 ariaRole="tooltip"
                  tabFocusEnabled="false"
                  target="targetButton"
                  themeNames="arrow no-padding"

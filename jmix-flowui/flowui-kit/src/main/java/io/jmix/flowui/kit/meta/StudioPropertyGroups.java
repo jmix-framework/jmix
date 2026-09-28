@@ -304,6 +304,16 @@ public final class StudioPropertyGroups {
     }
 
     @StudioPropertyGroup(properties = @StudioProperty(
+            xmlAttribute = StudioXmlAttributes.ARIA_DESCRIBED_BY,
+            type = StudioPropertyType.STRING))
+    public interface AriaDescribedBy {
+    }
+
+    @StudioPropertyGroup
+    public interface HasAriaDescription extends AriaDescribedBy {
+    }
+
+    @StudioPropertyGroup(properties = @StudioProperty(
             xmlAttribute = StudioXmlAttributes.ACCESSIBLE_NAME_START,
             type = StudioPropertyType.LOCALIZED_STRING))
     public interface AccessibleNameStart {
@@ -508,6 +518,29 @@ public final class StudioPropertyGroups {
             defaultValue = "NONE",
             options = {"NONE", "SENTENCES", "WORDS", "CHARACTERS"}))
     public interface Autocapitalize {
+    }
+
+    @StudioPropertyGroup(properties = @StudioProperty(
+            xmlAttribute = StudioXmlAttributes.INPUT_MODE,
+            type = StudioPropertyType.ENUMERATION,
+            classFqn = "com.vaadin.flow.component.InputMode",
+            options = {"NONE", "TEXT", "DECIMAL", "NUMERIC", "TEL", "SEARCH", "EMAIL", "URL"}))
+    public interface InputMode {
+    }
+
+    @StudioPropertyGroup(properties = @StudioProperty(
+            xmlAttribute = StudioXmlAttributes.PARTIAL_MATCH_MODE,
+            type = StudioPropertyType.ENUMERATION,
+            classFqn = "com.vaadin.flow.component.combobox.PartialMatchMode",
+            defaultValue = "NONE",
+            options = {"NONE", "FIRST_MATCH", "ONLY_MATCH"}))
+    public interface PartialMatchMode {
+    }
+
+    @StudioPropertyGroup(properties = @StudioProperty(
+            xmlAttribute = StudioXmlAttributes.DIALOG_ACCESSIBLE_NAME,
+            type = StudioPropertyType.LOCALIZED_STRING))
+    public interface DialogAccessibleName {
     }
 
     @StudioPropertyGroup(properties = @StudioProperty(
@@ -2337,15 +2370,17 @@ public final class StudioPropertyGroups {
     }
 
     @StudioPropertyGroup
-    public interface TextInputFieldDefaultProperties extends BaseTextFieldComponent, RequiredAttributes {
+    public interface TextInputFieldDefaultProperties extends BaseTextFieldComponent, HasAriaDescription,
+            RequiredAttributes {
     }
 
     @StudioPropertyGroup
     public interface MultiSelectComboBoxDefaultProperties extends BaseSizedEnabledComponentWithClassName,
-            HasAriaLabelAndFocusableAttributes, AllowCustomValue, AllowedCharPattern, Autofocus, AutoOpen,
-            OverlayWidth, ClearButtonVisible, CollectionOrInstanceDataContainer, ErrorMessage, HelperText,
-            ItemsContainerTypeParameterV, ItemsEnum, Label, MetaClassTypeParameterV, Opened, PageSize,
-            Placeholder, PropertyTypeParameterV, ReadOnly, Required, TextInputFieldThemeNames, Title {
+            HasAriaLabelAndFocusableAttributes, HasAriaDescription, PartialMatchMode, AllowCustomValue,
+            AllowedCharPattern, Autofocus, AutoOpen, OverlayWidth, ClearButtonVisible,
+            CollectionOrInstanceDataContainer, ErrorMessage, HelperText, ItemsContainerTypeParameterV, ItemsEnum, Label,
+            MetaClassTypeParameterV, Opened, PageSize, Placeholder, PropertyTypeParameterV, ReadOnly, Required,
+            TextInputFieldThemeNames, Title {
     }
 
     @StudioPropertyGroup
@@ -2375,7 +2410,7 @@ public final class StudioPropertyGroups {
     }
 
     @StudioPropertyGroup
-    public interface CheckboxComponent extends BooleanFieldComponent, Indeterminate {
+    public interface CheckboxComponent extends BooleanFieldComponent, HasAriaDescription, Indeterminate {
     }
 
     @StudioPropertyGroup
@@ -2383,8 +2418,8 @@ public final class StudioPropertyGroups {
     }
 
     @StudioPropertyGroup
-    public interface TextFieldComponent extends TextInputFieldDefaultProperties, AllowedCharPattern, Datatype,
-            MaxLength, MinLength, Pattern, PropertyTypeParameterV, TrimEnabled {
+    public interface TextFieldComponent extends TextInputFieldDefaultProperties, InputMode, AllowedCharPattern,
+            Datatype, MaxLength, MinLength, Pattern, PropertyTypeParameterV, TrimEnabled {
     }
 
     @StudioPropertyGroup
@@ -2398,10 +2433,10 @@ public final class StudioPropertyGroups {
     }
 
     @StudioPropertyGroup
-    public interface EntityComboBoxComponent extends FieldDefaultProperties, AllowedCharPattern, AllowCustomValue,
-            Autofocus, AutoOpen, FocusSelectedItem, OverlayWidth, ItemsContainerTypeParameterV,
-            MetaClassTypeParameterV, Opened, PageSize, Pattern, Placeholder, PropertyTypeParameterV,
-            TextInputFieldThemeNames, Title {
+    public interface EntityComboBoxComponent extends FieldDefaultProperties, HasAriaDescription, PartialMatchMode,
+            AllowedCharPattern, AllowCustomValue, Autofocus, AutoOpen, FocusSelectedItem, OverlayWidth,
+            ItemsContainerTypeParameterV, MetaClassTypeParameterV, Opened, PageSize, Pattern, Placeholder,
+            PropertyTypeParameterV, TextInputFieldThemeNames, Title {
     }
 
     @StudioPropertyGroup
@@ -2457,7 +2492,7 @@ public final class StudioPropertyGroups {
             @StudioProperty(xmlAttribute = StudioXmlAttributes.HIDE_DELAY,
                     type = StudioPropertyType.INTEGER,
                     category = StudioProperty.Category.GENERAL),
-            @StudioProperty(xmlAttribute = StudioXmlAttributes.ROLE,
+            @StudioProperty(xmlAttribute = StudioXmlAttributes.ARIA_ROLE,
                     type = StudioPropertyType.STRING, defaultValue = "dialog",
                     category = StudioProperty.Category.GENERAL)
     })
@@ -3106,7 +3141,7 @@ public final class StudioPropertyGroups {
                             type = StudioPropertyType.INTEGER,
                             category = StudioProperty.Category.GENERAL),
                     @StudioProperty(
-                            xmlAttribute = StudioXmlAttributes.ROLE,
+                            xmlAttribute = StudioXmlAttributes.ARIA_ROLE,
                             type = StudioPropertyType.STRING,
                             category = StudioProperty.Category.GENERAL),
                     @StudioProperty(
@@ -3152,16 +3187,16 @@ public final class StudioPropertyGroups {
                             options = {"helper-above-field", "vertical", "horizontal"})
             }
     )
-    public interface CheckboxGroupComponent extends SelectionFieldComponent, RequiredAttributes {
+    public interface CheckboxGroupComponent extends SelectionFieldComponent, HasAriaDescription, RequiredAttributes {
     }
 
     @StudioPropertyGroup(properties = @StudioProperty(
             xmlAttribute = StudioXmlAttributes.AUTO_OPEN,
             type = StudioPropertyType.BOOLEAN,
             defaultValue = "true"))
-    public interface ComboBoxComponent extends FieldDefaultProperties, Title, Pattern, PageSize, Datatype, ItemsEnum,
-            Autofocus, Placeholder, OverlayWidth, AllowCustomValue, FocusSelectedItem, ClearButtonVisible,
-            PropertyTypeParameterV, TextInputFieldThemeNames {
+    public interface ComboBoxComponent extends FieldDefaultProperties, HasAriaDescription, PartialMatchMode, Title,
+            Pattern, PageSize, Datatype, ItemsEnum, Autofocus, Placeholder, OverlayWidth, AllowCustomValue,
+            FocusSelectedItem, ClearButtonVisible, PropertyTypeParameterV, TextInputFieldThemeNames {
     }
 
     @StudioPropertyGroup(
@@ -3242,9 +3277,9 @@ public final class StudioPropertyGroups {
                             type = StudioPropertyType.LOCALIZED_STRING)
             }
     )
-    public interface DatePickerComponent extends FieldDefaultProperties, Name, Opened, AutoOpen, Placeholder,
-            WeekNumbersVisible, ClearButtonVisible, AllowedCharPattern, ValidationStringMin, ValidationStringMax,
-            PropertyTypeParameterV, TextInputFieldThemeNames {
+    public interface DatePickerComponent extends FieldDefaultProperties, HasAriaDescription, DialogAccessibleName, Name,
+            Opened, AutoOpen, Placeholder, WeekNumbersVisible, ClearButtonVisible, AllowedCharPattern,
+            ValidationStringMin, ValidationStringMax, PropertyTypeParameterV, TextInputFieldThemeNames {
     }
 
     @StudioPropertyGroup(
@@ -3268,11 +3303,16 @@ public final class StudioPropertyGroups {
                     @StudioProperty(
                             xmlAttribute = StudioXmlAttributes.TIME_PLACEHOLDER,
                             type = StudioPropertyType.LOCALIZED_STRING,
+                            category = StudioProperty.Category.GENERAL),
+                    @StudioProperty(
+                            xmlAttribute = StudioXmlAttributes.DEFAULT_TIME,
+                            type = StudioPropertyType.STRING,
                             category = StudioProperty.Category.GENERAL)
             }
     )
-    public interface DateTimePickerComponent extends FieldDefaultProperties, TimeStep, AutoOpen, WeekNumbersVisible,
-            ValidationStringMin, ValidationStringMax, PropertyTypeParameterV, TextInputFieldThemeNames {
+    public interface DateTimePickerComponent extends FieldDefaultProperties, DialogAccessibleName, TimeStep, AutoOpen,
+            WeekNumbersVisible, ValidationStringMin, ValidationStringMax, PropertyTypeParameterV,
+            TextInputFieldThemeNames {
     }
 
     @StudioPropertyGroup(properties = @StudioProperty(
@@ -3307,7 +3347,7 @@ public final class StudioPropertyGroups {
     }
 
     @StudioPropertyGroup
-    public interface SliderDefaultProperties extends FieldDefaultProperties, Property,
+    public interface SliderDefaultProperties extends FieldDefaultProperties, HasAriaDescription, Property,
             ValueChangeModeAttributes, MinMaxVisible, ValueAlwaysVisible {
     }
 
@@ -3372,7 +3412,7 @@ public final class StudioPropertyGroups {
             type = StudioPropertyType.VALUES_LIST,
             category = StudioProperty.Category.LOOK_AND_FEEL,
             options = {"vertical", "horizontal", "helper-above-field"}))
-    public interface RadioButtonGroupComponent extends SelectionFieldComponent, Required, Datatype,
+    public interface RadioButtonGroupComponent extends SelectionFieldComponent, HasAriaDescription, Required, Datatype,
             ItemsContainerTypeParameterV {
     }
 
@@ -3407,8 +3447,8 @@ public final class StudioPropertyGroups {
                                     "helper-above-field"})
             }
     )
-    public interface SelectComponent extends FieldDefaultProperties, Datatype, Autofocus, Placeholder, OverlayWidth,
-            PropertyTypeParameterV {
+    public interface SelectComponent extends FieldDefaultProperties, HasAriaDescription, Datatype, Autofocus,
+            Placeholder, OverlayWidth, PropertyTypeParameterV {
     }
 
     @StudioPropertyGroup(
@@ -3446,9 +3486,9 @@ public final class StudioPropertyGroups {
             }
     )
     public interface TextAreaComponent extends ValidatableBaseFieldComponent, HasAriaLabelAndFocusableAttributes,
-            ValueChangeModeAttributes, Pattern, Required, Property, MinLength, MaxLength, Autofocus, Autoselect,
-            TrimEnabled, StringValue, Placeholder, Autocorrect, Autocomplete, Autocapitalize, TextAreaThemeNames,
-            ClearButtonVisible, AllowedCharPattern {
+            HasAriaDescription, ValueChangeModeAttributes, Pattern, Required, Property, MinLength, MaxLength, Autofocus,
+            Autoselect, TrimEnabled, StringValue, Placeholder, Autocorrect, Autocomplete, Autocapitalize,
+            TextAreaThemeNames, ClearButtonVisible, AllowedCharPattern {
     }
 
     @StudioPropertyGroup(
@@ -3475,8 +3515,9 @@ public final class StudioPropertyGroups {
             classFqn = "io.jmix.core.metamodel.datatype.Datatype",
             options = {"offsetTime", "localTime", "time"},
             typeParameter = "V"))
-    public interface TimePickerComponent extends FieldDefaultProperties, TimeStep, AutoOpen, Placeholder,
-            ClearButtonVisible, AllowedCharPattern, ValidationStringMin, ValidationStringMax, PropertyTypeParameterV {
+    public interface TimePickerComponent extends FieldDefaultProperties, HasAriaDescription, TimeStep, AutoOpen,
+            Placeholder, ClearButtonVisible, AllowedCharPattern, ValidationStringMin, ValidationStringMax,
+            PropertyTypeParameterV {
     }
 
     @StudioPropertyGroup(
@@ -3495,16 +3536,30 @@ public final class StudioPropertyGroups {
                             xmlAttribute = StudioXmlAttributes.LOCALES_VISIBLE,
                             type = StudioPropertyType.BOOLEAN,
                             category = StudioProperty.Category.GENERAL,
-                            defaultValue = "true")
+                            defaultValue = "true"),
+                    @StudioProperty(
+                            xmlAttribute = StudioXmlAttributes.HEADING_LEVEL,
+                            type = StudioPropertyType.INTEGER,
+                            category = StudioProperty.Category.GENERAL,
+                            defaultValue = "1")
             }
     )
     public interface LoginFormComponent extends BaseComponentWithClassNames, Enabled {
     }
 
-    @StudioPropertyGroup(properties = @StudioProperty(
-            xmlAttribute = StudioXmlAttributes.FORGOT_PASSWORD_BUTTON_VISIBLE,
-            type = StudioPropertyType.BOOLEAN,
-            category = StudioProperty.Category.GENERAL))
+    @StudioPropertyGroup(
+            properties = {
+                    @StudioProperty(
+                            xmlAttribute = StudioXmlAttributes.FORGOT_PASSWORD_BUTTON_VISIBLE,
+                            type = StudioPropertyType.BOOLEAN,
+                            category = StudioProperty.Category.GENERAL),
+                    @StudioProperty(
+                            xmlAttribute = StudioXmlAttributes.HEADING_LEVEL,
+                            type = StudioPropertyType.INTEGER,
+                            category = StudioProperty.Category.GENERAL,
+                            defaultValue = "1")
+            }
+    )
     public interface LoginOverlayComponent extends BaseComponentWithClassNames, Opened, Enabled {
     }
 
@@ -3544,8 +3599,8 @@ public final class StudioPropertyGroups {
     }
 
     @StudioPropertyGroup
-    public interface ImageHtmlComponent extends BaseSizedComponentWithClassNames, Title, Enabled, DataBindingAttributes,
-            TextAttributes, ClickShortcut, HasAriaLabel, AlternateText, ImageResource, ImageThemeNames {
+    public interface ImageHtmlComponent extends BaseSizedComponentWithClassNames, Title, DataBindingAttributes,
+            ClickShortcut, HasAriaLabel, AlternateText, ImageResource, ImageThemeNames {
     }
 
     @StudioPropertyGroup(

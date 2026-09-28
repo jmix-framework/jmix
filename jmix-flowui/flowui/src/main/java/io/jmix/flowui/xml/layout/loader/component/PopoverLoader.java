@@ -52,7 +52,7 @@ public class PopoverLoader extends AbstractContainerLoader<Popover> {
         loadInteger(element, "focusDelay", resultComponent::setFocusDelay);
         loadInteger(element, "hoverDelay", resultComponent::setHoverDelay);
         loadInteger(element, "hideDelay", resultComponent::setHideDelay);
-        loadString(element, "role", resultComponent::setRole);
+        loadString(element, "ariaRole", resultComponent::setAriaRole);
 
         // Popover is not HasSize: setWidth/setHeight write element properties that the web component
         // forwards to the teleported overlay, and there is no min/max size equivalent.

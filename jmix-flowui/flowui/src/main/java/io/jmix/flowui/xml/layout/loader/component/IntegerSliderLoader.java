@@ -54,6 +54,7 @@ public class IntegerSliderLoader extends AbstractComponentLoader<JmixIntegerSlid
         componentLoader().loadValueAndElementAttributes(resultComponent, element);
         componentLoader().loadValidationAttributes(resultComponent, element, context);
         componentLoader().loadAriaLabel(resultComponent, element);
+        componentLoader().loadAriaDescription(resultComponent, element);
     }
 
     protected DataLoaderSupport getDataLoaderSupport() {

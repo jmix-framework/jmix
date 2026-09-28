@@ -14,6 +14,11 @@
  * limitations under the License.
  */
 
+/* Aura sets --vaadin-switch-border-width: 0 on :root for vaadin-switch, which would drop the jmix-switch track border */
+:where(jmix-switch) {
+    --vaadin-switch-border-width: var(--vaadin-input-field-border-width, 1px);
+}
+
 jmix-switch:is([checked]):not([readonly], [disabled])::part(switch) {
     --vaadin-switch-background: var(--aura-accent-color);
     --vaadin-switch-border-color: var(--vaadin-border-color-secondary);

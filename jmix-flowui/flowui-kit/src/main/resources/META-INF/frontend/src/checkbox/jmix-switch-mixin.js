@@ -210,17 +210,12 @@ export const SwitchMixin = (superclass) =>
             this.__oldChecked = checked;
         }
 
-        /**
-         * Override an observer from `FieldMixin`
-         * to validate when required is removed.
-         *
-         * @protected
-         * @override
-         */
-        _requiredChanged(required) {
-            super._requiredChanged(required);
+        /** @protected */
+        updated(props) {
+            super.updated(props);
 
-            if (required === false) {
+            // Validate when the required constraint is removed.
+            if (props.has('required') && this.required === false) {
                 this._requestValidation();
             }
         }

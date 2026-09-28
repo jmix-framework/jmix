@@ -769,8 +769,24 @@ public interface Dialogs {
         SideDialogBuilder withSideDialogPosition(SideDialogPosition position);
 
         /**
-         * @return overlay role of the dialog or {@code null} if not set
+         * @return the ARIA role of the dialog or {@code null} if not set
          */
+        @Nullable
+        String getAriaRole();
+
+        /**
+         * Sets the ARIA role of the dialog, used by screen readers.
+         *
+         * @param role the ARIA role to set
+         * @return builder
+         */
+        SideDialogBuilder withAriaRole(String role);
+
+        /**
+         * @return overlay role of the dialog or {@code null} if not set
+         * @deprecated Use {@link #getAriaRole()} instead
+         */
+        @Deprecated(since = "3.1", forRemoval = true)
         @Nullable
         String getOverlayRole();
 
@@ -779,7 +795,9 @@ public interface Dialogs {
          *
          * @param role role to set
          * @return builder
+         * @deprecated Use {@link #withAriaRole(String)} instead
          */
+        @Deprecated(since = "3.1", forRemoval = true)
         SideDialogBuilder withOverlayRole(String role);
 
         /**

@@ -64,6 +64,7 @@ public class SelectLoader extends AbstractComponentLoader<JmixSelect<?>> {
         componentLoader().loadValueAndElementAttributes(resultComponent, element);
         componentLoader().loadValidationAttributes(resultComponent, element, context);
         componentLoader().loadAriaLabel(resultComponent, element);
+        componentLoader().loadAriaDescription(resultComponent, element);
         componentLoader().loadDatatype(resultComponent, element);
 
         componentLoader().loadFragmentRenderer(element, resultComponent::setRenderer);

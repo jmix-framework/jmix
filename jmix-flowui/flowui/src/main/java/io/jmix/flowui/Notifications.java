@@ -338,7 +338,11 @@ public class Notifications {
         public Notification build() {
             notification = createNotification();
             notification.setDuration(duration);
-            notification.addThemeName(convertTypeToThemeName(type));
+
+            String typeThemeName = convertTypeToThemeName(type);
+            if (!typeThemeName.isEmpty()) {
+                notification.addThemeName(typeThemeName);
+            }
 
             // force setting assertive if type error
             notification.setAssertive(assertive || type == Type.ERROR);

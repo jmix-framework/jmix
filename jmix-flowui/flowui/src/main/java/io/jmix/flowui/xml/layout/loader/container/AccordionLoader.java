@@ -39,6 +39,8 @@ public class AccordionLoader extends AbstractContainerLoader<JmixAccordion> {
 
     @Override
     public void loadComponent() {
+        loadInteger(element, "headingLevel", resultComponent::setHeadingLevel);
+
         componentLoader().loadClassNames(resultComponent, element);
         componentLoader().loadSizeAttributes(resultComponent, element);
 

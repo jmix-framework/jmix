@@ -319,6 +319,10 @@ public class ComponentLoaderSupport implements ApplicationContextAware {
         loaderSupport.loadResourceString(element, "ariaLabelledBy", context.getMessageGroup(), component::setAriaLabelledBy);
     }
 
+    public void loadAriaDescription(HasAriaDescription component, Element element) {
+        loaderSupport.loadString(element, "ariaDescribedBy", component::setAriaDescribedBy);
+    }
+
     public void loadTrimming(SupportsTrimming component, Element element) {
         loaderSupport.loadBoolean(element, "trimEnabled", component::setTrimEnabled);
     }
@@ -436,6 +440,8 @@ public class ComponentLoaderSupport implements ApplicationContextAware {
 
         loadFirstDayOfWeek(datePickerI18n, element);
         loadDateFormat(datePickerI18n, element);
+        loaderSupport.loadResourceString(element, "dialogAccessibleName", context.getMessageGroup(),
+                datePickerI18n::setDialogAccessibleName);
     }
 
     @SuppressWarnings({"rawtypes"})

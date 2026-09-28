@@ -16,6 +16,7 @@
 
 package io.jmix.flowui.xml.layout.loader.html;
 
+import com.vaadin.flow.component.InputMode;
 import com.vaadin.flow.component.html.Input;
 import io.jmix.flowui.xml.layout.loader.AbstractComponentLoader;
 
@@ -29,6 +30,7 @@ public class InputLoader extends AbstractComponentLoader<Input> {
     @Override
     public void loadComponent() {
         loadString(element, "type", resultComponent::setType);
+        loadEnum(element, InputMode.class, "inputMode", resultComponent::setInputMode);
 
         componentLoader().loadPlaceholder(resultComponent, element);
         componentLoader().loadEnabled(resultComponent, element);

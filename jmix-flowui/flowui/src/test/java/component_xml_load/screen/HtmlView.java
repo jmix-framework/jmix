@@ -102,6 +102,9 @@ public class HtmlView extends StandardView {
     public Image imageId;
 
     @ViewComponent
+    public Image legacyImageId;
+
+    @ViewComponent
     public Main mainId;
 
     @ViewComponent

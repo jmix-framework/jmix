@@ -19,7 +19,7 @@
         <badge id="badge"
                text="Badge text"
                number="5"
-               role="status"
+               ariaRole="status"
                themeNames="success small"
                classNames="className1"
                css="color: red"

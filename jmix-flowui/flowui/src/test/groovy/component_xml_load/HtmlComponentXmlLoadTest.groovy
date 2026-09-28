@@ -19,6 +19,7 @@ package component_xml_load
 import com.vaadin.flow.component.HasText
 import com.vaadin.flow.component.HtmlComponent
 import com.vaadin.flow.component.HtmlContainer
+import com.vaadin.flow.component.InputMode
 import com.vaadin.flow.component.html.AnchorTarget
 import com.vaadin.flow.component.html.IFrame
 import com.vaadin.flow.component.html.OrderedList
@@ -26,6 +27,7 @@ import com.vaadin.flow.component.html.RangeInput
 import com.vaadin.flow.component.html.Span
 import com.vaadin.flow.data.value.ValueChangeMode
 import component_xml_load.screen.HtmlView
+import io.jmix.flowui.component.image.JmixImage
 import org.springframework.boot.test.context.SpringBootTest
 import test_support.spec.FlowuiTestSpecification
 
@@ -197,6 +199,7 @@ class HtmlComponentXmlLoadTest extends FlowuiTestSpecification {
             style.get("color") == "red"
             enabled
             height == "50px"
+            inputMode == InputMode.EMAIL
             maxHeight == "55px"
             maxWidth == "120px"
             minHeight == "40px"
@@ -216,24 +219,39 @@ class HtmlComponentXmlLoadTest extends FlowuiTestSpecification {
         def htmlView = navigateToView(HtmlView.class)
 
         then: "JmixImage attributes will be loaded"
-        def htmlContainer = htmlView."imageId" as HtmlContainer
+        def image = htmlView."imageId" as JmixImage
 
-        verifyAll(htmlContainer) {
+        verifyAll(image) {
             id.get() == "imageId"
+            alt.get() == "alternativeTextString"
+            ariaLabel.get() == "ariaLabelString"
             classNames.containsAll(["cssClassName1", "cssClassName2"])
             style.get("color") == "red"
-            enabled
             height == "50px"
             maxHeight == "55px"
             maxWidth == "120px"
             minHeight == "40px"
             minWidth == "80px"
+            src == "resourceString"
             title.get() == "imageTitle"
             visible
-            whiteSpace == HasText.WhiteSpace.PRE
             width == "100px"
-            getElement().getThemeList().containsAll(["primary", "small"])
-            (getChildren().findAny().get() as HtmlContainer).getText() == "imageChild"
+            getElement().getThemeList().contains("cover")
+        }
+    }
+
+    def "Legacy container attributes and nested components of JmixImage are ignored"() {
+        when: "Open the HtmlView"
+        def htmlView = navigateToView(HtmlView.class)
+
+        then: "Neither the legacy attributes nor the nested component are applied"
+        def image = htmlView."legacyImageId" as JmixImage
+
+        verifyAll(image) {
+            getChildren().count() == 0
+            getElement().isEnabled()
+            getElement().getText().isEmpty()
+            style.get("white-space") == null
         }
     }
 

@@ -210,7 +210,9 @@
                     <xs:enumeration value="ACCESSIBILITY"/>
                     <xs:enumeration value="ACCORDION_MENU"/>
                     <xs:enumeration value="ADD_DOCK"/>
+                    <xs:enumeration value="DOCK"/>
                     <xs:enumeration value="ADJUST"/>
+                    <xs:enumeration value="CONTRAST"/>
                     <xs:enumeration value="ADOBE_FLASH"/>
                     <xs:enumeration value="AIRPLANE"/>
                     <xs:enumeration value="ALARM"/>
@@ -281,6 +283,7 @@
                     <xs:enumeration value="BOOK"/>
                     <xs:enumeration value="BOOKMARK_O"/>
                     <xs:enumeration value="BOOKMARK"/>
+                    <xs:enumeration value="BRANCH"/>
                     <xs:enumeration value="BRIEFCASE"/>
                     <xs:enumeration value="BROWSER"/>
                     <xs:enumeration value="BUG_O"/>
@@ -305,9 +308,13 @@
                     <xs:enumeration value="CARET_LEFT"/>
                     <xs:enumeration value="CARET_RIGHT"/>
                     <xs:enumeration value="CARET_SQUARE_DOWN_O"/>
+                    <xs:enumeration value="CARET_SQUARE_DOWN"/>
                     <xs:enumeration value="CARET_SQUARE_LEFT_O"/>
+                    <xs:enumeration value="CARET_SQUARE_LEFT"/>
                     <xs:enumeration value="CARET_SQUARE_RIGHT_O"/>
+                    <xs:enumeration value="CARET_SQUARE_RIGHT"/>
                     <xs:enumeration value="CARET_SQUARE_UP_O"/>
+                    <xs:enumeration value="CARET_SQUARE_UP"/>
                     <xs:enumeration value="CARET_UP"/>
                     <xs:enumeration value="CART_O"/>
                     <xs:enumeration value="CART"/>
@@ -370,12 +377,14 @@
                     <xs:enumeration value="COIN_PILES"/>
                     <xs:enumeration value="COINS"/>
                     <xs:enumeration value="COMBOBOX"/>
+                    <xs:enumeration value="COMMAND"/>
                     <xs:enumeration value="COMMENT_ELLIPSIS_O"/>
                     <xs:enumeration value="COMMENT_ELLIPSIS"/>
                     <xs:enumeration value="COMMENT_O"/>
                     <xs:enumeration value="COMMENT"/>
                     <xs:enumeration value="COMMENTS_O"/>
                     <xs:enumeration value="COMMENTS"/>
+                    <xs:enumeration value="COMPASS"/>
                     <xs:enumeration value="COMPILE"/>
                     <xs:enumeration value="COMPRESS_SQUARE"/>
                     <xs:enumeration value="COMPRESS"/>
@@ -506,9 +515,11 @@
                     <xs:enumeration value="FOLDER_SEARCH"/>
                     <xs:enumeration value="FOLDER"/>
                     <xs:enumeration value="FONT"/>
+                    <xs:enumeration value="FORKLIFT"/>
                     <xs:enumeration value="FORM"/>
                     <xs:enumeration value="FORWARD"/>
                     <xs:enumeration value="FROWN_O"/>
+                    <xs:enumeration value="FROWN"/>
                     <xs:enumeration value="FUNCTION"/>
                     <xs:enumeration value="FUNNEL"/>
                     <xs:enumeration value="GAMEPAD"/>
@@ -606,11 +617,13 @@
                     <xs:enumeration value="MEDAL"/>
                     <xs:enumeration value="MEGAPHONE"/>
                     <xs:enumeration value="MEH_O"/>
+                    <xs:enumeration value="MEH"/>
                     <xs:enumeration value="MENU"/>
                     <xs:enumeration value="MICROPHONE"/>
                     <xs:enumeration value="MINUS_CIRCLE_O"/>
                     <xs:enumeration value="MINUS_CIRCLE"/>
                     <xs:enumeration value="MINUS_SQUARE_O"/>
+                    <xs:enumeration value="MINUS_SQUARE"/>
                     <xs:enumeration value="MINUS"/>
                     <xs:enumeration value="MOBILE_BROWSER"/>
                     <xs:enumeration value="MOBILE_RETRO"/>
@@ -637,6 +650,7 @@
                     <xs:enumeration value="OPTION"/>
                     <xs:enumeration value="OPTIONS"/>
                     <xs:enumeration value="ORIENTATION"/>
+                    <xs:enumeration value="OUTDENT"/>
                     <xs:enumeration value="OUT"/>
                     <xs:enumeration value="OUTBOX"/>
                     <xs:enumeration value="PACKAGE"/>
@@ -657,6 +671,7 @@
                     <xs:enumeration value="PASTE"/>
                     <xs:enumeration value="PAUSE"/>
                     <xs:enumeration value="PENCIL"/>
+                    <xs:enumeration value="PERSON"/>
                     <xs:enumeration value="PHONE_LANDLINE"/>
                     <xs:enumeration value="PHONE"/>
                     <xs:enumeration value="PICTURE"/>
@@ -676,6 +691,7 @@
                     <xs:enumeration value="PLUS_CIRCLE"/>
                     <xs:enumeration value="PLUS_MINUS"/>
                     <xs:enumeration value="PLUS_SQUARE_O"/>
+                    <xs:enumeration value="PLUS_SQUARE"/>
                     <xs:enumeration value="PLUS"/>
                     <xs:enumeration value="POINTER"/>
                     <xs:enumeration value="POWER_OFF"/>
@@ -738,6 +754,7 @@
                     <xs:enumeration value="SLIDER"/>
                     <xs:enumeration value="SLIDERS"/>
                     <xs:enumeration value="SMILEY_O"/>
+                    <xs:enumeration value="SMILEY"/>
                     <xs:enumeration value="SORT"/>
                     <xs:enumeration value="SOUND_DISABLE"/>
                     <xs:enumeration value="SPARK_LINE"/>
@@ -752,10 +769,12 @@
                     <xs:enumeration value="SPLIT"/>
                     <xs:enumeration value="SPOON"/>
                     <xs:enumeration value="SQUARE_SHADOW"/>
+                    <xs:enumeration value="SQUARE"/>
                     <xs:enumeration value="STAR_HALF_LEFT_O"/>
                     <xs:enumeration value="STAR_HALF_LEFT"/>
                     <xs:enumeration value="STAR_HALF_RIGHT_O"/>
                     <xs:enumeration value="STAR_HALF_RIGHT"/>
+                    <xs:enumeration value="STAR_HALF"/>
                     <xs:enumeration value="STAR_O"/>
                     <xs:enumeration value="STAR"/>
                     <xs:enumeration value="START_COG"/>
@@ -772,6 +791,7 @@
                     <xs:enumeration value="SUITCASE"/>
                     <xs:enumeration value="SUN_DOWN"/>
                     <xs:enumeration value="SUN_O"/>
+                    <xs:enumeration value="SUN"/>
                     <xs:enumeration value="SUN_RISE"/>
                     <xs:enumeration value="SUPERSCRIPT"/>
                     <xs:enumeration value="SWORD"/>
@@ -1359,6 +1379,27 @@
             <xs:enumeration value="SENTENCES"/>
             <xs:enumeration value="WORDS"/>
             <xs:enumeration value="CHARACTERS"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="inputModeEnum">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="NONE"/>
+            <xs:enumeration value="TEXT"/>
+            <xs:enumeration value="DECIMAL"/>
+            <xs:enumeration value="NUMERIC"/>
+            <xs:enumeration value="TEL"/>
+            <xs:enumeration value="SEARCH"/>
+            <xs:enumeration value="EMAIL"/>
+            <xs:enumeration value="URL"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="partialMatchModeEnum">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="NONE"/>
+            <xs:enumeration value="FIRST_MATCH"/>
+            <xs:enumeration value="ONLY_MATCH"/>
         </xs:restriction>
     </xs:simpleType>
 
@@ -2529,6 +2570,14 @@
         <xs:attribute name="autocapitalize" type="autocapitalizeEnum"/>
     </xs:attributeGroup>
 
+    <xs:attributeGroup name="hasInputMode">
+        <xs:attribute name="inputMode" type="inputModeEnum"/>
+    </xs:attributeGroup>
+
+    <xs:attributeGroup name="hasPartialMatchMode">
+        <xs:attribute name="partialMatchMode" type="partialMatchModeEnum"/>
+    </xs:attributeGroup>
+
     <xs:attributeGroup name="hasAutocorrect">
         <xs:attribute name="autocorrect" type="xs:boolean"/>
     </xs:attributeGroup>
@@ -2558,6 +2607,10 @@
     <xs:attributeGroup name="hasAriaLabel">
         <xs:attribute name="ariaLabel" type="resourceString"/>
         <xs:attribute name="ariaLabelledBy" type="resourceString"/>
+    </xs:attributeGroup>
+
+    <xs:attributeGroup name="hasAriaDescription">
+        <xs:attribute name="ariaDescribedBy" type="xs:string"/>
     </xs:attributeGroup>
 
     <xs:attributeGroup name="hasTrimming">
@@ -2814,6 +2867,7 @@
                 <xs:attributeGroup ref="hasValueChangeMode"/>
                 <xs:attributeGroup ref="hasFocusableAttributes"/>
                 <xs:attributeGroup ref="hasAriaLabel"/>
+                <xs:attributeGroup ref="hasAriaDescription"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -2826,6 +2880,7 @@
 
                 <xs:attributeGroup ref="hasRequired"/>
                 <xs:attributeGroup ref="hasAriaLabel"/>
+                <xs:attributeGroup ref="hasAriaDescription"/>
                 <xs:attributeGroup ref="hasValidation"/>
                 <xs:attributeGroup ref="hasValueChangeMode"/>
                 <xs:attributeGroup ref="hasFocusableAttributes"/>
@@ -2896,6 +2951,8 @@
                 <xs:attributeGroup ref="hasPlaceholder"/>
                 <xs:attributeGroup ref="hasValueAndElement"/>
                 <xs:attributeGroup ref="hasAriaLabel"/>
+                <xs:attributeGroup ref="hasAriaDescription"/>
+                <xs:attributeGroup ref="hasPartialMatchMode"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -3139,7 +3196,7 @@
         <xs:attribute name="focusDelay" type="xs:integer"/>
         <xs:attribute name="hoverDelay" type="xs:integer"/>
         <xs:attribute name="hideDelay" type="xs:integer"/>
-        <xs:attribute name="role" type="xs:string"/>
+        <xs:attribute name="ariaRole" type="xs:string"/>
         <xs:attribute name="width" type="xs:string"/>
         <xs:attribute name="height" type="xs:string"/>
         <xs:attribute name="visible" type="xs:boolean"/>
@@ -3641,6 +3698,7 @@
 
                 <xs:attributeGroup ref="hasRequired"/>
                 <xs:attributeGroup ref="hasTrimming"/>
+                <xs:attributeGroup ref="hasInputMode"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -3815,6 +3873,7 @@
                 <xs:attributeGroup ref="hasFocusableAttributes"/>
                 <xs:attributeGroup ref="hasEnabled"/>
                 <xs:attributeGroup ref="hasAriaLabel"/>
+                <xs:attributeGroup ref="hasAriaDescription"/>
                 <xs:attributeGroup ref="hasDataContainer"/>
                 <xs:attributeGroup ref="hasValueAndElement"/>
                 <xs:attributeGroup ref="hasClickNotifierAttributes"/>
@@ -3895,6 +3954,7 @@
                 </xs:sequence>
 
                 <xs:attribute name="content" type="resourceString"/>
+                <xs:attribute name="lineBreaks" type="xs:boolean"/>
 
                 <xs:attributeGroup ref="hasClassNames"/>
                 <xs:attributeGroup ref="hasSize"/>
@@ -4000,6 +4060,8 @@
                 <xs:attributeGroup ref="hasPlaceholder"/>
                 <xs:attributeGroup ref="hasOverlayWidth"/>
                 <xs:attributeGroup ref="hasAriaLabel"/>
+                <xs:attributeGroup ref="hasAriaDescription"/>
+                <xs:attributeGroup ref="hasPartialMatchMode"/>
                 <xs:attributeGroup ref="hasValidation"/>
             </xs:extension>
         </xs:complexContent>
@@ -4037,6 +4099,8 @@
                 <xs:attributeGroup ref="hasPlaceholder"/>
                 <xs:attributeGroup ref="hasOverlayWidth"/>
                 <xs:attributeGroup ref="hasAriaLabel"/>
+                <xs:attributeGroup ref="hasAriaDescription"/>
+                <xs:attributeGroup ref="hasPartialMatchMode"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -4102,6 +4166,7 @@
                 <xs:attributeGroup ref="hasPlaceholder"/>
                 <xs:attributeGroup ref="hasFocusableAttributes"/>
                 <xs:attributeGroup ref="hasAriaLabel"/>
+                <xs:attributeGroup ref="hasAriaDescription"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -4125,6 +4190,7 @@
                 <xs:attribute name="themeNames" type="datePickerThemeNames"/>
                 <xs:attribute name="allowedCharPattern" type="resourceString"/>
                 <xs:attribute name="dateFormat" type="resourceString"/>
+                <xs:attribute name="dialogAccessibleName" type="resourceString"/>
                 <xs:attribute name="max" type="xs:string"/>
                 <xs:attribute name="min" type="xs:string"/>
 
@@ -4132,6 +4198,7 @@
                 <xs:attributeGroup ref="hasFocusableAttributes"/>
                 <xs:attributeGroup ref="hasPlaceholder"/>
                 <xs:attributeGroup ref="hasAriaLabel"/>
+                <xs:attributeGroup ref="hasAriaDescription"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -4153,6 +4220,8 @@
                 <xs:attribute name="datatype" type="dateTimeDatatypeEnum"/>
                 <xs:attribute name="step" type="timePickerStep"/>
                 <xs:attribute name="dateFormat" type="resourceString"/>
+                <xs:attribute name="defaultTime" type="xs:string"/>
+                <xs:attribute name="dialogAccessibleName" type="resourceString"/>
                 <xs:attribute name="max" type="xs:string"/>
                 <xs:attribute name="min" type="xs:string"/>
 
@@ -4172,7 +4241,7 @@
                 </xs:sequence>
 
                 <xs:attribute name="number" type="xs:int"/>
-                <xs:attribute name="role" type="xs:string"/>
+                <xs:attribute name="ariaRole" type="xs:string"/>
                 <xs:attribute name="themeNames" type="badgeComponentThemeNames"/>
 
                 <xs:attributeGroup ref="hasText"/>
@@ -4224,6 +4293,7 @@
                 <xs:attributeGroup ref="hasValueAndElement"/>
                 <xs:attributeGroup ref="hasDataContainer"/>
                 <xs:attributeGroup ref="hasAriaLabel"/>
+                <xs:attributeGroup ref="hasAriaDescription"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -4251,6 +4321,7 @@
                 <xs:attributeGroup ref="hasValueAndElement"/>
                 <xs:attributeGroup ref="hasDataContainer"/>
                 <xs:attributeGroup ref="hasAriaLabel"/>
+                <xs:attributeGroup ref="hasAriaDescription"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -4335,6 +4406,7 @@
                 <xs:attributeGroup ref="hasValueAndElement"/>
                 <xs:attributeGroup ref="hasDataContainer"/>
                 <xs:attributeGroup ref="hasAriaLabel"/>
+                <xs:attributeGroup ref="hasAriaDescription"/>
                 <xs:attributeGroup ref="hasTrimming"/>
             </xs:extension>
         </xs:complexContent>
@@ -4399,6 +4471,8 @@
                         </xs:complexType>
                     </xs:element>
                 </xs:sequence>
+
+                <xs:attribute name="headingLevel" type="xs:integer"/>
 
                 <xs:attributeGroup ref="hasSize"/>
                 <xs:attributeGroup ref="hasClassNames"/>
@@ -4606,6 +4680,7 @@
                 <xs:attributeGroup ref="hasValueAndElement"/>
                 <xs:attributeGroup ref="hasDataContainer"/>
                 <xs:attributeGroup ref="hasAriaLabel"/>
+                <xs:attributeGroup ref="hasAriaDescription"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -4785,6 +4860,7 @@
                 </xs:sequence>
 
                 <xs:attribute name="forgotPasswordButtonVisible" type="xs:boolean"/>
+                <xs:attribute name="headingLevel" type="xs:integer"/>
 
                 <xs:attributeGroup ref="hasEnabled"/>
                 <xs:attributeGroup ref="hasClassNames"/>
@@ -4965,22 +5041,8 @@
     <!-- Image as Icon -->
     <xs:complexType name="imageIconComponent">
         <xs:complexContent>
-            <xs:extension base="baseHtmlComponent">
-                <!-- imageComponent -->
+            <xs:extension base="imageHtmlComponent">
                 <xs:attribute name="themeNames" type="imageThemeNames"/>
-
-                <!-- imageHtmlComponent -->
-                <xs:attribute name="resource" type="xs:string"/>
-                <xs:attribute name="alternateText" type="resourceString"/>
-
-                <xs:attributeGroup ref="hasAriaLabel"/>
-
-                <!-- baseClickableHtmlContainer -->
-                <xs:attributeGroup ref="hasClickNotifierAttributes"/>
-
-                <!-- baseHtmlContainer -->
-                <xs:attributeGroup ref="hasText"/>
-                <xs:attributeGroup ref="hasEnabled"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -5283,11 +5345,12 @@
     <!-- Image-->
     <xs:complexType name="imageHtmlComponent">
         <xs:complexContent>
-            <xs:extension base="baseClickableHtmlContainer">
+            <xs:extension base="baseHtmlComponent">
                 <xs:attribute name="resource" type="xs:string"/>
                 <xs:attribute name="alternateText" type="resourceString"/>
 
                 <xs:attributeGroup ref="hasAriaLabel"/>
+                <xs:attributeGroup ref="hasClickNotifierAttributes"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -5305,6 +5368,7 @@
                 <xs:attributeGroup ref="hasAriaLabel"/>
                 <xs:attributeGroup ref="hasPlaceholder"/>
                 <xs:attributeGroup ref="hasValueChangeMode"/>
+                <xs:attributeGroup ref="hasInputMode"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>

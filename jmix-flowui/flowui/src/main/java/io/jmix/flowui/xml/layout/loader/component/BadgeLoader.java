@@ -40,7 +40,7 @@ public class BadgeLoader extends AbstractComponentLoader<Badge> {
         componentLoader().loadWhiteSpace(resultComponent, element);
 
         loadInteger(element, "number", resultComponent::setNumber);
-        loadString(element, "role", resultComponent::setRole);
+        loadString(element, "ariaRole", resultComponent::setAriaRole);
 
         componentLoader().loadThemeNames(resultComponent, element);
         componentLoader().loadClassNames(resultComponent, element);

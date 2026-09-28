@@ -24,7 +24,9 @@ import java.util.Set;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.grid.ColumnTextAlign;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.data.provider.hierarchy.HierarchicalDataProvider.HierarchyFormat;
 import com.vaadin.flow.data.provider.hierarchy.TreeData;
+import com.vaadin.flow.data.provider.hierarchy.TreeDataProvider;
 import io.jmix.flowui.kit.component.grid.JmixGrid;
 import io.jmix.flowui.kit.component.grid.JmixTreeGrid;
 import io.jmix.flowui.kit.meta.StudioXmlElements;
@@ -70,12 +72,12 @@ class StudioGridPreviewLoader implements StudioPreviewComponentLoader {
         }
 
         // Placeholder rows so columns are visible and evenly laid out in preview;
-        // tree grids reject setItems(Collection) and get TreeData instead.
+        // tree grids reject setItems(Collection) and get a TreeDataProvider instead.
         if (environment != StudioPreviewEnvironment.NOOP) {
             if (grid instanceof JmixTreeGrid<Object> treeGrid) {
                 TreeData<Object> treeData = new TreeData<>();
                 treeData.addItems(null, List.of("Item 1", "Item 2", "Item 3"));
-                treeGrid.setTreeData(treeData);
+                treeGrid.setDataProvider(new TreeDataProvider<>(treeData, HierarchyFormat.NESTED));
             } else {
                 grid.setItems(List.of("Item 1", "Item 2", "Item 3"));
             }

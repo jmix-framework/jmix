@@ -16,6 +16,7 @@
 
 package io.jmix.flowui.component.delegate;
 
+import com.vaadin.flow.data.provider.hierarchy.HierarchicalDataProvider.HierarchyFormat;
 import com.vaadin.flow.data.provider.hierarchy.TreeData;
 import com.vaadin.flow.data.provider.hierarchy.TreeDataProvider;
 import com.vaadin.flow.function.ValueProvider;
@@ -44,7 +45,7 @@ public class TreeGridDelegate<E, ITEMS extends DataGridItems<E>>
 
     @Override
     protected void setupEmptyDataProvider() {
-        component.setDataProvider(new TreeDataProvider<>(new TreeData<>()));
+        component.setDataProvider(new TreeDataProvider<>(new TreeData<>(), HierarchyFormat.NESTED));
     }
 
     protected DataGridColumn<E> addHierarchyColumnInternal(String key, MetaPropertyPath metaPropertyPath) {

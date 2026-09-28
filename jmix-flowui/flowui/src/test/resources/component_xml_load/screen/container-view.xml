@@ -119,6 +119,7 @@
         <accordion id="accordionId"
                    classNames="cssClassName1, cssClassName2"
                    css="color: red;"
+                   headingLevel="3"
                    height="50px"
                    maxHeight="55px"
                    maxWidth="120px"

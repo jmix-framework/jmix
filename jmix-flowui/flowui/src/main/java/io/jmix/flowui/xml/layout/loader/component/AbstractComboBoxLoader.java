@@ -17,6 +17,7 @@
 package io.jmix.flowui.xml.layout.loader.component;
 
 import com.vaadin.flow.component.combobox.ComboBox;
+import com.vaadin.flow.component.combobox.PartialMatchMode;
 import io.jmix.flowui.xml.layout.loader.AbstractComponentLoader;
 import io.jmix.flowui.xml.layout.support.PrefixSuffixLoaderSupport;
 
@@ -41,6 +42,7 @@ public abstract class AbstractComboBoxLoader<T extends ComboBox<?>> extends Abst
         loadBoolean(element, "autoOpen", resultComponent::setAutoOpen);
         loadBoolean(element, "autofocus", resultComponent::setAutofocus);
         loadBoolean(element, "allowCustomValue", resultComponent::setAllowCustomValue);
+        loadEnum(element, PartialMatchMode.class, "partialMatchMode", resultComponent::setPartialMatchMode);
         loadBoolean(element, "focusSelectedItem", resultComponent::setFocusSelectedItem);
         loadString(element, "overlayWidth", resultComponent::setOverlayWidth);
 
@@ -56,6 +58,7 @@ public abstract class AbstractComboBoxLoader<T extends ComboBox<?>> extends Abst
         componentLoader().loadValidationAttributes(resultComponent, element, context);
         componentLoader().loadAllowedCharPattern(resultComponent, element, context);
         componentLoader().loadAriaLabel(resultComponent, element);
+        componentLoader().loadAriaDescription(resultComponent, element);
     }
 
     protected PrefixSuffixLoaderSupport getPrefixSuffixLoaderSupport() {

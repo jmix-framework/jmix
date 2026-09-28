@@ -24,7 +24,7 @@ import com.vaadin.flow.component.login.LoginI18n;
 /**
  * Internationalization object for customizing the component UI texts. An
  * instance with the default messages can be obtained using
- * {@link LoginI18n#createDefault()}
+ * {@link #createDefault()}
  *
  * @see LoginForm#setI18n(LoginI18n)
  */

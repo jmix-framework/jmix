@@ -17,8 +17,11 @@
 package io.jmix.flowui.xml.layout.loader.html;
 
 import io.jmix.flowui.component.image.JmixImage;
+import io.jmix.flowui.xml.layout.support.DataLoaderSupport;
 
-public class ImageLoader extends AbstractHtmlContainerLoader<JmixImage<?>> {
+public class ImageLoader extends AbstractHtmlComponentLoader<JmixImage<?>> {
+
+    protected DataLoaderSupport dataLoaderSupport;
 
     @Override
     protected JmixImage<?> createComponent() {
@@ -32,9 +35,17 @@ public class ImageLoader extends AbstractHtmlContainerLoader<JmixImage<?>> {
         loadString(element, "resource", resultComponent::setSrc);
         loadResourceString(element, "alternateText", context.getMessageGroup(), resultComponent::setAlt);
 
+        componentLoader().loadThemeList(resultComponent, element);
         componentLoader().loadAriaLabel(resultComponent, element);
         componentLoader().loadClickNotifierAttributes(resultComponent, element);
 
         getDataLoaderSupport().loadData(resultComponent, element);
+    }
+
+    protected DataLoaderSupport getDataLoaderSupport() {
+        if (dataLoaderSupport == null) {
+            dataLoaderSupport = applicationContext.getBean(DataLoaderSupport.class, context);
+        }
+        return dataLoaderSupport;
     }
 }

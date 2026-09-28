@@ -37,6 +37,7 @@ import io.jmix.flowui.view.navigation.UrlParamSerializer;
 import io.jmix.security.model.*;
 import io.jmix.security.role.RolePersistence;
 import io.jmix.security.role.RowLevelRoleRepository;
+import io.jmix.securityflowui.impl.role.LocalizedRoleColumnsSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,6 +72,8 @@ public class RowLevelRoleModelDetailView extends StandardDetailView<RowLevelRole
     private RolePersistence rolePersistence;
     @Autowired
     private RoleModelConverter roleModelConverter;
+    @Autowired
+    private LocalizedRoleColumnsSupport localizedRoleColumnsSupport;
     @Autowired
     private RowLevelRoleRepository roleRepository;
     @Autowired
@@ -146,6 +149,11 @@ public class RowLevelRoleModelDetailView extends StandardDetailView<RowLevelRole
     public void onBeforeShow(BeforeShowEvent event) {
         // may be 'null' if a role not found by a code
         setupRoleReadOnlyMode(getEditedEntityOrNull() != null && isDatabaseSource());
+        initChildRolesTable();
+    }
+
+    private void initChildRolesTable() {
+        localizedRoleColumnsSupport.install(childRolesTable);
     }
 
     private void setupRoleReadOnlyMode(boolean isDatabaseSource) {

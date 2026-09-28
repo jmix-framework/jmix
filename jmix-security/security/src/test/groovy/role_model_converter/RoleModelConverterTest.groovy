@@ -16,6 +16,7 @@
 
 package role_model_converter
 
+import io.jmix.security.model.BaseRole
 import io.jmix.security.model.ResourcePolicy
 import io.jmix.security.model.ResourcePolicyType
 import io.jmix.security.model.ResourceRole
@@ -55,6 +56,35 @@ class RoleModelConverterTest extends SecuritySpecification {
         then:
         model.code == 'role2'
         model.rowLevelPolicies == null
+    }
+
+    def "both models receive the message keys and the localized values of the role"() {
+        given:
+        def resourceRole = resourceRoleWithOnePolicy()
+        localize(resourceRole)
+        def rowLevelRole = rowLevelRoleWithOnePolicy()
+        localize(rowLevelRole)
+
+        expect:
+        with(roleModelConverter.createResourceRoleModel(resourceRole)) {
+            nameMessageKey == 'group/name'
+            descriptionMessageKey == 'group/description'
+            localizedNames == 'de=Name'
+            localizedDescriptions == 'de=Beschreibung'
+        }
+        with(roleModelConverter.createRowLevelRoleModel(rowLevelRole)) {
+            nameMessageKey == 'group/name'
+            descriptionMessageKey == 'group/description'
+            localizedNames == 'de=Name'
+            localizedDescriptions == 'de=Beschreibung'
+        }
+    }
+
+    private static void localize(BaseRole role) {
+        role.nameMessageKey = 'group/name'
+        role.descriptionMessageKey = 'group/description'
+        role.localizedNames = 'de=Name'
+        role.localizedDescriptions = 'de=Beschreibung'
     }
 
     private static ResourceRole resourceRoleWithOnePolicy() {

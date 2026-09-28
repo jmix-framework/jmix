@@ -42,6 +42,7 @@ import io.jmix.flowui.view.navigation.UrlParamSerializer;
 import io.jmix.security.model.*;
 import io.jmix.security.role.ResourceRoleRepository;
 import io.jmix.security.role.RolePersistence;
+import io.jmix.securityflowui.impl.role.LocalizedRoleColumnsSupport;
 import io.jmix.securityflowui.view.resourcepolicy.*;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
@@ -92,6 +93,8 @@ public class ResourceRoleModelDetailView extends StandardDetailView<ResourceRole
     private DialogWindows dialogWindows;
     @Autowired
     private RoleModelConverter roleModelConverter;
+    @Autowired
+    private LocalizedRoleColumnsSupport localizedRoleColumnsSupport;
     @Autowired
     private ResourceRoleRepository roleRepository;
     @Autowired
@@ -171,6 +174,11 @@ public class ResourceRoleModelDetailView extends StandardDetailView<ResourceRole
         // may be 'null' if a role not found by a code
         setupRoleReadOnlyMode(getEditedEntityOrNull() != null && isDatabaseSource());
         initAdditionalResourcePolicyTypes();
+        initChildRolesTable();
+    }
+
+    private void initChildRolesTable() {
+        localizedRoleColumnsSupport.install(childRolesTable);
     }
 
     private void initAdditionalResourcePolicyTypes() {

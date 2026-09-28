@@ -1395,6 +1395,14 @@
         </xs:restriction>
     </xs:simpleType>
 
+    <xs:simpleType name="partialMatchModeEnum">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="NONE"/>
+            <xs:enumeration value="FIRST_MATCH"/>
+            <xs:enumeration value="ONLY_MATCH"/>
+        </xs:restriction>
+    </xs:simpleType>
+
     <xs:simpleType name="whiteSpaceEnum">
         <xs:restriction base="xs:string">
             <xs:enumeration value="NORMAL"/>
@@ -2566,6 +2574,10 @@
         <xs:attribute name="inputMode" type="inputModeEnum"/>
     </xs:attributeGroup>
 
+    <xs:attributeGroup name="hasPartialMatchMode">
+        <xs:attribute name="partialMatchMode" type="partialMatchModeEnum"/>
+    </xs:attributeGroup>
+
     <xs:attributeGroup name="hasAutocorrect">
         <xs:attribute name="autocorrect" type="xs:boolean"/>
     </xs:attributeGroup>
@@ -2940,6 +2952,7 @@
                 <xs:attributeGroup ref="hasValueAndElement"/>
                 <xs:attributeGroup ref="hasAriaLabel"/>
                 <xs:attributeGroup ref="hasAriaDescription"/>
+                <xs:attributeGroup ref="hasPartialMatchMode"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -4047,6 +4060,7 @@
                 <xs:attributeGroup ref="hasOverlayWidth"/>
                 <xs:attributeGroup ref="hasAriaLabel"/>
                 <xs:attributeGroup ref="hasAriaDescription"/>
+                <xs:attributeGroup ref="hasPartialMatchMode"/>
                 <xs:attributeGroup ref="hasValidation"/>
             </xs:extension>
         </xs:complexContent>
@@ -4085,6 +4099,7 @@
                 <xs:attributeGroup ref="hasOverlayWidth"/>
                 <xs:attributeGroup ref="hasAriaLabel"/>
                 <xs:attributeGroup ref="hasAriaDescription"/>
+                <xs:attributeGroup ref="hasPartialMatchMode"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -4174,6 +4189,7 @@
                 <xs:attribute name="themeNames" type="datePickerThemeNames"/>
                 <xs:attribute name="allowedCharPattern" type="resourceString"/>
                 <xs:attribute name="dateFormat" type="resourceString"/>
+                <xs:attribute name="dialogAccessibleName" type="resourceString"/>
                 <xs:attribute name="max" type="xs:string"/>
                 <xs:attribute name="min" type="xs:string"/>
 
@@ -4203,6 +4219,8 @@
                 <xs:attribute name="datatype" type="dateTimeDatatypeEnum"/>
                 <xs:attribute name="step" type="timePickerStep"/>
                 <xs:attribute name="dateFormat" type="resourceString"/>
+                <xs:attribute name="defaultTime" type="xs:string"/>
+                <xs:attribute name="dialogAccessibleName" type="resourceString"/>
                 <xs:attribute name="max" type="xs:string"/>
                 <xs:attribute name="min" type="xs:string"/>
 

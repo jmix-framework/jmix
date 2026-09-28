@@ -277,6 +277,7 @@ public final class StudioXmlAttributes {
     public static final String DEFAULT_ROW_HEIGHT = "defaultRowHeight";
     public static final String DEFAULT_SLOT_LABEL_FORMAT = "defaultSlotLabelFormat";
     public static final String DEFAULT_SUGGESTIONS_ENABLED = "defaultSuggestionsEnabled";
+    public static final String DEFAULT_TIME = "defaultTime";
     public static final String DEFAULT_TIMED_EVENT_DURATION = "defaultTimedEventDuration";
     public static final String DEFAULT_VALUE = "defaultValue";
     public static final String DEFAULT_WEEK_NUMBER_FORMAT = "defaultWeekNumberFormat";
@@ -284,6 +285,7 @@ public final class StudioXmlAttributes {
     public static final String DENSE_LAYOUT = "denseLayout";
     public static final String DESCRIPTION = "description";
     public static final String DETAILS_VISIBLE_ON_CLICK = "detailsVisibleOnClick";
+    public static final String DIALOG_ACCESSIBLE_NAME = "dialogAccessibleName";
     public static final String DIMENSION = "dimension";
     public static final String DIRECTION = "direction";
     public static final String DISABLED = "disabled";
@@ -681,6 +683,7 @@ public final class StudioXmlAttributes {
     public static final String PARAMETER_CLASS = "parameterClass";
     public static final String PARAMETER_NAME = "parameterName";
     public static final String PARTIAL_DATA = "partialData";
+    public static final String PARTIAL_MATCH_MODE = "partialMatchMode";
     public static final String PASSWORD = "password";
     public static final String PATTERN = "pattern";
     public static final String PERCENT_PRECISION = "percentPrecision";

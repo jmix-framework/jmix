@@ -440,6 +440,8 @@ public class ComponentLoaderSupport implements ApplicationContextAware {
 
         loadFirstDayOfWeek(datePickerI18n, element);
         loadDateFormat(datePickerI18n, element);
+        loaderSupport.loadResourceString(element, "dialogAccessibleName", context.getMessageGroup(),
+                datePickerI18n::setDialogAccessibleName);
     }
 
     @SuppressWarnings({"rawtypes"})

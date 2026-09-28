@@ -17,6 +17,7 @@
 package test_support;
 
 import io.jmix.search.index.mapping.ContributedIndexDefinition;
+import io.jmix.search.index.mapping.ExtendedSearchSettings;
 import io.jmix.search.index.mapping.IndexDefinitionContributor;
 import io.jmix.search.index.mapping.MappingDefinition;
 import io.jmix.search.index.mapping.StaticAttributesGroupConfiguration;
@@ -24,6 +25,7 @@ import io.jmix.search.index.mapping.strategy.impl.AutoMappingStrategy;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import test_support.entity.TestSubReferenceEntity;
 import test_support.index_definition.common.TestIncludeSpecificLocalPropertiesIndexDefinition;
 
 import java.util.List;
@@ -42,8 +44,20 @@ public class ContributedIndexDefinitionTestConfiguration {
     @Bean
     public IndexDefinitionContributor testIndexDefinitionContributor() {
         return () -> List.of(
-                new ContributedIndexDefinition("test_SimpleRootEntity", null, mapping("secondTextValue")),
-                new ContributedIndexDefinition("test_ReferenceEntity", null, mapping("textValue")));
+                ContributedIndexDefinition.builder("test_SimpleRootEntity", mapping("secondTextValue"))
+                        // Ignored: the entity has a Java definition, which keeps its own settings.
+                        .withExtendedSearchSettings(extendedSearchSettings())
+                        .withIndexablePredicate(instance -> false)
+                        .build(),
+                ContributedIndexDefinition.builder("test_ReferenceEntity", mapping("textValue")).build(),
+                ContributedIndexDefinition.builder("test_SubReferenceEntity", mapping("textValue"))
+                        .withExtendedSearchSettings(extendedSearchSettings())
+                        .withIndexablePredicate(instance -> "indexed".equals(((TestSubReferenceEntity) instance).getName()))
+                        .build());
+    }
+
+    private static ExtendedSearchSettings extendedSearchSettings() {
+        return ExtendedSearchSettings.builder().build();
     }
 
     private static MappingDefinition mapping(String... properties) {

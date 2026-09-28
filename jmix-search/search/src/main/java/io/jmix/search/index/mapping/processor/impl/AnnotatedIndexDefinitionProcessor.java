@@ -133,11 +133,11 @@ public class AnnotatedIndexDefinitionProcessor {
      * @return index configuration
      */
     public IndexConfiguration createIndexConfiguration(ContributedIndexDefinition definition) {
-        MetaClass metaClass = metadata.getClass(definition.entityName());
-        String indexName = createIndexName(definition.indexName(), metaClass);
-        ExtendedSearchSettings extendedSearchSettings = ExtendedSearchSettings.empty();
+        MetaClass metaClass = metadata.getClass(definition.getEntityName());
+        String indexName = createIndexName(definition.getIndexName(), metaClass);
+        ExtendedSearchSettings extendedSearchSettings = definition.getExtendedSearchSettings();
         Map<String, MappingFieldDescriptor> fields = processMappingDefinition(
-                metaClass, definition.mappingDefinition(), extendedSearchSettings);
+                metaClass, definition.getMappingDefinition(), extendedSearchSettings);
         IndexMappingConfiguration mapping = new IndexMappingConfiguration(
                 metaClass, fields, createDisplayedNameDescriptor(metaClass));
         return new IndexConfiguration(
@@ -146,27 +146,28 @@ public class AnnotatedIndexDefinitionProcessor {
                 indexName,
                 mapping,
                 getAffectedEntityClasses(mapping),
-                obj -> true,
+                definition.getIndexablePredicate(),
                 extendedSearchSettings);
     }
 
     /**
      * Adds the fields of a contributed definition to an existing configuration. Fields already present
-     * in the existing configuration win over contributed ones with the same name.
+     * in the existing configuration win over contributed ones with the same name. The index name, the extended
+     * search settings and the indexable predicate of the existing configuration are kept.
      *
      * @param base       configuration built from the annotated Java definition
      * @param definition contributed definition for the same entity
      * @return a new index configuration with the merged fields
      */
     public IndexConfiguration appendContributedFields(IndexConfiguration base, ContributedIndexDefinition definition) {
-        if (definition.indexName() != null) {
+        if (definition.getIndexName() != null) {
             log.warn("Index name '{}' contributed for entity '{}' is dropped, the entity is already mapped " +
-                            "to index '{}'", definition.indexName(), definition.entityName(), base.getIndexName());
+                            "to index '{}'", definition.getIndexName(), definition.getEntityName(), base.getIndexName());
         }
         IndexMappingConfiguration baseMapping = base.getMapping();
         MetaClass metaClass = baseMapping.getEntityMetaClass();
         Map<String, MappingFieldDescriptor> fields = new HashMap<>(baseMapping.getFields());
-        processMappingDefinition(metaClass, definition.mappingDefinition(), base.getExtendedSearchSettings())
+        processMappingDefinition(metaClass, definition.getMappingDefinition(), base.getExtendedSearchSettings())
                 .forEach(fields::putIfAbsent);
         IndexMappingConfiguration mapping = new IndexMappingConfiguration(
                 metaClass, fields, baseMapping.getDisplayedNameDescriptor());

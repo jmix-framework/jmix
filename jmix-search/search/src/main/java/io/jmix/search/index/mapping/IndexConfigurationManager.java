@@ -322,7 +322,7 @@ public class IndexConfigurationManager {
                                 "instead of an empty collection");
             }
             for (ContributedIndexDefinition definition : definitions) {
-                configurations.compute(definition.entityName(), (entityName, existing) -> existing == null
+                configurations.compute(definition.getEntityName(), (entityName, existing) -> existing == null
                         ? indexDefinitionProcessor.createIndexConfiguration(definition)
                         : indexDefinitionProcessor.appendContributedFields(existing, definition));
             }

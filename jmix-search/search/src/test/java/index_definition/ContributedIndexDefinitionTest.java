@@ -31,6 +31,7 @@ import test_support.ContributedIndexDefinitionTestConfiguration;
 import test_support.TestJsonUtils;
 import test_support.entity.TestReferenceEntity;
 import test_support.entity.TestSimpleRootEntity;
+import test_support.entity.TestSubReferenceEntity;
 import test_support.index_definition.IndexConfigurationMatcher;
 
 @ExtendWith(SpringExtension.class)
@@ -59,9 +60,47 @@ public class ContributedIndexDefinitionTest {
     }
 
     @Test
+    void contributedDefinitionWithoutSettingsHasExtendedSearchDisabledAndIndexesEveryInstance() {
+        IndexConfiguration configuration = indexConfigurationManager.getIndexConfigurationByEntityName("test_ReferenceEntity");
+
+        Assertions.assertFalse(configuration.getExtendedSearchSettings().isEnabled());
+        Assertions.assertTrue(configuration.getIndexablePredicate().test(new TestReferenceEntity()));
+    }
+
+    @Test
+    void contributedExtendedSearchSettingsAreUsedForEntityWithoutJavaDefinition() {
+        IndexConfiguration configuration = indexConfigurationManager.getIndexConfigurationByEntityName("test_SubReferenceEntity");
+
+        Assertions.assertTrue(configuration.getExtendedSearchSettings().isEnabled());
+        JsonNode expectedMapping = TestJsonUtils.readJsonFromFile("index_definition/contributed/test_mapping_contributed_extended_search");
+        MatcherAssert.assertThat(configuration, IndexConfigurationMatcher.configureWith(
+                "test_SubReferenceEntity", "search_index_test_subreferenceentity", TestSubReferenceEntity.class, expectedMapping));
+    }
+
+    @Test
+    void contributedIndexablePredicateIsUsedForEntityWithoutJavaDefinition() {
+        IndexConfiguration configuration = indexConfigurationManager.getIndexConfigurationByEntityName("test_SubReferenceEntity");
+        TestSubReferenceEntity indexed = new TestSubReferenceEntity();
+        indexed.setName("indexed");
+        TestSubReferenceEntity skipped = new TestSubReferenceEntity();
+        skipped.setName("skipped");
+
+        Assertions.assertTrue(configuration.getIndexablePredicate().test(indexed));
+        Assertions.assertFalse(configuration.getIndexablePredicate().test(skipped));
+    }
+
+    @Test
+    void contributedSettingsAreIgnoredWhenAppendedToJavaDefinition() {
+        IndexConfiguration configuration = indexConfigurationManager.getIndexConfigurationByEntityName("test_SimpleRootEntity");
+
+        Assertions.assertFalse(configuration.getExtendedSearchSettings().isEnabled());
+        Assertions.assertTrue(configuration.getIndexablePredicate().test(new TestSimpleRootEntity()));
+    }
+
+    @Test
     void contributedEntityIsDirectlyIndexed() {
         Assertions.assertTrue(indexConfigurationManager.isDirectlyIndexed("test_ReferenceEntity"));
         MatcherAssert.assertThat(indexConfigurationManager.getAllIndexedEntities(),
-                Matchers.containsInAnyOrder("test_SimpleRootEntity", "test_ReferenceEntity"));
+                Matchers.containsInAnyOrder("test_SimpleRootEntity", "test_ReferenceEntity", "test_SubReferenceEntity"));
     }
 }

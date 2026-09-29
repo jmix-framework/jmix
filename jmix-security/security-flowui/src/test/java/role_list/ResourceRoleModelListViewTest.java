@@ -17,6 +17,7 @@
 package role_list;
 
 import com.vaadin.flow.data.provider.SortDirection;
+import io.jmix.core.UnconstrainedDataManager;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.testassist.FlowuiTestAssistConfiguration;
@@ -25,10 +26,14 @@ import io.jmix.flowui.testassist.UiTestUtils;
 import io.jmix.flowui.view.ViewControllerUtils;
 import io.jmix.flowui.view.navigation.ViewNavigationSupport;
 import io.jmix.security.model.ResourceRoleModel;
+import io.jmix.security.role.ResourceRoleRepository;
+import io.jmix.securitydata.entity.ResourceRoleEntity;
 import io.jmix.securityflowui.view.resourcerole.ResourceRoleModelListView;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.jdbc.core.JdbcTemplate;
 import test_support.SecurityFlowuiTestConfiguration;
 import test_support.role.TestAuditorRole;
 import test_support.role.TestBookkeeperRole;
@@ -51,6 +56,19 @@ public class ResourceRoleModelListViewTest {
 
     @Autowired
     ViewNavigationSupport viewNavigationSupport;
+    @Autowired
+    UnconstrainedDataManager dataManager;
+    @Autowired
+    JdbcTemplate jdbcTemplate;
+    @Autowired
+    ResourceRoleRepository resourceRoleRepository;
+
+    @AfterEach
+    void tearDown() {
+        jdbcTemplate.update("delete from SEC_RESOURCE_ROLE");
+        // The repository caches roles by code and does not see a delete through JDBC.
+        resourceRoleRepository.invalidateCache();
+    }
 
     @Test
     void roleModelsTable_showsTranslatedNameAndDescription() {
@@ -120,6 +138,25 @@ public class ResourceRoleModelListViewTest {
         enterName(view, "halter");
 
         assertThat(getTestRoleCodes(getRoleModelsDc(view).getItems())).isEmpty();
+    }
+
+    @Test
+    void roleModelsTable_databaseRole_showsTranslatedNameAndDescription() {
+        // Not a test role code, so that the order of the test roles stays as the other tests expect it.
+        ResourceRoleEntity roleEntity = dataManager.create(ResourceRoleEntity.class);
+        roleEntity.setCode("database-translated");
+        roleEntity.setName("Buchhaltung");
+        roleEntity.setDescription("Führt die Bücher");
+        roleEntity.setLocalizedNames("en=Accounting");
+        roleEntity.setLocalizedDescriptions("en=Keeps the books");
+        dataManager.save(roleEntity);
+
+        ResourceRoleModelListView view = openView();
+        DataGrid<ResourceRoleModel> roleModelsTable = getRoleModelsTable(view);
+        ResourceRoleModel roleModel = getRoleModel(getRoleModelsDc(view).getItems(), "database-translated");
+
+        assertThat(getShownText(roleModelsTable, "name", roleModel)).isEqualTo("Accounting");
+        assertThat(getShownText(roleModelsTable, "description", roleModel)).isEqualTo("Keeps the books");
     }
 
     ResourceRoleModelListView openView() {

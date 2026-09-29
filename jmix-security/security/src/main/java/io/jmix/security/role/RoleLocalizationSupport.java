@@ -21,8 +21,10 @@ import io.jmix.core.LocaleResolver;
 import io.jmix.core.MessageTools;
 import io.jmix.core.Messages;
 import io.jmix.core.security.CurrentAuthentication;
+import io.jmix.security.impl.role.RoleLocalizedValuesUtils;
 import io.jmix.security.model.BaseRole;
 import io.jmix.security.model.BaseRoleModel;
+import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
@@ -30,10 +32,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
-import java.io.StringReader;
 import java.util.Locale;
-import java.util.Properties;
+import java.util.Map;
 
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
@@ -153,30 +153,27 @@ public class RoleLocalizationSupport {
             return isAbsent(message) ? text : message;
         }
 
-        Properties properties = loadLocalizedValues(localizedValues);
-        String localized = properties.getProperty(LocaleResolver.localeToString(locale));
+        Map<String, String> values = loadLocalizedValues(localizedValues);
+        String localized = values.get(LocaleResolver.localeToString(locale));
         if (isAbsent(localized)) {
-            localized = properties.getProperty(locale.getLanguage());
+            localized = values.get(locale.getLanguage());
         }
 
         return isAbsent(localized) ? text : localized;
     }
 
-    protected Properties loadLocalizedValues(@Nullable String localizedValues) {
-        Properties properties = new Properties();
-        if (localizedValues == null || localizedValues.isEmpty()) {
-            return properties;
-        }
-
+    protected Map<String, String> loadLocalizedValues(@Nullable String localizedValues) {
         try {
-            properties.load(new StringReader(localizedValues));
-        } catch (IOException | IllegalArgumentException e) {
-            // A malformed escape makes the localized values unusable; the default text is shown instead.
-            log.warn("Cannot read the localized values of a role '{}': {}", localizedValues, e.getMessage());
-            return new Properties();
+            return RoleLocalizedValuesUtils.read(localizedValues);
+        } catch (IllegalArgumentException e) {
+            // A malformed escape makes the localized values unusable; the default text is shown instead. The provider
+            // of a database role reports such values when it builds the role, so this is logged at debug only, with
+            // the line breaks of the values escaped to keep the record on one line.
+            String values = StringUtils.replaceEach(localizedValues,
+                    new String[]{"\r", "\n"}, new String[]{"\\r", "\\n"});
+            log.debug("Cannot read the localized values of a role '{}': {}", values, e.getMessage());
+            return Map.of();
         }
-
-        return properties;
     }
 
     protected boolean isAbsent(@Nullable String value) {

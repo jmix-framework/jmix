@@ -30,6 +30,7 @@ import io.jmix.flowui.component.checkboxgroup.JmixCheckboxGroup;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.component.validation.ValidationErrors;
+import io.jmix.flowui.component.valuepicker.JmixValuePicker;
 import io.jmix.flowui.exception.ValidationException;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
@@ -65,6 +66,10 @@ public class ResourceRoleModelDetailView extends StandardDetailView<ResourceRole
 
     @ViewComponent
     private TypedTextField<String> codeField;
+    @ViewComponent
+    private JmixValuePicker<String> localizedNamesField;
+    @ViewComponent
+    private JmixValuePicker<String> localizedDescriptionsField;
     @ViewComponent
     private JmixCheckboxGroup<String> scopesField;
     @ViewComponent
@@ -215,6 +220,13 @@ public class ResourceRoleModelDetailView extends StandardDetailView<ResourceRole
 
     private void setupRoleReadOnlyMode(boolean isDatabaseSource) {
         setReadOnly(!isDatabaseSource);
+
+        // Only a database role keeps localized values: a design-time role is translated in message bundles. The fields
+        // are never made visible here, since attribute security may have hidden them when it bound them.
+        if (!isDatabaseSource) {
+            localizedNamesField.setVisible(false);
+            localizedDescriptionsField.setVisible(false);
+        }
 
         createDropdownButton.setVisible(isDatabaseSource);
 

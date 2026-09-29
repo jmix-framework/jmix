@@ -17,6 +17,7 @@
 package role_list;
 
 import com.vaadin.flow.data.provider.SortDirection;
+import io.jmix.core.UnconstrainedDataManager;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.testassist.FlowuiTestAssistConfiguration;
@@ -25,10 +26,14 @@ import io.jmix.flowui.testassist.UiTestUtils;
 import io.jmix.flowui.view.ViewControllerUtils;
 import io.jmix.flowui.view.navigation.ViewNavigationSupport;
 import io.jmix.security.model.RowLevelRoleModel;
+import io.jmix.security.role.RowLevelRoleRepository;
+import io.jmix.securitydata.entity.RowLevelRoleEntity;
 import io.jmix.securityflowui.view.rowlevelrole.RowLevelRoleModelListView;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.jdbc.core.JdbcTemplate;
 import test_support.SecurityFlowuiTestConfiguration;
 import test_support.role.TestArchiveRowLevelRole;
 import test_support.role.TestBranchRowLevelRole;
@@ -50,6 +55,19 @@ public class RowLevelRoleModelListViewTest {
 
     @Autowired
     ViewNavigationSupport viewNavigationSupport;
+    @Autowired
+    UnconstrainedDataManager dataManager;
+    @Autowired
+    JdbcTemplate jdbcTemplate;
+    @Autowired
+    RowLevelRoleRepository rowLevelRoleRepository;
+
+    @AfterEach
+    void tearDown() {
+        jdbcTemplate.update("delete from SEC_ROW_LEVEL_ROLE");
+        // The repository caches roles by code and does not see a delete through JDBC.
+        rowLevelRoleRepository.invalidateCache();
+    }
 
     @Test
     void roleModelsTable_showsTranslatedNameAndDescription() {
@@ -118,6 +136,25 @@ public class RowLevelRoleModelListViewTest {
         enterName(view, "filial");
 
         assertThat(getTestRoleCodes(getRoleModelsDc(view).getItems())).isEmpty();
+    }
+
+    @Test
+    void roleModelsTable_databaseRole_showsTranslatedNameAndDescription() {
+        // Not a test role code, so that the order of the test roles stays as the other tests expect it.
+        RowLevelRoleEntity roleEntity = dataManager.create(RowLevelRoleEntity.class);
+        roleEntity.setCode("database-translated");
+        roleEntity.setName("Archiv");
+        roleEntity.setDescription("Sieht das Archiv");
+        roleEntity.setLocalizedNames("en=Archive");
+        roleEntity.setLocalizedDescriptions("en=Sees the archive");
+        dataManager.save(roleEntity);
+
+        RowLevelRoleModelListView view = openView();
+        DataGrid<RowLevelRoleModel> roleModelsTable = getRoleModelsTable(view);
+        RowLevelRoleModel roleModel = getRoleModel(getRoleModelsDc(view).getItems(), "database-translated");
+
+        assertThat(getShownText(roleModelsTable, "name", roleModel)).isEqualTo("Archive");
+        assertThat(getShownText(roleModelsTable, "description", roleModel)).isEqualTo("Sees the archive");
     }
 
     RowLevelRoleModelListView openView() {

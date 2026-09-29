@@ -180,6 +180,37 @@ class RoleLocalizationSupportTest extends RoleLocalizationSpecification {
         roleLocalizationSupport.getLocalizedDescription(role) == 'Manages orders'
     }
 
+    def "a bundle that cannot be read is reported where the role is shown at debug only, on one line"() {
+        given: "the provider of a database role reports such a bundle at warn where it builds the role"
+        authenticate(Locale.GERMAN)
+        def role = databaseRole('de=Leiter\nru=\\u00')
+
+        when:
+        def records = standardErrorOf { roleLocalizationSupport.getLocalizedName(role) }
+                .readLines()
+                .findAll { it.contains(RoleLocalizationSupport.class.name) }
+
+        then: "the record of the resolver reaches the capture, so a warning of it could not pass unseen"
+        records.size() == 1
+        records[0].contains(' DEBUG ')
+        records[0].contains('de=Leiter\\nru=\\u00')
+    }
+
+    /**
+     * What the code writes to the standard error, where the simple SLF4J logger of the tests prints.
+     */
+    static String standardErrorOf(Closure code) {
+        def standardError = System.err
+        def captured = new ByteArrayOutputStream()
+        System.setErr(new PrintStream(captured, true, 'UTF-8'))
+        try {
+            code()
+        } finally {
+            System.setErr(standardError)
+        }
+        captured.toString('UTF-8')
+    }
+
     def "a role without a description has none in any locale, whichever kind of role it is"() {
         given: "a database role keeps null, a design-time role the empty string its annotation declares by default"
         authenticate(Locale.GERMAN)

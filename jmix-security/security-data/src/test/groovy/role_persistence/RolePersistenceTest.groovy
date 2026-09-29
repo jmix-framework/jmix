@@ -17,6 +17,7 @@
 package role_persistence
 
 import io.jmix.core.DataManager
+import io.jmix.core.EntitySerialization
 import io.jmix.core.security.InMemoryUserRepository
 import io.jmix.core.security.SecurityContextHelper
 import io.jmix.security.model.*
@@ -61,6 +62,8 @@ class RolePersistenceTest extends SecurityDataSpecification {
     InMemoryUserRepository userRepository
     @Autowired
     AuthenticationManager authenticationManager
+    @Autowired
+    EntitySerialization entitySerialization
 
     UserDetails user1
     Authentication systemAuthentication
@@ -215,6 +218,190 @@ class RolePersistenceTest extends SecurityDataSpecification {
             policy.entityName == 'User' &&
                     policy.whereClause == 'other query'
         }
+    }
+
+    def "a resource role keeps its localized values through the persistence"() {
+        when: "a new role is saved with localized values"
+        def roleModel = dataManager.create(ResourceRoleModel)
+        roleModel.name = 'Buchhaltung'
+        roleModel.code = 'accounting'
+        roleModel.localizedNames = 'en=Accounting'
+        roleModel.localizedDescriptions = 'en=Keeps the books'
+        rolePersistence.save(roleModel)
+
+        then:
+        with(resourceRoleProvider.getRoleByCode('accounting')) {
+            localizedNames == 'en=Accounting'
+            localizedDescriptions == 'en=Keeps the books'
+        }
+
+        when: "a model of the stored role gets another name only"
+        roleModel = storedResourceRoleModel('accounting')
+        roleModel.name = 'Buchführung'
+        rolePersistence.save(roleModel)
+
+        then: "the role keeps its localized values"
+        with(resourceRoleProvider.getRoleByCode('accounting')) {
+            name == 'Buchführung'
+            localizedNames == 'en=Accounting'
+            localizedDescriptions == 'en=Keeps the books'
+        }
+
+        when: "a model of the stored role gets other localized values"
+        roleModel = storedResourceRoleModel('accounting')
+        roleModel.localizedNames = 'en=Bookkeeping'
+        roleModel.localizedDescriptions = null
+        rolePersistence.save(roleModel)
+
+        then: "they replace the stored ones"
+        with(resourceRoleProvider.getRoleByCode('accounting')) {
+            localizedNames == 'en=Bookkeeping'
+            localizedDescriptions == null
+        }
+    }
+
+    def "a row-level role keeps its localized values through the persistence"() {
+        when: "a new role is saved with localized values"
+        def roleModel = dataManager.create(RowLevelRoleModel)
+        roleModel.name = 'Archiv'
+        roleModel.code = 'archive'
+        roleModel.localizedNames = 'en=Archive'
+        roleModel.localizedDescriptions = 'en=Sees the archived orders'
+        rolePersistence.save(roleModel)
+
+        then:
+        with(rowLevelRoleProvider.getRoleByCode('archive')) {
+            localizedNames == 'en=Archive'
+            localizedDescriptions == 'en=Sees the archived orders'
+        }
+
+        when: "a model of the stored role gets another name only"
+        roleModel = storedRowLevelRoleModel('archive')
+        roleModel.name = 'Ablage'
+        rolePersistence.save(roleModel)
+
+        then: "the role keeps its localized values"
+        with(rowLevelRoleProvider.getRoleByCode('archive')) {
+            name == 'Ablage'
+            localizedNames == 'en=Archive'
+            localizedDescriptions == 'en=Sees the archived orders'
+        }
+
+        when: "a model of the stored role gets other localized values"
+        roleModel = storedRowLevelRoleModel('archive')
+        roleModel.localizedNames = 'en=Records'
+        roleModel.localizedDescriptions = null
+        rolePersistence.save(roleModel)
+
+        then: "they replace the stored ones"
+        with(rowLevelRoleProvider.getRoleByCode('archive')) {
+            localizedNames == 'en=Records'
+            localizedDescriptions == null
+        }
+    }
+
+    def "a resource role is exported and imported with its localized values as they are in the file"() {
+        given: "a file exported from a role with localized values"
+        saveResourceRole('accounting', 'en=Accounting', 'en=Keeps the books')
+        def file = rolePersistence.exportResourceRoles([storedResourceRoleModel('accounting')], false)
+
+        expect: "the file holds them"
+        with(exportedRole(file)) {
+            localizedNames == 'en=Accounting'
+            localizedDescriptions == 'en=Keeps the books'
+        }
+
+        when: "the stored values change and the file is imported"
+        saveResourceRole('accounting', 'en=Bookkeeping', null)
+        rolePersistence.importResourceRoles(file, false)
+
+        then: "the role has the values of the file"
+        with(resourceRoleProvider.getRoleByCode('accounting')) {
+            localizedNames == 'en=Accounting'
+            localizedDescriptions == 'en=Keeps the books'
+        }
+
+        when: "a file exported from the role without localized values is imported after values are stored"
+        saveResourceRole('accounting', null, null)
+        def fileWithoutValues = rolePersistence.exportResourceRoles([storedResourceRoleModel('accounting')], false)
+        saveResourceRole('accounting', 'en=Bookkeeping', 'en=Keeps the books')
+        rolePersistence.importResourceRoles(fileWithoutValues, false)
+
+        then: "the role has no localized values, as in the file"
+        with(resourceRoleProvider.getRoleByCode('accounting')) {
+            localizedNames == null
+            localizedDescriptions == null
+        }
+    }
+
+    def "a row-level role is exported and imported with its localized values as they are in the file"() {
+        given: "a file exported from a role with localized values"
+        saveRowLevelRole('archive', 'en=Archive', 'en=Sees the archived orders')
+        def file = rolePersistence.exportRowLevelRoles([storedRowLevelRoleModel('archive')], false)
+
+        expect: "the file holds them"
+        with(exportedRole(file)) {
+            localizedNames == 'en=Archive'
+            localizedDescriptions == 'en=Sees the archived orders'
+        }
+
+        when: "the stored values change and the file is imported"
+        saveRowLevelRole('archive', 'en=Records', null)
+        rolePersistence.importRowLevelRoles(file, false)
+
+        then: "the role has the values of the file"
+        with(rowLevelRoleProvider.getRoleByCode('archive')) {
+            localizedNames == 'en=Archive'
+            localizedDescriptions == 'en=Sees the archived orders'
+        }
+
+        when: "a file exported from the role without localized values is imported after values are stored"
+        saveRowLevelRole('archive', null, null)
+        def fileWithoutValues = rolePersistence.exportRowLevelRoles([storedRowLevelRoleModel('archive')], false)
+        saveRowLevelRole('archive', 'en=Records', 'en=Sees the archived orders')
+        rolePersistence.importRowLevelRoles(fileWithoutValues, false)
+
+        then: "the role has no localized values, as in the file"
+        with(rowLevelRoleProvider.getRoleByCode('archive')) {
+            localizedNames == null
+            localizedDescriptions == null
+        }
+    }
+
+    /**
+     * Saves a new resource role or the stored one under the code, with the given localized values.
+     */
+    void saveResourceRole(String code, String localizedNames, String localizedDescriptions) {
+        def roleModel = resourceRoleProvider.findRoleByCode(code) == null
+                ? dataManager.create(ResourceRoleModel).tap { it.code = code; it.name = code }
+                : storedResourceRoleModel(code)
+        roleModel.localizedNames = localizedNames
+        roleModel.localizedDescriptions = localizedDescriptions
+        rolePersistence.save(roleModel)
+    }
+
+    void saveRowLevelRole(String code, String localizedNames, String localizedDescriptions) {
+        def roleModel = rowLevelRoleProvider.findRoleByCode(code) == null
+                ? dataManager.create(RowLevelRoleModel).tap { it.code = code; it.name = code }
+                : storedRowLevelRoleModel(code)
+        roleModel.localizedNames = localizedNames
+        roleModel.localizedDescriptions = localizedDescriptions
+        rolePersistence.save(roleModel)
+    }
+
+    /**
+     * The first role of an exported file, read as the import reads it.
+     */
+    Object exportedRole(byte[] file) {
+        entitySerialization.entitiesCollectionFromJson(new String(file, StandardCharsets.UTF_8), null)[0]
+    }
+
+    ResourceRoleModel storedResourceRoleModel(String code) {
+        roleModelConverter.createResourceRoleModel(resourceRoleProvider.getRoleByCode(code))
+    }
+
+    RowLevelRoleModel storedRowLevelRoleModel(String code) {
+        roleModelConverter.createRowLevelRoleModel(rowLevelRoleProvider.getRoleByCode(code))
     }
 
     def "export includes policies even for models loaded without policies"() {

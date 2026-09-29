@@ -1,6 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ Copyright 2020 Haulmont.
+  ~ Copyright 2026 Haulmont.
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -21,13 +20,15 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
-    <property name="uuid.type" dbms="oracle" value="varchar2(32)"/>
-    <property name="uuid.type" dbms="mariadb" value="char(36)"/>
-    <property name="uuid.type" dbms="postgresql, mysql, mssql, hsqldb, h2" value="uuid"/>
-
-    <include file="/io/jmix/securitydata/liquibase/changelog/001-security-data.xml"/>
-    <include file="/io/jmix/securitydata/liquibase/changelog/002-security-data.xml"/>
-    <include file="/io/jmix/securitydata/liquibase/changelog/003-security-data.xml"/>
-    <include file="/io/jmix/securitydata/liquibase/changelog/004-security-data.xml"/>
+    <changeSet author="security-data" id="1">
+        <addColumn tableName="SEC_RESOURCE_ROLE">
+            <column name="LOCALIZED_NAMES" type="clob"/>
+            <column name="LOCALIZED_DESCRIPTIONS" type="clob"/>
+        </addColumn>
+        <addColumn tableName="SEC_ROW_LEVEL_ROLE">
+            <column name="LOCALIZED_NAMES" type="clob"/>
+            <column name="LOCALIZED_DESCRIPTIONS" type="clob"/>
+        </addColumn>
+    </changeSet>
 
 </databaseChangeLog>

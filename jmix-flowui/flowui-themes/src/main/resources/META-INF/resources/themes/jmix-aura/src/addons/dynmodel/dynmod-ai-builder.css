@@ -49,6 +49,13 @@
     padding: 0 var(--vaadin-padding-m) var(--vaadin-padding-m);
 }
 
+/* AI Chat sets the text area border width to a unitless 0, which the Vaadin baseline box cannot subtract in
+   calc(): the box stays as an empty row above the text and the placeholder. The composer is aligned with
+   nothing, so the box is dropped until AI Chat uses 0px. */
+.dynmod-ai-builder .chat-pane jmix-ai-message-input > vaadin-text-area::before {
+    display: none;
+}
+
 .dynmod-ai-builder .chat-empty {
     flex-shrink: 0;
     gap: var(--vaadin-gap-s);

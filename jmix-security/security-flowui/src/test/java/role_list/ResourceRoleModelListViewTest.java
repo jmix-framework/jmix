@@ -40,6 +40,8 @@ import test_support.role.TestBookkeeperRole;
 import test_support.role.TestFullAccessRole;
 import test_support.role.TestManagerRole;
 
+import java.util.Objects;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static test_support.TestRoleFilters.enterName;
 import static test_support.TestRoleGrids.getRoleModel;
@@ -106,8 +108,8 @@ public class ResourceRoleModelListViewTest {
         ResourceRoleModelListView view = openView();
         DataGrid<ResourceRoleModel> roleModelsTable = getRoleModelsTable(view);
 
-        assertThat(roleModelsTable.getColumnByKey("name").isSortable()).isTrue();
-        assertThat(roleModelsTable.getColumnByKey("description").isSortable()).isTrue();
+        assertThat(Objects.requireNonNull(roleModelsTable.getColumnByKey("name")).isSortable()).isTrue();
+        assertThat(Objects.requireNonNull(roleModelsTable.getColumnByKey("description")).isSortable()).isTrue();
 
         sort(roleModelsTable, "name", SortDirection.DESCENDING);
 

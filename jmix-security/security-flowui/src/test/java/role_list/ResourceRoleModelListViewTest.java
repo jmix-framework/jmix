@@ -71,13 +71,25 @@ public class ResourceRoleModelListViewTest {
     }
 
     @Test
-    void roleModelsTable_showsTranslatedNameAndDescription() {
+    void roleModelsTable_showsTranslatedTexts() {
+        // Not a test role code, so that the order of the test roles stays as the other tests expect it.
+        ResourceRoleEntity roleEntity = dataManager.create(ResourceRoleEntity.class);
+        roleEntity.setCode("database-translated");
+        roleEntity.setName("Buchhaltung");
+        roleEntity.setDescription("Führt die Bücher");
+        roleEntity.setLocalizedNames("en=Accounting");
+        roleEntity.setLocalizedDescriptions("en=Keeps the accounts");
+        dataManager.save(roleEntity);
+
         ResourceRoleModelListView view = openView();
         DataGrid<ResourceRoleModel> roleModelsTable = getRoleModelsTable(view);
         ResourceRoleModel bookkeeper = getRoleModel(getRoleModelsDc(view).getItems(), TestBookkeeperRole.CODE);
+        ResourceRoleModel databaseRole = getRoleModel(getRoleModelsDc(view).getItems(), "database-translated");
 
         assertThat(getShownText(roleModelsTable, "name", bookkeeper)).isEqualTo("Bookkeeper");
         assertThat(getShownText(roleModelsTable, "description", bookkeeper)).isEqualTo("Keeps the books");
+        assertThat(getShownText(roleModelsTable, "name", databaseRole)).isEqualTo("Accounting");
+        assertThat(getShownText(roleModelsTable, "description", databaseRole)).isEqualTo("Keeps the accounts");
     }
 
     @Test
@@ -90,9 +102,12 @@ public class ResourceRoleModelListViewTest {
     }
 
     @Test
-    void sortByNameColumn_ordersByTranslatedName() {
+    void sortByColumns_ordersByTranslatedTexts() {
         ResourceRoleModelListView view = openView();
         DataGrid<ResourceRoleModel> roleModelsTable = getRoleModelsTable(view);
+
+        assertThat(roleModelsTable.getColumnByKey("name").isSortable()).isTrue();
+        assertThat(roleModelsTable.getColumnByKey("description").isSortable()).isTrue();
 
         sort(roleModelsTable, "name", SortDirection.DESCENDING);
 
@@ -100,30 +115,12 @@ public class ResourceRoleModelListViewTest {
                 .containsExactly(TestFullAccessRole.CODE, TestManagerRole.CODE,
                         TestBookkeeperRole.CODE, TestAuditorRole.CODE);
 
-        sort(roleModelsTable, "name", SortDirection.ASCENDING);
-
-        assertThat(getTestRoleCodes(getRoleModelsDc(view).getItems()))
-                .containsExactly(TestAuditorRole.CODE, TestBookkeeperRole.CODE,
-                        TestManagerRole.CODE, TestFullAccessRole.CODE);
-    }
-
-    @Test
-    void sortByDescriptionColumn_ordersByTranslatedDescription() {
-        ResourceRoleModelListView view = openView();
-        DataGrid<ResourceRoleModel> roleModelsTable = getRoleModelsTable(view);
-
         sort(roleModelsTable, "description", SortDirection.ASCENDING);
 
         // The full access role has no description.
         assertThat(getTestRoleCodes(getRoleModelsDc(view).getItems()))
                 .containsExactly(TestFullAccessRole.CODE, TestManagerRole.CODE, TestAuditorRole.CODE,
                         TestBookkeeperRole.CODE);
-
-        sort(roleModelsTable, "description", SortDirection.DESCENDING);
-
-        assertThat(getTestRoleCodes(getRoleModelsDc(view).getItems()))
-                .containsExactly(TestBookkeeperRole.CODE, TestAuditorRole.CODE, TestManagerRole.CODE,
-                        TestFullAccessRole.CODE);
     }
 
     @Test
@@ -138,25 +135,6 @@ public class ResourceRoleModelListViewTest {
         enterName(view, "halter");
 
         assertThat(getTestRoleCodes(getRoleModelsDc(view).getItems())).isEmpty();
-    }
-
-    @Test
-    void roleModelsTable_databaseRole_showsTranslatedNameAndDescription() {
-        // Not a test role code, so that the order of the test roles stays as the other tests expect it.
-        ResourceRoleEntity roleEntity = dataManager.create(ResourceRoleEntity.class);
-        roleEntity.setCode("database-translated");
-        roleEntity.setName("Buchhaltung");
-        roleEntity.setDescription("Führt die Bücher");
-        roleEntity.setLocalizedNames("en=Accounting");
-        roleEntity.setLocalizedDescriptions("en=Keeps the books");
-        dataManager.save(roleEntity);
-
-        ResourceRoleModelListView view = openView();
-        DataGrid<ResourceRoleModel> roleModelsTable = getRoleModelsTable(view);
-        ResourceRoleModel roleModel = getRoleModel(getRoleModelsDc(view).getItems(), "database-translated");
-
-        assertThat(getShownText(roleModelsTable, "name", roleModel)).isEqualTo("Accounting");
-        assertThat(getShownText(roleModelsTable, "description", roleModel)).isEqualTo("Keeps the books");
     }
 
     ResourceRoleModelListView openView() {

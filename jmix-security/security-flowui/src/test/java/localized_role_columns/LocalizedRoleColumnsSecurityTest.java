@@ -24,20 +24,19 @@ import io.jmix.flowui.testassist.UiTest;
 import io.jmix.flowui.testassist.UiTestUtils;
 import io.jmix.flowui.view.navigation.ViewNavigationSupport;
 import io.jmix.security.model.ResourceRoleModel;
+import io.jmix.securityflowui.view.resourcerole.ResourceRoleModelListView;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import test_support.SecurityFlowuiTestConfiguration;
 import test_support.TestNoRoleDescriptionsUiAuthenticator;
-import test_support.view.TestExtendedResourceRoleModelListView;
 
 import java.util.Objects;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * The user may not see the description of a role, so security removes the description column from the grid. The
- * extending view also makes that column unsortable.
+ * The user may not see the description of a role, so security removes the description column from the grid.
  */
 @UiTest(viewBasePackages = {"io.jmix.securityflowui.view", "test_support.view"},
         authenticator = TestNoRoleDescriptionsUiAuthenticator.class)
@@ -49,8 +48,8 @@ public class LocalizedRoleColumnsSecurityTest {
 
     @Test
     void install_columnRemovedBySecurity_leavesIt() {
-        viewNavigationSupport.navigate(TestExtendedResourceRoleModelListView.class);
-        TestExtendedResourceRoleModelListView view = UiTestUtils.getCurrentView();
+        viewNavigationSupport.navigate(ResourceRoleModelListView.class);
+        ResourceRoleModelListView view = UiTestUtils.getCurrentView();
         DataGrid<ResourceRoleModel> roleModelsTable = UiTestUtils.getComponent(view, "roleModelsTable");
         DataGridColumn<ResourceRoleModel> descriptionColumn =
                 Objects.requireNonNull(roleModelsTable.getColumnByKey("description"));

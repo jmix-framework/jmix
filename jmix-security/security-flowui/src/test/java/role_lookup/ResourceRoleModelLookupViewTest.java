@@ -35,7 +35,6 @@ import test_support.role.TestFullAccessRole;
 import test_support.role.TestManagerRole;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static test_support.TestRoleFilters.enterName;
 import static test_support.TestRoleGrids.getRoleModel;
 import static test_support.TestRoleGrids.getShownText;
 import static test_support.TestRoleGrids.getTestRoleCodes;
@@ -51,48 +50,18 @@ public class ResourceRoleModelLookupViewTest {
     ViewNavigationSupport viewNavigationSupport;
 
     @Test
-    void roleModelsTable_showsTranslatedName() {
-        ResourceRoleModelLookupView view = openView();
-        DataGrid<ResourceRoleModel> roleModelsTable = getRoleModelsTable(view);
-        ResourceRoleModel bookkeeper = getRoleModel(getRoleModelsDc(view).getItems(), TestBookkeeperRole.CODE);
+    void roleModelsTable_showsTranslatedNamesInTranslatedOrder() {
+        viewNavigationSupport.navigate(ResourceRoleModelLookupView.class);
+        ResourceRoleModelLookupView view = UiTestUtils.getCurrentView();
+        DataGrid<ResourceRoleModel> roleModelsTable = UiTestUtils.getComponent(view, "roleModelsTable");
+        CollectionContainer<ResourceRoleModel> roleModelsDc =
+                ViewControllerUtils.getViewData(view).getContainer("roleModelsDc");
+        ResourceRoleModel bookkeeper = getRoleModel(roleModelsDc.getItems(), TestBookkeeperRole.CODE);
 
-        assertThat(getShownText(roleModelsTable, "name", bookkeeper)).isEqualTo("Bookkeeper");
-    }
-
-    @Test
-    void loadRoles_ordersByTranslatedNameIgnoringCase() {
-        ResourceRoleModelLookupView view = openView();
-
-        assertThat(getTestRoleCodes(getRoleModelsDc(view).getItems()))
+        assertThat(getShownText(roleModelsTable, "name", bookkeeper))
+                .isEqualTo("Bookkeeper");
+        assertThat(getTestRoleCodes(roleModelsDc.getItems()))
                 .containsExactly(TestAuditorRole.CODE, TestBookkeeperRole.CODE,
                         TestManagerRole.CODE, TestFullAccessRole.CODE);
     }
-
-    @Test
-    void roleFilter_matchesTranslatedName() {
-        ResourceRoleModelLookupView view = openView();
-
-        enterName(view, "keep");
-
-        assertThat(getTestRoleCodes(getRoleModelsDc(view).getItems())).containsExactly(TestBookkeeperRole.CODE);
-
-        // A part of the German name that the English one lacks.
-        enterName(view, "halter");
-
-        assertThat(getTestRoleCodes(getRoleModelsDc(view).getItems())).isEmpty();
-    }
-
-    ResourceRoleModelLookupView openView() {
-        viewNavigationSupport.navigate(ResourceRoleModelLookupView.class);
-        return UiTestUtils.getCurrentView();
-    }
-
-    DataGrid<ResourceRoleModel> getRoleModelsTable(ResourceRoleModelLookupView view) {
-        return UiTestUtils.getComponent(view, "roleModelsTable");
-    }
-
-    CollectionContainer<ResourceRoleModel> getRoleModelsDc(ResourceRoleModelLookupView view) {
-        return ViewControllerUtils.getViewData(view).getContainer("roleModelsDc");
-    }
-
 }

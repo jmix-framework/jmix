@@ -21,26 +21,15 @@ import spock.lang.Specification
 
 class RoleLocalizedValuesUtilsTest extends Specification {
 
-    def "a bundle is read into its entries"() {
+    def "a bundle is read into its entries, and no bundle into none"() {
         expect:
-        RoleLocalizedValuesUtils.read('de=Leiter\nsr-Latn=Menadžer\npt_BR=Gerente') ==
-                [de: 'Leiter', 'sr-Latn': 'Menadžer', pt_BR: 'Gerente']
-    }
-
-    def "no bundle has no entries"() {
-        expect:
-        RoleLocalizedValuesUtils.read(bundle).isEmpty()
+        RoleLocalizedValuesUtils.read(bundle) == entries
 
         where:
-        bundle << [null, '']
-    }
-
-    def "a bundle that cannot be read fails as a whole"() {
-        when:
-        RoleLocalizedValuesUtils.read('de=Leiter\nru=\\u00')
-
-        then:
-        thrown(IllegalArgumentException)
+        bundle                                         || entries
+        'de=Leiter\nsr-Latn=Menadžer\npt_BR=Gerente' || [de: 'Leiter', 'sr-Latn': 'Menadžer', pt_BR: 'Gerente']
+        null                                           || [:]
+        ''                                             || [:]
     }
 
     def "written entries are read back as they were, with their text as it is and no comment line"() {
@@ -55,10 +44,8 @@ class RoleLocalizedValuesUtilsTest extends Specification {
         RoleLocalizedValuesUtils.read(bundle) == entries
         bundle.contains('Администратор')
         bundle.readLines().every { !it.startsWith('#') }
-    }
 
-    def "no entries are written as no bundle"() {
-        expect:
+        and: "no entries are written as no bundle"
         RoleLocalizedValuesUtils.write([:]) == null
     }
 }

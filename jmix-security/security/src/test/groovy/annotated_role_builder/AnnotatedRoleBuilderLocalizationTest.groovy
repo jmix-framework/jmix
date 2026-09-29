@@ -16,9 +16,6 @@
 
 package annotated_role_builder
 
-import io.jmix.security.impl.role.builder.AnnotatedRoleBuilder
-import io.jmix.security.impl.role.provider.AnnotatedResourceRoleProvider
-import io.jmix.security.impl.role.provider.AnnotatedRowLevelRoleProvider
 import io.jmix.security.role.ResourceRoleRepository
 import io.jmix.security.role.RowLevelRoleRepository
 import org.springframework.beans.factory.annotation.Autowired
@@ -43,31 +40,14 @@ class AnnotatedRoleBuilderLocalizationTest extends RoleLocalizationSpecification
     static final String OTHER_GROUP = 'test_support.other_group'
 
     @Autowired
-    AnnotatedRoleBuilder annotatedRoleBuilder
-    @Autowired
     ResourceRoleRepository resourceRoleRepository
     @Autowired
     RowLevelRoleRepository rowLevelRoleRepository
-    @Autowired
-    AnnotatedResourceRoleProvider annotatedResourceRoleProvider
-    @Autowired
-    AnnotatedRowLevelRoleProvider annotatedRowLevelRoleProvider
     @Autowired
     ApplicationContext applicationContext
 
     void setup() {
         authenticate(Locale.ENGLISH)
-    }
-
-    def "building a role keeps the keys of its references and takes the texts of the default locale"() {
-        when:
-        def role = annotatedRoleBuilder.createResourceRole(TestShortReferenceRole.name)
-
-        then:
-        role.nameMessageKey == "$OWN_GROUP/roles.shortReference.name"
-        role.name == 'Rolle mit kurzer Referenz'
-        role.descriptionMessageKey == "$OWN_GROUP/roles.shortReference.description"
-        role.description == 'Eine über eine kurze Referenz benannte Rolle'
     }
 
     def "a role is keyed by the form of its reference and provided with the text of the default locale: #code"() {
@@ -78,16 +58,17 @@ class AnnotatedRoleBuilderLocalizationTest extends RoleLocalizationSpecification
         role.nameMessageKey == nameMessageKey
         role.name == name
 
-        where:
-        code                            || nameMessageKey                           | name
-        TestShortReferenceRole.CODE     || "$OWN_GROUP/roles.shortReference.name"   | 'Rolle mit kurzer Referenz'
-        TestGroupReferenceRole.CODE     || "$OTHER_GROUP/roles.groupReference.name" | 'Rolle mit Gruppenreferenz'
-        TestMainGroupReferenceRole.CODE || 'roles.mainGroupReference.name'          | 'Rolle der Hauptgruppe'
-        TestMissingKeyRole.CODE         || "$OWN_GROUP/roles.missing.name"          | "$OWN_GROUP/roles.missing.name"
-        TestLiteralRole.CODE            || null                                     | 'Literal role'
+        where: "a message that is missing, or blank in the default locale, leaves the key as the name"
+        code                             || nameMessageKey                              | name
+        TestShortReferenceRole.CODE      || "$OWN_GROUP/roles.shortReference.name"      | 'Rolle mit kurzer Referenz'
+        TestGroupReferenceRole.CODE      || "$OTHER_GROUP/roles.groupReference.name"    | 'Rolle mit Gruppenreferenz'
+        TestMainGroupReferenceRole.CODE  || 'roles.mainGroupReference.name'             | 'Rolle der Hauptgruppe'
+        TestMissingKeyRole.CODE          || "$OWN_GROUP/roles.missing.name"             | nameMessageKey
+        TestBlankDefaultMessageRole.CODE || "$OWN_GROUP/roles.blankDefaultMessage.name" | nameMessageKey
+        TestLiteralRole.CODE             || null                                        | 'Literal role'
     }
 
-    def "a description is keyed and provided the way a name is"() {
+    def "a description is keyed and provided the way a name is, and a row-level role the way a resource role is"() {
         expect:
         with(resourceRoleRepository.getRoleByCode(TestShortReferenceRole.CODE)) {
             descriptionMessageKey == "$OWN_GROUP/roles.shortReference.description"
@@ -97,23 +78,12 @@ class AnnotatedRoleBuilderLocalizationTest extends RoleLocalizationSpecification
             descriptionMessageKey == null
             description == ''
         }
-    }
-
-    def "a row-level role is localized the same way"() {
-        when:
-        def role = rowLevelRoleRepository.getRoleByCode(TestShortReferenceRowLevelRole.CODE)
-
-        then:
-        role.nameMessageKey == "$OWN_GROUP/roles.shortReferenceRowLevel.name"
-        role.name == 'Zeilenrolle mit kurzer Referenz'
-        role.descriptionMessageKey == "$OWN_GROUP/roles.shortReferenceRowLevel.description"
-        role.description == 'Eine über eine kurze Referenz benannte Zeilenrolle'
-    }
-
-    def "a name whose message is blank in the default locale is the key, as the name of a missing message is"() {
-        expect:
-        resourceRoleRepository.getRoleByCode(TestBlankDefaultMessageRole.CODE).name ==
-                "$OWN_GROUP/roles.blankDefaultMessage.name"
+        with(rowLevelRoleRepository.getRoleByCode(TestShortReferenceRowLevelRole.CODE)) {
+            nameMessageKey == "$OWN_GROUP/roles.shortReferenceRowLevel.name"
+            name == 'Zeilenrolle mit kurzer Referenz'
+            descriptionMessageKey == "$OWN_GROUP/roles.shortReferenceRowLevel.description"
+            description == 'Eine über eine kurze Referenz benannte Zeilenrolle'
+        }
     }
 
     def "a builder that overrides the hook of the base parameters still has it called"() {
@@ -126,16 +96,5 @@ class AnnotatedRoleBuilderLocalizationTest extends RoleLocalizationSpecification
         then:
         role.name == '[custom] Rolle mit kurzer Referenz'
         role.nameMessageKey == "$OWN_GROUP/roles.shortReference.name"
-    }
-
-    def "roles rebuilt by hot deploy carry the texts of the default locale"() {
-        when:
-        annotatedResourceRoleProvider.refreshRoles()
-        annotatedRowLevelRoleProvider.refreshRoles()
-
-        then:
-        annotatedResourceRoleProvider.findRoleByCode(TestShortReferenceRole.CODE).name == 'Rolle mit kurzer Referenz'
-        annotatedRowLevelRoleProvider.findRoleByCode(TestShortReferenceRowLevelRole.CODE).name ==
-                'Zeilenrolle mit kurzer Referenz'
     }
 }

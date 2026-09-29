@@ -32,7 +32,8 @@ import io.jmix.security.model.ResourceRoleModel;
 import io.jmix.securityflowui.view.resourcerole.ResourceRoleModelListView;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -74,25 +75,18 @@ public class AssignToUsersActionTest {
         jdbcTemplate.update("delete from TEST_USER");
     }
 
-    @Test
-    void assignToUsers_userSelected_notifiesTranslatedRoleName() {
+    /**
+     * A user the role cannot be assigned to is warned about, the others are reported as assigned.
+     */
+    @ParameterizedTest
+    @CsvSource({USERNAME + ", SUCCESS", SecurityFlowuiTestConfiguration.REJECTED_USERNAME + ", WARNING"})
+    void assignToUsers_userSelected_notifiesWithTranslatedRoleName(String username, Notifications.Type type) {
         TestUserListView usersView = assignBookkeeperToUsers();
 
-        selectUser(usersView, USERNAME);
+        selectUser(usersView, username);
 
         NotificationInfo notification = Objects.requireNonNull(UiTestUtils.getLastOpenedNotification());
-        assertThat(notification.getType()).isEqualTo(Notifications.Type.SUCCESS);
-        assertThat(notification.getMessage()).contains("Bookkeeper");
-    }
-
-    @Test
-    void assignToUsers_rejectedUserSelected_warnsWithTranslatedRoleName() {
-        TestUserListView usersView = assignBookkeeperToUsers();
-
-        selectUser(usersView, SecurityFlowuiTestConfiguration.REJECTED_USERNAME);
-
-        NotificationInfo notification = Objects.requireNonNull(UiTestUtils.getLastOpenedNotification());
-        assertThat(notification.getType()).isEqualTo(Notifications.Type.WARNING);
+        assertThat(notification.getType()).isEqualTo(type);
         assertThat(notification.getMessage()).contains("Bookkeeper");
     }
 

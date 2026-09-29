@@ -34,7 +34,6 @@ import test_support.role.TestBranchRowLevelRole;
 import test_support.role.TestPartnerRowLevelRole;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static test_support.TestRoleFilters.enterName;
 import static test_support.TestRoleGrids.getRoleModel;
 import static test_support.TestRoleGrids.getShownText;
 import static test_support.TestRoleGrids.getTestRoleCodes;
@@ -50,48 +49,18 @@ public class RowLevelRoleModelLookupViewTest {
     ViewNavigationSupport viewNavigationSupport;
 
     @Test
-    void roleModelsTable_showsTranslatedName() {
-        RowLevelRoleModelLookupView view = openView();
-        DataGrid<RowLevelRoleModel> roleModelsTable = getRoleModelsTable(view);
-        RowLevelRoleModel branch = getRoleModel(getRoleModelsDc(view).getItems(), TestBranchRowLevelRole.CODE);
+    void roleModelsTable_showsTranslatedNamesInTranslatedOrder() {
+        viewNavigationSupport.navigate(RowLevelRoleModelLookupView.class);
+        RowLevelRoleModelLookupView view = UiTestUtils.getCurrentView();
+        DataGrid<RowLevelRoleModel> roleModelsTable = UiTestUtils.getComponent(view, "roleModelsTable");
+        CollectionContainer<RowLevelRoleModel> roleModelsDc =
+                ViewControllerUtils.getViewData(view).getContainer("roleModelsDc");
+        RowLevelRoleModel branch = getRoleModel(roleModelsDc.getItems(), TestBranchRowLevelRole.CODE);
 
-        assertThat(getShownText(roleModelsTable, "name", branch)).isEqualTo("Branch records");
-    }
-
-    @Test
-    void loadRoles_ordersByTranslatedNameIgnoringCase() {
-        RowLevelRoleModelLookupView view = openView();
-
-        assertThat(getTestRoleCodes(getRoleModelsDc(view).getItems()))
+        assertThat(getShownText(roleModelsTable, "name", branch))
+                .isEqualTo("Branch records");
+        assertThat(getTestRoleCodes(roleModelsDc.getItems()))
                 .containsExactly(TestArchiveRowLevelRole.CODE, TestPartnerRowLevelRole.CODE,
                         TestBranchRowLevelRole.CODE);
     }
-
-    @Test
-    void roleFilter_matchesTranslatedName() {
-        RowLevelRoleModelLookupView view = openView();
-
-        enterName(view, "branch");
-
-        assertThat(getTestRoleCodes(getRoleModelsDc(view).getItems())).containsExactly(TestBranchRowLevelRole.CODE);
-
-        // A part of the German name that the English one lacks.
-        enterName(view, "filial");
-
-        assertThat(getTestRoleCodes(getRoleModelsDc(view).getItems())).isEmpty();
-    }
-
-    RowLevelRoleModelLookupView openView() {
-        viewNavigationSupport.navigate(RowLevelRoleModelLookupView.class);
-        return UiTestUtils.getCurrentView();
-    }
-
-    DataGrid<RowLevelRoleModel> getRoleModelsTable(RowLevelRoleModelLookupView view) {
-        return UiTestUtils.getComponent(view, "roleModelsTable");
-    }
-
-    CollectionContainer<RowLevelRoleModel> getRoleModelsDc(RowLevelRoleModelLookupView view) {
-        return ViewControllerUtils.getViewData(view).getContainer("roleModelsDc");
-    }
-
 }

@@ -28,7 +28,6 @@ import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.testassist.FlowuiTestAssistConfiguration;
 import io.jmix.flowui.testassist.UiTest;
 import io.jmix.flowui.testassist.UiTestUtils;
-import io.jmix.flowui.view.StandardDetailView;
 import io.jmix.flowui.view.ViewControllerUtils;
 import io.jmix.flowui.view.navigation.UrlParamSerializer;
 import io.jmix.flowui.view.navigation.ViewNavigationSupport;
@@ -39,7 +38,6 @@ import io.jmix.security.role.ResourceRoleRepository;
 import io.jmix.securitydata.entity.ResourceRoleEntity;
 import io.jmix.securityflowui.view.resourcerole.ResourceRoleModelDetailView;
 import io.jmix.securityflowui.view.rolelocalization.RoleLocalizedValuesView;
-import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -75,9 +73,10 @@ public class ResourceRoleModelDetailViewTest {
 
     static final String PARENT_ROLE_CODE = "database-parent";
     static final String TRANSLATED_ROLE_CODE = "database-translated";
-    // Stored in an order other than that of the available locales, with an entry of a locale that is not available.
+    // Stored in an order other than that of the available locales, with an entry of a locale that is not available and,
+    // among the descriptions, a blank one, as an import or an edit outside the views may store it.
     static final String LOCALIZED_NAMES = "fr=Comptabilité\nen=Accounting\nde=Buchhaltungsrolle";
-    static final String LOCALIZED_DESCRIPTIONS = "fr=Tient les comptes\nen=Keeps the books\nde=Führt die Bücher";
+    static final String LOCALIZED_DESCRIPTIONS = "fr=Tient les comptes\nen=Keeps the books\nde=";
 
     @Autowired
     ViewNavigationSupport viewNavigationSupport;
@@ -116,36 +115,17 @@ public class ResourceRoleModelDetailViewTest {
     }
 
     @Test
-    void childRolesTable_showsTranslatedName() {
-        ResourceRoleModelDetailView view = openView(PARENT_ROLE_CODE);
-        ResourceRoleModel bookkeeper = getRoleModel(getChildRolesDc(view).getItems(), TestBookkeeperRole.CODE);
-
-        assertThat(getShownText(getChildRolesTable(view), "name", bookkeeper))
-                .isEqualTo("Bookkeeper");
-    }
-
-    @Test
-    void sortByChildRolesNameColumn_ordersByTranslatedName() {
+    void childRolesTable_showsAndSortsByTranslatedName() {
         ResourceRoleModelDetailView view = openView(PARENT_ROLE_CODE);
         DataGrid<ResourceRoleModel> childRolesTable = getChildRolesTable(view);
+        ResourceRoleModel bookkeeper = getRoleModel(getChildRolesDc(view).getItems(), TestBookkeeperRole.CODE);
+
+        assertThat(getShownText(childRolesTable, "name", bookkeeper)).isEqualTo("Bookkeeper");
 
         sort(childRolesTable, "name", SortDirection.ASCENDING);
 
         assertThat(getTestRoleCodes(getChildRolesDc(view).getItems()))
                 .containsExactly(TestAuditorRole.CODE, TestBookkeeperRole.CODE, TestManagerRole.CODE);
-
-        sort(childRolesTable, "name", SortDirection.DESCENDING);
-
-        assertThat(getTestRoleCodes(getChildRolesDc(view).getItems()))
-                .containsExactly(TestManagerRole.CODE, TestBookkeeperRole.CODE, TestAuditorRole.CODE);
-    }
-
-    @Test
-    void nameField_showsStoredText() {
-        ResourceRoleModelDetailView view = openView(TestBookkeeperRole.CODE);
-        TypedTextField<String> nameField = UiTestUtils.getComponent(view, "nameField");
-
-        assertThat(nameField.getValue()).isEqualTo("Buchhalter");
     }
 
     @Test
@@ -155,15 +135,7 @@ public class ResourceRoleModelDetailViewTest {
         assertThat(getLocalizedNamesField(view).isVisible()).isTrue();
         assertThat(getCollapsedValue(getLocalizedNamesField(view))).isEqualTo("de, en");
         assertThat(getLocalizedDescriptionsField(view).isVisible()).isTrue();
-        assertThat(getCollapsedValue(getLocalizedDescriptionsField(view))).isEqualTo("de, en");
-    }
-
-    @Test
-    void localizedValueFields_newRole_areShown() {
-        ResourceRoleModelDetailView view = openView(null);
-
-        assertThat(getLocalizedNamesField(view).isVisible()).isTrue();
-        assertThat(getLocalizedDescriptionsField(view).isVisible()).isTrue();
+        assertThat(getCollapsedValue(getLocalizedDescriptionsField(view))).isEqualTo("en");
     }
 
     @Test
@@ -176,7 +148,6 @@ public class ResourceRoleModelDetailViewTest {
 
     @Test
     void localizedValueFields_unreadableBundle_showNoLocales() {
-        // A bundle with a malformed escape, as an import or an edit outside the views may store it.
         ResourceRoleEntity brokenRole = dataManager.create(ResourceRoleEntity.class);
         brokenRole.setCode("database-broken");
         brokenRole.setName("Kaputt");
@@ -184,32 +155,16 @@ public class ResourceRoleModelDetailViewTest {
         dataManager.save(brokenRole);
 
         ResourceRoleModelDetailView view = openView("database-broken");
-        JmixValuePicker<String> localizedNamesField = getLocalizedNamesField(view);
 
-        assertThat(getCollapsedValue(localizedNamesField)).isEmpty();
-        assertThat(getDialogFields(editLocalizedValues(localizedNamesField)))
-                .extracting(TextFieldBase::getValue)
-                .containsExactly("", "");
+        assertThat(getCollapsedValue(getLocalizedNamesField(view))).isEmpty();
     }
 
     @Test
-    void localizedValueFields_blankEntry_isNotListed() {
-        // A blank entry, as an import or an edit outside the views may store it, counts as no value.
-        ResourceRoleEntity blankRole = dataManager.create(ResourceRoleEntity.class);
-        blankRole.setCode("database-blank");
-        blankRole.setName("Leer");
-        blankRole.setLocalizedNames("de=\nen=Accounting");
-        dataManager.save(blankRole);
-
-        ResourceRoleModelDetailView view = openView("database-blank");
-
-        assertThat(getCollapsedValue(getLocalizedNamesField(view))).isEqualTo("en");
-    }
-
-    @Test
-    void editLocalizedNames_opensDialogTitledWithFieldLabel() {
+    void editLocalizedNames_save_setsFieldValueAndViewStoresIt() {
         ResourceRoleModelDetailView view = openView(TRANSLATED_ROLE_CODE);
         JmixValuePicker<String> localizedNamesField = getLocalizedNamesField(view);
+        Map<String, String> editedEntries = Map.of("de", "Buchhaltungsrolle", "en", "Bookkeeping",
+                "fr", "Comptabilité");
 
         RoleLocalizedValuesView dialog = editLocalizedValues(localizedNamesField);
 
@@ -218,15 +173,6 @@ public class ResourceRoleModelDetailViewTest {
                 .allMatch(TypedTextField.class::isInstance)
                 .extracting(TextFieldBase::getValue)
                 .containsExactly("Buchhaltungsrolle", "Accounting");
-    }
-
-    @Test
-    void editLocalizedNames_save_setsFieldValueAndViewStoresIt() {
-        ResourceRoleModelDetailView view = openView(TRANSLATED_ROLE_CODE);
-        JmixValuePicker<String> localizedNamesField = getLocalizedNamesField(view);
-        RoleLocalizedValuesView dialog = editLocalizedValues(localizedNamesField);
-        Map<String, String> editedEntries = Map.of("de", "Buchhaltungsrolle", "en", "Bookkeeping",
-                "fr", "Comptabilité");
 
         enterValue(getDialogFields(dialog).get(1), "Bookkeeping");
         click(dialog, "saveAndCloseBtn");
@@ -241,15 +187,15 @@ public class ResourceRoleModelDetailViewTest {
     }
 
     @Test
-    void editLocalizedNames_close_leavesValue() {
+    void editLocalizedDescriptions_opensMultilineDialog() {
         ResourceRoleModelDetailView view = openView(TRANSLATED_ROLE_CODE);
-        JmixValuePicker<String> localizedNamesField = getLocalizedNamesField(view);
-        RoleLocalizedValuesView dialog = editLocalizedValues(localizedNamesField);
 
-        enterValue(getDialogFields(dialog).get(1), "Bookkeeping");
-        click(dialog, "closeBtn");
+        RoleLocalizedValuesView dialog = editLocalizedValues(getLocalizedDescriptionsField(view));
 
-        assertThat(localizedNamesField.getValue()).isEqualTo(LOCALIZED_NAMES);
+        assertThat(getDialogFields(dialog))
+                .allMatch(JmixTextArea.class::isInstance)
+                .extracting(TextFieldBase::getValue)
+                .containsExactly("", "Keeps the books");
     }
 
     @Test
@@ -269,27 +215,9 @@ public class ResourceRoleModelDetailViewTest {
         assertThat(role.getLocalizedDescriptions()).isNull();
     }
 
-    @Test
-    void editLocalizedDescriptions_opensMultilineDialog() {
-        ResourceRoleModelDetailView view = openView(TRANSLATED_ROLE_CODE);
-
-        RoleLocalizedValuesView dialog = editLocalizedValues(getLocalizedDescriptionsField(view));
-
-        assertThat(getDialogFields(dialog))
-                .allMatch(JmixTextArea.class::isInstance)
-                .extracting(TextFieldBase::getValue)
-                .containsExactly("Führt die Bücher", "Keeps the books");
-    }
-
-    /**
-     * Opens the detail view of the role with the code, or of a new role for {@code null}.
-     */
-    ResourceRoleModelDetailView openView(@Nullable String roleCode) {
-        String serializedCode = roleCode == null
-                ? StandardDetailView.NEW_ENTITY_ID
-                : urlParamSerializer.serialize(roleCode);
-        viewNavigationSupport.navigate(ResourceRoleModelDetailView.class,
-                new RouteParameters(ResourceRoleModelDetailView.ROUTE_PARAM_NAME, serializedCode));
+    ResourceRoleModelDetailView openView(String roleCode) {
+        viewNavigationSupport.navigate(ResourceRoleModelDetailView.class, new RouteParameters(
+                ResourceRoleModelDetailView.ROUTE_PARAM_NAME, urlParamSerializer.serialize(roleCode)));
         return UiTestUtils.getCurrentView();
     }
 

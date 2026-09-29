@@ -39,17 +39,15 @@
         <vbox id="contentBox" classNames="overflow-auto" expand="tabSheet">
             <formLayout id="form" dataContainer="roleModelDc">
                 <textField id="nameField" property="name"/>
+                <textField id="sourceField" property="source" readOnly="true"/>
+                <textField id="codeField" property="code" readOnly="true"/>
+                <textArea id="descriptionField" property="description" height="9.5em"/>
                 <valuePicker id="localizedNamesField" property="localizedNames">
                     <actions>
                         <action id="editRoleLocalizedValues" type="sec_editRoleLocalizedValues"/>
                         <action id="clear" type="value_clear"/>
                     </actions>
                 </valuePicker>
-                <textField id="sourceField" property="source" readOnly="true"/>
-                <textField id="codeField" property="code" readOnly="true"/>
-                <checkboxGroup id="scopesField" property="scopes" required="true"
-                               themeNames="horizontal"/>
-                <textArea id="descriptionField" property="description" height="9.5em"/>
                 <valuePicker id="localizedDescriptionsField" property="localizedDescriptions">
                     <actions>
                         <action id="editRoleLocalizedValues" type="sec_editRoleLocalizedValues">
@@ -60,6 +58,8 @@
                         <action id="clear" type="value_clear"/>
                     </actions>
                 </valuePicker>
+                <checkboxGroup id="scopesField" property="scopes" required="true"
+                               themeNames="horizontal"/>
             </formLayout>
 
             <tabSheet id="tabSheet" minHeight="30em" alignSelf="STRETCH">

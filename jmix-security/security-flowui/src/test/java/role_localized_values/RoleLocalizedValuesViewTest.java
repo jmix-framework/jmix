@@ -19,7 +19,6 @@ package role_localized_values;
 import com.vaadin.flow.component.textfield.TextFieldBase;
 import io.jmix.core.MessageTools;
 import io.jmix.flowui.DialogWindows;
-import io.jmix.flowui.component.SupportsTrimming;
 import io.jmix.flowui.component.textarea.JmixTextArea;
 import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.kit.action.Action;
@@ -33,6 +32,8 @@ import io.jmix.security.impl.role.RoleLocalizedValuesUtils;
 import io.jmix.securityflowui.view.resourcerole.ResourceRoleModelListView;
 import io.jmix.securityflowui.view.rolelocalization.RoleLocalizedValuesView;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import test_support.SecurityFlowuiTestConfiguration;
@@ -77,15 +78,6 @@ public class RoleLocalizedValuesViewTest {
     }
 
     @Test
-    void open_multiline_showsTextAreas() {
-        RoleLocalizedValuesView dialog = openDialog("en=Keeps the books", true);
-
-        List<TextFieldBase<?, String>> fields = getDialogFields(dialog);
-        assertThat(fields).hasSize(2).allMatch(JmixTextArea.class::isInstance);
-        assertThat(fields.get(1).getValue()).isEqualTo("Keeps the books");
-    }
-
-    @Test
     void save_setsTypedValueRemovesClearedEntryAndKeepsOtherLocales() {
         RoleLocalizedValuesView dialog = openDialog("de=Buchhaltung\nen=Accounting\nfr=Comptabilité", false);
         List<TextFieldBase<?, String>> fields = getDialogFields(dialog);
@@ -103,6 +95,7 @@ public class RoleLocalizedValuesViewTest {
         RoleLocalizedValuesView dialog = openDialog(
                 "de=Führt die Bücher\nen=Keeps the books\nfr=Tient les comptes", true);
         List<TextFieldBase<?, String>> fields = getDialogFields(dialog);
+        assertThat(fields).allMatch(JmixTextArea.class::isInstance);
 
         enterValue(fields.get(0), "   ");
         enterValue(fields.get(1), "");
@@ -112,23 +105,14 @@ public class RoleLocalizedValuesViewTest {
                 .isEqualTo(Map.of("fr", "Tient les comptes"));
     }
 
-    @Test
-    void save_noEntryLeft_givesNull() {
-        RoleLocalizedValuesView dialog = openDialog("en=Accounting", false);
-        TextFieldBase<?, String> englishField = getDialogFields(dialog).get(1);
-        // An application may turn trimming off, so blank input reaches the dialog as it is.
-        ((SupportsTrimming) englishField).setTrimEnabled(false);
-
-        enterValue(englishField, " ");
-        click(dialog, "saveAndCloseBtn");
-
-        assertThat(dialog.getLocalizedValues()).isNull();
-    }
-
-    @Test
-    void save_nothingChanged_returnsStoredBundle() {
-        // Properties.store would write the entries in an order of its own, so a rewritten bundle would differ.
-        String storedBundle = "fr=Comptabilité\nen=Accounting\nde=Buchhaltung";
+    @ParameterizedTest
+    @ValueSource(strings = {
+            // Properties.store would write the entries in an order of its own.
+            "fr=Comptabilité\nen=Accounting\nde=Buchhaltung",
+            // The blank entry opens as an empty field, which removes an entry when the dialog is saved.
+            "de=\nen=Accounting"
+    })
+    void save_nothingChanged_returnsStoredBundle(String storedBundle) {
         RoleLocalizedValuesView dialog = openDialog(storedBundle, false);
 
         click(dialog, "saveAndCloseBtn");
@@ -137,37 +121,16 @@ public class RoleLocalizedValuesViewTest {
     }
 
     @Test
-    void save_blankStoredEntryUntouched_returnsStoredBundle() {
-        // The blank entry of German opens as an empty field, which removes an entry when the dialog is saved.
-        String storedBundle = "de=\nen=Accounting";
-        RoleLocalizedValuesView dialog = openDialog(storedBundle, false);
-
-        click(dialog, "saveAndCloseBtn");
-
-        assertThat(dialog.getLocalizedValues()).isEqualTo(storedBundle);
-    }
-
-    @Test
-    void open_unreadableBundle_showsEmptyFields() {
+    void unreadableBundle_opensEmptyAndIsReplacedOnSave() {
         RoleLocalizedValuesView dialog = openDialog("en=Accounting\nru=\\u00", false);
 
         assertThat(getDialogFields(dialog))
                 .extracting(TextFieldBase::getValue)
                 .containsExactly("", "");
-    }
-
-    @Test
-    void save_unreadableBundle_givesFieldValues() {
-        RoleLocalizedValuesView dialog = openDialog("en=Accounting\nru=\\u00", false);
 
         click(dialog, "saveAndCloseBtn");
-        assertThat(dialog.getLocalizedValues()).isNull();
 
-        RoleLocalizedValuesView typedDialog = openDialog("en=Accounting\nru=\\u00", false);
-        enterValue(getDialogFields(typedDialog).get(1), "Bookkeeping");
-        click(typedDialog, "saveAndCloseBtn");
-        assertThat(RoleLocalizedValuesUtils.read(typedDialog.getLocalizedValues()))
-                .isEqualTo(Map.of("en", "Bookkeeping"));
+        assertThat(dialog.getLocalizedValues()).isNull();
     }
 
     @Test

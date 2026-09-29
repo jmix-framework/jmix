@@ -137,7 +137,7 @@ public class ResourceRoleModelListView extends StandardListView<ResourceRoleMode
                 .filter(role -> event == null || event.matches(role))
                 .map(role -> roleModelConverter.createResourceRoleModel(role, false))
                 .collect(Collectors.toList());
-        roleModelsDc.setItems(localizedRoleColumnsSupport.sortByName(roleModels));
+        roleModelsDc.setItems(roleModels);
     }
 
     @Install(to = "roleModelsTable.create", subject = "routeParametersProvider")

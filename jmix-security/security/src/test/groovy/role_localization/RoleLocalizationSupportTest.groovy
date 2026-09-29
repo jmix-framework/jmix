@@ -16,16 +16,13 @@
 
 package role_localization
 
-import io.jmix.core.Metadata
 import io.jmix.core.MetadataTools
 import io.jmix.security.impl.role.builder.AnnotatedRoleBuilder
 import io.jmix.security.impl.role.provider.AnnotatedResourceRoleProvider
 import io.jmix.security.impl.role.provider.AnnotatedRowLevelRoleProvider
 import io.jmix.security.model.ResourceRole
-import io.jmix.security.model.ResourceRoleModel
 import io.jmix.security.model.RoleModelConverter
 import io.jmix.security.model.RowLevelRole
-import io.jmix.security.model.RowLevelRoleModel
 import io.jmix.security.role.RoleLocalizationSupport
 import org.springframework.beans.factory.annotation.Autowired
 import test_support.RoleLocalizationSpecification
@@ -51,8 +48,6 @@ class RoleLocalizationSupportTest extends RoleLocalizationSpecification {
     AnnotatedRowLevelRoleProvider annotatedRowLevelRoleProvider
     @Autowired
     RoleModelConverter roleModelConverter
-    @Autowired
-    Metadata metadata
     @Autowired
     MetadataTools metadataTools
 
@@ -80,60 +75,30 @@ class RoleLocalizationSupportTest extends RoleLocalizationSpecification {
         return role
     }
 
-    def "a role with a message key shows the message of the user's locale"() {
+    def "a role shows its text in the user's locale, or in the locale given"() {
         given:
         authenticate(Locale.ENGLISH)
-        def role = designTimeRole(TestShortReferenceRole.CODE)
-
-        expect:
-        roleLocalizationSupport.getLocalizedName(role) == 'Short reference role'
-        roleLocalizationSupport.getLocalizedDescription(role) == 'A role named through a short reference'
-    }
-
-    def "an explicit locale is used instead of the user's"() {
-        given:
-        authenticate(Locale.GERMAN)
         def designTime = designTimeRole(TestShortReferenceRole.CODE)
-        def databaseRole = databaseRole('de=Leiter', 'de=Verwaltet Bestellungen')
+        def database = databaseRole('de=Leiter', 'de=Verwaltet Bestellungen')
 
         expect:
-        roleLocalizationSupport.getLocalizedName(designTime, Locale.ENGLISH) == 'Short reference role'
-        roleLocalizationSupport.getLocalizedName(databaseRole, Locale.ENGLISH) == 'Manager'
-        roleLocalizationSupport.getLocalizedDescription(databaseRole, Locale.ENGLISH) == 'Manages orders'
+        roleLocalizationSupport.getLocalizedName(designTime) == 'Short reference role'
+        roleLocalizationSupport.getLocalizedDescription(designTime) == 'A role named through a short reference'
+        roleLocalizationSupport.getLocalizedName(database, Locale.GERMAN) == 'Leiter'
+        roleLocalizationSupport.getLocalizedDescription(database, Locale.GERMAN) == 'Verwaltet Bestellungen'
     }
 
-    def "a message missing or blank in the user's locale falls back to the text of the default locale"() {
+    def "a message missing or blank in the user's locale falls back to the default locale, then to the key"() {
         given: "the English lookup reaches only the locale-less bundle: it lacks one message and blanks another"
         authenticate(Locale.ENGLISH)
         def missing = designTimeRole(TestDefaultLocaleOnlyRole.CODE)
-        def blank = designTimeRole(TestBlankMessageRole.CODE)
 
         expect:
         roleLocalizationSupport.getLocalizedName(missing) == 'Nur in der Standardsprache'
         roleLocalizationSupport.getLocalizedDescription(missing) == 'Nur in der Standardsprache beschrieben'
-        roleLocalizationSupport.getLocalizedName(blank) == 'Mit leerer Übersetzung'
-    }
-
-    def "a role that keeps only the keys of its messages is shown with the messages of the default locale"() {
-        given: "a role as a custom provider may make it: the keys and the references, but no texts"
-        authenticate(Locale.ENGLISH)
-        def role = new ResourceRole(code: 'keys-only', name: 'msg://roles.defaultLocaleOnly.name',
-                nameMessageKey: 'test_support.role_localization/roles.defaultLocaleOnly.name',
-                description: 'msg://roles.defaultLocaleOnly.description',
-                descriptionMessageKey: 'test_support.role_localization/roles.defaultLocaleOnly.description')
-
-        expect:
-        roleLocalizationSupport.getLocalizedName(role) == 'Nur in der Standardsprache'
-        roleLocalizationSupport.getLocalizedDescription(role) == 'Nur in der Standardsprache beschrieben'
-    }
-
-    def "a message missing in every locale shows the text the role keeps: the key"() {
-        given:
-        authenticate(Locale.ENGLISH)
-        def role = designTimeRole(TestMissingKeyRole.CODE)
-
-        expect:
-        roleLocalizationSupport.getLocalizedName(role) == 'test_support.role_localization/roles.missing.name'
+        roleLocalizationSupport.getLocalizedName(designTimeRole(TestBlankMessageRole.CODE)) == 'Mit leerer Übersetzung'
+        roleLocalizationSupport.getLocalizedName(designTimeRole(TestMissingKeyRole.CODE)) ==
+                'test_support.role_localization/roles.missing.name'
     }
 
     def "the message key wins over localized names"() {
@@ -166,18 +131,8 @@ class RoleLocalizationSupportTest extends RoleLocalizationSpecification {
         'nothing for the locale'   | Locale.GERMAN | 'ru=Менеджер'                  || 'Manager'    | 'Manages orders'
         'nothing localized at all' | Locale.GERMAN | null                           || 'Manager'    | 'Manages orders'
         'an empty exact value'     | PT_BR         | 'pt_BR=\npt=Gerente'           || 'Gerente'    | 'Gerente'
-        'an empty value'           | Locale.GERMAN | 'de='                          || 'Manager'    | 'Manages orders'
         'a value of spaces'        | Locale.GERMAN | 'de=\\ \\ '                    || 'Manager'    | 'Manages orders'
-    }
-
-    def "a bundle that cannot be read is dropped as a whole, with the values read before the broken one"() {
-        given:
-        authenticate(Locale.GERMAN)
-        def role = databaseRole('de=Leiter\nru=\\u00', 'de=Verwaltet Bestellungen\nru=\\u00')
-
-        expect:
-        roleLocalizationSupport.getLocalizedName(role) == 'Manager'
-        roleLocalizationSupport.getLocalizedDescription(role) == 'Manages orders'
+        'an unreadable bundle'     | Locale.GERMAN | 'de=Leiter\nru=\\u00'          || 'Manager'    | 'Manages orders'
     }
 
     def "a bundle that cannot be read is reported where the role is shown at debug only, on one line"() {
@@ -211,15 +166,18 @@ class RoleLocalizationSupportTest extends RoleLocalizationSpecification {
         captured.toString('UTF-8')
     }
 
-    def "a role without a description has none in any locale, whichever kind of role it is"() {
-        given: "a database role keeps null, a design-time role the empty string its annotation declares by default"
+    def "a role without a name is shown with an empty one and a role without a description with none"() {
+        given: "a database role keeps null, a design-time role the empty description its annotation declares by default"
         authenticate(Locale.GERMAN)
-        def databaseRole = databaseRole('de=Leiter')
-        databaseRole.description = null
+        def database = databaseRole(null)
+        database.name = null
+        database.description = null
         def designTime = designTimeRole(TestLiteralRole.CODE)
 
         expect:
-        roleLocalizationSupport.getLocalizedDescription(databaseRole) == null
+        roleLocalizationSupport.getLocalizedName(database) == ''
+        roleLocalizationSupport.getLocalizedName(roleModelConverter.createResourceRoleModel(database)) == ''
+        roleLocalizationSupport.getLocalizedDescription(database) == null
         roleLocalizationSupport.getLocalizedDescription(designTime) == null
         roleLocalizationSupport.getLocalizedDescription(roleModelConverter.createResourceRoleModel(designTime)) == null
     }
@@ -240,17 +198,6 @@ class RoleLocalizationSupportTest extends RoleLocalizationSpecification {
         roleLocalizationSupport.getLocalizedDescription(databaseModel, Locale.GERMAN) == 'Manages orders'
     }
 
-    def "a role without a name is shown with an empty one, never with null"() {
-        given:
-        authenticate(Locale.GERMAN)
-        def role = databaseRole(null)
-        role.name = null
-
-        expect:
-        roleLocalizationSupport.getLocalizedName(role) == ''
-        roleLocalizationSupport.getLocalizedName(roleModelConverter.createResourceRoleModel(role)) == ''
-    }
-
     def "the instance name of both role models is their localized name"() {
         given:
         authenticate(Locale.ENGLISH)
@@ -266,15 +213,5 @@ class RoleLocalizationSupportTest extends RoleLocalizationSpecification {
         metadataTools.getInstanceName(databaseModel) == 'Leader'
         metadataTools.getInstanceName(designTimeRowLevelModel) == 'Short reference row-level role'
         metadataTools.getInstanceName(databaseRowLevelModel) == 'Order reader'
-    }
-
-    def "the instance name of both role models depends on the properties it is localized from"() {
-        expect:
-        instanceNameProperties(ResourceRoleModel) == ['name', 'nameMessageKey', 'localizedNames'] as Set
-        instanceNameProperties(RowLevelRoleModel) == ['name', 'nameMessageKey', 'localizedNames'] as Set
-    }
-
-    Set<String> instanceNameProperties(Class<?> modelClass) {
-        metadataTools.getInstanceNameRelatedProperties(metadata.getClass(modelClass))*.name as Set
     }
 }

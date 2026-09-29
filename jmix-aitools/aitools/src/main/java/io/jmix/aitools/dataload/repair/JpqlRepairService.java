@@ -21,6 +21,8 @@ import io.jmix.aitools.dataload.execution.JpqlExecutionRequest;
 import io.jmix.aitools.dataload.execution.GeneratedJpqlResult;
 import io.jmix.aitools.dataload.validation.JpqlValidationResult;
 import io.jmix.aitools.dataload.validation.JpqlValidationService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -33,6 +35,8 @@ import org.springframework.stereotype.Component;
  */
 @Component("aitls_JpqlRepairService")
 public class JpqlRepairService {
+
+    private static final Logger log = LoggerFactory.getLogger(JpqlRepairService.class);
 
     @Autowired
     protected AiToolsDataLoadProperties dataLoadProperties;
@@ -93,6 +97,8 @@ public class JpqlRepairService {
             if (repairedResult == null) {
                 return new JpqlRepairResult(currentResult, currentValidation, attempt, true);
             }
+
+            log.debug("JPQL repair attempt {} produced: {}", attempt, repairedResult.getJpql());
 
             currentResult = repairedResult;
             currentValidation = jpqlValidationService.validate(currentResult);

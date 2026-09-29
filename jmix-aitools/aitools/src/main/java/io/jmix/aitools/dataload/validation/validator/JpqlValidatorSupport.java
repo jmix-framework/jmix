@@ -50,6 +50,9 @@ public final class JpqlValidatorSupport {
     private static final Pattern RESULT_ALIAS_SUFFIX_PATTERN = Pattern.compile("(?i)\\s+(as\\s+)?[A-Za-z_$][\\w$]*$");
     private static final Set<String> LITERAL_WORDS = Set.of("true", "false", "null");
     private static final Pattern OBJECT_PATTERN = Pattern.compile("(?i)^object\\s*\\(\\s*([A-Za-z_$][\\w$]*)\\s*\\)$");
+    private static final Pattern SELECT_PREFIX_PATTERN = Pattern.compile("(?i)^\\s*select\\s+");
+    private static final Pattern SELECT_ITEM_ALIAS_PATTERN = Pattern.compile("(?i)\\s+as\\s+([A-Za-z_$][\\w$]*)\\s*$");
+    private static final Pattern WHITESPACE_PATTERN = Pattern.compile("\\s+");
 
     private JpqlValidatorSupport() {
     }
@@ -174,6 +177,72 @@ public final class JpqlValidatorSupport {
     }
 
     /**
+     * Counts the values the select clause of a query selects. A comma inside a function call, a subquery or a
+     * string literal does not separate selected values.
+     *
+     * @param jpql JPQL select query
+     * @return the number of selected values
+     */
+    public static int selectedValueCount(String jpql) {
+        return splitSelectedItems(selectClauseOf(jpql)).size();
+    }
+
+    /**
+     * Returns the {@code AS} alias of each value the select clause selects, in select-clause order, so that a
+     * value can be told from the name it is bound to by position. An {@code as} inside a value, such as the target
+     * type of {@code cast(... as string)}, is not an alias.
+     *
+     * @param jpql JPQL select query
+     * @return one entry per selected value: its alias, or {@code null} when the value has none
+     */
+    public static List<@Nullable String> selectedAliases(String jpql) {
+        List<String> items = splitSelectedItems(selectClauseOf(jpql));
+        List<@Nullable String> aliases = new ArrayList<>(items.size());
+        for (String item : items) {
+            Matcher matcher = SELECT_ITEM_ALIAS_PATTERN.matcher(item);
+            aliases.add(matcher.find() ? matcher.group(1) : null);
+        }
+        return aliases;
+    }
+
+    /**
+     * Returns the expression of each value the select clause selects, in select-clause order, without its
+     * {@code AS} alias and with whitespace collapsed, so that two queries can be compared value by value.
+     *
+     * @param jpql JPQL select query
+     * @return one expression per selected value
+     */
+    public static List<String> selectedExpressions(String jpql) {
+        List<String> items = splitSelectedItems(selectClauseOf(jpql));
+        List<String> expressions = new ArrayList<>(items.size());
+        for (String item : items) {
+            String expression = SELECT_ITEM_ALIAS_PATTERN.matcher(item).replaceFirst("");
+            expressions.add(WHITESPACE_PATTERN.matcher(expression.trim()).replaceAll(" "));
+        }
+        return expressions;
+    }
+
+    /**
+     * Returns the names of the columns of a query: the {@code AS} aliases of its select clause, in select-clause
+     * order. Columns are bound to values by position, so the aliases name the columns only when every selected
+     * value has one; a partial list is not returned.
+     *
+     * @param jpql JPQL select query
+     * @return the aliases, or an empty list when not every selected value is aliased
+     */
+    public static List<String> resultAliases(String jpql) {
+        List<@Nullable String> aliases = selectedAliases(jpql);
+        List<String> names = new ArrayList<>(aliases.size());
+        for (String alias : aliases) {
+            if (alias == null) {
+                return List.of();
+            }
+            names.add(alias);
+        }
+        return names;
+    }
+
+    /**
      * Parses the given JPQL into a {@link QueryParser}.
      *
      * @param queryTransformerFactory factory used to create the parser, may be {@code null} if unavailable
@@ -233,5 +302,62 @@ public final class JpqlValidatorSupport {
             }
         }
         return depth;
+    }
+
+    /**
+     * Returns the part of the query before its own {@code from}, with string literals blanked. A {@code from} of
+     * a subquery is inside parentheses, so only the depth-zero one ends the select clause.
+     */
+    private static String selectClauseOf(String jpql) {
+        String text = stripStringLiterals(jpql);
+        int depth = 0;
+        for (int i = 0; i < text.length(); i++) {
+            char character = text.charAt(i);
+            if (character == '(') {
+                depth++;
+            } else if (character == ')') {
+                depth--;
+            } else if (depth == 0 && text.regionMatches(true, i, "from", 0, 4)
+                    && isWordBoundary(text, i - 1) && isWordBoundary(text, i + 4)) {
+                return text.substring(0, i);
+            }
+        }
+        return text;
+    }
+
+    /**
+     * Splits a select clause into its selected values at the depth-zero commas: a comma inside a function call or
+     * a subquery separates arguments, not values. The leading {@code select} keyword is dropped.
+     */
+    private static List<String> splitSelectedItems(String selectClause) {
+        List<String> items = new ArrayList<>();
+        int depth = 0;
+        int itemStart = 0;
+        for (int i = 0; i < selectClause.length(); i++) {
+            char character = selectClause.charAt(i);
+            if (character == '(') {
+                depth++;
+            } else if (character == ')') {
+                depth--;
+            } else if (character == ',' && depth == 0) {
+                items.add(selectClause.substring(itemStart, i));
+                itemStart = i + 1;
+            }
+        }
+        items.add(selectClause.substring(itemStart));
+        items.set(0, SELECT_PREFIX_PATTERN.matcher(items.get(0)).replaceFirst(""));
+        return items;
+    }
+
+    /**
+     * Whether the character at this index ends a word. An underscore or a dot does not: {@code valid_from} and
+     * {@code e.from} carry the letters {@code from} without being the query's own {@code from}.
+     */
+    private static boolean isWordBoundary(String text, int index) {
+        if (index < 0 || index >= text.length()) {
+            return true;
+        }
+        char character = text.charAt(index);
+        return !Character.isLetterOrDigit(character) && character != '_' && character != '.';
     }
 }

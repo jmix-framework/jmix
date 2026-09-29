@@ -194,7 +194,7 @@ public class AiToolsLlmDataQueryService implements LlmDataQueryService {
         }
 
         List<String> resultProperties = resultPropertiesOf(repaired.getJpql());
-        if (resultProperties == null) {
+        if (resultProperties.isEmpty()) {
             // Its columns cannot be read, and the generated ones do not describe this text: keeping the query
             // as generated is the only answer that leaves nothing mismatched.
             return query;
@@ -230,84 +230,16 @@ public class AiToolsLlmDataQueryService implements LlmDataQueryService {
      * the generated query would be the same mismatch by another route.
      *
      * @param jpql the repaired query
-     * @return the columns the repaired query returns in select-clause order, or {@code null} when they cannot
+     * @return the columns the repaired query returns in select-clause order, or an empty list when they cannot
      *         be read from it
      */
-    @Nullable
     protected List<String> resultPropertiesOf(String jpql) {
-        String selectClause = selectClauseOf(jpql);
-        List<String> aliases = JpqlValidatorSupport.extractAliases(selectClause);
+        List<String> aliases = JpqlValidatorSupport.resultAliases(jpql);
         if (aliases.isEmpty()) {
-            log.warn("The repaired query names none of its selected values, so it is not used");
-            return null;
+            log.warn("The repaired query does not name each of its {} selected values, so it is not used",
+                    JpqlValidatorSupport.selectedValueCount(jpql));
         }
-
-        int selected = selectedExpressionCount(selectClause);
-        if (aliases.size() != selected) {
-            log.warn("The repaired query names {} of its {} selected values, so it is not used",
-                    aliases.size(), selected);
-            return null;
-        }
-
         return aliases;
-    }
-
-    /**
-     * Counts the values a select clause selects: its top-level commas plus one. A comma inside a function call
-     * or a subquery separates arguments rather than selected values, and a comma inside a string literal is
-     * text — the clause arrives with its literals already blanked by {@link #selectClauseOf}.
-     */
-    protected int selectedExpressionCount(String selectClause) {
-        int depth = 0;
-        int count = 1;
-        for (int i = 0; i < selectClause.length(); i++) {
-            char character = selectClause.charAt(i);
-            if (character == '(') {
-                depth++;
-            } else if (character == ')') {
-                depth--;
-            } else if (character == ',' && depth == 0) {
-                count++;
-            }
-        }
-
-        return count;
-    }
-
-    /**
-     * Returns the part of the query before its own {@code from}, which is where the columns are named. A
-     * {@code from} of a subquery is inside parentheses, so only the depth-zero one ends the select clause.
-     */
-    protected String selectClauseOf(String jpql) {
-        String text = JpqlValidatorSupport.stripStringLiterals(jpql);
-        int depth = 0;
-        for (int i = 0; i < text.length(); i++) {
-            char character = text.charAt(i);
-            if (character == '(') {
-                depth++;
-            } else if (character == ')') {
-                depth--;
-            } else if (depth == 0 && text.regionMatches(true, i, "from", 0, 4)
-                    && isWordBoundary(text, i - 1) && isWordBoundary(text, i + 4)) {
-                return text.substring(0, i);
-            }
-        }
-
-        return text;
-    }
-
-    /**
-     * Whether the character at this index ends a word. An underscore does not: an alias like {@code valid_from}
-     * carries the letters {@code from} inside it, and taking that for the query's own {@code from} would cut the
-     * select clause in the middle of a name.
-     */
-    protected boolean isWordBoundary(String text, int index) {
-        if (index < 0 || index >= text.length()) {
-            return true;
-        }
-
-        char character = text.charAt(index);
-        return !Character.isLetterOrDigit(character) && character != '_';
     }
 
     @Override

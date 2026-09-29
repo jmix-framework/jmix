@@ -18,6 +18,7 @@ CONSTRAINTS:
 - Preserve execution options such as maxResults and firstResult when they are relevant.
 - Preserve the original intent as much as possible.
 - Never invent entities, properties, joins, or parameter names.
+- Alias every selected value in the select clause with AS: the aliases become the result column names, so a query with an unaliased value is rejected.
 
 RETURN FORMAT
 Return exactly one JSON object and no Markdown.

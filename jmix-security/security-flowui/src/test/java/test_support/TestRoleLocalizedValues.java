@@ -36,6 +36,7 @@ import java.util.Objects;
 public final class TestRoleLocalizedValues {
 
     public static final String EDIT_ACTION_ID = "editRoleLocalizedValues";
+    public static final String CLEAR_ACTION_ID = "clear";
 
     private TestRoleLocalizedValues() {
     }
@@ -47,6 +48,14 @@ public final class TestRoleLocalizedValues {
         Action action = Objects.requireNonNull(field.getAction(EDIT_ACTION_ID));
         action.actionPerform(field);
         return UiTestUtils.getLastOpenedViewDialog();
+    }
+
+    /**
+     * Performs the clear action of the field.
+     */
+    public static void clearValue(JmixValuePicker<String> field) {
+        Action action = Objects.requireNonNull(field.getAction(CLEAR_ACTION_ID));
+        action.actionPerform(field);
     }
 
     /**

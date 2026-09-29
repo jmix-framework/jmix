@@ -59,6 +59,7 @@ import static test_support.TestRoleGrids.getRoleModel;
 import static test_support.TestRoleGrids.getShownText;
 import static test_support.TestRoleGrids.getTestRoleCodes;
 import static test_support.TestRoleGrids.sort;
+import static test_support.TestRoleLocalizedValues.clearValue;
 import static test_support.TestRoleLocalizedValues.click;
 import static test_support.TestRoleLocalizedValues.editLocalizedValues;
 import static test_support.TestRoleLocalizedValues.enterValue;
@@ -249,6 +250,23 @@ public class RowLevelRoleModelDetailViewTest {
         click(dialog, "closeBtn");
 
         assertThat(localizedNamesField.getValue()).isEqualTo(LOCALIZED_NAMES);
+    }
+
+    @Test
+    void clearLocalizedValues_save_viewStoresNone() {
+        RowLevelRoleModelDetailView view = openView(TRANSLATED_ROLE_CODE);
+
+        clearValue(getLocalizedNamesField(view));
+        clearValue(getLocalizedDescriptionsField(view));
+
+        assertThat(getCollapsedValue(getLocalizedNamesField(view))).isEmpty();
+
+        // Saved without closing: closing navigates to the parent layout, which the tests do not have.
+        view.save();
+
+        RowLevelRoleEntity role = loadTranslatedRoleEntity();
+        assertThat(role.getLocalizedNames()).isNull();
+        assertThat(role.getLocalizedDescriptions()).isNull();
     }
 
     @Test

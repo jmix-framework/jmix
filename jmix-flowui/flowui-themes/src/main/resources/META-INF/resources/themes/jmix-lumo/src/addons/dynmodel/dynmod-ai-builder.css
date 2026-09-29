@@ -49,6 +49,16 @@
     padding: 0 var(--lumo-space-m) var(--lumo-space-m);
 }
 
+/* Progress follows the question it answers: AI Chat keeps an empty reply and its own, unused status list
+   above the thinking indicator while the reply is generated. */
+.dynmod-ai-builder .chat-pane jmix-ai-assistant-message[message-state='generating']:not([has-message]) {
+    display: none;
+}
+
+.dynmod-ai-builder .chat-pane jmix-ai-message-list::part(thinking-status-list) {
+    display: none;
+}
+
 .dynmod-ai-builder .chat-empty {
     flex-shrink: 0;
     gap: var(--lumo-space-s);

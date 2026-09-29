@@ -240,6 +240,9 @@ public interface UnconstrainedDataManager {
      * <pre>
      * dataManager.remove(dataManager.getReference(Customer.class, customerId));
      * </pre>
+     * <p>
+     * Only the id of the returned instance is loaded: {@link EntityStates#isLoaded(Object, String)} returns
+     * {@code false} for its other attributes until they are set on the instance.
      *
      * @param entityClass entity class
      * @param id          id of an existing object

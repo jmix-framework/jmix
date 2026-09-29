@@ -17,11 +17,13 @@
 package io.jmix.core;
 
 import com.google.common.collect.Sets;
+import io.jmix.core.annotation.Internal;
 import io.jmix.core.common.util.StackTrace;
 import io.jmix.core.entity.EntityPreconditions;
 import io.jmix.core.entity.EntitySystemAccess;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.entity.LoadedPropertiesInfo;
+import io.jmix.core.impl.ReferenceLoadedPropertiesInfo;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import org.jspecify.annotations.NullMarked;
@@ -342,11 +344,31 @@ public class EntityStates {
         checkNotNullArgument(entity);
         EntityPreconditions.checkEntityType(entity);
 
-        return constructCurrentFetchPlan((Entity) entity, entity.getClass(), new HashMap<>());
+        return constructCurrentFetchPlan((Entity) entity, entity.getClass(), new HashMap<>(), false);
     }
 
+    /**
+     * Returns a fetch plan to reload the given entity graph after it is saved: {@link #getCurrentFetchPlan(Object)}
+     * plus the {@link FetchPlan#LOCAL} attributes of each instance returned by
+     * {@link UnconstrainedDataManager#getReference(Class, Object)}.
+     *
+     * @param entity entity instance
+     * @return fetch plan
+     */
+    @Internal
+    public FetchPlan getFetchPlanForReloadAfterSave(Object entity) {
+        checkNotNullArgument(entity);
+        EntityPreconditions.checkEntityType(entity);
+
+        return constructCurrentFetchPlan((Entity) entity, entity.getClass(), new HashMap<>(), true);
+    }
+
+    /**
+     * @param addLocalToReferences whether to add the {@link FetchPlan#LOCAL} attributes of references
+     */
     protected FetchPlan constructCurrentFetchPlan(Entity entity, Class<?> declaredEntityClass,
-                                                  Map<FetchPlanVisitKey, FetchPlanVisit> fetchPlanVisits) {
+                                                  Map<FetchPlanVisitKey, FetchPlanVisit> fetchPlanVisits,
+                                                  boolean addLocalToReferences) {
         FetchPlanVisitKey key = new FetchPlanVisitKey(entity, declaredEntityClass);
         FetchPlanVisit visit = fetchPlanVisits.get(key);
         if (visit != null) {
@@ -364,6 +386,11 @@ public class EntityStates {
         // to the resulting fetch plan.
         MetaClass metaClass = metadata.getClass(declaredEntityClass);
 
+        if (addLocalToReferences
+                && getUncheckedEntityEntry(entity).getLoadedPropertiesInfo() instanceof ReferenceLoadedPropertiesInfo) {
+            currentFetchPlanBuilder.addFetchPlan(FetchPlan.LOCAL);
+        }
+
         for (MetaProperty property : metaClass.getProperties()) {
             if (!isLoaded(entity, property.getName()))
                 continue;
@@ -375,11 +402,13 @@ public class EntityStates {
                     if (value instanceof Collection) {
                         for (Object item : ((Collection<?>) value)) {
                             if (item != null) {
-                                propertyBuilder.merge(constructCurrentFetchPlan((Entity) item, declaredPropertyClass, fetchPlanVisits));
+                                propertyBuilder.merge(constructCurrentFetchPlan((Entity) item,
+                                        declaredPropertyClass, fetchPlanVisits, addLocalToReferences));
                             }
                         }
                     } else {
-                        propertyBuilder.merge(constructCurrentFetchPlan((Entity) value, declaredPropertyClass, fetchPlanVisits));
+                        propertyBuilder.merge(constructCurrentFetchPlan((Entity) value,
+                                declaredPropertyClass, fetchPlanVisits, addLocalToReferences));
                     }
                     // The input object graph can be large, so we use FetchMode.UNDEFINED to avoid huge SQLs with
                     // unpredictably high number of joins

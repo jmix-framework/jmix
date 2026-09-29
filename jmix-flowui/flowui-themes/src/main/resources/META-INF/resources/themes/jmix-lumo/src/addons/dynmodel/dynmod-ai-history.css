@@ -176,12 +176,13 @@
 .ah-root .ah-graph-diagram svg { display: block; width: 100%; height: auto; }
 .ah-root .ah-graph-legend { display: flex; gap: .75rem; flex-wrap: wrap; }
 .ah-root .ah-graph-status { font-size: .7rem; }
-.ah-root .ah-graph-STARTED { color: #3866d5; }
-.ah-root .ah-graph-COMPLETED { color: #168253; }
-.ah-root .ah-graph-WAITING { color: #a66b00; }
-.ah-root .ah-graph-FAILED { color: #c43131; }
-.ah-root .ah-graph-REPAIR { color: #a66b00; }
-.ah-root .ah-graph-REJECTED { color: #c43131; }
+/* Small status words: the colors for a light background had a contrast of about 2.5:1 on a dark one. */
+.ah-root .ah-graph-STARTED { color: light-dark(#3866d5, #90bdf9); }
+.ah-root .ah-graph-COMPLETED { color: light-dark(#168253, #4fd18b); }
+.ah-root .ah-graph-WAITING { color: light-dark(#a66b00, #ffcc33); }
+.ah-root .ah-graph-FAILED { color: light-dark(#c43131, #ff9e99); }
+.ah-root .ah-graph-REPAIR { color: light-dark(#a66b00, #ffcc33); }
+.ah-root .ah-graph-REJECTED { color: light-dark(#c43131, #ff9e99); }
 .ah-root .ah-graph-trace-rows { display: grid; gap: .15rem; }
 .ah-root .ah-graph-trace-row {
     display: grid; grid-template-columns: 10rem minmax(0, 1fr) 6rem 5rem;

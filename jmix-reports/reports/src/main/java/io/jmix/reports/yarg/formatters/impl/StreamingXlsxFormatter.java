@@ -23,6 +23,9 @@ import io.jmix.reports.yarg.formatters.impl.streaming.StreamingStyleCache;
 import io.jmix.reports.yarg.formatters.impl.streaming.StreamingXlsxToCsvWriter;
 import io.jmix.reports.yarg.formatters.impl.streaming.TemplateBand;
 import io.jmix.reports.yarg.formatters.impl.xls.DocumentConverter;
+import io.jmix.reports.yarg.formatters.impl.xlsx.Range;
+import io.jmix.reports.yarg.formatters.impl.xlsx.RangeDependencies;
+import io.jmix.reports.yarg.formatters.impl.xlsx.XlsxUtils;
 import io.jmix.reports.yarg.structure.BandData;
 import io.jmix.reports.yarg.structure.BandOrientation;
 import io.jmix.reports.yarg.structure.ReportOutputType;
@@ -114,6 +117,8 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -142,8 +147,9 @@ import org.w3c.dom.NodeList;
  *     static rows onto the row's final position; sheet-qualified references are never rewritten;</li>
  *     <li>row grouping (outline levels), conditional formatting, sheet-name and header substitution;</li>
  *     <li>{@code hint_style_<param>} dynamic named cell styles and {@code hint_rowAutoHeight};</li>
- *     <li>template freeze panes, page/print setup, user-defined names, the print area, data validations,
- *     and column widths, hidden state and column-level styles (copied to the result workbook).</li>
+ *     <li>template freeze panes, page/print setup, user-defined names, the print area (re-based onto the
+ *     rendered rows), data validations, and column widths, hidden state and column-level styles (copied to
+ *     the result workbook).</li>
  * </ul>
  *
  * <p><b>Not supported</b> (fundamental to forward-only writing — the non-streaming engine must be used
@@ -179,9 +185,8 @@ import org.w3c.dom.NodeList;
  * is rejected with an error rather than silently reordered; an integer value beyond a double's exact
  * range (2^53) is written as a rounded double, because POI sets a numeric cell only through a double,
  * whereas the non-streaming engine keeps the exact digits in the raw file (give the field a format or
- * select the value as a string to keep it exact); and coordinate-based template settings that are copied
- * verbatim (print area and data-validation regions) keep their template positions — they are not re-based
- * as bands expand.
+ * select the value as a string to keep it exact); and data-validation regions, which are copied verbatim,
+ * keep their template positions — they are not re-based as bands expand.
  *
  * <p>Data feeding: when the report's streaming band is backed by a {@code sql} or {@code jpql} dataset,
  * its rows are pulled from a live database cursor inside an open transaction (see
@@ -199,6 +204,8 @@ import org.w3c.dom.NodeList;
  * the office process can handle; formula cells stay unevaluated in all converted outputs.
  */
 public class StreamingXlsxFormatter extends AbstractFormatter implements StreamingReportFormatter {
+
+    private static final Logger log = LoggerFactory.getLogger(StreamingXlsxFormatter.class);
 
     protected static final String HINT_NAME_PREFIX = "hint_";
     protected static final String STYLE_HINT_PREFIX = "hint_style_";
@@ -788,6 +795,7 @@ public class StreamingXlsxFormatter extends AbstractFormatter implements Streami
         }
         applyConditionalFormattings();
         applyStaticMerges(resultSheet);
+        copyPrintArea();
     }
 
     /**
@@ -956,14 +964,14 @@ public class StreamingXlsxFormatter extends AbstractFormatter implements Streami
     /**
      * Carries over sheet- and workbook-level template settings that the fresh result workbook would
      * otherwise lose (the non-streaming engine renders on a template copy and keeps them for free): freeze
-     * panes, page/print setup, user-defined names and the print area. Coordinate-based settings are copied
-     * with their template positions; they are not re-based as bands expand (a documented limitation).
+     * panes, page/print setup and user-defined names. The print area is carried over once the rows are
+     * written, see {@link #copyPrintArea()}. Other coordinate-based settings are copied with their
+     * template positions; they are not re-based as bands expand (a documented limitation).
      */
     protected void copyTemplateSettings(XSSFSheet templateSheet, SXSSFSheet resultSheet) {
         copyFreezePane(templateSheet, resultSheet);
         copyPrintSetup(templateSheet, resultSheet);
         copyDefinedNames();
-        copyPrintArea();
         copyDataValidations(templateSheet, resultSheet);
     }
 
@@ -1051,19 +1059,75 @@ public class StreamingXlsxFormatter extends AbstractFormatter implements Streami
         }
     }
 
+    /**
+     * Copies the template print area re-based onto the written rows, see {@link XlsxUtils#rebasePrintArea}: static
+     * rows are mapped to the rows they are written to, bands to all their instances with their child bands. A print
+     * area that is not re-based, e.g. whole columns, is copied as authored; one that is not one area of cell
+     * references, e.g. several areas or a formula, is not copied.
+     */
     protected void copyPrintArea() {
-        String printArea = templateWorkbook.getPrintArea(0);
+        SpreadsheetVersion version = templateWorkbook.getSpreadsheetVersion();
+        Range printArea = XlsxUtils.parsePrintArea(templateWorkbook.getPrintArea(0), version);
         if (printArea == null) {
             return;
         }
+        // the template has one sheet, the formula may quote and escape its name or omit it
+        String sheetName = templateWorkbook.getSheetName(0);
+        printArea = new Range(sheetName, printArea.getFirstColumn(), printArea.getFirstRow(),
+                printArea.getLastColumn(), printArea.getLastRow());
+        Range resultPrintArea = null;
         try {
-            AreaReference area = new AreaReference(printArea, templateWorkbook.getSpreadsheetVersion());
-            CellReference first = area.getFirstCell();
-            CellReference last = area.getLastCell();
-            resultWorkbook.setPrintArea(0, first.getCol(), last.getCol(), first.getRow(), last.getRow());
-        } catch (IllegalArgumentException e) {
-            // Multi-area or otherwise unparsable print area: skip rather than fail the render.
+            // the streaming engine copies no drawings, its merged regions do not stick out of bands and static rows
+            resultPrintArea = XlsxUtils.rebasePrintArea(printArea, getWrittenBlocks(sheetName, version),
+                    new RangeDependencies(), version);
+        } catch (RuntimeException e) {
+            // the print area must not break the report
+            log.warn("Unable to re-base the print area {}, it is kept as authored",
+                    templateWorkbook.getPrintArea(0), e);
         }
+        // the result sheet name is prepended to the reference
+        resultWorkbook.setPrintArea(0, XlsxUtils.toCellRangeAddress(
+                resultPrintArea != null ? resultPrintArea : printArea, version).formatAsString(null, true));
+    }
+
+    /**
+     * Returns the template ranges of the rendered bands and of the static rows mapped to the rows written for them:
+     * all the instances of a band with their child bands, the output row of a static row.
+     */
+    protected RangeDependencies getWrittenBlocks(String sheetName, SpreadsheetVersion version) {
+        RangeDependencies writtenBlocks = new RangeDependencies();
+        for (TemplateBand band : templateBands.values()) {
+            int[] rows = getRenderedBlockRows(band);
+            if (rows != null) {
+                writtenBlocks.addDependency(
+                        new Range(sheetName, band.firstCol + 1, band.firstRow + 1, band.lastCol + 1, band.lastRow + 1),
+                        new Range(sheetName, band.firstCol + 1, rows[0] + 1, band.lastCol + 1, rows[1] + 1));
+            }
+        }
+        staticRowOutputs.forEach((templateRow, outputRow) -> writtenBlocks.addDependency(
+                new Range(sheetName, 1, templateRow + 1, version.getMaxColumns(), templateRow + 1),
+                new Range(sheetName, 1, outputRow + 1, version.getMaxColumns(), outputRow + 1)));
+        return writtenBlocks;
+    }
+
+    /**
+     * Returns the first and the last output row (0-based) of all the rendered instances of the band with their child
+     * bands, or {@code null} if the band rendered nothing.
+     */
+    @Nullable
+    protected int[] getRenderedBlockRows(TemplateBand band) {
+        int[] rows = renderedBandRows.get(band.name);
+        if (rows == null) {
+            return null;
+        }
+        int lastRow = rows[1];
+        for (TemplateBand child : childTemplateBandsOf(band)) {
+            int[] childRows = getRenderedBlockRows(child);
+            if (childRows != null) {
+                lastRow = Math.max(lastRow, childRows[1]);
+            }
+        }
+        return new int[]{rows[0], lastRow};
     }
 
     /**

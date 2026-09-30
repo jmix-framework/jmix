@@ -146,13 +146,6 @@
     font-weight: 600;
 }
 
-.dynmod-ai-builder .empty-hint {
-    color: var(--vaadin-text-color-secondary);
-    font-size: var(--aura-font-size-s);
-    text-align: center;
-    padding: var(--vaadin-padding-l) var(--vaadin-padding-m);
-}
-
 .dynmod-ai-builder .plan-item {
     display: block;
     position: relative;
@@ -229,14 +222,6 @@
     display: block;
     color: var(--vaadin-text-color);
     font-size: var(--aura-font-size-s);
-}
-
-.dynmod-ai-builder .note-detail {
-    display: block;
-    margin-block-start: 0.25em;
-    color: var(--vaadin-text-color-secondary);
-    font-size: var(--aura-font-size-xs);
-    overflow-wrap: anywhere;
 }
 
 .dynmod-ai-builder vaadin-details.card-details {

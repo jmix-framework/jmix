@@ -138,14 +138,6 @@
     font-weight: 600;
 }
 
-.dynmod-ai-builder .empty-hint {
-    color: var(--lumo-secondary-text-color);
-    font-size: var(--lumo-font-size-s);
-    line-height: var(--lumo-line-height-s);
-    text-align: center;
-    padding: var(--lumo-space-l) var(--lumo-space-m);
-}
-
 .dynmod-ai-builder .plan-item {
     display: block;
     position: relative;
@@ -225,14 +217,6 @@
     color: var(--lumo-body-text-color);
     font-size: var(--lumo-font-size-s);
     line-height: var(--lumo-line-height-s);
-}
-
-.dynmod-ai-builder .note-detail {
-    display: block;
-    margin-block-start: 0.25em;
-    color: var(--lumo-secondary-text-color);
-    font-size: var(--lumo-font-size-xs);
-    overflow-wrap: anywhere;
 }
 
 .dynmod-ai-builder vaadin-details.card-details {

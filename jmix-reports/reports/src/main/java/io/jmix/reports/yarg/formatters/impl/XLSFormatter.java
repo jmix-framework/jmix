@@ -27,6 +27,8 @@ import io.jmix.reports.yarg.formatters.impl.xls.caches.XlsStyleCache;
 import io.jmix.reports.yarg.formatters.impl.xls.caches.XslStyleHelper;
 import io.jmix.reports.yarg.formatters.impl.xls.hints.*;
 import io.jmix.reports.yarg.formatters.impl.xlsx.Range;
+import io.jmix.reports.yarg.formatters.impl.xlsx.RangeDependencies;
+import io.jmix.reports.yarg.formatters.impl.xlsx.XlsxUtils;
 import io.jmix.reports.yarg.exception.ReportingException;
 import io.jmix.reports.yarg.exception.UnsupportedFormatException;
 import io.jmix.reports.yarg.formatters.factory.FormatterFactoryInput;
@@ -48,6 +50,8 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellReference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -56,6 +60,9 @@ import java.util.*;
 import static io.jmix.reports.yarg.formatters.impl.xls.HSSFCellHelper.getCellFromReference;
 import static io.jmix.reports.yarg.formatters.impl.xls.HSSFPicturesHelper.getAllAnchors;
 import static io.jmix.reports.yarg.formatters.impl.xls.HSSFRangeHelper.*;
+import static io.jmix.reports.yarg.formatters.impl.xlsx.XlsxUtils.parsePrintArea;
+import static io.jmix.reports.yarg.formatters.impl.xlsx.XlsxUtils.rebasePrintArea;
+import static io.jmix.reports.yarg.formatters.impl.xlsx.XlsxUtils.spansAllRows;
 
 /**
  * Document formatter for '.xls' file types
@@ -63,7 +70,10 @@ import static io.jmix.reports.yarg.formatters.impl.xls.HSSFRangeHelper.*;
 
 //todo : we need to rewrite logic in the way similar to XlsxFormatter (store rendered ranges in memory) - use bandsToResultRanges etc.
 public class XLSFormatter extends AbstractFormatter {
+    private static final Logger log = LoggerFactory.getLogger(XLSFormatter.class);
+
     protected static final String DYNAMIC_HEIGHT_STYLE = "styleWithoutHeight";
+    private static final String PRINT_AREA_NAME = "Print_Area";
 
     protected HSSFWorkbook templateWorkbook;
     protected HSSFWorkbook resultWorkbook;
@@ -94,6 +104,10 @@ public class XLSFormatter extends AbstractFormatter {
     protected DocumentConverter documentConverter;
 
     protected BiMap<BandData, Range> bandsToResultRanges = HashBiMap.create();
+    /**
+     * Template merged regions that stick out of the band they are copied with, mapped to their copies in the result.
+     */
+    protected RangeDependencies outerMergeRegions = new RangeDependencies();
 
     public XLSFormatter(FormatterFactoryInput formatterFactoryInput) {
         super(formatterFactoryInput);
@@ -162,6 +176,7 @@ public class XLSFormatter extends AbstractFormatter {
 
         updateFormulas();
         copyPictures();
+        updatePrintAreas();
     }
 
     protected void applyHints() {
@@ -254,6 +269,136 @@ public class XLSFormatter extends AbstractFormatter {
 
             copyPicturesFromTemplateToResult(templateSheet, resultSheet);
         }
+    }
+
+    /**
+     * Re-bases each sheet's print area onto the rendered report, so that printing the report covers everything
+     * rendered for the template print area, see {@link XlsxUtils#rebasePrintArea}.
+     */
+    protected void updatePrintAreas() {
+        RangeDependencies bandBlocks = null;
+        for (HSSFName name : resultWorkbook.getAllNames()) {
+            int sheetNumber = name.getSheetIndex();
+            if (!PRINT_AREA_NAME.equals(name.getNameName()) || sheetNumber < 0) {
+                continue;
+            }
+            // unlike HSSFWorkbook.getPrintArea(), getRefersToFormula() does not fail on a name without a definition
+            Range printArea = parsePrintArea(name.getRefersToFormula(), SpreadsheetVersion.EXCEL97);
+            // whole columns cover every rendered row anyway
+            if (printArea == null || spansAllRows(printArea, SpreadsheetVersion.EXCEL97)) {
+                continue;
+            }
+            // band ranges refer to the sheet by its name as is, the formula may quote and escape it or omit it
+            printArea = new Range(resultWorkbook.getSheetName(sheetNumber), printArea.getFirstColumn(),
+                    printArea.getFirstRow(), printArea.getLastColumn(), printArea.getLastRow());
+            try {
+                if (bandBlocks == null) {
+                    bandBlocks = getRenderedBandBlocks();
+                }
+                Range resultPrintArea = rebasePrintArea(printArea, bandBlocks,
+                        getRenderedObjects(sheetNumber, printArea), SpreadsheetVersion.EXCEL97);
+                if (resultPrintArea != null) {
+                    resultWorkbook.setPrintArea(sheetNumber,
+                            resultPrintArea.getFirstColumn() - 1, resultPrintArea.getLastColumn() - 1,
+                            resultPrintArea.getFirstRow() - 1, resultPrintArea.getLastRow() - 1);
+                }
+            } catch (RuntimeException e) {
+                // the print area must not break the report
+                log.warn("Unable to re-base the print area {}, it is kept as authored", name.getRefersToFormula(), e);
+            }
+        }
+    }
+
+    /**
+     * Returns the template range of each rendered band mapped to the range covering the blocks of all its instances,
+     * see {@link XlsxUtils#getRenderedBandBlocks}.
+     */
+    protected RangeDependencies getRenderedBandBlocks() {
+        return XlsxUtils.getRenderedBandBlocks(rootBand, band -> {
+            Range resultRange = bandsToResultRanges.get(band);
+            return resultRange != null ? getRenderedRange(band, resultRange) : null;
+        }, band -> getTemplateRange(band.getName(), bandsToResultRanges.get(band).getSheet()));
+    }
+
+    /**
+     * Returns the template range of the band on the given sheet.
+     */
+    protected Range getTemplateRange(String bandName, String sheetName) {
+        Bounds bounds = templateBounds.get(bandName);
+        return new Range(sheetName, bounds.column0 + 1, bounds.row0 + 1, bounds.column1 + 1, bounds.row1 + 1);
+    }
+
+    /**
+     * Returns the cells the band instance is rendered to: a horizontal band keeps the columns of its template range,
+     * its result range starts in the first column.
+     */
+    protected Range getRenderedRange(BandData band, Range resultRange) {
+        if (BandOrientation.HORIZONTAL != band.getOrientation()) {
+            return resultRange;
+        }
+        Bounds bounds = templateBounds.get(band.getName());
+        return new Range(resultRange.getSheet(), bounds.column0 + 1, resultRange.getFirstRow(), bounds.column1 + 1,
+                resultRange.getLastRow());
+    }
+
+    /**
+     * Returns the template ranges of the objects intersecting the template print area that keep their size, mapped
+     * to the ranges they are rendered to: the merged regions copied with the bands they stick out of, see
+     * {@link #outerMergeRegions}, and the drawings. A sheet with charts keeps its drawings as they are, see
+     * {@link #copyCharts(HSSFSheet)}. Another sheet keeps the drawings of the template sheet in place too, comments
+     * aside, which are not printed, and gets a copy of each drawing moved with the band containing its top left cell,
+     * see {@link #copyPicturesFromTemplateToResult(HSSFSheet, HSSFSheet)}.
+     */
+    protected RangeDependencies getRenderedObjects(int sheetNumber, Range printArea) {
+        RangeDependencies objects = new RangeDependencies();
+        for (Range mergeRange : outerMergeRegions.templates()) {
+            if (printArea.intersects(mergeRange)) {
+                for (Range resultMergeRange : outerMergeRegions.resultsForTemplate(mergeRange)) {
+                    objects.addDependency(mergeRange, resultMergeRange);
+                }
+            }
+        }
+        HSSFSheet templateSheet = templateWorkbook.getSheetAt(sheetNumber);
+        List<HSSFClientAnchor> templateAnchors = getAllAnchors(getEscherAggregate(templateSheet));
+        if (!drawingPatriarchsMap.containsKey(resultWorkbook.getSheetAt(sheetNumber))) {
+            for (HSSFClientAnchor anchor : templateAnchors) {
+                addStaticObject(objects, getAnchorRange(printArea.getSheet(), anchor), printArea);
+            }
+            return objects;
+        }
+        HSSFPatriarch templatePatriarch = templateSheet.getDrawingPatriarch();
+        if (templatePatriarch != null) {
+            for (HSSFShape shape : templatePatriarch.getChildren()) {
+                if (!(shape instanceof HSSFComment) && shape.getAnchor() instanceof HSSFClientAnchor anchor) {
+                    addStaticObject(objects, getAnchorRange(printArea.getSheet(), anchor), printArea);
+                }
+            }
+        }
+        if (!orderedPicturesId.isEmpty()) {
+            for (HSSFClientAnchor anchor : templateAnchors) {
+                Range anchorRange = getAnchorRange(printArea.getSheet(), anchor);
+                if (printArea.intersects(anchorRange)) {
+                    Cell topLeft = getCellFromTemplate(new Cell(anchor.getCol1(), anchor.getRow1()));
+                    objects.addDependency(anchorRange, anchorRange.copy().shift(topLeft.getRow() - anchor.getRow1(),
+                            topLeft.getCol() - anchor.getCol1()));
+                }
+            }
+        }
+        return objects;
+    }
+
+    private void addStaticObject(RangeDependencies objects, Range anchorRange, Range printArea) {
+        if (printArea.intersects(anchorRange)) {
+            objects.addDependency(anchorRange, anchorRange);
+        }
+    }
+
+    /**
+     * Returns the cells the drawing object is anchored in.
+     */
+    protected Range getAnchorRange(String sheetName, HSSFClientAnchor anchor) {
+        return new Range(sheetName, anchor.getCol1() + 1, anchor.getRow1() + 1, anchor.getCol2() + 1,
+                anchor.getRow2() + 1);
     }
 
     protected void writeBand(BandData band) {
@@ -474,7 +619,8 @@ public class XLSFormatter extends AbstractFormatter {
             HSSFName aNamedRange = templateWorkbook.getName(nameName);
 
             String refersToFormula = aNamedRange.getRefersToFormula();
-            if (!AreaReference.isContiguous(refersToFormula)) {
+            // a print area may have no definition
+            if (refersToFormula == null || !AreaReference.isContiguous(refersToFormula)) {
                 continue;
             }
 
@@ -567,10 +713,21 @@ public class XLSFormatter extends AbstractFormatter {
 
                         if (!skipRegion) {
                             resultSheet.addMergedRegion(newRegion);
+                            if (!isMergeRegionInsideNamedRange(row, column, aref.getLastCell().getRow(),
+                                    (int) aref.getLastCell().getCol(), cra.getFirstRow(), cra.getFirstColumn(),
+                                    cra.getLastRow(), cra.getLastColumn())) {
+                                outerMergeRegions.addDependency(getRange(resultSheet, cra),
+                                        getRange(resultSheet, newRegion));
+                            }
                         }
                     }
                 }
             }
+    }
+
+    private Range getRange(HSSFSheet sheet, CellRangeAddress region) {
+        return new Range(sheet.getSheetName(), region.getFirstColumn() + 1, region.getFirstRow() + 1,
+                region.getLastColumn() + 1, region.getLastRow() + 1);
     }
 
     protected boolean intersects(CellRangeAddress x, CellRangeAddress y) {
@@ -804,11 +961,14 @@ public class XLSFormatter extends AbstractFormatter {
         if (CollectionUtils.isNotEmpty(orderedPicturesId)) {//just a shitty workaround for anchors without pictures
             for (HSSFClientAnchor anchor : list) {
                 Cell topLeft = getCellFromTemplate(new Cell(anchor.getCol1(), anchor.getRow1()));
+                // the picture keeps its size
+                int width = anchor.getCol2() - anchor.getCol1();
+                int height = anchor.getRow2() - anchor.getRow1();
                 anchor.setCol1(topLeft.getCol());
                 anchor.setRow1(topLeft.getRow());
 
-                anchor.setCol2(topLeft.getCol() + anchor.getCol2() - anchor.getCol1());
-                anchor.setRow2(topLeft.getRow() + anchor.getRow2() - anchor.getRow1());
+                anchor.setCol2(Math.min(topLeft.getCol() + width, SpreadsheetVersion.EXCEL97.getLastColumnIndex()));
+                anchor.setRow2(Math.min(topLeft.getRow() + height, SpreadsheetVersion.EXCEL97.getLastRowIndex()));
 
                 HSSFPatriarch sheetPatriarch = drawingPatriarchsMap.get(resultSheet);
                 if (sheetPatriarch != null) {

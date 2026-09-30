@@ -24,7 +24,9 @@ html {
     --jmix-font-icon-accessibility: '\e683';
     --jmix-font-icon-accordion-menu: '\e61f';
     --jmix-font-icon-add-dock: '\e620';
+    --jmix-font-icon-dock: '\e620';
     --jmix-font-icon-adjust: '\e74a';
+    --jmix-font-icon-contrast: '\e74a';
     --jmix-font-icon-adobe-flash: '\e648';
     --jmix-font-icon-airplane: '\e684';
     --jmix-font-icon-alarm: '\e903';
@@ -94,6 +96,7 @@ html {
     --jmix-font-icon-book: '\e6f9';
     --jmix-font-icon-bookmark-o: '\e7b5';
     --jmix-font-icon-bookmark: '\e7b6';
+    --jmix-font-icon-branch: '\e670';
     --jmix-font-icon-briefcase: '\e602';
     --jmix-font-icon-browser: '\e628';
     --jmix-font-icon-bug-o: '\e68a';
@@ -118,9 +121,13 @@ html {
     --jmix-font-icon-caret-left: '\e7bd';
     --jmix-font-icon-caret-right: '\e7be';
     --jmix-font-icon-caret-square-down-o: '\e7bf';
+    --jmix-font-icon-caret-square-down: '\e7bf';
     --jmix-font-icon-caret-square-left-o: '\e7c0';
+    --jmix-font-icon-caret-square-left: '\e7c0';
     --jmix-font-icon-caret-square-right-o: '\e7c1';
+    --jmix-font-icon-caret-square-right: '\e7c1';
     --jmix-font-icon-caret-square-up-o: '\e7c2';
+    --jmix-font-icon-caret-square-up: '\e7c2';
     --jmix-font-icon-caret-up: '\e7c3';
     --jmix-font-icon-cart-o: '\e6fb';
     --jmix-font-icon-cart: '\e6fc';
@@ -183,12 +190,14 @@ html {
     --jmix-font-icon-coin-piles: '\e913';
     --jmix-font-icon-coins: '\e914';
     --jmix-font-icon-combobox: '\e636';
+    --jmix-font-icon-command: '\e947';
     --jmix-font-icon-comment-ellipsis-o: '\e765';
     --jmix-font-icon-comment-ellipsis: '\e766';
     --jmix-font-icon-comment-o: '\e767';
     --jmix-font-icon-comment: '\e768';
     --jmix-font-icon-comments-o: '\e769';
     --jmix-font-icon-comments: '\e76a';
+    --jmix-font-icon-compass: '\e727';
     --jmix-font-icon-compile: '\e915';
     --jmix-font-icon-compress-square: '\e637';
     --jmix-font-icon-compress: '\e76b';
@@ -319,9 +328,11 @@ html {
     --jmix-font-icon-folder-search: '\e930';
     --jmix-font-icon-folder: '\e7e6';
     --jmix-font-icon-font: '\e713';
+    --jmix-font-icon-forklift: '\e957';
     --jmix-font-icon-form: '\e64b';
     --jmix-font-icon-forward: '\e77c';
     --jmix-font-icon-frown-o: '\e6a4';
+    --jmix-font-icon-frown: '\e6a4';
     --jmix-font-icon-function: '\e64c';
     --jmix-font-icon-funnel: '\e931';
     --jmix-font-icon-gamepad: '\e714';
@@ -419,11 +430,13 @@ html {
     --jmix-font-icon-medal: '\e6b3';
     --jmix-font-icon-megaphone: '\e6b4';
     --jmix-font-icon-meh-o: '\e6b5';
+    --jmix-font-icon-meh: '\e6b5';
     --jmix-font-icon-menu: '\e7b3';
     --jmix-font-icon-microphone: '\e72a';
     --jmix-font-icon-minus-circle-o: '\e7f3';
     --jmix-font-icon-minus-circle: '\e7f4';
     --jmix-font-icon-minus-square-o: '\e7f5';
+    --jmix-font-icon-minus-square: '\e7f5';
     --jmix-font-icon-minus: '\e7f6';
     --jmix-font-icon-mobile-browser: '\e93d';
     --jmix-font-icon-mobile-retro: '\e93e';
@@ -450,6 +463,7 @@ html {
     --jmix-font-icon-option: '\e947';
     --jmix-font-icon-options: '\e65e';
     --jmix-font-icon-orientation: '\e65f';
+    --jmix-font-icon-outdent: '\e770';
     --jmix-font-icon-out: '\e614';
     --jmix-font-icon-outbox: '\e660';
     --jmix-font-icon-package: '\e6b7';
@@ -470,6 +484,7 @@ html {
     --jmix-font-icon-paste: '\e6bc';
     --jmix-font-icon-pause: '\e78d';
     --jmix-font-icon-pencil: '\e7fa';
+    --jmix-font-icon-person: '\e6a8';
     --jmix-font-icon-phone-landline: '\e948';
     --jmix-font-icon-phone: '\e7fb';
     --jmix-font-icon-picture: '\e7fc';
@@ -489,6 +504,7 @@ html {
     --jmix-font-icon-plus-circle: '\e7ff';
     --jmix-font-icon-plus-minus: '\e603';
     --jmix-font-icon-plus-square-o: '\e800';
+    --jmix-font-icon-plus-square: '\e800';
     --jmix-font-icon-plus: '\e801';
     --jmix-font-icon-pointer: '\e66b';
     --jmix-font-icon-power-off: '\e78f';
@@ -551,6 +567,7 @@ html {
     --jmix-font-icon-slider: '\e674';
     --jmix-font-icon-sliders: '\e6cf';
     --jmix-font-icon-smiley-o: '\e6d0';
+    --jmix-font-icon-smiley: '\e6d0';
     --jmix-font-icon-sort: '\e799';
     --jmix-font-icon-sound-disable: '\e79a';
     --jmix-font-icon-spark-line: '\e954';
@@ -565,10 +582,12 @@ html {
     --jmix-font-icon-split: '\e675';
     --jmix-font-icon-spoon: '\e73a';
     --jmix-font-icon-square-shadow: '\e79b';
+    --jmix-font-icon-square: '\e7a6';
     --jmix-font-icon-star-half-left-o: '\e79c';
     --jmix-font-icon-star-half-left: '\e79d';
     --jmix-font-icon-star-half-right-o: '\e79e';
     --jmix-font-icon-star-half-right: '\e79f';
+    --jmix-font-icon-star-half: '\e79d';
     --jmix-font-icon-star-o: '\e7a0';
     --jmix-font-icon-star: '\e7a1';
     --jmix-font-icon-start-cog: '\e676';
@@ -585,6 +604,7 @@ html {
     --jmix-font-icon-suitcase: '\e809';
     --jmix-font-icon-sun-down: '\e95a';
     --jmix-font-icon-sun-o: '\e73c';
+    --jmix-font-icon-sun: '\e73c';
     --jmix-font-icon-sun-rise: '\e95b';
     --jmix-font-icon-superscript: '\e6d5';
     --jmix-font-icon-sword: '\e678';
@@ -1105,8 +1125,16 @@ html {
     content: var(--jmix-font-icon-add-dock);
 }
 
+.jmix-font-icon-dock:before {
+    content: var(--jmix-font-icon-dock);
+}
+
 .jmix-font-icon-adjust:before {
     content: var(--jmix-font-icon-adjust);
+}
+
+.jmix-font-icon-contrast:before {
+    content: var(--jmix-font-icon-contrast);
 }
 
 .jmix-font-icon-adobe-flash:before {
@@ -1385,6 +1413,10 @@ html {
     content: var(--jmix-font-icon-bookmark);
 }
 
+.jmix-font-icon-branch:before {
+    content: var(--jmix-font-icon-branch);
+}
+
 .jmix-font-icon-briefcase:before {
     content: var(--jmix-font-icon-briefcase);
 }
@@ -1481,16 +1513,32 @@ html {
     content: var(--jmix-font-icon-caret-square-down-o);
 }
 
+.jmix-font-icon-caret-square-down:before {
+    content: var(--jmix-font-icon-caret-square-down);
+}
+
 .jmix-font-icon-caret-square-left-o:before {
     content: var(--jmix-font-icon-caret-square-left-o);
+}
+
+.jmix-font-icon-caret-square-left:before {
+    content: var(--jmix-font-icon-caret-square-left);
 }
 
 .jmix-font-icon-caret-square-right-o:before {
     content: var(--jmix-font-icon-caret-square-right-o);
 }
 
+.jmix-font-icon-caret-square-right:before {
+    content: var(--jmix-font-icon-caret-square-right);
+}
+
 .jmix-font-icon-caret-square-up-o:before {
     content: var(--jmix-font-icon-caret-square-up-o);
+}
+
+.jmix-font-icon-caret-square-up:before {
+    content: var(--jmix-font-icon-caret-square-up);
 }
 
 .jmix-font-icon-caret-up:before {
@@ -1741,6 +1789,10 @@ html {
     content: var(--jmix-font-icon-combobox);
 }
 
+.jmix-font-icon-command:before {
+    content: var(--jmix-font-icon-command);
+}
+
 .jmix-font-icon-comment-ellipsis-o:before {
     content: var(--jmix-font-icon-comment-ellipsis-o);
 }
@@ -1763,6 +1815,10 @@ html {
 
 .jmix-font-icon-comments:before {
     content: var(--jmix-font-icon-comments);
+}
+
+.jmix-font-icon-compass:before {
+    content: var(--jmix-font-icon-compass);
 }
 
 .jmix-font-icon-compile:before {
@@ -2285,6 +2341,10 @@ html {
     content: var(--jmix-font-icon-font);
 }
 
+.jmix-font-icon-forklift:before {
+    content: var(--jmix-font-icon-forklift);
+}
+
 .jmix-font-icon-form:before {
     content: var(--jmix-font-icon-form);
 }
@@ -2295,6 +2355,10 @@ html {
 
 .jmix-font-icon-frown-o:before {
     content: var(--jmix-font-icon-frown-o);
+}
+
+.jmix-font-icon-frown:before {
+    content: var(--jmix-font-icon-frown);
 }
 
 .jmix-font-icon-function:before {
@@ -2685,6 +2749,10 @@ html {
     content: var(--jmix-font-icon-meh-o);
 }
 
+.jmix-font-icon-meh:before {
+    content: var(--jmix-font-icon-meh);
+}
+
 .jmix-font-icon-menu:before {
     content: var(--jmix-font-icon-menu);
 }
@@ -2703,6 +2771,10 @@ html {
 
 .jmix-font-icon-minus-square-o:before {
     content: var(--jmix-font-icon-minus-square-o);
+}
+
+.jmix-font-icon-minus-square:before {
+    content: var(--jmix-font-icon-minus-square);
 }
 
 .jmix-font-icon-minus:before {
@@ -2809,6 +2881,10 @@ html {
     content: var(--jmix-font-icon-orientation);
 }
 
+.jmix-font-icon-outdent:before {
+    content: var(--jmix-font-icon-outdent);
+}
+
 .jmix-font-icon-out:before {
     content: var(--jmix-font-icon-out);
 }
@@ -2889,6 +2965,10 @@ html {
     content: var(--jmix-font-icon-pencil);
 }
 
+.jmix-font-icon-person:before {
+    content: var(--jmix-font-icon-person);
+}
+
 .jmix-font-icon-phone-landline:before {
     content: var(--jmix-font-icon-phone-landline);
 }
@@ -2963,6 +3043,10 @@ html {
 
 .jmix-font-icon-plus-square-o:before {
     content: var(--jmix-font-icon-plus-square-o);
+}
+
+.jmix-font-icon-plus-square:before {
+    content: var(--jmix-font-icon-plus-square);
 }
 
 .jmix-font-icon-plus:before {
@@ -3213,6 +3297,10 @@ html {
     content: var(--jmix-font-icon-smiley-o);
 }
 
+.jmix-font-icon-smiley:before {
+    content: var(--jmix-font-icon-smiley);
+}
+
 .jmix-font-icon-sort:before {
     content: var(--jmix-font-icon-sort);
 }
@@ -3269,6 +3357,10 @@ html {
     content: var(--jmix-font-icon-square-shadow);
 }
 
+.jmix-font-icon-square:before {
+    content: var(--jmix-font-icon-square);
+}
+
 .jmix-font-icon-star-half-left-o:before {
     content: var(--jmix-font-icon-star-half-left-o);
 }
@@ -3283,6 +3375,10 @@ html {
 
 .jmix-font-icon-star-half-right:before {
     content: var(--jmix-font-icon-star-half-right);
+}
+
+.jmix-font-icon-star-half:before {
+    content: var(--jmix-font-icon-star-half);
 }
 
 .jmix-font-icon-star-o:before {
@@ -3347,6 +3443,10 @@ html {
 
 .jmix-font-icon-sun-o:before {
     content: var(--jmix-font-icon-sun-o);
+}
+
+.jmix-font-icon-sun:before {
+    content: var(--jmix-font-icon-sun);
 }
 
 .jmix-font-icon-sun-rise:before {

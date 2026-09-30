@@ -32,6 +32,7 @@ dependencies {
     api 'org.springframework.security:spring-security-web'
     api 'org.springframework:spring-webmvc'
     api 'org.springframework:spring-context'
+    api 'tools.jackson.core:jackson-databind'
 
     implementation 'com.fasterxml.jackson.core:jackson-databind'
     implementation 'com.fasterxml.jackson.core:jackson-annotations'

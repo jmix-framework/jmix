@@ -20,7 +20,6 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import io.jmix.core.Entity;
-import io.jmix.core.Messages;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.Stores;
 import io.jmix.core.annotation.DeletedBy;
@@ -32,10 +31,9 @@ import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.JmixId;
 import io.jmix.core.entity.annotation.MetaAnnotation;
 import io.jmix.core.metamodel.annotation.*;
+import io.jmix.core.metamodel.datatype.AdaptiveDatatypeProvider;
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
-import io.jmix.core.metamodel.datatype.FormatStringsRegistry;
-import io.jmix.core.metamodel.datatype.impl.AdaptiveNumberDatatype;
 import io.jmix.core.metamodel.datatype.EnumClass;
 import io.jmix.core.metamodel.datatype.impl.EnumerationImpl;
 import io.jmix.core.metamodel.model.Store;
@@ -98,19 +96,15 @@ public class MetaModelLoader {
 
     protected Stores stores;
 
-    protected FormatStringsRegistry formatStringsRegistry;
-
-    protected Messages messages;
+    @Autowired(required = false)
+    protected List<AdaptiveDatatypeProvider> adaptiveDatatypeProviders = Collections.emptyList();
 
     private static final Logger log = LoggerFactory.getLogger(MetaModelLoader.class);
 
     @Autowired
-    public MetaModelLoader(DatatypeRegistry datatypes, Stores stores, FormatStringsRegistry formatStringsRegistry,
-                           Messages messages) {
+    public MetaModelLoader(DatatypeRegistry datatypes, Stores stores) {
         this.datatypes = datatypes;
         this.stores = stores;
-        this.formatStringsRegistry = formatStringsRegistry;
-        this.messages = messages;
     }
 
     public void loadModel(Session session, Set<String> classNames) {
@@ -1006,12 +1000,10 @@ public class MetaModelLoader {
 
     @Nullable
     protected Datatype getAdaptiveDatatype(MetaProperty metaProperty, Class<?> type) {
-        NumberFormat numberFormat = metaProperty.getAnnotatedElement().getAnnotation(NumberFormat.class);
-        if (numberFormat != null) {
-            if (Number.class.isAssignableFrom(type)) {
-                return new AdaptiveNumberDatatype(type, numberFormat, formatStringsRegistry, messages);
-            } else {
-                log.warn("NumberFormat annotation is ignored because " + metaProperty + " is not a Number");
+        for (AdaptiveDatatypeProvider provider : adaptiveDatatypeProviders) {
+            Datatype<?> datatype = provider.getAdaptiveDatatype(metaProperty, type);
+            if (datatype != null) {
+                return datatype;
             }
         }
         return null;

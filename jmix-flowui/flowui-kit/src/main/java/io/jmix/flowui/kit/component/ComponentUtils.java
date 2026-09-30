@@ -216,10 +216,7 @@ public final class ComponentUtils {
     public static Image copyImage(Image image) {
         Image copy = new Image(image.getSrc(), image.getAlt().orElse(null));
 
-        copy.setText(image.getText());
-        copy.setWhiteSpace(image.getWhiteSpace());
         copy.setVisible(image.isVisible());
-        copy.setEnabled(image.isEnabled());
         copy.addClassNames(image.getClassNames().toArray(new String[0]));
 
         copy.setWidth(image.getWidth());

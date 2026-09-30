@@ -349,6 +349,12 @@ final class StudioChartsPropertyGroups {
     }
 
     @StudioPropertyGroup(properties = @StudioProperty(
+            xmlAttribute = StudioXmlAttributes.CONTAIN_SHAPE,
+            type = StudioPropertyType.BOOLEAN))
+    public interface ContainShape {
+    }
+
+    @StudioPropertyGroup(properties = @StudioProperty(
             xmlAttribute = StudioXmlAttributes.COORDINATE_SYSTEM,
             type = StudioPropertyType.ENUMERATION,
             classFqn = "io.jmix.chartsflowui.kit.component.model.series.CoordinateSystem",
@@ -822,6 +828,12 @@ final class StudioChartsPropertyGroups {
             classFqn = "io.jmix.chartsflowui.kit.component.model.axis.AbstractCartesianAxis.NameLocation",
             options = {"END", "CENTER", "START"}))
     public interface NameLocation {
+    }
+
+    @StudioPropertyGroup(properties = @StudioProperty(
+            xmlAttribute = StudioXmlAttributes.NAME_MOVE_OVERLAP,
+            type = StudioPropertyType.BOOLEAN))
+    public interface NameMoveOverlap {
     }
 
     @StudioPropertyGroup(properties = @StudioProperty(
@@ -1752,8 +1764,8 @@ final class StudioChartsPropertyGroups {
     @StudioPropertyGroup
     public interface AngleAxisDefaultProperties extends StartAngle, Clockwise, PolarIndex, MinFunction, MaxFunction,
             AnimationFunctionDefaultProperties, StudioPropertyGroups.Id, AxisType, CategoryBoundaryGap,
-            NonCategoryBoundaryGap, StringMin, StringMax, BooleanScale, SplitNumber, MinInterval, MaxInterval,
-            Interval, LogBase, Silent, TriggerEvent, AnimationDefaultProperties, IntegerZLevel, IntegerZ {
+            NonCategoryBoundaryGap, ContainShape, StringMin, StringMax, BooleanScale, SplitNumber, MinInterval,
+            MaxInterval, Interval, LogBase, Silent, TriggerEvent, AnimationDefaultProperties, IntegerZLevel, IntegerZ {
     }
 
     @StudioPropertyGroup
@@ -1834,8 +1846,8 @@ final class StudioChartsPropertyGroups {
 
     @StudioPropertyGroup
     public interface CartesianAxisDefaultProperties extends StudioPropertyGroups.Id, Show, GridIndex, AlignTicks,
-            AxisPosition, IntegerOffset, Name, NameLocation, NameGap, NameRotate, Inverse, AxisType,
-            CategoryBoundaryGap, NonCategoryBoundaryGap, StringMin, StringMax, BooleanScale, SplitNumber,
+            AxisPosition, IntegerOffset, Name, NameLocation, NameGap, NameRotate, NameMoveOverlap, Inverse, AxisType,
+            CategoryBoundaryGap, NonCategoryBoundaryGap, ContainShape, StringMin, StringMax, BooleanScale, SplitNumber,
             MinInterval, MaxInterval, Interval, LogBase, Silent, TriggerEvent, AnimationDefaultProperties,
             AnimationFunctionDefaultProperties, MinFunction, MaxFunction, IntegerZLevel, IntegerZ {
     }
@@ -2129,9 +2141,23 @@ final class StudioChartsPropertyGroups {
             PositionCoordinates, ValueFormatterFunction, StudioPropertyGroups.HideDelay {
     }
 
-    @StudioPropertyGroup(properties = @StudioProperty(
-            xmlAttribute = StudioXmlAttributes.CONTAIN_LABEL,
-            type = StudioPropertyType.BOOLEAN))
+    @StudioPropertyGroup(
+            properties = {
+                    @StudioProperty(
+                            xmlAttribute = StudioXmlAttributes.CONTAIN_LABEL,
+                            type = StudioPropertyType.BOOLEAN),
+                    @StudioProperty(
+                            xmlAttribute = StudioXmlAttributes.OUTER_BOUNDS_MODE,
+                            type = StudioPropertyType.ENUMERATION,
+                            classFqn = "io.jmix.chartsflowui.kit.component.model.Grid.OuterBoundsMode",
+                            options = {"AUTO", "NONE", "SAME"}),
+                    @StudioProperty(
+                            xmlAttribute = StudioXmlAttributes.OUTER_BOUNDS_CONTAIN,
+                            type = StudioPropertyType.ENUMERATION,
+                            classFqn = "io.jmix.chartsflowui.kit.component.model.Grid.OuterBoundsContain",
+                            options = {"AUTO", "ALL", "AXIS_LABEL"})
+            }
+    )
     public interface GridItemComponent extends Show, Left, Width, Bottom, IntegerZ, StringTop, ShadowBlur,
             ShadowColor, BorderColor, StringRight, StringHeight, ShadowOffsetY, ShadowOffsetX, IntegerZLevel,
             BackgroundColor, IntegerBorderWidth, StudioPropertyGroups.Id {
@@ -2377,7 +2403,7 @@ final class StudioChartsPropertyGroups {
     public interface RadiusAxisComponent extends AnimationDefaultProperties, AnimationFunctionDefaultProperties,
             Name, Silent, NameGap, LogBase, Inverse, Interval, IntegerZ, AxisType, StringMin, StringMax, PolarIndex,
             NameRotate, SplitNumber, MinInterval, MinFunction, MaxInterval, MaxFunction, TriggerEvent, BooleanScale,
-            IntegerZLevel, CategoryBoundaryGap, NonCategoryBoundaryGap, StudioPropertyGroups.Id {
+            IntegerZLevel, CategoryBoundaryGap, NonCategoryBoundaryGap, ContainShape, StudioPropertyGroups.Id {
     }
 
     @StudioPropertyGroup(

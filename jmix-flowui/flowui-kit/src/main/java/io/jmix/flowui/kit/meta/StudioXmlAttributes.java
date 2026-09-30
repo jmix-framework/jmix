@@ -76,8 +76,10 @@ public final class StudioXmlAttributes {
     public static final String APPEND_TO_BODY = "appendToBody";
     public static final String APPLY_COLUMN_COLOR_TO_TASKS = "applyColumnColorToTasks";
     public static final String APPLY_SHORTCUT = "applyShortcut";
+    public static final String ARIA_DESCRIBED_BY = "ariaDescribedBy";
     public static final String ARIA_LABEL = "ariaLabel";
     public static final String ARIA_LABELLED_BY = "ariaLabelledBy";
+    public static final String ARIA_ROLE = "ariaRole";
     public static final String ARIA_LINK_MODE = "ariaLinkMode";
     public static final String ATTRIBUTES = "attributes";
     public static final String ATTRIBUTIONS = "attributions";
@@ -225,6 +227,7 @@ public final class StudioXmlAttributes {
     public static final String CONTAINER = "container";
     public static final String CONTAINER_PREFIX = "containerPrefix";
     public static final String CONTAIN_LABEL = "containLabel";
+    public static final String CONTAIN_SHAPE = "containShape";
     public static final String CONTENT = "content";
     public static final String CONTENT_ALIGNMENT = "contentAlignment";
     public static final String COORDINATE_SYSTEM = "coordinateSystem";
@@ -275,6 +278,7 @@ public final class StudioXmlAttributes {
     public static final String DEFAULT_ROW_HEIGHT = "defaultRowHeight";
     public static final String DEFAULT_SLOT_LABEL_FORMAT = "defaultSlotLabelFormat";
     public static final String DEFAULT_SUGGESTIONS_ENABLED = "defaultSuggestionsEnabled";
+    public static final String DEFAULT_TIME = "defaultTime";
     public static final String DEFAULT_TIMED_EVENT_DURATION = "defaultTimedEventDuration";
     public static final String DEFAULT_VALUE = "defaultValue";
     public static final String DEFAULT_WEEK_NUMBER_FORMAT = "defaultWeekNumberFormat";
@@ -282,6 +286,7 @@ public final class StudioXmlAttributes {
     public static final String DENSE_LAYOUT = "denseLayout";
     public static final String DESCRIPTION = "description";
     public static final String DETAILS_VISIBLE_ON_CLICK = "detailsVisibleOnClick";
+    public static final String DIALOG_ACCESSIBLE_NAME = "dialogAccessibleName";
     public static final String DIMENSION = "dimension";
     public static final String DIRECTION = "direction";
     public static final String DISABLED = "disabled";
@@ -431,6 +436,7 @@ public final class StudioXmlAttributes {
     public static final String HAS_IN_EXPRESSION = "hasInExpression";
     public static final String HEADER = "header";
     public static final String HEADER_FILTER_APPLY_SHORTCUT = "headerFilterApplyShortcut";
+    public static final String HEADING_LEVEL = "headingLevel";
     public static final String HEIGHT = "height";
     public static final String HELPER_TEXT = "helperText";
     public static final String HIDE_ALL_ENABLED = "hideAllEnabled";
@@ -467,6 +473,7 @@ public final class StudioXmlAttributes {
     public static final String INDICATOR_SIZE = "indicatorSize";
     public static final String INITIAL_DATE = "initialDate";
     public static final String INITIAL_DISPLAY_MODE = "initialDisplayMode";
+    public static final String INPUT_MODE = "inputMode";
     public static final String INSIDE = "inside";
     public static final String INTEGER = "integer";
     public static final String INTERACTIVE = "interactive";
@@ -518,6 +525,7 @@ public final class StudioXmlAttributes {
     public static final String LIGATURE = "ligature";
     public static final String LIKE_CLAUSE = "likeClause";
     public static final String LINE = "line";
+    public static final String LINE_BREAKS = "lineBreaks";
     public static final String LINE_HEIGHT = "lineHeight";
     public static final String LINE_X = "lineX";
     public static final String LINE_Y = "lineY";
@@ -622,6 +630,7 @@ public final class StudioXmlAttributes {
     public static final String NAME = "name";
     public static final String NAME_GAP = "nameGap";
     public static final String NAME_LOCATION = "nameLocation";
+    public static final String NAME_MOVE_OVERLAP = "nameMoveOverlap";
     public static final String NAME_ROTATE = "nameRotate";
     public static final String NATURAL_VERSION_ID = "naturalVersionId";
     public static final String NAVIGATION_LINKS_ENABLED = "navigationLinksEnabled";
@@ -659,6 +668,8 @@ public final class StudioXmlAttributes {
     public static final String ORIGIN_TYPE = "originType";
     public static final String ORIGIN_VALUE = "originValue";
     public static final String OUTCOME = "outcome";
+    public static final String OUTER_BOUNDS_CONTAIN = "outerBoundsContain";
+    public static final String OUTER_BOUNDS_MODE = "outerBoundsMode";
     public static final String OVERFLOW = "overflow";
     public static final String OVERLAP = "overlap";
     public static final String OVERLAPS = "overlaps";
@@ -678,6 +689,7 @@ public final class StudioXmlAttributes {
     public static final String PARAMETER_CLASS = "parameterClass";
     public static final String PARAMETER_NAME = "parameterName";
     public static final String PARTIAL_DATA = "partialData";
+    public static final String PARTIAL_MATCH_MODE = "partialMatchMode";
     public static final String PASSWORD = "password";
     public static final String PATTERN = "pattern";
     public static final String PERCENT_PRECISION = "percentPrecision";
@@ -749,7 +761,6 @@ public final class StudioXmlAttributes {
     public static final String RESOURCE_DOC = "resourceDoc";
     public static final String REVEAL_BUTTON_VISIBLE = "revealButtonVisible";
     public static final String RIGHT = "right";
-    public static final String ROLE = "role";
     public static final String ROOT_HEADING_LEVEL = "rootHeadingLevel";
     public static final String ROSE_TYPE = "roseType";
     public static final String ROTATE = "rotate";

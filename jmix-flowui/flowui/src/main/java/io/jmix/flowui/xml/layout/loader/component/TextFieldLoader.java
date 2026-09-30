@@ -16,6 +16,7 @@
 
 package io.jmix.flowui.xml.layout.loader.component;
 
+import com.vaadin.flow.component.InputMode;
 import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.xml.layout.loader.AbstractComponentLoader;
 import io.jmix.flowui.xml.layout.support.DataLoaderSupport;
@@ -51,6 +52,7 @@ public class TextFieldLoader extends AbstractComponentLoader<TypedTextField<?>> 
         loadInteger(element, "minLength", resultComponent::setMinLength);
         loadBoolean(element, "autoselect", resultComponent::setAutoselect);
         loadBoolean(element, "clearButtonVisible", resultComponent::setClearButtonVisible);
+        loadEnum(element, InputMode.class, "inputMode", resultComponent::setInputMode);
         loadResourceString(element, "title", context.getMessageGroup(), resultComponent::setTitle);
 
         componentLoader().loadPlaceholder(resultComponent, element);
@@ -72,6 +74,7 @@ public class TextFieldLoader extends AbstractComponentLoader<TypedTextField<?>> 
         componentLoader().loadAllowedCharPattern(resultComponent, element, context);
         componentLoader().loadTrimming(resultComponent, element);
         componentLoader().loadAriaLabel(resultComponent, element);
+        componentLoader().loadAriaDescription(resultComponent, element);
     }
 
     protected DataLoaderSupport getDataLoaderSupport() {

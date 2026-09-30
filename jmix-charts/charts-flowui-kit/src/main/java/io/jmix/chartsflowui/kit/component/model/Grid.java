@@ -58,6 +58,10 @@ public class Grid extends ChartObservableObject
 
     protected Boolean containLabel;
 
+    protected OuterBoundsMode outerBoundsMode;
+
+    protected OuterBoundsContain outerBoundsContain;
+
     protected Color backgroundColor;
 
     protected Color borderColor;
@@ -73,6 +77,73 @@ public class Grid extends ChartObservableObject
     protected Integer shadowOffsetY;
 
     protected InnerTooltip tooltip;
+
+    /**
+     * The strategy for determining the outer bounds, a constraint rectangle that prevents axis labels and axis names
+     * from overflowing: the grid rectangle shrinks if they would overflow the outer bounds. {@link #AUTO} (the default)
+     * behaves as {@link #SAME} if {@code containLabel} is enabled, otherwise the outer bounds are determined
+     * automatically, typically as the chart canvas. {@link #NONE} removes the constraint. {@link #SAME} uses the
+     * rectangle defined by the position and size of the grid.
+     */
+    public enum OuterBoundsMode implements HasEnumId {
+        AUTO("auto"),
+        NONE("none"),
+        SAME("same");
+
+        private final String id;
+
+        OuterBoundsMode(String id) {
+            this.id = id;
+        }
+
+        @Override
+        public String getId() {
+            return id;
+        }
+
+        @Nullable
+        public static OuterBoundsMode fromId(String id) {
+            for (OuterBoundsMode at : OuterBoundsMode.values()) {
+                if (at.getId().equals(id)) {
+                    return at;
+                }
+            }
+            return null;
+        }
+    }
+
+    /**
+     * Determines what is confined by the outer bounds (see {@link OuterBoundsMode}). {@link #ALL} confines the grid
+     * rectangle, axis labels and axis names. {@link #AXIS_LABEL} confines the grid rectangle and axis labels, but not
+     * axis names. {@link #AUTO} (the default) behaves as {@link #AXIS_LABEL} if {@code containLabel} is enabled,
+     * otherwise as {@link #ALL}.
+     */
+    public enum OuterBoundsContain implements HasEnumId {
+        AUTO("auto"),
+        ALL("all"),
+        AXIS_LABEL("axisLabel");
+
+        private final String id;
+
+        OuterBoundsContain(String id) {
+            this.id = id;
+        }
+
+        @Override
+        public String getId() {
+            return id;
+        }
+
+        @Nullable
+        public static OuterBoundsContain fromId(String id) {
+            for (OuterBoundsContain at : OuterBoundsContain.values()) {
+                if (at.getId().equals(id)) {
+                    return at;
+                }
+            }
+            return null;
+        }
+    }
 
     @Nullable
     public String getId() {
@@ -182,13 +253,46 @@ public class Grid extends ChartObservableObject
         markAsDirty();
     }
 
+    /**
+     * @return whether the grid region contains axis labels
+     * @deprecated use {@link #getOuterBoundsMode()} and {@link #getOuterBoundsContain()} instead
+     */
+    @Deprecated(since = "3.1", forRemoval = true)
     @Nullable
     public Boolean getContainLabel() {
         return containLabel;
     }
 
+    /**
+     * Sets whether the grid region contains axis labels.
+     *
+     * @param containLabel whether the grid region contains axis labels
+     * @deprecated use {@link #setOuterBoundsMode(OuterBoundsMode)} with {@link OuterBoundsMode#SAME} and
+     * {@link #setOuterBoundsContain(OuterBoundsContain)} with {@link OuterBoundsContain#AXIS_LABEL} instead
+     */
+    @Deprecated(since = "3.1", forRemoval = true)
     public void setContainLabel(Boolean containLabel) {
         this.containLabel = containLabel;
+        markAsDirty();
+    }
+
+    @Nullable
+    public OuterBoundsMode getOuterBoundsMode() {
+        return outerBoundsMode;
+    }
+
+    public void setOuterBoundsMode(OuterBoundsMode outerBoundsMode) {
+        this.outerBoundsMode = outerBoundsMode;
+        markAsDirty();
+    }
+
+    @Nullable
+    public OuterBoundsContain getOuterBoundsContain() {
+        return outerBoundsContain;
+    }
+
+    public void setOuterBoundsContain(OuterBoundsContain outerBoundsContain) {
+        this.outerBoundsContain = outerBoundsContain;
         markAsDirty();
     }
 
@@ -314,8 +418,23 @@ public class Grid extends ChartObservableObject
         return this;
     }
 
+    /**
+     * @deprecated use {@link #withOuterBoundsMode(OuterBoundsMode)} with {@link OuterBoundsMode#SAME} and
+     * {@link #withOuterBoundsContain(OuterBoundsContain)} with {@link OuterBoundsContain#AXIS_LABEL} instead
+     */
+    @Deprecated(since = "3.1", forRemoval = true)
     public Grid withContainLabel(Boolean containLabel) {
         setContainLabel(containLabel);
+        return this;
+    }
+
+    public Grid withOuterBoundsMode(OuterBoundsMode outerBoundsMode) {
+        setOuterBoundsMode(outerBoundsMode);
+        return this;
+    }
+
+    public Grid withOuterBoundsContain(OuterBoundsContain outerBoundsContain) {
+        setOuterBoundsContain(outerBoundsContain);
         return this;
     }
 

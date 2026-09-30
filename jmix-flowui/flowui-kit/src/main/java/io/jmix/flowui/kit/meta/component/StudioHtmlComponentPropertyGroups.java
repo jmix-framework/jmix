@@ -59,8 +59,7 @@ final class StudioHtmlComponentPropertyGroups {
     }
 
     @StudioPropertyGroup
-    public interface ImageHtmlComponent extends BaseHtmlComponent, StudioPropertyGroups.Enabled,
-            StudioPropertyGroups.DataBindingAttributes, StudioPropertyGroups.TextAttributes,
+    public interface ImageHtmlComponent extends BaseHtmlComponent, StudioPropertyGroups.DataBindingAttributes,
             StudioPropertyGroups.ClickShortcut, StudioPropertyGroups.HasAriaLabel,
             StudioPropertyGroups.AlternateText, StudioPropertyGroups.ImageResource,
             StudioPropertyGroups.ImageThemeNames {
@@ -151,7 +150,7 @@ final class StudioHtmlComponentPropertyGroups {
                     "week"}))
     public interface InputComponent extends BaseHtmlComponent,
             StudioPropertyGroups.HasAriaLabelAndFocusableAttributes, StudioPropertyGroups.ValueChangeModeAttributesWithGeneralCategory,
-            StudioPropertyGroups.Enabled, StudioPropertyGroups.Placeholder {
+            StudioPropertyGroups.Enabled, StudioPropertyGroups.Placeholder, StudioPropertyGroups.InputMode {
     }
 
     @StudioPropertyGroup(properties = @StudioProperty(

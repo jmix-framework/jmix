@@ -41,7 +41,7 @@ class BadgeXmlLoadTest extends FlowuiTestSpecification {
         verifyAll(view.badge) {
             text == "Badge text"
             number == 5
-            role == "status"
+            ariaRole.orElse(null) == "status"
             themeNames.containsAll(["success", "small"])
             className == "className1"
             style.get("color") == "red"

@@ -71,6 +71,7 @@ public class NumberFieldLoader extends AbstractComponentLoader<JmixNumberField> 
         componentLoader().loadValidationAttributes(resultComponent, element, context);
         componentLoader().loadAllowedCharPattern(resultComponent, element, context);
         componentLoader().loadAriaLabel(resultComponent, element);
+        componentLoader().loadAriaDescription(resultComponent, element);
     }
 
     protected DataLoaderSupport getDataLoaderSupport() {

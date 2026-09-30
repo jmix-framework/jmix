@@ -268,7 +268,10 @@ public abstract class BaseEntityEntry implements EntityEntry, Cloneable {
 
             if (entry instanceof BaseEntityEntry baseEntityEntry && baseEntityEntry.propertyChangeListeners != null) {
                 for (EntityPropertyChangeListener listener : baseEntityEntry.propertyChangeListeners) {
-                    addPropertyChangeListener(listener, false);
+                    // skip a listener this entry already holds
+                    if (propertyChangeListeners == null || !propertyChangeListeners.contains(listener)) {
+                        addPropertyChangeListener(listener, false);
+                    }
                 }
             }
 

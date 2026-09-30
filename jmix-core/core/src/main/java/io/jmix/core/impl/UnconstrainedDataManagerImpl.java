@@ -19,6 +19,7 @@ package io.jmix.core.impl;
 import io.jmix.core.*;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.constraint.AccessConstraint;
+import io.jmix.core.entity.EntitySystemAccess;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.entity.KeyValueEntity;
 import io.jmix.core.impl.metadata.MetadataGenerationManager;
@@ -81,6 +82,9 @@ public class UnconstrainedDataManagerImpl implements UnconstrainedDataManager {
 
     @Autowired
     protected FetchPlanRepository fetchPlanRepository;
+
+    @Autowired
+    protected ReferenceValuesSupport referenceValuesSupport;
 
     @Autowired
     protected ExtendedEntities extendedEntities;
@@ -369,7 +373,25 @@ public class UnconstrainedDataManagerImpl implements UnconstrainedDataManager {
     public <T> T getReference(Class<T> entityClass, Object id) {
         T entity = metadata.create(entityClass, id);
         entityStates.makePatch(entity);
+        initReferenceLoadedState(entity);
         return entity;
+    }
+
+    /**
+     * Makes the reference report as loaded only its primary key and the attributes set on it later.
+     */
+    protected void initReferenceLoadedState(Object entity) {
+        referenceValuesSupport.clearInitialValues(entity);
+
+        ReferenceLoadedPropertiesInfo loadedPropertiesInfo = new ReferenceLoadedPropertiesInfo();
+        String primaryKeyName = metadataTools.getPrimaryKeyName(metadata.getClass(entity));
+        if (primaryKeyName != null) {
+            loadedPropertiesInfo.registerProperty(primaryKeyName, true);
+        }
+        EntityEntry entityEntry = EntitySystemAccess.getEntityEntry(entity);
+        entityEntry.setLoadedPropertiesInfo(loadedPropertiesInfo);
+        // not weak, so that it is copied with the entity entry and serialized
+        entityEntry.addPropertyChangeListener(ReferenceLoadedPropertiesInfo.MarkingLoadedOnSetListener.INSTANCE, false);
     }
 
     @Override

@@ -18,6 +18,7 @@
     <layout>
         <markdown id="markdown"
                   content="msg:///component_xml_load.markdown.content"
+                  lineBreaks="true"
                   css="color: red"
                   classNames="className1"
                   visible="false"

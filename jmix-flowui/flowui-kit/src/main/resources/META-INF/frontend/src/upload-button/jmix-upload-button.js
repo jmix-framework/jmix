@@ -53,6 +53,12 @@ class JmixUploadButton extends Upload {
 
         this.$.dropLabelContainer.hidden = true;
 
+        // The upload progress is shown in the upload dialog instead of the file list.
+        const fileList = this.querySelector(':scope > [slot="file-list"]');
+        if (fileList) {
+            fileList.hidden = true;
+        }
+
         this.addEventListener("upload-progress", this._onUploadProgressEvent.bind(this));
         this.addEventListener('upload-success', this._onUploadSuccessEvent.bind(this));
         this.addEventListener('upload-error', this._onUploadFailedEvent.bind(this));
@@ -68,18 +74,6 @@ class JmixUploadButton extends Upload {
         return [
             '_onJmixI18nChanged(jmixI18n)',
         ]
-    }
-
-    /**
-     * @private
-     * @override
-     */
-    _renderFileList() {
-        // Disable rendering fileList element
-        // and hide it while file uploading.
-        if (this._fileList) {
-            this._fileList.hidden = true;
-        }
     }
 
     _onUploadSuccessEvent(event) {

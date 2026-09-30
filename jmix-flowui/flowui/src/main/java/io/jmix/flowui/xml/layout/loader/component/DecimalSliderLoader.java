@@ -54,6 +54,7 @@ public class DecimalSliderLoader extends AbstractComponentLoader<JmixDecimalSlid
         componentLoader().loadValueAndElementAttributes(resultComponent, element);
         componentLoader().loadValidationAttributes(resultComponent, element, context);
         componentLoader().loadAriaLabel(resultComponent, element);
+        componentLoader().loadAriaDescription(resultComponent, element);
     }
 
     protected DataLoaderSupport getDataLoaderSupport() {

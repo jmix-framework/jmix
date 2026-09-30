@@ -96,7 +96,7 @@ public class JpqlExecutionService {
         GeneratedJpqlResult generatedResult = vrResult.getGeneratedResult();
         JpqlValidationResult validationResult = vrResult.getValidationResult();
         if (vrResult.isFailed()) {
-            return JpqlExecutionResult.failed(generatedResult, validationResult, false);
+            return JpqlExecutionResult.failed(generatedResult, validationResult, vrResult.isRepaired());
         }
 
         Integer effectiveMaxResults = getEffectiveMaxResult(generatedResult.getMaxResults());
@@ -126,6 +126,7 @@ public class JpqlExecutionService {
                 jpqlParameterConversionService.convert(toExecutionParameters(generatedResult));
 
         try {
+            log.debug("Executing JPQL with columns {}: {}", request.getResultProperties(), executableJpql);
             ExecutionRows executionRows = executeQuery(request, withJpql(generatedResult, executableJpql),
                     executionParameters, effectiveMaxResults, generatedResult.getFirstResult());
 

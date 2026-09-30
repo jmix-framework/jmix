@@ -19,7 +19,7 @@ package io.jmix.flowui.kit.component.menubar;
 import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.function.SerializableRunnable;
 
-// CAUTION: copied from com.vaadin.flow.component.menubar.MenuBarItem [last update Vaadin 25.2.1]
+// CAUTION: copied from com.vaadin.flow.component.menubar.MenuBarItem [last update Vaadin 25.3.0]
 @Tag("vaadin-menu-bar-item")
 public class JmixMenuBarItem extends JmixMenuItem {
 

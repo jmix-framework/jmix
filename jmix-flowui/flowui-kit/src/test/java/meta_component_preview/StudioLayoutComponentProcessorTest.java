@@ -69,8 +69,8 @@ class StudioLayoutComponentProcessorTest {
         assertTrue(processor.addChild(tabs, first, 0));
 
         assertEquals(2, tabs.getComponentCount());
-        assertEquals(0, tabs.indexOf(first));
-        assertEquals(1, tabs.indexOf(second));
+        assertEquals(0, tabs.getIndexOf(first));
+        assertEquals(1, tabs.getIndexOf(second));
 
         assertTrue(processor.removeChild(tabs, first));
         assertEquals(1, tabs.getComponentCount());

@@ -36,11 +36,11 @@ class JmixSidePanelLayoutDialogOverlay extends OverlayMixin(DirMixin(ThemableMix
     }
 
     /**
-     * Override method from OverlayFocusMixin to use dialog as focus trap root.
+     * Override method from OverlayFocusMixin to use dialog as focus root.
      * @protected
      * @override
      */
-    get _focusTrapRoot() {
+    get _focusRoot() {
       return this.getRootNode().host;
     }
 

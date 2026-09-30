@@ -17,6 +17,7 @@
 package io.jmix.core;
 
 import io.jmix.core.annotation.JmixModule;
+import io.jmix.core.impl.TempDirProcessor;
 import io.jmix.core.impl.logging.LogMdcFilter;
 import io.jmix.core.impl.metadata.MetadataGenerationFilter;
 import io.jmix.core.impl.metadata.MetadataGenerationManager;
@@ -58,6 +59,11 @@ public class CoreConfiguration {
     @Bean("core_BeanExclusionProcessor")
     public static BeanExclusionProcessor beanExclusionProcessor(JmixModules modules) {
         return new BeanExclusionProcessor(modules);
+    }
+
+    @Bean("core_TempDirProcessor")
+    public static TempDirProcessor tempDirProcessor() {
+        return new TempDirProcessor();
     }
 
     @Bean("core_Modules")

@@ -31,6 +31,8 @@
                         width="200"
                         height="100"
                         containLabel="true"
+                        outerBoundsMode="SAME"
+                        outerBoundsContain="AXIS_LABEL"
                         backgroundColor="WHITE"
                         borderColor="BLACK"
                         borderWidth="200"

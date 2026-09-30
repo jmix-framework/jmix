@@ -30,6 +30,7 @@ import com.vaadin.flow.shared.Registration;
 import io.jmix.core.*;
 import io.jmix.core.accesscontext.InMemoryCrudEntityContext;
 import io.jmix.core.annotation.Internal;
+import io.jmix.core.common.event.Subscription;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -55,6 +56,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static java.util.Objects.requireNonNull;
 
@@ -681,8 +683,25 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
 
             setModifiedAfterOpen(modifiedAfterOpen);
         } else {
-            getEditedEntityLoader().setEntityId(requireNonNull(EntityValues.getId(entityToEdit)));
+            InstanceLoader<T> loader = getEditedEntityLoader();
+            if (isEntityModifiedInParentContext()) {
+                mergeEntityToEditAfterLoad(loader, entityToEdit);
+            }
+            loader.setEntityId(requireNonNull(EntityValues.getId(entityToEdit)));
         }
+    }
+
+    /*
+     * The entity is modified in a parent data context, but it is reloaded because its loaded attributes don't cover
+     * the container's fetch plan. Merging the parent's instance over the reloaded one keeps the parent's unsaved
+     * changes, while the attributes that only the reloaded instance has keep the values from the data store.
+     */
+    private void mergeEntityToEditAfterLoad(InstanceLoader<T> loader, T entityToEdit) {
+        AtomicReference<Subscription> subscription = new AtomicReference<>();
+        subscription.set(loader.addPostLoadListener(event -> {
+            subscription.get().remove();
+            getViewData().getDataContext().merge(entityToEdit);
+        }));
     }
 
     private boolean doNotReloadEditedEntity() {

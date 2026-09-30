@@ -22,19 +22,25 @@ import io.jmix.core.security.SystemAuthenticator;
 import io.jmix.email.*;
 import io.jmix.email.entity.SendingAttachment;
 import io.jmix.email.entity.SendingMessage;
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.Tags;
+import io.micrometer.core.instrument.binder.jvm.ExecutorServiceMetrics;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.angus.mail.smtp.SMTPAddressFailedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.mail.MailSendException;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
 
 import org.jspecify.annotations.Nullable;
-import jakarta.annotation.Resource;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
 import jakarta.mail.internet.AddressException;
 import java.util.*;
 import java.util.concurrent.RejectedExecutionException;
@@ -50,9 +56,6 @@ public class EmailerImpl implements Emailer {
     protected EmailerProperties emailerProperties;
 
     protected AtomicInteger callCount = new AtomicInteger(0);
-
-    @Resource(name = "mailSendTaskExecutor")
-    protected TaskExecutor mailSendTaskExecutor;
 
     @Autowired
     protected EmailDataProvider emailDataProvider;
@@ -74,6 +77,29 @@ public class EmailerImpl implements Emailer {
 
     @Autowired
     protected EmailCleaner emailCleaner;
+
+    @Autowired
+    protected MeterRegistry meterRegistry;
+
+    protected TaskExecutor mailSendTaskExecutor;
+
+    @PostConstruct
+    protected void initMailSendTaskExecutor() {
+        if (applicationContext.containsBean("mailSendTaskExecutor")) {
+            log.warn("The 'mailSendTaskExecutor' bean is ignored: the Email add-on no longer uses it and sends " +
+                    "queued emails with its own executor. To customize that executor, extend EmailerImpl and " +
+                    "override createMailSendTaskExecutor()");
+        }
+        mailSendTaskExecutor = createMailSendTaskExecutor();
+        bindMailSendTaskExecutorMetrics();
+    }
+
+    @PreDestroy
+    protected void destroyMailSendTaskExecutor() throws Exception {
+        if (mailSendTaskExecutor instanceof DisposableBean disposableExecutor) {
+            disposableExecutor.destroy();
+        }
+    }
 
     @Override
     public void sendEmail(String address, String subject, String body, String bodyContentType, Boolean important,
@@ -318,6 +344,24 @@ public class EmailerImpl implements Emailer {
             if (msg.getBcc() != null) {
                 msg.setBcc(adminAddress);
             }
+        }
+    }
+
+    protected TaskExecutor createMailSendTaskExecutor() {
+        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        executor.setCorePoolSize(5);
+        executor.setMaxPoolSize(10);
+        executor.setQueueCapacity(200);
+        executor.setThreadNamePrefix("mailSendTaskExecutor-");
+        executor.initialize();
+        return executor;
+    }
+
+    protected void bindMailSendTaskExecutorMetrics() {
+        if (mailSendTaskExecutor instanceof ThreadPoolTaskExecutor threadPoolTaskExecutor) {
+            new ExecutorServiceMetrics(threadPoolTaskExecutor.getThreadPoolExecutor(), "mailSendTaskExecutor",
+                    Tags.empty())
+                    .bindTo(meterRegistry);
         }
     }
 

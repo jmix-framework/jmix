@@ -16,6 +16,7 @@
 
 package component_xml_load
 
+import com.vaadin.flow.component.InputMode
 import com.vaadin.flow.component.shared.Tooltip
 import com.vaadin.flow.component.textfield.Autocapitalize
 import com.vaadin.flow.component.textfield.Autocomplete
@@ -75,6 +76,7 @@ class TextFieldXmlLoadTest extends FlowuiTestSpecification {
             errorMessage == "errorMessageString"
             height == "50px"
             helperText == "helperTextString"
+            inputMode == InputMode.NUMERIC
             label == "labelString"
             maxHeight == "55px"
             maxLength == 50

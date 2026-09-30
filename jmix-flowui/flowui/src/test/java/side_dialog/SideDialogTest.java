@@ -16,6 +16,7 @@
 
 package side_dialog;
 
+import io.jmix.flowui.Dialogs;
 import io.jmix.flowui.component.sidedialog.SideDialog;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.kit.component.sidedialog.JmixSideDialogOverlay;
@@ -32,12 +33,17 @@ import org.springframework.boot.test.context.SpringBootTest;
 import side_dialog.view.SideDialogTestView;
 import test_support.FlowuiTestConfiguration;
 
+import java.util.Optional;
+
 @UiTest(viewBasePackages = "side_dialog.view")
 @SpringBootTest(classes = {FlowuiTestConfiguration.class, FlowuiTestAssistConfiguration.class})
 public class SideDialogTest {
 
     @Autowired
     private ViewNavigationSupport navigationSupport;
+
+    @Autowired
+    private Dialogs dialogs;
 
     @Test
     @DisplayName("Open and close SideDialog")
@@ -82,5 +88,20 @@ public class SideDialogTest {
          */
 
         Assertions.assertNull(dialogInfo);
+    }
+
+    @Test
+    @DisplayName("Set ARIA role via SideDialog builder")
+    public void sideDialogBuilderAriaRole() {
+        navigationSupport.navigate(SideDialogTestView.class);
+
+        Dialogs.SideDialogBuilder builder = dialogs.createSideDialog()
+                .withAriaRole("alertdialog");
+
+        Assertions.assertEquals("alertdialog", builder.getAriaRole());
+
+        SideDialog sideDialog = builder.open();
+
+        Assertions.assertEquals(Optional.of("alertdialog"), sideDialog.getAriaRole());
     }
 }

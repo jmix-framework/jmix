@@ -247,9 +247,13 @@ final class StudioStandardComponentsPreviewLoader implements StudioPreviewCompon
                 return svgIcon;
             },
             StudioXmlElements.FONT_ICON, (element, environment) -> new FontIcon(),
-            StudioXmlElements.MARKDOWN, (element, environment) -> new Markdown(inlineContent(element)
-                    .or(() -> LoaderUtils.loadString(element, StudioXmlElements.CONTENT))
-                    .orElse("")),
+            StudioXmlElements.MARKDOWN, (element, environment) -> {
+                Markdown markdown = new Markdown(inlineContent(element)
+                        .or(() -> LoaderUtils.loadString(element, StudioXmlElements.CONTENT))
+                        .orElse(""));
+                LoaderUtils.loadBoolean(element, "lineBreaks", markdown::setLineBreaks);
+                return markdown;
+            },
             // Only inline content renders: the runtime reads "file" through Resources (classpath/file/web),
             // which a spring-free kit loader cannot do. An empty Svg is the honest placeholder.
             StudioXmlElements.SVG, (element, environment) -> inlineContent(element)
@@ -374,7 +378,7 @@ final class StudioStandardComponentsPreviewLoader implements StudioPreviewCompon
                 loadLocalizedString(element, "text", environment, badge::setText);
                 ComponentLoaderUtils.loadWhiteSpace(badge, element);
                 loadInteger(element, "number", badge::setNumber);
-                loadString(element, "role", badge::setRole);
+                loadString(element, "ariaRole", badge::setAriaRole);
                 ComponentLoaderUtils.loadIconSetIcon(element).ifPresent(badge::setIcon);
             }
             case StudioXmlElements.POPOVER -> loadPopoverAttributes((Popover) component, element);
@@ -485,7 +489,7 @@ final class StudioStandardComponentsPreviewLoader implements StudioPreviewCompon
         loadInteger(element, "focusDelay", popover::setFocusDelay);
         loadInteger(element, "hoverDelay", popover::setHoverDelay);
         loadInteger(element, "hideDelay", popover::setHideDelay);
-        loadString(element, "role", popover::setRole);
+        loadString(element, "ariaRole", popover::setAriaRole);
         loadString(element, "width", popover::setWidth);
         loadString(element, "height", popover::setHeight);
 

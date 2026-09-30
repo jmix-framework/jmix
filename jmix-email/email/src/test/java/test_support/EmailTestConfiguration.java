@@ -28,8 +28,6 @@ import io.jmix.testsupport.config.HsqlEmbeddedDataSourceTestConfiguration;
 import io.jmix.testsupport.config.JpaMainStoreTestConfiguration;
 import io.jmix.testsupport.config.LiquibaseTestConfiguration;
 import org.springframework.context.annotation.*;
-import org.springframework.core.task.SyncTaskExecutor;
-import org.springframework.core.task.TaskExecutor;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.scripting.ScriptEvaluator;
 import org.springframework.scripting.groovy.GroovyScriptEvaluator;
@@ -44,9 +42,9 @@ import java.util.Collections;
 @PropertySource("classpath:/test_support/test-app.properties")
 public class EmailTestConfiguration {
 
-    @Bean("mailSendTaskExecutor")
-    public TaskExecutor taskExecutor() {
-        return new SyncTaskExecutor();
+    @Bean
+    public TestEmailQueueProcessor testEmailQueueProcessor() {
+        return new TestEmailQueueProcessor();
     }
 
     @Bean

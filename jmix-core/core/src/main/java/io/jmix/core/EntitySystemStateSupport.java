@@ -16,6 +16,7 @@
 
 package io.jmix.core;
 
+import io.jmix.core.impl.ReferenceLoadedPropertiesInfo;
 import io.jmix.core.metamodel.model.MetaProperty;
 import org.springframework.stereotype.Component;
 
@@ -33,8 +34,15 @@ public class EntitySystemStateSupport {
         }
     }
 
+    /**
+     * Merges the system state of the source into the destination. A source returned by
+     * {@link UnconstrainedDataManager#getReference(Class, Object)} has no state to merge.
+     */
     @SuppressWarnings({"unchecked", "rawtypes"})
     public void mergeSystemState(Entity src, Entity dst) {
+        if (isReference(src)) {
+            return;
+        }
         dst.__getEntityEntry().copy(src.__getEntityEntry());
         if (dst instanceof CopyingSystemState) {
             ((CopyingSystemState) dst).copyFrom(src);
@@ -43,5 +51,9 @@ public class EntitySystemStateSupport {
 
     public void mergeLazyLoadingState(Entity src, Entity dst, MetaProperty metaProperty,
                                       Function<Collection<Object>, Collection<Object>> collectionWrapFunction) {
+    }
+
+    protected boolean isReference(Entity entity) {
+        return entity.__getEntityEntry().getLoadedPropertiesInfo() instanceof ReferenceLoadedPropertiesInfo;
     }
 }

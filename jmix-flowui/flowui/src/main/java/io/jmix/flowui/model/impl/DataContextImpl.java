@@ -22,6 +22,8 @@ import io.jmix.core.common.event.EventHub;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.core.entity.*;
 import io.jmix.core.impl.CachingLoadedPropertiesInfo;
+import io.jmix.core.impl.ReferenceLoadedPropertiesInfo;
+import io.jmix.core.impl.ReferenceValuesSupport;
 import io.jmix.core.metamodel.datatype.EnumClass;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
@@ -64,6 +66,9 @@ public class DataContextImpl implements DataContextInternal {
 
     @Autowired
     protected EntitySystemStateSupport entitySystemStateSupport;
+
+    @Autowired
+    protected ReferenceValuesSupport referenceValuesSupport;
 
     @Autowired
     protected EntityReferencesNormalizer entityReferencesNormalizer;
@@ -333,6 +338,10 @@ public class DataContextImpl implements DataContextInternal {
                  InvocationTargetException e) {
             throw new RuntimeException("Cannot create an instance of " + srcEntity.getClass(), e);
         }
+        if (isReferenceSource(srcEntity)) {
+            // the constructor assigns field initializer values again; clear them, as getReference() does
+            referenceValuesSupport.clearInitialValues(dstEntity);
+        }
         copySystemState(srcEntity, dstEntity);
         return dstEntity;
     }
@@ -351,12 +360,17 @@ public class DataContextImpl implements DataContextInternal {
         mergeSystemState(srcEntity, dstEntity, isRoot, options);
 
         boolean coldReset = isColdResetTarget(dstEntity, isRoot, options, dstExisted);
+        boolean referenceTarget = isReferenceTarget(dstEntity, dstExisted);
+        // in a root or fresh merge, the attributes set on a reference are copied even if the destination lacks them
+        boolean referenceSource = (isRoot || options.isFresh()) && isReferenceSource(srcEntity);
 
         resetLoadedInfoBeforeCopy(dstEntity, coldReset);
 
         MetaClass metaClass = getEntityMetaClass(srcEntity);
 
-        mergeDatatypeProperties(srcEntity, dstEntity, metaClass, srcNew, dstNew, isRoot, options);
+        // a reference destination has no unfetched state, so it is treated as new
+        mergeDatatypeProperties(srcEntity, dstEntity, metaClass, srcNew,
+                dstNew || referenceTarget || referenceSource, isRoot, options);
 
         mergeReferenceProperties(srcEntity, dstEntity, metaClass, srcNew, isRoot, options, mergedMap);
 
@@ -454,7 +468,8 @@ public class DataContextImpl implements DataContextInternal {
                     continue;
                 }
 
-                if (value == null || !entityStates.isLoaded(dstEntity, propertyName)) {
+                if (value == null || !entityStates.isLoaded(dstEntity, propertyName)
+                        && !isEmbeddedToInstall(srcEntity, dstEntity, property, isRoot, options)) {
                     mergeUnloadedOrNullReference(dstEntity, property, value, mergedMap, options);
                     continue;
                 }
@@ -758,10 +773,17 @@ public class DataContextImpl implements DataContextInternal {
         if (EntityValues.isVersionSupported(dstEntity)) {
             EntityValues.setVersion(dstEntity, EntityValues.getVersion(srcEntity));
         }
+
+        // the setters above mark attributes loaded in a copy of a reference; report only what the source reports
+        if (EntitySystemAccess.getEntityEntry(srcEntity).getLoadedPropertiesInfo()
+                instanceof ReferenceLoadedPropertiesInfo srcInfo) {
+            EntitySystemAccess.getEntityEntry(dstEntity).setLoadedPropertiesInfo(srcInfo.copy());
+        }
     }
 
     protected void mergeSystemState(Object srcEntity, Object dstEntity, boolean isRoot, MergeOptions options) {
         if (isRoot || options.isFresh()) {
+            // a reference source only extends the destination's fetch group (see EntitySystemStateSupport)
             // Preserve the loaded state in the destination entity
             EntityEntry dstEntityEntry = EntitySystemAccess.getEntityEntry(dstEntity);
             LoadedPropertiesInfo prevLoadedPropertiesInfo = dstEntityEntry.getLoadedPropertiesInfo();
@@ -786,6 +808,38 @@ public class DataContextImpl implements DataContextInternal {
     }
 
     /**
+     * Whether the source is a reference returned by {@code DataManager.getReference()} or a copy of one. Such a
+     * source never makes the destination less loaded.
+     */
+    protected boolean isReferenceSource(Object srcEntity) {
+        return EntitySystemAccess.getEntityEntry(srcEntity).getLoadedPropertiesInfo()
+                instanceof ReferenceLoadedPropertiesInfo;
+    }
+
+    /**
+     * Whether the destination is a pre-existing reference. It has no unfetched state, so every attribute loaded in
+     * the source can be copied into it; the setters mark the copied attributes loaded.
+     */
+    protected boolean isReferenceTarget(Object dstEntity, boolean dstExisted) {
+        return dstExisted
+                && EntitySystemAccess.getEntityEntry(dstEntity).getLoadedPropertiesInfo()
+                instanceof ReferenceLoadedPropertiesInfo;
+    }
+
+    /**
+     * Whether a loaded embedded value must be installed on a destination that does not report it loaded: the
+     * destination is a reference, or the source is a reference in a root or fresh merge.
+     * {@link #mergeUnloadedOrNullReference} skips embedded values.
+     */
+    protected boolean isEmbeddedToInstall(Object srcEntity, Object dstEntity, MetaProperty property,
+                                          boolean isRoot, MergeOptions options) {
+        return property.getType() == MetaProperty.Type.EMBEDDED
+                && (EntitySystemAccess.getEntityEntry(dstEntity).getLoadedPropertiesInfo()
+                instanceof ReferenceLoadedPropertiesInfo
+                || (isRoot || options.isFresh()) && isReferenceSource(srcEntity));
+    }
+
+    /**
      * Blanks the destination's caching loaded-state info before the copy loops when {@code coldReset} is
      * set (see {@link #isColdResetTarget}), so their {@code isLoaded} checks recompute from the fetch group
      * just unioned in {@link #mergeSystemState} rather than from a stale cached negative. No-op otherwise.
@@ -804,13 +858,23 @@ public class DataContextImpl implements DataContextInternal {
     protected void mergeLoadedPropertiesInfo(Object srcEntity, Object dstEntity, boolean isRoot, MergeOptions options,
                                              boolean coldReset) {
         if (isRoot || options.isFresh()) {
+            EntityEntry srcEntityEntry = EntitySystemAccess.getEntityEntry(srcEntity);
+            EntityEntry dstEntityEntry = EntitySystemAccess.getEntityEntry(dstEntity);
+            if (srcEntityEntry.getLoadedPropertiesInfo() instanceof ReferenceLoadedPropertiesInfo referenceInfo) {
+                // a reference never makes the destination less loaded: add its loaded names, also after a cold reset
+                LoadedPropertiesInfo dstInfo = dstEntityEntry.getLoadedPropertiesInfo();
+                if (dstInfo != null) {
+                    for (String property : referenceInfo.getLoadedProperties()) {
+                        dstInfo.registerProperty(property, true);
+                    }
+                }
+                return;
+            }
             if (coldReset) {
                 // already reset before the copy loops (resetLoadedInfoBeforeCopy); the loops repopulated
                 // correct answers into the fresh cache from the unioned fetch group, so leave it as is
                 return;
             }
-            EntityEntry srcEntityEntry = EntitySystemAccess.getEntityEntry(srcEntity);
-            EntityEntry dstEntityEntry = EntitySystemAccess.getEntityEntry(dstEntity);
             if (srcEntityEntry.getLoadedPropertiesInfo() == null) {
                 dstEntityEntry.setLoadedPropertiesInfo(null);
             } else {
@@ -1333,7 +1397,7 @@ public class DataContextImpl implements DataContextInternal {
 
     protected void updateFetchPlans(SaveContext saveContext) {
         for (Object entity : saveContext.getEntitiesToSave()) {
-            saveContext.getFetchPlans().put(entity, entityStates.getCurrentFetchPlan(entity));
+            saveContext.getFetchPlans().put(entity, entityStates.getFetchPlanForReloadAfterSave(entity));
         }
     }
 

@@ -24,6 +24,8 @@ import org.dom4j.Element;
 
 import java.text.ParseException;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeParseException;
 import java.util.function.Consumer;
 
 public class DateTimePickerLoader extends AbstractComponentLoader<TypedDateTimePicker<?>> {
@@ -46,6 +48,7 @@ public class DateTimePickerLoader extends AbstractComponentLoader<TypedDateTimeP
         loadBoolean(element, "weekNumbersVisible", resultComponent::setWeekNumbersVisible);
         loadDateTime(element, "max", resultComponent::setMax);
         loadDateTime(element, "min", resultComponent::setMin);
+        loadTime(element, "defaultTime", resultComponent::setDefaultTime);
 
         componentLoader().loadDatePickerI18n(element, resultComponent::getDatePickerI18n);
         componentLoader().loadLabel(resultComponent, element);
@@ -62,6 +65,20 @@ public class DateTimePickerLoader extends AbstractComponentLoader<TypedDateTimeP
         componentLoader().loadAriaLabel(resultComponent, element);
         componentLoader().loadDuration(element, "step")
                 .ifPresent(resultComponent::setStep);
+    }
+
+    protected void loadTime(Element element, String attributeName, Consumer<LocalTime> setter) {
+        loadString(element, attributeName)
+                .ifPresent(timeString -> {
+                    try {
+                        setter.accept(LocalTime.parse(timeString));
+                    } catch (DateTimeParseException e) {
+                        String errorMessage = String.format("Unparseable time for %s with '%s' id",
+                                resultComponent.getClass().getSimpleName(),
+                                resultComponent.getId().orElse("null"));
+                        throw new GuiDevelopmentException(errorMessage, context);
+                    }
+                });
     }
 
     protected void loadDateTime(Element element, String attributeName, Consumer<LocalDateTime> setter) {

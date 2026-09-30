@@ -65,13 +65,13 @@ class StudioPreviewParityTest {
 
     @Test
     void badge_hasFrameworkLoaderAndRuntimeAttributes() {
-        Element view = view("<badge id='badge' text='msg://custom' number='7' role='status' "
+        Element view = view("<badge id='badge' text='msg://custom' number='7' ariaRole='status' "
                 + "icon='CHECK' themeNames='success pill' whiteSpace='PRE'/>");
         Badge badge = assertInstanceOf(Badge.class, load(view.element("badge"), view));
         assertEquals("badge", badge.getId().orElseThrow());
         assertEquals("Custom", badge.getText());
         assertEquals(7, badge.getNumber());
-        assertEquals("status", badge.getRole());
+        assertEquals("status", badge.getAriaRole().orElseThrow());
         assertTrue(badge.getThemeNames().containsAll(List.of("success", "pill")));
         assertEquals("pre", badge.getStyle().get("white-space"));
         assertEquals("vaadin:check", badge.getIcon().getElement().getAttribute("icon"));
@@ -159,6 +159,13 @@ class StudioPreviewParityTest {
         Element view = view("<markdown><content>" + body + "</content></markdown>");
         Markdown markdown = assertInstanceOf(Markdown.class, load(view.element("markdown"), view));
         assertEquals(body, markdown.getContent());
+    }
+
+    @Test
+    void markdown_loadsLineBreaks() {
+        Element view = view("<markdown content='first line' lineBreaks='true'/>");
+        Markdown markdown = assertInstanceOf(Markdown.class, load(view.element("markdown"), view));
+        assertTrue(markdown.isLineBreaks());
     }
 
     @Test

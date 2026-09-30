@@ -57,7 +57,7 @@ class PopoverXmlLoadTest extends FlowuiTestSpecification {
             openOnFocus
             openOnHover
             position == PopoverPosition.BOTTOM_END
-            role == "tooltip"
+            ariaRole.orElse(null) == "tooltip"
             !tabFocusEnabled
             themeNames.containsAll(["arrow", "no-padding"])
             !visible

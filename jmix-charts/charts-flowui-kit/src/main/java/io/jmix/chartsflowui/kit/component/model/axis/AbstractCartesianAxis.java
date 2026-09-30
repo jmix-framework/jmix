@@ -47,6 +47,8 @@ public abstract class AbstractCartesianAxis<T extends AbstractCartesianAxis<T>> 
 
     protected Integer nameRotate;
 
+    protected Boolean nameMoveOverlap;
+
     protected Boolean inverse;
 
     protected AbstractCartesianAxis(AxisType type) {
@@ -199,6 +201,16 @@ public abstract class AbstractCartesianAxis<T extends AbstractCartesianAxis<T>> 
     }
 
     @Nullable
+    public Boolean getNameMoveOverlap() {
+        return nameMoveOverlap;
+    }
+
+    public void setNameMoveOverlap(Boolean nameMoveOverlap) {
+        this.nameMoveOverlap = nameMoveOverlap;
+        markAsDirty();
+    }
+
+    @Nullable
     @Override
     public Boolean getInverse() {
         return inverse;
@@ -237,6 +249,12 @@ public abstract class AbstractCartesianAxis<T extends AbstractCartesianAxis<T>> 
     @SuppressWarnings("unchecked")
     public T withOffset(Integer offset) {
         setOffset(offset);
+        return (T) this;
+    }
+
+    @SuppressWarnings("unchecked")
+    public T withNameMoveOverlap(Boolean nameMoveOverlap) {
+        setNameMoveOverlap(nameMoveOverlap);
         return (T) this;
     }
 }

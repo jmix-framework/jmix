@@ -59,8 +59,10 @@ public class ChartAxesXmlLoadTest extends AbstractXmlLoadTest {
         assertEquals(HasAxisName.NameLocation.CENTER, xAxis.getNameLocation());
         assertEquals(15, xAxis.getNameGap());
         assertEquals(5, xAxis.getNameRotate());
+        assertFalse(xAxis.getNameMoveOverlap());
         assertFalse(xAxis.getInverse());
         assertEquals("5%", xAxis.getBoundaryGap().getNonCategoryGap()[0]);
+        assertFalse(xAxis.getContainShape());
         assertEquals("5", xAxis.getMin());
         assertEquals("100", xAxis.getMax());
         assertFalse(xAxis.getScale());
@@ -258,8 +260,10 @@ public class ChartAxesXmlLoadTest extends AbstractXmlLoadTest {
         assertEquals(HasAxisName.NameLocation.CENTER, yAxis.getNameLocation());
         assertEquals(15, yAxis.getNameGap());
         assertEquals(5, yAxis.getNameRotate());
+        assertFalse(yAxis.getNameMoveOverlap());
         assertFalse(yAxis.getInverse());
         assertEquals("5%", yAxis.getBoundaryGap().getNonCategoryGap()[0]);
+        assertFalse(yAxis.getContainShape());
         assertEquals("5", yAxis.getMin());
         assertEquals("100", yAxis.getMax());
         assertFalse(yAxis.getScale());
@@ -458,6 +462,7 @@ public class ChartAxesXmlLoadTest extends AbstractXmlLoadTest {
         assertEquals("100", radiusAxis.getMax());
         assertNull(radiusAxis.getBoundaryGap().getCategoryGap());
         assertEquals("0", radiusAxis.getBoundaryGap().getNonCategoryGap()[0]);
+        assertFalse(radiusAxis.getContainShape());
         assertEquals(1000, radiusAxis.getAnimationThreshold());
         assertEquals("cubicOut", radiusAxis.getAnimationEasingUpdate());
         assertEquals("cubicOut", radiusAxis.getAnimationEasing());
@@ -520,6 +525,7 @@ public class ChartAxesXmlLoadTest extends AbstractXmlLoadTest {
         assertEquals(5, angleAxis.getSplitNumber());
         assertEquals("100", angleAxis.getMax());
         assertEquals("0", angleAxis.getBoundaryGap().getNonCategoryGap()[0]);
+        assertFalse(angleAxis.getContainShape());
         assertEquals(1000, angleAxis.getAnimationThreshold());
         assertEquals("cubicOut", angleAxis.getAnimationEasingUpdate());
         assertEquals("cubicOut", angleAxis.getAnimationEasing());

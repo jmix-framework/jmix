@@ -52,7 +52,7 @@ class TempDirTest {
     void tempDir_defaultWritable_keepsDefault() {
         String tempDir = startAndGetTempDir(Map.of("user.dir", testDir.toString()));
 
-        assertThat(tempDir).isEqualTo(testDir.resolve(".jmix/temp").toString());
+        assertThat(Path.of(tempDir)).isEqualTo(testDir.resolve(".jmix/temp"));
     }
 
     @Test

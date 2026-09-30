@@ -36,6 +36,7 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -65,6 +66,8 @@ public class RestDataStore extends AbstractDataStore {
     private FetchPlanSerialization fetchPlanSerialization;
     @Autowired
     private FileStorageLocator fileStorageLocator;
+    @Autowired
+    private RestDataStoreExtensionSupport extensionSupport;
 
     private String storeName;
 
@@ -83,28 +86,32 @@ public class RestDataStore extends AbstractDataStore {
         Class<Object> entityClass = context.getEntityMetaClass().getJavaClass();
         String entityName = getEntityName(context.getEntityMetaClass());
         String fetchPlan = getFetchPlanNameOrJson(context.getFetchPlan());
-        Object entity = null;
+        Map<String, Object> requestParameters = extensionSupport.beforeLoad(storeName, context);
+        String json;
+        List<Object> entities;
         if (id != null) {
-            RestInvoker.LoadParams params = new RestInvoker.LoadParams(entityName, id, fetchPlan);
-            String json = restInvoker.load(params);
-            entity = restSerialization.fromJson(json, entityClass);
+            RestInvoker.LoadParams params = new RestInvoker.LoadParams(entityName, id, fetchPlan, requestParameters);
+            json = restInvoker.load(params);
+            Object entity = restSerialization.fromJson(json, entityClass);
+            entities = entity == null ? List.of() : List.of(entity);
         } else {
             RestInvoker.LoadListParams params = new RestInvoker.LoadListParams(entityName,
                     1,
                     getFirstResult(context.getQuery()),
                     createRestSort(context.getQuery()),
                     createRestFilter(context),
-                    fetchPlan);
-            String json = restInvoker.loadList(params);
-            List<Object> entities = restSerialization.fromJsonCollection(json, entityClass);
-            if (!entities.isEmpty()) {
-                entity = entities.get(0);
-            }
+                    fetchPlan,
+                    requestParameters);
+            json = restInvoker.loadList(params);
+            entities = restSerialization.fromJsonCollection(json, entityClass);
         }
-        if (entity != null) {
-            updateEntityState(entity, context.getFetchPlan());
-            entityEventManager.publishEntityLoadingEvent(entity);
+        if (json == null || entities.isEmpty()) {
+            return null;
         }
+        Object entity = entities.get(0);
+        updateEntityState(entity, context.getFetchPlan());
+        extensionSupport.afterLoad(storeName, context, entities, json);
+        entityEventManager.publishEntityLoadingEvent(entity);
         return entity;
     }
 
@@ -119,12 +126,16 @@ public class RestDataStore extends AbstractDataStore {
                 getFirstResult(context.getQuery()),
                 createRestSort(context.getQuery()),
                 createRestFilter(context),
-                fetchPlan);
+                fetchPlan,
+                extensionSupport.beforeLoad(storeName, context));
         String json = restInvoker.loadList(params);
         List<Object> entities = restSerialization.fromJsonCollection(json, entityClass);
 
         for (Object entity : entities) {
             updateEntityState(entity, context.getFetchPlan());
+        }
+        extensionSupport.afterLoad(storeName, context, entities, json);
+        for (Object entity : entities) {
             entityEventManager.publishEntityLoadingEvent(entity);
         }
         return entities;
@@ -267,7 +278,8 @@ public class RestDataStore extends AbstractDataStore {
     @Override
     protected long countAll(LoadContext<?> context) {
         String entityName = getEntityName(context.getEntityMetaClass());
-        long count = restInvoker.count(entityName, createRestFilter(context));
+        long count = restInvoker.count(entityName, createRestFilter(context),
+                extensionSupport.beforeCount(storeName, context));
         return count;
     }
 
@@ -282,7 +294,7 @@ public class RestDataStore extends AbstractDataStore {
             boolean isNew = entityStates.isNew(entity);
             if (isNew) {
                 entityEventManager.publishEntitySavingEvent(entity, true);
-                String entityJson = serializeToJson(entity, true, fileRefs);
+                String entityJson = serializeToJson(context, entity, true, fileRefs);
                 savedEntityJson = restInvoker.create(entityName, entityJson);
             } else {
                 Object id = EntityValues.getId(entity);
@@ -291,7 +303,7 @@ public class RestDataStore extends AbstractDataStore {
                 }
                 entityEventManager.publishEntitySavingEvent(entity, false);
 
-                String entityJson = serializeToJson(entity, false, fileRefs);
+                String entityJson = serializeToJson(context, entity, false, fileRefs);
                 savedEntityJson = restInvoker.update(entityName, id.toString(), entityJson);
             }
             Object savedEntity = restSerialization.fromJson(savedEntityJson, entity.getClass());
@@ -303,14 +315,16 @@ public class RestDataStore extends AbstractDataStore {
                 EntityValues.setId(entity, EntityValues.getId(savedEntity));
             }
             updateEntityState(savedEntity, fetchPlan);
+            extensionSupport.afterSave(storeName, context, entity, savedEntity, isNew, savedEntityJson);
             entityEventManager.publishEntitySavedEvent(entity, savedEntity, isNew);
             saved.add(savedEntity);
         }
         return saved;
     }
 
-    private String serializeToJson(Object entity, boolean isNew, Set<FileRef> fileRefs) {
+    private String serializeToJson(SaveContext context, Object entity, boolean isNew, Set<FileRef> fileRefs) {
         String json = restSerialization.toJson(entity, isNew);
+        json = extensionSupport.beforeSave(storeName, context, entity, isNew, json);
         if (fileRefs.isEmpty()) {
             return json;
         } else {

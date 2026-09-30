@@ -17,6 +17,7 @@
 package io.jmix.flowui.view.template.impl;
 
 import io.jmix.flowui.model.InstanceContainer;
+import io.jmix.flowui.view.DialogMode;
 import io.jmix.flowui.view.StandardReadView;
 
 /**
@@ -25,6 +26,7 @@ import io.jmix.flowui.view.StandardReadView;
  * Overriding {@link #getEntityContainer()} is what frees a generated read view from declaring
  * {@code @ReadEntityContainer}: the container id is fixed on the generated subclass instead.
  */
+@DialogMode(width = "64em", resizable = true, maximizable = true)
 public class TemplateReadView extends StandardReadView<Object> {
 
     protected static final String DEFAULT_READ_ENTITY_CONTAINER_ID = "entityDc";

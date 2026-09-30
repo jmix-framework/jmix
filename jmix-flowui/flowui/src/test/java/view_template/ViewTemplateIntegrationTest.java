@@ -26,6 +26,7 @@ import com.vaadin.flow.router.RouteParameters;
 import io.jmix.core.DataManager;
 import io.jmix.core.Metadata;
 import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.flowui.DialogWindows;
 import io.jmix.flowui.ViewNavigators;
 import io.jmix.flowui.Views;
 import io.jmix.flowui.component.UiComponentUtils;
@@ -52,6 +53,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 import test_support.FlowuiTestConfiguration;
 import test_support.entity.viewtemplate.ViewTemplateBindingsEntity;
 import test_support.entity.viewtemplate.ViewTemplateFilteringEntity;
+import test_support.entity.viewtemplate.ViewTemplateMasterEntity;
 import test_support.entity.viewtemplate.ViewTemplateParamsEntity;
 import test_support.entity.viewtemplate.ViewTemplateTestEntity;
 
@@ -109,6 +111,9 @@ public class ViewTemplateIntegrationTest {
 
     @Autowired
     ViewNavigators viewNavigators;
+
+    @Autowired
+    DialogWindows dialogWindows;
 
     @Autowired
     DataManager dataManager;
@@ -547,6 +552,22 @@ public class ViewTemplateIntegrationTest {
         View<?> currentView = UiTestUtils.getCurrentView();
         assertEquals(detailViewInfo.getControllerClass(), currentView.getClass());
         assertEquals(DETAIL_VIEW_ID, currentView.getId().orElseThrow());
+    }
+
+    @Test
+    void testTemplateDetailViewOpenedInDialogHasDefaultWidthAndIsResizableAndMaximizable() {
+        navigationSupport.navigate(LIST_VIEW_ID);
+        View<?> listView = UiTestUtils.getCurrentView();
+
+        // The master entity renders a tab sheet, whose content must not decide the dialog size.
+        DialogWindow<?> dialog = dialogWindows.detail(listView, ViewTemplateMasterEntity.class)
+                .newEntity()
+                .open();
+
+        assertEquals(MASTER_DETAIL_VIEW_ID, dialog.getView().getId().orElseThrow());
+        assertEquals("64em", dialog.getWidth());
+        assertTrue(dialog.isResizable());
+        assertTrue(dialog.isMaximizable());
     }
 
     protected Optional<MenuItem> findTemplateViewsRootItem() {

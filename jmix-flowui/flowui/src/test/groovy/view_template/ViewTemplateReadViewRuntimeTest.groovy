@@ -17,6 +17,7 @@
 package view_template
 
 import io.jmix.core.DataManager
+import io.jmix.flowui.DialogWindows
 import io.jmix.flowui.ViewNavigators
 import io.jmix.flowui.component.UiComponentUtils
 import io.jmix.flowui.testassist.UiTestUtils
@@ -48,6 +49,9 @@ class ViewTemplateReadViewRuntimeTest extends FlowuiTestSpecification {
 
     @Autowired
     ViewNavigators navigators
+
+    @Autowired
+    DialogWindows dialogWindows
 
     @Autowired
     JdbcTemplate jdbcTemplate
@@ -159,6 +163,24 @@ class ViewTemplateReadViewRuntimeTest extends FlowuiTestSpecification {
         dialogView != null
         (dialogView as ReadOnlyAwareView).readOnly
         ViewControllerUtils.getViewData(dialogView).getContainer("entityDc").item.id == line.id
+    }
+
+    def "generated read view opened in a dialog has a default width and can be resized and maximized"() {
+        given: "a master entity in the database, whose read view renders a tab sheet"
+        def master = dataManager.create(ViewTemplateMasterEntity)
+        master.name = "master"
+        master = dataManager.save(master)
+
+        when: "its generated read view is opened in a dialog"
+        def dialog = dialogWindows.read(originView(), ViewTemplateMasterEntity)
+                .readEntity(master)
+                .open()
+
+        then: "the dialog size does not depend on the content of the first tab, and the user can change it"
+        dialog.view.id.orElseThrow() == MASTER_READ_VIEW_ID
+        dialog.width == "64em"
+        dialog.resizable
+        dialog.maximizable
     }
 
     /**

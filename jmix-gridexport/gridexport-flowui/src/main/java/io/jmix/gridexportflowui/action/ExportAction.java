@@ -201,6 +201,18 @@ public class ExportAction extends ListDataComponentAction<ExportAction, Object> 
     }
 
     /**
+     * Returns the exporter used by this action, e.g. to configure the exporter the action has created.
+     *
+     * @param <T> exporter type
+     * @return exporter instance, or {@code null} if it has not been set yet
+     */
+    @SuppressWarnings("unchecked")
+    @Nullable
+    public <T extends DataGridExporter> T getDataGridExporter() {
+        return (T) dataGridExporter;
+    }
+
+    /**
      * Sets the dataGrid exporter instance
      */
     public void setDataGridExporter(DataGridExporter dataGridExporter) {

@@ -35,8 +35,14 @@ import io.jmix.flowui.UiProperties;
 import io.jmix.flowui.component.ListDataComponent;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.grid.EnhancedDataGrid;
+import io.jmix.flowui.data.DataUnit;
 import io.jmix.flowui.data.grid.EntityDataGridItems;
 import io.jmix.flowui.model.InstanceContainer;
+import io.jmix.gridexportflowui.GridExportProperties;
+import io.jmix.gridexportflowui.exporter.entitiesloader.AllEntitiesLoader;
+import io.jmix.gridexportflowui.exporter.entitiesloader.AllEntitiesLoader.ExportedEntityVisitor;
+import io.jmix.gridexportflowui.exporter.entitiesloader.AllEntitiesLoaderFactory;
+import io.jmix.gridexportflowui.exporter.entitiesloader.LimitOffsetAllEntitiesLoader;
 import org.apache.commons.collections4.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.jspecify.annotations.Nullable;
@@ -55,6 +61,12 @@ public abstract class AbstractDataGridExporter<T extends AbstractDataGridExporte
     protected MetadataTools metadataTools;
     protected UiProperties uiProperties;
     protected CoreProperties coreProperties;
+    protected GridExportProperties gridExportProperties;
+
+    @Nullable
+    protected String exportAllPaginationStrategy;
+    @Nullable
+    protected Integer exportAllBatchSize;
 
     @Autowired
     public void setMessageTools(MessageTools messageTools) {
@@ -86,6 +98,11 @@ public abstract class AbstractDataGridExporter<T extends AbstractDataGridExporte
         this.coreProperties = coreProperties;
     }
 
+    @Autowired
+    public void setGridExportProperties(GridExportProperties gridExportProperties) {
+        this.gridExportProperties = gridExportProperties;
+    }
+
     protected String fileName;
 
     protected Map<String, Function<ColumnValueContext, Object>> columnValueProviders;
@@ -101,6 +118,76 @@ public abstract class AbstractDataGridExporter<T extends AbstractDataGridExporte
     @SuppressWarnings("unchecked")
     public T withFileName(String fileName) {
         setFileName(fileName);
+        return (T) this;
+    }
+
+    /**
+     * Returns the pagination strategy used by this exporter to load all rows.
+     *
+     * @return pagination strategy, or {@code null} if
+     * {@link GridExportProperties#getExportAllPaginationStrategy()} is used
+     */
+    @Nullable
+    public String getExportAllPaginationStrategy() {
+        return exportAllPaginationStrategy;
+    }
+
+    /**
+     * Sets the pagination strategy used by this exporter to load all rows, overriding
+     * {@link GridExportProperties#getExportAllPaginationStrategy()}.
+     *
+     * @param exportAllPaginationStrategy pagination strategy, e.g.
+     *                                    {@link LimitOffsetAllEntitiesLoader#PAGINATION_STRATEGY}, or {@code null}
+     *                                    to use the application-wide one
+     */
+    public void setExportAllPaginationStrategy(@Nullable String exportAllPaginationStrategy) {
+        this.exportAllPaginationStrategy = exportAllPaginationStrategy;
+    }
+
+    /**
+     * @param exportAllPaginationStrategy pagination strategy, or {@code null} to use the application-wide one
+     * @return this instance for chaining
+     * @see #setExportAllPaginationStrategy(String)
+     */
+    @SuppressWarnings("unchecked")
+    public T withExportAllPaginationStrategy(@Nullable String exportAllPaginationStrategy) {
+        setExportAllPaginationStrategy(exportAllPaginationStrategy);
+        return (T) this;
+    }
+
+    /**
+     * Returns the number of entities loaded in one query when this exporter loads all rows.
+     *
+     * @return batch size, or {@code null} if {@link GridExportProperties#getExportAllBatchSize()} is used
+     */
+    @Nullable
+    public Integer getExportAllBatchSize() {
+        return exportAllBatchSize;
+    }
+
+    /**
+     * Sets the number of entities loaded in one query when this exporter loads all rows, overriding
+     * {@link GridExportProperties#getExportAllBatchSize()}.
+     *
+     * @param exportAllBatchSize positive batch size, or {@code null} to use the application-wide one
+     * @throws IllegalArgumentException if the batch size is not positive
+     */
+    public void setExportAllBatchSize(@Nullable Integer exportAllBatchSize) {
+        if (exportAllBatchSize != null && exportAllBatchSize <= 0) {
+            throw new IllegalArgumentException("Export all batch size must be positive: " + exportAllBatchSize);
+        }
+        this.exportAllBatchSize = exportAllBatchSize;
+    }
+
+    /**
+     * @param exportAllBatchSize positive batch size, or {@code null} to use the application-wide one
+     * @return this instance for chaining
+     * @throws IllegalArgumentException if the batch size is not positive
+     * @see #setExportAllBatchSize(Integer)
+     */
+    @SuppressWarnings("unchecked")
+    public T withExportAllBatchSize(@Nullable Integer exportAllBatchSize) {
+        setExportAllBatchSize(exportAllBatchSize);
         return (T) this;
     }
 
@@ -126,6 +213,21 @@ public abstract class AbstractDataGridExporter<T extends AbstractDataGridExporte
         return MapUtils.isNotEmpty(columnValueProviders)
                 ? columnValueProviders.get(columnId)
                 : null;
+    }
+
+    protected void loadAllEntities(AllEntitiesLoaderFactory allEntitiesLoaderFactory, DataUnit dataUnit,
+                                   ExportedEntityVisitor exportedEntityVisitor) {
+        AllEntitiesLoader loader = getAllEntitiesLoaderInternal(allEntitiesLoaderFactory);
+        int loadBatchSize = exportAllBatchSize != null
+                ? exportAllBatchSize
+                : gridExportProperties.getExportAllBatchSize();
+        loader.loadAll(dataUnit, exportedEntityVisitor, loadBatchSize);
+    }
+
+    protected AllEntitiesLoader getAllEntitiesLoaderInternal(AllEntitiesLoaderFactory allEntitiesLoaderFactory) {
+        return exportAllPaginationStrategy != null
+                ? allEntitiesLoaderFactory.getEntitiesLoader(exportAllPaginationStrategy)
+                : allEntitiesLoaderFactory.getEntitiesLoader();
     }
 
     protected String getMetaClassName(MetaClass metaClass) {

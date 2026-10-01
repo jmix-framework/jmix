@@ -95,8 +95,11 @@ public class KeysetAllEntitiesLoader extends AbstractAllEntitiesLoader {
     /**
      * Sort entities by the primary key, load the first batch and save the last entity primary key value.
      * Load the next batch with primary keys after the last entity primary key.
+     *
+     * @param collectionLoader      loader of the exported data grid, the source of the query and its parameters
      * @param exportedEntityVisitor {@link ExportedEntityVisitor#visitEntity(EntityExportContext)}
-     * @param loadBatchSize {@link GridExportProperties#getExportAllBatchSize()} number of entities loaded in one query
+     * @param loadBatchSize         number of entities loaded in one query, either the one requested by the exporter
+     *                              or {@link GridExportProperties#getExportAllBatchSize()}
      */
     protected void loadEntities(CollectionLoader<?> collectionLoader,
                                 ExportedEntityVisitor exportedEntityVisitor,

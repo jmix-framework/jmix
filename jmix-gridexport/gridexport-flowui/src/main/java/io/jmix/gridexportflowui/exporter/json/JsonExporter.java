@@ -31,7 +31,6 @@ import io.jmix.flowui.download.Downloader;
 import io.jmix.gridexportflowui.action.ExportAction;
 import io.jmix.gridexportflowui.exporter.AbstractDataGridExporter;
 import io.jmix.gridexportflowui.exporter.ExportMode;
-import io.jmix.gridexportflowui.exporter.entitiesloader.AllEntitiesLoader;
 import io.jmix.gridexportflowui.exporter.entitiesloader.AllEntitiesLoaderFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
@@ -81,8 +80,7 @@ public class JsonExporter extends AbstractDataGridExporter<JsonExporter> {
         JsonArray jsonElements = new JsonArray();
 
         if (exportMode == ExportMode.ALL_ROWS) {
-            AllEntitiesLoader entitiesLoader = allEntitiesLoaderFactory.getEntitiesLoader();
-            entitiesLoader.loadAll(((ListDataComponent<?>) dataGrid).getItems(),
+            loadAllEntities(allEntitiesLoaderFactory, ((ListDataComponent<?>) dataGrid).getItems(),
                     context -> {
                         JsonObject jsonObject = createJsonObjectFromEntity(dataGrid, context.getEntity(), columnFilter);
                         jsonElements.add(jsonObject);

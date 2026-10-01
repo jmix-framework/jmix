@@ -53,7 +53,6 @@ import io.jmix.gridexportflowui.GridExportProperties;
 import io.jmix.gridexportflowui.action.ExportAction;
 import io.jmix.gridexportflowui.exporter.AbstractDataGridExporter;
 import io.jmix.gridexportflowui.exporter.ExportMode;
-import io.jmix.gridexportflowui.exporter.entitiesloader.AllEntitiesLoader;
 import io.jmix.gridexportflowui.exporter.entitiesloader.AllEntitiesLoaderFactory;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.SpreadsheetVersion;
@@ -114,7 +113,6 @@ public class ExcelExporter extends AbstractDataGridExporter<ExcelExporter> {
 
     protected boolean isRowNumberExceeded = false;
 
-    protected GridExportProperties gridExportProperties;
     protected Notifications notifications;
     protected AllEntitiesLoaderFactory allEntitiesLoaderFactory;
     protected CurrentAuthentication currentAuthentication;
@@ -263,8 +261,7 @@ public class ExcelExporter extends AbstractDataGridExporter<ExcelExporter> {
             } else if (exportMode == ExportMode.ALL_ROWS) {
                 boolean addLevelPadding = !(dataGrid instanceof TreeDataGrid);
 
-                AllEntitiesLoader entitiesLoader = allEntitiesLoaderFactory.getEntitiesLoader();
-                entitiesLoader.loadAll(
+                loadAllEntities(allEntitiesLoaderFactory,
                         ((ListDataComponent<?>) dataGrid).getItems(),
                         context -> {
                             if (!checkIsRowNumberExceed(context.getEntityNumber())) {

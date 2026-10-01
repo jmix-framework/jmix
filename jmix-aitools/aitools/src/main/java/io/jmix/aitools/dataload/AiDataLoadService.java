@@ -58,11 +58,12 @@ public interface AiDataLoadService {
 
     /**
      * Generates a JPQL query for the given natural-language request, executes it and returns
-     * the structured result (query draft, validation, rows). Runs statelessly without
-     * persisting chat history.
+     * the query that ran (or failed validation), its validation result and the fetched rows. Runs
+     * statelessly without persisting chat history.
      *
      * @param userText user request in natural language
-     * @return result containing the generated query, its validation and the fetched rows
+     * @return result containing the executed query or the one that failed validation, its validation
+     * result and the fetched rows
      */
     EntityDataLoadResult loadData(String userText);
 }

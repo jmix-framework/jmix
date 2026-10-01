@@ -109,12 +109,38 @@ public class AiDataLoadServiceImpl implements AiDataLoadService, InitializingBea
 
         return new EntityDataLoadResult(
                 userText,
-                query,
+                resolveProcessedQuery(query, executionResult),
                 executionResult.getValidationResult(),
                 executionResult.getRows(),
                 executionResult.isHasMore(),
                 executionResult.isExecuted(),
                 executionResult.getExecutionError()
+        );
+    }
+
+    /**
+     * Returns the query that the result's rows and validation result belong to.
+     *
+     * @param generatedQuery  query generated for the request
+     * @param executionResult outcome of executing the generated query
+     * @return the generated query if no repair was attempted; otherwise the repaired query with the generated
+     * column names, which key the rows
+     */
+    protected EntityDataLoadQuery resolveProcessedQuery(EntityDataLoadQuery generatedQuery,
+                                                        JpqlExecutionResult executionResult) {
+        if (!executionResult.isRepaired()) {
+            return generatedQuery;
+        }
+
+        GeneratedJpqlResult repairedQuery = executionResult.getGeneratedJpqlResult();
+        return new EntityDataLoadQuery(
+                repairedQuery.getJpql(),
+                repairedQuery.getParameters(),
+                generatedQuery.getResultProperties(),
+                repairedQuery.getExplanation(),
+                repairedQuery.getWarnings(),
+                repairedQuery.getMaxResults(),
+                repairedQuery.getFirstResult()
         );
     }
 

@@ -16,7 +16,9 @@
 
 package io.jmix.email.entity;
 
+import io.jmix.core.annotation.Secret;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
+import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.email.authentication.OAuth2ClientType;
 import jakarta.persistence.*;
@@ -39,6 +41,8 @@ public class RefreshToken {
     @Id
     private UUID id;
 
+    @SystemLevel
+    @Secret
     @Lob
     @Column(name = "TOKEN_VALUE", nullable = false)
     @NotNull

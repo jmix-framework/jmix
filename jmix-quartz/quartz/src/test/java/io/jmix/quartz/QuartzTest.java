@@ -25,10 +25,15 @@ import io.jmix.quartz.model.*;
 import io.jmix.quartz.service.QuartzService;
 import io.jmix.quartz.util.QuartzJobClassFinder;
 import io.jmix.quartz.util.QuartzJobDetailsFinder;
+import org.jspecify.annotations.Nullable;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.quartz.*;
+import org.quartz.listeners.SchedulerListenerSupport;
+import org.quartz.spi.OperableTrigger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -38,7 +43,9 @@ import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(
@@ -65,6 +72,21 @@ public class QuartzTest {
 
     @Autowired
     private UnconstrainedDataManager dataManager;
+
+    private final TestSchedulerListener schedulerListener = new TestSchedulerListener();
+
+    @BeforeEach
+    void registerSchedulerListener() throws SchedulerException {
+        scheduler.getListenerManager().addSchedulerListener(schedulerListener);
+    }
+
+    @AfterEach
+    void cleanUp() throws SchedulerException {
+        scheduler.getListenerManager().removeSchedulerListener(schedulerListener);
+        for (String jobName : List.of("syncUnchangedJob", "syncChangedSimpleJob", "syncChangedCronJob")) {
+            scheduler.deleteJob(JobKey.jobKey(jobName, "testJobGroup"));
+        }
+    }
 
     @Test
     public void testFindQuartzJobClasses() {
@@ -261,62 +283,79 @@ public class QuartzTest {
     }
 
     @Test
-    public void testTriggerUpdateOnJobSave() throws Exception {
-        JobModel jobModel = dataManager.create(JobModel.class);
-        jobModel.setJobName("triggerSyncJobName");
-        jobModel.setJobGroup("testJobGroup");
-        jobModel.setJobClass(QuartTestApplication.MyQuartzJob.class.getName());
+    public void testUnchangedTriggersAreUntouchedOnJobSave() throws Exception {
+        //explicit values and null values that are replaced with defaults on build must both compare as unchanged
+        TriggerModel simpleTriggerModel = createSimpleTriggerModel("syncUnchangedSimple", futureDate(), 10000L, 100);
+        TriggerModel defaultsTriggerModel = createSimpleTriggerModel("syncUnchangedSimpleDefaults", futureDate(),
+                null, null);
+        TriggerModel cronTriggerModel = createCronTriggerModel("syncUnchangedCron", futureDate(), "0 0 0 * * ?");
+        //without a start date the trigger starts "now", which is a start time in the past on the next save
+        TriggerModel pastStartTriggerModel = createCronTriggerModel("syncUnchangedCronPastStart", null,
+                "0 0 0 1 1 ? 2099");
+        List<TriggerModel> triggerModels = List.of(simpleTriggerModel, defaultsTriggerModel, cronTriggerModel,
+                pastStartTriggerModel);
+        JobModel jobModel = createPausedJobWithFiredTriggers("syncUnchangedJob", triggerModels);
+        Map<TriggerKey, Trigger> triggersBefore = getTriggers(triggerModels);
+        schedulerListener.clear();
 
-        //start dates are in the future so that triggers do not fire during the test
-        Date futureStart = Date.from(LocalDateTime.now().plus(1, ChronoUnit.HOURS)
-                .atZone(ZoneId.systemDefault()).toInstant());
-
-        TriggerModel simpleTriggerModel = dataManager.create(TriggerModel.class);
-        simpleTriggerModel.setTriggerName("triggerSyncSimpleTriggerName");
-        simpleTriggerModel.setTriggerGroup("testTriggerGroup");
-        simpleTriggerModel.setScheduleType(ScheduleType.SIMPLE);
-        simpleTriggerModel.setRepeatCount(100);
-        simpleTriggerModel.setRepeatInterval(10000L);
-        simpleTriggerModel.setStartDate(futureStart);
-
-        TriggerModel cronTriggerModel = dataManager.create(TriggerModel.class);
-        cronTriggerModel.setTriggerName("triggerSyncCronTriggerName");
-        cronTriggerModel.setTriggerGroup("testTriggerGroup");
-        cronTriggerModel.setScheduleType(ScheduleType.CRON_EXPRESSION);
-        cronTriggerModel.setCronExpression("0 0 0 * * ?");
-        cronTriggerModel.setStartDate(futureStart);
-
-        List<TriggerModel> triggerModels = new ArrayList<>();
-        triggerModels.add(simpleTriggerModel);
-        triggerModels.add(cronTriggerModel);
-        quartzService.updateQuartzJob(jobModel, new ArrayList<>(), triggerModels, false);
-
-        quartzService.pauseJob(jobModel.getJobName(), jobModel.getJobGroup());
-
-        TriggerKey simpleTriggerKey = TriggerKey.triggerKey("triggerSyncSimpleTriggerName", "testTriggerGroup");
-        TriggerKey cronTriggerKey = TriggerKey.triggerKey("triggerSyncCronTriggerName", "testTriggerGroup");
-        Assertions.assertEquals(Trigger.TriggerState.PAUSED, scheduler.getTriggerState(simpleTriggerKey));
-        Assertions.assertEquals(Trigger.TriggerState.PAUSED, scheduler.getTriggerState(cronTriggerKey));
-
-        //saving with unchanged triggers must leave them untouched, keeping their pause state
         jobModel.setDescription("updated description");
         quartzService.updateQuartzJob(jobModel, new ArrayList<>(), triggerModels, true);
 
-        Assertions.assertEquals(Trigger.TriggerState.PAUSED, scheduler.getTriggerState(simpleTriggerKey));
-        Assertions.assertEquals(Trigger.TriggerState.PAUSED, scheduler.getTriggerState(cronTriggerKey));
+        Assertions.assertEquals(List.of(), schedulerListener.unscheduledKeys);
+        Assertions.assertEquals(List.of(), schedulerListener.scheduledKeys);
+        for (Trigger triggerBefore : triggersBefore.values()) {
+            assertTriggerUntouched(triggerBefore);
+        }
+    }
 
-        //a changed trigger must be rescheduled keeping its pause state, the unchanged one - untouched
+    @Test
+    public void testChangedSimpleTriggerIsRescheduledOnJobSave() throws Exception {
+        TriggerModel simpleTriggerModel = createSimpleTriggerModel("syncChangedSimple", futureDate(), 10000L, 100);
+        TriggerModel cronTriggerModel = createCronTriggerModel("syncChangedSimpleCron", futureDate(), "0 0 0 * * ?");
+        List<TriggerModel> triggerModels = List.of(simpleTriggerModel, cronTriggerModel);
+        JobModel jobModel = createPausedJobWithFiredTriggers("syncChangedSimpleJob", triggerModels);
+        TriggerKey simpleTriggerKey = triggerKey(simpleTriggerModel);
+        Trigger simpleTriggerBefore = scheduler.getTrigger(simpleTriggerKey);
+        Trigger cronTriggerBefore = scheduler.getTrigger(triggerKey(cronTriggerModel));
+        schedulerListener.clear();
+
         simpleTriggerModel.setRepeatInterval(20000L);
         quartzService.updateQuartzJob(jobModel, new ArrayList<>(), triggerModels, true);
 
+        //only the changed trigger is replaced
+        Assertions.assertEquals(List.of(simpleTriggerKey), schedulerListener.unscheduledKeys);
+        Assertions.assertEquals(List.of(simpleTriggerKey), schedulerListener.scheduledKeys);
         SimpleTrigger rescheduledTrigger = (SimpleTrigger) scheduler.getTrigger(simpleTriggerKey);
-        Assertions.assertNotNull(rescheduledTrigger);
         Assertions.assertEquals(20000L, rescheduledTrigger.getRepeatInterval());
+        //the replacement keeps the last fire time and the pause state of the replaced trigger
+        Assertions.assertEquals(simpleTriggerBefore.getPreviousFireTime(), rescheduledTrigger.getPreviousFireTime());
         Assertions.assertEquals(Trigger.TriggerState.PAUSED, scheduler.getTriggerState(simpleTriggerKey));
-        Assertions.assertEquals(Trigger.TriggerState.PAUSED, scheduler.getTriggerState(cronTriggerKey));
+        assertTriggerUntouched(cronTriggerBefore);
+    }
 
-        //cleanup
-        scheduler.deleteJob(JobKey.jobKey(jobModel.getJobName(), jobModel.getJobGroup()));
+    @Test
+    public void testChangedCronTriggerIsRescheduledOnJobSave() throws Exception {
+        TriggerModel simpleTriggerModel = createSimpleTriggerModel("syncChangedCronSimple", futureDate(), 10000L, 100);
+        TriggerModel cronTriggerModel = createCronTriggerModel("syncChangedCron", futureDate(), "0 0 0 * * ?");
+        List<TriggerModel> triggerModels = List.of(simpleTriggerModel, cronTriggerModel);
+        JobModel jobModel = createPausedJobWithFiredTriggers("syncChangedCronJob", triggerModels);
+        TriggerKey cronTriggerKey = triggerKey(cronTriggerModel);
+        Trigger cronTriggerBefore = scheduler.getTrigger(cronTriggerKey);
+        Trigger simpleTriggerBefore = scheduler.getTrigger(triggerKey(simpleTriggerModel));
+        schedulerListener.clear();
+
+        cronTriggerModel.setCronExpression("0 30 0 * * ?");
+        quartzService.updateQuartzJob(jobModel, new ArrayList<>(), triggerModels, true);
+
+        //only the changed trigger is replaced
+        Assertions.assertEquals(List.of(cronTriggerKey), schedulerListener.unscheduledKeys);
+        Assertions.assertEquals(List.of(cronTriggerKey), schedulerListener.scheduledKeys);
+        CronTrigger rescheduledTrigger = (CronTrigger) scheduler.getTrigger(cronTriggerKey);
+        Assertions.assertEquals("0 30 0 * * ?", rescheduledTrigger.getCronExpression());
+        //the replacement keeps the last fire time and the pause state of the replaced trigger
+        Assertions.assertEquals(cronTriggerBefore.getPreviousFireTime(), rescheduledTrigger.getPreviousFireTime());
+        Assertions.assertEquals(Trigger.TriggerState.PAUSED, scheduler.getTriggerState(cronTriggerKey));
+        assertTriggerUntouched(simpleTriggerBefore);
     }
 
     @Test
@@ -365,4 +404,107 @@ public class QuartzTest {
         scheduler.deleteJob(jobKey);
     }
 
+
+    private Date futureDate() {
+        //start dates are in the future so that triggers do not fire during the test
+        return Date.from(LocalDateTime.now().plus(1, ChronoUnit.HOURS).atZone(ZoneId.systemDefault()).toInstant());
+    }
+
+    private TriggerModel createSimpleTriggerModel(String triggerName, @Nullable Date startDate,
+                                                  @Nullable Long repeatInterval, @Nullable Integer repeatCount) {
+        TriggerModel triggerModel = dataManager.create(TriggerModel.class);
+        triggerModel.setTriggerName(triggerName);
+        triggerModel.setTriggerGroup("testTriggerGroup");
+        triggerModel.setScheduleType(ScheduleType.SIMPLE);
+        triggerModel.setStartDate(startDate);
+        triggerModel.setRepeatInterval(repeatInterval);
+        triggerModel.setRepeatCount(repeatCount);
+        return triggerModel;
+    }
+
+    private TriggerModel createCronTriggerModel(String triggerName, @Nullable Date startDate, String cronExpression) {
+        TriggerModel triggerModel = dataManager.create(TriggerModel.class);
+        triggerModel.setTriggerName(triggerName);
+        triggerModel.setTriggerGroup("testTriggerGroup");
+        triggerModel.setScheduleType(ScheduleType.CRON_EXPRESSION);
+        triggerModel.setStartDate(startDate);
+        triggerModel.setCronExpression(cronExpression);
+        return triggerModel;
+    }
+
+    private TriggerKey triggerKey(TriggerModel triggerModel) {
+        return TriggerKey.triggerKey(triggerModel.getTriggerName(), triggerModel.getTriggerGroup());
+    }
+
+    /**
+     * Creates the job with the given triggers through the service, marks every trigger as already fired
+     * (a distinct last fire time per trigger, without waiting for a real execution) and pauses the job.
+     */
+    private JobModel createPausedJobWithFiredTriggers(String jobName, List<TriggerModel> triggerModels)
+            throws SchedulerException {
+        JobModel jobModel = dataManager.create(JobModel.class);
+        jobModel.setJobName(jobName);
+        jobModel.setJobGroup("testJobGroup");
+        jobModel.setJobClass(QuartTestApplication.MyQuartzJob.class.getName());
+        quartzService.updateQuartzJob(jobModel, new ArrayList<>(), triggerModels, false);
+
+        long lastFireTime = System.currentTimeMillis() - 3_600_000L;
+        for (TriggerModel triggerModel : triggerModels) {
+            setPreviousFireTime(triggerKey(triggerModel), new Date(lastFireTime));
+            lastFireTime += 60_000L;
+        }
+        quartzService.pauseJob(jobModel.getJobName(), jobModel.getJobGroup());
+        return jobModel;
+    }
+
+    private void setPreviousFireTime(TriggerKey triggerKey, Date previousFireTime) throws SchedulerException {
+        OperableTrigger trigger = (OperableTrigger) scheduler.getTrigger(triggerKey);
+        trigger.setPreviousFireTime(previousFireTime);
+        scheduler.rescheduleJob(triggerKey, trigger);
+        Assertions.assertEquals(previousFireTime, scheduler.getTrigger(triggerKey).getPreviousFireTime());
+    }
+
+    private Map<TriggerKey, Trigger> getTriggers(List<TriggerModel> triggerModels) throws SchedulerException {
+        Map<TriggerKey, Trigger> triggers = new LinkedHashMap<>();
+        for (TriggerModel triggerModel : triggerModels) {
+            TriggerKey triggerKey = triggerKey(triggerModel);
+            triggers.put(triggerKey, scheduler.getTrigger(triggerKey));
+        }
+        return triggers;
+    }
+
+    private void assertTriggerUntouched(Trigger triggerBefore) throws SchedulerException {
+        TriggerKey triggerKey = triggerBefore.getKey();
+        Trigger triggerAfter = scheduler.getTrigger(triggerKey);
+        Assertions.assertNotNull(triggerBefore.getPreviousFireTime(), triggerKey.toString());
+        Assertions.assertEquals(triggerBefore.getPreviousFireTime(), triggerAfter.getPreviousFireTime(),
+                triggerKey.toString());
+        Assertions.assertEquals(triggerBefore.getNextFireTime(), triggerAfter.getNextFireTime(), triggerKey.toString());
+        Assertions.assertEquals(Trigger.TriggerState.PAUSED, scheduler.getTriggerState(triggerKey),
+                triggerKey.toString());
+    }
+
+    /**
+     * Records which triggers the scheduler was asked to schedule and unschedule; a reschedule reports both.
+     */
+    static class TestSchedulerListener extends SchedulerListenerSupport {
+
+        final List<TriggerKey> scheduledKeys = new ArrayList<>();
+        final List<TriggerKey> unscheduledKeys = new ArrayList<>();
+
+        @Override
+        public void jobScheduled(Trigger trigger) {
+            scheduledKeys.add(trigger.getKey());
+        }
+
+        @Override
+        public void jobUnscheduled(TriggerKey triggerKey) {
+            unscheduledKeys.add(triggerKey);
+        }
+
+        void clear() {
+            scheduledKeys.clear();
+            unscheduledKeys.clear();
+        }
+    }
 }

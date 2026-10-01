@@ -28,8 +28,10 @@ import io.jmix.core.Messages;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.component.select.JmixSelect;
 import io.jmix.flowui.data.items.EnumDataProvider;
+import io.jmix.security.model.BaseRole;
 import io.jmix.security.model.BaseRoleModel;
 import io.jmix.security.model.RoleSourceType;
+import io.jmix.security.role.RoleLocalizationSupport;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -42,6 +44,7 @@ public class RoleFilter extends Composite<Details> implements InitializingBean {
 
     protected Messages messages;
     protected UiComponents uiComponents;
+    protected RoleLocalizationSupport roleLocalizationSupport;
 
     @Autowired
     public void setMessages(Messages messages) {
@@ -51,6 +54,11 @@ public class RoleFilter extends Composite<Details> implements InitializingBean {
     @Autowired
     public void setUiComponents(UiComponents uiComponents) {
         this.uiComponents = uiComponents;
+    }
+
+    @Autowired
+    public void setRoleLocalizationSupport(RoleLocalizationSupport roleLocalizationSupport) {
+        this.roleLocalizationSupport = roleLocalizationSupport;
     }
 
     @Override
@@ -123,6 +131,16 @@ public class RoleFilter extends Composite<Details> implements InitializingBean {
 
     public void setSourceFilterVisible(boolean visible) {
         sourceFilter.setVisible(visible);
+    }
+
+    /**
+     * Returns the name of a role that the name filter matches: the name in the user's locale.
+     *
+     * @param role the role to match
+     * @return the name of the role in the user's locale
+     */
+    protected String getLocalizedName(BaseRole role) {
+        return roleLocalizationSupport.getLocalizedName(role);
     }
 
     protected void onFilterFieldValueChange(AbstractField.ComponentValueChangeEvent<?, ?> event) {

@@ -18,9 +18,11 @@ package io.jmix.security.model;
 
 import io.jmix.core.annotation.TenantId;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
+import io.jmix.core.metamodel.annotation.DependsOnProperties;
 import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.core.metamodel.annotation.JmixProperty;
+import io.jmix.security.role.RoleLocalizationSupport;
 
 import jakarta.persistence.Id;
 import java.util.HashMap;
@@ -37,12 +39,23 @@ public abstract class BaseRoleModel {
     @JmixProperty(mandatory = true)
     protected String code;
 
-    @InstanceName
     @JmixProperty(mandatory = true)
     protected String name;
 
     @JmixProperty
     protected String description;
+
+    @JmixProperty
+    protected String nameMessageKey;
+
+    @JmixProperty
+    protected String descriptionMessageKey;
+
+    @JmixProperty
+    protected String localizedNames;
+
+    @JmixProperty
+    protected String localizedDescriptions;
 
     @JmixProperty
     private RoleSourceType source;
@@ -89,12 +102,54 @@ public abstract class BaseRoleModel {
         this.name = name;
     }
 
+    /**
+     * @return the name in the current user's locale
+     * @see RoleLocalizationSupport#getLocalizedName(BaseRoleModel)
+     */
+    @InstanceName
+    @DependsOnProperties({"name", "nameMessageKey", "localizedNames"})
+    public String getInstanceName(RoleLocalizationSupport roleLocalizationSupport) {
+        return roleLocalizationSupport.getLocalizedName(this);
+    }
+
     public String getDescription() {
         return description;
     }
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getNameMessageKey() {
+        return nameMessageKey;
+    }
+
+    public void setNameMessageKey(String nameMessageKey) {
+        this.nameMessageKey = nameMessageKey;
+    }
+
+    public String getDescriptionMessageKey() {
+        return descriptionMessageKey;
+    }
+
+    public void setDescriptionMessageKey(String descriptionMessageKey) {
+        this.descriptionMessageKey = descriptionMessageKey;
+    }
+
+    public String getLocalizedNames() {
+        return localizedNames;
+    }
+
+    public void setLocalizedNames(String localizedNames) {
+        this.localizedNames = localizedNames;
+    }
+
+    public String getLocalizedDescriptions() {
+        return localizedDescriptions;
+    }
+
+    public void setLocalizedDescriptions(String localizedDescriptions) {
+        this.localizedDescriptions = localizedDescriptions;
     }
 
     public Set<String> getChildRoles() {

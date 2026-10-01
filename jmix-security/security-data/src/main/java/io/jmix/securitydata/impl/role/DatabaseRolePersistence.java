@@ -353,6 +353,8 @@ public class DatabaseRolePersistence implements RolePersistence {
         entity.setName(model.getName());
         entity.setCode(model.getCode());
         entity.setDescription(model.getDescription());
+        entity.setLocalizedNames(model.getLocalizedNames());
+        entity.setLocalizedDescriptions(model.getLocalizedDescriptions());
         entity.setScopes(model.getScopes());
         entity.setChildRoles(model.getChildRoles());
     }
@@ -362,6 +364,8 @@ public class DatabaseRolePersistence implements RolePersistence {
         entity.setName(model.getName());
         entity.setCode(model.getCode());
         entity.setDescription(model.getDescription());
+        entity.setLocalizedNames(model.getLocalizedNames());
+        entity.setLocalizedDescriptions(model.getLocalizedDescriptions());
         entity.setChildRoles(model.getChildRoles());
     }
 

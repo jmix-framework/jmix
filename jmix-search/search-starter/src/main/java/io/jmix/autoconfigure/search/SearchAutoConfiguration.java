@@ -132,11 +132,13 @@ public class SearchAutoConfiguration {
                 IndexConfigurationManager indexConfigurationManager,
                 IndexingQueueManager indexingQueueManager,
                 EntityStates entityStates,
-                MetadataTools metadataTools) {
+                MetadataTools metadataTools,
+                MultitenancyAdapter multitenancyAdapter) {
             return new DynamicAttributesTrackingListener(indexConfigurationManager,
                     indexingQueueManager,
                     entityStates,
-                    metadataTools);
+                    metadataTools,
+                    multitenancyAdapter);
         }
 
         @Bean(name = "search_DynamicAttributesResolver")

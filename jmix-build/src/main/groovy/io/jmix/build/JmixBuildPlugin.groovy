@@ -316,7 +316,8 @@ class JmixBuildPlugin implements Plugin<Project> {
     }
 
     private void setupDependencyManagement(Project project) {
-        def bom = project.rootProject.findProject("bom") ?: "io.jmix.bom:jmix-bom:${project.version}"
+        def bomProject = project.rootProject.findProject("bom")
+        def bom = bomProject ? project.dependencies.project(path: bomProject.path) : "io.jmix.bom:jmix-bom:${project.version}"
         project.with {
             dependencies {
                 api platform(bom)

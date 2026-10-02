@@ -26,8 +26,8 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 /**
- * A run-time configuration with a numeric condition in the root and a condition nested in a group,
- * used to check how filter values are cleared.
+ * A configuration built with the configuration builder, with a numeric condition in the root and a
+ * condition nested in a group, used to check how filter values are cleared.
  */
 @Route(value = "gf-clear-values-test-view")
 @ViewController("GfClearValuesTestView")
@@ -82,7 +82,7 @@ public class GfClearValuesTestView extends StandardView {
                 .add(deepGroup)
                 .build();
 
-        genericFilter.runtimeConfigurationBuilder()
+        genericFilter.filterConfigurationBuilder()
                 .id("c1")
                 .name("C1")
                 .add(amountCondition)

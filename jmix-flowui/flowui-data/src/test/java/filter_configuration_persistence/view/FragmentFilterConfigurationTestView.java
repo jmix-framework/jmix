@@ -17,24 +17,19 @@
 package filter_configuration_persistence.view;
 
 import com.vaadin.flow.router.Route;
-import io.jmix.flowui.component.genericfilter.GenericFilter;
 import io.jmix.flowui.view.StandardView;
 import io.jmix.flowui.view.ViewComponent;
 import io.jmix.flowui.view.ViewController;
 import io.jmix.flowui.view.ViewDescriptor;
 
 /**
- * A view with a design-time configuration declared in XML. Used to check that a persisted
- * configuration with the same id does not displace the one declared by the view.
+ * A view that hosts {@link FilterConfigurationTestFragment}, a fragment with a filter.
  */
-@Route("design-time-filter-configuration-test-view")
-@ViewController("DesignTimeFilterConfigurationTestView")
-@ViewDescriptor("design-time-filter-configuration-test-view.xml")
-public class DesignTimeFilterConfigurationTestView extends StandardView {
-
-    public static final String CONFIGURATION_ID = "byName";
-    public static final String CONFIGURATION_NAME = "By name";
+@Route("fragment-filter-configuration-test-view")
+@ViewController("FragmentFilterConfigurationTestView")
+@ViewDescriptor("fragment-filter-configuration-test-view.xml")
+public class FragmentFilterConfigurationTestView extends StandardView {
 
     @ViewComponent
-    public GenericFilter genericFilter;
+    public FilterConfigurationTestFragment projectsFragment;
 }

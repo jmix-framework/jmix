@@ -29,7 +29,6 @@ import io.jmix.core.AccessManager;
 import io.jmix.core.Messages;
 import io.jmix.core.Metadata;
 import io.jmix.core.annotation.Experimental;
-import io.jmix.core.annotation.Internal;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.querycondition.Condition;
 import io.jmix.core.querycondition.LogicalCondition;
@@ -65,7 +64,6 @@ import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.kit.component.combobutton.ComboButton;
 import io.jmix.flowui.kit.component.combobutton.ComboButtonVariant;
 import io.jmix.flowui.kit.component.dropdownbutton.DropdownButton;
-import io.jmix.flowui.kit.component.dropdownbutton.DropdownButtonVariant;
 import io.jmix.flowui.kit.icon.JmixFontIcon;
 import io.jmix.flowui.model.BaseCollectionLoader;
 import io.jmix.flowui.model.DataLoader;
@@ -699,14 +697,14 @@ public class GenericFilter extends Composite<JmixDetails>
     }
 
     /**
-     * Creates a new {@link RunTimeConfigurationBuilder} for building and registering
-     * a {@link io.jmix.flowui.component.genericfilter.configuration.RunTimeConfiguration}.
+     * Creates a new {@link FilterConfigurationBuilder} for building and registering
+     * a {@link DesignTimeConfiguration} from code.
      *
-     * @return a new {@code RunTimeConfigurationBuilder} instance
+     * @return a new {@code FilterConfigurationBuilder} instance
      */
     @Experimental
-    public RunTimeConfigurationBuilder runtimeConfigurationBuilder() {
-        return new RunTimeConfigurationBuilder(this, uiComponents);
+    public FilterConfigurationBuilder filterConfigurationBuilder() {
+        return new FilterConfigurationBuilder(this);
     }
 
     protected void setCurrentConfigurationInternal(Configuration currentConfiguration, boolean fromClient) {
@@ -734,6 +732,8 @@ public class GenericFilter extends Composite<JmixDetails>
         if (rootLogicalFilterComponent != null) {
             contentWrapper.remove(((Component) rootLogicalFilterComponent));
         }
+        // The conditions of the previously shown configuration must not keep their listeners.
+        removeConditionOperationChangeListeners();
 
         LogicalFilterComponent<?> rootComponent = getCurrentConfiguration().getRootLogicalFilterComponent();
 
@@ -771,11 +771,6 @@ public class GenericFilter extends Composite<JmixDetails>
 
         rootLogicalFilterComponent.setAutoApply(isAutoApply());
 
-        // This method runs on every configuration refresh (e.g. each re-navigation); detach the
-        // condition listeners registered on the previous run so they don't accumulate.
-        conditionOperationChangeRegistrations.forEach(Registration::remove);
-        conditionOperationChangeRegistrations.clear();
-
         if (!(getCurrentConfiguration() instanceof DesignTimeConfiguration)) {
             for (FilterComponent filterComponent : rootLogicalFilterComponent.getFilterComponents()) {
                 if (filterComponent instanceof SingleFilterComponentBase) {
@@ -794,6 +789,11 @@ public class GenericFilter extends Composite<JmixDetails>
                 }
             }
         }
+    }
+
+    protected void removeConditionOperationChangeListeners() {
+        conditionOperationChangeRegistrations.forEach(Registration::remove);
+        conditionOperationChangeRegistrations.clear();
     }
 
     protected void resetFilterComponentDefaultValue(PropertyFilter<?> propertyFilter) {
@@ -1011,14 +1011,35 @@ public class GenericFilter extends Composite<JmixDetails>
 
     /**
      * Adds a configuration to the filter.
+     * <p>
+     * A {@link DesignTimeConfiguration} takes precedence over a stored configuration with the same id. If the
+     * stored configurations are already loaded, as for a filter inside a fragment, the stored one is removed
+     * and then ignored, see {@link #loadConfigurationsAndApplyDefault()}. If the removed configuration is the
+     * current one, the empty configuration becomes current without applying the filter.
      *
      * @param configuration configuration to add
      * @see DesignTimeConfiguration
      * @see RunTimeConfiguration
      */
     public void addConfiguration(Configuration configuration) {
-        configurations.add(configuration);
-        addSelectConfigurationAction(configuration);
+        Configuration registeredConfiguration = getConfiguration(configuration.getId());
+        // A run-time configuration with the id of a design-time one is taken for a stored configuration loaded earlier.
+        if (configuration instanceof DesignTimeConfiguration
+                && registeredConfiguration instanceof RunTimeConfiguration) {
+            logIgnoredStoredConfiguration(registeredConfiguration.getId());
+            configurations.remove(registeredConfiguration);
+            registeredConfiguration.getRootLogicalFilterComponent().getElement().removeFromParent();
+            configurations.add(configuration);
+
+            if (registeredConfiguration == getCurrentConfiguration()) {
+                setCurrentConfigurationInternal(getEmptyConfiguration(), false);
+            } else {
+                updateSelectConfigurationDropdown();
+            }
+        } else {
+            configurations.add(configuration);
+            addSelectConfigurationAction(configuration);
+        }
     }
 
     /**
@@ -1124,12 +1145,15 @@ public class GenericFilter extends Composite<JmixDetails>
      * Loads the stored configurations available to the current user and applies the one that is
      * default for all users.
      * <p>
-     * Configurations are loaded after the view is initialized, so a configuration registered earlier
-     * can already have the id of a stored one: this happens when the user saves a configuration that
-     * the application registers in the view's {@code InitEvent} handler. A stored configuration is the
-     * state the user saved for that id, so it is applied to the registered configuration instead of
-     * being added next to it. A configuration that cannot be modified, such as a
-     * {@link DesignTimeConfiguration} declared by the view itself, is kept as it is.
+     * A configuration that cannot be modified, such as a {@link DesignTimeConfiguration} declared in XML or
+     * built from code, takes precedence over a stored configuration with the same id: the stored one is
+     * ignored as a whole, including its "default for all users" mark. Such a stored configuration is left
+     * from an earlier version, where a configuration built from code could be edited and saved under its own
+     * id. The stored configurations are loaded after the view's {@code InitEvent}, so a configuration the
+     * view registers there is already known. A design-time configuration registered later, for example in a
+     * fragment's {@code ReadyEvent}, replaces the stored one when it is added, see
+     * {@link #addConfiguration(Configuration)}. A registered run-time configuration with the id of a stored
+     * one, such as one loaded by a previous call, is kept as it is.
      */
     public void loadConfigurationsAndApplyDefault() {
         Map<Configuration, Boolean> configurationsMap = genericFilterSupport.getConfigurationsMap(this);
@@ -1141,11 +1165,9 @@ public class GenericFilter extends Composite<JmixDetails>
 
             Configuration configuration;
             if (registeredConfiguration instanceof RunTimeConfiguration runTimeConfiguration) {
-                applyStoredConfiguration(runTimeConfiguration, storedConfiguration);
                 configuration = runTimeConfiguration;
             } else if (registeredConfiguration != null) {
-                log.warn("Stored configuration '{}' is ignored: the filter has a configuration with the same id "
-                        + "that cannot be modified.", storedConfiguration.getId());
+                logIgnoredStoredConfiguration(storedConfiguration.getId());
                 continue;
             } else {
                 addConfiguration(storedConfiguration);
@@ -1159,32 +1181,9 @@ public class GenericFilter extends Composite<JmixDetails>
         }
     }
 
-    /**
-     * Applies the state loaded from the storage to a configuration that is already registered: the
-     * conditions, the name and the default values the user saved for that id replace the registered
-     * ones. The registered instance itself is kept, so a reference to it held by the application
-     * stays valid.
-     *
-     * @param registeredConfiguration a configuration registered before the stored ones were loaded
-     * @param storedConfiguration     a configuration loaded from the storage
-     */
-    protected void applyStoredConfiguration(RunTimeConfiguration registeredConfiguration,
-                                            Configuration storedConfiguration) {
-        // Reset the modification flags while they still refer to the configuration's own components:
-        // they are kept in a set, so flags left from the replaced components would never be cleared.
-        registeredConfiguration.setModified(false);
-
-        registeredConfiguration.setRootLogicalFilterComponent(storedConfiguration.getRootLogicalFilterComponent());
-        registeredConfiguration.setName(storedConfiguration.getName());
-        registeredConfiguration.setAvailableForAllUsers(storedConfiguration.isAvailableForAllUsers());
-        genericFilterSupport.refreshConfigurationDefaultValues(registeredConfiguration);
-
-        // The name is part of the stored state, so the dropdown is rebuilt in any case.
-        updateSelectConfigurationDropdown();
-
-        if (registeredConfiguration == currentConfiguration) {
-            refreshCurrentConfigurationLayout();
-        }
+    protected void logIgnoredStoredConfiguration(String id) {
+        log.warn("Stored configuration '{}' of filter '{}' is ignored: the filter has a configuration with the same id "
+                + "that cannot be modified.", id, FilterUtils.generateFilterPath(this));
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})

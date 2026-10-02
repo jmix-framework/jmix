@@ -26,7 +26,6 @@ import io.jmix.flowui.action.DialogAction;
 import io.jmix.flowui.component.genericfilter.Configuration;
 import io.jmix.flowui.component.genericfilter.GenericFilterSupport;
 import io.jmix.flowui.component.genericfilter.configuration.DesignTimeConfiguration;
-import io.jmix.flowui.component.genericfilter.configuration.RunTimeConfiguration;
 import io.jmix.flowui.component.genericfilter.model.FilterConfigurationModel;
 import io.jmix.flowui.icon.Icons;
 import io.jmix.flowui.kit.icon.JmixFontIcon;
@@ -92,8 +91,6 @@ public class GenericFilterRemoveAction extends GenericFilterAction<GenericFilter
         return super.isApplicable()
                 && target.getCurrentConfiguration() != target.getEmptyConfiguration()
                 && !(target.getCurrentConfiguration() instanceof DesignTimeConfiguration)
-                && !(target.getCurrentConfiguration() instanceof RunTimeConfiguration rc
-                        && rc.isProtectedFromUserDeletion())
                 && (globalConfigurationModificationPermitted || !isCurrentConfigurationAvailableForAll());
     }
 

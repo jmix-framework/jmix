@@ -15,17 +15,7 @@
   -->
 
 <view xmlns="http://jmix.io/schema/flowui/view">
-    <data>
-        <collection id="projectsDc"
-                    class="test_support.entity.Project">
-            <loader id="projectsLd">
-                <query>select e from test_Project e</query>
-            </loader>
-        </collection>
-    </data>
     <layout>
-        <genericFilter id="genericFilter" dataLoader="projectsLd">
-            <properties include=".*"/>
-        </genericFilter>
+        <fragment id="projectsFragment" class="filter_configuration_persistence.view.FilterConfigurationTestFragment"/>
     </layout>
 </view>

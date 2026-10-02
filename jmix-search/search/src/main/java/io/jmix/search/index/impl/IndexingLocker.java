@@ -36,16 +36,23 @@ public class IndexingLocker {
 
     protected final IndexConfigurationManager indexConfigurationManager;
 
+    /**
+     * Asks the index configurations nothing: both maps fill themselves on first use.
+     * <p>
+     * They used to be prefilled, one lock per indexed entity. That stopped working when the unit of work became
+     * the pair of an entity and a tenant - a prefilled lock is keyed by the entity name alone and no longer
+     * matches what a caller looks up - and it was redundant even before, because every lookup goes through
+     * {@code computeIfAbsent}.
+     * <p>
+     * It was also not free. Asking for the indexed entities builds the index definitions, and a bean constructor
+     * runs before Liquibase has created the schema. An application that has the Dynamic Attributes module could
+     * not start on a database without the attribute tables: resolving the dynamic attributes of an entity reads
+     * them, and here that read happened too early.
+     */
     @Autowired
     public IndexingLocker(IndexConfigurationManager indexConfigurationManager) {
-        Map<String, ReentrantLock> tmpEnqueueAllLocks = new ConcurrentHashMap<>();
-        indexConfigurationManager.getAllIndexedEntities().forEach(
-                entity -> tmpEnqueueAllLocks.put(entity, new ReentrantLock())
-        );
-        this.enqueueAllLocks = tmpEnqueueAllLocks;
-
+        this.enqueueAllLocks = new ConcurrentHashMap<>();
         this.enqueueingSessionOperationLocks = new ConcurrentHashMap<>();
-
         this.indexConfigurationManager = indexConfigurationManager;
     }
 

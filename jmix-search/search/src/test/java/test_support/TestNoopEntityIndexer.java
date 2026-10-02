@@ -17,6 +17,7 @@
 package test_support;
 
 import io.jmix.core.Id;
+import io.jmix.search.index.EntityDeletionTarget;
 import io.jmix.search.index.EntityIndexer;
 import io.jmix.search.index.IndexResult;
 import org.jspecify.annotations.NullMarked;
@@ -63,6 +64,11 @@ public class TestNoopEntityIndexer implements EntityIndexer {
 
     @Override
     public IndexResult deleteCollectionByEntityIds(Collection<Id<?>> entityIds) {
+        return new IndexResult(0, Collections.emptyList());
+    }
+
+    @Override
+    public IndexResult deleteCollectionByTargets(Collection<EntityDeletionTarget> targets) {
         return new IndexResult(0, Collections.emptyList());
     }
 }

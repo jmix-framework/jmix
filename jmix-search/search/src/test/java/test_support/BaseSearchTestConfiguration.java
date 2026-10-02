@@ -18,22 +18,23 @@ package test_support;
 
 import io.jmix.core.CoreConfiguration;
 import io.jmix.core.IdSerialization;
+import io.jmix.core.annotation.JmixModule;
 import io.jmix.core.security.InMemoryUserRepository;
 import io.jmix.core.security.UserRepository;
 import io.jmix.data.DataConfiguration;
 import io.jmix.dynattr.DynAttrConfiguration;
 import io.jmix.dynattr.DynAttrManager;
 import io.jmix.eclipselink.EclipselinkConfiguration;
+import io.jmix.multitenancy.MultitenancyConfiguration;
 import io.jmix.search.SearchConfiguration;
-import io.jmix.search.SearchProperties;
 import io.jmix.search.index.EntityIndexer;
 import io.jmix.search.index.IndexManager;
-import io.jmix.search.index.impl.IndexStateRegistry;
-import io.jmix.search.index.impl.StartupIndexSynchronizer;
+import io.jmix.search.index.impl.*;
 import io.jmix.search.index.mapping.IndexConfigurationManager;
 import io.jmix.search.index.mapping.processor.impl.IndexDefinitionDetector;
 import io.jmix.search.index.queue.IndexingQueueManager;
 import io.jmix.security.SecurityConfiguration;
+import io.jmix.securitydata.SecurityDataConfiguration;
 import io.jmix.testsupport.config.CommonCoreTestConfiguration;
 import io.jmix.testsupport.config.HsqlMemDataSourceTestConfiguration;
 import io.jmix.testsupport.config.JpaMainStoreTestConfiguration;
@@ -59,6 +60,8 @@ import org.jspecify.annotations.Nullable;
         HsqlMemDataSourceTestConfiguration.class,
         JpaMainStoreTestConfiguration.class
 })
+@JmixModule(id = "test_support.base_search",
+        dependsOn = {SecurityDataConfiguration.class, MultitenancyConfiguration.class})
 public class BaseSearchTestConfiguration {
 
     @Autowired
@@ -77,11 +80,14 @@ public class BaseSearchTestConfiguration {
         return new TestNoopEntityIndexer();
     }
 
+    @Bean("search_MultitenancyAdapter")
+    public MultitenancyAdapter multitenancyAdapter() {
+        return new NoopMultitenancyAdapter();
+    }
+
     @Bean("search_IndexManager")
-    public IndexManager indexManager(IndexConfigurationManager indexConfigurationManager,
-                                     IndexStateRegistry indexStateRegistry,
-                                     SearchProperties searchProperties) {
-        return new TestNoopIndexManager(indexConfigurationManager, indexStateRegistry, searchProperties);
+    public IndexManager indexManager() {
+        return new TestNoopIndexManager();
     }
 
     @Bean("search_JpaIndexingQueueManager")

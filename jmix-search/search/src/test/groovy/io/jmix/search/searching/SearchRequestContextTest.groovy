@@ -21,7 +21,6 @@ import spock.lang.Specification
 
 import static io.jmix.search.searching.SearchRequestContext.ProcessingState.*
 
-
 class SearchRequestContextTest extends Specification {
 
     def "RequestContext.getting initial parameters"() {
@@ -113,13 +112,11 @@ class SearchRequestContextTest extends Specification {
         def requestContext = new SearchRequestContext<>(initialBuilder, initialSearchContext)
         and:
         IndexConfiguration configuration1 = Mock(IndexConfiguration)
-        configuration1.getIndexName() >> "firstIndex"
         IndexConfiguration configuration2 = Mock(IndexConfiguration)
-        configuration2.getIndexName() >> "secondIndex"
         and:
         List<IndexSearchRequestScope> scopes = List.of(
-                new IndexSearchRequestScope(configuration1, Set.of("field1_1", "field1_2", "field1_3")),
-                new IndexSearchRequestScope(configuration2, Set.of("field2_1"))
+                new IndexSearchRequestScope(configuration1, Set.of("field1_1", "field1_2", "field1_3"), "firstIndex"),
+                new IndexSearchRequestScope(configuration2, Set.of("field2_1"), "secondIndex")
         )
 
         when:

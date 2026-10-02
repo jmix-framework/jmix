@@ -1,0 +1,97 @@
+/*
+ * Copyright 2026 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/*
+ * Redirects Maven Central to a mirror whose URL is passed when the build is started.
+ * Apply it from the settings.gradle of every build, included builds too.
+ *
+ * Mirror URL, the first non-blank value wins:
+ *   - Gradle property mavenCentralMirror: -PmavenCentralMirror=<url>
+ *     or the ORG_GRADLE_PROJECT_mavenCentralMirror environment variable;
+ *   - MAVEN_CENTRAL_MIRROR environment variable.
+ * Without a value nothing changes and Maven Central is used as declared.
+ *
+ * Covered: mavenCentral() and repositories declared with the Maven Central URL in pluginManagement,
+ * dependencyResolutionManagement, project buildscript and project repositories. The Gradle Plugin Portal redirects
+ * requests for artifacts it does not host (plugin dependencies) to Maven Central, so the mirror is also put in front
+ * of the portal in pluginManagement.
+ * Not covered: the buildscript {} and plugins {} blocks of settings.gradle, they are resolved before this script.
+ */
+
+import org.gradle.api.artifacts.dsl.RepositoryHandler
+import org.gradle.api.artifacts.repositories.ArtifactRepository
+import org.gradle.api.artifacts.repositories.MavenArtifactRepository
+
+List<String> centralUrls = ['https://repo.maven.apache.org/maven2', 'https://repo1.maven.org/maven2']
+String portalRepoName = 'Gradle Central Plugin Repository'
+
+String mirrorUrl = providers.gradleProperty('mavenCentralMirror')
+        .orElse(providers.environmentVariable('MAVEN_CENTRAL_MIRROR'))
+        .getOrElse('')
+        .trim()
+if (!mirrorUrl) {
+    return
+}
+
+URI uri
+try {
+    uri = new URI(mirrorUrl)
+} catch (URISyntaxException e) {
+    throw new GradleException("Invalid Maven Central mirror URL '${mirrorUrl}': ${e.message}")
+}
+if (!(uri.scheme in ['http', 'https']) || !uri.host) {
+    throw new GradleException("Invalid Maven Central mirror URL '${mirrorUrl}': expected http(s)://host/path")
+}
+if (gradle.parent == null) {
+    logger.lifecycle("Maven Central mirror: ${mirrorUrl}")
+}
+
+def normalize = { Object url -> url?.toString()?.replaceAll('/+$', '') }
+
+def redirect = { RepositoryHandler repositories ->
+    repositories.withType(MavenArtifactRepository).configureEach { MavenArtifactRepository repo ->
+        if (normalize(repo.url) in centralUrls) {
+            logger.info("Maven Central mirror: '${repo.name}' ${repo.url} -> ${mirrorUrl}")
+            repo.url = mirrorUrl
+        }
+    }
+}
+
+// The pluginManagement {} block is evaluated before the rest of settings.gradle, so its repositories are final here.
+RepositoryHandler pluginRepositories = pluginManagement.repositories
+redirect(pluginRepositories)
+if (pluginRepositories.isEmpty()) {
+    // Keep the implicit Gradle Plugin Portal, which is dropped as soon as any repository is declared.
+    pluginRepositories.gradlePluginPortal()
+}
+int portalIndex = pluginRepositories.findIndexOf { it.name == portalRepoName }
+boolean mirrorBeforePortal = pluginRepositories.take(Math.max(portalIndex, 0))
+        .any { ArtifactRepository r -> r instanceof MavenArtifactRepository && normalize(r.url) == normalize(mirrorUrl) }
+if (portalIndex >= 0 && !mirrorBeforePortal) {
+    MavenArtifactRepository mirror = pluginRepositories.maven {
+        name = 'MavenCentralMirror'
+        url = mirrorUrl
+    }
+    pluginRepositories.remove(mirror)
+    pluginRepositories.addFirst(mirror)
+}
+
+redirect(dependencyResolutionManagement.repositories)
+
+gradle.beforeProject { project ->
+    redirect(project.buildscript.repositories)
+    redirect(project.repositories)
+}

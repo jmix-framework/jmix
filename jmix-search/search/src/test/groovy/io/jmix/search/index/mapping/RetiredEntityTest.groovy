@@ -88,6 +88,22 @@ class RetiredEntityTest extends Specification {
         indexStateRegistry.isIndexAvailable("search_index_test_retired")
     }
 
+    def "what a caller was handed does not change under it when the definitions are rebuilt"() {
+        given:
+        def state = new IndexConfigurationManager.State(
+                new IndexConfigurationManager.Registry(Stub(InstanceNameProvider)))
+        indexConfigurationManager.replaceConfigurations(state, [])
+        def held = state.registry.getIndexConfigurations()
+
+        when: "a rebuild lands while the caller is still walking what it was given"
+        indexConfigurationManager.replaceConfigurations(state, [])
+
+        then: """the rebuild assembles a registry of its own and publishes it, so the one the caller holds stays
+                 exactly as it was - the next caller gets the new one"""
+        held.is(state.registry.getIndexConfigurations()) == false
+        held.isEmpty()
+    }
+
     def "a configuration whose mapping carries the data of a tenant is left out whichever way it was built"() {
         given:
         def processor = Mock(AnnotatedIndexDefinitionProcessor)

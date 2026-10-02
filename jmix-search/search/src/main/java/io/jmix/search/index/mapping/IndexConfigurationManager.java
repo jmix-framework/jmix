@@ -42,8 +42,6 @@ import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
-import java.util.concurrent.locks.StampedLock;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -76,8 +74,15 @@ public class IndexConfigurationManager {
     private static final Logger log = LoggerFactory.getLogger(IndexConfigurationManager.class);
 
     protected static class State {
-        protected final Registry registry;
-        protected final StampedLock lock = new StampedLock();
+        /**
+         * Replaced as a whole when the definitions are rebuilt, never refilled in place.
+         * <p>
+         * A reader walks what it was handed - the queue builds its query from it, the change listener asks on
+         * every save, every search asks for the scope - and a walk takes long enough for a rebuild to land in the
+         * middle of it. Refilling would show that reader a set half taken apart; replacing leaves the set it
+         * holds exactly as it was and gives the next reader the new one.
+         */
+        protected volatile Registry registry;
         protected volatile boolean initialized;
 
         protected State(Registry registry) {
@@ -156,7 +161,7 @@ public class IndexConfigurationManager {
     public Collection<IndexConfiguration> getAllIndexConfigurations() {
         State state = getState();
         ensureInitialized(state);
-        return optimisticRead(state, state.registry::getIndexConfigurations);
+        return state.registry.getIndexConfigurations();
     }
 
     /**
@@ -169,7 +174,7 @@ public class IndexConfigurationManager {
     public IndexConfiguration getIndexConfigurationByEntityName(String entityName) {
         State state = getState();
         ensureInitialized(state);
-        IndexConfiguration indexConfiguration = optimisticRead(state, () -> state.registry.getIndexConfigurationByEntityName(entityName));
+        IndexConfiguration indexConfiguration = state.registry.getIndexConfigurationByEntityName(entityName);
         if (indexConfiguration == null) {
             throw new IllegalArgumentException("Entity '" + entityName + "' is not configured for indexing");
         }
@@ -185,7 +190,7 @@ public class IndexConfigurationManager {
     public Optional<IndexConfiguration> getIndexConfigurationByEntityNameOpt(String entityName) {
         State state = getState();
         ensureInitialized(state);
-        return optimisticReadOpt(state, () -> state.registry.getIndexConfigurationByEntityName(entityName));
+        return Optional.ofNullable(state.registry.getIndexConfigurationByEntityName(entityName));
     }
 
     /**
@@ -218,8 +223,7 @@ public class IndexConfigurationManager {
     public Collection<String> getAllIndexedEntities() {
         State state = getState();
         ensureInitialized(state);
-        // A snapshot, so that a caller iterating the result is unaffected by a concurrent registry rebuild.
-        return optimisticRead(state, () -> List.copyOf(state.registry.getAllIndexedEntities()));
+        return state.registry.getAllIndexedEntities();
     }
 
     /**
@@ -232,7 +236,7 @@ public class IndexConfigurationManager {
     public boolean isDirectlyIndexed(String entityName) {
         State state = getState();
         ensureInitialized(state);
-        return optimisticRead(state, () -> state.registry.hasDefinitionForEntity(entityName));
+        return state.registry.hasDefinitionForEntity(entityName);
     }
 
     /**
@@ -245,7 +249,7 @@ public class IndexConfigurationManager {
     public boolean isAffectedEntityClass(Class<?> entityClass) {
         State state = getState();
         ensureInitialized(state);
-        return optimisticRead(state, () -> state.registry.isEntityClassRegistered(entityClass));
+        return state.registry.isEntityClassRegistered(entityClass);
     }
 
     /**
@@ -258,7 +262,7 @@ public class IndexConfigurationManager {
     public Set<String> getLocalPropertyNamesAffectedByUpdate(Class<?> entityClass) {
         State state = getState();
         ensureInitialized(state);
-        return optimisticRead(state, () -> state.registry.getLocalPropertyNamesAffectedByUpdate(entityClass));
+        return state.registry.getLocalPropertyNamesAffectedByUpdate(entityClass);
     }
 
     /**
@@ -273,8 +277,8 @@ public class IndexConfigurationManager {
         log.debug("Get dependencies metadata for class {} with changed properties: {}", entityClass, changedProperties);
         State state = getState();
         ensureInitialized(state);
-        Map<String, Set<MetaPropertyPath>> backRefProperties = optimisticRead(state,
-                () -> state.registry.getBackRefPropertiesForUpdate(entityClass));
+        Map<String, Set<MetaPropertyPath>> backRefProperties =
+                state.registry.getBackRefPropertiesForUpdate(entityClass);
         if (MapUtils.isEmpty(backRefProperties)) {
             return Collections.emptyMap();
         }
@@ -392,13 +396,9 @@ public class IndexConfigurationManager {
      */
     protected void replaceConfigurations(State state, List<IndexConfiguration> configurations) {
         List<IndexConfiguration> accepted = dropIndexNameCollisions(configurations);
-        long stamp = state.lock.writeLock();
-        try {
-            state.registry.clean();
-            accepted.forEach(state.registry::registerIndexConfiguration);
-        } finally {
-            state.lock.unlockWrite(stamp);
-        }
+        Registry fresh = new Registry(instanceNameProvider);
+        accepted.forEach(fresh::registerIndexConfiguration);
+        state.registry = fresh;
     }
 
     /**
@@ -439,42 +439,6 @@ public class IndexConfigurationManager {
                 ? indexLayout.indexName(configuration, SAMPLE_TENANT_ID)
                 : indexLayout.indexName(configuration, null);
         return requireNonNull(indexName);
-    }
-
-    /**
-     * Executes the given supplier function using an optimistic read lock and wraps the result in an {@link Optional}.
-     *
-     * @param <T>      the type of the result provided by the supplier
-     * @param supplier the supplier function to execute within the optimistic read lock
-     * @return an {@link Optional} containing the result of the supplier's execution, or an empty {@link Optional} if the result is {@code null}
-     */
-    protected <T> Optional<T> optimisticReadOpt(State state, Supplier<T> supplier) {
-        return Optional.ofNullable(optimisticRead(state, supplier));
-    }
-
-    /**
-     * Executes the given supplier function in a read-safe manner using an optimistic read lock,
-     * ensuring the consistency of the read operation. If the optimistic lock fails validation,
-     * a fallback using a read lock is performed.
-     *
-     * @param <T>      the type of the result provided by the supplier
-     * @param supplier the supplier function to execute within the optimistic read lock
-     * @return the result of the supplier's execution
-     */
-    @Nullable
-    protected <T> T optimisticRead(State state, Supplier<T> supplier) {
-        T result;
-        long stamp = state.lock.tryOptimisticRead();
-        result = supplier.get();
-        if (!state.lock.validate(stamp)) {
-            stamp = state.lock.readLock();
-            try {
-                result = supplier.get();
-            } finally {
-                state.lock.unlockRead(stamp);
-            }
-        }
-        return result;
     }
 
     protected State getState() {
@@ -600,28 +564,28 @@ public class IndexConfigurationManager {
         }
 
         Collection<IndexConfiguration> getIndexConfigurations() {
-            return List.copyOf(indexConfigurationsByEntityName.values());
+            return indexConfigurationsByEntityName.values();
         }
 
         @Nullable
         Map<String, Set<MetaPropertyPath>> getBackRefPropertiesForUpdate(Class<?> entityClass) {
             Map<String, Set<MetaPropertyPath>> properties = referentiallyAffectedPropertiesForUpdate.get(entityClass);
-            return properties == null ? null : Map.copyOf(properties);
+            return properties;
         }
 
         @Nullable
         Set<MetaPropertyPath> getBackRefPropertiesForDelete(Class<?> entityClass) {
             Set<MetaPropertyPath> properties = referentiallyAffectedPropertiesForDelete.get(entityClass);
-            return properties == null ? null : Set.copyOf(properties);
+            return properties;
         }
 
         Set<String> getLocalPropertyNamesAffectedByUpdate(Class<?> entityClass) {
             Map<String, Set<MetaPropertyPath>> updateMetadata = referentiallyAffectedPropertiesForUpdate.get(entityClass);
-            return updateMetadata == null ? Collections.emptySet() : Set.copyOf(updateMetadata.keySet());
+            return updateMetadata == null ? Collections.emptySet() : updateMetadata.keySet();
         }
 
         Collection<String> getAllIndexedEntities() {
-            return Set.copyOf(indexConfigurationsByEntityName.keySet());
+            return indexConfigurationsByEntityName.keySet();
         }
 
         boolean hasDefinitionForEntity(String entityName) {
@@ -789,13 +753,6 @@ public class IndexConfigurationManager {
             return propertyPath.getMetaProperties().length > 1
                     ? createShiftedPropertyPath(propertyPath, 1)
                     : null;
-        }
-
-        public void clean() {
-            indexConfigurationsByEntityName.clear();
-            referentiallyAffectedPropertiesForUpdate.clear();
-            referentiallyAffectedPropertiesForDelete.clear();
-            registeredEntityClasses.clear();
         }
     }
 }

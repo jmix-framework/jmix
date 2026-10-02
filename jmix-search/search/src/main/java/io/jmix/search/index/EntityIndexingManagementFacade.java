@@ -361,7 +361,9 @@ public class EntityIndexingManagementFacade {
             int processed = scope.entityName() == null
                     ? indexingQueueManager.processNextEnqueueingSession(scope.tenantId())
                     : indexingQueueManager.processEnqueueingSession(scope.entityName(), scope.tenantId());
-            return String.format("%d instances have been enqueued", processed);
+            // Worded as the operations of the same name are: an administrator moving from the one-field form to
+            // this one is doing the same thing and should read the same sentence.
+            return String.format("Enqueued %d instances", processed);
         });
     }
 

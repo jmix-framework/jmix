@@ -82,14 +82,11 @@ public class IndexingLocker {
     }
 
     /**
-     * Keeps two bulk enqueueings of the same data from running at once - the synchronous one and the batch of an
-     * enqueueing session both load the ids of an entity and put them into the queue, and doing that twice over
-     * the same records fills the queue with duplicates and moves the session's position twice.
+     * Keeps two bulk enqueueings of the same records from running at once, which would fill the queue with
+     * duplicates and move the session's position twice.
      * <p>
-     * The data in question is that of one entity of one tenant: an entity split by tenants has a session per
-     * tenant, and a synchronous enqueueing asked without a tenant walks the tenants one at a time. Work on the
-     * records of one tenant has nothing to exclude work on the records of another from. For an entity that is
-     * not split the tenant is null and the key is the entity name alone, as it was before tenants existed.
+     * The records are those of one entity of one tenant, so that work on one tenant does not exclude work on
+     * another. An entity that is not split has a null tenant and is keyed by its name alone, as before.
      */
     public boolean tryLockEntityForEnqueueIndexAll(String entityName, @Nullable String tenantId) {
         checkEntityInIndexingScope(entityName);

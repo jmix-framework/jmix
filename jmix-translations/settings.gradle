@@ -15,3 +15,5 @@
  */
 
 rootProject.name = 'jmix-translations'
+
+apply from: '../gradle/maven-central-mirror.settings.gradle'

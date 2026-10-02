@@ -1,0 +1,10 @@
+{
+	"properties": {
+		"textValue": {
+			"type": "text"
+		},
+		"_instance_name": {
+			"type": "text"
+		}
+	}
+}

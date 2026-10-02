@@ -17,6 +17,8 @@
 package io.jmix.search.index.impl;
 
 import io.jmix.search.index.mapping.IndexConfigurationManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -36,6 +38,8 @@ import java.util.stream.Collectors;
  */
 @Component("search_IndexStateRegistry")
 public class IndexStateRegistry {
+
+    private static final Logger log = LoggerFactory.getLogger(IndexStateRegistry.class);
 
     protected final Map<String, Boolean> registry;
     protected final IndexConfigurationManager indexConfigurationManager;
@@ -65,9 +69,9 @@ public class IndexStateRegistry {
     }
 
     public List<String> getAllUnavailableIndexedEntities() {
-        return registry.entrySet().stream()
-                .filter(entry -> !entry.getValue())
-                .map(Map.Entry::getKey)
+        // Entities indexed by a later metadata generation have no entry yet and are unavailable by default.
+        return indexConfigurationManager.getAllIndexedEntities().stream()
+                .filter(entityName -> !isIndexAvailable(entityName))
                 .collect(Collectors.toList());
     }
 
@@ -75,7 +79,8 @@ public class IndexStateRegistry {
         if (indexConfigurationManager.isDirectlyIndexed(entityName)) {
             registry.put(entityName, value);
         } else {
-            throw new IllegalArgumentException(String.format("Entity '%s' is not indexed", entityName));
+            // A retired entity from an older metadata generation is ignored instead of failing a background operation.
+            log.debug("Entity '{}' is not indexed, skipping state change", entityName);
         }
     }
 }

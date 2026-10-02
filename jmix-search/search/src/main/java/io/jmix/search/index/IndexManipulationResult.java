@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Haulmont.
+ * Copyright 2026 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,16 +16,16 @@
 
 package io.jmix.search.index;
 
-public enum IndexSynchronizationStatus implements AtomicIndexOperationResult {
-    MISSING,
-    IRRELEVANT,
-    CREATED,
-    RECREATED,
-    UPDATED,
-    ACTUAL;
+public enum IndexManipulationResult implements AtomicIndexOperationResult {
+    SUCCESS,
+    FAILURE;
+
+    public static IndexManipulationResult of(boolean success){
+        return success ? SUCCESS : FAILURE;
+    }
 
     @Override
     public boolean isSuccess() {
-        return this == ACTUAL || this == CREATED || this == RECREATED || this == UPDATED;
+        return this == SUCCESS;
     }
 }

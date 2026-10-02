@@ -156,8 +156,16 @@ public class OpenSearchEntitySearcher extends AbstractEntitySearcher implements 
         return requestContext;
     }
 
+    /**
+     * Missing indexes are ignored rather than failing the request.
+     * <p>
+     * A tenant-aware entity is mapped to one index per tenant, and an index of a single tenant can be absent: the
+     * schema management strategy forbids creating it, or the tenant appeared while the engine was unreachable.
+     * Without this the engine answers with an error for the whole request, and one tenant's missing index breaks
+     * the search of everyone, including entities that have no tenants at all.
+     */
     protected void initRequest(SearchRequest.Builder builder, List<String> targetIndexes) {
-        builder.index(targetIndexes);
+        builder.index(targetIndexes).ignoreUnavailable(true);
     }
 
     protected void applyPostStrategyRequestSettings(SearchRequest.Builder builder, SearchContext searchContext, int offset) {

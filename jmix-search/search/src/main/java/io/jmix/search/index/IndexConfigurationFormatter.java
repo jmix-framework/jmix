@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Haulmont.
+ * Copyright 2026 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,16 +16,22 @@
 
 package io.jmix.search.index;
 
-public enum IndexSynchronizationStatus implements AtomicIndexOperationResult {
-    MISSING,
-    IRRELEVANT,
-    CREATED,
-    RECREATED,
-    UPDATED,
-    ACTUAL;
+import io.jmix.core.annotation.Internal;
+import org.springframework.lang.Nullable;
 
-    @Override
-    public boolean isSuccess() {
-        return this == ACTUAL || this == CREATED || this == RECREATED || this == UPDATED;
+@Internal
+public final class IndexConfigurationFormatter {
+
+    private IndexConfigurationFormatter() {
+    }
+
+    public static String format(@Nullable IndexConfiguration configuration) {
+        if (configuration == null) {
+            return "null";
+        }
+        return String.format("indexClass=%s, entityName='%s', tenantAware=%s",
+                configuration.getClass().getName(),
+                configuration.getEntityName(),
+                configuration.isTenantAware());
     }
 }

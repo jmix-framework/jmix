@@ -90,4 +90,14 @@ public interface EntityIndexer {
      * @return {@link IndexResult}
      */
     IndexResult deleteCollectionByEntityIds(Collection<Id<?>> entityIds);
+
+    /**
+     * Deletes documents of provided records, each with the tenant it belonged to.
+     * <p>
+     * A target whose tenant is unknown is deleted from every index of its entity - see {@link EntityDeletionTarget}.
+     *
+     * @param targets records to delete with their tenants
+     * @return {@link IndexResult}
+     */
+    IndexResult deleteCollectionByTargets(Collection<EntityDeletionTarget> targets);
 }

@@ -20,12 +20,17 @@ import io.jmix.core.*;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.security.SystemAuthenticator;
 import io.jmix.data.StoreAwareLocator;
 import io.jmix.search.SearchProperties;
+import io.jmix.search.index.EntityDeletionTarget;
 import io.jmix.search.index.EntityIndexer;
 import io.jmix.search.index.IndexConfiguration;
+import io.jmix.search.index.IndexManipulationResult;
 import io.jmix.search.index.IndexResult;
+import io.jmix.search.index.IndexOperationResult;
+import io.jmix.search.index.impl.IndexLayout;
 import io.jmix.search.index.impl.IndexStateRegistry;
 import io.jmix.search.index.impl.IndexingLocker;
 import io.jmix.search.index.mapping.IndexConfigurationManager;
@@ -34,17 +39,22 @@ import io.jmix.search.index.queue.EntityIdsLoader.ResultHolder;
 import io.jmix.search.index.queue.IndexingQueueManager;
 import io.jmix.search.index.queue.entity.EnqueueingSession;
 import io.jmix.search.index.queue.entity.IndexingQueueItem;
+import io.jmix.search.index.impl.MultitenancyAdapter;
 import org.apache.commons.collections4.MapUtils;
 import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
+import java.util.ArrayList;
 import java.util.*;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import static java.lang.String.format;
@@ -65,8 +75,12 @@ public class JpaIndexingQueueManager implements IndexingQueueManager {
     protected final IndexingLocker locker;
     protected final SearchProperties searchProperties;
     protected final IndexStateRegistry indexStateRegistry;
+
+    @Autowired
+    protected IndexLayout indexLayout;
     protected final EnqueueingSessionManager enqueueingSessionManager;
     protected final EntityIdsLoaderProvider entityIdsLoaderProvider;
+    protected final MultitenancyAdapter multitenancyAdapter;
 
     public JpaIndexingQueueManager(SearchProperties searchProperties,
                                    UnconstrainedDataManager dataManager,
@@ -80,7 +94,8 @@ public class JpaIndexingQueueManager implements IndexingQueueManager {
                                    IndexingLocker locker,
                                    IndexStateRegistry indexStateRegistry,
                                    EnqueueingSessionManager enqueueingSessionManager,
-                                   EntityIdsLoaderProvider entityIdsLoaderProvider) {
+                                   EntityIdsLoaderProvider entityIdsLoaderProvider,
+                                   MultitenancyAdapter multitenancyAdapter) {
         this.searchProperties = searchProperties;
         this.dataManager = dataManager;
         this.metadata = metadata;
@@ -94,6 +109,7 @@ public class JpaIndexingQueueManager implements IndexingQueueManager {
         this.indexStateRegistry = indexStateRegistry;
         this.enqueueingSessionManager = enqueueingSessionManager;
         this.entityIdsLoaderProvider = entityIdsLoaderProvider;
+        this.multitenancyAdapter = multitenancyAdapter;
     }
 
     @Override
@@ -112,17 +128,34 @@ public class JpaIndexingQueueManager implements IndexingQueueManager {
     }
 
     @Override
-    public int emptyQueue(String entityName) {
-        Preconditions.checkNotEmptyString(entityName);
+    public int emptyQueue(@Nullable String entityName, @Nullable String tenantId) {
         TransactionTemplate transactionTemplate = storeAwareLocator.getTransactionTemplate(Stores.MAIN);
         transactionTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
         Integer result = transactionTemplate.execute(status -> {
-            log.debug("Empty queue for entity '{}'", entityName);
+            log.debug("Empty queue for entity '{}' of tenant '{}'", entityName, tenantId);
             EntityManager entityManager = storeAwareLocator.getEntityManager(Stores.MAIN);
-            Query query = entityManager.createQuery("delete from search_IndexingQueue q where q.entityName = ?1");
-            query.setParameter(1, entityName);
+
+            StringBuilder queryString = new StringBuilder("delete from search_IndexingQueue q");
+            List<String> conditions = new ArrayList<>();
+            if (entityName != null) {
+                conditions.add("q.entityName = :entityName");
+            }
+            if (tenantId != null) {
+                conditions.add("q.tenantId = :tenantId");
+            }
+            if (!conditions.isEmpty()) {
+                queryString.append(" where ").append(String.join(" and ", conditions));
+            }
+
+            Query query = entityManager.createQuery(queryString.toString());
+            if (entityName != null) {
+                query.setParameter("entityName", entityName);
+            }
+            if (tenantId != null) {
+                query.setParameter("tenantId", tenantId);
+            }
             int deleted = query.executeUpdate();
-            log.debug("{} records for entity '{}' have been deleted from queue", deleted, entityName);
+            log.debug("{} records have been deleted from queue", deleted);
             return deleted;
         });
         return result == null ? 0 : result;
@@ -147,6 +180,21 @@ public class JpaIndexingQueueManager implements IndexingQueueManager {
     }
 
     @Override
+    public int enqueueIndexByEntityId(Id<?> entityId, @Nullable String tenantId) {
+        Preconditions.checkNotNullArgument(entityId);
+        if (tenantId == null) {
+            return enqueueIndexByEntityId(entityId);
+        }
+        MetaClass metaClass = metadata.getClass(entityId.getEntityClass());
+        if (indexConfigurationManager.getIndexConfigurationByEntityNameOpt(metaClass.getName()).isEmpty()) {
+            return 0;
+        }
+        IndexingQueueItem item = createQueueItem(metaClass.getName(), idSerialization.idToString(entityId),
+                IndexingOperation.INDEX, tenantId);
+        return enqueue(Collections.singletonList(item));
+    }
+
+    @Override
     public int enqueueIndexCollectionByEntityIds(Collection<Id<?>> entityIds) {
         Preconditions.checkNotNullArgument(entityIds);
         return enqueueByIds(entityIds, IndexingOperation.INDEX);
@@ -154,17 +202,35 @@ public class JpaIndexingQueueManager implements IndexingQueueManager {
 
     @Override
     public int enqueueIndexAll() {
-        return indexConfigurationManager.getAllIndexConfigurations().stream()
-                .map(IndexConfiguration::getEntityName)
-                .map(this::enqueueIndexAll)
-                .reduce(Integer::sum)
-                .orElse(0);
+        return enqueueIndexAll(null, null);
     }
 
     @Override
-    public int enqueueIndexAll(String entityName) {
-        Preconditions.checkNotEmptyString(entityName);
-        return enqueueIndexAll(entityName, searchProperties.getReindexEntityEnqueueBatchSize());
+    public int enqueueIndexAll(@Nullable String entityName, @Nullable String tenantId) {
+        Collection<IndexConfiguration> configurations = entityName == null
+                ? indexConfigurationManager.getAllIndexConfigurations()
+                : List.of(indexConfigurationManager.getIndexConfigurationByEntityName(entityName));
+
+        int batchSize = searchProperties.getReindexEntityEnqueueBatchSize();
+        int enqueued = 0;
+        for (IndexConfiguration configuration : configurations) {
+            if (tenantId != null && !indexLayout.isSplitByTenants(configuration)) {
+                // The data of this entity is shared by every tenant, so none of it belongs to the named one.
+                log.debug("Entity '{}' is not stored per tenant: nothing of tenant '{}' to enqueue",
+                        configuration.getEntityName(), tenantId);
+                continue;
+            }
+            if (tenantId == null && indexLayout.isSplitByTenants(configuration)) {
+                // One pass per tenant: the records of a tenant are what one index holds, and an item that
+                // remembers no tenant cannot be told apart from an item addressed to an unavailable index.
+                for (IndexLayout.TenantIndex index : indexLayout.allIndexes(configuration)) {
+                    enqueued += enqueueIndexAll(configuration.getEntityName(), index.tenantId(), batchSize);
+                }
+                continue;
+            }
+            enqueued += enqueueIndexAll(configuration.getEntityName(), tenantId, batchSize);
+        }
+        return enqueued;
     }
 
     @Override
@@ -173,51 +239,120 @@ public class JpaIndexingQueueManager implements IndexingQueueManager {
     }
 
     @Override
-    public void initAsyncEnqueueIndexAll() {
-        indexConfigurationManager.getAllIndexConfigurations().stream()
-                .map(IndexConfiguration::getEntityName)
-                .forEach(this::initAsyncEnqueueIndexAll);
+    public List<String> getEntityNamesOfEnqueueingSessions(@Nullable String tenantId) {
+        if (tenantId == null) {
+            return getEntityNamesOfEnqueueingSessions();
+        }
+        checkMultitenancyModulePresent();
+        return enqueueingSessionManager.loadEntityNamesOfSessions(tenantId);
     }
 
     @Override
-    public boolean initAsyncEnqueueIndexAll(String entityName) {
+    public List<IndexOperationResult<IndexManipulationResult>> initAsyncEnqueueIndexAll() {
+        List<IndexOperationResult<IndexManipulationResult>> results = new ArrayList<>();
+        indexConfigurationManager.getAllIndexConfigurations().stream()
+                .map(IndexConfiguration::getEntityName)
+                .forEach(entityName -> results.addAll(initAsyncEnqueueIndexAll(entityName)));
+        return results;
+    }
+
+    @Override
+    public List<IndexOperationResult<IndexManipulationResult>> initAsyncEnqueueIndexAll(String entityName) {
         return enqueueingSessionManager.initSession(entityName);
     }
 
     @Override
-    public void suspendAsyncEnqueueIndexAll() {
-        indexConfigurationManager.getAllIndexConfigurations().stream()
-                .map(IndexConfiguration::getEntityName)
-                .forEach(this::suspendAsyncEnqueueIndexAll);
+    public List<IndexOperationResult<IndexManipulationResult>> initAsyncEnqueueIndexAll(@Nullable String entityName, @Nullable String tenantId) {
+        if (tenantId != null) {
+            checkMultitenancyModulePresent();
+        }
+        if (entityName == null) {
+            return everyEntityOfTenant(tenantId, entity -> initAsyncEnqueueIndexAll(entity, tenantId));
+        }
+        return tenantId == null
+                ? initAsyncEnqueueIndexAll(entityName)
+                : enqueueingSessionManager.initSession(entityName, tenantId);
     }
 
     @Override
-    public boolean suspendAsyncEnqueueIndexAll(String entityName) {
+    public List<IndexOperationResult<IndexManipulationResult>> suspendAsyncEnqueueIndexAll() {
+        List<IndexOperationResult<IndexManipulationResult>> results = new ArrayList<>();
+        indexConfigurationManager.getAllIndexConfigurations().stream()
+                .map(IndexConfiguration::getEntityName)
+                .forEach(entityName -> results.addAll(suspendAsyncEnqueueIndexAll(entityName)));
+        return results;
+    }
+
+    @Override
+    public List<IndexOperationResult<IndexManipulationResult>> suspendAsyncEnqueueIndexAll(String entityName) {
         return enqueueingSessionManager.suspendSession(entityName);
     }
 
     @Override
-    public void resumeAsyncEnqueueIndexAll() {
-        indexConfigurationManager.getAllIndexConfigurations().stream()
-                .map(IndexConfiguration::getEntityName)
-                .forEach(this::resumeAsyncEnqueueIndexAll);
+    public List<IndexOperationResult<IndexManipulationResult>> suspendAsyncEnqueueIndexAll(@Nullable String entityName, @Nullable String tenantId) {
+        if (tenantId != null) {
+            checkMultitenancyModulePresent();
+        }
+        if (entityName == null) {
+            return everyEntityOfTenant(tenantId, entity -> suspendAsyncEnqueueIndexAll(entity, tenantId));
+        }
+        return tenantId == null
+                ? suspendAsyncEnqueueIndexAll(entityName)
+                : enqueueingSessionManager.suspendSession(entityName, tenantId);
     }
 
     @Override
-    public boolean resumeAsyncEnqueueIndexAll(String entityName) {
+    public List<IndexOperationResult<IndexManipulationResult>> resumeAsyncEnqueueIndexAll() {
+        List<IndexOperationResult<IndexManipulationResult>> results = new ArrayList<>();
+        indexConfigurationManager.getAllIndexConfigurations().stream()
+                .map(IndexConfiguration::getEntityName)
+                .forEach(entityName -> results.addAll(resumeAsyncEnqueueIndexAll(entityName)));
+        return results;
+    }
+
+    @Override
+    public List<IndexOperationResult<IndexManipulationResult>> resumeAsyncEnqueueIndexAll(String entityName) {
         return enqueueingSessionManager.resumeSession(entityName);
     }
 
     @Override
-    public void terminateAsyncEnqueueIndexAll() {
-        indexConfigurationManager.getAllIndexConfigurations().stream()
-                .map(IndexConfiguration::getEntityName)
-                .forEach(this::terminateAsyncEnqueueIndexAll);
+    public List<IndexOperationResult<IndexManipulationResult>> resumeAsyncEnqueueIndexAll(@Nullable String entityName, @Nullable String tenantId) {
+        if (tenantId != null) {
+            checkMultitenancyModulePresent();
+        }
+        if (entityName == null) {
+            return everyEntityOfTenant(tenantId, entity -> resumeAsyncEnqueueIndexAll(entity, tenantId));
+        }
+        return tenantId == null
+                ? resumeAsyncEnqueueIndexAll(entityName)
+                : enqueueingSessionManager.resumeSession(entityName, tenantId);
     }
 
     @Override
-    public boolean terminateAsyncEnqueueIndexAll(String entityName) {
+    public List<IndexOperationResult<IndexManipulationResult>> terminateAsyncEnqueueIndexAll() {
+        List<IndexOperationResult<IndexManipulationResult>> results = new ArrayList<>();
+        indexConfigurationManager.getAllIndexConfigurations().stream()
+                .map(IndexConfiguration::getEntityName)
+                .forEach(entityName -> results.addAll(terminateAsyncEnqueueIndexAll(entityName)));
+        return results;
+    }
+
+    @Override
+    public List<IndexOperationResult<IndexManipulationResult>> terminateAsyncEnqueueIndexAll(String entityName) {
         return enqueueingSessionManager.removeSession(entityName);
+    }
+
+    @Override
+    public List<IndexOperationResult<IndexManipulationResult>> terminateAsyncEnqueueIndexAll(@Nullable String entityName, @Nullable String tenantId) {
+        if (tenantId != null) {
+            checkMultitenancyModulePresent();
+        }
+        if (entityName == null) {
+            return everyEntityOfTenant(tenantId, entity -> terminateAsyncEnqueueIndexAll(entity, tenantId));
+        }
+        return tenantId == null
+                ? terminateAsyncEnqueueIndexAll(entityName)
+                : enqueueingSessionManager.removeSession(entityName, tenantId);
     }
 
     @Override
@@ -226,24 +361,50 @@ public class JpaIndexingQueueManager implements IndexingQueueManager {
     }
 
     @Override
+    public int processNextEnqueueingSession(@Nullable String tenantId) {
+        return processNextEnqueueingSession(tenantId, searchProperties.getReindexEntityEnqueueBatchSize());
+    }
+
+    @Override
     public int processNextEnqueueingSession(int batchSize) {
+        return processSession(enqueueingSessionManager::getNextActiveSession, batchSize);
+    }
+
+    @Override
+    public int processNextEnqueueingSession(@Nullable String tenantId, int batchSize) {
+        if (tenantId == null) {
+            return processNextEnqueueingSession(batchSize);
+        }
+        checkMultitenancyModulePresent();
+        return processSession(() -> enqueueingSessionManager.getNextActiveSession(tenantId), batchSize);
+    }
+
+    /**
+     * Advances one session by a batch, whichever session the caller points at.
+     * <p>
+     * Every caller supplies its own way of choosing the session - the next active one of any tenant, the next
+     * active one of a named entity, or the session of a named entity and tenant. Choosing is the only thing that
+     * differs between them; locking, authentication and the batch itself are the same.
+     */
+    protected int processSession(Supplier<EnqueueingSession> nextSession, int batchSize) {
         try {
             authenticator.begin();
             log.debug("Get next active enqueueing session");
-            EnqueueingSession session = enqueueingSessionManager.getNextActiveSession();
+            EnqueueingSession session = nextSession.get();
             if (session == null) {
                 log.trace("Active enqueueing session not found");
                 return 0;
             }
 
-            if (!locker.tryLockEntityForEnqueueIndexAll(session.getEntityName())) {
-                log.info("Unable to process enqueueing session for entity '{}': currently in progress", session.getEntityName());
+            if (!locker.tryLockEntityForEnqueueIndexAll(session.getEntityName(), session.getTenantId())) {
+                log.info("Unable to process enqueueing session for entity '{}' of tenant '{}': currently in progress",
+                        session.getEntityName(), session.getTenantId());
                 return 0;
             }
             try {
                 return processEnqueueingSession(session, batchSize);
             } finally {
-                locker.unlockEntityForEnqueueIndexAll(session.getEntityName());
+                locker.unlockEntityForEnqueueIndexAll(session.getEntityName(), session.getTenantId());
             }
         } finally {
             authenticator.end();
@@ -256,30 +417,22 @@ public class JpaIndexingQueueManager implements IndexingQueueManager {
     }
 
     @Override
+    public int processEnqueueingSession(String entityName, @Nullable String tenantId) {
+        return processEnqueueingSession(entityName, tenantId, searchProperties.getReindexEntityEnqueueBatchSize());
+    }
+
+    @Override
     public int processEnqueueingSession(String entityName, int batchSize) {
-        EnqueueingSession session = null;
-        try {
-            authenticator.begin();
+        return processEnqueueingSession(entityName, null, batchSize);
+    }
 
-            log.debug("Get enqueueing session for entity '{}'", entityName);
-            session = enqueueingSessionManager.getSession(entityName);
-            if (session == null) {
-                log.trace("Enqueueing session not found");
-                return 0;
-            }
-
-            if (!locker.tryLockEntityForEnqueueIndexAll(session.getEntityName())) {
-                log.info("Unable to process enqueueing session for entity '{}': currently in progress", session.getEntityName());
-                return 0;
-            }
-            try {
-                return processEnqueueingSession(session, batchSize);
-            } finally {
-                locker.unlockEntityForEnqueueIndexAll(session.getEntityName());
-            }
-        } finally {
-            authenticator.end();
+    @Override
+    public int processEnqueueingSession(String entityName, @Nullable String tenantId, int batchSize) {
+        if (tenantId == null) {
+            return processSession(() -> enqueueingSessionManager.getNextActiveSessionOfEntity(entityName), batchSize);
         }
+        checkMultitenancyModulePresent();
+        return processSession(() -> enqueueingSessionManager.getSession(entityName, tenantId), batchSize);
     }
 
     @Override
@@ -291,7 +444,9 @@ public class JpaIndexingQueueManager implements IndexingQueueManager {
     @Override
     public int enqueueDeleteCollection(Collection<Object> entityInstances) {
         Preconditions.checkNotNullArgument(entityInstances);
-        return enqueue(entityInstances, IndexingOperation.DELETE);
+        return enqueueDeleteTargets(entityInstances.stream()
+                .map(instance -> new EntityDeletionTarget(Id.of(instance), tenantOfInstance(instance)))
+                .toList());
     }
 
     @Override
@@ -301,9 +456,55 @@ public class JpaIndexingQueueManager implements IndexingQueueManager {
     }
 
     @Override
+    public int enqueueDeleteByEntityId(Id<?> entityId, @Nullable String tenantId) {
+        Preconditions.checkNotNullArgument(entityId);
+        if (tenantId == null) {
+            return enqueueDeleteByEntityId(entityId);
+        }
+        return enqueueDeleteTargets(List.of(new EntityDeletionTarget(entityId, tenantId)));
+    }
+
+    @Override
     public int enqueueDeleteCollectionByEntityIds(Collection<Id<?>> entityIds) {
         Preconditions.checkNotNullArgument(entityIds);
-        return enqueueByIds(entityIds, IndexingOperation.DELETE);
+        return enqueueDeleteTargets(entityIds.stream().map(EntityDeletionTarget::tenantUnknown).toList());
+    }
+
+    /**
+     * Puts deletions into the queue, each carrying the tenant of its record when the caller knows it.
+     * <p>
+     * The tenant is stored because it cannot be determined when the item is processed: the record is gone from the
+     * database by then. An item without a tenant is deleted from every index of its entity.
+     */
+    protected int enqueueDeleteTargets(Collection<EntityDeletionTarget> targets) {
+        List<IndexingQueueItem> queueItems = targets.stream()
+                .map(target -> {
+                    MetaClass metaClass = metadata.getClass(target.entityId().getEntityClass());
+                    return indexConfigurationManager.getIndexConfigurationByEntityNameOpt(metaClass.getName())
+                            .map(configuration -> createQueueItem(metaClass.getName(),
+                                    idSerialization.idToString(target.entityId()),
+                                    IndexingOperation.DELETE,
+                                    target.tenantId()))
+                            .orElse(null);
+                })
+                .filter(Objects::nonNull)
+                .toList();
+        return enqueue(queueItems);
+    }
+
+    /**
+     * Reads the tenant off an instance the caller holds. An instance detached with the tenant attribute left
+     * unfetched has no tenant to read; it is then left unknown and the deletion falls back to every index of the
+     * entity.
+     */
+    @Nullable
+    protected String tenantOfInstance(Object instance) {
+        if (!multitenancyAdapter.isTenantIdReadable(instance)) {
+            log.debug("The tenant of an instance of entity '{}' cannot be read: its deletion is enqueued without one",
+                    metadata.getClass(instance).getName());
+            return null;
+        }
+        return multitenancyAdapter.getTenantIdForInstance(instance);
     }
 
     @Override
@@ -350,7 +551,7 @@ public class JpaIndexingQueueManager implements IndexingQueueManager {
         ResultHolder resultHolder = loader.loadNextIds(session, batchSize);
         List<?> ids = resultHolder.getIds();
         log.debug("Next {} enqueuing instances of entity '{}': {}", ids.size(), entityName, ids);
-        int processed = processRawIds(ids, entityClass, batchSize);
+        int processed = processRawIds(ids, entityClass, session.getTenantId(), batchSize);
         log.debug("Processed {} instances of entity '{}'", processed, entityName);
         if (ids.size() < batchSize) {
             log.debug("All instances of entity '{}' have been processed", entityName);
@@ -362,7 +563,7 @@ public class JpaIndexingQueueManager implements IndexingQueueManager {
         return processed;
     }
 
-    protected int enqueueIndexAll(String entityName, int batchSize) {
+    protected int enqueueIndexAll(String entityName, @Nullable String tenantId, int batchSize) {
         if (batchSize <= 0) {
             throw new IllegalArgumentException("Size of enqueuing batch during reindex entity must be positive");
         }
@@ -371,21 +572,22 @@ public class JpaIndexingQueueManager implements IndexingQueueManager {
             throw new IllegalArgumentException(String.format("Unable to enqueue instances of entity '%s' - entity is not configured for indexing", entityName));
         }
 
-        if (!locker.tryLockEntityForEnqueueIndexAll(entityName)) {
-            log.info("Unable to enqueue all instances of entity '{}' for indexing: 'Enqueue all' process is active", entityName);
+        if (!locker.tryLockEntityForEnqueueIndexAll(entityName, tenantId)) {
+            log.info("Unable to enqueue all instances of entity '{}' of tenant '{}' for indexing:"
+                    + " 'Enqueue all' process is active", entityName, tenantId);
             return 0;
         }
 
         try {
             MetaClass metaClass = metadata.getClass(entityName);
-            List<?> rawIds = loadRawIds(metaClass);
-            return processRawIds(rawIds, metaClass, batchSize);
+            List<?> rawIds = loadRawIds(metaClass, tenantId);
+            return processRawIds(rawIds, metaClass, tenantId, batchSize);
         } finally {
-            locker.unlockEntityForEnqueueIndexAll(entityName);
+            locker.unlockEntityForEnqueueIndexAll(entityName, tenantId);
         }
     }
 
-    protected List<?> loadRawIds(MetaClass metaClass) {
+    protected List<?> loadRawIds(MetaClass metaClass, @Nullable String tenantId) {
         String entityName = metaClass.getName();
         String primaryKeyName = metadataTools.getPrimaryKeyName(metaClass);
         log.debug("Primary key of entity '{}': '{}'", entityName, primaryKeyName);
@@ -406,10 +608,23 @@ public class JpaIndexingQueueManager implements IndexingQueueManager {
         List<?> rawIds;
         TransactionTemplate transactionTemplate = storeAwareLocator.getTransactionTemplate(metaClass.getStore().getName());
         transactionTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
+        String tenantProperty = tenantId == null ? null : tenantPropertyName(metaClass);
         rawIds = transactionTemplate.execute(status -> {
             EntityManager em = storeAwareLocator.getEntityManager(metaClass.getStore().getName());
-            String discriminatorCondition = metaClass.getDescendants().isEmpty() ? "" : "where TYPE(e) = " + entityName;
-            Query query = em.createQuery(format("select e.%s from %s e %s", primaryKeyName, entityName, discriminatorCondition));
+
+            List<String> conditions = new ArrayList<>();
+            if (!metaClass.getDescendants().isEmpty()) {
+                conditions.add("TYPE(e) = " + entityName);
+            }
+            if (tenantProperty != null) {
+                conditions.add("e." + tenantProperty + " = :tenantId");
+            }
+            String where = conditions.isEmpty() ? "" : "where " + String.join(" and ", conditions);
+
+            Query query = em.createQuery(format("select e.%s from %s e %s", primaryKeyName, entityName, where));
+            if (tenantProperty != null) {
+                query.setParameter("tenantId", tenantId);
+            }
             return query.getResultList();
         });
         if (rawIds == null) {
@@ -418,7 +633,26 @@ public class JpaIndexingQueueManager implements IndexingQueueManager {
         return rawIds;
     }
 
-    protected int processRawIds(List<?> rawIds, MetaClass metaClass, int batchSize) {
+    /**
+     * @return name of the attribute holding the tenant of the entity
+     * @throws IllegalArgumentException if the entity has no such attribute, so that instances of one tenant cannot
+     *                                  be asked for at all
+     */
+    protected String tenantPropertyName(MetaClass metaClass) {
+        MetaProperty tenantProperty = metadataTools.findTenantIdProperty(metaClass);
+        if (tenantProperty == null) {
+            throw new IllegalArgumentException(String.format(
+                    "Unable to enqueue instances of one tenant: entity '%s' is not tenant-aware", metaClass.getName()));
+        }
+        return tenantProperty.getName();
+    }
+
+    /**
+     * @param tenantId tenant every one of these records belongs to, or null when the entity is not split by
+     *                 tenants - the ids were loaded with that tenant as the condition, so recording it costs
+     *                 nothing and lets the queue tell the items of one tenant from the items of another
+     */
+    protected int processRawIds(List<?> rawIds, MetaClass metaClass, @Nullable String tenantId, int batchSize) {
         Class<Object> entityClass = metaClass.getJavaClass();
         String entityName = metaClass.getName();
         int totalSize = rawIds.size();
@@ -436,7 +670,7 @@ public class JpaIndexingQueueManager implements IndexingQueueManager {
             } else {
                 List<IndexingQueueItem> queueItems = rawIdsBatch.stream()
                         .map(id -> idSerialization.idToString(Id.of(id, entityClass)))
-                        .map(id -> createQueueItem(entityName, id, IndexingOperation.INDEX))
+                        .map(id -> createQueueItem(entityName, id, IndexingOperation.INDEX, tenantId))
                         .collect(Collectors.toList());
 
                 int enqueued = enqueue(queueItems);
@@ -471,8 +705,7 @@ public class JpaIndexingQueueManager implements IndexingQueueManager {
 
             List<IndexingQueueItem> queueItems;
             do {
-                List<String> unavailableEntities = indexStateRegistry.getAllUnavailableIndexedEntities();
-                LoadContext<IndexingQueueItem> loadContext = createDequeueLoadContext(unavailableEntities, batchSize);
+                LoadContext<IndexingQueueItem> loadContext = createDequeueLoadContext(batchSize);
                 log.trace("Dequeue items by load context: {}", loadContext);
                 queueItems = dataManager.loadList(loadContext);
                 log.debug("Dequeued {} items: {}", queueItems.size(), queueItems);
@@ -487,6 +720,14 @@ public class JpaIndexingQueueManager implements IndexingQueueManager {
                 dataManager.save(saveContext);
 
                 count += successfullyProcessedQueueItems.size();
+
+                // A batch where nothing succeeded leaves the queue exactly as it was, so the next iteration would
+                // load the same items and the loop would never end.
+                if (successfullyProcessedQueueItems.isEmpty()) {
+                    log.info("Stop processing the queue: none of the {} items of the batch could be processed",
+                            queueItems.size());
+                    break;
+                }
             } while (processEntireQueue && queueItems.size() == batchSize);
         } finally {
             locker.unlockQueueProcessing();
@@ -497,15 +738,73 @@ public class JpaIndexingQueueManager implements IndexingQueueManager {
         return count;
     }
 
-    protected LoadContext<IndexingQueueItem> createDequeueLoadContext(List<String> unavailableEntities, int batchSize) {
+    /**
+     * Builds the query that takes the next batch, leaving out the items that cannot be processed right now.
+     * <p>
+     * An item whose index is unavailable cannot be processed and is not removed from the queue, so taking it
+     * would put it back at the head of the next batch - the batch is the oldest items first - and the queue
+     * would stop for everyone. The items are therefore excluded by the query rather than discovered late.
+     * <p>
+     * Exclusion is per tenant where the tenant is known: a record of a tenant whose index is missing waits,
+     * while records of the other tenants of the same entity keep flowing. An item that does not carry a tenant
+     * is excluded together with its entity, because there is no telling which index it is addressed to.
+     * <p>
+     * The query is rebuilt for every batch, so the indexes of all configurations are asked for in one call: the
+     * layout reads the list of tenants from the database, and asking configuration by configuration would mean
+     * one query per indexed entity several times a minute.
+     */
+    protected LoadContext<IndexingQueueItem> createDequeueLoadContext(int batchSize) {
         LoadContext.Query query = new LoadContext.Query("");
-        StringBuilder sb = new StringBuilder("select q from search_IndexingQueue q");
-        if (!unavailableEntities.isEmpty()) {
-            sb.append(" where q.entityName not in :unavailableEntities");
-            query.setParameter("unavailableEntities", unavailableEntities);
+        StringBuilder queryString = new StringBuilder("select q from search_IndexingQueue q");
+
+        List<String> conditions = new ArrayList<>();
+        int index = 0;
+        Map<IndexConfiguration, List<IndexLayout.TenantIndex>> indexesByConfiguration =
+                indexLayout.allIndexes(indexConfigurationManager.getAllIndexConfigurations());
+        for (Map.Entry<IndexConfiguration, List<IndexLayout.TenantIndex>> entry : indexesByConfiguration.entrySet()) {
+            IndexConfiguration configuration = entry.getKey();
+            String entityName = configuration.getEntityName();
+            List<IndexLayout.TenantIndex> indexes = entry.getValue();
+
+            if (indexes.isEmpty()) {
+                // A tenant-aware entity of an application that has no tenants: nothing to write to at all.
+                conditions.add(String.format("not (q.entityName = :e%d)", index));
+                query.setParameter("e" + index, entityName);
+                index++;
+                continue;
+            }
+
+            boolean anyUnavailable = false;
+            for (IndexLayout.TenantIndex tenantIndex : indexes) {
+                if (indexStateRegistry.isIndexAvailable(tenantIndex.indexName())) {
+                    continue;
+                }
+                anyUnavailable = true;
+                if (tenantIndex.tenantId() == null) {
+                    conditions.add(String.format("not (q.entityName = :e%d and q.tenantId is null)", index));
+                } else {
+                    conditions.add(String.format("not (q.entityName = :e%d and q.tenantId = :t%d)", index, index));
+                    query.setParameter("t" + index, tenantIndex.tenantId());
+                }
+                query.setParameter("e" + index, entityName);
+                index++;
+            }
+
+            if (anyUnavailable && indexLayout.isSplitByTenants(configuration)) {
+                // Items that were enqueued without a tenant may be addressed to the unavailable index.
+                conditions.add(String.format("not (q.entityName = :e%d and q.tenantId is null)", index));
+                query.setParameter("e" + index, entityName);
+                index++;
+            }
         }
-        sb.append(" order by q.createdDate asc");
-        query.setQueryString(sb.toString());
+
+        if (!conditions.isEmpty()) {
+            log.debug("Skip queue items addressed to an unavailable index: {}", conditions);
+            queryString.append(" where ").append(String.join(" and ", conditions));
+        }
+        queryString.append(" order by q.createdDate asc");
+
+        query.setQueryString(queryString.toString());
         query.setMaxResults(batchSize);
 
         return new LoadContext<IndexingQueueItem>(metadata.getClass(IndexingQueueItem.class)).setQuery(query);
@@ -525,11 +824,34 @@ public class JpaIndexingQueueManager implements IndexingQueueManager {
         }
         if (MapUtils.isNotEmpty(itemsForDelete)) {
             successfullyProcessedQueueItems.addAll(
-                    processQueueItemsGroup(itemsForDelete, entityIndexer::deleteCollectionByEntityIds)
+                    processQueueItemsGroup(itemsForDelete,
+                            entityIds -> entityIndexer.deleteCollectionByTargets(
+                                    deletionTargets(entityIds, itemsForDelete)))
             );
         }
 
         return successfullyProcessedQueueItems;
+    }
+
+    /**
+     * Pairs every record to delete with the tenant its item carries, so that the deletion goes to that tenant's index
+     * alone. An item enqueued without a tenant leaves the pair unresolved, and the indexer deletes the document from
+     * every index of the entity.
+     */
+    protected List<EntityDeletionTarget> deletionTargets(Collection<Id<?>> entityIds,
+                                                         Map<Id<?>, List<IndexingQueueItem>> itemsForDelete) {
+        return entityIds.stream()
+                .map(entityId -> new EntityDeletionTarget(entityId, tenantOfItems(itemsForDelete.get(entityId))))
+                .toList();
+    }
+
+    @Nullable
+    protected String tenantOfItems(@Nullable List<IndexingQueueItem> items) {
+        return items == null ? null : items.stream()
+                .map(IndexingQueueItem::getTenantId)
+                .filter(Objects::nonNull)
+                .findFirst()
+                .orElse(null);
     }
 
     protected List<IndexingQueueItem> processQueueItemsGroup(Map<Id<?>, List<IndexingQueueItem>> itemsGroup,
@@ -548,19 +870,6 @@ public class JpaIndexingQueueManager implements IndexingQueueManager {
         }
         failedIds.forEach(itemsGroup.keySet()::remove);
         return itemsGroup.values().stream().flatMap(Collection::stream).collect(Collectors.toList());
-    }
-
-    protected Map<IndexingOperation, Map<Id<?>, List<IndexingQueueItem>>> groupQueueItems(Collection<IndexingQueueItem> queueItems) {
-        Map<IndexingOperation, Map<Id<?>, List<IndexingQueueItem>>> result = new HashMap<>();
-        queueItems.forEach(item -> {
-            IndexingOperation operation = item.getOperation();
-            Id<?> id = idSerialization.stringToId(item.getEntityId());
-            Map<Id<?>, List<IndexingQueueItem>> itemsForOperation = result.computeIfAbsent(operation, k -> new HashMap<>());
-            List<IndexingQueueItem> itemsForInstanceId = itemsForOperation.computeIfAbsent(id, k -> new ArrayList<>());
-            itemsForInstanceId.add(item);
-        });
-
-        return result;
     }
 
     protected int enqueue(Collection<Object> entityInstances, IndexingOperation operation) {
@@ -601,11 +910,25 @@ public class JpaIndexingQueueManager implements IndexingQueueManager {
     }
 
     protected IndexingQueueItem createQueueItem(String entityName, String entityId, IndexingOperation operation) {
+        return createQueueItem(entityName, entityId, operation, null);
+    }
+
+    protected IndexingQueueItem createQueueItem(String entityName,
+                                                String entityId,
+                                                IndexingOperation operation,
+                                                @Nullable String tenantId) {
         IndexingQueueItem queueItem = metadata.create(IndexingQueueItem.class);
         queueItem.setOperation(operation);
         queueItem.setEntityId(entityId);
         queueItem.setEntityName(entityName);
+        queueItem.setTenantId(tenantId);
         return queueItem;
+    }
+
+    protected void checkMultitenancyModulePresent() {
+        if (!multitenancyAdapter.isMultitenancyActive()) {
+            throw new IllegalStateException("Multitenancy is not available");
+        }
     }
 
     /**
@@ -696,4 +1019,22 @@ public class JpaIndexingQueueManager implements IndexingQueueManager {
             });
         }
     }
+
+    /**
+     * Repeats a session operation for every indexed entity, which is what an operation asked without an entity
+     * means. When a tenant is named, entities without a tenant attribute are left out: none of their data belongs
+     * to that tenant. The attribute is enough to ask about here - that multitenancy is on has been established by
+     * the caller.
+     */
+    protected List<IndexOperationResult<IndexManipulationResult>> everyEntityOfTenant(
+            @Nullable String tenantId,
+            Function<String, List<IndexOperationResult<IndexManipulationResult>>> operation) {
+        List<IndexOperationResult<IndexManipulationResult>> results = new ArrayList<>();
+        indexConfigurationManager.getAllIndexConfigurations().stream()
+                .filter(configuration -> tenantId == null || configuration.isTenantAware())
+                .map(IndexConfiguration::getEntityName)
+                .forEach(entityName -> results.addAll(operation.apply(entityName)));
+        return results;
+    }
+
 }

@@ -30,7 +30,7 @@ import java.util.Set;
  * @param indexConfiguration the configuration of the index relevant to the search request
  * @param fields the set of fields that are included in the scope of the search request
  */
-public record IndexSearchRequestScope(IndexConfiguration indexConfiguration, Set<String> fields) {
+public record IndexSearchRequestScope(IndexConfiguration indexConfiguration, Set<String> fields, String indexName) {
 
     /**
      * Returns the list of fields that are included in the scope of the search request.

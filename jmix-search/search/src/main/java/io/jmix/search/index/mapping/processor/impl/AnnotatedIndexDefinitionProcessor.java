@@ -17,13 +17,18 @@
 package io.jmix.search.index.mapping.processor.impl;
 
 import io.jmix.core.Metadata;
+import io.jmix.core.MetadataTools;
+import io.jmix.search.exception.IndexDefinitionRejectedException;
+import io.jmix.search.index.impl.IndexLayout;
 import io.jmix.core.common.util.ReflectionHelper;
 import io.jmix.core.impl.method.ContextArgumentResolverComposite;
 import io.jmix.core.impl.method.MethodArgumentsProvider;
 import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.search.SearchProperties;
 import io.jmix.search.index.IndexConfiguration;
+import io.jmix.search.index.IndexNameGenerator;
 import io.jmix.search.index.annotation.*;
 import io.jmix.search.index.mapping.*;
 import io.jmix.search.index.mapping.MappingDefinition.MappingDefinitionBuilder;
@@ -55,6 +60,8 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import static io.jmix.search.index.IndexConfigurationFormatter.format;
+
 /**
  * Provides functionality to process index definition interfaces marked with {@link JmixEntitySearchIndex}
  */
@@ -71,7 +78,11 @@ public class AnnotatedIndexDefinitionProcessor {
     protected final MethodArgumentsProvider methodArgumentsProvider;
     protected final List<AttributesGroupProcessor<? extends AttributesGroupConfiguration>> attributesGroupProcessors;
     protected final InstanceNameRelatedPropertiesResolver instanceNameRelatedPropertiesResolver;
+    protected final MetadataTools metadataTools;
+    protected final IndexNameGenerator indexNameGenerator;
 
+    @Autowired
+    protected IndexLayout indexLayout;
 
     @Autowired
     public AnnotatedIndexDefinitionProcessor(Metadata metadata,
@@ -80,7 +91,9 @@ public class AnnotatedIndexDefinitionProcessor {
                                              SearchProperties searchProperties,
                                              ContextArgumentResolverComposite resolvers,
                                              List<AttributesGroupProcessor<?>> attributesGroupProcessors,
-                                             InstanceNameRelatedPropertiesResolver instanceNameRelatedPropertiesResolver) {
+                                             InstanceNameRelatedPropertiesResolver instanceNameRelatedPropertiesResolver,
+                                             MetadataTools metadataTools,
+                                             IndexNameGenerator indexNameGenerator) {
         this.metadata = metadata;
         this.mappingFieldAnnotationProcessorsRegistry = mappingFieldAnnotationProcessorsRegistry;
         this.propertyValueExtractorProvider = propertyValueExtractorProvider;
@@ -88,6 +101,8 @@ public class AnnotatedIndexDefinitionProcessor {
         this.methodArgumentsProvider = new MethodArgumentsProvider(resolvers);
         this.attributesGroupProcessors = attributesGroupProcessors;
         this.instanceNameRelatedPropertiesResolver = instanceNameRelatedPropertiesResolver;
+        this.metadataTools = metadataTools;
+        this.indexNameGenerator = indexNameGenerator;
     }
 
     /**
@@ -103,25 +118,28 @@ public class AnnotatedIndexDefinitionProcessor {
         Class<?> indexDefClass = resolveClass(className);
         ParsedIndexDefinition indexDef = parseIndexDefinition(indexDefClass);
 
-        String indexName = createIndexName(indexDef);
-        log.debug("Index name for entity {}: {}", indexDef.getMetaClass(), indexName);
-
         IndexMappingConfiguration indexMappingConfiguration = createIndexMappingConfig(indexDef);
+        checkNoTenantDataInSharedIndex(indexDefClass, indexMappingConfiguration);
         Set<Class<?>> affectedEntityClasses = getAffectedEntityClasses(indexMappingConfiguration);
         log.debug("Index Definition class {}. Affected entity classes = {}", className, affectedEntityClasses);
 
         Predicate<Object> indexablePredicate = createIndexablePredicate(indexDef);
 
-        IndexConfiguration indexConfiguration = new IndexConfiguration(
-                indexDef.getMetaClass().getName(),
-                indexDef.getEntityClass(),
-                indexName,
-                indexMappingConfiguration,
-                affectedEntityClasses,
-                indexablePredicate,
-                indexDef.getExtendedSearchSettings()
-        );
-        log.debug("Index configuration: {}", indexConfiguration);
+        IndexConfiguration indexConfiguration;
+
+            boolean tenantAware = metadataTools.isTenantAware(indexDef.metaClass);
+            indexConfiguration = new IndexConfiguration(
+                    indexDef.getMetaClass().getName(),
+                    indexDef.getEntityClass(),
+                    indexMappingConfiguration,
+                    affectedEntityClasses,
+                    indexablePredicate,
+                    indexDef.getExtendedSearchSettings(),
+                    tenantAware,
+                    resolveIndexNamePattern(indexDefClass, indexDef, tenantAware)
+            );
+
+        log.debug("Index configuration: {}", format(indexConfiguration));
 
         return indexConfiguration;
     }
@@ -134,20 +152,23 @@ public class AnnotatedIndexDefinitionProcessor {
      */
     public IndexConfiguration createIndexConfiguration(ContributedIndexDefinition definition) {
         MetaClass metaClass = metadata.getClass(definition.getEntityName());
-        String indexName = createIndexName(definition.getIndexName(), metaClass);
+        String source = String.format("Contributed index definition of entity '%s'", metaClass.getName());
         ExtendedSearchSettings extendedSearchSettings = definition.getExtendedSearchSettings();
         Map<String, MappingFieldDescriptor> fields = processMappingDefinition(
                 metaClass, definition.getMappingDefinition(), extendedSearchSettings);
         IndexMappingConfiguration mapping = new IndexMappingConfiguration(
                 metaClass, fields, createDisplayedNameDescriptor(metaClass));
+        checkNoTenantDataInSharedIndex(source, mapping);
+        boolean tenantAware = metadataTools.isTenantAware(metaClass);
         return new IndexConfiguration(
                 metaClass.getName(),
                 metaClass.getJavaClass(),
-                indexName,
                 mapping,
                 getAffectedEntityClasses(mapping),
                 definition.getIndexablePredicate(),
-                extendedSearchSettings);
+                extendedSearchSettings,
+                tenantAware,
+                resolveIndexNamePattern(definition.getIndexName(), source, tenantAware));
     }
 
     /**
@@ -161,8 +182,9 @@ public class AnnotatedIndexDefinitionProcessor {
      */
     public IndexConfiguration appendContributedFields(IndexConfiguration base, ContributedIndexDefinition definition) {
         if (definition.getIndexName() != null) {
-            log.warn("Index name '{}' contributed for entity '{}' is dropped, the entity is already mapped " +
-                            "to index '{}'", definition.getIndexName(), definition.getEntityName(), base.getIndexName());
+            log.warn("Index name pattern '{}' contributed for entity '{}' is dropped, the entity is already named " +
+                            "by '{}'", definition.getIndexName(), definition.getEntityName(),
+                    base.getIndexNamePattern());
         }
         IndexMappingConfiguration baseMapping = base.getMapping();
         MetaClass metaClass = baseMapping.getEntityMetaClass();
@@ -174,11 +196,12 @@ public class AnnotatedIndexDefinitionProcessor {
         return new IndexConfiguration(
                 base.getEntityName(),
                 base.getEntityClass(),
-                base.getIndexName(),
                 mapping,
                 getAffectedEntityClasses(mapping),
                 base.getIndexablePredicate(),
-                base.getExtendedSearchSettings());
+                base.getExtendedSearchSettings(),
+                base.isTenantAware(),
+                base.getIndexNamePattern());
     }
 
     protected Class<?> resolveClass(String className) {
@@ -225,17 +248,6 @@ public class AnnotatedIndexDefinitionProcessor {
         }
 
         return result;
-    }
-
-    protected String createIndexName(ParsedIndexDefinition parsedIndexDefinition) {
-        return createIndexName(parsedIndexDefinition.getIndexName(), parsedIndexDefinition.getMetaClass());
-    }
-
-    protected String createIndexName(@Nullable String explicitIndexName, MetaClass metaClass) {
-        String indexName = StringUtils.isNotEmpty(explicitIndexName)
-                ? explicitIndexName
-                : searchProperties.getSearchIndexNamePrefix() + metaClass.getName();
-        return indexName.toLowerCase();
     }
 
     protected ExtendedSearchSettings createExtendedSearchSettings(Class<?> indexDefinitionClass) {
@@ -291,12 +303,12 @@ public class AnnotatedIndexDefinitionProcessor {
 
     protected boolean isIndexablePredicateMethod(Method method) {
         return method.isDefault()
-                && method.isAnnotationPresent(io.jmix.search.index.annotation.IndexablePredicate.class);
+               && method.isAnnotationPresent(IndexablePredicate.class);
     }
 
     protected boolean isMappingDefinitionImplementationMethod(Method method) {
         return method.isDefault()
-                && method.isAnnotationPresent(ManualMappingDefinition.class);
+               && method.isAnnotationPresent(ManualMappingDefinition.class);
     }
 
     protected boolean isFieldMappingAnnotation(Annotation annotation) {
@@ -389,6 +401,85 @@ public class AnnotatedIndexDefinitionProcessor {
         Class<? extends Annotation> aClass = annotation.annotationType();
         Optional<FieldAnnotationProcessor<? extends Annotation>> processor = mappingFieldAnnotationProcessorsRegistry.getProcessorForAnnotationClass(aClass);
         processor.ifPresent(fieldAnnotationProcessor -> fieldAnnotationProcessor.process(builder, entityMetaClass, annotation));
+    }
+
+    /**
+     * Fails if an entity stored in a single index shared by all tenants maps the data of a tenant-aware entity.
+     * <p>
+     * A mapped value is copied into the document, so the data of one tenant would end up in an index that every
+     * tenant searches. Row-level security of the Multitenancy add-on doesn't help here: it constrains the queries
+     * to the database, while the value has already been copied to the search engine.
+     * <p>
+     * The opposite direction is safe: a tenant-aware entity that maps a shared one merely duplicates data that
+     * everyone is allowed to see into the index of every tenant.
+     */
+    /**
+     * Takes the index name pattern an entity declares for itself and checks it right away, while the index
+     * definition interface is at hand and can be named in the error message.
+     * <p>
+     * A blank value means the entity declares nothing and the application-wide pattern applies.
+     */
+    @Nullable
+    protected String resolveIndexNamePattern(Class<?> indexDefinitionClass,
+                                             ParsedIndexDefinition indexDef,
+                                             boolean tenantAware) {
+        return resolveIndexNamePattern(indexDef.getIndexName(),
+                String.format("Index definition %s of entity '%s'",
+                        indexDefinitionClass.getSimpleName(), indexDef.getMetaClass().getName()),
+                tenantAware);
+    }
+
+    @Nullable
+    protected String resolveIndexNamePattern(@Nullable String pattern, String source, boolean tenantAware) {
+        if (StringUtils.isBlank(pattern)) {
+            return null;
+        }
+        indexNameGenerator.validateEntityIndexNamePattern(pattern, source,
+                tenantAware && indexLayout.isSplitByTenantsEnabled());
+        return pattern;
+    }
+
+    protected void checkNoTenantDataInSharedIndex(Class<?> indexDefinitionClass,
+                                                  IndexMappingConfiguration mappingConfiguration) {
+        checkNoTenantDataInSharedIndex(indexDefinitionClass.getSimpleName(), mappingConfiguration);
+    }
+
+    protected void checkNoTenantDataInSharedIndex(String source, IndexMappingConfiguration mappingConfiguration) {
+        if (!indexLayout.isSplitByTenantsEnabled()) {
+            return;
+        }
+        MetaClass rootMetaClass = mappingConfiguration.getEntityMetaClass();
+        if (metadataTools.isTenantAware(rootMetaClass)) {
+            return;
+        }
+
+        mappingConfiguration.getFields().values().forEach(field ->
+                checkPropertyPath(source, rootMetaClass,
+                        field.getMetaPropertyPath(), field.getEntityPropertyFullName()));
+
+        mappingConfiguration.getDisplayedNameDescriptor().getInstanceNameRelatedProperties().forEach(path ->
+                checkPropertyPath(source, rootMetaClass, path, path.toPathString()));
+    }
+
+    protected void checkPropertyPath(String source,
+                                     MetaClass rootMetaClass,
+                                     MetaPropertyPath propertyPath,
+                                     String propertyDescription) {
+        for (MetaProperty property : propertyPath.getMetaProperties()) {
+            if (!property.getRange().isClass()) {
+                continue;
+            }
+            MetaClass referencedMetaClass = property.getRange().asClass();
+            if (metadataTools.isTenantAware(referencedMetaClass)) {
+                throw new IndexDefinitionRejectedException(String.format(
+                        "Entity '%s' is stored in a single index shared by all tenants, but its index definition %s"
+                                + " maps property '%s' of tenant-aware entity '%s'. The data of one tenant would"
+                                + " become searchable by the others. Either drop the mapped property or make '%s'"
+                                + " tenant-aware.",
+                        rootMetaClass.getName(), source, propertyDescription,
+                        referencedMetaClass.getName(), rootMetaClass.getName()));
+            }
+        }
     }
 
     protected Set<Class<?>> getAffectedEntityClasses(IndexMappingConfiguration indexMappingConfiguration) {

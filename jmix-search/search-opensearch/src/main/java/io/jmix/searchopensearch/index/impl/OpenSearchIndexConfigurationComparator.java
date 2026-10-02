@@ -36,7 +36,7 @@ public class OpenSearchIndexConfigurationComparator
 
     @Override
     @Nullable
-    protected IndexState getIndexState(IndexConfiguration indexConfiguration) {
-        return indexStateResolver.getState(indexConfiguration.getIndexName());
+    protected IndexState getIndexState(String indexName) {
+        return indexStateResolver.getState(indexName);
     }
 }

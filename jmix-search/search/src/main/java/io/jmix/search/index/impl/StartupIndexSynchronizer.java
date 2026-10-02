@@ -17,11 +17,13 @@
 package io.jmix.search.index.impl;
 
 import io.jmix.core.JmixOrder;
+import io.jmix.core.security.SystemAuthenticator;
 import io.jmix.search.SearchProperties;
 import io.jmix.search.index.IndexManager;
-import io.jmix.search.index.IndexConfiguration;
+import io.jmix.search.index.IndexOperationResult;
 import io.jmix.search.index.IndexSynchronizationStatus;
 import io.jmix.search.index.queue.IndexingQueueManager;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,9 +32,9 @@ import org.springframework.context.event.EventListener;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 
 /**
  * Synchronizes search indexes on application startup.
@@ -53,11 +55,31 @@ public class StartupIndexSynchronizer {
     @Autowired
     protected SearchProperties searchProperties;
     @Autowired
-    protected IndexStateRegistry indexStateRegistry;
+    protected SystemAuthenticator authenticator;
 
+    /**
+     * Runs once the application context is up, not while the beans are being created.
+     * <p>
+     * Working out which indexes an entity has reads the tenants from the database, and the queue of a recreated
+     * index is filled through the database as well. Both are only possible after the schema is there: a
+     * {@code @PostConstruct} of a plain bean runs before Liquibase, and on an empty database the synchronization
+     * failed as a whole, leaving the application running with no indexes at all and one line in the log.
+     * <p>
+     * Runs last among the listeners of the event: the cluster event channel is subscribed to on the same event,
+     * and a tenant announced while this sweep is still reading the tenants would otherwise be missed by this node.
+     */
     @EventListener(ApplicationStartedEvent.class)
     @Order(JmixOrder.LOWEST_PRECEDENCE)
-    public void onApplicationStarted() {
+    protected void synchronizeOnStartup() {
+        authenticator.runWithSystem(this::synchronize);
+    }
+
+    /**
+     * Runs as the system user: both the tenants an entity has indexes for and the queue of a recreated index are
+     * read and written through {@code DataManager}, which applies security constraints, and a startup thread has no
+     * authentication of its own.
+     */
+    protected void synchronize() {
         try {
             if (!searchProperties.isEnabled()) {
                 log.info("Unable to start index synchronization: Search add-on is disabled");
@@ -65,52 +87,65 @@ public class StartupIndexSynchronizer {
             }
 
             log.info("Start initial index synchronization");
-            Map<IndexConfiguration, IndexSynchronizationStatus> indexSynchronizationResults
+            List<IndexOperationResult<IndexSynchronizationStatus>> indexSynchronizationResults
                     = indexManager.synchronizeIndexSchemas();
 
-            List<IndexConfiguration> enqueueAllCandidates = new ArrayList<>();
-            List<IndexConfiguration> available = new ArrayList<>();
-            List<IndexConfiguration> unavailable = new ArrayList<>();
-            indexSynchronizationResults.forEach((config, status) -> {
-                log.info("Synchronization Result: Entity={}, Index={}, Status={}",
-                        config.getEntityName(),
-                        config.getIndexName(),
-                        status);
-                switch (status) {
-                    case CREATED:
-                    case RECREATED:
-                        enqueueAllCandidates.add(config);
-                        available.add(config);
-                        break;
-                    case IRRELEVANT:
-                    case MISSING:
-                        unavailable.add(config);
-                        break;
-                    case UPDATED:
-                    default:
-                        available.add(config);
-                }
-            });
-
-            //TODO duplicating marking indexes that already performed in ESIndexManager
-            available.forEach(config -> indexStateRegistry.markIndexAsAvailable(config.getEntityName()));
-            unavailable.forEach(config -> indexStateRegistry.markIndexAsUnavailable(config.getEntityName()));
+            Set<EnqueueingTarget> enqueueAllCandidates = new LinkedHashSet<>();
+            indexSynchronizationResults.forEach(result -> handleSynchronizationResult(result, enqueueAllCandidates));
 
             if (searchProperties.isEnqueueIndexAllOnStartupIndexRecreationEnabled()) {
-                List<IndexConfiguration> indexConfigurationsToEnqueueAll = enqueueAllCandidates.stream()
-                        .filter(config -> {
-                            List<String> entitiesAllowedToEnqueue
-                                    = searchProperties.getEnqueueIndexAllOnStartupIndexRecreationEntities();
-                            return entitiesAllowedToEnqueue.isEmpty()
-                                    || entitiesAllowedToEnqueue.contains(config.getEntityName());
-                        })
-                        .toList();
-                indexConfigurationsToEnqueueAll.forEach(
-                        config -> indexingQueueManager.initAsyncEnqueueIndexAll(config.getEntityName()));
+                List<String> entitiesAllowedToEnqueue
+                        = searchProperties.getEnqueueIndexAllOnStartupIndexRecreationEntities();
+                enqueueAllCandidates.stream()
+                        .filter(target -> entitiesAllowedToEnqueue.isEmpty()
+                                || entitiesAllowedToEnqueue.contains(target.entityName()))
+                        .forEach(this::initAsyncEnqueueIndexAll);
             }
             log.info("Finish initial index synchronization");
         } catch (Exception e) {
             log.error("Failed to synchronize indexes", e);
         }
+    }
+
+    /**
+     * Availability is not recorded here: the index manager has already marked every index it touched, and a second
+     * owner of the same registry is how the two start disagreeing. What is left is deciding what to reindex - an
+     * index that has just been created or recreated holds nothing yet.
+     */
+    protected void handleSynchronizationResult(IndexOperationResult<IndexSynchronizationStatus> result,
+                                               Set<EnqueueingTarget> enqueueAllCandidates) {
+        log.info("Synchronization Result: Entity={}, Index={}, Status={}",
+                result.entityName(),
+                result.indexName(),
+                result.result());
+        switch (result.result()) {
+            case CREATED:
+            case RECREATED:
+                enqueueAllCandidates.add(new EnqueueingTarget(result.entityName(), result.tenantId()));
+                break;
+            default:
+        }
+    }
+
+    /**
+     * Requests a reindex of the data that the recreated index holds.
+     * <p>
+     * An index of a tenant holds the data of that tenant only, so recreating it must not make the application reread
+     * the data of all the other tenants.
+     */
+    protected void initAsyncEnqueueIndexAll(EnqueueingTarget target) {
+        if (target.tenantId() == null) {
+            indexingQueueManager.initAsyncEnqueueIndexAll(target.entityName());
+        } else {
+            indexingQueueManager.initAsyncEnqueueIndexAll(target.entityName(), target.tenantId());
+        }
+    }
+
+    /**
+     * Data to reread after its index has been created anew.
+     *
+     * @param tenantId tenant whose data is to be reread, or null if the index is not tenant-specific
+     */
+    protected record EnqueueingTarget(String entityName, @Nullable String tenantId) {
     }
 }

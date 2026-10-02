@@ -25,7 +25,11 @@ import io.jmix.core.impl.scanning.JmixModulesClasspathScanner;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
+import io.jmix.search.exception.IndexDefinitionRejectedException;
 import io.jmix.search.index.IndexConfiguration;
+import io.jmix.search.index.IndexNameGenerator;
+import io.jmix.search.index.impl.IndexLayout;
+import io.jmix.search.index.impl.IndexStateRegistry;
 import io.jmix.search.index.mapping.processor.impl.AnnotatedIndexDefinitionProcessor;
 import io.jmix.search.index.mapping.processor.impl.IndexDefinitionDetector;
 import org.apache.commons.collections4.CollectionUtils;
@@ -42,6 +46,8 @@ import java.util.concurrent.locks.StampedLock;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static java.util.Objects.requireNonNull;
 
 /**
  * The {@code IndexConfigurationManager} class provides functionality for managing
@@ -84,6 +90,17 @@ public class IndexConfigurationManager {
     protected final InstanceNameProvider instanceNameProvider;
     protected final GenerationStateStore<State> stateStore = new GenerationStateStore<>();
 
+
+    /**
+     * Stands for any tenant while the index names of different entities are compared with each other. Spelled the
+     * same as the sample the name generator validates its patterns with - both only have to be a usable tenant id.
+     */
+    protected static final String SAMPLE_TENANT_ID = "sampleTenant";
+
+    @Autowired
+    protected IndexLayout indexLayout;
+    protected final IndexStateRegistry indexStateRegistry;
+
     @Autowired
     protected MetadataGenerationManager metadataGenerationManager;
 
@@ -93,9 +110,11 @@ public class IndexConfigurationManager {
     public IndexConfigurationManager(JmixModulesClasspathScanner classpathScanner,
                                      AnnotatedIndexDefinitionProcessor indexDefinitionProcessor,
                                      InstanceNameProvider instanceNameProvider,
-                                     IndexDefinitionDetector indexDefinitionDetector) {
+                                     IndexDefinitionDetector indexDefinitionDetector,
+                                     IndexStateRegistry indexStateRegistry) {
         this.indexDefinitionProcessor = indexDefinitionProcessor;
         this.instanceNameProvider = instanceNameProvider;
+        this.indexStateRegistry = indexStateRegistry;
         Class<? extends IndexDefinitionDetector> detectorClass = indexDefinitionDetector.getClass();
         classNames = Collections.unmodifiableSet(classpathScanner.getClassNames(detectorClass));
     }
@@ -172,13 +191,9 @@ public class IndexConfigurationManager {
      * @return {@link IndexConfiguration}
      */
     public IndexConfiguration getIndexConfigurationByIndexName(String indexName) {
-        State state = getState();
-        ensureInitialized(state);
-        IndexConfiguration indexConfiguration = optimisticRead(state, () -> state.registry.getIndexConfigurationByIndexName(indexName));
-        if (indexConfiguration == null) {
-            throw new IllegalArgumentException("There is no configuration for index name '" + indexName + "'");
-        }
-        return indexConfiguration;
+        return getIndexConfigurationByIndexNameOpt(indexName)
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "There is no configuration for index name '" + indexName + "'"));
     }
 
     /**
@@ -188,9 +203,10 @@ public class IndexConfigurationManager {
      * @return optional {@link IndexConfiguration}
      */
     public Optional<IndexConfiguration> getIndexConfigurationByIndexNameOpt(String indexName) {
-        State state = getState();
-        ensureInitialized(state);
-        return optimisticReadOpt(state, () -> state.registry.getIndexConfigurationByIndexName(indexName));
+        return getAllIndexConfigurations().stream()
+                .filter(configuration -> indexLayout.allIndexes(configuration).stream()
+                        .anyMatch(index -> index.indexName().equals(indexName)))
+                .findFirst();
     }
 
     @SuppressWarnings("ConstantConditions")
@@ -309,9 +325,14 @@ public class IndexConfigurationManager {
     protected void initializeIndexDefinitions(State state) {
         Map<String, IndexConfiguration> configurations = new LinkedHashMap<>();
         for (String className : classNames) {
-            IndexConfiguration configuration = indexDefinitionProcessor.createIndexConfiguration(className);
-            if (configurations.putIfAbsent(configuration.getEntityName(), configuration) != null) {
-                log.warn("Multiple Index Definitions are detected for entity '{}'", configuration.getEntityName());
+            try {
+                IndexConfiguration configuration = indexDefinitionProcessor.createIndexConfiguration(className);
+                if (configurations.putIfAbsent(configuration.getEntityName(), configuration) != null) {
+                    log.warn("Multiple Index Definitions are detected for entity '{}'", configuration.getEntityName());
+                }
+            } catch (IndexDefinitionRejectedException e) {
+                // The entity of this definition is left out; the entities of the other definitions are not.
+                log.error("Index definition {} is not applied. {}", className, e.getMessage());
             }
         }
         for (IndexDefinitionContributor contributor : indexDefinitionContributors) {
@@ -322,9 +343,16 @@ public class IndexConfigurationManager {
                                 "instead of an empty collection");
             }
             for (ContributedIndexDefinition definition : definitions) {
-                configurations.compute(definition.getEntityName(), (entityName, existing) -> existing == null
-                        ? indexDefinitionProcessor.createIndexConfiguration(definition)
-                        : indexDefinitionProcessor.appendContributedFields(existing, definition));
+                try {
+                    configurations.compute(definition.getEntityName(), (entityName, existing) -> existing == null
+                            ? indexDefinitionProcessor.createIndexConfiguration(definition)
+                            : indexDefinitionProcessor.appendContributedFields(existing, definition));
+                } catch (IndexDefinitionRejectedException e) {
+                    // The same rule as for an annotated definition: this entity is left out, the rest keep working.
+                    // A contribution rejected on top of an existing configuration leaves that configuration alone.
+                    log.error("Contributed index definition of entity '{}' is not applied. {}",
+                            definition.getEntityName(), e.getMessage());
+                }
             }
         }
         replaceConfigurations(state, new ArrayList<>(configurations.values()));
@@ -336,13 +364,55 @@ public class IndexConfigurationManager {
      * @param configurations the list of {@link IndexConfiguration} objects to be set in the registry
      */
     protected void replaceConfigurations(State state, List<IndexConfiguration> configurations) {
+        List<IndexConfiguration> accepted = dropIndexNameCollisions(configurations);
         long stamp = state.lock.writeLock();
         try {
             state.registry.clean();
-            configurations.forEach(state.registry::registerIndexConfiguration);
+            accepted.forEach(state.registry::registerIndexConfiguration);
+            indexStateRegistry.clean();
         } finally {
             state.lock.unlockWrite(stamp);
         }
+    }
+
+    /**
+     * Leaves out the entities that claim an index already taken: their documents would be mixed in one index, and
+     * the mapping of one entity would be applied to the documents of the other.
+     * <p>
+     * The first claim wins and the later ones are dropped, so one mistake costs the entity that made it and
+     * nothing else. The module behaved this way before the check existed, except that the loss was silent.
+     * <p>
+     * Names are compared by the shape a configuration produces, not by the names of the indexes that exist right
+     * now: the name of a configuration split by tenants is taken for one sample tenant. Two tenants of the same
+     * entity can never collide, because the pattern of a split configuration is required to contain the tenant
+     * placeholder, so comparing one sample tenant is enough and the check does not depend on which tenants the
+     * application happens to have.
+     *
+     * @return the configurations that keep their index
+     */
+    protected List<IndexConfiguration> dropIndexNameCollisions(List<IndexConfiguration> configurations) {
+        Map<String, String> entityNamesByIndexName = new HashMap<>();
+        List<IndexConfiguration> accepted = new ArrayList<>(configurations.size());
+        for (IndexConfiguration configuration : configurations) {
+            String indexName = sampleIndexName(configuration);
+            String claimedBy = entityNamesByIndexName.putIfAbsent(indexName, configuration.getEntityName());
+            if (claimedBy != null) {
+                log.error("Entity '{}' is not indexed: index '{}' is already taken by entity '{}'. Their documents"
+                                + " would be mixed in one index. Give one of them an index name of its own in its"
+                                + " index definition.",
+                        configuration.getEntityName(), indexName, claimedBy);
+                continue;
+            }
+            accepted.add(configuration);
+        }
+        return accepted;
+    }
+
+    protected String sampleIndexName(IndexConfiguration configuration) {
+        String indexName = indexLayout.isSplitByTenants(configuration)
+                ? indexLayout.indexName(configuration, SAMPLE_TENANT_ID)
+                : indexLayout.indexName(configuration, null);
+        return requireNonNull(indexName);
     }
 
     /**
@@ -444,21 +514,26 @@ public class IndexConfigurationManager {
         @Override
         public String toString() {
             return "PropertyTrackingInfo{" +
-                    "trackedClassUpdate=" + trackedClassUpdate +
-                    ", trackedClassDelete=" + trackedClassDelete +
-                    ", localPropertyName='" + localPropertyName + '\'' +
-                    ", backRefGlobalPropertyUpdate=" + backRefGlobalPropertyUpdate +
-                    ", backRefGlobalPropertyDelete=" + backRefGlobalPropertyDelete +
-                    '}';
+                   "trackedClassUpdate=" + trackedClassUpdate +
+                   ", trackedClassDelete=" + trackedClassDelete +
+                   ", localPropertyName='" + localPropertyName + '\'' +
+                   ", backRefGlobalPropertyUpdate=" + backRefGlobalPropertyUpdate +
+                   ", backRefGlobalPropertyDelete=" + backRefGlobalPropertyDelete +
+                   '}';
         }
     }
 
+    /**
+     * Holds the configurations of one metadata generation.
+     * <p>
+     * Every getter returns a copy: the collections are plain maps rebuilt by {@code clean()} and re-registration,
+     * so a view handed to a caller would be read outside the lock while a writer is replacing the content.
+     */
     protected static class Registry {
 
         private final InstanceNameProvider instanceNameProvider;
 
         private final Map<String, IndexConfiguration> indexConfigurationsByEntityName = new HashMap<>();
-        private final Map<String, IndexConfiguration> indexConfigurationsByIndexName = new HashMap<>();
         private final Map<Class<?>, Map<String, Set<MetaPropertyPath>>> referentiallyAffectedPropertiesForUpdate = new HashMap<>();
         private final Map<Class<?>, Set<MetaPropertyPath>> referentiallyAffectedPropertiesForDelete = new HashMap<>();
         private final Set<Class<?>> registeredEntityClasses = new HashSet<>();
@@ -498,32 +573,29 @@ public class IndexConfigurationManager {
             return indexConfigurationsByEntityName.get(entityName);
         }
 
-        @Nullable
-        IndexConfiguration getIndexConfigurationByIndexName(String indexName) {
-            return indexConfigurationsByIndexName.get(indexName);
-        }
-
         Collection<IndexConfiguration> getIndexConfigurations() {
-            return indexConfigurationsByEntityName.values();
+            return List.copyOf(indexConfigurationsByEntityName.values());
         }
 
         @Nullable
         Map<String, Set<MetaPropertyPath>> getBackRefPropertiesForUpdate(Class<?> entityClass) {
-            return referentiallyAffectedPropertiesForUpdate.get(entityClass);
+            Map<String, Set<MetaPropertyPath>> properties = referentiallyAffectedPropertiesForUpdate.get(entityClass);
+            return properties == null ? null : Map.copyOf(properties);
         }
 
         @Nullable
         Set<MetaPropertyPath> getBackRefPropertiesForDelete(Class<?> entityClass) {
-            return referentiallyAffectedPropertiesForDelete.get(entityClass);
+            Set<MetaPropertyPath> properties = referentiallyAffectedPropertiesForDelete.get(entityClass);
+            return properties == null ? null : Set.copyOf(properties);
         }
 
         Set<String> getLocalPropertyNamesAffectedByUpdate(Class<?> entityClass) {
             Map<String, Set<MetaPropertyPath>> updateMetadata = referentiallyAffectedPropertiesForUpdate.get(entityClass);
-            return updateMetadata == null ? Collections.emptySet() : updateMetadata.keySet();
+            return updateMetadata == null ? Collections.emptySet() : Set.copyOf(updateMetadata.keySet());
         }
 
         Collection<String> getAllIndexedEntities() {
-            return indexConfigurationsByEntityName.keySet();
+            return Set.copyOf(indexConfigurationsByEntityName.keySet());
         }
 
         boolean hasDefinitionForEntity(String entityName) {
@@ -536,8 +608,9 @@ public class IndexConfigurationManager {
 
         private void registerInMainRegistries(IndexConfiguration indexConfiguration) {
             String entityName = indexConfiguration.getEntityName();
+            // Duplicates by entity name are already collapsed while the definitions are collected, and index name
+            // collisions are dropped by replaceConfigurations, so a configuration reaching here keeps its place.
             indexConfigurationsByEntityName.put(entityName, indexConfiguration);
-            indexConfigurationsByIndexName.put(indexConfiguration.getIndexName(), indexConfiguration);
             registeredEntityClasses.addAll(indexConfiguration.getAffectedEntityClasses());
         }
 
@@ -694,7 +767,6 @@ public class IndexConfigurationManager {
 
         public void clean() {
             indexConfigurationsByEntityName.clear();
-            indexConfigurationsByIndexName.clear();
             referentiallyAffectedPropertiesForUpdate.clear();
             referentiallyAffectedPropertiesForDelete.clear();
             registeredEntityClasses.clear();

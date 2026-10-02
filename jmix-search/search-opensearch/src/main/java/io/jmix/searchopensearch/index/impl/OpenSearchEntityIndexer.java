@@ -18,11 +18,11 @@ package io.jmix.searchopensearch.index.impl;
 
 import io.jmix.core.*;
 import io.jmix.search.SearchProperties;
-import io.jmix.search.index.IndexConfiguration;
 import io.jmix.search.index.IndexResult;
 import io.jmix.search.index.RefreshPolicy;
 import io.jmix.search.index.impl.BaseEntityIndexer;
 import io.jmix.search.index.impl.IndexStateRegistry;
+import io.jmix.search.index.impl.MultitenancyAdapter;
 import io.jmix.search.index.impl.dynattr.DynamicAttributesSupport;
 import io.jmix.search.index.mapping.IndexConfigurationManager;
 import org.apache.commons.lang3.StringUtils;
@@ -57,7 +57,8 @@ public class OpenSearchEntityIndexer extends BaseEntityIndexer {
                                    MetadataTools metadataTools,
                                    SearchProperties searchProperties,
                                    OpenSearchClient client,
-                                   DynamicAttributesSupport dynamicAttributesSupport) {
+                                   DynamicAttributesSupport dynamicAttributesSupport,
+                                   MultitenancyAdapter multitenancyAdapter) {
         super(dataManager,
                 fetchPlans,
                 indexConfigurationManager,
@@ -66,7 +67,8 @@ public class OpenSearchEntityIndexer extends BaseEntityIndexer {
                 indexStateRegistry,
                 metadataTools,
                 searchProperties,
-                dynamicAttributesSupport);
+                dynamicAttributesSupport,
+                multitenancyAdapter);
         this.client = client;
     }
 
@@ -91,19 +93,14 @@ public class OpenSearchEntityIndexer extends BaseEntityIndexer {
     }
 
     @Override
-    protected IndexResult deleteByGroupedDocIds(Map<IndexConfiguration, Collection<String>> groupedDocIds) {
+    protected IndexResult deleteByGroupedDocIds(List<DocumentToDelete> documents) {
         BulkRequest.Builder requestBuilder = new BulkRequest.Builder();
-        for (Map.Entry<IndexConfiguration, Collection<String>> entry : groupedDocIds.entrySet()) {
-            IndexConfiguration indexConfiguration = entry.getKey();
-            String indexName = indexConfiguration.getIndexName();
-            Collection<String> docIds = entry.getValue();
-            docIds.forEach(docId ->
-                    requestBuilder.operations(operationsBuilder ->
-                            operationsBuilder.delete(deleteOperationBuilder ->
-                                    deleteOperationBuilder.index(indexName).id(docId))
-                    )
-            );
-        }
+        documents.forEach(data ->
+                requestBuilder.operations(operationsBuilder ->
+                        operationsBuilder.delete(deleteOperationBuilder ->
+                                deleteOperationBuilder.index(data.indexName()).id(data.entityId()))
+                )
+        );
 
         BulkResponse response = execute(requestBuilder);
         return createIndexResult(response);

@@ -20,11 +20,12 @@ import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.search.index.queue.impl.EnqueueingSessionStatus;
+import org.jspecify.annotations.Nullable;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 
-import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import java.util.Date;
 import java.util.UUID;
 
@@ -47,6 +48,9 @@ public class EnqueueingSession {
     @NotNull
     @Column(name = "ENTITY_NAME", nullable = false)
     private String entityName;
+
+    @Column(name = "TENANT_ID")
+    private String tenantId;
 
     @NotNull
     @Column(name = "ORDERING_PROPERTY", nullable = false)
@@ -94,6 +98,15 @@ public class EnqueueingSession {
 
     public void setEntityName(String entityName) {
         this.entityName = entityName;
+    }
+
+    @Nullable
+    public String getTenantId() {
+        return tenantId;
+    }
+
+    public void setTenantId(@Nullable String tenantId) {
+        this.tenantId = tenantId;
     }
 
     public Date getCreatedDate() {

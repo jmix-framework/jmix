@@ -84,7 +84,7 @@ public class ElasticSearchQueryConfigurer extends AbstractSearchQueryConfigurer<
         return Query.of(root ->
                 root.bool(b -> b
                         .must(m -> m.term(t -> t.field("_index")
-                                .value(indexSearchRequestScope.indexConfiguration().getIndexName())))
+                                .value(indexSearchRequestScope.indexName())))
                         .must(m2 -> businessQueryConfigurer.apply(m2, indexSearchRequestScope))
                 ));
     }

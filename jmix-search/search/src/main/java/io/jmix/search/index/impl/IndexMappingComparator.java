@@ -28,6 +28,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import static io.jmix.search.index.IndexConfigurationFormatter.format;
 import static io.jmix.search.index.impl.MappingComparingResult.*;
 
 /**
@@ -47,18 +48,19 @@ public abstract class IndexMappingComparator<TState, TJsonp> {
     protected final ObjectMapper objectMapper = new ObjectMapper();
     protected final JsonpSerializer<TJsonp> jsonpSerializer;
 
-
     public IndexMappingComparator(MappingFieldComparator mappingFieldComparator, JsonpSerializer<TJsonp> jsonpSerializer) {
         this.mappingFieldComparator = mappingFieldComparator;
         this.jsonpSerializer = jsonpSerializer;
     }
 
-    public MappingComparingResult compare(IndexConfiguration indexConfiguration, TState currentIndexState) {
+    public MappingComparingResult compare(IndexConfiguration indexConfiguration,
+                                          String indexName,
+                                          TState currentIndexState) {
 
         Map<String, Object> appliedMapping = getAppliedMapping(currentIndexState);
         Map<String, Object> expectedMapping = getExpectedMapping(indexConfiguration);
-        log.debug("Mappings of index '{}':\nCurrent: {}\nActual: {}",
-                indexConfiguration.getIndexName(), appliedMapping, expectedMapping);
+        log.debug("Mappings of index '{}' and configuration {}:\nCurrent: {}\nActual: {}",
+                indexName, format(indexConfiguration), appliedMapping, expectedMapping);
         return compare(appliedMapping, expectedMapping);
     }
 
@@ -78,7 +80,6 @@ public abstract class IndexMappingComparator<TState, TJsonp> {
 
     @Nullable
     protected abstract TJsonp extractTypeMapping(TState currentIndexState);
-
 
     @SuppressWarnings("unchecked")
     MappingComparingResult compare(Map<String, Object> appliedMapping, Map<String, Object> expectedMapping) {

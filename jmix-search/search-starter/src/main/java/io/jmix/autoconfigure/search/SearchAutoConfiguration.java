@@ -23,12 +23,17 @@ import io.jmix.data.DataConfiguration;
 import io.jmix.dynattr.DynAttrMetadata;
 import io.jmix.search.SearchConfiguration;
 import io.jmix.search.SearchProperties;
+import io.jmix.multitenancy.core.TenantProvider;
+import io.jmix.multitenancy.Multitenancy;
 import io.jmix.search.index.EntityIndexer;
 import io.jmix.search.index.IndexManager;
 import io.jmix.search.index.impl.NoopEntityIndexer;
 import io.jmix.search.index.impl.NoopEntitySearcher;
 import io.jmix.search.index.impl.NoopIndexManager;
 import io.jmix.search.index.impl.NoopIndexingQueueManager;
+import io.jmix.search.index.impl.AddonMultitenancyAdapter;
+import io.jmix.search.index.impl.NoopMultitenancyAdapter;
+import io.jmix.search.index.impl.MultitenancyAdapter;
 import io.jmix.search.index.impl.dynattr.DynamicAttributesSupportDelegate;
 import io.jmix.search.index.mapping.IndexConfigurationManager;
 import io.jmix.search.index.mapping.processor.impl.FieldMappingCreator;
@@ -38,6 +43,7 @@ import io.jmix.search.index.mapping.processor.impl.dynattr.DynamicAttributesReso
 import io.jmix.search.index.mapping.processor.impl.dynattr.WildcardPatternsMatcher;
 import io.jmix.search.index.queue.IndexingQueueManager;
 import io.jmix.search.index.queue.impl.JpaIndexingQueueManager;
+import io.jmix.search.listener.SearchTenantEventListener;
 import io.jmix.search.listener.dynattr.DynamicAttributesTrackingListener;
 import io.jmix.search.searching.EntitySearcher;
 import io.jmix.search.utils.PropertyTools;
@@ -45,6 +51,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -59,7 +66,9 @@ public class SearchAutoConfiguration {
 
     @Bean("search_IndexManager")
     @ConditionalOnProperty(name = "jmix.search.enabled", havingValue = "false")
-    public IndexManager indexManager() { return new NoopIndexManager(); }
+    public IndexManager indexManager() {
+        return new NoopIndexManager();
+    }
 
     @Bean("search_EntitySearcher")
     @ConditionalOnProperty(name = "jmix.search.enabled", havingValue = "false")
@@ -70,12 +79,40 @@ public class SearchAutoConfiguration {
     public EntityIndexer entityIndexer() { return new NoopEntityIndexer(); }
 
     @Bean("search_IndexingQueueManager")
-    public IndexingQueueManager indexingQueueManager(SearchProperties searchProperties) {
+    public IndexingQueueManager indexingQueueManager(SearchProperties searchProperties,
+                                                     IndexConfigurationManager indexConfigurationManager) {
         if (searchProperties.isEnabled()) {
             return beanFactory.createBean(JpaIndexingQueueManager.class);
         }
 
-        return new NoopIndexingQueueManager();
+        return new NoopIndexingQueueManager(indexConfigurationManager);
+    }
+
+    @Configuration
+    @ConditionalOnClass(TenantProvider.class)
+    public static class SearchMultitenancyConfiguration {
+
+        @Bean("search_MultitenancyAdapter")
+        public MultitenancyAdapter multitenancyAdapter(Multitenancy multitenancy) {
+            return new AddonMultitenancyAdapter(multitenancy);
+        }
+
+        @Bean("search_SearchTenantEventListener")
+        public SearchTenantEventListener searchTenantEventListener(SearchProperties searchProperties,
+                                                                   IndexManager indexManager,
+                                                                   IndexConfigurationManager indexConfigurationManager) {
+            return new SearchTenantEventListener(searchProperties, indexManager, indexConfigurationManager);
+        }
+    }
+
+    @Configuration
+    @ConditionalOnMissingClass("io.jmix.multitenancy.core.TenantProvider")
+    public static class SearchTenantlessConfiguration {
+
+        @Bean("search_MultitenancyAdapter")
+        public MultitenancyAdapter multitenancyAdapter() {
+            return new NoopMultitenancyAdapter();
+        }
     }
 
     @Configuration

@@ -1,0 +1,213 @@
+/*
+ * Copyright 2026 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+.ah-root {
+    --ah-border: var(--vaadin-border-color-secondary, var(--lumo-contrast-10pct));
+    --ah-muted: var(--vaadin-text-color-secondary, var(--lumo-secondary-text-color));
+    --ah-surface: var(--vaadin-background-color, var(--lumo-base-color));
+    --ah-accent: var(--aura-accent-text-color, var(--lumo-primary-text-color));
+    --ah-text: var(--vaadin-text-color, var(--lumo-body-text-color));
+    display: flex; flex-direction: column; width: 100%; height: 100%; min-height: 0;
+    color: var(--ah-text); overflow: hidden;
+}
+.ah-root * { box-sizing: border-box; }
+.ah-root h2 { margin: 0; font-size: 1rem; line-height: 1.5; }
+.ah-root .ah-toolbar {
+    display: flex; justify-content: space-between; align-items: center;
+    gap: 1rem; padding: .5rem 1.25rem; border-bottom: 1px solid var(--ah-border);
+}
+.ah-root .ah-title { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+.ah-root .ah-toolbar-actions, .ah-root .ah-execution-heading {
+    display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap;
+}
+.ah-root .ah-time { font-variant-numeric: tabular-nums; }
+.ah-root .ah-body { display: grid; grid-template-columns: 18rem minmax(0, 1fr); flex: 1; min-height: 0; }
+.ah-root .ah-body { position: relative; }
+.ah-root .ah-body:has(.ah-snapshot-panel:not([hidden])) {
+    grid-template-columns: 16rem minmax(0, 1fr) 30em;
+}
+.ah-root .ah-snapshot-panel { width: 30em; max-width: min(30em, 100%); height: 100%; border-left: 1px solid var(--ah-border); }
+.ah-root .ah-snapshot-panel[hidden] { display: none; }
+@media (max-width: 1500px) {
+    .ah-root .ah-body:has(.ah-snapshot-panel:not([hidden])) { grid-template-columns: 18rem minmax(0, 1fr); }
+    .ah-root .ah-snapshot-panel:not([hidden]) {
+        position: absolute; inset: 0 0 0 auto; width: min(30em, 100%); z-index: 2;
+        box-shadow: -.25rem 0 1rem #0002;
+    }
+}
+.ah-root .ah-sidebar {
+    display: flex; flex-direction: column; min-height: 0; border-right: 1px solid var(--ah-border);
+}
+.ah-root .ah-sidebar-header {
+    display: flex; align-items: baseline; justify-content: space-between; gap: .5rem;
+    padding: 1.1rem 1.25rem .7rem;
+}
+.ah-root .ah-muted { color: var(--ah-muted); font-size: .78rem; overflow-wrap: anywhere; }
+.ah-root .ah-id { color: var(--ah-muted); font: .75rem ui-monospace, monospace; overflow-wrap: anywhere; }
+.ah-root .ah-conversations { overflow: auto; flex: 1; padding: .25rem .6rem; }
+.ah-root .ah-conversation {
+    display: flex; width: 100%; height: auto; min-height: 4.5rem; margin: 0 0 .2rem;
+    padding: .75rem .8rem; border: 0; border-radius: .5rem; box-shadow: none;
+    background: transparent; color: var(--ah-text); text-align: left;
+    justify-content: flex-start; white-space: normal;
+}
+.ah-root .ah-conversation::part(label) { width: 100%; white-space: normal; }
+.ah-root .ah-conversation:hover { background: color-mix(in srgb, currentColor 4%, transparent); }
+.ah-root .ah-conversation.ah-selected {
+    background: color-mix(in srgb, var(--ah-accent) 9%, transparent);
+    color: var(--ah-accent); box-shadow: inset 3px 0 var(--ah-accent);
+}
+.ah-root .ah-conversation-caption { display: grid; gap: .35rem; min-width: 0; width: 100%; }
+.ah-root .ah-conversation-title {
+    font-weight: 500; font-size: .88rem; line-height: 1.45; overflow: hidden;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow-wrap: anywhere;
+}
+.ah-root .ah-pagination {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: .5rem .75rem; gap: .4rem; border-top: 1px solid var(--ah-border);
+}
+.ah-root .ah-content {
+    display: flex; flex-direction: column; min-height: 0; min-width: 0; background: var(--ah-surface);
+}
+.ah-root .ah-conversation-heading {
+    display: grid; gap: .15rem; padding: .9rem 1.75rem; border-bottom: 1px solid var(--ah-border);
+}
+.ah-root .ah-conversation-heading:empty { display: none; }
+.ah-root .ah-selected-title { white-space: nowrap; text-overflow: ellipsis; overflow: hidden; }
+.ah-root .ah-metadata {
+    display: flex; align-items: center; gap: .8rem; min-width: 0;
+    margin: 0; font-size: .78rem; color: var(--ah-muted);
+}
+.ah-root .ah-model-names {
+    display: block; min-width: 0; font-size: .76rem; color: var(--ah-muted);
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.ah-root .ah-metadata .ah-muted { flex-shrink: 0; white-space: nowrap; }
+.ah-root .ah-conversation-id {
+    margin-left: auto; min-width: 4rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.ah-root .ah-note {
+    display: block; color: var(--ah-muted); font-size: .8rem; line-height: 1.6;
+    white-space: pre-wrap; overflow-wrap: anywhere;
+}
+.ah-root .ah-timeline { flex: 1; overflow: auto; padding: 1.75rem 2rem; }
+.ah-root .ah-run { max-width: 58rem; margin: 0 auto 2rem; }
+.ah-root .ah-timeline > .ah-message { max-width: 58rem; margin: 0 auto 2rem; }
+.ah-root .ah-messages { display: flex; flex-direction: column; gap: 1.4rem; }
+.ah-root .ah-message { min-width: 0; padding: 0; }
+.ah-root .ah-user {
+    max-width: 88%; margin-left: auto; padding: .85rem 1.1rem; border-radius: .8rem .8rem .2rem .8rem;
+    background: color-mix(in srgb, var(--ah-accent) 7%, var(--ah-surface));
+}
+.ah-root .ah-assistant { width: 100%; padding: 0 .25rem; box-sizing: border-box; }
+.ah-root .ah-message-heading { display: flex; gap: .65rem; align-items: center; flex-wrap: wrap; margin-bottom: .45rem; }
+.ah-root .ah-author { font-weight: 600; font-size: .85rem; overflow-wrap: anywhere; }
+.ah-root .ah-message-heading .ah-badge { margin-left: auto; }
+.ah-root .ah-message-text { display: block; white-space: pre-wrap; overflow-wrap: anywhere; line-height: 1.65; font-size: .95rem; }
+.ah-root .ah-message-markdown { white-space: normal; }
+.ah-root .ah-message-markdown > :first-child { margin-top: 0; }
+.ah-root .ah-message-markdown > :last-child { margin-bottom: 0; }
+.ah-root .ah-badge { font-size: .7rem; width: fit-content; }
+.ah-root .ah-message-footer {
+    display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap;
+    gap: .5rem; padding: .5rem 1.5rem; border-top: 1px solid var(--ah-border);
+}
+.ah-root .ah-notice { display: grid; gap: .5rem; padding: 2.5rem 1.25rem; text-align: center; }
+.ah-root .ah-run-details {
+    max-width: 48rem; margin: .65rem 0 0; font-size: .75rem; color: var(--ah-muted);
+}
+.ah-root .ah-details-content { display: grid; gap: .35rem; color: var(--ah-text); }
+.ah-root .ah-execution-heading vaadin-button { font-size: .75rem; min-height: 1.75rem; padding: 0 .5rem; }
+.ah-root .ah-details-content > vaadin-button { justify-self: start; }
+.ah-root .ah-events { display: grid; gap: 0; }
+.ah-root .ah-event {
+    --ah-event-color: var(--ah-muted);
+    display: grid; grid-template-columns: 5.6rem minmax(0, 1fr) 4.5rem; align-items: start;
+    gap: .4rem; padding: .15rem .4rem; min-width: 0; font-size: .75rem;
+    border-left: 2px solid var(--ah-event-color); border-bottom: 1px solid var(--ah-border);
+}
+.ah-root .ah-event:hover { background: color-mix(in srgb, var(--ah-event-color) 4%, transparent); }
+.ah-root .ah-event.ah-tool { --ah-event-color: var(--lumo-primary-color, var(--ah-accent)); }
+.ah-root .ah-event.ah-success { --ah-event-color: var(--lumo-success-color, #168253); }
+.ah-root .ah-event.ah-warning { --ah-event-color: var(--lumo-warning-color, #a66b00); }
+.ah-root .ah-event.ah-error { --ah-event-color: var(--lumo-error-color, #c43131); }
+.ah-root .ah-event.ah-warning, .ah-root .ah-event.ah-error {
+    background: color-mix(in srgb, var(--ah-event-color) 8%, transparent);
+    border-left-width: 3px;
+}
+.ah-root .ah-event.ah-warning .ah-event-title, .ah-root .ah-event.ah-error .ah-event-title {
+    color: var(--ah-event-color); font-weight: 600;
+}
+.ah-root .ah-event > * { min-width: 0; }
+.ah-root .ah-event-time, .ah-root .ah-event-interval {
+    font: .75rem/1.6rem ui-monospace, monospace; color: var(--ah-muted); white-space: nowrap;
+}
+.ah-root .ah-event-interval { grid-column: 3; grid-row: 1; text-align: right; }
+.ah-root .ah-event-summary { display: flex; align-items: baseline; gap: .5rem; min-width: 0; line-height: 1.6rem; }
+.ah-root .ah-event-title { flex-shrink: 0; font-size: .75rem; font-weight: 500; }
+.ah-root .ah-event-subject {
+    font: .7rem/1.6rem ui-monospace, monospace; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.ah-root .ah-event-details { margin: 0; grid-column: 2; font-size: .75rem; }
+.ah-root .ah-event-details vaadin-details-summary { padding: 0; min-height: 0; }
+.ah-root .ah-event-details::part(summary) { padding: 0; min-height: 1.6rem; }
+.ah-root .ah-event-details::part(toggle) { width: .8rem; margin: 0 .25rem 0 0; }
+.ah-root .ah-event-details::part(content) { padding: .3rem 0 .5rem; }
+.ah-root .ah-event-data {
+    display: grid; gap: .4rem; max-height: 22rem; overflow: auto; padding: .4rem .6rem;
+    border-left: 1px solid var(--ah-border);
+}
+.ah-root .ah-event-data .ah-message-text { font-size: .8rem; }
+.ah-root .ah-event-data:has(.ah-graph-trace) { max-height: 34rem; }
+.ah-root .ah-graph-trace { display: grid; gap: .5rem; }
+.ah-root .ah-graph-diagram svg { display: block; width: 100%; height: auto; }
+.ah-root .ah-graph-legend { display: flex; gap: .75rem; flex-wrap: wrap; }
+.ah-root .ah-graph-status { font-size: .7rem; }
+/* Small status words: the colors for a light background had a contrast of about 2.5:1 on a dark one. */
+.ah-root .ah-graph-STARTED { color: light-dark(#3866d5, #90bdf9); }
+.ah-root .ah-graph-COMPLETED { color: light-dark(#168253, #4fd18b); }
+.ah-root .ah-graph-WAITING { color: light-dark(#a66b00, #ffcc33); }
+.ah-root .ah-graph-FAILED { color: light-dark(#c43131, #ff9e99); }
+.ah-root .ah-graph-REPAIR { color: light-dark(#a66b00, #ffcc33); }
+.ah-root .ah-graph-REJECTED { color: light-dark(#c43131, #ff9e99); }
+.ah-root .ah-graph-trace-rows { display: grid; gap: .15rem; }
+.ah-root .ah-graph-trace-row {
+    display: grid; grid-template-columns: 10rem minmax(0, 1fr) 6rem 5rem;
+    gap: .3rem; align-items: baseline; border-bottom: 1px solid var(--ah-border);
+}
+.ah-root .ah-graph-conditions { grid-column: 1 / -1; }
+.ah-root .ah-diagnostic .ah-event-title, .ah-root .ah-diagnostic .ah-event-subject { color: var(--ah-muted); }
+.ah-root .ah-plan { display: grid; gap: .5rem; padding: .5rem 0; }
+.ah-root .ah-plan-step { margin: 0; font-size: .8rem; }
+.ah-root .ah-plan-step::part(summary) { white-space: normal; overflow-wrap: anywhere; }
+.ah-root .ah-plan-arguments { display: grid; gap: .4rem; padding: .4rem .75rem; }
+.ah-root .ah-argument { display: grid; grid-template-columns: minmax(5rem, 1fr) minmax(0, 3fr); gap: .75rem; }
+.ah-root .ah-code-label { font-family: ui-monospace, monospace; font-size: .78rem; overflow-wrap: anywhere; }
+.ah-root .ah-code { display: block; font: .78rem/1.6 ui-monospace, monospace; white-space: pre-wrap; overflow-wrap: anywhere; }
+@media (max-width: 950px) {
+    .ah-root .ah-body, .ah-root .ah-body:has(.ah-snapshot-panel:not([hidden])) { grid-template-columns: 14rem minmax(0, 1fr); }
+    .ah-root .ah-timeline, .ah-root .ah-conversation-heading { padding: 1rem; }
+    .ah-root .ah-user { max-width: 96%; }
+}
+@media (max-width: 650px) {
+    .ah-root .ah-body, .ah-root .ah-body:has(.ah-snapshot-panel:not([hidden])) { grid-template-columns: 1fr; grid-template-rows: 12rem minmax(0, 1fr); }
+    .ah-root .ah-sidebar { border-right: 0; border-bottom: 1px solid var(--ah-border); }
+    .ah-root .ah-sidebar-header { padding: .5rem 1rem; }
+    .ah-root .ah-toolbar { padding: .5rem .75rem; }
+    .ah-root .ah-title > .ah-muted { display: none; }
+    .ah-root .ah-message-footer { padding: .4rem .75rem; }
+}
+

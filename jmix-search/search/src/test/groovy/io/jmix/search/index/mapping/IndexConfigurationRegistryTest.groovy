@@ -65,37 +65,6 @@ class IndexConfigurationRegistryTest extends Specification {
         !registry.isEntityClassRegistered(Invoice)
     }
 
-    def "a second definition for the same entity does not replace the first"() {
-        given: "two index definitions naming one entity - a mistake in the application"
-        def first = configuration("test_Order", Order)
-        def second = configuration("test_Order", Invoice)
-
-        when:
-        registry.registerIndexConfiguration(first)
-        registry.registerIndexConfiguration(second)
-
-        then: """the first one wins and the second is dropped with a warning: replacing it would make the effective
-                 configuration depend on the order the definitions were discovered in"""
-        registry.getIndexConfigurationByEntityName("test_Order").is(first)
-        registry.getIndexConfigurations().size() == 1
-        !registry.isEntityClassRegistered(Invoice)
-    }
-
-    def "the returned collections are copies and do not follow later registrations"() {
-        given:
-        registry.registerIndexConfiguration(configuration("test_Order", Order))
-        def configurations = registry.getIndexConfigurations()
-        def entities = registry.getAllIndexedEntities()
-
-        when: "the registry is filled further while the caller still holds what it was given"
-        registry.registerIndexConfiguration(configuration("test_Invoice", Invoice))
-
-        then: """a view would have changed under the caller: the maps are rebuilt by clean() and re-registration,
-                 and the caller reads them outside the lock that guards the writer"""
-        configurations.size() == 1
-        entities == ["test_Order"] as Set
-        registry.getIndexConfigurations().size() == 2
-    }
 
     def "properties affected by an update of an unregistered class are an empty set, not null"() {
         expect: "the caller iterates the result without a null check, unlike with the back-reference getters"

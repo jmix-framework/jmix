@@ -65,8 +65,10 @@ public class StartupIndexSynchronizer {
      * {@code @PostConstruct} of a plain bean runs before Liquibase, and on an empty database the synchronization
      * failed as a whole, leaving the application running with no indexes at all and one line in the log.
      * <p>
-     * Runs last among the listeners of the event: the cluster event channel is subscribed to on the same event,
-     * and a tenant announced while this sweep is still reading the tenants would otherwise be missed by this node.
+     * The order is the one the framework gives its own listeners and says nothing about the cluster event
+     * channel, which subscribes to the same event with no order of its own and therefore after this sweep. A
+     * tenant announced by another node while the sweep is running is missed by this node until something reads
+     * the tenants again - synchronizing the schemas from the console does it.
      */
     @EventListener(ApplicationStartedEvent.class)
     @Order(JmixOrder.LOWEST_PRECEDENCE)

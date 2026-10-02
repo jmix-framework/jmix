@@ -16,6 +16,7 @@
 
 package io.jmix.search.index.impl;
 
+import io.jmix.core.MetadataTools;
 import io.jmix.search.SearchProperties;
 import io.jmix.search.index.IndexConfiguration;
 import io.jmix.search.index.IndexNameGenerator;
@@ -26,6 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -49,14 +51,41 @@ public class StandardIndexLayout implements IndexLayout {
     @Autowired
     protected SearchProperties searchProperties;
 
+    @Autowired
+    protected MetadataTools metadataTools;
+
+    /**
+     * Keeps the warning about a tenant attribute outside JPA to one line per entity: the question is asked on
+     * every write and every search.
+     */
+    protected final Map<String, Boolean> warnedAboutNonJpaTenantAttribute = new ConcurrentHashMap<>();
+
     @Override
     public boolean isSplitByTenantsEnabled() {
         return searchProperties.isSplitIndexesByTenants() && multitenancyAdapter.isMultitenancyActive();
     }
 
+    /**
+     * Tells whether the data of the configuration is stored in a separate index per tenant.
+     * <p>
+     * A tenant attribute on an entity of a store other than JPA buys nothing: the add-on fills the attribute from
+     * {@code JpaDataStore} alone and constrains rows through an EclipseLink criterion, so such an entity has no
+     * tenants to be split by. Splitting it would produce an index per tenant with nothing in any of them.
+     */
     @Override
     public boolean isSplitByTenants(IndexConfiguration configuration) {
-        return isSplitByTenantsEnabled() && configuration.isTenantAware();
+        if (!isSplitByTenantsEnabled() || !configuration.isTenantAware()) {
+            return false;
+        }
+        if (!metadataTools.isJpaEntity(configuration.getEntityClass())) {
+            warnedAboutNonJpaTenantAttribute.computeIfAbsent(configuration.getEntityName(), entityName -> {
+                log.warn("Entity '{}' has a tenant attribute but is not stored in JPA: multitenancy does not apply"
+                        + " to it, and its index is not split by tenants", entityName);
+                return Boolean.TRUE;
+            });
+            return false;
+        }
+        return true;
     }
 
     @Nullable

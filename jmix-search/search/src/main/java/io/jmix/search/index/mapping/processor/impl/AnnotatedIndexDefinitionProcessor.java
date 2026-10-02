@@ -119,7 +119,6 @@ public class AnnotatedIndexDefinitionProcessor {
         ParsedIndexDefinition indexDef = parseIndexDefinition(indexDefClass);
 
         IndexMappingConfiguration indexMappingConfiguration = createIndexMappingConfig(indexDef);
-        checkNoTenantDataInSharedIndex(indexDefClass, indexMappingConfiguration);
         Set<Class<?>> affectedEntityClasses = getAffectedEntityClasses(indexMappingConfiguration);
         log.debug("Index Definition class {}. Affected entity classes = {}", className, affectedEntityClasses);
 
@@ -158,7 +157,6 @@ public class AnnotatedIndexDefinitionProcessor {
                 metaClass, definition.getMappingDefinition(), extendedSearchSettings);
         IndexMappingConfiguration mapping = new IndexMappingConfiguration(
                 metaClass, fields, createDisplayedNameDescriptor(metaClass));
-        checkNoTenantDataInSharedIndex(source, mapping);
         boolean tenantAware = metadataTools.isTenantAware(metaClass);
         return new IndexConfiguration(
                 metaClass.getName(),
@@ -404,16 +402,6 @@ public class AnnotatedIndexDefinitionProcessor {
     }
 
     /**
-     * Fails if an entity stored in a single index shared by all tenants maps the data of a tenant-aware entity.
-     * <p>
-     * A mapped value is copied into the document, so the data of one tenant would end up in an index that every
-     * tenant searches. Row-level security of the Multitenancy add-on doesn't help here: it constrains the queries
-     * to the database, while the value has already been copied to the search engine.
-     * <p>
-     * The opposite direction is safe: a tenant-aware entity that maps a shared one merely duplicates data that
-     * everyone is allowed to see into the index of every tenant.
-     */
-    /**
      * Takes the index name pattern an entity declares for itself and checks it right away, while the index
      * definition interface is at hand and can be named in the error message.
      * <p>
@@ -439,12 +427,21 @@ public class AnnotatedIndexDefinitionProcessor {
         return pattern;
     }
 
-    protected void checkNoTenantDataInSharedIndex(Class<?> indexDefinitionClass,
-                                                  IndexMappingConfiguration mappingConfiguration) {
-        checkNoTenantDataInSharedIndex(indexDefinitionClass.getSimpleName(), mappingConfiguration);
-    }
-
-    protected void checkNoTenantDataInSharedIndex(String source, IndexMappingConfiguration mappingConfiguration) {
+    /**
+     * Fails if an entity stored in a single index shared by all tenants maps the data of a tenant-aware entity.
+     * <p>
+     * A mapped value is copied into the document, so the data of one tenant would end up in an index that every
+     * tenant searches. Row-level security of the Multitenancy add-on doesn't help here: it constrains the queries
+     * to the database, while the value has already been copied to the search engine.
+     * <p>
+     * The opposite direction is safe: a tenant-aware entity that maps a shared one merely duplicates data that
+     * everyone is allowed to see into the index of every tenant.
+     * <p>
+     * Called over an assembled configuration rather than inside the methods that build one: a definition is built
+     * from an annotation, contributed whole, or contributed on top of an existing one, and a field reaching the
+     * data of a tenant is equally forbidden whichever way it got there.
+     */
+    public void checkNoTenantDataInSharedIndex(String source, IndexMappingConfiguration mappingConfiguration) {
         if (!indexLayout.isSplitByTenantsEnabled()) {
             return;
         }

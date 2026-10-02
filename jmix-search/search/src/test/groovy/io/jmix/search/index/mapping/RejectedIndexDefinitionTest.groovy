@@ -80,6 +80,25 @@ class RejectedIndexDefinitionTest extends Specification {
         registered == [order]
     }
 
+    def "of two definitions naming one entity, the first one wins"() {
+        given: "two index definitions for one entity - a mistake in the application"
+        def first = Stub(IndexConfiguration) {
+            getEntityName() >> "demo_Order"
+        }
+        def second = Stub(IndexConfiguration) {
+            getEntityName() >> "demo_Order"
+        }
+        processor.createIndexConfiguration(GOOD) >> first
+        processor.createIndexConfiguration(BROKEN) >> second
+
+        when:
+        manager.initializeIndexDefinitions(null)
+
+        then: """replacing the first would make the effective configuration depend on the order the definitions
+                 were discovered in"""
+        registered == [first]
+    }
+
     def "a failure of another kind still takes the whole set down"() {
         given:
         processor.createIndexConfiguration(GOOD) >> Stub(IndexConfiguration)

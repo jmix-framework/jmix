@@ -54,7 +54,7 @@ class TenantDataIsolationTest extends Specification {
         def mapping = mappingOf(sharedEntity, ["supplier.name": pathThrough(tenantEntity)], [])
 
         when:
-        processor().checkNoTenantDataInSharedIndex(ProductIndexDefinition, mapping)
+        processor().checkNoTenantDataInSharedIndex(ProductIndexDefinition.simpleName, mapping)
 
         then:
         def exception = thrown(IndexDefinitionRejectedException)
@@ -69,7 +69,7 @@ class TenantDataIsolationTest extends Specification {
         def mapping = mappingOf(sharedEntity, [:], [pathThrough(tenantEntity)])
 
         when:
-        processor().checkNoTenantDataInSharedIndex(ProductIndexDefinition, mapping)
+        processor().checkNoTenantDataInSharedIndex(ProductIndexDefinition.simpleName, mapping)
 
         then:
         thrown(IndexDefinitionRejectedException)
@@ -80,7 +80,7 @@ class TenantDataIsolationTest extends Specification {
         def mapping = mappingOf(tenantEntity, ["customer.name": pathThrough(tenantEntity)], [])
 
         when:
-        processor().checkNoTenantDataInSharedIndex(ProductIndexDefinition, mapping)
+        processor().checkNoTenantDataInSharedIndex(ProductIndexDefinition.simpleName, mapping)
 
         then:
         noExceptionThrown()
@@ -91,7 +91,7 @@ class TenantDataIsolationTest extends Specification {
         def mapping = mappingOf(sharedEntity, ["category.name": pathThrough(anotherSharedEntity)], [])
 
         when:
-        processor().checkNoTenantDataInSharedIndex(ProductIndexDefinition, mapping)
+        processor().checkNoTenantDataInSharedIndex(ProductIndexDefinition.simpleName, mapping)
 
         then:
         noExceptionThrown()
@@ -104,7 +104,7 @@ class TenantDataIsolationTest extends Specification {
         def mapping = mappingOf(sharedEntity, ["supplier.name": pathThrough(tenantEntity)], [])
 
         when:
-        processor(layoutWithoutTenants).checkNoTenantDataInSharedIndex(ProductIndexDefinition, mapping)
+        processor(layoutWithoutTenants).checkNoTenantDataInSharedIndex(ProductIndexDefinition.simpleName, mapping)
 
         then: "there are no tenants, so there is nothing to leak between"
         noExceptionThrown()

@@ -93,8 +93,12 @@ public class ElasticsearchIndexManager extends BaseIndexManager<IndexState, Inde
         }
 
         boolean acknowledged = response.acknowledged();
-        // Availability is decided by the caller: it is the one that knows whether an index that was already
-        // there counts as created, and it marks the index either way.
+        if (acknowledged) {
+            // The index was put there by this call, which is a fact only this method holds. A failure means the
+            // opposite of nothing: the index may be there anyway, put by another node, so what a failure means is
+            // left to the caller and nothing is marked here.
+            indexStateRegistry.markIndexAsAvailable(indexName);
+        }
         return IndexManipulationResult.of(acknowledged);
     }
 

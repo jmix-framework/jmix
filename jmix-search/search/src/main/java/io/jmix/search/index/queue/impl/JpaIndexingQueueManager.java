@@ -396,6 +396,15 @@ public class JpaIndexingQueueManager implements IndexingQueueManager {
                 return 0;
             }
 
+            if (!indexConfigurationManager.isDirectlyIndexed(session.getEntityName())) {
+                // The entity left the indexed set while its session was still in the table - a metadata
+                // generation that no longer carries it. Throwing here would cost the scheduler every tick from
+                // now on, for every other entity too.
+                log.warn("Enqueueing session of entity '{}' is left alone: the entity is no longer indexed."
+                                + " Terminate the session to remove it", session.getEntityName());
+                return 0;
+            }
+
             if (!locker.tryLockEntityForEnqueueIndexAll(session.getEntityName(), session.getTenantId())) {
                 log.info("Unable to process enqueueing session for entity '{}' of tenant '{}': currently in progress",
                         session.getEntityName(), session.getTenantId());

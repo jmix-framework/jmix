@@ -58,8 +58,9 @@ public class IndexStateRegistry {
     /**
      * Clears the registry, so every index becomes unavailable until it is marked as available again.
      * <p>
-     * Should be called after index configurations are refreshed: the previous availability markers may refer to
-     * indexes that are no longer configured.
+     * Called from the explicit "refresh the index definitions" operation alone, which synchronizes the schemas
+     * immediately afterwards and so fills the registry back in. It must not be called from a rebuild that nothing
+     * repairs: every index would stay unavailable and indexing would stop until someone noticed.
      */
     public void clean() {
         registry.clear();

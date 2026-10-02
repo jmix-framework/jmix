@@ -157,7 +157,8 @@ class EnqueueingSessionManagerTest extends Specification {
     }
 
     def "session management methods throw when the index of the entity is not split by tenants"() {
-        given:
+        given: "the entity is indexed, so the refusal can only come from the split check"
+        indexConfigurationManager.isDirectlyIndexed("test_Entity") >> true
         indexLayout.isSplitByTenants(indexConfig) >> false
 
         when:
@@ -171,7 +172,8 @@ class EnqueueingSessionManagerTest extends Specification {
         action.call()
 
         then:
-        thrown(IllegalArgumentException)
+        def e = thrown(IllegalArgumentException)
+        e.message.contains("is not split by tenants")
 
         where:
         methodName << ["initSession", "suspendSession", "resumeSession", "removeSession"]

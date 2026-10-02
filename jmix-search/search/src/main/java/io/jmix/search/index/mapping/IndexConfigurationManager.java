@@ -129,6 +129,11 @@ public class IndexConfigurationManager {
      * if the Dynamic attributes add-on is used in the project.
      */
     public void refreshIndexDefinitions() {
+        // Forget which indexes were known to be ready: the definitions are about to be recomputed, and an index
+        // whose mapping changed must not be written to before it has been checked again. The caller of this
+        // method synchronizes the schemas right after, which is what fills the knowledge back in - the lazy
+        // rebuild on a new metadata generation has no such repair, so it leaves the markers alone.
+        indexStateRegistry.clean();
         initializeIndexDefinitions(getState());
     }
 
@@ -355,7 +360,29 @@ public class IndexConfigurationManager {
                 }
             }
         }
-        replaceConfigurations(state, new ArrayList<>(configurations.values()));
+        replaceConfigurations(state, accepted(configurations.values()));
+    }
+
+    /**
+     * Leaves out the configurations that cannot be applied, whichever way they were built.
+     * <p>
+     * The rule is attached to the assembled configuration rather than to the way of assembling one: a definition
+     * comes from an annotation, from a contribution, or from a contribution on top of an annotation, and a new way
+     * of building one must not need a new place to check it.
+     */
+    protected List<IndexConfiguration> accepted(Collection<IndexConfiguration> configurations) {
+        List<IndexConfiguration> accepted = new ArrayList<>(configurations.size());
+        for (IndexConfiguration configuration : configurations) {
+            try {
+                indexDefinitionProcessor.checkNoTenantDataInSharedIndex(
+                        String.format("Index definition of entity '%s'", configuration.getEntityName()),
+                        configuration.getMapping());
+                accepted.add(configuration);
+            } catch (IndexDefinitionRejectedException e) {
+                log.error("Entity '{}' is not indexed. {}", configuration.getEntityName(), e.getMessage());
+            }
+        }
+        return accepted;
     }
 
     /**
@@ -369,7 +396,6 @@ public class IndexConfigurationManager {
         try {
             state.registry.clean();
             accepted.forEach(state.registry::registerIndexConfiguration);
-            indexStateRegistry.clean();
         } finally {
             state.lock.unlockWrite(stamp);
         }

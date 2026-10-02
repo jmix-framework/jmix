@@ -17,6 +17,7 @@
 package io.jmix.search.index.impl
 
 import io.jmix.search.index.IndexConfiguration
+import io.jmix.core.MetadataTools
 import io.jmix.search.SearchProperties
 import io.jmix.search.index.IndexNameGenerator
 import spock.lang.Specification
@@ -32,6 +33,7 @@ class StandardIndexLayoutTest extends Specification {
 
     def configuration = Stub(IndexConfiguration) {
         getEntityName() >> "test_Order"
+        getEntityClass() >> Object
         isTenantAware() >> true
     }
 
@@ -39,6 +41,7 @@ class StandardIndexLayoutTest extends Specification {
         layout.multitenancyAdapter = multitenancyAdapter
         layout.indexNameGenerator = indexNameGenerator
         layout.searchProperties = searchProperties
+        layout.metadataTools = jpaMetadataTools()
         multitenancyAdapter.isMultitenancyActive() >> true
     }
 
@@ -64,6 +67,7 @@ class StandardIndexLayoutTest extends Specification {
         given:
         def customer = Stub(IndexConfiguration) {
             getEntityName() >> "test_Customer"
+            getEntityClass() >> Object
             isTenantAware() >> true
         }
         indexNameGenerator.generateIndexName(_ as IndexConfiguration, "acme") >> "index_acme"
@@ -82,6 +86,7 @@ class StandardIndexLayoutTest extends Specification {
         given:
         def shared = Stub(IndexConfiguration) {
             getEntityName() >> "test_Shared"
+            getEntityClass() >> Object
             isTenantAware() >> false
         }
         indexNameGenerator.generateIndexName(shared, null) >> "index_shared"
@@ -106,4 +111,11 @@ class StandardIndexLayoutTest extends Specification {
         then: "the caller named the tenant and has to hear that it has no index, unlike a sweep over all of them"
         thrown(IllegalArgumentException)
     }
+    /** The entities of these tests are ordinary JPA ones: a tenant attribute elsewhere buys nothing. */
+    protected MetadataTools jpaMetadataTools() {
+        return Stub(MetadataTools) {
+            isJpaEntity(_) >> true
+        }
+    }
+
 }

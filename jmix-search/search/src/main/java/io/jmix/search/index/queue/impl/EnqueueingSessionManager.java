@@ -236,7 +236,7 @@ public class EnqueueingSessionManager {
             Optional<EnqueueingSession> currentSessionOpt = reloadSession(session);
             currentSessionOpt.ifPresent(currentSession -> dataManager.remove(currentSession));
             return IndexManipulationResult.SUCCESS;
-        });
+        }, false);
         return toResult(entityName, session.getTenantId(), result);
     }
 
@@ -265,14 +265,18 @@ public class EnqueueingSessionManager {
         return toResult(entityName, tenantId, result);
     }
 
+    /**
+     * Removing a session is how an entity that left the indexed set gets its leftovers cleared, so it does not
+     * demand that the entity still be indexed.
+     */
     protected IndexManipulationResult removeSessionInternal(String entityName, @Nullable String tenantId) {
         return executeManagementAction(entityName, tenantId, 10000, () -> {
-            EnqueueingSession session = getSession(entityName, tenantId);
+            EnqueueingSession session = loadEnqueueingSessionEntityByEntityName(entityName, tenantId).orElse(null);
             if (session != null) {
                 dataManager.remove(session);
             }
             return IndexManipulationResult.SUCCESS;
-        });
+        }, false);
     }
 
     /**
@@ -426,9 +430,23 @@ public class EnqueueingSessionManager {
     }
 
     protected IndexManipulationResult executeManagementAction(String entityName, @Nullable String tenantId, int lockTimeoutMs, SessionManagementAction action) {
+        return executeManagementAction(entityName, tenantId, lockTimeoutMs, action, true);
+    }
+
+    /**
+     * Runs an action on the session of one entity and tenant, under the lock of that session.
+     *
+     * @param entityMustBeIndexed whether the entity has to be in the indexed set. An operation that creates or
+     *                            resumes work needs it; an operation that removes what an entity left behind is
+     *                            refused by it - and removing a session of an entity that is no longer indexed is
+     *                            the only way such a session can ever be got rid of
+     */
+    protected IndexManipulationResult executeManagementAction(String entityName, @Nullable String tenantId,
+                                                              int lockTimeoutMs, SessionManagementAction action,
+                                                              boolean entityMustBeIndexed) {
         Preconditions.checkNotEmptyString(entityName);
         validateTenantId(entityName, tenantId);
-        if (indexConfigurationManager.isDirectlyIndexed(entityName)) {
+        if (!entityMustBeIndexed || indexConfigurationManager.isDirectlyIndexed(entityName)) {
             log.debug("Try to lock enqueueing session for entity '{}' and tenant '{}'", entityName, tenantId);
             if (!locker.tryLockEnqueueingSession(entityName, tenantId, lockTimeoutMs, TimeUnit.MILLISECONDS)) {
                 log.info("Unable to lock enqueuing session for entity '{}' and tenant '{}': session is locked",
@@ -454,6 +472,11 @@ public class EnqueueingSessionManager {
             return;
         }
         Preconditions.checkNotEmptyString(tenantId);
+        if (entityName != null && !indexConfigurationManager.isDirectlyIndexed(entityName)) {
+            // An entity that left the indexed set has no configuration to ask about the split. Its leftovers are
+            // addressed by the tenant they were written with, and refusing here would make them unreachable.
+            return;
+        }
         if (entityName == null) {
             // There is no configuration to ask, so the only thing that can be checked is the add-on itself.
             if (!multitenancyAdapter.isMultitenancyActive()) {

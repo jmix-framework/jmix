@@ -149,9 +149,15 @@ public abstract class BaseIndexManager<TState, TSettings, TJsonp> implements Ind
                 IndexRecreationStatus.PROBLEM_WITH_INDEX_CREATING);
     }
 
+    /**
+     * Recreates the index, creating it when it is not there at all.
+     * <p>
+     * The engines answer a deletion of a missing index with an error, so dropping unconditionally would turn
+     * "recreate an index that does not exist" - a new tenant, an index removed by hand, a fresh engine - into a
+     * failure instead of a creation.
+     */
     protected IndexRecreationStatus recreateIndex(IndexConfiguration indexConfiguration, String indexName) {
-        boolean dropped = dropIndex(indexName);
-        if (!dropped) {
+        if (isIndexExist(indexName) && !dropIndex(indexName)) {
             return IndexRecreationStatus.PROBLEM_WITH_INDEX_DELETING;
         }
 

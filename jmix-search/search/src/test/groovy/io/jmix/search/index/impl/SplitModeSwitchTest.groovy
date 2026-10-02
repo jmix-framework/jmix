@@ -16,6 +16,7 @@
 
 package io.jmix.search.index.impl
 
+import io.jmix.core.MetadataTools
 import io.jmix.search.SearchProperties
 import io.jmix.search.index.IndexConfiguration
 import io.jmix.search.index.IndexNameGenerator
@@ -41,6 +42,7 @@ class SplitModeSwitchTest extends Specification {
 
     def configuration = Stub(IndexConfiguration) {
         getEntityName() >> "test_Order"
+        getEntityClass() >> Object
         isTenantAware() >> true
     }
 
@@ -48,6 +50,7 @@ class SplitModeSwitchTest extends Specification {
         def layout = new StandardIndexLayout()
         layout.multitenancyAdapter = multitenancyAdapter
         layout.indexNameGenerator = indexNameGenerator
+        layout.metadataTools = jpaMetadataTools()
         layout.searchProperties = Stub(SearchProperties) {
             isSplitIndexesByTenants() >> splitEnabled
         }
@@ -110,6 +113,7 @@ class SplitModeSwitchTest extends Specification {
         given:
         def shared = Stub(IndexConfiguration) {
             getEntityName() >> "test_Country"
+            getEntityClass() >> Object
             isTenantAware() >> false
         }
         def layout = layout(splitEnabled)
@@ -122,4 +126,11 @@ class SplitModeSwitchTest extends Specification {
         where:
         splitEnabled << [true, false]
     }
+    /** The entities of these tests are ordinary JPA ones: a tenant attribute elsewhere buys nothing. */
+    protected MetadataTools jpaMetadataTools() {
+        return Stub(MetadataTools) {
+            isJpaEntity(_) >> true
+        }
+    }
+
 }

@@ -468,13 +468,14 @@ public class AnnotatedIndexDefinitionProcessor {
             }
             MetaClass referencedMetaClass = property.getRange().asClass();
             if (metadataTools.isTenantAware(referencedMetaClass)) {
+                // The source names itself - "Index definition of entity 'Catalog'" - so it opens the sentence
+                // instead of sitting behind a second "its index definition", which read twice over.
                 throw new IndexDefinitionRejectedException(String.format(
-                        "Entity '%s' is stored in a single index shared by all tenants, but its index definition %s"
-                                + " maps property '%s' of tenant-aware entity '%s'. The data of one tenant would"
-                                + " become searchable by the others. Either drop the mapped property or make '%s'"
-                                + " tenant-aware.",
-                        rootMetaClass.getName(), source, propertyDescription,
-                        referencedMetaClass.getName(), rootMetaClass.getName()));
+                        "%s maps property '%s' of tenant-aware entity '%s', but '%s' is stored in a single index"
+                                + " shared by all tenants. The data of one tenant would become searchable by the"
+                                + " others. Either drop the mapped property or make '%s' tenant-aware.",
+                        source, propertyDescription, referencedMetaClass.getName(),
+                        rootMetaClass.getName(), rootMetaClass.getName()));
             }
         }
     }

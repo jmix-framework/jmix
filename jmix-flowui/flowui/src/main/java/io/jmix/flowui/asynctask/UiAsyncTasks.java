@@ -19,6 +19,7 @@ package io.jmix.flowui.asynctask;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.UIDetachedException;
 import com.vaadin.flow.server.Command;
 import io.jmix.core.impl.metadata.MetadataGeneration;
 import io.jmix.core.impl.metadata.MetadataGenerationManager;
@@ -374,11 +375,23 @@ public class UiAsyncTasks {
         return throwable -> {
             if (throwable instanceof TimeoutException) {
                 log.error("UI async task finished on timeout");
+            } else if (throwable instanceof CancellationException) {
+                log.debug("UI async task cancelled", throwable);
+            } else if (findRootCause(throwable) instanceof UIDetachedException) {
+                log.debug("UI async task completed after UI was detached, skipping UI update", throwable);
             } else {
                 log.error("UI async task error", throwable);
             }
             return null;
         };
+    }
+
+    protected Throwable findRootCause(Throwable throwable) {
+        Throwable cause = throwable;
+        while (cause.getCause() != null) {
+            cause = cause.getCause();
+        }
+        return cause;
     }
 
     public void setDefaultExceptionHandler(Function<Throwable, Void> defaultExceptionHandler) {

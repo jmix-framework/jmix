@@ -308,6 +308,7 @@ public class DownloaderImpl implements Downloader, ApplicationContextAware {
                     }
                 })
                 .withResultHandler(context.owningComponent()::removeFromParent)
+                .withOwner(context.owningComponent())
                 .withTimeout(62, TimeUnit.SECONDS)
                 .runAsync();
     }

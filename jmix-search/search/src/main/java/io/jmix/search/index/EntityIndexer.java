@@ -88,7 +88,12 @@ public interface EntityIndexer {
      *
      * @param entityIds IDs of entity instances
      * @return {@link IndexResult}
+     * @deprecated an id alone does not say which tenant's index holds the document, so a deletion asked this way
+     * is sent to every index of the entity. Use {@link #deleteCollectionByTargets(Collection)}, which carries the
+     * tenant, and {@link EntityDeletionTarget#tenantUnknown(Id)} where it is genuinely unknown. The indexing
+     * queue calls that method, so an override placed here no longer takes part in queued deletions.
      */
+    @Deprecated(since = "3.1", forRemoval = true)
     IndexResult deleteCollectionByEntityIds(Collection<Id<?>> entityIds);
 
     /**

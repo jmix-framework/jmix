@@ -63,6 +63,7 @@ public class NoopEntityIndexer implements EntityIndexer {
         return new IndexResult(0, Collections.emptyList());
     }
 
+    @Deprecated(since = "3.1", forRemoval = true)
     @Override
     public IndexResult deleteCollectionByEntityIds(Collection<Id<?>> entityIds) {
         return new IndexResult(0, Collections.emptyList());

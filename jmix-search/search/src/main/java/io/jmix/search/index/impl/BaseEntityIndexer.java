@@ -129,9 +129,10 @@ public abstract class BaseEntityIndexer implements EntityIndexer {
 
     @Override
     public IndexResult deleteByEntityId(Id<?> entityId) {
-        return deleteCollectionByEntityIds(Collections.singletonList(entityId));
+        return deleteCollectionByTargets(List.of(EntityDeletionTarget.tenantUnknown(entityId)));
     }
 
+    @Deprecated(since = "3.1", forRemoval = true)
     @Override
     public IndexResult deleteCollectionByEntityIds(Collection<Id<?>> entityIds) {
         return deleteCollectionByTargets(entityIds.stream().map(EntityDeletionTarget::tenantUnknown).toList());
@@ -490,7 +491,6 @@ public abstract class BaseEntityIndexer implements EntityIndexer {
 
         log.debug("Source object: {}", sourceObject);
         String serializedEntityId = idSerialization.idToString(Id.of(instance));
-        ///
         return new IndexDocumentData(indexName, serializedEntityId, sourceObject);
     }
 

@@ -27,7 +27,6 @@ import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.search.exception.IndexDefinitionRejectedException;
 import io.jmix.search.index.IndexConfiguration;
-import io.jmix.search.index.IndexNameGenerator;
 import io.jmix.search.index.impl.IndexLayout;
 import io.jmix.search.index.impl.IndexStateRegistry;
 import io.jmix.search.index.mapping.processor.impl.AnnotatedIndexDefinitionProcessor;
@@ -157,7 +156,6 @@ public class IndexConfigurationManager {
      *
      * @return all {@link IndexConfiguration}
      */
-    @SuppressWarnings("ConstantConditions")
     public Collection<IndexConfiguration> getAllIndexConfigurations() {
         State state = getState();
         ensureInitialized(state);
@@ -199,7 +197,11 @@ public class IndexConfigurationManager {
      *
      * @param indexName index name
      * @return {@link IndexConfiguration}
+     * @deprecated an index name no longer identifies one configuration on its own: an entity split by tenants has
+     * one index per tenant, and the names are built from tenant ids while the application runs. Ask by entity name
+     * instead - {@link #getIndexConfigurationByEntityName(String)}.
      */
+    @Deprecated(since = "3.1", forRemoval = true)
     public IndexConfiguration getIndexConfigurationByIndexName(String indexName) {
         return getIndexConfigurationByIndexNameOpt(indexName)
                 .orElseThrow(() -> new IllegalArgumentException(
@@ -208,18 +210,23 @@ public class IndexConfigurationManager {
 
     /**
      * Gets optional {@link IndexConfiguration} registered for provided index name.
+     * <p>
+     * Answering this reads the tenants of the application: the index names of a split entity are not stored
+     * anywhere to be looked up.
      *
      * @param indexName index name
      * @return optional {@link IndexConfiguration}
+     * @deprecated see {@link #getIndexConfigurationByIndexName(String)}
      */
+    @Deprecated(since = "3.1", forRemoval = true)
     public Optional<IndexConfiguration> getIndexConfigurationByIndexNameOpt(String indexName) {
-        return getAllIndexConfigurations().stream()
-                .filter(configuration -> indexLayout.allIndexes(configuration).stream()
+        return indexLayout.allIndexes(getAllIndexConfigurations()).entrySet().stream()
+                .filter(entry -> entry.getValue().stream()
                         .anyMatch(index -> index.indexName().equals(indexName)))
+                .map(Map.Entry::getKey)
                 .findFirst();
     }
 
-    @SuppressWarnings("ConstantConditions")
     public Collection<String> getAllIndexedEntities() {
         State state = getState();
         ensureInitialized(state);
@@ -232,7 +239,6 @@ public class IndexConfigurationManager {
      * @param entityName entity name
      * @return true if the entity is indexed, false otherwise
      */
-    @SuppressWarnings("ConstantConditions")
     public boolean isDirectlyIndexed(String entityName) {
         State state = getState();
         ensureInitialized(state);
@@ -245,7 +251,6 @@ public class IndexConfigurationManager {
      * @param entityClass entity java class
      * @return true if the entity is involved in the index process, false otherwise
      */
-    @SuppressWarnings("ConstantConditions")
     public boolean isAffectedEntityClass(Class<?> entityClass) {
         State state = getState();
         ensureInitialized(state);
@@ -258,7 +263,6 @@ public class IndexConfigurationManager {
      * @param entityClass entity class
      * @return set of property names
      */
-    @SuppressWarnings("ConstantConditions")
     public Set<String> getLocalPropertyNamesAffectedByUpdate(Class<?> entityClass) {
         State state = getState();
         ensureInitialized(state);
@@ -516,8 +520,8 @@ public class IndexConfigurationManager {
     /**
      * Holds the configurations of one metadata generation.
      * <p>
-     * Every getter returns a copy: the collections are plain maps rebuilt by {@code clean()} and re-registration,
-     * so a view handed to a caller would be read outside the lock while a writer is replacing the content.
+     * A registry is filled before it is published and is not written to afterwards, so the getters hand out the
+     * collections themselves: whoever holds one holds a generation that no longer changes.
      */
     protected static class Registry {
 

@@ -498,7 +498,14 @@ public class EnqueueingSessionManager {
     protected List<IndexOperationResult<IndexManipulationResult>> applyForAllTenantsOrTenantless(
             String entityName,
             BiFunction<String, String, IndexManipulationResult> action) {
-        IndexConfiguration config = indexConfigurationManager.getIndexConfigurationByEntityName(entityName);
+        IndexConfiguration config = indexConfigurationManager.getIndexConfigurationByEntityNameOpt(entityName)
+                .orElse(null);
+        if (config == null) {
+            // The entity has left the indexed set, so it has no indexes to enumerate. Its sessions are still in
+            // the table, and they are what the operation has to reach: the tenants come from the rows themselves.
+            tenantsOfSessions(entityName).forEach(tenantId -> action.apply(entityName, tenantId));
+            return List.of();
+        }
         return indexLayout.allIndexes(config)
                 .stream()
                 .map(index -> new IndexOperationResult<>(
@@ -510,17 +517,36 @@ public class EnqueueingSessionManager {
     }
 
     /**
+     * @return the tenant of every session of the entity, a null element for a session that carries none
+     */
+    protected List<String> tenantsOfSessions(String entityName) {
+        return dataManager.load(EnqueueingSession.class)
+                .query("where e.entityName = ?1", entityName)
+                .list()
+                .stream()
+                .map(EnqueueingSession::getTenantId)
+                .toList();
+    }
+
+    /**
      * Turns the outcome of an operation on one session into the row that names the index it was performed on.
      * <p>
-     * A session of a split entity that carries no tenant has no index to be named against - it is a leftover of
-     * an application that was upgraded, or of a tenant that has been removed. The operation itself is still
-     * performed, and the session is gone or suspended as asked; what cannot be produced is the row, so none is
-     * returned rather than one naming an index that does not exist.
+     * Two kinds of session have no index to be named against: one of a split entity that carries no tenant - a
+     * leftover of an application that was upgraded, or of a tenant that has been removed - and one of an entity
+     * that is no longer indexed at all. The operation itself is still performed, and the session is gone or
+     * suspended as asked; what cannot be produced is the row, so none is returned rather than one naming an
+     * index that does not exist.
      */
     protected List<IndexOperationResult<IndexManipulationResult>> toResult(String entityName,
                                                                      @Nullable String tenantId,
                                                                      IndexManipulationResult result) {
-        IndexConfiguration config = indexConfigurationManager.getIndexConfigurationByEntityName(entityName);
+        IndexConfiguration config = indexConfigurationManager.getIndexConfigurationByEntityNameOpt(entityName)
+                .orElse(null);
+        if (config == null) {
+            log.warn("Entity '{}' is no longer indexed: the operation is done, but there is no index to report it"
+                    + " against", entityName);
+            return List.of();
+        }
         String indexName = indexLayout.indexName(config, tenantId);
         if (indexName == null) {
             log.warn("Session of entity '{}' carries no tenant while the entity is split by tenants: the "

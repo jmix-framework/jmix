@@ -132,8 +132,13 @@ public class IndexingLocker {
         }
     }
 
+    /**
+     * Asks nothing about the entity: the caller decides whether it has to be in the indexed set.
+     * <p>
+     * An operation that removes what an entity left behind runs for an entity that is no longer indexed, and it
+     * needs this lock just as much as the operations that create work.
+     */
     protected ReentrantLock acquireEnqueueingSessionLock(String entityName, @Nullable String tenantId) {
-        checkEntityInIndexingScope(entityName);
         return enqueueingSessionOperationLocks.computeIfAbsent(sessionKey(entityName, tenantId),
                 key -> new ReentrantLock());
     }

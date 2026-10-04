@@ -45,6 +45,7 @@ class EnqueueingSessionManagerTest extends Specification {
         manager.@multitenancyAdapter = multitenancyAdapter
         manager.@indexLayout = indexLayout
         indexConfigurationManager.getIndexConfigurationByEntityName("test_Entity") >> indexConfig
+        indexConfigurationManager.getIndexConfigurationByEntityNameOpt("test_Entity") >> Optional.of(indexConfig)
     }
 
     private static class TestableEnqueueingSessionManager extends EnqueueingSessionManager {

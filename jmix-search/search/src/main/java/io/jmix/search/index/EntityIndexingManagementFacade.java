@@ -18,6 +18,7 @@ package io.jmix.search.index;
 
 import io.jmix.core.Id;
 import io.jmix.core.IdSerialization;
+import io.jmix.core.Metadata;
 import io.jmix.core.security.Authenticated;
 import io.jmix.search.SearchProperties;
 import io.jmix.search.index.impl.MultitenancyAdapter;
@@ -52,6 +53,8 @@ public class EntityIndexingManagementFacade {
     protected SearchProperties searchProperties;
     @Autowired
     protected MultitenancyAdapter multitenancyAdapter;
+    @Autowired
+    protected Metadata metadata;
 
     @ManagedAttribute(description = "Strategy of index synchronization")
     public String getIndexSchemaManagementStrategy() {
@@ -345,8 +348,17 @@ public class EntityIndexingManagementFacade {
             @ManagedOperationParameter(name = "tenantId", description = "Tenant id; empty for all")
     })
     public String terminateAsyncEnqueueing(String entityName, String tenantId) {
-        return withScope(entityName, tenantId, false,
-                scope -> formatResults("Terminate async enqueueing", indexingQueueManager.terminateAsyncEnqueueIndexAll(scope.entityName(), scope.tenantId())));
+        return withScope(entityName, tenantId, false, false, scope -> {
+            List<IndexOperationResult<IndexManipulationResult>> results =
+                    indexingQueueManager.terminateAsyncEnqueueIndexAll(scope.entityName(), scope.tenantId());
+            if (scope.entityName() != null && scope.configurations().isEmpty()) {
+                // No configuration means no index to name a row against, so there are no rows to format - but
+                // the sessions were removed, and "no indexes to work with" would read as if nothing happened.
+                return String.format("Terminate async enqueueing: entity '%s' is no longer indexed,"
+                        + " the enqueueing sessions it left behind have been removed", scope.entityName());
+            }
+            return formatResults("Terminate async enqueueing", results);
+        });
     }
 
     @Authenticated
@@ -448,7 +460,7 @@ public class EntityIndexingManagementFacade {
             @ManagedOperationParameter(name = "tenantId", description = "Tenant id; empty for all")
     })
     public String emptyIndexingQueue(String entityName, String tenantId) {
-        return withScope(entityName, tenantId, false, scope -> {
+        return withScope(entityName, tenantId, false, false, scope -> {
             int deleted = indexingQueueManager.emptyQueue(scope.entityName(), scope.tenantId());
             return String.format("%d items have been removed from Indexing Queue", deleted);
         });
@@ -572,22 +584,36 @@ public class EntityIndexingManagementFacade {
      * Resolves what the two text fields of a scoped operation mean and runs the operation, or reports why it cannot
      * run. An empty field is "everything": no entity means every indexed entity, no tenant means every tenant.
      *
-     * @param mustExist whether the operation creates or schedules something, and so needs a tenant that exists.
-     *                  Operations that clean up or report take a tenant that is already gone: removing what a
-     *                  deleted tenant left behind is one of their jobs
+     * @param tenantMustExist whether the operation creates or schedules something, and so needs a tenant that
+     *                        exists. Operations that clean up or report take a tenant that is already gone:
+     *                        removing what a deleted tenant left behind is one of their jobs
      */
-    protected String withScope(@Nullable String entityName, @Nullable String tenantId, boolean mustExist,
+    protected String withScope(@Nullable String entityName, @Nullable String tenantId, boolean tenantMustExist,
                                Function<Scope, String> operation) {
+        return withScope(entityName, tenantId, tenantMustExist, true, operation);
+    }
+
+    /**
+     * @param entityMustBeIndexed whether the operation needs an entity that is still in the indexed set. Only the
+     *                            operations that clear away what an entity left behind may say no: such an entity
+     *                            has no index configuration, so an operation that works through one has nothing
+     *                            to do, while the leftovers would become unreachable if this refused
+     */
+    protected String withScope(@Nullable String entityName, @Nullable String tenantId, boolean tenantMustExist,
+                               boolean entityMustBeIndexed, Function<Scope, String> operation) {
         String entity = StringUtils.trimToNull(entityName);
         String tenant = StringUtils.trimToNull(tenantId);
 
         if (entity != null) {
             InputValidationResult entityValidation = validateInputEntity(entity);
             if (!entityValidation.isValid()) {
-                return entityValidation.getMessage();
+                if (entityMustBeIndexed || metadata.findClass(entity) == null) {
+                    return entityValidation.getMessage();
+                }
+                return operation.apply(new Scope(entity, tenant, List.of()));
             }
         }
-        if (tenant != null && mustExist && !multitenancyAdapter.getAvailableTenants().contains(tenant)) {
+        if (tenant != null && tenantMustExist && !multitenancyAdapter.getAvailableTenants().contains(tenant)) {
             return String.format("Tenant '%s' does not exist", tenant);
         }
 
@@ -609,7 +635,7 @@ public class EntityIndexingManagementFacade {
     protected static <RT extends AtomicIndexOperationResult> String formatResults(
             String operationName,
             List<IndexOperationResult<RT>> results) {
-        if (!results.iterator().hasNext()) {
+        if (results.isEmpty()) {
             return operationName + " result: no indexes to work with";
         }
         return results.stream()

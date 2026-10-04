@@ -16,6 +16,8 @@
 
 package io.jmix.search.index
 
+import io.jmix.core.Metadata
+import io.jmix.core.metamodel.model.MetaClass
 import io.jmix.search.index.impl.MultitenancyAdapter
 import io.jmix.search.index.mapping.IndexConfigurationManager
 import io.jmix.search.index.queue.IndexingQueueManager
@@ -37,6 +39,7 @@ class ManagementScopeTest extends Specification {
     static final String ENTITY = "demo_Order"
     static final String TENANT = "acme"
     static final String GHOST = "ghost"
+    static final String RETIRED = "demo_Retired"
 
     def "the two fields address the whole application, an entity, a tenant, or a single index"() {
         given:
@@ -62,17 +65,69 @@ class ManagementScopeTest extends Specification {
         ENTITY      | TENANT      || ENTITY         | TENANT
     }
 
-    def "an entity that is not indexed is refused before anything is addressed"() {
+    def "a name that is not an entity at all is refused before anything is addressed"() {
         given:
         def facade = facade()
         facade.indexConfigurationManager.isDirectlyIndexed("demo_NotIndexed") >> false
+        facade.metadata.findClass("demo_NotIndexed") >> null
 
         when:
         def result = facade.validateIndexes("demo_NotIndexed", "")
 
-        then:
+        then: "a misspelled name has nothing behind it, so there is nothing to clean up either"
         result.contains("is not configured for indexing")
         0 * facade.indexManager._
+    }
+
+    def "a cleanup operation reaches an entity that has left the indexed set"() {
+        given: "the entity is still in the metamodel, only its index definition is gone"
+        def facade = facade()
+        facade.indexConfigurationManager.isDirectlyIndexed(RETIRED) >> false
+        facade.metadata.findClass(RETIRED) >> Mock(MetaClass)
+
+        when:
+        def result = facade.terminateAsyncEnqueueing(RETIRED, "")
+
+        then: """what such an entity left behind - its enqueueing session - is removable only through this
+                 operation, so refusing here would make the leftovers unreachable"""
+        1 * facade.indexingQueueManager.terminateAsyncEnqueueIndexAll(RETIRED, null) >> []
+        !result.contains("is not configured for indexing")
+    }
+
+    def "#operationName refuses an entity that has left the indexed set"() {
+        given:
+        def facade = facade()
+        facade.indexConfigurationManager.isDirectlyIndexed(RETIRED) >> false
+        facade.metadata.findClass(RETIRED) >> Mock(MetaClass)
+
+        when:
+        def result = operation.call(facade)
+
+        then: """only the operations that clear away leftovers accept such an entity; the rest work through an
+                 index configuration, and it has none"""
+        result.contains("is not configured for indexing")
+
+        where:
+        operationName                  | operation
+        "initAsyncEnqueueing"          | { it.initAsyncEnqueueing(RETIRED, "") }
+        "suspendAsyncEnqueueing"       | { it.suspendAsyncEnqueueing(RETIRED, "") }
+        "resumeAsyncEnqueueing"        | { it.resumeAsyncEnqueueing(RETIRED, "") }
+        "validateIndexes"              | { it.validateIndexes(RETIRED, "") }
+        "deleteIndexes"                | { it.deleteIndexes(RETIRED, "") }
+    }
+
+    def "clearing the queue reaches an entity that has left the indexed set"() {
+        given:
+        def facade = facade()
+        facade.indexConfigurationManager.isDirectlyIndexed(RETIRED) >> false
+        facade.metadata.findClass(RETIRED) >> Mock(MetaClass)
+
+        when:
+        def result = facade.emptyIndexingQueue(RETIRED, "")
+
+        then: "its queue items outlive its index definition, and this is the only way to be rid of them"
+        1 * facade.indexingQueueManager.emptyQueue(RETIRED, null) >> 3
+        !result.contains("is not configured for indexing")
     }
 
     def "an operation that creates something refuses a tenant that cannot exist"() {
@@ -131,6 +186,7 @@ class ManagementScopeTest extends Specification {
         facade.multitenancyAdapter = Stub(MultitenancyAdapter) {
             getAvailableTenants() >> ([TENANT] as Set)
         }
+        facade.metadata = Stub(Metadata)
         return facade
     }
 
@@ -144,6 +200,7 @@ class ManagementScopeTest extends Specification {
         facade.multitenancyAdapter = Mock(MultitenancyAdapter) {
             getAvailableTenants() >> ([TENANT] as Set)
         }
+        facade.metadata = Mock(Metadata)
         return facade
     }
 }

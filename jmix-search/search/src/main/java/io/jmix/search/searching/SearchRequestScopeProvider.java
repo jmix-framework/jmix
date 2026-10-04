@@ -20,7 +20,6 @@ import io.jmix.search.index.IndexConfiguration;
 import io.jmix.search.index.impl.IndexLayout;
 import io.jmix.search.index.impl.MultitenancyAdapter;
 import io.jmix.search.index.mapping.IndexConfigurationManager;
-import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

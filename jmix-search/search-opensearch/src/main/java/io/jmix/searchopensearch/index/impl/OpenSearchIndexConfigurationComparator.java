@@ -16,7 +16,6 @@
 
 package io.jmix.searchopensearch.index.impl;
 
-import io.jmix.search.index.IndexConfiguration;
 import io.jmix.search.index.impl.IndexConfigurationComparator;
 import org.jspecify.annotations.Nullable;
 import org.opensearch.client.json.JsonpSerializable;

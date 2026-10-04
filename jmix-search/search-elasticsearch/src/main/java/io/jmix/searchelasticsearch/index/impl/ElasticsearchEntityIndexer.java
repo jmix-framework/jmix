@@ -95,12 +95,12 @@ public class ElasticsearchEntityIndexer extends BaseEntityIndexer {
     @Override
     protected IndexResult deleteByGroupedDocIds(List<DocumentToDelete> documents) {
         BulkRequest.Builder requestBuilder = new BulkRequest.Builder();
-            documents.forEach(docId ->
-                    requestBuilder.operations(operationsBuilder ->
-                            operationsBuilder.delete(deleteOperationBuilder ->
-                                    deleteOperationBuilder.index(docId.indexName()).id(docId.entityId()))
-                    )
-            );
+        documents.forEach(data ->
+                requestBuilder.operations(operationsBuilder ->
+                        operationsBuilder.delete(deleteOperationBuilder ->
+                                deleteOperationBuilder.index(data.indexName()).id(data.entityId()))
+                )
+        );
 
         BulkResponse response = execute(requestBuilder);
         return createIndexResult(response);

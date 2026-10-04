@@ -25,7 +25,6 @@ import io.jmix.search.SearchConfiguration;
 import io.jmix.search.SearchProperties;
 import io.jmix.search.index.EntityIndexer;
 import io.jmix.search.index.IndexManager;
-import io.jmix.search.index.IndexNameGenerator;
 import io.jmix.search.index.impl.IndexConfigurationComparator;
 import io.jmix.search.index.impl.IndexStateRegistry;
 import io.jmix.search.index.impl.IndexStateResolver;

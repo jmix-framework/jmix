@@ -56,17 +56,14 @@ public class ElasticsearchIndexManager extends BaseIndexManager<IndexState, Inde
                                      IndexStateRegistry indexStateRegistry,
                                      IndexConfigurationManager indexConfigurationManager,
                                      SearchProperties searchProperties,
-                                     IndexNameGenerator indexNameGenerator,
                                      ElasticsearchIndexSettingsProvider indexSettingsProcessor,
                                      ElasticsearchIndexConfigurationComparator configurationComparator,
                                      ElasticsearchIndexStateResolver indexStateResolver,
-                                     ElasticsearchPutMappingRequestBuilder putMappingRequestBuilder
-                                     ) {
+                                     ElasticsearchPutMappingRequestBuilder putMappingRequestBuilder) {
         super(
                 indexConfigurationManager,
                 indexStateRegistry,
                 searchProperties,
-                indexNameGenerator,
                 configurationComparator,
                 indexStateResolver);
         this.client = client;

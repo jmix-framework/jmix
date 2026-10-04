@@ -19,7 +19,6 @@ package io.jmix.search.index.impl
 import io.jmix.search.index.IndexManipulationResult
 import io.jmix.search.SearchProperties
 import io.jmix.search.index.IndexConfiguration
-import io.jmix.search.index.IndexNameGenerator
 import io.jmix.search.index.IndexOperationResult
 import io.jmix.search.index.IndexRecreationStatus
 import io.jmix.search.index.IndexSynchronizationStatus
@@ -39,7 +38,7 @@ class BaseIndexManagerTest extends Specification {
 
     def "synchronizeIndexSchemas. The giving configurations couldn't be null"() {
         given:
-        BaseIndexManager indexManager = new BaseIndexManagerTestImpl(null, null, null, null, null, null)
+        BaseIndexManager indexManager = new BaseIndexManagerTestImpl(null, null, null, null, null)
         indexManager.indexLayout = Mock(IndexLayout)
 
         when:
@@ -67,7 +66,7 @@ class BaseIndexManagerTest extends Specification {
         indexLayout.indexName(indexConfigurationMock, null) >> INDEX_NAME
 
         and:
-        BaseIndexManager indexManager = new BaseIndexManagerTestImpl(null, indexStateRegistry, searchPropertiesMock, Mock(IndexNameGenerator), null, null)
+        BaseIndexManager indexManager = new BaseIndexManagerTestImpl(null, indexStateRegistry, searchPropertiesMock, null, null)
         indexManager.indexLayout = indexLayout
         BaseIndexManager indexManagerSpy = Spy(indexManager)
         indexManagerSpy.isIndexExist(INDEX_NAME) >> false
@@ -111,7 +110,7 @@ class BaseIndexManagerTest extends Specification {
         indexLayout.indexName(indexConfigurationMock, null) >> INDEX_NAME
 
         and:
-        BaseIndexManager indexManager = new BaseIndexManagerTestImpl(null, indexStateRegistry, searchPropertiesMock, Mock(IndexNameGenerator), null, null)
+        BaseIndexManager indexManager = new BaseIndexManagerTestImpl(null, indexStateRegistry, searchPropertiesMock, null, null)
         indexManager.indexLayout = indexLayout
         BaseIndexManager indexManagerSpy = Spy(indexManager)
         indexManagerSpy.createIndex(indexConfigurationMock, INDEX_NAME) >> { throw creationOutcome }
@@ -160,7 +159,7 @@ class BaseIndexManagerTest extends Specification {
         indexLayout.indexName(indexConfigurationMock, null) >> INDEX_NAME
 
         and:
-        BaseIndexManager indexManager = new BaseIndexManagerTestImpl(null, indexStateRegistry, searchPropertiesMock, Mock(IndexNameGenerator), configurationComparator, null)
+        BaseIndexManager indexManager = new BaseIndexManagerTestImpl(null, indexStateRegistry, searchPropertiesMock, configurationComparator, null)
         indexManager.indexLayout = indexLayout
         BaseIndexManager indexManagerSpy = Spy(indexManager)
         indexManagerSpy.isIndexExist(INDEX_NAME) >> true
@@ -215,7 +214,7 @@ class BaseIndexManagerTest extends Specification {
         indexLayout.indexName(indexConfigurationMock, null) >> INDEX_NAME
 
         and:
-        BaseIndexManager indexManager = new BaseIndexManagerTestImpl(null, indexStateRegistry, searchPropertiesMock, Mock(IndexNameGenerator), configurationComparator, null)
+        BaseIndexManager indexManager = new BaseIndexManagerTestImpl(null, indexStateRegistry, searchPropertiesMock, configurationComparator, null)
         indexManager.indexLayout = indexLayout
         BaseIndexManager indexManagerSpy = Spy(indexManager)
         indexManagerSpy.isIndexExist(INDEX_NAME) >> true
@@ -264,7 +263,7 @@ class BaseIndexManagerTest extends Specification {
                 new IndexLayout.TenantIndex("tenant2", "index_tenant_2"))
 
         and:
-        BaseIndexManager indexManager = new BaseIndexManagerTestImpl(null, indexStateRegistry, searchPropertiesMock, Mock(IndexNameGenerator), null, null)
+        BaseIndexManager indexManager = new BaseIndexManagerTestImpl(null, indexStateRegistry, searchPropertiesMock, null, null)
         indexManager.indexLayout = indexLayout
         BaseIndexManager indexManagerSpy = Spy(indexManager)
         indexManagerSpy.isIndexExist("index_tenant_1") >> false
@@ -307,7 +306,7 @@ class BaseIndexManagerTest extends Specification {
                 new IndexLayout.TenantIndex("tenant2", "index_tenant_2"))
 
         and:
-        BaseIndexManager indexManager = new BaseIndexManagerTestImpl(null, indexStateRegistry, Mock(SearchProperties), Mock(IndexNameGenerator), configurationComparator, null)
+        BaseIndexManager indexManager = new BaseIndexManagerTestImpl(null, indexStateRegistry, Mock(SearchProperties), configurationComparator, null)
         indexManager.indexLayout = indexLayout
         BaseIndexManager indexManagerSpy = Spy(indexManager)
         indexManagerSpy.isIndexExist("index_tenant_1") >> true
@@ -339,7 +338,7 @@ class BaseIndexManagerTest extends Specification {
                 new IndexLayout.TenantIndex("tenant2", "index_tenant_2"))
 
         and:
-        BaseIndexManager indexManager = new BaseIndexManagerTestImpl(null, Mock(IndexStateRegistry), Mock(SearchProperties), Mock(IndexNameGenerator), null, null)
+        BaseIndexManager indexManager = new BaseIndexManagerTestImpl(null, Mock(IndexStateRegistry), Mock(SearchProperties), null, null)
         indexManager.indexLayout = indexLayout
         BaseIndexManager indexManagerSpy = Spy(indexManager)
         indexManagerSpy.dropIndex("index_tenant_1") >> true
@@ -380,7 +379,7 @@ class BaseIndexManagerTest extends Specification {
 
         and:
         BaseIndexManager indexManager = new BaseIndexManagerTestImpl(
-                configurationManager, Mock(IndexStateRegistry), searchPropertiesMock, Mock(IndexNameGenerator), null, null)
+                configurationManager, Mock(IndexStateRegistry), searchPropertiesMock, null, null)
         indexManager.indexLayout = indexLayout
         BaseIndexManager indexManagerSpy = Spy(indexManager)
         indexManagerSpy.isIndexExist("index_tenant_1") >> false
@@ -416,7 +415,7 @@ class BaseIndexManagerTest extends Specification {
 
         and:
         BaseIndexManager indexManager = new BaseIndexManagerTestImpl(
-                configurationManager, indexStateRegistry, searchPropertiesMock, Mock(IndexNameGenerator), null, null)
+                configurationManager, indexStateRegistry, searchPropertiesMock, null, null)
         indexManager.indexLayout = indexLayout
         BaseIndexManager indexManagerSpy = Spy(indexManager)
         indexManagerSpy.isIndexExist("index_tenant_1") >> false
@@ -464,7 +463,7 @@ class BaseIndexManagerTest extends Specification {
 
         and:
         BaseIndexManager indexManager = new BaseIndexManagerTestImpl(
-                configurationManager, indexStateRegistry, searchPropertiesMock, Mock(IndexNameGenerator), configurationComparator, null)
+                configurationManager, indexStateRegistry, searchPropertiesMock, configurationComparator, null)
         indexManager.indexLayout = indexLayout
         BaseIndexManager indexManagerSpy = Spy(indexManager)
         indexManagerSpy.isIndexExist("index_tenant_1") >> true
@@ -507,7 +506,7 @@ class BaseIndexManagerTest extends Specification {
         indexLayout.indexName(indexConfigurationMock, null) >> INDEX_NAME
 
         and:
-        BaseIndexManager indexManager = new BaseIndexManagerTestImpl(null, indexStateRegistry, searchPropertiesMock, Mock(IndexNameGenerator), configurationComparator, null)
+        BaseIndexManager indexManager = new BaseIndexManagerTestImpl(null, indexStateRegistry, searchPropertiesMock, configurationComparator, null)
         indexManager.indexLayout = indexLayout
         BaseIndexManager indexManagerSpy = Spy(indexManager)
         indexManagerSpy.isIndexExist(INDEX_NAME) >> true
@@ -531,7 +530,6 @@ class BaseIndexManagerTest extends Specification {
                 Mock(IndexConfigurationManager),
                 Mock(IndexStateRegistry),
                 Mock(SearchProperties),
-                Mock(IndexNameGenerator),
                 Mock(IndexConfigurationComparator),
                 Mock(IndexStateResolver))
         indexManager.indexLayout = Mock(IndexLayout)
@@ -560,7 +558,6 @@ class BaseIndexManagerTest extends Specification {
                 Mock(IndexConfigurationManager),
                 Mock(IndexStateRegistry),
                 Mock(SearchProperties),
-                Mock(IndexNameGenerator),
                 indexConfigurationComparatorMock,
                 Mock(IndexStateResolver))
         indexManager.indexLayout = Mock(IndexLayout)
@@ -605,7 +602,7 @@ class BaseIndexManagerTest extends Specification {
         and:
         BaseIndexManager indexManager = new BaseIndexManagerTestImpl(
                 configurationManager, Mock(IndexStateRegistry), Mock(SearchProperties),
-                Mock(IndexNameGenerator), null, null)
+                null, null)
         indexManager.indexLayout = indexLayout
         indexManager.indexingQueueManager = queueManager
 

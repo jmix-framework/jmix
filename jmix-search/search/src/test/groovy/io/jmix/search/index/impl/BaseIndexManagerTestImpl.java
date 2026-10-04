@@ -27,13 +27,11 @@ public class BaseIndexManagerTestImpl extends BaseIndexManager<Object, Object, O
     protected BaseIndexManagerTestImpl(IndexConfigurationManager indexConfigurationManager,
                                        IndexStateRegistry indexStateRegistry,
                                        SearchProperties searchProperties,
-                                       IndexNameGenerator indexNameGenerator,
                                        IndexConfigurationComparator<Object, Object, Object> indexConfigurationComparator,
                                        IndexStateResolver<Object, Object> indexStateResolver) {
         super(indexConfigurationManager,
                 indexStateRegistry,
                 searchProperties,
-                indexNameGenerator,
                 indexConfigurationComparator,
                 indexStateResolver);
     }

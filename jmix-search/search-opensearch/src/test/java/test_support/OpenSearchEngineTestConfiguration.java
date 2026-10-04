@@ -24,7 +24,6 @@ import io.jmix.multitenancy.Multitenancy;
 import io.jmix.search.SearchProperties;
 import io.jmix.search.index.EntityIndexer;
 import io.jmix.search.index.IndexManager;
-import io.jmix.search.index.IndexNameGenerator;
 import io.jmix.search.index.impl.IndexStateRegistry;
 import io.jmix.search.index.impl.AddonMultitenancyAdapter;
 import io.jmix.search.index.impl.MultitenancyAdapter;
@@ -92,7 +91,6 @@ public class OpenSearchEngineTestConfiguration {
                                            IndexStateRegistry indexStateRegistry,
                                            IndexConfigurationManager indexConfigurationManager,
                                            SearchProperties searchProperties,
-                                           IndexNameGenerator indexNameGenerator,
                                            OpenSearchIndexSettingsProvider indexSettingsProvider,
                                            OpenSearchIndexConfigurationComparator configurationComparator,
                                            OpenSearchIndexStateResolver indexStateResolver,
@@ -101,7 +99,6 @@ public class OpenSearchEngineTestConfiguration {
                 indexStateRegistry,
                 indexConfigurationManager,
                 searchProperties,
-                indexNameGenerator,
                 indexSettingsProvider,
                 configurationComparator,
                 indexStateResolver,

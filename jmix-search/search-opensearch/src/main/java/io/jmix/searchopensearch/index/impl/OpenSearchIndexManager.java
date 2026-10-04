@@ -59,7 +59,6 @@ public class OpenSearchIndexManager extends BaseIndexManager<IndexState, IndexSe
                                   IndexStateRegistry indexStateRegistry,
                                   IndexConfigurationManager indexConfigurationManager,
                                   SearchProperties searchProperties,
-                                  IndexNameGenerator indexNameGenerator,
                                   OpenSearchIndexSettingsProvider indexSettingsProcessor,
                                   OpenSearchIndexConfigurationComparator configurationComparator,
                                   OpenSearchIndexStateResolver metadataResolver,
@@ -67,7 +66,6 @@ public class OpenSearchIndexManager extends BaseIndexManager<IndexState, IndexSe
         super(indexConfigurationManager,
                 indexStateRegistry,
                 searchProperties,
-                indexNameGenerator,
                 configurationComparator,
                 metadataResolver);
         this.client = client;

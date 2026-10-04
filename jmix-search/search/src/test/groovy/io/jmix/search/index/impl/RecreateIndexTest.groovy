@@ -18,7 +18,6 @@ package io.jmix.search.index.impl
 
 import io.jmix.search.SearchProperties
 import io.jmix.search.index.IndexConfiguration
-import io.jmix.search.index.IndexNameGenerator
 import io.jmix.search.index.IndexRecreationStatus
 import io.jmix.search.index.mapping.IndexConfigurationManager
 import spock.lang.Specification
@@ -84,7 +83,6 @@ class RecreateIndexTest extends Specification {
                 Stub(IndexConfigurationManager),
                 new IndexStateRegistry(),
                 Stub(SearchProperties),
-                Stub(IndexNameGenerator),
                 Stub(IndexConfigurationComparator),
                 Stub(IndexStateResolver))
     }

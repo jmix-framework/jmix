@@ -23,7 +23,6 @@ import io.jmix.search.SearchConfiguration;
 import io.jmix.search.SearchProperties;
 import io.jmix.search.index.EntityIndexer;
 import io.jmix.search.index.IndexManager;
-import io.jmix.search.index.IndexNameGenerator;
 import io.jmix.search.index.impl.IndexStateRegistry;
 import io.jmix.search.index.impl.MultitenancyAdapter;
 import io.jmix.search.index.impl.dynattr.DynamicAttributesSupport;
@@ -122,7 +121,6 @@ public class SearchOpenSearchAutoConfiguration {
                                                   IndexStateRegistry indexStateRegistry,
                                                   IndexConfigurationManager indexConfigurationManager,
                                                   SearchProperties searchProperties,
-                                                  IndexNameGenerator indexNameGenerator,
                                                   OpenSearchIndexSettingsProvider indexSettingsProcessor,
                                                   OpenSearchIndexConfigurationComparator configurationComparator,
                                                   OpenSearchIndexStateResolver metadataResolver,
@@ -132,7 +130,6 @@ public class SearchOpenSearchAutoConfiguration {
                 indexStateRegistry,
                 indexConfigurationManager,
                 searchProperties,
-                indexNameGenerator,
                 indexSettingsProcessor,
                 configurationComparator,
                 metadataResolver,

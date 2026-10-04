@@ -27,7 +27,6 @@ import io.jmix.search.SearchConfiguration;
 import io.jmix.search.SearchProperties;
 import io.jmix.search.index.EntityIndexer;
 import io.jmix.search.index.IndexManager;
-import io.jmix.search.index.IndexNameGenerator;
 import io.jmix.search.index.impl.IndexStateRegistry;
 import io.jmix.search.index.impl.MultitenancyAdapter;
 import io.jmix.search.index.impl.dynattr.DynamicAttributesSupport;
@@ -120,7 +119,6 @@ public class SearchElasticsearchAutoConfiguration {
     protected IndexManager elasticsearchIndexManager(ElasticsearchClient client,
                                                      IndexConfigurationManager indexConfigurationManager,
                                                      SearchProperties searchProperties,
-                                                     IndexNameGenerator indexNameGenerator,
                                                      IndexStateRegistry indexStateRegistry,
                                                      ElasticsearchIndexSettingsProvider indexSettingsProcessor,
                                                      ElasticsearchIndexConfigurationComparator configurationComparator,
@@ -130,7 +128,6 @@ public class SearchElasticsearchAutoConfiguration {
                 indexStateRegistry,
                 indexConfigurationManager,
                 searchProperties,
-                indexNameGenerator,
                 indexSettingsProcessor,
                 configurationComparator,
                 indexStateResolver,

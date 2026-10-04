@@ -758,6 +758,9 @@ public class JpaIndexingQueueManager implements IndexingQueueManager {
      * while records of the other tenants of the same entity keep flowing. An item that does not carry a tenant
      * is excluded together with its entity, because there is no telling which index it is addressed to.
      * <p>
+     * An item that names a tenant the layout does not know waits as well: the tenant has been deleted, its index
+     * is no longer named, and an index that is not named produces no exclusion of its own.
+     * <p>
      * The query is rebuilt for every batch, so the indexes of all configurations are asked for in one call: the
      * layout reads the list of tenants from the database, and asking configuration by configuration would mean
      * one query per indexed entity several times a minute.
@@ -783,6 +786,19 @@ public class JpaIndexingQueueManager implements IndexingQueueManager {
                 continue;
             }
 
+            if (indexLayout.isSplitByTenants(configuration)) {
+                // An item of a tenant the layout no longer names - a deleted tenant - has no index to be written
+                // to, and no exclusion of its own is produced for an index that is not named. Without this the
+                // batch would take such items, fail to write them, remove nothing and stop the queue for everyone.
+                // They wait here instead, and go on if the tenant is restored.
+                conditions.add(String.format(
+                        "not (q.entityName = :e%d and q.tenantId is not null and q.tenantId not in :ts%d)",
+                        index, index));
+                query.setParameter("e" + index, entityName);
+                query.setParameter("ts" + index, indexes.stream().map(IndexLayout.TenantIndex::tenantId).toList());
+                index++;
+            }
+
             boolean anyUnavailable = false;
             for (IndexLayout.TenantIndex tenantIndex : indexes) {
                 if (indexStateRegistry.isIndexAvailable(tenantIndex.indexName())) {
@@ -790,7 +806,10 @@ public class JpaIndexingQueueManager implements IndexingQueueManager {
                 }
                 anyUnavailable = true;
                 if (tenantIndex.tenantId() == null) {
-                    conditions.add(String.format("not (q.entityName = :e%d and q.tenantId is null)", index));
+                    // The one index of an entity that is not split. Every item of that entity is addressed to it,
+                    // whatever stands in the item's tenant column - the column is filled for a tenant-aware entity
+                    // even when the application keeps its indexes shared - so the entity waits as a whole.
+                    conditions.add(String.format("not (q.entityName = :e%d)", index));
                 } else {
                     conditions.add(String.format("not (q.entityName = :e%d and q.tenantId = :t%d)", index, index));
                     query.setParameter("t" + index, tenantIndex.tenantId());

@@ -109,7 +109,27 @@ class IndexingQueueManagerTest extends Specification {
                  every following batch and the queue would stop for everyone"""
         query.getParameters().values().containsAll(["test_Partial", "tenant-a"])
         !query.getParameters().values().contains("tenant-b")
-        query.getQueryString().count("not (") == 2
+
+        and: "the entity is split, so it also leaves out the items of tenants the layout does not name at all"
+        query.getQueryString().count("not (") == 3
+    }
+
+    def "the batch leaves out the items of a tenant the layout no longer names"() {
+        given: "one tenant is left; the other has been deleted, so no index of it is named any more"
+        def partial = splitConfiguration("test_Partial", ["tenant-a": "index_a"])
+        indexConfigurationManager.getAllIndexConfigurations() >> [partial]
+        indexStateRegistry.isIndexAvailable("index_a") >> true
+        metadata.getClass(_) >> Stub(MetaClass)
+
+        when:
+        def query = manager.createDequeueLoadContext(10).getQuery()
+
+        then: """an index that is not named produces no exclusion of its own, so without this the items of the
+                 deleted tenant would be taken by every batch, fail to be written, be removed from nothing, and
+                 stop the queue for every entity and every other tenant"""
+        query.getQueryString().contains("q.tenantId not in :ts0")
+        query.getParameters().get("ts0") == ["tenant-a"]
+        query.getParameters().get("e0") == "test_Partial"
     }
 
     def "items enqueued without a tenant are left out together with their entity"() {
@@ -136,9 +156,12 @@ class IndexingQueueManagerTest extends Specification {
         when:
         def query = manager.createDequeueLoadContext(10).getQuery()
 
-        then: "all of its items carry no tenant, so the single condition covers them"
-        query.getQueryString().contains("q.tenantId is null")
-        query.getParameters().values().contains("test_Shared")
+        then: """every item of such an entity is addressed to its one index, whatever stands in the item's tenant
+                 column - the column is filled for a tenant-aware entity even when the indexes are kept shared,
+                 so a condition that only covered the items without a tenant would let the rest through"""
+        query.getQueryString().contains("not (q.entityName = :e0)")
+        !query.getQueryString().contains("q.tenantId")
+        query.getParameters().get("e0") == "test_Shared"
     }
 
     def "a tenant-aware entity of an application without tenants has no index to write to"() {

@@ -243,15 +243,30 @@ public class NoopIndexingQueueManager implements IndexingQueueManager {
         return 0;
     }
 
-    protected List<IndexOperationResult<IndexManipulationResult>> createResult(String entityName, @Nullable String tenantId) {
-        IndexConfiguration config = indexConfigurationManager.getIndexConfigurationByEntityName(entityName);
+    /**
+     * @param entityName entity name, or null for every indexed entity - the interface allows both, and a search
+     *                   that is switched off answers the same way for either
+     */
+    protected List<IndexOperationResult<IndexManipulationResult>> createResult(@Nullable String entityName,
+                                                                               @Nullable String tenantId) {
+        Collection<IndexConfiguration> configurations = entityName == null
+                ? indexConfigurationManager.getAllIndexConfigurations()
+                : List.of(indexConfigurationManager.getIndexConfigurationByEntityName(entityName));
+        return configurations.stream()
+                .flatMap(configuration -> failureRows(configuration, tenantId).stream())
+                .toList();
+    }
+
+    protected List<IndexOperationResult<IndexManipulationResult>> failureRows(IndexConfiguration configuration,
+                                                                              @Nullable String tenantId) {
+        String entityName = configuration.getEntityName();
         if (tenantId == null) {
-            return indexLayout.allIndexes(config).stream()
+            return indexLayout.allIndexes(configuration).stream()
                     .map(index -> new IndexOperationResult<>(
                             entityName, index.indexName(), index.tenantId(), IndexManipulationResult.FAILURE))
                     .toList();
         }
-        String indexName = indexLayout.indexName(config, tenantId);
+        String indexName = indexLayout.indexName(configuration, tenantId);
         return List.of(
                 new IndexOperationResult<>(entityName, requireNonNull(indexName), tenantId, IndexManipulationResult.FAILURE));
     }

@@ -269,15 +269,15 @@ class IndexingQueueManagerTest extends Specification {
         result == ["test_Entity"]
     }
 
-    def "initAsyncEnqueueIndexAll with a tenant initializes sessions for tenant-aware entities only"() {
+    def "initAsyncEnqueueIndexAll with a tenant initializes sessions for entities split by tenants only"() {
         given:
         multitenancyAdapter.isMultitenancyActive() >> true
         def tenantConfig = Mock(IndexConfiguration)
-        tenantConfig.isTenantAware() >> true
         tenantConfig.getEntityName() >> "test_TenantEntity"
         def tenantlessConfig = Mock(IndexConfiguration)
-        tenantlessConfig.isTenantAware() >> false
         tenantlessConfig.getEntityName() >> "test_TenantlessEntity"
+        indexLayout.isSplitByTenants(tenantConfig) >> true
+        indexLayout.isSplitByTenants(tenantlessConfig) >> false
         indexConfigurationManager.getAllIndexConfigurations() >> [tenantConfig, tenantlessConfig]
 
         when:
@@ -291,15 +291,15 @@ class IndexingQueueManagerTest extends Specification {
     }
 
     @Unroll
-    def "#methodName delegates to session manager for tenant-aware entities"() {
+    def "#methodName delegates to session manager for entities split by tenants"() {
         given:
         multitenancyAdapter.isMultitenancyActive() >> true
         def tenantConfig = Mock(IndexConfiguration)
-        tenantConfig.isTenantAware() >> true
         tenantConfig.getEntityName() >> "test_TenantEntity"
         def tenantlessConfig = Mock(IndexConfiguration)
-        tenantlessConfig.isTenantAware() >> false
         tenantlessConfig.getEntityName() >> "test_TenantlessEntity"
+        indexLayout.isSplitByTenants(tenantConfig) >> true
+        indexLayout.isSplitByTenants(tenantlessConfig) >> false
         indexConfigurationManager.getAllIndexConfigurations() >> [tenantConfig, tenantlessConfig]
 
         when:

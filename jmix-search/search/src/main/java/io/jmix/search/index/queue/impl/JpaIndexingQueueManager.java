@@ -51,7 +51,6 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
-import java.util.ArrayList;
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -1050,16 +1049,15 @@ public class JpaIndexingQueueManager implements IndexingQueueManager {
 
     /**
      * Repeats a session operation for every indexed entity, which is what an operation asked without an entity
-     * means. When a tenant is named, entities without a tenant attribute are left out: none of their data belongs
-     * to that tenant. The attribute is enough to ask about here - that multitenancy is on has been established by
-     * the caller.
+     * means. When a tenant is named, entities whose data is not stored per tenant are left out: none of their
+     * data belongs to that tenant, and a session operation on them is refused.
      */
     protected List<IndexOperationResult<IndexManipulationResult>> everyEntityOfTenant(
             @Nullable String tenantId,
             Function<String, List<IndexOperationResult<IndexManipulationResult>>> operation) {
         List<IndexOperationResult<IndexManipulationResult>> results = new ArrayList<>();
         indexConfigurationManager.getAllIndexConfigurations().stream()
-                .filter(configuration -> tenantId == null || configuration.isTenantAware())
+                .filter(configuration -> tenantId == null || indexLayout.isSplitByTenants(configuration))
                 .map(IndexConfiguration::getEntityName)
                 .forEach(entityName -> results.addAll(operation.apply(entityName)));
         return results;

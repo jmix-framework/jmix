@@ -16,6 +16,7 @@
 
 package io.jmix.search.index.impl;
 
+import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.search.index.IndexConfiguration;
 import org.jspecify.annotations.Nullable;
 
@@ -35,9 +36,10 @@ public interface IndexLayout {
      * Tells whether this application stores tenant-aware entities in a separate index per tenant at all.
      * <p>
      * It is false when the multitenancy add-on is absent, and when the application has switched the mode off to
-     * keep the indexes it had before the upgrade. Callers that have a configuration at hand ask
-     * {@link #isSplitByTenants(IndexConfiguration)} instead; this one is for the code that is still building a
-     * configuration and only knows whether the entity has a tenant attribute.
+     * keep the indexes it had before the upgrade. This answers for the application, not for an entity: whether a
+     * particular entity is split is {@link #isSplitByTenants(IndexConfiguration)} or
+     * {@link #isSplitByTenants(MetaClass)}, which also require the entity to carry a tenant attribute and to be
+     * stored in JPA.
      *
      * @return true if the mode is on
      */
@@ -47,6 +49,14 @@ public interface IndexLayout {
      * @return true if the configuration is mapped to a separate index per tenant
      */
     boolean isSplitByTenants(IndexConfiguration configuration);
+
+    /**
+     * The same question for an entity whose configuration is still being built, and which therefore cannot be
+     * asked about yet. Both overloads answer by the same rule.
+     *
+     * @return true if the data of the entity is mapped to a separate index per tenant
+     */
+    boolean isSplitByTenants(MetaClass metaClass);
 
     /**
      * Returns the index that holds the documents of the configuration for the given tenant.

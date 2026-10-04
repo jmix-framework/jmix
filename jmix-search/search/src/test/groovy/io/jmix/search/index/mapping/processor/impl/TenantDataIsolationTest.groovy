@@ -47,6 +47,11 @@ class TenantDataIsolationTest extends Specification {
         metadataTools.isTenantAware(anotherSharedEntity) >> false
         metadataTools.isTenantAware(tenantEntity) >> true
         indexLayout.isSplitByTenantsEnabled() >> true
+        // What decides the question is whether the root gets an index of its own per tenant, not whether it
+        // carries the attribute: an entity whose attribute buys it no separate index is on the shared side.
+        indexLayout.isSplitByTenants(sharedEntity) >> false
+        indexLayout.isSplitByTenants(anotherSharedEntity) >> false
+        indexLayout.isSplitByTenants(tenantEntity) >> true
     }
 
     def "a shared index that maps a property of a tenant-aware entity is rejected"() {
@@ -84,6 +89,23 @@ class TenantDataIsolationTest extends Specification {
 
         then:
         noExceptionThrown()
+    }
+
+    def "an entity whose tenant attribute buys it no index of its own may not map tenant data either"() {
+        given: """the root carries a tenant attribute, so it looks tenant-aware - but it is not stored in JPA and
+                  the layout gives it one index that every tenant searches, which is where the mapped value lands"""
+        def nonJpaRoot = metaClass("demo_Report")
+        metadataTools.isTenantAware(nonJpaRoot) >> true
+        indexLayout.isSplitByTenants(nonJpaRoot) >> false
+        def mapping = mappingOf(nonJpaRoot, ["supplier.name": pathThrough(tenantEntity)], [])
+
+        when:
+        processor().checkNoTenantDataInSharedIndex(ProductIndexDefinition.simpleName, mapping)
+
+        then:
+        def exception = thrown(IndexDefinitionRejectedException)
+        exception.message.contains("demo_Report")
+        exception.message.contains("demo_Supplier")
     }
 
     def "a shared index that maps another shared entity is fine"() {

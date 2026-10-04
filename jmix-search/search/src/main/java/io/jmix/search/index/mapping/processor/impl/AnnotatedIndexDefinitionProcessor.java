@@ -124,19 +124,16 @@ public class AnnotatedIndexDefinitionProcessor {
 
         Predicate<Object> indexablePredicate = createIndexablePredicate(indexDef);
 
-        IndexConfiguration indexConfiguration;
-
-            boolean tenantAware = metadataTools.isTenantAware(indexDef.metaClass);
-            indexConfiguration = new IndexConfiguration(
-                    indexDef.getMetaClass().getName(),
-                    indexDef.getEntityClass(),
-                    indexMappingConfiguration,
-                    affectedEntityClasses,
-                    indexablePredicate,
-                    indexDef.getExtendedSearchSettings(),
-                    tenantAware,
-                    resolveIndexNamePattern(indexDefClass, indexDef, tenantAware)
-            );
+        IndexConfiguration indexConfiguration = new IndexConfiguration(
+                indexDef.getMetaClass().getName(),
+                indexDef.getEntityClass(),
+                indexMappingConfiguration,
+                affectedEntityClasses,
+                indexablePredicate,
+                indexDef.getExtendedSearchSettings(),
+                metadataTools.isTenantAware(indexDef.getMetaClass()),
+                resolveIndexNamePattern(indexDefClass, indexDef)
+        );
 
         log.debug("Index configuration: {}", format(indexConfiguration));
 
@@ -157,7 +154,6 @@ public class AnnotatedIndexDefinitionProcessor {
                 metaClass, definition.getMappingDefinition(), extendedSearchSettings);
         IndexMappingConfiguration mapping = new IndexMappingConfiguration(
                 metaClass, fields, createDisplayedNameDescriptor(metaClass));
-        boolean tenantAware = metadataTools.isTenantAware(metaClass);
         return new IndexConfiguration(
                 metaClass.getName(),
                 metaClass.getJavaClass(),
@@ -165,8 +161,8 @@ public class AnnotatedIndexDefinitionProcessor {
                 getAffectedEntityClasses(mapping),
                 definition.getIndexablePredicate(),
                 extendedSearchSettings,
-                tenantAware,
-                resolveIndexNamePattern(definition.getIndexName(), source, tenantAware));
+                metadataTools.isTenantAware(metaClass),
+                resolveIndexNamePattern(definition.getIndexName(), source, metaClass));
     }
 
     /**
@@ -408,22 +404,19 @@ public class AnnotatedIndexDefinitionProcessor {
      * A blank value means the entity declares nothing and the application-wide pattern applies.
      */
     @Nullable
-    protected String resolveIndexNamePattern(Class<?> indexDefinitionClass,
-                                             ParsedIndexDefinition indexDef,
-                                             boolean tenantAware) {
+    protected String resolveIndexNamePattern(Class<?> indexDefinitionClass, ParsedIndexDefinition indexDef) {
         return resolveIndexNamePattern(indexDef.getIndexName(),
                 String.format("Index definition %s of entity '%s'",
                         indexDefinitionClass.getSimpleName(), indexDef.getMetaClass().getName()),
-                tenantAware);
+                indexDef.getMetaClass());
     }
 
     @Nullable
-    protected String resolveIndexNamePattern(@Nullable String pattern, String source, boolean tenantAware) {
+    protected String resolveIndexNamePattern(@Nullable String pattern, String source, MetaClass metaClass) {
         if (StringUtils.isBlank(pattern)) {
             return null;
         }
-        indexNameGenerator.validateEntityIndexNamePattern(pattern, source,
-                tenantAware && indexLayout.isSplitByTenantsEnabled());
+        indexNameGenerator.validateEntityIndexNamePattern(pattern, source, indexLayout.isSplitByTenants(metaClass));
         return pattern;
     }
 
@@ -434,8 +427,9 @@ public class AnnotatedIndexDefinitionProcessor {
      * tenant searches. Row-level security of the Multitenancy add-on doesn't help here: it constrains the queries
      * to the database, while the value has already been copied to the search engine.
      * <p>
-     * The opposite direction is safe: a tenant-aware entity that maps a shared one merely duplicates data that
-     * everyone is allowed to see into the index of every tenant.
+     * The opposite direction is safe: an entity split by tenants that maps a shared one merely duplicates data
+     * that everyone is allowed to see into the index of every tenant. Being split is what matters, not carrying
+     * a tenant attribute - an entity whose attribute buys it no separate index is on the shared side here.
      * <p>
      * Called over an assembled configuration rather than inside the methods that build one: a definition is built
      * from an annotation, contributed whole, or contributed on top of an existing one, and a field reaching the
@@ -446,7 +440,7 @@ public class AnnotatedIndexDefinitionProcessor {
             return;
         }
         MetaClass rootMetaClass = mappingConfiguration.getEntityMetaClass();
-        if (metadataTools.isTenantAware(rootMetaClass)) {
+        if (indexLayout.isSplitByTenants(rootMetaClass)) {
             return;
         }
 

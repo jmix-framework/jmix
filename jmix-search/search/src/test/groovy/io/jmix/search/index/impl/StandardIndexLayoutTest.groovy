@@ -111,6 +111,23 @@ class StandardIndexLayoutTest extends Specification {
         then: "the caller named the tenant and has to hear that it has no index, unlike a sweep over all of them"
         thrown(IllegalArgumentException)
     }
+    def "an entity whose tenant attribute is outside JPA is not split"() {
+        given: """the add-on fills the tenant attribute from JpaDataStore alone, so such an entity has no tenants
+                  to be split by: splitting it would make an index per tenant with nothing in any of them"""
+        layout.metadataTools = Stub(MetadataTools) {
+            isJpaEntity(_) >> false
+        }
+        multitenancyAdapter.getAvailableTenants() >> (["acme"] as Set)
+        indexNameGenerator.generateIndexName(configuration, null) >> "search_index_test_order"
+
+        expect:
+        !layout.isSplitByTenants(configuration)
+
+        and: "it keeps the single index it would have had with splitting switched off"
+        layout.allIndexes(configuration)*.indexName() == ["search_index_test_order"]
+        layout.indexName(configuration, "acme") == "search_index_test_order"
+    }
+
     /** The entities of these tests are ordinary JPA ones: a tenant attribute elsewhere buys nothing. */
     protected MetadataTools jpaMetadataTools() {
         return Stub(MetadataTools) {

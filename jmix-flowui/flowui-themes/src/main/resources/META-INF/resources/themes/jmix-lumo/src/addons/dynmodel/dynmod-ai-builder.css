@@ -270,10 +270,6 @@
 .dynmod-ai-builder .draft-title { flex: 1 1 0; white-space: normal; overflow-wrap: anywhere; font-size: 1rem; }
 .dynmod-ai-builder .step-row { padding-block: .5rem; line-height: 1.5; border-bottom: 1px solid var(--lumo-contrast-10pct); }
 .dynmod-ai-builder .step-properties { color: var(--lumo-secondary-text-color); font-size: .875em; }
-.dynmod-ai-builder vaadin-details.plan-technical { margin: .5rem 0 0; padding: 0; min-width: 0; box-sizing: border-box; }
-.dynmod-ai-builder .plan-technical > vaadin-details-summary { padding: .25rem 0; }
-.dynmod-ai-builder .plan-technical::part(content) { padding: .5rem 0 0; }
-.dynmod-ai-builder .plan-technical-content { margin: 0; max-width: 100%; min-width: 0; font-size: .75rem; }
 .dynmod-ai-builder .card-details { border: 0; padding: 0; background: transparent; }
 .dynmod-ai-builder .card-details::part(content) { padding-inline: 0; }
 .dynmod-ai-builder .finding-row { border-inline-start: 3px solid var(--dmagent-finding-accent); border-start-end-radius: var(--lumo-border-radius-m); border-end-end-radius: var(--lumo-border-radius-m); background: color-mix(in oklab, var(--dmagent-finding-accent) 8%, transparent); color: var(--lumo-body-text-color); padding: .5rem .65rem; margin-block: .35rem; align-items: flex-start; }

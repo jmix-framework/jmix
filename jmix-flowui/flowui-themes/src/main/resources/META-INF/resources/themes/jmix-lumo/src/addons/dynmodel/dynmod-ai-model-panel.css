@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-/* Shared by the live Builder and saved history attachments, in both themes. */
+/* Shared by the live Builder panel and the saved attachments in the chat, in both themes. */
 .dynmod-ai-builder .draft-panel .draft-title {
     display: -webkit-box;
     -webkit-box-orient: vertical;
@@ -79,12 +79,6 @@
     font-weight: 700;
     line-height: 1.4;
     overflow-wrap: anywhere;
-}
-
-.dynmod-ai-builder .draft-panel vaadin-details.plan-technical {
-    margin-top: .75rem;
-    padding-top: .75rem;
-    border-top: 2px solid var(--vaadin-border-color, var(--lumo-contrast-30pct));
 }
 
 .dynmod-ai-builder .plan-entity-content {

@@ -58,6 +58,12 @@ To learn Jmix, complete the [tutorial](https://docs.jmix.io/jmix/tutorial/index.
     ./gradlew publishToMavenLocal
     ```
 
+- If Maven Central is unreachable or answers `429 Too Many Requests`, pass a mirror of it with `-PmavenCentralMirror=<url>` or the `MAVEN_CENTRAL_MIRROR` environment variable, for example:
+
+    ```bash
+    ./gradlew publishToMavenLocal -PmavenCentralMirror=https://maven-central-eu.storage-download.googleapis.com/maven2/
+    ```
+
 - If you want to build Gradle plugins, Studio templates or framework translations, execute `./gradlew publishToMavenLocal` in the respective directories:
 
   - `jmix-gradle-plugin` - a Gradle plugin for building Jmix applications.

@@ -355,6 +355,15 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
         return close(StandardOutcome.DISCARD);
     }
 
+    @Override
+    public OperationResult close(CloseAction closeAction) {
+        if (isSaveActionPerformed() && StandardOutcome.CLOSE.getCloseAction().equals(closeAction)) {
+            return super.close(StandardOutcome.SAVE.getCloseAction());
+        }
+
+        return super.close(closeAction);
+    }
+
     /**
      * @return whether a notification will be shown in case of successful save
      */

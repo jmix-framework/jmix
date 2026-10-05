@@ -645,8 +645,9 @@ class GenericFilterBuilderApiTest extends FlowuiTestSpecification {
         when:
         builder.buildAndRegister()
 
-        then:
-        thrown(IllegalStateException)
+        then: "the one-shot guard rejects the call, not the check of the already registered id"
+        def e = thrown(IllegalStateException)
+        e.message.contains("must not be called more than once")
     }
 
     def "FilterConfigurationBuilder.buildAndRegister() throws when the filter has no DataLoader"() {

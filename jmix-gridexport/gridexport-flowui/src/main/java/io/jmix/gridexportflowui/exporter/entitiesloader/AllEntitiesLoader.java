@@ -49,7 +49,30 @@ public interface AllEntitiesLoader {
     String getPaginationStrategy();
 
     /**
-     * Load entities and export each entity using the {@link ExportedEntityVisitor}
+     * Loads entities in batches of the size the loader chooses itself and exports each entity using
+     * the {@link ExportedEntityVisitor}.
+     *
+     * @param dataUnit              data unit linked with the data
+     * @param exportedEntityVisitor visitor which exports entity to appropriate format
+     * @deprecated implement and use {@link #loadAll(DataUnit, ExportedEntityVisitor, int)} instead, which takes
+     * the batch size configured for the exporter. This method will be removed and the one with the batch size
+     * will become abstract.
      */
+    @Deprecated(since = "3.1", forRemoval = true)
     void loadAll(DataUnit dataUnit, ExportedEntityVisitor exportedEntityVisitor);
+
+    /**
+     * Loads entities in batches of the given size and exports each entity using the {@link ExportedEntityVisitor}.
+     * A loader whose data source has no notion of batches may ignore the batch size.
+     * <p>
+     * The default implementation exists only for loaders written before the batch size was introduced: it ignores
+     * {@code loadBatchSize} and delegates to {@link #loadAll(DataUnit, ExportedEntityVisitor)}. Override it.
+     *
+     * @param dataUnit              data unit linked with the data
+     * @param exportedEntityVisitor visitor which exports entity to appropriate format
+     * @param loadBatchSize         number of entities loaded in one query, positive
+     */
+    default void loadAll(DataUnit dataUnit, ExportedEntityVisitor exportedEntityVisitor, int loadBatchSize) {
+        loadAll(dataUnit, exportedEntityVisitor);
+    }
 }

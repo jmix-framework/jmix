@@ -26,6 +26,7 @@ import io.jmix.aitools.dataload.execution.JpqlExecutionRequest;
 import io.jmix.aitools.dataload.execution.JpqlExecutionResult;
 import io.jmix.aitools.dataload.execution.JpqlExecutionService;
 import io.jmix.aitools.dataload.generation.EntityDataLoadGenerationService;
+import io.jmix.aitools.dataload.validation.JpqlValidationIssue;
 import io.jmix.aitools.dataload.validation.JpqlValidationResult;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -36,6 +37,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -149,6 +151,100 @@ class AiDataLoadServiceTest {
         assertEquals(query.getResultProperties(), request.getResultProperties());
         assertSame(query, result.getQuery());
         assertEquals(List.of(Map.of("clientName", "Acme")), result.getRows());
+    }
+
+    @Test
+    @DisplayName("Exposes the repaired query under the requested column names")
+    void loadData_repairedQuery_exposesRepairedQueryWithRequestedColumns() {
+        EntityDataLoadGenerationService entityDataLoadGenerationService = mock(EntityDataLoadGenerationService.class);
+        JpqlExecutionService jpqlExecutionService = mock(JpqlExecutionService.class);
+        AiDataLoadServiceImpl service = createService(entityDataLoadGenerationService, jpqlExecutionService);
+
+        EntityDataLoadQuery query = new EntityDataLoadQuery(
+                "select c.nme as clientName from aitls_Customer c where c.id = :id",
+                List.of(new GeneratedJpqlParameter("id", "Long", "10")),
+                List.of("clientName"),
+                "Load one customer",
+                List.of("Generation warning"),
+                5,
+                0
+        );
+        GeneratedJpqlResult repairedQuery = new GeneratedJpqlResult(
+                "select c.name as client_name from aitls_Customer c where c.id = :customerId",
+                List.of(new GeneratedJpqlParameter("customerId", "Long", "10")),
+                "Load one customer by id",
+                List.of("Repair warning"),
+                10,
+                5
+        );
+        JpqlValidationResult validationResult = new JpqlValidationResult(true, List.of());
+        JpqlExecutionResult executionResult = new JpqlExecutionResult(
+                repairedQuery,
+                validationResult,
+                List.of(Map.of("clientName", "Acme")),
+                10,
+                5,
+                false,
+                true,
+                true,
+                null
+        );
+
+        when(entityDataLoadGenerationService.generate("show customer")).thenReturn(query);
+        when(jpqlExecutionService.execute(any())).thenReturn(executionResult);
+
+        EntityDataLoadResult result = service.loadData("show customer");
+
+        EntityDataLoadQuery resultQuery = result.getQuery();
+        assertEquals(repairedQuery.getJpql(), resultQuery.getJpql());
+        assertEquals(repairedQuery.getParameters(), resultQuery.getParameters());
+        assertEquals(List.of("clientName"), resultQuery.getResultProperties());
+        assertEquals("Load one customer by id", resultQuery.getExplanation());
+        assertEquals(List.of("Repair warning"), resultQuery.getWarnings());
+        assertEquals(10, resultQuery.getMaxResults());
+        assertEquals(5, resultQuery.getFirstResult());
+        assertSame(validationResult, result.getValidationResult());
+        assertEquals(List.of(Map.of("clientName", "Acme")), result.getRows());
+        assertTrue(result.isExecuted());
+    }
+
+    @Test
+    @DisplayName("Exposes the repaired query that validation rejected")
+    void loadData_repairedQueryRejected_exposesRejectedQuery() {
+        EntityDataLoadGenerationService entityDataLoadGenerationService = mock(EntityDataLoadGenerationService.class);
+        JpqlExecutionService jpqlExecutionService = mock(JpqlExecutionService.class);
+        AiDataLoadServiceImpl service = createService(entityDataLoadGenerationService, jpqlExecutionService);
+
+        EntityDataLoadQuery query = new EntityDataLoadQuery(
+                "select c.nme as clientName, c.email as email from aitls_Customer c",
+                List.of(),
+                List.of("clientName", "email"),
+                "Load customers",
+                List.of(),
+                null,
+                null
+        );
+        GeneratedJpqlResult repairedQuery = new GeneratedJpqlResult(
+                "select c.name as clientName from aitls_Customer c",
+                List.of(),
+                "Load customer names",
+                List.of()
+        );
+        JpqlValidationResult validationResult = new JpqlValidationResult(false, List.of(
+                new JpqlValidationIssue("resultProperties.mismatch", "The repaired query selects 1 value")
+        ));
+
+        when(entityDataLoadGenerationService.generate("show customers")).thenReturn(query);
+        when(jpqlExecutionService.execute(any()))
+                .thenReturn(JpqlExecutionResult.failed(repairedQuery, validationResult, true));
+
+        EntityDataLoadResult result = service.loadData("show customers");
+
+        assertEquals(repairedQuery.getJpql(), result.getQuery().getJpql());
+        assertEquals(List.of("clientName", "email"), result.getQuery().getResultProperties());
+        assertSame(validationResult, result.getValidationResult());
+        assertEquals(List.of(), result.getRows());
+        assertFalse(result.isExecuted());
     }
 
     protected AiDataLoadServiceImpl createService(EntityDataLoadGenerationService entityDataLoadGenerationService,

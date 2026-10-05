@@ -21,6 +21,7 @@ import io.jmix.reports.yarg.formatters.ReportFormatter
 import io.jmix.reports.yarg.formatters.factory.FormatterFactoryInput
 import io.jmix.reports.yarg.formatters.impl.XlsxFormatter
 import io.jmix.reports.yarg.structure.BandData
+import io.jmix.reports.yarg.structure.BandOrientation
 import io.jmix.reports.yarg.structure.CustomValueFormatter
 import io.jmix.reports.yarg.structure.ReportFieldFormat
 import io.jmix.reports.yarg.structure.ReportOutputType
@@ -43,6 +44,9 @@ import java.util.zip.ZipOutputStream
  * <p>Each test builds an XLSX template programmatically with Apache POI (cells with {@code ${alias}}
  * placeholders plus named ranges matching band names), constructs a {@link BandData} tree by hand, and runs
  * it through {@link XlsxFormatter} directly. The produced bytes are then read back with POI and asserted.
+ * A test may also build the template in another workbook, e.g. an XLS one, and render it with another
+ * formatter, see {@link #buildTemplate(Workbook, Closure)} and
+ * {@link #render(byte[], BandData, ReportOutputType, Closure)}.
  *
  * <p>This keeps the tests deterministic and free of a database, a Spring context and binary template
  * resources — they verify the correctness of the generated workbook, not throughput.
@@ -59,12 +63,19 @@ abstract class BaseXlsxRenderTest extends Specification {
      * {@code <calcPr/>} workbook element (absent in POI-generated workbooks) is injected afterwards.
      */
     protected byte[] buildTemplate(Closure configure) {
-        def workbook = new XSSFWorkbook()
+        return buildTemplate(new XSSFWorkbook(), configure)
+    }
+
+    /**
+     * Builds a template like {@link #buildTemplate(Closure)} but in the given workbook, e.g. an XLS one; the
+     * {@code <calcPr/>} element is injected into XLSX workbooks only.
+     */
+    protected byte[] buildTemplate(Workbook workbook, Closure configure) {
         try {
             configure.call(workbook)
             def bos = new ByteArrayOutputStream()
             workbook.write(bos)
-            return injectCalcPr(bos.toByteArray())
+            return workbook instanceof XSSFWorkbook ? injectCalcPr(bos.toByteArray()) : bos.toByteArray()
         } finally {
             workbook.close()
         }
@@ -115,11 +126,20 @@ abstract class BaseXlsxRenderTest extends Specification {
     // --- rendering ---------------------------------------------------------------------------------------
 
     protected byte[] render(byte[] template, BandData rootBand) {
+        return render(template, rootBand, ReportOutputType.xlsx, this.&createFormatter)
+    }
+
+    /**
+     * Renders like {@link #render(byte[], BandData)}, but to the given output type with the formatter that the
+     * factory creates for the formatter input, e.g. an XLS one.
+     */
+    protected byte[] render(byte[] template, BandData rootBand, ReportOutputType outputType,
+                            Closure<ReportFormatter> formatterFactory) {
         def output = new ByteArrayOutputStream()
         def reportTemplate = new ReportTemplate()
         reportTemplate.setContent(template)
-        def input = new FormatterFactoryInput("xlsx", rootBand, reportTemplate, ReportOutputType.xlsx, output)
-        createFormatter(input).renderDocument()
+        def input = new FormatterFactoryInput(outputType.id, rootBand, reportTemplate, outputType, output)
+        formatterFactory.call(input).renderDocument()
         return output.toByteArray()
     }
 
@@ -144,11 +164,16 @@ abstract class BaseXlsxRenderTest extends Specification {
         return root
     }
 
-    protected BandData addBand(BandData parent, String name, Map<String, Object> data) {
-        def band = new BandData(name, parent)
+    protected BandData addBand(BandData parent, String name, Map<String, Object> data,
+                               BandOrientation orientation = BandOrientation.HORIZONTAL) {
+        def band = new BandData(name, parent, orientation)
         band.setData(data ?: [:])
         parent.addChild(band)
         return band
+    }
+
+    protected BandData verticalBand(BandData parent, String name, Map<String, Object> data) {
+        return addBand(parent, name, data, BandOrientation.VERTICAL)
     }
 
     protected void withFieldFormats(BandData rootBand, ReportFieldFormat... formats) {

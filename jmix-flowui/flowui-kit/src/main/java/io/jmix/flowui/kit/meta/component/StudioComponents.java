@@ -159,7 +159,13 @@ interface StudioComponents {
             xmlElement = StudioXmlElements.BADGE,
             icon = "io/jmix/flowui/kit/meta/icon/component/badge.svg",
             documentationLink = "%VERSION%/flow-ui/vc/components/badge.html",
-            propertyGroups = StudioPropertyGroups.BadgeComponent.class)
+            propertyGroups = StudioPropertyGroups.BadgeComponent.class,
+            propertiesBindings = {
+                    @StudioPropertiesBinding(
+                            source = "dataContainer",
+                            item = "property"
+                    )
+            })
     Badge badge();
 
     @StudioComponent(

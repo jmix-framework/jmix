@@ -1,0 +1,1 @@
+org.springframework.boot.EnvironmentPostProcessor=io.jmix.reports.libintegration.ReportsEnvironmentPostProcessor

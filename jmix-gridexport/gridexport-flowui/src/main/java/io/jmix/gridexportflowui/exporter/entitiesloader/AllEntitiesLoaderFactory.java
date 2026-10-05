@@ -16,6 +16,7 @@
 
 package io.jmix.gridexportflowui.exporter.entitiesloader;
 
+import io.jmix.core.common.util.Preconditions;
 import io.jmix.gridexportflowui.GridExportProperties;
 import org.springframework.stereotype.Component;
 
@@ -43,7 +44,20 @@ public class AllEntitiesLoaderFactory {
      * {@link GridExportProperties#getExportAllPaginationStrategy()}
      */
     public AllEntitiesLoader getEntitiesLoader() {
-        String paginationStrategy = gridExportProperties.getExportAllPaginationStrategy();
+        return getEntitiesLoader(gridExportProperties.getExportAllPaginationStrategy());
+    }
+
+    /**
+     * Returns the {@link AllEntitiesLoader} that implements the given pagination strategy.
+     *
+     * @param paginationStrategy pagination strategy, e.g. {@link KeysetAllEntitiesLoader#PAGINATION_STRATEGY}
+     *                           or {@link LimitOffsetAllEntitiesLoader#PAGINATION_STRATEGY}
+     * @return loader with the given pagination strategy
+     * @throws IllegalStateException if there is no loader with the given pagination strategy
+     */
+    public AllEntitiesLoader getEntitiesLoader(String paginationStrategy) {
+        Preconditions.checkNotNullArgument(paginationStrategy, "Pagination strategy can't be null");
+
         Optional<? extends AllEntitiesLoader> entityLoader = allEntitiesLoaders.stream()
                 .filter(provider -> paginationStrategy.equals(provider.getPaginationStrategy()))
                 .findFirst();

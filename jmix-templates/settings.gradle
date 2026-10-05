@@ -15,3 +15,5 @@
  */
 
 rootProject.name = 'jmix-templates'
+
+apply from: '../gradle/maven-central-mirror.settings.gradle'

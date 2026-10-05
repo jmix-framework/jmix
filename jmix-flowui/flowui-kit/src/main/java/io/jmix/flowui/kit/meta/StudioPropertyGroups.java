@@ -3152,7 +3152,8 @@ public final class StudioPropertyGroups {
                                     "warning", "small"})
             }
     )
-    public interface BadgeComponent extends BaseSizedComponentWithClassNames, TextAttributes, Icon {
+    public interface BadgeComponent extends BaseSizedComponentWithClassNames, TextAttributes, Icon,
+            DataBindingAttributes {
     }
 
     @StudioPropertyGroup(

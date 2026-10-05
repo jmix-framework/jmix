@@ -16,9 +16,6 @@
 
 package xlsx
 
-import io.jmix.reports.yarg.structure.BandData
-import io.jmix.reports.yarg.structure.BandOrientation
-
 /**
  * Runs the {@link BaseXlsxBandLayoutTest} layout contract against the in-memory {@code XlsxFormatter}, plus
  * the one layout rule that is specific to this engine: vertical bands grow rightwards.
@@ -48,12 +45,5 @@ class XlsxBandLayoutTest extends BaseXlsxBandLayoutTest {
             stringValue(sheet, 0, 0) == "x"
             stringValue(sheet, 0, 1) == "y"
             stringValue(sheet, 0, 2) == "z"
-    }
-
-    protected BandData verticalBand(BandData parent, String name, Map<String, Object> data) {
-        def band = new BandData(name, parent, BandOrientation.VERTICAL)
-        band.setData(data)
-        parent.addChild(band)
-        return band
     }
 }

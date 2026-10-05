@@ -15,3 +15,5 @@
  */
 
 rootProject.name = 'jmix-build'
+
+apply from: '../gradle/maven-central-mirror.settings.gradle'

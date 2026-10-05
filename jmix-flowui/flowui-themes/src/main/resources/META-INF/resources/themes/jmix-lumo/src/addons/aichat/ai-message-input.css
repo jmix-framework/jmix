@@ -80,8 +80,8 @@
     flex: 1 1 auto;
     min-width: 0;
     align-self: center;
-    --vaadin-input-field-border-width: 0 !important;
-    --vaadin-focus-ring-width: 0;
+    --vaadin-input-field-border-width: 0px !important;
+    --vaadin-focus-ring-width: 0px;
     --vaadin-input-field-background: transparent !important;
     --vaadin-input-field-hover-highlight: transparent !important;
   }

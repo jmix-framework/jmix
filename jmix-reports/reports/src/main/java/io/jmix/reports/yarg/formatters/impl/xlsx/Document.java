@@ -19,9 +19,6 @@ import io.jmix.reports.yarg.exception.ReportFormattingException;
 import io.jmix.reports.yarg.structure.BandData;
 import org.docx4j.dml.chart.CTChartSpace;
 import org.docx4j.dml.spreadsheetdrawing.CTDrawing;
-import org.docx4j.dml.spreadsheetdrawing.CTMarker;
-import org.docx4j.dml.spreadsheetdrawing.CTOneCellAnchor;
-import org.docx4j.dml.spreadsheetdrawing.CTTwoCellAnchor;
 import org.docx4j.openpackaging.exceptions.Docx4JException;
 import org.docx4j.openpackaging.packages.SpreadsheetMLPackage;
 import org.docx4j.openpackaging.parts.DrawingML.Drawing;
@@ -268,28 +265,14 @@ public class Document {
                     }
                     Object anchorObj = ctDrawing.getEGAnchor().get(chartNum++);
 
-                    Range range = null;
                     if (anchorObj != null) {
-                        CTMarker from = null;
-                        CTMarker to = null;
-                        Child specificAnchor = null;
-                        if (anchorObj instanceof CTOneCellAnchor ctOneCellAnchor) {
-                            from = ctOneCellAnchor.getFrom();
-                            to = ctOneCellAnchor.getFrom();
-                            specificAnchor = ctOneCellAnchor;
-                        } else if (anchorObj instanceof CTTwoCellAnchor ctTwoCellAnchor) {
-                            from = ctTwoCellAnchor.getFrom();
-                            to = ctTwoCellAnchor.getTo();
-                            specificAnchor = ctTwoCellAnchor;
-                        }
-
-                        if (from != null && to != null) {
-                            String sheetName = worksheets.get(worksheets.size() - 1).name;
-                            range = new Range(sheetName, from.getCol() + 1, from.getRow() + 1, to.getCol() + 1, to.getRow() + 1);
-                            chartSpaces.put(range, new ChartWrapper((CTChartSpace) o, drawing, specificAnchor));
+                        String sheetName = worksheets.get(worksheets.size() - 1).name;
+                        Range range = XlsxUtils.getAnchorRange(sheetName, anchorObj);
+                        if (range != null) {
+                            chartSpaces.put(range, new ChartWrapper((CTChartSpace) o, drawing, (Child) anchorObj));
                         }
                     } else {
-                        chartSpaces.put(range, new ChartWrapper((CTChartSpace) o, drawing, null));
+                        chartSpaces.put(null, new ChartWrapper((CTChartSpace) o, drawing, null));
                     }
                 }
 

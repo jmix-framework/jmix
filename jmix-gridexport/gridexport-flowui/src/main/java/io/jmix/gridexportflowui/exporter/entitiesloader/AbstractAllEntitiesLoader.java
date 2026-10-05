@@ -24,6 +24,8 @@ import io.jmix.flowui.data.DataUnit;
 import io.jmix.flowui.model.*;
 import io.jmix.gridexportflowui.GridExportProperties;
 import io.jmix.gridexportflowui.exporter.EntityExportContext;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
@@ -32,6 +34,7 @@ import java.util.List;
 /**
  * Base class for the all entities loader which is used to export to other data formats such as excel or json
  */
+@NullMarked
 public abstract class AbstractAllEntitiesLoader implements AllEntitiesLoader {
 
     protected MetadataTools metadataTools;
@@ -55,17 +58,29 @@ public abstract class AbstractAllEntitiesLoader implements AllEntitiesLoader {
      * responsibility of {@code entityExporter}. Data is loaded in batches, the batch size is configured by the
      * {@link GridExportProperties#getExportAllBatchSize()}.
      *
-     * @param dataUnit       data unit linked with the data
+     * @param dataUnit              data unit linked with the data
      * @param exportedEntityVisitor visitor which exports entity to appropriate format
+     * @deprecated use {@link #loadAll(DataUnit, ExportedEntityVisitor, int)} instead
      */
+    @SuppressWarnings("removal")
+    @Deprecated(since = "3.1", forRemoval = true)
+    @Override
     public void loadAll(DataUnit dataUnit, ExportedEntityVisitor exportedEntityVisitor) {
-        Preconditions.checkNotNullArgument(exportedEntityVisitor,
+        loadAll(dataUnit, exportedEntityVisitor, gridExportProperties.getExportAllBatchSize());
+    }
+
+    @Override
+    public void loadAll(DataUnit dataUnit, ExportedEntityVisitor exportedEntityVisitor, int loadBatchSize) {
+        Preconditions.checkNotNullArgument(dataUnit,
                 "Cannot export all rows. DataUnit can't be null");
         Preconditions.checkNotNullArgument(exportedEntityVisitor,
                 "Cannot export all rows. Entity exporter can't be null");
+        if (loadBatchSize <= 0) {
+            throw new IllegalArgumentException(
+                    "Cannot export all rows. Load batch size must be positive: " + loadBatchSize);
+        }
 
         DataLoader dataLoader = getDataLoader(dataUnit);
-        int loadBatchSize = gridExportProperties.getExportAllBatchSize();
 
         TransactionTemplate transactionTemplate = new TransactionTemplate(platformTransactionManager);
         transactionTemplate.executeWithoutResult(transactionStatus -> {
@@ -85,6 +100,7 @@ public abstract class AbstractAllEntitiesLoader implements AllEntitiesLoader {
                                          ExportedEntityVisitor exportedEntityVisitor,
                                          int loadBatchSize);
 
+    @Nullable
     protected DataLoader getDataLoader(DataUnit dataUnit) {
         if (!(dataUnit instanceof ContainerDataUnit<?> containerDataUnit)) {
             throw new IllegalArgumentException("Cannot get data loader. DataUnit must be an instance of ContainerDataUnit.");
@@ -111,6 +127,7 @@ public abstract class AbstractAllEntitiesLoader implements AllEntitiesLoader {
             query.setFirstResult(firstResult);
             query.setMaxResults(loadBatchSize);
 
+            //noinspection ConstantValue
             List<KeyValueEntity> keyValueEntities = loader.getDelegate() == null
                     ? dataManager.loadValues(loadContext)
                     : loader.getDelegate().apply(loadContext);

@@ -14,4 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.flowui.view.template;
+@NullMarked
+package xml_processors;
+
+import org.jspecify.annotations.NullMarked;

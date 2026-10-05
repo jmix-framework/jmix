@@ -23,7 +23,7 @@ import xlsx.StreamingBaseXlsxRenderTest
 /**
  * Sheet- and workbook-level template settings that the streaming engine must carry over to the result
  * document (the non-streaming engine renders on a template copy and keeps them for free): freeze panes,
- * page/print setup, user-defined names and the print area.
+ * page/print setup, user-defined names and the print area, which {@code SpreadsheetPrintAreaTest} covers in detail.
  */
 class StreamingXlsxTemplateSettingsTest extends StreamingBaseXlsxRenderTest {
 
@@ -186,7 +186,7 @@ class StreamingXlsxTemplateSettingsTest extends StreamingBaseXlsxRenderTest {
         sheet.getColumnStyle(4).getDataFormatString() == "#,##0.00"
     }
 
-    def "print area is copied from the template"() {
+    def "print area is carried over from the template"() {
         given:
         def template = buildTemplate { wb ->
             def s = sheet(wb)
@@ -201,7 +201,7 @@ class StreamingXlsxTemplateSettingsTest extends StreamingBaseXlsxRenderTest {
         def workbook = read(render(template, root))
 
         then:
-        workbook.getPrintArea(0) != null
+        workbook.getPrintArea(0) == 'Sheet1!$A$1'
     }
 
     def "band row height is carried to every rendered instance"() {

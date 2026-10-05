@@ -34,6 +34,6 @@ class AnnotatedRoleProviderTest extends SecuritySpecification {
         then: //find multiple roles including the ones from test_support/annotated_role_provider package
         roles.size() > 0
 
-        roles.find { it.name = 'TestAnnotatedRoleProviderRole' } != null
+        roles.find { it.name == 'TestAnnotatedRoleProviderRole' } != null
     }
 }

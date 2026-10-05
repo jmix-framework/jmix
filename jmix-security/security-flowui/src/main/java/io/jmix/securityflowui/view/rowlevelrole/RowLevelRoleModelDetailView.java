@@ -26,6 +26,7 @@ import io.jmix.flowui.action.list.ReadAction;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.component.validation.ValidationErrors;
+import io.jmix.flowui.component.valuepicker.JmixValuePicker;
 import io.jmix.flowui.exception.ValidationException;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
@@ -37,6 +38,7 @@ import io.jmix.flowui.view.navigation.UrlParamSerializer;
 import io.jmix.security.model.*;
 import io.jmix.security.role.RolePersistence;
 import io.jmix.security.role.RowLevelRoleRepository;
+import io.jmix.securityflowui.impl.role.LocalizedRoleColumnsSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,6 +60,10 @@ public class RowLevelRoleModelDetailView extends StandardDetailView<RowLevelRole
     @ViewComponent
     private TypedTextField<String> codeField;
     @ViewComponent
+    private JmixValuePicker<String> localizedNamesField;
+    @ViewComponent
+    private JmixValuePicker<String> localizedDescriptionsField;
+    @ViewComponent
     private DataGrid<RowLevelRoleModel> childRolesTable;
     @ViewComponent
     private DataGrid<RowLevelPolicyModel> rowLevelPoliciesTable;
@@ -71,6 +77,8 @@ public class RowLevelRoleModelDetailView extends StandardDetailView<RowLevelRole
     private RolePersistence rolePersistence;
     @Autowired
     private RoleModelConverter roleModelConverter;
+    @Autowired
+    private LocalizedRoleColumnsSupport localizedRoleColumnsSupport;
     @Autowired
     private RowLevelRoleRepository roleRepository;
     @Autowired
@@ -146,10 +154,22 @@ public class RowLevelRoleModelDetailView extends StandardDetailView<RowLevelRole
     public void onBeforeShow(BeforeShowEvent event) {
         // may be 'null' if a role not found by a code
         setupRoleReadOnlyMode(getEditedEntityOrNull() != null && isDatabaseSource());
+        initChildRolesTable();
+    }
+
+    private void initChildRolesTable() {
+        localizedRoleColumnsSupport.install(childRolesTable);
     }
 
     private void setupRoleReadOnlyMode(boolean isDatabaseSource) {
         setReadOnly(!isDatabaseSource);
+
+        // Only a database role keeps localized values: a design-time role is translated in message bundles. The fields
+        // are never made visible here, since attribute security may have hidden them when it bound them.
+        if (!isDatabaseSource) {
+            localizedNamesField.setVisible(false);
+            localizedDescriptionsField.setVisible(false);
+        }
 
         Collection<Action> resourcePoliciesActions = rowLevelPoliciesTable.getActions();
         for (Action action : resourcePoliciesActions) {

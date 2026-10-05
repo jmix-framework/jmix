@@ -89,6 +89,14 @@ public class ResourceRoleEntity implements Serializable {
     @Column(name = "DESCRIPTION")
     private String description;
 
+    @Lob
+    @Column(name = "LOCALIZED_NAMES")
+    private String localizedNames;
+
+    @Lob
+    @Column(name = "LOCALIZED_DESCRIPTIONS")
+    private String localizedDescriptions;
+
     @Composition
     @OnDelete(DeletePolicy.CASCADE)
     @OneToMany(mappedBy = "role")
@@ -217,6 +225,22 @@ public class ResourceRoleEntity implements Serializable {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getLocalizedNames() {
+        return localizedNames;
+    }
+
+    public void setLocalizedNames(String localizedNames) {
+        this.localizedNames = localizedNames;
+    }
+
+    public String getLocalizedDescriptions() {
+        return localizedDescriptions;
+    }
+
+    public void setLocalizedDescriptions(String localizedDescriptions) {
+        this.localizedDescriptions = localizedDescriptions;
     }
 
     public String getSysTenantId() {

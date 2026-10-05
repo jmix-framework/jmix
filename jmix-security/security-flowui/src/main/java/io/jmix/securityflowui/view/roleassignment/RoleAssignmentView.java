@@ -37,6 +37,7 @@ import io.jmix.security.model.ResourceRole;
 import io.jmix.security.model.ResourceRoleModel;
 import io.jmix.security.model.RowLevelRoleModel;
 import io.jmix.security.role.ResourceRoleRepository;
+import io.jmix.security.role.RoleLocalizationSupport;
 import io.jmix.security.role.RowLevelRoleRepository;
 import io.jmix.security.role.assignment.RoleAssignmentModel;
 import io.jmix.security.role.assignment.RoleAssignmentPersistence;
@@ -76,6 +77,8 @@ public class RoleAssignmentView extends StandardView {
     private ResourceRoleRepository resourceRoleRepository;
     @Autowired
     private RowLevelRoleRepository rowLevelRoleRepository;
+    @Autowired
+    private RoleLocalizationSupport roleLocalizationSupport;
 
     @Autowired(required = false)
     private RoleAssignmentPersistence roleAssignmentPersistence;
@@ -100,7 +103,7 @@ public class RoleAssignmentView extends StandardView {
     protected Renderer<RoleAssignmentModel> resourceRoleAssignmentsTableRoleNameRenderer() {
         return new TextRenderer<>(roleAssignmentEntity -> {
             BaseRole role = resourceRoleRepository.findRoleByCode(roleAssignmentEntity.getRoleCode());
-            return role != null ? role.getName() : StringUtils.EMPTY;
+            return role != null ? roleLocalizationSupport.getLocalizedName(role) : StringUtils.EMPTY;
         });
     }
 
@@ -118,7 +121,7 @@ public class RoleAssignmentView extends StandardView {
     protected Renderer<RoleAssignmentModel> rowLevelRoleAssignmentsTableRoleNameRenderer() {
         return new TextRenderer<>(roleAssignmentEntity -> {
             BaseRole role = rowLevelRoleRepository.findRoleByCode(roleAssignmentEntity.getRoleCode());
-            return role != null ? role.getName() : StringUtils.EMPTY;
+            return role != null ? roleLocalizationSupport.getLocalizedName(role) : StringUtils.EMPTY;
         });
     }
 

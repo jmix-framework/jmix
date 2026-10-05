@@ -38,7 +38,7 @@ public class GenericFilterInitialConditionTestView extends StandardView {
                 .property("number")
                 .operation(PropertyFilter.Operation.EQUAL)
                 .build();
-        genericFilter.runtimeConfigurationBuilder()
+        genericFilter.filterConfigurationBuilder()
                 .id("c1")
                 .name("C1")
                 .add(number1, "n1")
@@ -50,7 +50,7 @@ public class GenericFilterInitialConditionTestView extends StandardView {
                 .property("number")
                 .operation(PropertyFilter.Operation.EQUAL)
                 .build();
-        genericFilter.runtimeConfigurationBuilder()
+        genericFilter.filterConfigurationBuilder()
                 .id("c2")
                 .name("C2")
                 .add(number2, "n2")

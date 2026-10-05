@@ -19,7 +19,7 @@ package component.genericfilter
 import component.genericfilter.view.GenericFilterApiTestView
 import io.jmix.flowui.UiComponents
 import io.jmix.flowui.component.genericfilter.GenericFilter
-import io.jmix.flowui.component.genericfilter.configuration.RunTimeConfiguration
+import io.jmix.flowui.component.genericfilter.configuration.DesignTimeConfiguration
 import io.jmix.flowui.component.jpqlfilter.JpqlFilter
 import io.jmix.flowui.component.logicalfilter.GroupFilter
 import io.jmix.flowui.component.logicalfilter.LogicalFilterComponent
@@ -517,16 +517,16 @@ class GenericFilterBuilderApiTest extends FlowuiTestSpecification {
         thrown(IllegalStateException)
     }
 
-    // RunTimeConfigurationBuilder
+    // FilterConfigurationBuilder
 
     /**
-     * {@link io.jmix.flowui.component.genericfilter.RunTimeConfigurationBuilder}
-     * creates a {@link RunTimeConfiguration} — a dynamic configuration whose
-     * conditions can be added or removed by the user at runtime.
+     * {@link io.jmix.flowui.component.genericfilter.FilterConfigurationBuilder} creates a
+     * {@link DesignTimeConfiguration}: the configuration belongs to the code that registers it,
+     * as one declared in XML does.
      * <p>
-     * Obtain one with {@code filter.runtimeConfigurationBuilder()}.
+     * Obtain one with {@code filter.filterConfigurationBuilder()}.
      */
-    def "RunTimeConfigurationBuilder creates and registers a RunTimeConfiguration"() {
+    def "FilterConfigurationBuilder creates and registers a DesignTimeConfiguration"() {
         given: "A GenericFilter bound to a DataLoader"
         GenericFilter filter = filterWithLoader()
 
@@ -536,29 +536,27 @@ class GenericFilterBuilderApiTest extends FlowuiTestSpecification {
                 .where("{E}.status = 'ACTIVE'")
                 .build()
 
-        when: "Creating a RunTimeConfiguration via the builder"
-        RunTimeConfiguration config = filter.runtimeConfigurationBuilder()
-                .id("dynamic")
-                .name("Dynamic Search")
+        when: "Creating a configuration via the builder"
+        DesignTimeConfiguration config = filter.filterConfigurationBuilder()
+                .id("predefined")
+                .name("Predefined Search")
                 .add(activeFilter)
                 .buildAndRegister()
 
-        then: "Configuration is registered and contains the added condition"
-        filter.configurations.any { it.id == "dynamic" }
-        config instanceof RunTimeConfiguration
-        config.id == "dynamic"
-        config.name == "Dynamic Search"
+        then: "The configuration is registered and contains the added condition"
+        filter.getConfiguration("predefined").is(config)
+        config.name == "Predefined Search"
         config.rootLogicalFilterComponent.filterComponents.contains(activeFilter)
     }
 
-    def "RunTimeConfigurationBuilder.addAll() adds multiple components at once"() {
+    def "FilterConfigurationBuilder.addAll() adds multiple components at once"() {
         given: "A GenericFilter bound to a DataLoader and two conditions"
         GenericFilter filter = filterWithLoader()
         def f1 = filter.filterComponentBuilder().jpqlFilter().where("{E}.status = 'A'").build()
         def f2 = filter.filterComponentBuilder().jpqlFilter().where("{E}.status = 'B'").build()
 
         when: "Adding both via the addAll vararg"
-        RunTimeConfiguration config = filter.runtimeConfigurationBuilder()
+        DesignTimeConfiguration config = filter.filterConfigurationBuilder()
                 .id("multi")
                 .addAll(f1, f2)
                 .buildAndRegister()
@@ -568,12 +566,12 @@ class GenericFilterBuilderApiTest extends FlowuiTestSpecification {
         config.rootLogicalFilterComponent.filterComponents.contains(f2)
     }
 
-    def "RunTimeConfigurationBuilder.makeCurrent() activates the configuration immediately"() {
+    def "FilterConfigurationBuilder.makeCurrent() activates the configuration immediately"() {
         given: "A GenericFilter bound to a DataLoader"
         GenericFilter filter = filterWithLoader()
 
-        when: "Creating a RunTimeConfiguration and making it current"
-        RunTimeConfiguration config = filter.runtimeConfigurationBuilder()
+        when: "Creating a configuration and making it current"
+        DesignTimeConfiguration config = filter.filterConfigurationBuilder()
                 .id("active")
                 .makeCurrent()
                 .buildAndRegister()
@@ -582,13 +580,13 @@ class GenericFilterBuilderApiTest extends FlowuiTestSpecification {
         filter.currentConfiguration == config
     }
 
-    def "RunTimeConfigurationBuilder respects the specified logical operation"() {
+    def "FilterConfigurationBuilder respects the specified logical operation"() {
         given:
         GenericFilter filter = filterWithLoader()
 
         when:
-        RunTimeConfiguration config = filter.runtimeConfigurationBuilder()
-                .id("orRuntime")
+        DesignTimeConfiguration config = filter.filterConfigurationBuilder()
+                .id("orConfiguration")
                 .operation(LogicalFilterComponent.Operation.OR)
                 .buildAndRegister()
 
@@ -596,27 +594,27 @@ class GenericFilterBuilderApiTest extends FlowuiTestSpecification {
         config.rootLogicalFilterComponent.operation == LogicalFilterComponent.Operation.OR
     }
 
-    def "RunTimeConfigurationBuilder.buildAndRegister() throws when 'id' is not set"() {
+    def "FilterConfigurationBuilder.buildAndRegister() throws when 'id' is not set"() {
         given:
         GenericFilter filter = uiComponents.create(GenericFilter)
 
         when:
-        filter.runtimeConfigurationBuilder()
+        filter.filterConfigurationBuilder()
                 .buildAndRegister()
 
         then:
         thrown(IllegalStateException)
     }
 
-    def "RunTimeConfigurationBuilder.buildAndRegister() throws when id is already registered"() {
+    def "FilterConfigurationBuilder.buildAndRegister() throws when id is already registered"() {
         given: "A filter that already has a configuration with id 'dup'"
         GenericFilter filter = filterWithLoader()
-        filter.runtimeConfigurationBuilder()
+        filter.filterConfigurationBuilder()
                 .id("dup")
                 .buildAndRegister()
 
         when: "Registering another configuration with the same id"
-        filter.runtimeConfigurationBuilder()
+        filter.filterConfigurationBuilder()
                 .id("dup")
                 .buildAndRegister()
 
@@ -624,12 +622,12 @@ class GenericFilterBuilderApiTest extends FlowuiTestSpecification {
         thrown(IllegalStateException)
     }
 
-    def "RunTimeConfigurationBuilder.buildAndRegister() throws when id is the reserved empty-configuration id"() {
+    def "FilterConfigurationBuilder.buildAndRegister() throws when id is the reserved empty-configuration id"() {
         given: "A DataLoader-bound filter"
         GenericFilter filter = filterWithLoader()
 
         when: "Registering a configuration whose id equals the reserved empty-configuration id"
-        filter.runtimeConfigurationBuilder()
+        filter.filterConfigurationBuilder()
                 .id(filter.getEmptyConfiguration().getId())
                 .name("With reserved id")
                 .buildAndRegister()
@@ -638,24 +636,38 @@ class GenericFilterBuilderApiTest extends FlowuiTestSpecification {
         thrown(IllegalStateException)
     }
 
-    def "RunTimeConfigurationBuilder.buildAndRegister() throws when called twice on the same instance"() {
+    def "FilterConfigurationBuilder.buildAndRegister() throws when called twice on the same instance"() {
         given: "A DataLoader-bound filter so the first build succeeds and sets the one-shot flag"
         GenericFilter filter = filterWithLoader()
-        def builder = filter.runtimeConfigurationBuilder().id("once")
+        def builder = filter.filterConfigurationBuilder().id("once")
         builder.buildAndRegister()
 
         when:
         builder.buildAndRegister()
+
+        then: "the one-shot guard rejects the call, not the check of the already registered id"
+        def e = thrown(IllegalStateException)
+        e.message.contains("must not be called more than once")
+    }
+
+    def "FilterConfigurationBuilder.buildAndRegister() throws when the filter has no DataLoader"() {
+        given: "a GenericFilter without a DataLoader, with an id set so the DataLoader check is reached"
+        GenericFilter filter = uiComponents.create(GenericFilter)
+
+        when:
+        filter.filterConfigurationBuilder()
+                .id("noLoader")
+                .buildAndRegister()
 
         then:
         thrown(IllegalStateException)
     }
 
     /**
-     * {@link RunTimeConfiguration} stores the default value in the configuration map so the
-     * value can be restored on reset.
+     * The builder records the default value in the configuration, so the value is restored when
+     * the configuration is selected again or its values are cleared.
      */
-    def "RunTimeConfigurationBuilder stores the default value for reset support"() {
+    def "FilterConfigurationBuilder stores the default value of a condition"() {
         given: "A GenericFilter and a typed JpqlFilter"
         GenericFilter filter = filterWithLoader()
         JpqlFilter<String> codeFilter = filter.filterComponentBuilder()
@@ -665,7 +677,7 @@ class GenericFilterBuilderApiTest extends FlowuiTestSpecification {
                 .build()
 
         when: "Registering the filter component with an explicit default value"
-        RunTimeConfiguration config = filter.runtimeConfigurationBuilder()
+        DesignTimeConfiguration config = filter.filterConfigurationBuilder()
                 .id("byCode")
                 .add(codeFilter, "DEFAULT")
                 .buildAndRegister()
@@ -674,7 +686,31 @@ class GenericFilterBuilderApiTest extends FlowuiTestSpecification {
         config.getFilterComponentDefaultValue("code") == "DEFAULT"
     }
 
-    def "RunTimeConfigurationBuilder.add(fc, value) calls setValue on the component"() {
+    def "FilterConfigurationBuilder stores the default value of a condition nested in a group"() {
+        given: "A GenericFilter and a group with a typed JpqlFilter that has a value"
+        GenericFilter filter = filterWithLoader()
+        JpqlFilter<String> codeFilter = filter.filterComponentBuilder()
+                .jpqlFilter(String)
+                .parameterName("code")
+                .where("{E}.code = ?")
+                .build()
+        codeFilter.setValue("NESTED")
+        GroupFilter group = filter.filterComponentBuilder()
+                .groupFilter()
+                .add(codeFilter)
+                .build()
+
+        when: "Registering the group"
+        DesignTimeConfiguration config = filter.filterConfigurationBuilder()
+                .id("withNestedValue")
+                .add(group)
+                .buildAndRegister()
+
+        then: "The value of the nested condition is its default value"
+        config.getFilterComponentDefaultValue("code") == "NESTED"
+    }
+
+    def "FilterConfigurationBuilder.add(fc, value) calls setValue on the component"() {
         given: "A GenericFilter with a DataLoader so the JpqlFilter gets a value component"
         GenericFilter filter = filterWithLoader()
 
@@ -686,7 +722,7 @@ class GenericFilterBuilderApiTest extends FlowuiTestSpecification {
                 .build()
 
         when: "Adding the filter with an explicit default value"
-        filter.runtimeConfigurationBuilder()
+        filter.filterConfigurationBuilder()
                 .id("byNumber")
                 .add(jf, "ORD-999")
                 .buildAndRegister()
@@ -695,33 +731,25 @@ class GenericFilterBuilderApiTest extends FlowuiTestSpecification {
         jf.getValue() == "ORD-999"
     }
 
-    // RunTimeConfiguration — modified state
-
-    /**
-     * Components added through the builder are marked as modified by the builder
-     * itself (via {@code config.setModified(true)}) so the per-condition remove
-     * button is visible immediately — no extra boilerplate needed.
-     */
-    def "Components added via RunTimeConfigurationBuilder are marked as modified"() {
-        given: "A void JpqlFilter condition"
+    def "FilterConfigurationBuilder.add() accepts a non-single filter component (GroupFilter)"() {
+        given: "a GenericFilter with a DataLoader and a GroupFilter condition"
         GenericFilter filter = filterWithLoader()
-        def fc = filter.filterComponentBuilder()
-                .jpqlFilter()
-                .where("{E}.active = true")
+        GroupFilter group = filter.filterComponentBuilder()
+                .groupFilter()
+                .add(filter.filterComponentBuilder().jpqlFilter().where("{E}.number = '1'").build())
                 .build()
 
-        when: "Creating a RunTimeConfiguration with the condition via the builder"
-        RunTimeConfiguration config = filter.runtimeConfigurationBuilder()
-                .id("with-condition")
-                .add(fc)
+        when: "adding the GroupFilter (not a SingleFilterComponentBase) to a configuration"
+        DesignTimeConfiguration config = filter.filterConfigurationBuilder()
+                .id("withGroup")
+                .add(group)
                 .buildAndRegister()
 
-        then: "The condition is marked as modified (remove button visible)"
-        config.isFilterComponentModified(fc)
-        config.isModified()
+        then: "the GroupFilter is part of the configuration"
+        config.rootLogicalFilterComponent.filterComponents.contains(group)
     }
 
-    def "RunTimeConfigurationBuilder copies autoApply from the filter"() {
+    def "FilterConfigurationBuilder copies autoApply from the filter"() {
         given: "A GenericFilter with autoApply explicitly set to false"
         GenericFilter filter = filterWithLoader()
         filter.setAutoApply(false)
@@ -732,122 +760,14 @@ class GenericFilterBuilderApiTest extends FlowuiTestSpecification {
                 .where("{E}.active = true")
                 .build()
 
-        when: "Building a RunTimeConfiguration"
-        RunTimeConfiguration config = filter.runtimeConfigurationBuilder()
+        when: "Building a configuration"
+        DesignTimeConfiguration config = filter.filterConfigurationBuilder()
                 .id("noAutoApply")
                 .add(fc)
                 .buildAndRegister()
 
         then: "Root GroupFilter inherits autoApply=false from the filter"
         !config.rootLogicalFilterComponent.isAutoApply()
-
-        and: "Child filter component also has autoApply=false (GroupFilter.add() propagates it)"
-        !fc.isAutoApply()
-    }
-
-    def "Empty RunTimeConfiguration built without components is not modified"() {
-        given:
-        GenericFilter filter = filterWithLoader()
-
-        when:
-        RunTimeConfiguration config = filter.runtimeConfigurationBuilder()
-                .id("empty")
-                .buildAndRegister()
-
-        then:
-        !config.isModified()
-    }
-
-    // RunTimeConfiguration — protection from user deletion
-
-    def "RunTimeConfigurationBuilder creates configuration protected from user deletion by default"() {
-        given:
-        GenericFilter filter = filterWithLoader()
-
-        when:
-        RunTimeConfiguration config = filter.runtimeConfigurationBuilder()
-                .id("protected")
-                .buildAndRegister()
-
-        then:
-        config.isProtectedFromUserDeletion()
-    }
-
-    def "RunTimeConfigurationBuilder.allowDeletion() disables user-deletion protection"() {
-        given:
-        GenericFilter filter = filterWithLoader()
-
-        when:
-        RunTimeConfiguration config = filter.runtimeConfigurationBuilder()
-                .id("deletable")
-                .allowDeletion()
-                .buildAndRegister()
-
-        then:
-        !config.isProtectedFromUserDeletion()
-    }
-
-    def "RunTimeConfigurationBuilder.allowDeletion(true) disables protection"() {
-        given:
-        GenericFilter filter = filterWithLoader()
-
-        when:
-        RunTimeConfiguration config = filter.runtimeConfigurationBuilder()
-                .id("deletable2")
-                .allowDeletion(true)
-                .buildAndRegister()
-
-        then:
-        !config.isProtectedFromUserDeletion()
-    }
-
-    def "RunTimeConfigurationBuilder.allowDeletion(false) keeps protection enabled"() {
-        given:
-        GenericFilter filter = filterWithLoader()
-
-        when:
-        RunTimeConfiguration config = filter.runtimeConfigurationBuilder()
-                .id("protected2")
-                .allowDeletion(false)
-                .buildAndRegister()
-
-        then:
-        config.isProtectedFromUserDeletion()
-    }
-
-    /**
-     * {@code protectedFromUserDeletion} only hides the Remove action in the UI
-     * ({@code GenericFilterRemoveAction#isApplicable}). Programmatic removal via
-     * {@code removeConfiguration()} must still work — it is used internally,
-     * e.g. by the configuration renaming flow.
-     */
-    def "removeConfiguration() removes a configuration protected from user deletion"() {
-        given:
-        GenericFilter filter = filterWithLoader()
-        filter.runtimeConfigurationBuilder()
-                .id("protected")
-                .buildAndRegister()
-
-        when:
-        filter.removeConfiguration(filter.getConfigurations().find { it.id == "protected" })
-
-        then:
-        !filter.getConfigurations().any { it.id == "protected" }
-    }
-
-    def "removeConfiguration() removes a configuration created with allowDeletion()"() {
-        given:
-        GenericFilter filter = filterWithLoader()
-        filter.runtimeConfigurationBuilder()
-                .id("deletable")
-                .allowDeletion()
-                .buildAndRegister()
-
-        when:
-        filter.removeConfiguration(filter.getConfigurations().find { it.id == "deletable" })
-
-        then:
-        !filter.getConfigurations().any { it.id == "deletable" }
     }
 
     // GenericFilter helper methods
@@ -898,55 +818,5 @@ class GenericFilterBuilderApiTest extends FlowuiTestSpecification {
 
         then:
         jf.queryCondition.join == "join {E}.tags t"
-    }
-
-    def "RunTimeConfigurationBuilder.buildAndRegister() throws when the filter has no DataLoader"() {
-        given: "a GenericFilter without a DataLoader, with an id set so the DataLoader check is reached"
-        GenericFilter filter = uiComponents.create(GenericFilter)
-
-        when:
-        filter.runtimeConfigurationBuilder()
-                .id("noLoader")
-                .buildAndRegister()
-
-        then:
-        thrown(IllegalStateException)
-    }
-
-    def "RunTimeConfigurationBuilder.add() accepts a non-single filter component (GroupFilter)"() {
-        given: "a GenericFilter with a DataLoader and a GroupFilter condition"
-        GenericFilter filter = filterWithLoader()
-        GroupFilter group = filter.filterComponentBuilder()
-                .groupFilter()
-                .add(filter.filterComponentBuilder().jpqlFilter().where("{E}.number = '1'").build())
-                .build()
-
-        when: "adding the GroupFilter (not a SingleFilterComponentBase) to a runtime configuration"
-        RunTimeConfiguration config = filter.runtimeConfigurationBuilder()
-                .id("withGroup")
-                .add(group)
-                .buildAndRegister()
-
-        then: "the GroupFilter is part of the configuration"
-        config.rootLogicalFilterComponent.filterComponents.contains(group)
-    }
-
-    def "RunTimeConfigurationBuilder.add() of a value-less single component stores no default value"() {
-        given: "a GenericFilter and a PropertyFilter on a numeric property with no value"
-        GenericFilter filter = filterWithLoader()
-        PropertyFilter<BigDecimal> pf = filter.filterComponentBuilder()
-                .<BigDecimal> propertyFilter()
-                .property("amount")
-                .operation(PropertyFilter.Operation.EQUAL)
-                .build()
-
-        when: "adding it without a value (paramName non-null, value null)"
-        RunTimeConfiguration config = filter.runtimeConfigurationBuilder()
-                .id("noValue")
-                .add(pf)
-                .buildAndRegister()
-
-        then: "no default value is recorded for the parameter"
-        config.getFilterComponentDefaultValue(pf.parameterName) == null
     }
 }

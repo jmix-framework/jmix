@@ -26,6 +26,7 @@ import io.jmix.flowui.component.logicalfilter.GroupFilter
 import io.jmix.flowui.component.propertyfilter.PropertyFilter
 import io.jmix.flowui.kit.component.button.JmixButton
 import org.springframework.boot.test.context.SpringBootTest
+import test_support.TestRunTimeConfigurations
 import test_support.spec.FlowuiTestSpecification
 
 /**
@@ -78,12 +79,8 @@ class GenericFilterNestedRemoveTest extends FlowuiTestSpecification {
 
         GroupFilter innerGroup = filter.filterComponentBuilder().groupFilter().add(deepCondition).build()
         GroupFilter outerGroup = filter.filterComponentBuilder().groupFilter().add(innerGroup).build()
-        filter.runtimeConfigurationBuilder()
-                .id("c2")
-                .name("C2")
-                .add(outerGroup)
-                .makeCurrent()
-                .buildAndRegister()
+        def c2 = TestRunTimeConfigurations.register(filter, "c2", "C2", outerGroup)
+        filter.setCurrentConfiguration(c2)
 
         expect: "the two-levels-deep condition drives the loader condition"
         innerGroup.ownFilterComponents.contains(deepCondition)

@@ -18,7 +18,7 @@ package component.genericfilter.view;
 
 import com.vaadin.flow.router.Route;
 import io.jmix.flowui.component.genericfilter.GenericFilter;
-import io.jmix.flowui.component.genericfilter.configuration.RunTimeConfiguration;
+import io.jmix.flowui.component.genericfilter.configuration.DesignTimeConfiguration;
 import io.jmix.flowui.component.propertyfilter.PropertyFilter;
 import io.jmix.flowui.view.*;
 
@@ -43,7 +43,7 @@ public class GfActivationPlainSetCurrentTestView extends StandardView {
                 .property("number")
                 .operation(PropertyFilter.Operation.EQUAL)
                 .build();
-        RunTimeConfiguration c1 = genericFilter.runtimeConfigurationBuilder()
+        DesignTimeConfiguration c1 = genericFilter.filterConfigurationBuilder()
                 .id("c1")
                 .name("C1")
                 .add(number1, "n1")
@@ -54,7 +54,7 @@ public class GfActivationPlainSetCurrentTestView extends StandardView {
                 .property("number")
                 .operation(PropertyFilter.Operation.EQUAL)
                 .build();
-        genericFilter.runtimeConfigurationBuilder()
+        genericFilter.filterConfigurationBuilder()
                 .id("c2")
                 .name("C2")
                 .add(number2, "n2")

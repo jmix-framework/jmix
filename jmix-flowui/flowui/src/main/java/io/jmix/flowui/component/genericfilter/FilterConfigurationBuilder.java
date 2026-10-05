@@ -17,9 +17,9 @@
 package io.jmix.flowui.component.genericfilter;
 
 import io.jmix.core.annotation.Experimental;
-import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.component.filter.FilterComponent;
 import io.jmix.flowui.component.filter.SingleFilterComponentBase;
+import io.jmix.flowui.component.genericfilter.configuration.DesignTimeConfiguration;
 import io.jmix.flowui.component.genericfilter.configuration.RunTimeConfiguration;
 import io.jmix.flowui.component.logicalfilter.GroupFilter;
 import io.jmix.flowui.component.logicalfilter.LogicalFilterComponent;
@@ -31,50 +31,49 @@ import java.util.List;
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
 /**
- * Fluent builder for {@link RunTimeConfiguration}.
+ * Fluent builder for a {@link DesignTimeConfiguration} registered from code.
  * <p>
- * Use this builder when you need a <em>dynamic</em> configuration whose filter components
- * can be added or removed at runtime (e.g. via the per-condition remove button).
+ * A configuration built by this builder belongs to the code that registers it, like a configuration
+ * declared in XML: it is created anew every time the view opens and is never stored. The user can
+ * change the values of its conditions, clear them and make the configuration their default one, but
+ * cannot edit, save or remove it. To change the conditions themselves, the user copies the
+ * configuration and saves the copy as their own configuration.
  * <p>
  * Encapsulates all required steps:
  * <ul>
  *   <li>Creating and configuring the root {@link GroupFilter}</li>
  *   <li>Adding filter components and recording their default values in the configuration</li>
- *   <li>Marking all added components as modified so remove buttons appear immediately</li>
  *   <li>Registering the configuration via {@link GenericFilter#addConfiguration(Configuration)}</li>
  *   <li>Optionally activating the configuration via
  *       {@link GenericFilter#setCurrentConfiguration(Configuration)}</li>
  * </ul>
  * <p>
- * Obtain an instance via {@link GenericFilter#runtimeConfigurationBuilder()}:
+ * Obtain an instance via {@link GenericFilter#filterConfigurationBuilder()}:
  * <pre>{@code
- * filter.runtimeConfigurationBuilder()
- *       .id("dynamicSearch")
- *       .name("Dynamic Search")
- *       .add(nameFilter)
+ * filter.filterConfigurationBuilder()
+ *       .id("openOrders")
+ *       .name("Open Orders")
+ *       .add(numberFilter)
  *       .add(statusFilter, "NEW")
  *       .makeCurrent()
  *       .buildAndRegister();
  * }</pre>
  */
 @Experimental
-public class RunTimeConfigurationBuilder {
+public class FilterConfigurationBuilder {
 
     protected final GenericFilter filter;
-    protected final UiComponents uiComponents;
 
     protected String id;
     protected String name;
     protected LogicalFilterComponent.Operation operation = LogicalFilterComponent.Operation.AND;
     protected boolean makeCurrent = false;
-    protected boolean allowDeletion = false;
     protected boolean built = false;
 
     protected final List<ComponentEntry> entries = new ArrayList<>();
 
-    protected RunTimeConfigurationBuilder(GenericFilter filter, UiComponents uiComponents) {
+    protected FilterConfigurationBuilder(GenericFilter filter) {
         this.filter = filter;
-        this.uiComponents = uiComponents;
     }
 
     /**
@@ -82,7 +81,7 @@ public class RunTimeConfigurationBuilder {
      *
      * @param id unique configuration identifier within this filter
      */
-    public RunTimeConfigurationBuilder id(String id) {
+    public FilterConfigurationBuilder id(String id) {
         checkNotNullArgument(id, "id must not be null");
         this.id = id;
         return this;
@@ -93,7 +92,7 @@ public class RunTimeConfigurationBuilder {
      *
      * @param name display name shown in the configuration selector
      */
-    public RunTimeConfigurationBuilder name(@Nullable String name) {
+    public FilterConfigurationBuilder name(@Nullable String name) {
         this.name = name;
         return this;
     }
@@ -103,7 +102,7 @@ public class RunTimeConfigurationBuilder {
      *
      * @param operation logical operation
      */
-    public RunTimeConfigurationBuilder operation(LogicalFilterComponent.Operation operation) {
+    public FilterConfigurationBuilder operation(LogicalFilterComponent.Operation operation) {
         checkNotNullArgument(operation, "operation must not be null");
         this.operation = operation;
         return this;
@@ -114,7 +113,7 @@ public class RunTimeConfigurationBuilder {
      *
      * @param filterComponent filter component to add
      */
-    public RunTimeConfigurationBuilder add(FilterComponent filterComponent) {
+    public FilterConfigurationBuilder add(FilterComponent filterComponent) {
         checkNotNullArgument(filterComponent, "filterComponent must not be null");
         entries.add(new ComponentEntry(filterComponent, null, false));
         return this;
@@ -125,7 +124,7 @@ public class RunTimeConfigurationBuilder {
      *
      * @param filterComponents filter components to add
      */
-    public RunTimeConfigurationBuilder addAll(FilterComponent... filterComponents) {
+    public FilterConfigurationBuilder addAll(FilterComponent... filterComponents) {
         checkNotNullArgument(filterComponents, "filterComponents must not be null");
         for (FilterComponent filterComponent : filterComponents) {
             add(filterComponent);
@@ -143,8 +142,8 @@ public class RunTimeConfigurationBuilder {
      * @param defaultValue    value to apply and record as the configuration default
      * @param <V>             the value type of the filter component
      */
-    public <V> RunTimeConfigurationBuilder add(SingleFilterComponentBase<V> filterComponent,
-                                               @Nullable V defaultValue) {
+    public <V> FilterConfigurationBuilder add(SingleFilterComponentBase<V> filterComponent,
+                                              @Nullable V defaultValue) {
         checkNotNullArgument(filterComponent, "filterComponent must not be null");
         entries.add(new ComponentEntry(filterComponent, defaultValue, true));
         return this;
@@ -157,80 +156,66 @@ public class RunTimeConfigurationBuilder {
      * {@code genericFilter_makeDefault} action and stored per user): it simply activates this
      * configuration now, equivalent to {@link GenericFilter#setCurrentConfiguration(Configuration)}.
      */
-    public RunTimeConfigurationBuilder makeCurrent() {
+    public FilterConfigurationBuilder makeCurrent() {
         this.makeCurrent = true;
         return this;
     }
 
     /**
-     * Controls whether the user can delete this configuration through the UI.
-     * <p>
-     * By default, configurations created via this builder are protected from user deletion
-     * ({@link RunTimeConfiguration#setProtectedFromUserDeletion(boolean)}).
-     *
-     * @param allowDeletion {@code true} to allow the user to remove the configuration,
-     *                      {@code false} (default) to protect it
-     */
-    public RunTimeConfigurationBuilder allowDeletion(boolean allowDeletion) {
-        this.allowDeletion = allowDeletion;
-        return this;
-    }
-
-    /**
-     * Allows the user to delete this configuration through the UI.
-     * Convenience alias for {@code allowDeletion(true)}.
-     */
-    public RunTimeConfigurationBuilder allowDeletion() {
-        return allowDeletion(true);
-    }
-
-    /**
-     * Builds the {@link RunTimeConfiguration}, registers it with the filter, and
+     * Builds the {@link DesignTimeConfiguration}, registers it with the filter, and
      * optionally activates it.
      * <p>
      * Automatically:
      * <ul>
-     *   <li>Creates the root {@link GroupFilter} with {@code setConditionModificationDelegated(true)}
-     *       and {@code setDataLoader(filter.getDataLoader())}</li>
+     *   <li>Creates the root {@link GroupFilter} as the filter creates it for a configuration declared in XML</li>
      *   <li>Adds each filter component to the root</li>
-     *   <li>Calls {@code setFilterComponentDefaultValue} for every component with a value</li>
-     *   <li>Registers the configuration via {@link GenericFilter#addConfiguration(Configuration)}, and
-     *       activates it via {@link GenericFilter#setCurrentConfiguration(Configuration)} if
-     *       {@link #makeCurrent()} was requested</li>
+     *   <li>Calls {@code setFilterComponentDefaultValue} for every component with a value, including the
+     *       components nested in a group</li>
+     *   <li>Registers the configuration via {@link GenericFilter#addConfiguration(Configuration)}, where a
+     *       run-time configuration with the same id, such as a stored one, gives way to it, and activates it via
+     *       {@link GenericFilter#setCurrentConfiguration(Configuration)} if {@link #makeCurrent()} was
+     *       requested</li>
      * </ul>
      *
-     * @return the newly created and registered {@link RunTimeConfiguration}
+     * @return the newly created and registered {@link DesignTimeConfiguration}
      * @throws IllegalStateException if this builder instance has already been used, if {@code id}
-     *         was not set, if a configuration with the same id is already registered in the filter,
-     *         or if the filter has no DataLoader
+     *         was not set or is the id of the empty configuration, if a configuration with the same id that is
+     *         not a run-time one, such as a design-time configuration, is already registered in the filter, or if
+     *         the filter has no DataLoader
      */
     @SuppressWarnings({"rawtypes", "unchecked"})
-    public RunTimeConfiguration buildAndRegister() {
+    public DesignTimeConfiguration buildAndRegister() {
         if (built) {
             throw new IllegalStateException(
-                    "RunTimeConfigurationBuilder.buildAndRegister() must not be called more than once; create a new instance per configuration");
+                    "%s.buildAndRegister() must not be called more than once; create a new instance per configuration"
+                            .formatted(FilterConfigurationBuilder.class.getSimpleName()));
         }
+
         if (id == null) {
             throw new IllegalStateException(
-                    "RunTimeConfigurationBuilder: 'id' is required — call .id(\"...\") before .buildAndRegister()");
+                    "%s: 'id' is required — call .id(\"...\") before .buildAndRegister()"
+                            .formatted(FilterConfigurationBuilder.class.getSimpleName()));
         }
+
         if (id.equals(filter.getEmptyConfiguration().getId())) {
-            throw new IllegalStateException(String.format(
-                    "RunTimeConfigurationBuilder: 'id' must not be the reserved empty-configuration id '%s'", id));
+            throw new IllegalStateException("%s: 'id' must not be the reserved empty-configuration id '%s'"
+                    .formatted(FilterConfigurationBuilder.class.getSimpleName(), id));
         }
-        if (filter.getConfiguration(id) != null) {
-            throw new IllegalStateException(String.format(
-                    "RunTimeConfigurationBuilder: a configuration with id '%s' is already registered in this filter", id));
+
+        Configuration registeredConfiguration = filter.getConfiguration(id);
+        // A run-time configuration with the id, such as a stored one loaded before the builder runs, gives way.
+        if (registeredConfiguration != null && !(registeredConfiguration instanceof RunTimeConfiguration)) {
+            throw new IllegalStateException("%s: a configuration with id '%s' is already registered in this filter"
+                    .formatted(FilterConfigurationBuilder.class.getSimpleName(), id));
         }
+
         if (filter.getDataLoader() == null) {
-            throw new IllegalStateException(
-                    "RunTimeConfigurationBuilder: the filter has no DataLoader; set it before building a configuration");
+            throw new IllegalStateException("%s: the filter has no DataLoader; set it before building a configuration"
+                    .formatted(FilterConfigurationBuilder.class.getSimpleName()));
         }
 
         LogicalFilterComponent<?> root = filter.createConfigurationRootLogicalFilterComponent(operation);
-
-        RunTimeConfiguration config = new RunTimeConfiguration(id, root, filter);
-        config.setName(name);
+        DesignTimeConfiguration config = new DesignTimeConfiguration(id, name, root, filter);
 
         for (ComponentEntry entry : entries) {
             FilterComponent fc = entry.filterComponent;
@@ -240,21 +225,19 @@ public class RunTimeConfigurationBuilder {
             }
 
             root.add(fc);
+        }
 
-            // Persist the default value for reset/restore behaviour.
-            // Skip components without a parameter name (e.g. void JpqlFilter with Void parameterClass).
+        // Persist the default values for reset/restore behaviour, including the ones of conditions nested in a group.
+        // Skip components without a parameter name (e.g. void JpqlFilter with Void parameterClass).
+        for (FilterComponent fc : root.getFilterComponents()) {
             if (fc instanceof SingleFilterComponentBase<?> sfc) {
                 String paramName = sfc.getParameterName();
-                Object valueToStore = entry.overrideDefault ? entry.defaultValue : sfc.getValue();
+                Object valueToStore = sfc.getValue();
                 if (paramName != null && valueToStore != null) {
                     config.setFilterComponentDefaultValue(paramName, valueToStore);
                 }
             }
         }
-
-        // All components are added — mark them as modified so remove buttons appear.
-        config.setModified(true);
-        config.setProtectedFromUserDeletion(!allowDeletion);
 
         filter.addConfiguration(config);
         if (makeCurrent) {

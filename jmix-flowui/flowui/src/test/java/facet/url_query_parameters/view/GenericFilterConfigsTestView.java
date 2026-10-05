@@ -18,6 +18,7 @@ package facet.url_query_parameters.view;
 
 import com.vaadin.flow.router.Route;
 import io.jmix.flowui.component.genericfilter.GenericFilter;
+import io.jmix.flowui.component.genericfilter.configuration.RunTimeConfiguration;
 import io.jmix.flowui.component.propertyfilter.PropertyFilter;
 import io.jmix.flowui.facet.UrlQueryParametersFacet;
 import io.jmix.flowui.view.StandardView;
@@ -26,13 +27,14 @@ import io.jmix.flowui.view.Subscribe;
 import io.jmix.flowui.view.ViewComponent;
 import io.jmix.flowui.view.ViewController;
 import io.jmix.flowui.view.ViewDescriptor;
+import test_support.TestRunTimeConfigurations;
 
 /**
- * A view that activates a programmatic {@code RunTimeConfiguration} in {@code onInit}:
- * {@code active} (a {@code name} condition, made current) and {@code other} (an {@code email}
- * condition, registered but not current). Used to verify that such a programmatic baseline survives
- * a same-view re-navigation ({@code RestoreComponentsStateEvent} + a clean
- * {@code QueryParametersChangeEvent}) instead of being wiped.
+ * A view that registers two {@code RunTimeConfiguration}s in {@code onInit}: {@code active}
+ * (a {@code name} condition, made current) and {@code other} (an {@code email} condition, registered
+ * but not current). Used to verify that such a baseline survives a same-view re-navigation
+ * ({@code RestoreComponentsStateEvent} + a clean {@code QueryParametersChangeEvent}) instead of
+ * being wiped.
  */
 @Route("GenericFilterConfigsTestView")
 @ViewController
@@ -53,24 +55,18 @@ public class GenericFilterConfigsTestView extends StandardView {
                 .operation(PropertyFilter.Operation.EQUAL)
                 .operationEditable(true)
                 .build();
+        nameFilter.setValue("John");
 
-        ownersFilter.runtimeConfigurationBuilder()
-                .id("active")
-                .name("Active")
-                .add(nameFilter, "John")
-                .makeCurrent()
-                .buildAndRegister();
+        RunTimeConfiguration active = TestRunTimeConfigurations.register(ownersFilter, "active", "Active", nameFilter);
+        ownersFilter.setCurrentConfiguration(active);
 
         PropertyFilter<String> emailFilter = ownersFilter.filterComponentBuilder()
                 .<String>propertyFilter()
                 .property("email")
                 .operation(PropertyFilter.Operation.EQUAL)
                 .build();
+        emailFilter.setValue("someone@example.com");
 
-        ownersFilter.runtimeConfigurationBuilder()
-                .id("other")
-                .name("Other")
-                .add(emailFilter, "someone@example.com")
-                .buildAndRegister();
+        TestRunTimeConfigurations.register(ownersFilter, "other", "Other", emailFilter);
     }
 }

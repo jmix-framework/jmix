@@ -14,23 +14,20 @@
   ~ limitations under the License.
   -->
 
-<view xmlns="http://jmix.io/schema/flowui/view">
+<fragment xmlns="http://jmix.io/schema/flowui/fragment">
     <data>
         <collection id="projectsDc"
                     class="test_support.entity.Project">
-            <loader id="projectsLd">
+            <loader id="projectsDl">
                 <query>select e from test_Project e</query>
             </loader>
         </collection>
     </data>
-    <layout>
-        <genericFilter id="genericFilter" dataLoader="projectsLd">
-            <properties include=".*"/>
-            <configurations>
-                <configuration id="byName" name="By name">
-                    <propertyFilter property="name" operation="CONTAINS"/>
-                </configuration>
-            </configurations>
-        </genericFilter>
-    </layout>
-</view>
+    <content>
+        <vbox padding="false">
+            <genericFilter id="genericFilter" dataLoader="projectsDl">
+                <properties include=".*"/>
+            </genericFilter>
+        </vbox>
+    </content>
+</fragment>

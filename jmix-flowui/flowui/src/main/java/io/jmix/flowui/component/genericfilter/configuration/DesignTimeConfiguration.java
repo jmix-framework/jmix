@@ -23,6 +23,7 @@ import io.jmix.flowui.component.filter.SingleFilterComponentBase;
 import io.jmix.flowui.component.genericfilter.Configuration;
 import io.jmix.flowui.component.genericfilter.GenericFilter;
 import io.jmix.flowui.component.logicalfilter.LogicalFilterComponent;
+import io.jmix.flowui.component.propertyfilter.PropertyFilter;
 
 import org.jspecify.annotations.Nullable;
 import java.util.HashMap;
@@ -36,6 +37,7 @@ public class DesignTimeConfiguration implements Configuration {
     protected final GenericFilter owner;
 
     protected Map<String, Object> defaultValuesMap = new HashMap<>();
+    protected Map<String, PropertyFilter.Operation.Type> defaultValueOperationTypes = new HashMap<>();
 
     public DesignTimeConfiguration(String id,
                                    @Nullable String name,
@@ -112,6 +114,7 @@ public class DesignTimeConfiguration implements Configuration {
         Preconditions.checkNotNullArgument(parameterName);
         if (isFilterComponentExist(parameterName)) {
             defaultValuesMap.put(parameterName, defaultValue);
+            defaultValueOperationTypes.put(parameterName, getOperationType(parameterName));
         }
     }
 
@@ -121,11 +124,23 @@ public class DesignTimeConfiguration implements Configuration {
                 "Use FilterCopyAction to create a modifiable copy of configuration");
     }
 
+    /**
+     * Returns the default value of the filter component with the given parameter name.
+     * <p>
+     * The user can change an editable operation of a condition to an operation of another type, for
+     * example "in list", and the condition then needs a value of another kind. The default value recorded
+     * for the original operation type does not fit it, so {@code null} is returned until the operation
+     * is changed back.
+     *
+     * @param parameterName a parameter name of the filter component
+     * @return the default value, or {@code null} if there is none or it does not fit the current operation
+     */
     @Nullable
     @Override
     public Object getFilterComponentDefaultValue(String parameterName) {
         Preconditions.checkNotNullArgument(parameterName);
-        if (isFilterComponentExist(parameterName)) {
+        if (isFilterComponentExist(parameterName)
+                && getOperationType(parameterName) == defaultValueOperationTypes.get(parameterName)) {
             return defaultValuesMap.get(parameterName);
         }
 
@@ -142,6 +157,23 @@ public class DesignTimeConfiguration implements Configuration {
         return rootLogicalFilterComponent.getFilterComponents().stream()
                 .anyMatch(filterComponent -> filterComponent instanceof SingleFilterComponentBase
                         && parameterName.equals(((SingleFilterComponentBase<?>) filterComponent).getParameterName()));
+    }
+
+    /**
+     * Returns the type of the current operation of the property filter with the given parameter name.
+     *
+     * @param parameterName a parameter name of the filter component
+     * @return the operation type, or {@code null} if the filter component is not a property filter
+     */
+    protected PropertyFilter.Operation.@Nullable Type getOperationType(String parameterName) {
+        for (FilterComponent filterComponent : rootLogicalFilterComponent.getFilterComponents()) {
+            if (filterComponent instanceof PropertyFilter<?> propertyFilter
+                    && parameterName.equals(propertyFilter.getParameterName())) {
+                return propertyFilter.getOperation().getType();
+            }
+        }
+
+        return null;
     }
 
     @Override

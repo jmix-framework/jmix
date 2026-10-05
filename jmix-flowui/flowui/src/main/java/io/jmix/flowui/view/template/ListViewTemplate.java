@@ -16,7 +16,6 @@
 
 package io.jmix.flowui.view.template;
 
-import io.jmix.core.annotation.Experimental;
 import io.jmix.core.entity.annotation.MetaAnnotation;
 
 import java.lang.annotation.Retention;
@@ -26,7 +25,6 @@ import java.lang.annotation.Target;
 /**
  * Declares that the framework should generate a list view for the annotated entity at runtime.
  */
-@Experimental
 @Target({java.lang.annotation.ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @MetaAnnotation

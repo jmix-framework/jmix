@@ -16,7 +16,6 @@
 
 package io.jmix.flowui.view.template;
 
-import io.jmix.core.annotation.Experimental;
 import io.jmix.core.entity.annotation.MetaAnnotation;
 
 import java.lang.annotation.ElementType;
@@ -32,7 +31,6 @@ import java.lang.annotation.Target;
  * {@code entity_read} action all open it. Its route requires an entity id, so the view always opens for an
  * existing instance. Note that the generated list view carries no {@code list_read} action of its own.
  */
-@Experimental
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @MetaAnnotation

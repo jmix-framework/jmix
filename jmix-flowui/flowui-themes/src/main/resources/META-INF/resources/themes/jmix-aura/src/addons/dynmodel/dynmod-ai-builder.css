@@ -288,11 +288,7 @@
 .dynmod-ai-builder .activity-completed > vaadin-icon { color: var(--aura-green); }
 .dynmod-ai-builder .activity-failed > vaadin-icon { color: var(--aura-red); }
 .dynmod-ai-builder .activity-waiting > vaadin-icon { color: var(--aura-orange); }
-.dynmod-ai-builder .activity-payload { white-space: pre-wrap; overflow-wrap: anywhere; max-height: 20rem; overflow: auto; font-size: .75rem; }
 .dynmod-ai-builder .activity-card { border: none; border-radius: 0; padding: 0; background: transparent; }
-.dynmod-ai-builder .activity-details { width: 100%; margin: 0; }
-.dynmod-ai-builder .activity-details > vaadin-details-summary { padding-block: .2rem; }
-.dynmod-ai-builder .activity-details .activity-row { flex: 1; }
 .dynmod-ai-builder .activity-open { display: block; width: 100%; height: auto; margin: 0; padding: 0; border: 0; border-radius: 0; box-shadow: none; background: transparent; text-align: start; white-space: normal; color: inherit; font: inherit; }
 .dynmod-ai-builder .activity-open::part(label) { display: block; width: 100%; white-space: normal; }
 .dynmod-ai-builder .activity-open .activity-row { width: 100%; box-sizing: border-box; }

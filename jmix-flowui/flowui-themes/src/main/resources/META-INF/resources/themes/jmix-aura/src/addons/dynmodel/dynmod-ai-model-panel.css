@@ -148,28 +148,20 @@
     padding-block: .5rem .75rem;
 }
 
-.dynmod-ai-builder .activity-details > vaadin-details-summary {
-    padding-inline: 0;
-}
-
-.dynmod-ai-builder .activity-details > vaadin-details-summary::part(content) {
-    flex: 1;
-    min-width: 0;
-}
-
-.dynmod-ai-builder .activity-details .activity-row {
+.dynmod-ai-builder .activity-list .activity-row {
     display: grid;
     grid-template-columns: .85rem minmax(0, 1fr) auto;
     align-items: start;
     width: 100%;
     box-sizing: border-box;
+    padding-block: .2rem;
 }
 
-.dynmod-ai-builder .activity-details .activity-row > vaadin-icon {
+.dynmod-ai-builder .activity-list .activity-row > vaadin-icon {
     margin-top: .2rem;
 }
 
-.dynmod-ai-builder .activity-details .activity-duration {
+.dynmod-ai-builder .activity-list .activity-duration {
     margin-inline-start: 0;
     justify-self: end;
 }

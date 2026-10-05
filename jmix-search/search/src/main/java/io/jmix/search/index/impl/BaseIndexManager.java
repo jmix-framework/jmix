@@ -84,26 +84,31 @@ public abstract class BaseIndexManager<TState, TSettings, TJsonp> implements Ind
                 indexConfigurations, tenantId,
                 (configuration, indexName) -> IndexManipulationResult.of(dropIndex(indexName)),
                 IndexManipulationResult.FAILURE);
-        discardQueuedWork(indexConfigurations, tenantId);
+        discardQueuedWork(results);
         return results;
     }
 
     /**
-     * Removes what the indexing queue was holding for the indexes just deleted.
+     * Removes what the indexing queue was holding for the indexes that were actually deleted.
      * <p>
      * There is nowhere left to write those items, and dropping an index marks it unavailable, which keeps its
      * items out of every batch from now on. Left in place they would sit in the queue table for good, so deleting
      * the index removes them too.
+     * <p>
+     * An index whose deletion failed still holds its documents, so its queued items are kept: discarding them
+     * would leave a record that was deleted or edited in the index for good, with nothing left to correct it.
      */
-    protected void discardQueuedWork(Collection<IndexConfiguration> indexConfigurations, @Nullable String tenantId) {
-        for (IndexConfiguration configuration : indexConfigurations) {
-            if (tenantId != null && !indexLayout.isSplitByTenants(configuration)) {
+    protected void discardQueuedWork(List<IndexOperationResult<IndexManipulationResult>> deletions) {
+        for (IndexOperationResult<IndexManipulationResult> deletion : deletions) {
+            if (!deletion.isSuccess()) {
+                log.info("Queue items of entity '{}' are kept: index '{}' has not been deleted",
+                        deletion.entityName(), deletion.indexName());
                 continue;
             }
-            int discarded = indexingQueueManager.emptyQueue(configuration.getEntityName(), tenantId);
+            int discarded = indexingQueueManager.emptyQueue(deletion.entityName(), deletion.tenantId());
             if (discarded > 0) {
-                log.info("{} queue items of entity '{}' are discarded with the deleted index of tenant '{}'",
-                        discarded, configuration.getEntityName(), tenantId);
+                log.info("{} queue items of entity '{}' are discarded with the deleted index '{}'",
+                        discarded, deletion.entityName(), deletion.indexName());
             }
         }
     }

@@ -599,10 +599,14 @@ class BaseIndexManagerTest extends Specification {
         and:
         IndexingQueueManager queueManager = Mock()
 
-        and:
+        and: "an index manager whose dropIndex reports that the engine deleted the index"
         BaseIndexManager indexManager = new BaseIndexManagerTestImpl(
-                configurationManager, Mock(IndexStateRegistry), Mock(SearchProperties),
-                null, null)
+                configurationManager, Mock(IndexStateRegistry), Mock(SearchProperties), null, null) {
+            @Override
+            boolean dropIndex(String indexName) {
+                return true
+            }
+        }
         indexManager.indexLayout = indexLayout
         indexManager.indexingQueueManager = queueManager
 
@@ -613,6 +617,43 @@ class BaseIndexManagerTest extends Specification {
                  its index was not deleted, so its items are still processable"""
         1 * queueManager.emptyQueue(ENTITY_NAME, "tenant1")
         0 * queueManager.emptyQueue("SharedEntity", _)
+    }
+
+    def "an index that was not deleted keeps what the queue was holding for it"() {
+        given:
+        IndexConfiguration configuration = Mock()
+        configuration.getEntityName() >> ENTITY_NAME
+
+        and:
+        IndexConfigurationManager configurationManager = Mock()
+        configurationManager.getAllIndexConfigurations() >> List.of(configuration)
+
+        and:
+        IndexLayout indexLayout = Mock()
+        indexLayout.isSplitByTenants(configuration) >> true
+        indexLayout.indexName(configuration, "tenant1") >> "index_tenant_1"
+
+        and:
+        IndexingQueueManager queueManager = Mock()
+
+        and: "an index manager whose dropIndex reports that the engine did not delete the index"
+        BaseIndexManager indexManager = new BaseIndexManagerTestImpl(
+                configurationManager, Mock(IndexStateRegistry), Mock(SearchProperties), null, null) {
+            @Override
+            boolean dropIndex(String indexName) {
+                return false
+            }
+        }
+        indexManager.indexLayout = indexLayout
+        indexManager.indexingQueueManager = queueManager
+
+        when:
+        def results = indexManager.deleteIndexes(configurationManager.getAllIndexConfigurations(), "tenant1")
+
+        then: """the index still holds its documents, so the deletions and edits waiting in the queue are the only
+                 thing that can still correct them - discarding those would leave the stale documents for good"""
+        0 * queueManager.emptyQueue(_, _)
+        results.every { !it.isSuccess() }
     }
 
 }

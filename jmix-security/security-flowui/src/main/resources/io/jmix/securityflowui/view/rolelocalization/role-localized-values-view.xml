@@ -20,9 +20,7 @@
         <action id="saveAction"
                 text="msg:///actions.Ok"
                 icon="OK"
-                actionVariant="PRIMARY">
-            <shortcutCombination keyCombination="${SAVE_SHORTCUT}" resetFocusOnActiveElement="true"/>
-        </action>
+                actionVariant="PRIMARY"/>
         <action id="closeAction" type="view_close"/>
     </actions>
     <layout>

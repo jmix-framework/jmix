@@ -22,9 +22,12 @@ import io.jmix.core.CoreProperties;
 import io.jmix.core.LocaleResolver;
 import io.jmix.core.MessageTools;
 import io.jmix.flowui.UiComponents;
+import io.jmix.flowui.UiViewProperties;
 import io.jmix.flowui.component.textarea.JmixTextArea;
 import io.jmix.flowui.component.textfield.TypedTextField;
+import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
+import io.jmix.flowui.kit.component.KeyCombination;
 import io.jmix.flowui.view.DialogMode;
 import io.jmix.flowui.view.StandardOutcome;
 import io.jmix.flowui.view.StandardView;
@@ -54,6 +57,8 @@ public class RoleLocalizedValuesView extends StandardView {
 
     @ViewComponent
     private FormLayout form;
+    @ViewComponent
+    private Action saveAction;
 
     @Autowired
     private CoreProperties coreProperties;
@@ -61,6 +66,8 @@ public class RoleLocalizedValuesView extends StandardView {
     private MessageTools messageTools;
     @Autowired
     private UiComponents uiComponents;
+    @Autowired
+    private UiViewProperties uiViewProperties;
 
     private final Map<String, TextFieldBase<?, String>> fields = new LinkedHashMap<>();
 
@@ -70,6 +77,11 @@ public class RoleLocalizedValuesView extends StandardView {
 
     private boolean storedBundleReadable = true;
     private boolean multiline;
+
+    @Subscribe
+    public void onInit(InitEvent event) {
+        initSaveShortcut();
+    }
 
     @Subscribe
     public void onBeforeShow(BeforeShowEvent event) {
@@ -105,6 +117,20 @@ public class RoleLocalizedValuesView extends StandardView {
      */
     public void setMultiline(boolean multiline) {
         this.multiline = multiline;
+    }
+
+    /**
+     * Binds the save action to the application's save shortcut, if the application sets one. The shortcut is not
+     * declared in the descriptor, where an unset shortcut fails the loading of the view.
+     */
+    protected void initSaveShortcut() {
+        KeyCombination kc = KeyCombination.create(uiViewProperties.getSaveShortcut());
+        if (kc != null) {
+            // The field in focus commits its value before the action runs, so that a value typed just before the
+            // shortcut is saved.
+            kc.setResetFocusOnActiveElement(true);
+            saveAction.setShortcutCombination(kc);
+        }
     }
 
     protected void readStoredEntries() {

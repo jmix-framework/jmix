@@ -90,6 +90,10 @@ public class RoleModelConverter {
         roleModel.setCode(role.getCode());
         roleModel.setDescription(role.getDescription());
         roleModel.setName(role.getName());
+        roleModel.setNameMessageKey(role.getNameMessageKey());
+        roleModel.setDescriptionMessageKey(role.getDescriptionMessageKey());
+        roleModel.setLocalizedNames(role.getLocalizedNames());
+        roleModel.setLocalizedDescriptions(role.getLocalizedDescriptions());
         roleModel.setSource(RoleSourceType.fromId(role.getSource()));
         roleModel.setChildRoles(role.getChildRoles());
         roleModel.setCustomProperties(role.getCustomProperties());

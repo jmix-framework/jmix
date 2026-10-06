@@ -83,7 +83,8 @@ public class QuartzTest {
     @AfterEach
     void cleanUp() throws SchedulerException {
         scheduler.getListenerManager().removeSchedulerListener(schedulerListener);
-        for (String jobName : List.of("syncUnchangedJob", "syncChangedSimpleJob", "syncChangedCronJob")) {
+        for (String jobName : List.of("syncUnchangedJob", "syncChangedSimpleJob", "syncChangedCronJob",
+                "syncAddedPausedJob", "syncAddedActiveJob", "syncAddedTriggerlessJob")) {
             scheduler.deleteJob(JobKey.jobKey(jobName, "testJobGroup"));
         }
     }
@@ -359,6 +360,59 @@ public class QuartzTest {
     }
 
     @Test
+    public void testTriggersAddedToPausedJobArePaused() throws Exception {
+        TriggerModel simpleTriggerModel = createSimpleTriggerModel("syncAddedPausedSimple", futureDate(), 10000L, 100);
+        TriggerModel cronTriggerModel = createCronTriggerModel("syncAddedPausedCron", futureDate(), "0 0 0 * * ?");
+        JobModel jobModel = createPausedJobWithFiredTriggers("syncAddedPausedJob",
+                List.of(simpleTriggerModel, cronTriggerModel));
+        TriggerKey renamedTriggerKey = triggerKey(simpleTriggerModel);
+        Trigger cronTriggerBefore = scheduler.getTrigger(triggerKey(cronTriggerModel));
+        schedulerListener.clear();
+
+        //a renamed trigger is a removed and an added one, a new trigger is just added
+        simpleTriggerModel.setTriggerName("syncAddedPausedSimpleRenamed");
+        TriggerModel addedTriggerModel = createSimpleTriggerModel("syncAddedPausedAdded", futureDate(), 30000L, 5);
+        quartzService.updateQuartzJob(jobModel, new ArrayList<>(),
+                List.of(simpleTriggerModel, cronTriggerModel, addedTriggerModel), true);
+
+        Assertions.assertEquals(List.of(renamedTriggerKey), schedulerListener.unscheduledKeys);
+        Assertions.assertEquals(List.of(triggerKey(simpleTriggerModel), triggerKey(addedTriggerModel)),
+                schedulerListener.scheduledKeys);
+        //the job stays paused: the added triggers take the pause state of the job, the kept one is untouched
+        Assertions.assertEquals(Trigger.TriggerState.PAUSED, scheduler.getTriggerState(triggerKey(simpleTriggerModel)));
+        Assertions.assertEquals(Trigger.TriggerState.PAUSED, scheduler.getTriggerState(triggerKey(addedTriggerModel)));
+        assertTriggerUntouched(cronTriggerBefore);
+        Assertions.assertEquals(JobState.PAUSED, getJobState(jobModel));
+    }
+
+    @Test
+    public void testTriggersAddedToActiveJobAreActive() throws Exception {
+        TriggerModel simpleTriggerModel = createSimpleTriggerModel("syncAddedActiveSimple", futureDate(), 10000L, 100);
+        JobModel jobModel = createJobWithFiredTriggers("syncAddedActiveJob", List.of(simpleTriggerModel));
+        Assertions.assertEquals(JobState.NORMAL, getJobState(jobModel));
+
+        TriggerModel addedTriggerModel = createSimpleTriggerModel("syncAddedActiveAdded", futureDate(), 30000L, 5);
+        quartzService.updateQuartzJob(jobModel, new ArrayList<>(),
+                List.of(simpleTriggerModel, addedTriggerModel), true);
+
+        Assertions.assertEquals(Trigger.TriggerState.NORMAL, scheduler.getTriggerState(triggerKey(addedTriggerModel)));
+        Assertions.assertEquals(JobState.NORMAL, getJobState(jobModel));
+    }
+
+    @Test
+    public void testTriggersAddedToJobWithoutTriggersArePaused() throws Exception {
+        //an existing job without triggers is shown as paused, so the save must not start it
+        JobModel jobModel = createJobWithFiredTriggers("syncAddedTriggerlessJob", List.of());
+        Assertions.assertEquals(JobState.PAUSED, getJobState(jobModel));
+
+        TriggerModel addedTriggerModel = createSimpleTriggerModel("syncAddedTriggerlessAdded", futureDate(), 30000L, 5);
+        quartzService.updateQuartzJob(jobModel, new ArrayList<>(), List.of(addedTriggerModel), true);
+
+        Assertions.assertEquals(Trigger.TriggerState.PAUSED, scheduler.getTriggerState(triggerKey(addedTriggerModel)));
+        Assertions.assertEquals(JobState.PAUSED, getJobState(jobModel));
+    }
+
+    @Test
     public void testJobStateOfJobWithoutTriggers() throws Exception {
         JobDetail testJob = JobBuilder.newJob()
                 .withIdentity("noTriggersJobName", "testJobGroup")
@@ -437,10 +491,10 @@ public class QuartzTest {
     }
 
     /**
-     * Creates the job with the given triggers through the service, marks every trigger as already fired
-     * (a distinct last fire time per trigger, without waiting for a real execution) and pauses the job.
+     * Creates the job with the given triggers through the service and marks every trigger as already fired
+     * (a distinct last fire time per trigger, without waiting for a real execution).
      */
-    private JobModel createPausedJobWithFiredTriggers(String jobName, List<TriggerModel> triggerModels)
+    private JobModel createJobWithFiredTriggers(String jobName, List<TriggerModel> triggerModels)
             throws SchedulerException {
         JobModel jobModel = dataManager.create(JobModel.class);
         jobModel.setJobName(jobName);
@@ -453,8 +507,22 @@ public class QuartzTest {
             setPreviousFireTime(triggerKey(triggerModel), new Date(lastFireTime));
             lastFireTime += 60_000L;
         }
+        return jobModel;
+    }
+
+    private JobModel createPausedJobWithFiredTriggers(String jobName, List<TriggerModel> triggerModels)
+            throws SchedulerException {
+        JobModel jobModel = createJobWithFiredTriggers(jobName, triggerModels);
         quartzService.pauseJob(jobModel.getJobName(), jobModel.getJobGroup());
         return jobModel;
+    }
+
+    private JobState getJobState(JobModel jobModel) {
+        return quartzService.getAllJobs().stream()
+                .filter(jm -> jobModel.getJobName().equals(jm.getJobName()))
+                .findFirst()
+                .map(JobModel::getJobState)
+                .orElseThrow();
     }
 
     private void setPreviousFireTime(TriggerKey triggerKey, Date previousFireTime) throws SchedulerException {

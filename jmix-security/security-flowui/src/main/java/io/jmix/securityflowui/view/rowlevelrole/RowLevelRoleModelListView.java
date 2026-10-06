@@ -40,6 +40,7 @@ import io.jmix.security.role.RolePersistence;
 import io.jmix.security.role.RowLevelRoleRepository;
 import io.jmix.securityflowui.component.rolefilter.RoleFilter;
 import io.jmix.securityflowui.component.rolefilter.RoleFilterChangeEvent;
+import io.jmix.securityflowui.impl.role.LocalizedRoleColumnsSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -81,6 +82,8 @@ public class RowLevelRoleModelListView extends StandardListView<RowLevelRoleMode
     @Autowired
     private RoleModelConverter roleModelConverter;
     @Autowired
+    private LocalizedRoleColumnsSupport localizedRoleColumnsSupport;
+    @Autowired
     private RowLevelRoleRepository roleRepository;
     @Autowired
     private UrlParamSerializer urlParamSerializer;
@@ -93,6 +96,13 @@ public class RowLevelRoleModelListView extends StandardListView<RowLevelRoleMode
     public void onInit(InitEvent event) {
         initFilter();
         initActions();
+        initLocalizedRoleColumns();
+    }
+
+    private void initLocalizedRoleColumns() {
+        if (getLookupComponent() instanceof DataGrid<RowLevelRoleModel> grid) {
+            localizedRoleColumnsSupport.install(grid);
+        }
     }
 
     private void initFilter() {
@@ -127,9 +137,8 @@ public class RowLevelRoleModelListView extends StandardListView<RowLevelRoleMode
         List<RowLevelRoleModel> roleModels = roleRepository.getAllRoles(false).stream()
                 .filter(role -> event == null || event.matches(role))
                 .map(role -> roleModelConverter.createRowLevelRoleModel(role, false))
-                .sorted(Comparator.comparing(RowLevelRoleModel::getName))
                 .collect(Collectors.toList());
-        roleModelsDc.setItems(roleModels);
+        roleModelsDc.setItems(localizedRoleColumnsSupport.sortByName(roleModels));
     }
 
     @Install(to = "roleModelsTable.create", subject = "routeParametersProvider")

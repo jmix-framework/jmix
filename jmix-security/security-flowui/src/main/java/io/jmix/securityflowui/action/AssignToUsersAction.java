@@ -37,6 +37,7 @@ import io.jmix.security.model.BaseRoleModel;
 import io.jmix.security.model.ResourceRoleModel;
 import io.jmix.security.model.RowLevelRoleModel;
 import io.jmix.security.role.ResourceRoleRepository;
+import io.jmix.security.role.RoleLocalizationSupport;
 import io.jmix.security.role.RowLevelRoleRepository;
 import io.jmix.security.role.assignment.RoleAssignment;
 import io.jmix.security.role.assignment.RoleAssignmentPersistence;
@@ -76,6 +77,7 @@ public class AssignToUsersAction<E extends BaseRoleModel>
 
     protected ResourceRoleRepository resourceRoleRepository;
     protected RowLevelRoleRepository rowLevelRoleRepository;
+    protected RoleLocalizationSupport roleLocalizationSupport;
 
     protected E selectedItem;
 
@@ -114,6 +116,11 @@ public class AssignToUsersAction<E extends BaseRoleModel>
     @Autowired
     public void setRowLevelRoleRepository(RowLevelRoleRepository rowLevelRoleRepository) {
         this.rowLevelRoleRepository = rowLevelRoleRepository;
+    }
+
+    @Autowired
+    public void setRoleLocalizationSupport(RoleLocalizationSupport roleLocalizationSupport) {
+        this.roleLocalizationSupport = roleLocalizationSupport;
     }
 
     @Autowired
@@ -273,7 +280,7 @@ public class AssignToUsersAction<E extends BaseRoleModel>
         String message = messages.formatMessage(
                 getClass(),
                 "assignToUsersAction.afterCloseNotificationMessage",
-                selectedItem.getName(), selectedItemsCount
+                roleLocalizationSupport.getLocalizedName(selectedItem), selectedItemsCount
         );
 
         notifications.create(title, message)
@@ -286,7 +293,7 @@ public class AssignToUsersAction<E extends BaseRoleModel>
         String message = messages.formatMessage(
                 getClass(),
                 "assignToUsersAction.incorrectUserSelectedNotificationMessage",
-                selectedItem.getName(), user.getUsername()
+                roleLocalizationSupport.getLocalizedName(selectedItem), user.getUsername()
         );
 
         notifications.create(title, message)

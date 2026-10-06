@@ -26,6 +26,10 @@ public abstract class BaseRole implements Serializable {
     private String code;
     private String source;
     private String description;
+    private String nameMessageKey;
+    private String descriptionMessageKey;
+    private String localizedNames;
+    private String localizedDescriptions;
     private Set<String> childRoles;
     private Map<String, String> customProperties = new HashMap<>();
     private String tenantId;
@@ -64,6 +68,55 @@ public abstract class BaseRole implements Serializable {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    /**
+     * @return the key of the message that localizes the name, when the role declares its name as a
+     * {@code msg://} reference; {@link #getName()} then holds the message in the default locale, or the key when that
+     * message is missing or blank
+     */
+    public String getNameMessageKey() {
+        return nameMessageKey;
+    }
+
+    public void setNameMessageKey(String nameMessageKey) {
+        this.nameMessageKey = nameMessageKey;
+    }
+
+    /**
+     * @return the key of the message that localizes the description, when the role declares its description as a
+     * {@code msg://} reference; {@link #getDescription()} then holds the message in the default locale, or the key
+     * when that message is missing
+     */
+    public String getDescriptionMessageKey() {
+        return descriptionMessageKey;
+    }
+
+    public void setDescriptionMessageKey(String descriptionMessageKey) {
+        this.descriptionMessageKey = descriptionMessageKey;
+    }
+
+    /**
+     * @return the name localized to other locales, in {@link java.util.Properties} format keyed by locale, such as
+     * {@code de=Leiter}
+     */
+    public String getLocalizedNames() {
+        return localizedNames;
+    }
+
+    public void setLocalizedNames(String localizedNames) {
+        this.localizedNames = localizedNames;
+    }
+
+    /**
+     * @return the description localized to other locales, in {@link java.util.Properties} format keyed by locale
+     */
+    public String getLocalizedDescriptions() {
+        return localizedDescriptions;
+    }
+
+    public void setLocalizedDescriptions(String localizedDescriptions) {
+        this.localizedDescriptions = localizedDescriptions;
     }
 
     public Set<String> getChildRoles() {

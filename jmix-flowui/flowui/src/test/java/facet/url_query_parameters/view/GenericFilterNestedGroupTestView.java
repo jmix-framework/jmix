@@ -18,6 +18,7 @@ package facet.url_query_parameters.view;
 
 import com.vaadin.flow.router.Route;
 import io.jmix.flowui.component.genericfilter.GenericFilter;
+import io.jmix.flowui.component.genericfilter.configuration.RunTimeConfiguration;
 import io.jmix.flowui.component.logicalfilter.LogicalFilterComponent;
 import io.jmix.flowui.component.propertyfilter.PropertyFilter;
 import io.jmix.flowui.facet.UrlQueryParametersFacet;
@@ -27,9 +28,10 @@ import io.jmix.flowui.view.Subscribe;
 import io.jmix.flowui.view.ViewComponent;
 import io.jmix.flowui.view.ViewController;
 import io.jmix.flowui.view.ViewDescriptor;
+import test_support.TestRunTimeConfigurations;
 
 /**
- * A view whose programmatic {@code RunTimeConfiguration} has a NESTED structure: the root holds a
+ * A view whose {@code RunTimeConfiguration} registered in {@code onInit} has a NESTED structure: the root holds a
  * {@code groupFilter} (AND) that in turn holds two conditions ({@code name}, {@code email}). Used to
  * verify that the re-navigation restore reconstructs the whole tree, including a condition removed
  * from a nested group.
@@ -66,11 +68,7 @@ public class GenericFilterNestedGroupTestView extends StandardView {
                 .add(emailFilter)
                 .build();
 
-        ownersFilter.runtimeConfigurationBuilder()
-                .id("grouped")
-                .name("Grouped")
-                .add(group)
-                .makeCurrent()
-                .buildAndRegister();
+        RunTimeConfiguration grouped = TestRunTimeConfigurations.register(ownersFilter, "grouped", "Grouped", group);
+        ownersFilter.setCurrentConfiguration(grouped);
     }
 }

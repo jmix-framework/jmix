@@ -1419,6 +1419,25 @@ public class DataContextImpl implements DataContextInternal {
         if (childDirtyAttributes.isEmpty()) {
             return merge(entity);
         }
+        // Hold the ChangeEvents of the merge below until the child's dirty attributes are registered
+        // here, so a listener sees this context's modified state that results from the merge.
+        mergeDepth++;
+        try {
+            return mergeDirtyFromChild(entity, childDirtyAttributes);
+        } finally {
+            mergeDepth--;
+            if (mergeDepth == 0) {
+                mergeApplied.clear();
+                flushDeferredChangeEvents();
+            }
+        }
+    }
+
+    /**
+     * Body of {@link #mergeFromChild(Object, Set)} for a non-empty set of child dirty attributes. Runs
+     * inside a merge, so the {@code ChangeEvent}s it causes are deferred until the caller unwinds.
+     */
+    protected Object mergeDirtyFromChild(Object entity, Set<String> childDirtyAttributes) {
         // capture this context's pre-overwrite values: they become the baselines of the
         // attributes the child's merge is about to overwrite (when not already dirty here)
         Object managed = find(entity);

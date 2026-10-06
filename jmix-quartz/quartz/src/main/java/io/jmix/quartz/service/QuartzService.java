@@ -98,7 +98,8 @@ public class QuartzService {
      * Saves the job in the Quartz engine. Job data parameters and triggers are taken from the {@link JobModel}
      * collections. Existing triggers of the job are synchronized with the provided ones: unchanged triggers are
      * kept with their execution state and pause state, changed ones are rescheduled keeping their last fire time
-     * and pause state, obsolete ones are removed, an empty collection removes all triggers of the job.
+     * and pause state, obsolete ones are removed, an empty collection removes all triggers of the job. A save never
+     * starts a job that is not running: triggers added to an existing job without active triggers are paused.
      * <p>
      * The behavior is defined by the original job key of the context
      * (see {@link JobSaveContext#setOriginalJobKey(JobKey)}) and the target key built from the job model name
@@ -110,8 +111,9 @@ public class QuartzService {
      *     if it no longer exists in the engine);</li>
      *     <li>the original key differs from the target key — the job is recreated under the target key and
      *     removed under the original one; its triggers are created anew, since a trigger cannot be moved to
-     *     another job, so their execution state and pause state are not kept; if a job with the target key
-     *     already exists, {@link QuartzJobSaveException} is thrown and nothing is changed.</li>
+     *     another job, so their execution state is not kept, but they are paused if the original job had no
+     *     active triggers; if a job with the target key already exists, {@link QuartzJobSaveException} is thrown
+     *     and nothing is changed.</li>
      * </ul>
      *
      * @param context the job model to save and the save options
@@ -141,12 +143,15 @@ public class QuartzService {
             scheduler.addJob(jobDetail, false);
 
             //unschedule triggers of the original job before scheduling new ones - they usually share trigger keys
-            for (Trigger trigger : scheduler.getTriggersOfJob(originalJobKey)) {
+            List<? extends Trigger> originalTriggers = scheduler.getTriggersOfJob(originalJobKey);
+            boolean paused = !hasActiveTrigger(originalTriggers);
+            for (Trigger trigger : originalTriggers) {
                 scheduler.unscheduleJob(trigger.getKey());
             }
             if (!CollectionUtils.isEmpty(triggerModels)) {
                 for (TriggerModel triggerModel : triggerModels) {
-                    scheduler.scheduleJob(buildTrigger(jobDetail, triggerModel));
+                    //the save must not start a job that was not running
+                    scheduleTrigger(buildTrigger(jobDetail, triggerModel), paused);
                 }
             }
 
@@ -169,7 +174,8 @@ public class QuartzService {
      * @param triggerModels          triggers for job; existing triggers of the job are synchronized with provided
      *                               ones: unchanged triggers are kept with their execution state and pause state,
      *                               changed ones are rescheduled keeping their last fire time and pause state,
-     *                               obsolete ones are removed, empty list removes all triggers
+     *                               obsolete ones are removed, empty list removes all triggers; triggers added to
+     *                               an existing job without active triggers are paused
      * @param replaceJobIfExists     replace if job with the same name already exists
      */
     @SuppressWarnings("unchecked")
@@ -181,10 +187,11 @@ public class QuartzService {
         log.debug("updating job with name {} and group {}", jobModel.getJobName(), jobModel.getJobGroup());
         try {
             JobKey jobKey = JobKey.jobKey(jobModel.getJobName(), jobModel.getJobGroup());
-            JobDetail jobDetail = buildJobDetail(jobModel, scheduler.getJobDetail(jobKey), jobDataParameterModels);
+            JobDetail existingJobDetail = scheduler.getJobDetail(jobKey);
+            JobDetail jobDetail = buildJobDetail(jobModel, existingJobDetail, jobDataParameterModels);
             scheduler.addJob(jobDetail, replaceJobIfExists);
 
-            updateTriggers(jobDetail, triggerModels);
+            updateTriggers(jobDetail, triggerModels, existingJobDetail != null);
         } catch (SchedulerException e) {
             log.warn("Unable to update job with name {} and group {}", jobModel.getJobName(), jobModel.getJobGroup(), e);
             throw new QuartzJobSaveException(e.getMessage());
@@ -544,13 +551,23 @@ public class QuartzService {
     /**
      * Synchronizes triggers of the job with the provided models: unchanged triggers are left untouched, so they
      * keep their execution state and pause state, changed ones are rescheduled keeping their last fire time and
-     * pause state, missing ones are scheduled and obsolete ones are unscheduled.
+     * pause state, missing ones are scheduled and obsolete ones are unscheduled. Triggers added to an existing job
+     * that has no active triggers are scheduled paused, so that the save does not start a job that is not running.
+     *
+     * @param existingJob whether the job existed in the scheduler before this save
      */
-    protected void updateTriggers(JobDetail jobDetail, List<TriggerModel> triggerModels) throws SchedulerException {
+    protected void updateTriggers(JobDetail jobDetail, List<TriggerModel> triggerModels, boolean existingJob)
+            throws SchedulerException {
+        List<? extends Trigger> jobTriggers = scheduler.getTriggersOfJob(jobDetail.getKey());
         Map<TriggerKey, Trigger> existingTriggers = new HashMap<>();
-        for (Trigger trigger : scheduler.getTriggersOfJob(jobDetail.getKey())) {
+        for (Trigger trigger : jobTriggers) {
             existingTriggers.put(trigger.getKey(), trigger);
         }
+        /*
+        A paused job and a job without triggers (shown as paused) must stay paused after the save,
+        so their new triggers are paused as well. A new job starts active.
+        */
+        boolean pauseAddedTriggers = existingJob && !hasActiveTrigger(jobTriggers);
 
         Set<TriggerKey> keysToKeep = new HashSet<>();
         if (!CollectionUtils.isEmpty(triggerModels)) {
@@ -558,7 +575,7 @@ public class QuartzService {
                 Trigger newTrigger = buildTrigger(jobDetail, triggerModel);
                 Trigger existingTrigger = existingTriggers.get(newTrigger.getKey());
                 if (existingTrigger == null) {
-                    scheduler.scheduleJob(newTrigger);
+                    scheduleTrigger(newTrigger, pauseAddedTriggers);
                 } else {
                     keysToKeep.add(newTrigger.getKey());
                     if (isTriggerChanged(existingTrigger, newTrigger, triggerModel)) {
@@ -631,6 +648,30 @@ public class QuartzService {
         if (newTrigger instanceof OperableTrigger operableTrigger) {
             operableTrigger.setPreviousFireTime(existingTrigger.getPreviousFireTime());
         }
+    }
+
+    /**
+     * Schedules the trigger, paused if requested.
+     */
+    protected void scheduleTrigger(Trigger trigger, boolean paused) throws SchedulerException {
+        scheduler.scheduleJob(trigger);
+        if (paused) {
+            scheduler.pauseTrigger(trigger.getKey());
+        }
+    }
+
+    /**
+     * Defines whether any of the triggers is active, which means the job they belong to is waiting to be fired
+     * or running.
+     */
+    protected boolean hasActiveTrigger(Collection<? extends Trigger> triggers) throws SchedulerException {
+        for (Trigger trigger : triggers) {
+            Trigger.TriggerState triggerState = scheduler.getTriggerState(trigger.getKey());
+            if (triggerState == Trigger.TriggerState.NORMAL || triggerState == Trigger.TriggerState.BLOCKED) {
+                return true;
+            }
+        }
+        return false;
     }
 
     protected Trigger buildTrigger(JobDetail jobDetail, TriggerModel triggerModel) {

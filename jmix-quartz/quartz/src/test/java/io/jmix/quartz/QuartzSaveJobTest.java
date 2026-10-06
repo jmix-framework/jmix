@@ -130,6 +130,23 @@ public class QuartzSaveJobTest {
     }
 
     @Test
+    void testRenamedPausedJobStaysPaused() throws SchedulerException {
+        JobModel jobModel = buildJobModel("renameSrcJob");
+        jobModel.setTriggers(List.of(buildCronTriggerModel("renamePausedTrigger")));
+        quartzService.saveJob(new JobSaveContext(jobModel));
+        JobKey srcKey = JobKey.jobKey("renameSrcJob", JOB_GROUP);
+        scheduler.pauseJob(srcKey);
+
+        jobModel.setJobName("renameDstJob");
+        quartzService.saveJob(new JobSaveContext(jobModel).setOriginalJobKey(srcKey));
+
+        //the save must not start a job that was not running
+        List<? extends Trigger> triggers = scheduler.getTriggersOfJob(JobKey.jobKey("renameDstJob", JOB_GROUP));
+        Assertions.assertEquals(1, triggers.size());
+        Assertions.assertEquals(Trigger.TriggerState.PAUSED, scheduler.getTriggerState(triggers.get(0).getKey()));
+    }
+
+    @Test
     void testFailedRenameLeavesOriginalJobIntact() throws SchedulerException {
         //an unrelated job whose trigger key will collide with a trigger scheduled during the rename
         JobKey collisionJobKey = JobKey.jobKey("collisionJob", JOB_GROUP);

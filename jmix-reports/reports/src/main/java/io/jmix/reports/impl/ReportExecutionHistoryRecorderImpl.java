@@ -238,7 +238,7 @@ public class ReportExecutionHistoryRecorderImpl implements ReportExecutionHistor
             try {
                 getFileStorage().removeFile(path);
             } catch (FileStorageException e) {
-                log.error("Failed to remove document from storage " + path, e);
+                log.error("Failed to remove document from storage {}", path, e);
             }
         }
     }

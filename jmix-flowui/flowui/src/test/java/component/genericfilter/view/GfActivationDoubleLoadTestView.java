@@ -18,7 +18,7 @@ package component.genericfilter.view;
 
 import com.vaadin.flow.router.Route;
 import io.jmix.flowui.component.genericfilter.GenericFilter;
-import io.jmix.flowui.component.genericfilter.configuration.RunTimeConfiguration;
+import io.jmix.flowui.component.genericfilter.configuration.DesignTimeConfiguration;
 import io.jmix.flowui.component.propertyfilter.PropertyFilter;
 import io.jmix.flowui.model.CollectionLoader;
 import io.jmix.flowui.view.*;
@@ -51,7 +51,7 @@ public class GfActivationDoubleLoadTestView extends StandardView {
                 .property("number")
                 .operation(PropertyFilter.Operation.EQUAL)
                 .build();
-        RunTimeConfiguration declConfiguration = genericFilter.runtimeConfigurationBuilder()
+        DesignTimeConfiguration declConfiguration = genericFilter.filterConfigurationBuilder()
                 .id("decl")
                 .name("Declarative-like default")
                 .add(declValue, "d1")
@@ -64,7 +64,7 @@ public class GfActivationDoubleLoadTestView extends StandardView {
                 .property("number")
                 .operation(PropertyFilter.Operation.EQUAL)
                 .build();
-        genericFilter.runtimeConfigurationBuilder()
+        genericFilter.filterConfigurationBuilder()
                 .id("rt")
                 .name("Runtime")
                 .add(runtimeValue, "n1")

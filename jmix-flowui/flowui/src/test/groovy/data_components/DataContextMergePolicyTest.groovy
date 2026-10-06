@@ -1163,4 +1163,68 @@ class DataContextMergePolicyTest extends DataContextSpec {
         cleanup:
         dataManager.remove(customer)
     }
+
+    def "a ChangeEvent fired by a child save sees the parent's registered changes (#5763)"() {
+        given: "an order with a composition line loaded into the parent context"
+        DataContext parent = factory.createDataContext()
+        Customer customer = dataManager.save(new Customer(name: 'c1', address: new Address()))
+        Order order = dataManager.save(new Order(number: 'o1', customer: customer))
+        OrderLine line = dataManager.save(new OrderLine(quantity: 1, order: order))
+        Order parentOrder = parent.merge(dataManager.load(Id.of(order))
+                .fetchPlan { it.addAll('number', 'orderLines.quantity') }.one())
+        OrderLine parentLine = parentOrder.orderLines[0]
+
+        and: "a change listener recording the parent's state at the moment of each event"
+        def events = []
+        parent.addChangeListener { e ->
+            events << [entity: e.entity, hasChanges: e.source.hasChanges(), modified: e.source.isModified(e.entity)]
+        }
+
+        when: "a line dialog edits the line and saves into the parent"
+        DataContext child = factory.createDataContext()
+        child.setParent(parent)
+        OrderLine childLine = child.merge(parentLine)
+        childLine.quantity = 2
+        child.save()
+
+        then: "the event for the line fires once the parent already holds the change"
+        parentLine.quantity == 2
+        parent.hasChanges()
+        !events.empty
+        events.findAll { it.entity.is(parentLine) } == [[entity: parentLine, hasChanges: true, modified: true]]
+
+        cleanup:
+        dataManager.remove(line, order, customer)
+    }
+
+    def "a ChangeEvent fired by a child save that reverts the parent's edit sees no changes (#5763)"() {
+        given:
+        DataContext parent = factory.createDataContext()
+        Customer customer = dataManager.save(new Customer(name: 'c1', address: new Address()))
+        Customer parentManaged = parent.merge(dataManager.load(Id.of(customer)).fetchPlan { it.add('name') }.one())
+
+        and: "a first dialog session has edited the attribute"
+        DataContext child1 = factory.createDataContext()
+        child1.setParent(parent)
+        Customer child1Managed = child1.merge(parentManaged)
+        child1Managed.name = 'edited'
+        child1.save()
+
+        and:
+        def events = []
+        parent.addChangeListener { e -> events << [entity: e.entity, hasChanges: e.source.hasChanges()] }
+
+        when: "a second dialog session sets it back to the original value"
+        DataContext child2 = factory.createDataContext()
+        child2.setParent(parent)
+        Customer child2Managed = child2.merge(parentManaged)
+        child2Managed.name = 'c1'
+        child2.save()
+
+        then: "the event already sees the parent back at its baseline"
+        events == [[entity: parentManaged, hasChanges: false]]
+
+        cleanup:
+        dataManager.remove(customer)
+    }
 }

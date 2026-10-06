@@ -145,13 +145,13 @@ public class HtmlFormatter extends AbstractFormatter {
                         }
                     }
                 } else {
-                    log.debug("Fonts directory is empty: " + fontsDir.getPath());
+                    log.debug("Fonts directory is empty: {}", fontsDir.getPath());
                 }
             } else {
                 log.warn(format("File %s is not a directory", fontsDir.getAbsolutePath()));
             }
         } else {
-            log.debug("Fonts directory does not exist: " + fontsDir.getPath());
+            log.debug("Fonts directory does not exist: {}", fontsDir.getPath());
         }
     }
 

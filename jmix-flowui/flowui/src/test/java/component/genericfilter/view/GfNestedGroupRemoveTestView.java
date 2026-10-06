@@ -18,9 +18,11 @@ package component.genericfilter.view;
 
 import com.vaadin.flow.router.Route;
 import io.jmix.flowui.component.genericfilter.GenericFilter;
+import io.jmix.flowui.component.genericfilter.configuration.RunTimeConfiguration;
 import io.jmix.flowui.component.logicalfilter.GroupFilter;
 import io.jmix.flowui.component.propertyfilter.PropertyFilter;
 import io.jmix.flowui.view.*;
+import test_support.TestRunTimeConfigurations;
 
 /**
  * A run-time configuration whose root contains a nested group with a single property condition,
@@ -51,11 +53,7 @@ public class GfNestedGroupRemoveTestView extends StandardView {
                 .add(nestedCondition)
                 .build();
 
-        genericFilter.runtimeConfigurationBuilder()
-                .id("c1")
-                .name("C1")
-                .add(nestedGroup)
-                .makeCurrent()
-                .buildAndRegister();
+        RunTimeConfiguration c1 = TestRunTimeConfigurations.register(genericFilter, "c1", "C1", nestedGroup);
+        genericFilter.setCurrentConfiguration(c1);
     }
 }

@@ -20,6 +20,7 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteAlias;
 import io.jmix.core.EntityStates;
 import io.jmix.flowui.UiComponents;
+import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.view.*;
 import io.jmix.security.model.BaseRoleModel;
@@ -29,6 +30,7 @@ import io.jmix.security.model.RowLevelRoleModel;
 import io.jmix.security.role.RowLevelRoleRepository;
 import io.jmix.securityflowui.component.rolefilter.RoleFilter;
 import io.jmix.securityflowui.component.rolefilter.RoleFilterChangeEvent;
+import io.jmix.securityflowui.impl.role.LocalizedRoleColumnsSupport;
 import io.jmix.securityflowui.util.RoleAssignmentCandidatePredicate;
 import io.jmix.securityflowui.util.RoleHierarchyCandidatePredicate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +38,6 @@ import org.jspecify.annotations.Nullable;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -59,6 +60,8 @@ public class RowLevelRoleModelLookupView extends StandardListView<RowLevelRoleMo
     @Autowired
     private RoleModelConverter roleModelConverter;
     @Autowired
+    private LocalizedRoleColumnsSupport localizedRoleColumnsSupport;
+    @Autowired
     private RowLevelRoleRepository roleRepository;
     @Autowired
     private EntityStates entityStates;
@@ -79,8 +82,15 @@ public class RowLevelRoleModelLookupView extends StandardListView<RowLevelRoleMo
     @Subscribe
     public void onInit(InitEvent event) {
         initFilter();
+        initLocalizedRoleColumns();
         compositeRoleAssignmentCandidatePredicate = combineRoleAssignmentPredicates(roleAssignmentCandidatePredicates);
         compositeRoleHierarchyCandidatePredicate = combineRoleHierarchyPredicates(roleHierarchyCandidatePredicates);
+    }
+
+    private void initLocalizedRoleColumns() {
+        if (getLookupComponent() instanceof DataGrid<RowLevelRoleModel> grid) {
+            localizedRoleColumnsSupport.install(grid);
+        }
     }
 
     private void initFilter() {
@@ -124,9 +134,8 @@ public class RowLevelRoleModelLookupView extends StandardListView<RowLevelRoleMo
                     return allowed;
                 })
                 .map(role -> roleModelConverter.createRowLevelRoleModel(role, false))
-                .sorted(Comparator.comparing(RowLevelRoleModel::getName))
                 .collect(Collectors.toList());
-        roleModelsDc.setItems(roleModels);
+        roleModelsDc.setItems(localizedRoleColumnsSupport.sortByName(roleModels));
     }
 
     public void setExcludedRoles(List<String> excludedRolesCodes) {

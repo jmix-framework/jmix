@@ -73,7 +73,7 @@ public abstract class FragmentRenderer<T extends Component, E> extends Fragment<
     protected InstanceContainer<E> getItemRendererContainer() {
         RendererItemContainer annotation = getClass().getAnnotation(RendererItemContainer.class);
         if (annotation == null || Strings.isNullOrEmpty(annotation.value())) {
-            log.info("@{} does not declared in {}",
+            log.debug("@{} is not declared in {}",
                     RendererItemContainer.class.getSimpleName(), getClass().getSimpleName());
 
             return null;

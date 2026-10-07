@@ -24,13 +24,12 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import static java.lang.annotation.ElementType.FIELD;
-import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.ElementType.TYPE;
 
 /**
  * Marks an entity or attribute as off-limits to the AI: its data must never reach the model, and a
- * generated query may not read it. On a type the whole entity is excluded; on a field or getter only
- * that attribute is, and the exclusion is inherited by entity subclasses.
+ * generated query may not read it. On a type the whole entity is excluded; on a field only that
+ * attribute is, and the exclusion is inherited by entity subclasses.
  * <p>
  * Unlike the {@code jmix.aitools.dataload.*} include/exclude properties, this is a code-level boundary
  * that cannot be overridden at deployment time &mdash; use it for data whose exposure decision must
@@ -40,7 +39,7 @@ import static java.lang.annotation.ElementType.TYPE;
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
-@Target({TYPE, FIELD, METHOD})
+@Target({TYPE, FIELD})
 @MetaAnnotation
 public @interface ExcludeFromAi {
 }

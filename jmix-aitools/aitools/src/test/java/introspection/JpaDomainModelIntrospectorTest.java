@@ -206,7 +206,7 @@ class JpaDomainModelIntrospectorTest {
                 .map(EntityDescriptor::getName)
                 .filter(name -> name.startsWith("aitls_"))
                 .count();
-        assertEquals(10, testEntityCount);
+        assertEquals(11, testEntityCount);
     }
 
     @Test

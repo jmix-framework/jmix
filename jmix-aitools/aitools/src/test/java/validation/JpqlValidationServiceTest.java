@@ -203,6 +203,45 @@ class JpqlValidationServiceTest {
     }
 
     @Test
+    @DisplayName("Rejects an excluded entity named in a TYPE() comparison")
+    void testRejectsExcludedEntityInTypeComparison() {
+        assertRejectsUsedEntity(
+                "select e.number as n from aitls_Order e where type(e) = aitls_HiddenEntity",
+                "aitls_HiddenEntity");
+    }
+
+    @Test
+    @DisplayName("Rejects an excluded entity named in a TYPE() IN list")
+    void testRejectsExcludedEntityInTypeInList() {
+        assertRejectsUsedEntity(
+                "select e.number as n from aitls_Order e where type(e) in (aitls_Order, aitls_HiddenSubEntity)",
+                "aitls_HiddenSubEntity");
+    }
+
+    @Test
+    @DisplayName("Rejects an excluded entity named as a TREAT() subtype")
+    void testRejectsExcludedEntityAsTreatSubtype() {
+        assertRejectsUsedEntity(
+                "select c.name as name from aitls_Order e join treat(e.customer as aitls_HiddenEntity) c",
+                "aitls_HiddenEntity");
+    }
+
+    @Test
+    @DisplayName("Does not treat an entity name inside a string literal as a used entity")
+    void testIgnoresEntityNameInStringLiteral() {
+        GeneratedJpqlResult result = new GeneratedJpqlResult(
+                "select e.number as n from aitls_Order e where e.number = 'aitls_HiddenEntity'",
+                List.of(),
+                "String literal that contains an excluded entity name",
+                List.of()
+        );
+
+        JpqlValidationResult validationResult = jpqlValidationService.validate(result);
+
+        assertTrue(validationResult.isValid(), () -> validationResult.getIssues().toString());
+    }
+
+    @Test
     @DisplayName("Rejects invalid property paths extracted from JPQL")
     void testRejectsInvalidPropertyPath() {
         GeneratedJpqlResult result = new GeneratedJpqlResult(
@@ -486,5 +525,16 @@ class JpqlValidationServiceTest {
 
         assertFalse(validationResult.isValid());
         assertTrue(validationResult.getIssues().stream().anyMatch(issue -> issue.getCode().equals(JPQL_SYNTAX_INVALID_CODE)));
+    }
+
+    private void assertRejectsUsedEntity(String jpql, String entityName) {
+        GeneratedJpqlResult result = new GeneratedJpqlResult(jpql, List.of(), "Excluded entity", List.of());
+
+        JpqlValidationResult validationResult = jpqlValidationService.validate(result);
+
+        assertFalse(validationResult.isValid());
+        assertTrue(validationResult.getIssues().stream().anyMatch(issue ->
+                        issue.getCode().equals(USED_ENTITY_UNKNOWN_CODE) && issue.getMessage().contains(entityName)),
+                () -> validationResult.getIssues().toString());
     }
 }

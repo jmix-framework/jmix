@@ -18,6 +18,7 @@ package introspection;
 
 import io.jmix.aitools.dataload.introspection.JpaDomainModelIntrospector;
 import io.jmix.aitools.dataload.introspection.model.EntityDescriptor;
+import io.jmix.aitools.dataload.introspection.model.RelationPropertyDescriptor;
 import io.jmix.aitools.dataload.tool.DomainModelDiscoveryTool;
 import io.jmix.core.security.SystemAuthenticator;
 import org.junit.jupiter.api.DisplayName;
@@ -98,6 +99,34 @@ class DomainModelDiscoveryExcludeFromAiTest {
                 systemAuthenticator.end();
             }
         }
+
+        @Test
+        @DisplayName("Drops a reference to an entity left out of the index, by the annotation or by configuration")
+        void testReferenceToExcludedEntityDroppedFromIndex() {
+            assertTrue(introspector.containsProperty("aitls_Document", "parent"));
+            assertFalse(introspector.containsProperty("aitls_Document", "licenseKey"));
+            assertFalse(introspector.containsProperty("aitls_Document", "systemRecord"));
+            assertFalse(introspector.containsPropertyPath("aitls_Document", "licenseKey.id"));
+        }
+
+        @Test
+        @DisplayName("Does not name an excluded entity in the detailed descriptor of an entity referring to it")
+        void testReferenceToExcludedEntityHiddenFromDescriptor() {
+            systemAuthenticator.begin();
+            try {
+                EntityDescriptor document = tool.getDomainModelForEntities(
+                                List.of("aitls_Document"), new ToolContext(Map.of())).stream()
+                        .findFirst()
+                        .orElseThrow();
+                assertTrue(hasProperty(document, "parent"));
+                assertFalse(hasProperty(document, "licenseKey"));
+                assertTrue(document.getProperties().stream()
+                        .noneMatch(property -> property instanceof RelationPropertyDescriptor relation
+                                && relation.getTargetEntityName().equals("aitls_HiddenEntity")));
+            } finally {
+                systemAuthenticator.end();
+            }
+        }
     }
 
     @Nested
@@ -116,6 +145,24 @@ class DomainModelDiscoveryExcludeFromAiTest {
             assertNull(introspector.getEntityDescriptor("aitls_HiddenEntity"));
             assertNull(introspector.getEntityDescriptor("aitls_HiddenBaseEntity"));
             assertNull(introspector.getEntityDescriptor("aitls_HiddenSubEntity"));
+            assertFalse(introspector.containsProperty("aitls_Document", "licenseKey"));
+        }
+    }
+
+    @Nested
+    @ExtendWith(SpringExtension.class)
+    @ContextConfiguration(classes = AiToolsTestConfiguration.class)
+    @TestPropertySource(properties = "jmix.aitools.dataload.exclude-system-level-entities=false")
+    class ConfigurationIncludesTarget {
+
+        @Autowired
+        JpaDomainModelIntrospector introspector;
+
+        @Test
+        @DisplayName("Keeps a reference whose target entity configuration brings into the index")
+        void testReferenceFollowsTargetInclusion() {
+            assertTrue(introspector.containsEntity("aitls_SystemLevelEntity"));
+            assertTrue(introspector.containsProperty("aitls_Document", "systemRecord"));
         }
     }
 

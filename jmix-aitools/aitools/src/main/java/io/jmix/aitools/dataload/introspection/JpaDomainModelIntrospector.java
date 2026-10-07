@@ -292,6 +292,11 @@ public class JpaDomainModelIntrospector {
             if (!metadataTools.isJpa(property)) {
                 continue;
             }
+            // A reference to an entity left out of the index cannot be queried through, and would only reveal that
+            // the entity exists.
+            if (property.getRange().isClass() && !shouldInclude(property.getRange().asClass())) {
+                continue;
+            }
             EntityPropertyDescriptor propertyDescriptor = introspectProperty(property);
             if (propertyDescriptor != null) {
                 propertyDescriptors.add(propertyDescriptor);

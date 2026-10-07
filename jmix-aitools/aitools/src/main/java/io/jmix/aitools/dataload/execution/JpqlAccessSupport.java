@@ -16,6 +16,7 @@
 
 package io.jmix.aitools.dataload.execution;
 
+import io.jmix.aitools.ExcludeFromAi;
 import io.jmix.aitools.dataload.execution.JpqlDeclarationSupport.Declaration;
 import io.jmix.aitools.dataload.validation.validator.JpqlValidatorSupport;
 import io.jmix.core.AccessManager;
@@ -49,6 +50,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 /**
  * Checks a validated data-load query against the current user's permissions for every entity it reads, and
@@ -58,6 +61,9 @@ import java.util.TreeMap;
  * An entity counts as read when the query declares it (root, join, subquery) or when a path passes through it
  * ({@code o.customer.name} reads the customer). The platform checks entity READ and applies row-level conditions
  * for the root entity only.
+ * <p>
+ * Every entity the query reads is also narrowed to the records the AI may see: records of a {@code @ExcludeFromAi}
+ * subclass are records of its base entity too, and a query over the base would otherwise return them.
  */
 @Component("aitls_JpqlAccessSupport")
 public class JpqlAccessSupport {
@@ -79,8 +85,8 @@ public class JpqlAccessSupport {
 
     /**
      * Checks the query and its parameters and returns the text to execute, with the row-level conditions of every
-     * non-root entity woven in. A text the JPQL parser cannot read is returned unchanged, since executing it fails
-     * on the same parser.
+     * non-root entity and the exclusion of {@code @ExcludeFromAi} subclasses woven in. A text the JPQL parser cannot
+     * read is returned unchanged, since executing it fails on the same parser.
      *
      * @param jpql           validated query text
      * @param parameterNames names of the parameters passed with the query
@@ -121,9 +127,11 @@ public class JpqlAccessSupport {
         checkEntityReadPermitted(graph);
         checkSelectsValues(parser);
 
-        String constrained = applyRowLevelConditions(jpql, graph);
+        String withAppliedRowLevel = applyRowLevelConditions(jpql, graph);
+        String constrained = applyExcludedSubtypeConditions(withAppliedRowLevel, graph);
+
         if (!constrained.equals(jpql)) {
-            log.debug("Row-level conditions applied to [{}]: {}", jpql, constrained);
+            log.debug("Access conditions applied to [{}]: {}", jpql, constrained);
         }
         return constrained;
     }
@@ -299,6 +307,63 @@ public class JpqlAccessSupport {
             }
         }
         return transformer != null ? transformer.getResult() : jpql;
+    }
+
+    /**
+     * Keeps the records of {@code @ExcludeFromAi} subclasses out of the result: such a subclass is closed to the AI,
+     * yet its records are records of every visible ancestor. Unlike row-level conditions, this applies to the root
+     * alias too, since the platform knows nothing of the annotation.
+     *
+     * @param jpql  query text
+     * @param graph graph of the query
+     * @return the text to execute, unchanged when no entity the query reads has an excluded subclass
+     * @throws JpqlAccessConstraintException if an entity with an excluded subclass occurs where a condition added to
+     *                                       the outer query cannot reach it
+     */
+    protected String applyExcludedSubtypeConditions(String jpql, QueryGraph graph) {
+        QueryTransformer transformer = null;
+        for (Map.Entry<String, EntityOccurrence> entry : graph.entities().entrySet()) {
+            MetaClass entity = metadata.findClass(entry.getKey());
+            if (entity == null) {
+                continue;
+            }
+            Set<String> excludedSubtypes = excludedSubtypeNames(entity);
+            if (excludedSubtypes.isEmpty()) {
+                continue;
+            }
+
+            EntityOccurrence occurrence = entry.getValue();
+            if (occurrence.inner) {
+                // The message names the entity the query reads, never the excluded subclass.
+                throw new JpqlAccessConstraintException(String.format(
+                        "The query reads entity %s where it cannot be narrowed to the records available to the AI: "
+                                + "in a subquery, or as a collection without an alias. Rewrite the query so that it "
+                                + "reads %s through a join or a path in the main query",
+                        entity.getName(), entity.getName()));
+            }
+            for (Map.Entry<String, @Nullable String> target : occurrence.outerTargets.entrySet()) {
+                if (transformer == null) {
+                    transformer = queryTransformerFactory.transformer(jpql);
+                }
+                // The JPQL parser takes no entity type literal in an IN list, hence one comparison per subclass.
+                String expression = target.getKey();
+                String condition = excludedSubtypes.stream()
+                        .map(subtype -> String.format("type(%s) <> %s", expression, subtype))
+                        .collect(Collectors.joining(" and "));
+                transformer.addWhere(nullSafe(target.getValue(), condition));
+            }
+        }
+        return transformer != null ? transformer.getResult() : jpql;
+    }
+
+    protected Set<String> excludedSubtypeNames(MetaClass entity) {
+        Set<String> names = new TreeSet<>();
+        for (MetaClass descendant : entity.getDescendants()) {
+            if (descendant.getAnnotations().containsKey(ExcludeFromAi.class.getName())) {
+                names.add(descendant.getName());
+            }
+        }
+        return names;
     }
 
     /**

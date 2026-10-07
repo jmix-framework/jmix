@@ -21,22 +21,31 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import io.jmix.charts.model.chart.impl.GanttChartModelImpl;
 import io.jmix.charts.widget.amcharts.serialization.ChartJsonSerializationContext;
+import io.jmix.core.AccessManager;
 import io.jmix.core.Messages;
+import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.entity.EntityValues;
+import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.core.metamodel.model.MetaPropertyPath;
+import io.jmix.ui.accesscontext.UiEntityAttributeContext;
 import io.jmix.ui.data.DataItem;
+import io.jmix.ui.data.impl.EntityDataItem;
 import org.apache.commons.lang3.time.FastDateFormat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Nullable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 
 @Component("ui_ChartDataItemsSerializer")
@@ -54,7 +63,9 @@ public class ChartDataItemsSerializer {
             = DateTimeFormatter.ofPattern(ChartJsonSerializationContext.DEFAULT_DATE_TIME_FORMAT);
 
     protected Messages messages;
+    protected Metadata metadata;
     protected MetadataTools metadataTools;
+    protected AccessManager accessManager;
 
     @Autowired
     public void setMetadataTools(MetadataTools metadataTools) {
@@ -66,10 +77,22 @@ public class ChartDataItemsSerializer {
         this.messages = messages;
     }
 
+    @Autowired
+    public void setMetadata(Metadata metadata) {
+        this.metadata = metadata;
+    }
+
+    @Autowired
+    public void setAccessManager(AccessManager accessManager) {
+        this.accessManager = accessManager;
+    }
+
     public JsonArray serialize(List<DataItem> items, ChartJsonSerializationContext context) {
         JsonArray serialized = new JsonArray();
 
         Function<DataItem, String> itemKeyMapper = context.getItemKeyMapper();
+        // Attribute permissions are checked once per entity class and field within one serialization.
+        Map<MetaClass, Map<String, Boolean>> viewPermissions = new HashMap<>();
 
         for (DataItem item : items) {
             JsonObject itemElement = new JsonObject();
@@ -80,7 +103,7 @@ public class ChartDataItemsSerializer {
             }
 
             for (String property : context.getProperties()) {
-                Object propertyValue = item.getValue(property);
+                Object propertyValue = getPermittedValue(item, property, viewPermissions);
 
                 addProperty(itemElement, property, propertyValue, context);
             }
@@ -90,7 +113,7 @@ public class ChartDataItemsSerializer {
 
                 String segmentsField = chart.getSegmentsField();
 
-                Object value = item.getValue(segmentsField);
+                Object value = getPermittedValue(item, segmentsField, viewPermissions);
                 if (value != null && !(value instanceof Collection)) {
                     throw new RuntimeException("Gantt chart segments field must be a collection");
                 }
@@ -105,7 +128,7 @@ public class ChartDataItemsSerializer {
                         segment.add("$i", context.serialize(segmentIndex));
 
                         for (String field : context.getSegmentFields()) {
-                            Object propertyValue = dataItem.getValue(field);
+                            Object propertyValue = getPermittedValue(dataItem, field, viewPermissions);
 
                             if (propertyValue != null) {
                                 addProperty(segment, field, propertyValue, context);
@@ -123,6 +146,35 @@ public class ChartDataItemsSerializer {
         }
 
         return serialized;
+    }
+
+    @Nullable
+    protected Object getPermittedValue(DataItem item, String field,
+                                       Map<MetaClass, Map<String, Boolean>> viewPermissions) {
+        return isFieldViewPermitted(item, field, viewPermissions) ? item.getValue(field) : null;
+    }
+
+    protected boolean isFieldViewPermitted(DataItem item, String field,
+                                           Map<MetaClass, Map<String, Boolean>> viewPermissions) {
+        if (!(item instanceof EntityDataItem)) {
+            return true;
+        }
+
+        MetaClass metaClass = metadata.getClass(((EntityDataItem) item).getItem());
+        return viewPermissions
+                .computeIfAbsent(metaClass, key -> new HashMap<>())
+                .computeIfAbsent(field, key -> isPropertyViewPermitted(metaClass, key));
+    }
+
+    protected boolean isPropertyViewPermitted(MetaClass metaClass, String property) {
+        MetaPropertyPath propertyPath = metadataTools.resolveMetaPropertyPathOrNull(metaClass, property);
+        if (propertyPath == null) {
+            return true;
+        }
+
+        UiEntityAttributeContext context = new UiEntityAttributeContext(propertyPath);
+        accessManager.applyRegisteredConstraints(context);
+        return context.canView();
     }
 
     protected void addProperty(JsonObject jsonObject, String property, Object value, JsonSerializationContext context) {

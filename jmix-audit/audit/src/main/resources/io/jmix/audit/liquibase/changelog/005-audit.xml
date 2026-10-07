@@ -20,16 +20,6 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
-
-    <!--
-      Indexes for AUDIT_ENTITY_LOG. The table can be very large, and every query against it
-      (the entity log view, the "history of an instance" query, retention clean-up) either filters or orders
-      by EVENT_TS; the instance history additionally filters by ENTITY_ID.
-
-      Each change set is skipped when an index on the same columns already exists under any name
-      (an application or a DBA may have created it beforehand), or when an index with the same name exists.
-    -->
-
     <changeSet author="audit" id="1">
         <preConditions onFail="MARK_RAN">
             <not>

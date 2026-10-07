@@ -360,6 +360,7 @@ dependencies {
         api "com.embabel.agent:embabel-agent-starter-byok:$embabelVersion"
         api "com.embabel.agent:embabel-agent-starter-openai:$embabelVersion"
         api "com.embabel.agent:embabel-agent-starter-anthropic:$embabelVersion"
+        api "com.embabel.agent:embabel-agent-test:$embabelVersion"
 
         def eclipselinkOriginalVersion = '5.0.0'
         def eclipselinkVersion = '5.0.0-1-jmix'

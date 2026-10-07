@@ -1,0 +1,304 @@
+/*
+ * Copyright 2026 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+.dynmod-ai-builder {
+    min-width: 0;
+    min-height: 0;
+}
+
+.dynmod-ai-builder .chat-pane {
+    flex: 1 1 auto;
+    min-width: 0;
+    min-height: 0;
+    height: 100%;
+    overflow: hidden;
+}
+
+.dynmod-ai-builder .chat-pane .jmix-ai-chat {
+    min-height: 0;
+}
+
+.dynmod-ai-builder .chat-pane .jmix-ai-chat[empty] {
+    justify-content: flex-end;
+}
+
+.dynmod-ai-builder .chat-pane .jmix-ai-chat[empty] .jmix-ai-chat-empty-header {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    min-height: 0;
+    overflow-y: auto;
+    justify-content: safe center;
+}
+
+.dynmod-ai-builder .chat-pane jmix-ai-message-input {
+    box-sizing: border-box;
+    padding: 0 var(--lumo-space-m) var(--lumo-space-m);
+}
+
+/* Progress follows the question it answers: AI Chat keeps an empty reply and its own, unused status list
+   above the thinking indicator while the reply is generated. */
+.dynmod-ai-builder .chat-pane jmix-ai-assistant-message[message-state='generating']:not([has-message]) {
+    display: none;
+}
+
+.dynmod-ai-builder .chat-pane jmix-ai-message-list::part(thinking-status-list) {
+    display: none;
+}
+
+.dynmod-ai-builder .chat-empty {
+    flex-shrink: 0;
+    gap: var(--lumo-space-s);
+    padding: 0 var(--lumo-space-m) var(--lumo-space-m);
+    text-align: center;
+}
+
+.dynmod-ai-builder .chat-empty-icon {
+    color: var(--lumo-primary-color-50pct);
+    width: var(--lumo-icon-size-l);
+    height: var(--lumo-icon-size-l);
+}
+
+.dynmod-ai-builder .chat-empty-text {
+    color: var(--lumo-secondary-text-color);
+    font-size: var(--lumo-font-size-s);
+    line-height: var(--lumo-line-height-s);
+    max-width: 28em;
+}
+
+.dynmod-ai-builder .chat-empty-examples {
+    justify-content: center;
+    gap: var(--lumo-space-xs);
+}
+
+.dynmod-ai-builder vaadin-button.example-chip {
+    --vaadin-button-tertiary-background: var(--lumo-primary-color-10pct);
+    border-radius: var(--lumo-size-m);
+    padding: 0 var(--lumo-space-m);
+}
+
+.dynmod-ai-builder .draft-panel {
+    flex: 0 0 30em;
+    width: 30em;
+    height: 100%;
+    min-width: 0;
+    min-height: 0;
+    background: var(--lumo-contrast-5pct);
+    box-sizing: border-box;
+}
+
+.dynmod-ai-builder .draft-header {
+    flex-shrink: 0;
+    gap: var(--lumo-space-s);
+    padding: var(--lumo-space-s) var(--lumo-space-m);
+    box-sizing: border-box;
+}
+
+.dynmod-ai-builder .draft-title {
+    margin: 0;
+    font-size: var(--lumo-font-size-l);
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.dynmod-ai-builder .draft-body {
+    min-height: 0;
+    padding: var(--lumo-space-s) var(--lumo-space-m);
+    overflow-y: auto;
+    box-sizing: border-box;
+}
+
+.dynmod-ai-builder .card {
+    background: var(--lumo-base-color);
+    border: 1px solid var(--lumo-contrast-10pct);
+    border-radius: var(--lumo-border-radius-m);
+    padding: var(--lumo-space-s) var(--lumo-space-m);
+    box-sizing: border-box;
+}
+
+.dynmod-ai-builder .card-caption {
+    margin: 0 0 var(--lumo-space-xs);
+    color: var(--lumo-secondary-text-color);
+    font-size: var(--lumo-font-size-xs);
+    font-weight: 600;
+}
+
+.dynmod-ai-builder .plan-item {
+    display: block;
+    position: relative;
+    padding: 0.22em 0 0.22em 1.1em;
+    color: var(--lumo-body-text-color);
+    font-size: var(--lumo-font-size-s);
+    line-height: var(--lumo-line-height-s);
+    overflow-wrap: anywhere;
+}
+
+.dynmod-ai-builder .plan-item::before {
+    content: '';
+    position: absolute;
+    inset-inline-start: 0.05em;
+    top: 0.72em;
+    width: 0.32em;
+    height: 0.32em;
+    border-radius: 50%;
+    background: var(--lumo-primary-color);
+}
+
+.dynmod-ai-builder .plan-minor {
+    color: var(--lumo-secondary-text-color);
+    font-size: var(--lumo-font-size-xs);
+}
+
+.dynmod-ai-builder .plan-minor::before {
+    background: var(--lumo-contrast-30pct);
+}
+
+.dynmod-ai-builder .finding {
+    display: block;
+    padding: 0.2em 0;
+    font-size: var(--lumo-font-size-s);
+    line-height: var(--lumo-line-height-s);
+    overflow-wrap: anywhere;
+}
+
+/* The agent's own finding palette: next to each other the theme red, orange and yellow blend or glare.
+   The hues are far apart and muted; the text stays neutral, and the stripe, the icon and a faint tint
+   show the severity. */
+.dynmod-ai-builder {
+    --dmagent-finding-error: light-dark(oklch(0.56 0.15 25), oklch(0.72 0.13 25));
+    --dmagent-finding-warning: light-dark(oklch(0.74 0.13 75), oklch(0.8 0.12 80));
+}
+
+.dynmod-ai-builder .finding-blocking {
+    --dmagent-finding-accent: var(--dmagent-finding-error);
+}
+
+.dynmod-ai-builder .finding-advisory {
+    --dmagent-finding-accent: var(--dmagent-finding-warning);
+}
+
+.dynmod-ai-builder .finding-ok {
+    color: var(--lumo-success-text-color);
+}
+
+.dynmod-ai-builder .finding-row {
+    align-items: baseline;
+    gap: var(--lumo-space-s);
+}
+
+.dynmod-ai-builder .fix-button {
+    flex-shrink: 0;
+    font-size: var(--lumo-font-size-xs);
+}
+
+.dynmod-ai-builder .note-title {
+    display: block;
+    margin-bottom: 0.25em;
+    font-weight: 600;
+}
+
+.dynmod-ai-builder .note-text {
+    display: block;
+    color: var(--lumo-body-text-color);
+    font-size: var(--lumo-font-size-s);
+    line-height: var(--lumo-line-height-s);
+}
+
+.dynmod-ai-builder vaadin-details.card-details {
+    background: var(--lumo-base-color);
+    border: 1px solid var(--lumo-contrast-10pct);
+    border-radius: var(--lumo-border-radius-m);
+    padding: 0 var(--lumo-space-s);
+    box-sizing: border-box;
+}
+
+.dynmod-ai-builder .step-row {
+    display: block;
+    padding: 0.2em 0;
+    font-size: var(--lumo-font-size-s);
+    line-height: var(--lumo-line-height-s);
+    overflow-wrap: anywhere;
+}
+
+.dynmod-ai-builder .actions {
+    flex-shrink: 0;
+    padding: var(--lumo-space-s) var(--lumo-space-m) var(--lumo-space-m);
+    box-sizing: border-box;
+}
+
+@container dynmod-settings-view (max-width: 60rem) {
+    .dynmod-ai-builder {
+        flex-direction: column;
+    }
+
+    .dynmod-ai-builder .chat-pane {
+        flex: 1 1 55%;
+        width: 100%;
+        height: auto;
+        border-inline-end: none;
+    }
+
+    .dynmod-ai-builder .draft-panel {
+        border-inline-start: none;
+        border-block-start: 1px solid var(--lumo-contrast-10pct);
+        flex: 1 1 45%;
+        width: 100%;
+        height: auto;
+    }
+}
+/* Builder-local presentation; shared AiChat styles are intentionally unchanged. */
+.dynmod-ai-builder .dmagent-activity-summary { --dmagent-activity-link-color: var(--lumo-primary-text-color); }
+.dynmod-ai-builder .conversation-header { flex: 0 0 auto; padding-inline: 1rem; }
+.dynmod-ai-builder .draft-panel { background: var(--lumo-base-color); }
+.dynmod-ai-builder .draft-header { flex-wrap: nowrap; align-items: center; }
+.dynmod-ai-builder .draft-header > :not(.draft-title) { flex-shrink: 0; }
+.dynmod-ai-builder .draft-title { flex: 1 1 0; white-space: normal; overflow-wrap: anywhere; font-size: 1rem; }
+.dynmod-ai-builder .step-row { padding-block: .5rem; line-height: 1.5; border-bottom: 1px solid var(--lumo-contrast-10pct); }
+.dynmod-ai-builder .step-properties { color: var(--lumo-secondary-text-color); font-size: .875em; }
+.dynmod-ai-builder .card-details::part(content) { padding-inline: 0; }
+.dynmod-ai-builder .finding-row { border-inline-start: 3px solid var(--dmagent-finding-accent); border-start-end-radius: var(--lumo-border-radius-m); border-end-end-radius: var(--lumo-border-radius-m); background: color-mix(in oklab, var(--dmagent-finding-accent) 8%, transparent); color: var(--lumo-body-text-color); padding: .5rem .65rem; margin-block: .35rem; align-items: flex-start; }
+.dynmod-ai-builder .finding-row > vaadin-icon { flex: 0 0 1rem; width: 1rem; height: 1rem; margin-block-start: .15rem; color: var(--dmagent-finding-accent); }
+.dynmod-ai-builder .finding-level { display: block; font-weight: 600; margin-bottom: .2rem; }
+.dynmod-ai-builder .run-activity { font-size: .8125rem; width: 100%; max-width: 40rem; min-width: 0; }
+.dynmod-ai-builder .activity-row { display: flex; align-items: baseline; gap: .4rem; padding-block: .2rem; min-width: 0; }
+.dynmod-ai-builder .activity-row > vaadin-icon { width: .85rem; height: .85rem; flex: 0 0 auto; }
+.dynmod-ai-builder .activity-row > span:first-of-type { overflow-wrap: anywhere; }
+.dynmod-ai-builder .activity-duration { margin-inline-start: auto; white-space: nowrap; color: var(--lumo-secondary-text-color); font-variant-numeric: tabular-nums; }
+.dynmod-ai-builder .activity-started > vaadin-icon { animation: dmagent-activity-spin 1.5s linear infinite; }
+.dynmod-ai-builder .activity-completed > vaadin-icon { color: var(--lumo-success-text-color); }
+.dynmod-ai-builder .activity-failed > vaadin-icon { color: var(--lumo-error-text-color); }
+.dynmod-ai-builder .activity-waiting > vaadin-icon { color: var(--lumo-warning-text-color); }
+.dynmod-ai-builder .activity-card { border: none; border-radius: 0; padding: 0; background: transparent; }
+.dynmod-ai-builder .activity-open { display: block; width: 100%; height: auto; margin: 0; padding: 0; border: 0; border-radius: 0; box-shadow: none; background: transparent; text-align: start; white-space: normal; color: inherit; font: inherit; }
+.dynmod-ai-builder .activity-open::part(label) { display: block; width: 100%; white-space: normal; }
+.dynmod-ai-builder .activity-open .activity-row { width: 100%; box-sizing: border-box; }
+.dynmod-ai-builder .activity-open:hover .activity-row > span:first-of-type { color: var(--lumo-primary-text-color); text-decoration: underline; }
+.dynmod-ai-builder .activity-open:focus-visible { outline: 2px solid var(--lumo-primary-color); outline-offset: 2px; }
+@keyframes dmagent-activity-spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .dynmod-ai-builder .activity-started > vaadin-icon { animation: none; } }
+/* While the assistant works, the AI mode shows a pulsing dot: Visual and Code stay viewable but read-only. */
+.dynmod-settings-view .editor-mode-renderer.ai-busy::after { content: ""; flex: none; width: .45em; height: .45em; border-radius: 50%; background: var(--lumo-primary-color); animation: dmagent-mode-busy 1.6s ease-in-out infinite; }
+@keyframes dmagent-mode-busy { 50% { opacity: .35; transform: scale(.75); } }
+@media (prefers-reduced-motion: reduce) { .dynmod-settings-view .editor-mode-renderer.ai-busy::after { animation: none; } }
+/* The agent puts the Visual / Code / AI switch first: it stays at the start, also when the header wraps. */
+.dynmod-settings-view .header-box.dmagent-header-box { flex-wrap: wrap; }
+.dynmod-settings-view .header-box.dmagent-header-box .tab-list { margin-inline-start: 0; margin-inline-end: auto; }
+@container dynmod-settings-view (max-width: 640px) {
+    .dynmod-settings-view .header-box.dmagent-header-box { flex-direction: column; }
+    .dynmod-settings-view .header-box.dmagent-header-box .tab-list { margin-inline-end: 0; }
+}

@@ -45,6 +45,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -64,6 +65,8 @@ import java.util.stream.Collectors;
  * <p>
  * Every entity the query reads is also narrowed to the records the AI may see: records of a {@code @ExcludeFromAi}
  * subclass are records of its base entity too, and a query over the base would otherwise return them.
+ * <p>
+ * A {@code left join} is narrowed in its own {@code on} clause, so that a hidden record is joined as an absent one.
  */
 @Component("aitls_JpqlAccessSupport")
 public class JpqlAccessSupport {
@@ -81,12 +84,15 @@ public class JpqlAccessSupport {
     @Autowired
     protected JpqlDeclarationSupport declarationSupport;
     @Autowired
+    protected JpqlLeftJoinSupport leftJoinSupport;
+    @Autowired
     protected QueryParamValuesManager queryParamValuesManager;
 
     /**
      * Checks the query and its parameters and returns the text to execute, with the row-level conditions of every
-     * non-root entity and the exclusion of {@code @ExcludeFromAi} subclasses woven in. A text the JPQL parser cannot
-     * read is returned unchanged, since executing it fails on the same parser.
+     * non-root entity and the exclusion of {@code @ExcludeFromAi} subclasses woven in: into the {@code on} clause of
+     * a left join, into the {@code where} otherwise. A text the JPQL parser cannot read is returned unchanged, since
+     * executing it fails on the same parser.
      *
      * @param jpql           validated query text
      * @param parameterNames names of the parameters passed with the query
@@ -127,7 +133,8 @@ public class JpqlAccessSupport {
         checkEntityReadPermitted(graph);
         checkSelectsValues(parser);
 
-        String withAppliedRowLevel = applyRowLevelConditions(jpql, graph);
+        String withLeftJoins = applyLeftJoinConditions(jpql, graph);
+        String withAppliedRowLevel = applyRowLevelConditions(withLeftJoins, graph);
         String constrained = applyExcludedSubtypeConditions(withAppliedRowLevel, graph);
 
         if (!constrained.equals(jpql)) {
@@ -180,7 +187,11 @@ public class JpqlAccessSupport {
             if (declaration.nested()) {
                 occurrence.inner = true;
             } else {
-                occurrence.outerTargets.put(declaration.variable(), declaration.nullCheck());
+                if (declaration.leftJoin()) {
+                    occurrence.leftJoinTargets.add(declaration.variable());
+                } else {
+                    occurrence.outerTargets.put(declaration.variable(), declaration.nullCheck());
+                }
                 outerVariables.add(lowerCase(declaration.variable()));
             }
         }
@@ -209,6 +220,19 @@ public class JpqlAccessSupport {
         }
 
         MetaProperty[] properties = propertyPath.getMetaProperties();
+        if (outer && isIdOfReference(properties)) {
+            // `d.parent.id` reads the referenced record's key: rewritten into a left join of its own, so that a
+            // hidden record reads as an absent one instead of removing the row.
+            MetaClass referenced = properties[0].getRange().asClass();
+            Map<String, @Nullable String> idPathTargets = occurrenceOf(entities, referenced.getName()).idPathTargets;
+            String target = path.getVariableName() + "." + properties[0].getName();
+            // The variable is matched case-insensitively when rewriting, so `O.customer.id` and `o.customer.id`
+            // are one reference and get one join.
+            if (idPathTargets.keySet().stream().noneMatch(target::equalsIgnoreCase)) {
+                idPathTargets.put(target, metadataTools.isOwningSide(properties[0]) ? target : null);
+            }
+            return;
+        }
         StringBuilder prefix = new StringBuilder(path.getVariableName());
         for (int i = 0; i < properties.length; i++) {
             MetaProperty property = properties[i];
@@ -241,6 +265,18 @@ public class JpqlAccessSupport {
         }
     }
 
+    protected boolean isIdOfReference(MetaProperty[] properties) {
+        if (properties.length != 2) {
+            return false;
+        }
+        MetaProperty reference = properties[0];
+        if (!reference.getRange().isClass() || reference.getRange().getCardinality().isMany()
+                || metadataTools.isJpaEmbeddable(reference.getRange().asClass())) {
+            return false;
+        }
+        return properties[1].getName().equals(metadataTools.getPrimaryKeyName(reference.getRange().asClass()));
+    }
+
     protected String lowerCase(String name) {
         return name.toLowerCase(Locale.ROOT);
     }
@@ -267,6 +303,175 @@ public class JpqlAccessSupport {
                     "The query selects %s as a whole entity rather than as values. An entity is not returned as a "
                             + "value: select the attributes you need instead",
                     String.join(", ", entityExpressions)));
+        }
+    }
+
+    /**
+     * Narrows the entities joined by a {@code left join} in the join's own {@code on} clause, so that a hidden record
+     * is joined as an absent one and the row stays. Covers row-level conditions and excluded subclasses alike.
+     *
+     * @param jpql  query text
+     * @param graph graph of the query
+     * @return the text with the conditions in the {@code on} clauses, unchanged when there is nothing to apply
+     * @throws JpqlAccessConstraintException if a row-level condition to apply carries a join; if a navigating
+     *                                       condition has to be wrapped into a subquery and the entity has no primary
+     *                                       key; or if a {@code <ref>.<id>} path occurs in the {@code on} clause of
+     *                                       the left join declaring its variable
+     * @throws IllegalStateException         if the query text cannot be rewritten as its graph requires
+     */
+    protected String applyLeftJoinConditions(String jpql, QueryGraph graph) {
+        JpqlLeftJoinSupport.Rewrite rewrite = null;
+        for (Map.Entry<String, EntityOccurrence> entry : graph.entities().entrySet()) {
+            MetaClass entity = metadata.findClass(entry.getKey());
+            EntityOccurrence occurrence = entry.getValue();
+            if (entity == null || !occurrence.hasOnTargets()) {
+                continue;
+            }
+            List<RowLevelCondition> rowLevelConditions = collectRowLevelConditions(entity);
+            Set<String> excludedSubtypes = excludedSubtypeNames(entity);
+            if (rowLevelConditions.isEmpty() && excludedSubtypes.isEmpty()) {
+                continue;
+            }
+            checkNoJoinClause(entity, rowLevelConditions);
+
+            if (rewrite == null) {
+                rewrite = leftJoinSupport.rewrite(jpql);
+            }
+            List<String> variables = new ArrayList<>(occurrence.leftJoinTargets);
+            String primaryKey = metadataTools.getPrimaryKeyName(entity);
+            if (primaryKey == null && !occurrence.idPathTargets.isEmpty()) {
+                // A registered id path reads the entity's key (isIdOfReference), so the key exists; never leave the
+                // path unconstrained if that ever changes.
+                throw new IllegalStateException("Entity " + entity.getName() + " has no primary key, yet the query "
+                        + "reads it through " + occurrence.idPathTargets.keySet());
+            }
+            LeftJoinConditions leftJoinConditions = classifyConditions(entity, rowLevelConditions, primaryKey);
+            for (Map.Entry<String, @Nullable String> idPath : occurrence.idPathTargets.entrySet()) {
+                String referencePath = idPath.getKey();
+                JpqlLeftJoinSupport.Rewrite.JoinedIdPath joined = rewrite.joinIdPath(referencePath, primaryKey);
+                String variable = joined.variable();
+                if (variable != null) {
+                    variables.add(variable);
+                }
+                if (joined.leftInInnerJoinOn()) {
+                    // An inner join drops a row without a visible record wherever it is narrowed: the path is
+                    // narrowed in the `where` as a path prefix, by the passes that follow.
+                    occurrence.outerTargets.putIfAbsent(referencePath, idPath.getValue());
+                }
+            }
+            for (String variable : variables) {
+                for (String condition : onConditions(entity, leftJoinConditions, excludedSubtypes, variable, rewrite)) {
+                    rewrite.addOnCondition(variable, condition);
+                }
+            }
+        }
+        return rewrite != null ? rewrite.getResult() : jpql;
+    }
+
+    /**
+     * Sorts the entity's row-level conditions by how they go into a join's {@code on} clause: as they are, or
+     * wrapped into a subquery on the entity because they navigate a reference of it, which an {@code on} clause
+     * cannot do. Decided once per condition, not per variable it is applied to.
+     *
+     * @param entity             entity the conditions belong to
+     * @param rowLevelConditions the entity's row-level conditions
+     * @param primaryKey         name of the entity's primary key, or {@code null} if it has none
+     * @return the conditions, with the {@code {E}} placeholder still in place
+     * @throws JpqlAccessConstraintException if a condition navigates and the entity has no primary key to wrap it
+     *                                       into a subquery by
+     */
+    protected LeftJoinConditions classifyConditions(MetaClass entity, List<RowLevelCondition> rowLevelConditions,
+                                                    @Nullable String primaryKey) {
+        List<String> plain = new ArrayList<>();
+        List<String> navigating = new ArrayList<>();
+        for (RowLevelCondition condition : rowLevelConditions) {
+            String where = condition.where();
+            if (where == null || where.isBlank()) {
+                continue;
+            }
+            if (!navigatesReference(entity, where)) {
+                plain.add(where);
+            } else if (primaryKey == null) {
+                throw new JpqlAccessConstraintException(String.format(
+                        "The query reads entity %s through a left join, and its row-level conditions cannot be "
+                                + "applied there: the entity has no primary key. Rewrite the query so that it "
+                                + "reads %s as the entity the query selects from",
+                        entity.getName(), entity.getName()));
+            } else {
+                navigating.add(where);
+            }
+        }
+        return new LeftJoinConditions(plain, navigating);
+    }
+
+    /**
+     * Returns the conditions narrowing one variable of the entity in its join's {@code on} clause.
+     *
+     * @param entity           entity the variable ranges over
+     * @param conditions       the entity's row-level conditions, sorted by {@link #classifyConditions}
+     * @param excludedSubtypes names of the entity's {@code @ExcludeFromAi} descendants
+     * @param variable         variable to narrow
+     * @param rewrite          rewrite of the query, used for fresh variable names
+     * @return the conditions, with the variable in place of {@code {E}}
+     */
+    protected List<String> onConditions(MetaClass entity, LeftJoinConditions conditions, Set<String> excludedSubtypes,
+                                        String variable, JpqlLeftJoinSupport.Rewrite rewrite) {
+        List<String> result = new ArrayList<>();
+        for (String where : conditions.plain()) {
+            result.add(where.replace(QueryTransformer.ALIAS_PLACEHOLDER, variable));
+        }
+        if (!conditions.navigating().isEmpty()) {
+            String primaryKey = metadataTools.getPrimaryKeyName(entity);
+            for (String where : conditions.navigating()) {
+                String subqueryVariable = rewrite.newVariable();
+                result.add(String.format("%s.%s in (select %s.%s from %s %s where %s)",
+                        variable, primaryKey, subqueryVariable, primaryKey, entity.getName(), subqueryVariable,
+                        where.replace(QueryTransformer.ALIAS_PLACEHOLDER, subqueryVariable)));
+            }
+        }
+        if (!excludedSubtypes.isEmpty()) {
+            result.add(excludedSubtypeCondition(variable, excludedSubtypes));
+        }
+        return result;
+    }
+
+    /**
+     * Tells whether a row-level condition reaches beyond the entity's own columns: through a reference to another
+     * entity, or into a collection. A condition that cannot be read is treated as navigating.
+     *
+     * @param entity entity the condition belongs to
+     * @param where  the condition with the {@code {E}} placeholder
+     * @return whether the condition navigates
+     */
+    protected boolean navigatesReference(MetaClass entity, String where) {
+        String variable = "aitlsNavigationCheck";
+        try {
+            QueryParser parser = queryTransformerFactory.parser(String.format("select %s from %s %s where %s",
+                    variable, entity.getName(), variable, where.replace(QueryTransformer.ALIAS_PLACEHOLDER, variable)));
+            for (QueryParser.QueryPath path : parser.getQueryPaths()) {
+                if (!variable.equalsIgnoreCase(path.getVariableName()) || !path.getFullPath().contains(".")) {
+                    continue;
+                }
+                MetaPropertyPath propertyPath = entity.getPropertyPath(path.getPropertyPath());
+                if (propertyPath == null) {
+                    return true;
+                }
+                MetaProperty[] properties = propertyPath.getMetaProperties();
+                for (int i = 0; i < properties.length; i++) {
+                    MetaProperty property = properties[i];
+                    if (!property.getRange().isClass() || metadataTools.isJpaEmbeddable(property.getRange().asClass())) {
+                        continue;
+                    }
+                    // A to-one reference at the end of the path reads the foreign key only.
+                    if (property.getRange().getCardinality().isMany() || i < properties.length - 1) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        } catch (RuntimeException e) {
+            log.debug("Cannot read row-level condition [{}] of {}, treating it as navigating", where, entity.getName(), e);
+            return true;
         }
     }
 
@@ -345,15 +550,18 @@ public class JpqlAccessSupport {
                 if (transformer == null) {
                     transformer = queryTransformerFactory.transformer(jpql);
                 }
-                // The JPQL parser takes no entity type literal in an IN list, hence one comparison per subclass.
-                String expression = target.getKey();
-                String condition = excludedSubtypes.stream()
-                        .map(subtype -> String.format("type(%s) <> %s", expression, subtype))
-                        .collect(Collectors.joining(" and "));
-                transformer.addWhere(nullSafe(target.getValue(), condition));
+                transformer.addWhere(nullSafe(target.getValue(),
+                        excludedSubtypeCondition(target.getKey(), excludedSubtypes)));
             }
         }
         return transformer != null ? transformer.getResult() : jpql;
+    }
+
+    protected String excludedSubtypeCondition(String expression, Set<String> excludedSubtypes) {
+        // The JPQL parser takes no entity type literal in an IN list, hence one comparison per subclass.
+        return excludedSubtypes.stream()
+                .map(subtype -> String.format("type(%s) <> %s", expression, subtype))
+                .collect(Collectors.joining(" and "));
     }
 
     protected Set<String> excludedSubtypeNames(MetaClass entity) {
@@ -413,6 +621,11 @@ public class JpqlAccessSupport {
             return targets;
         }
 
+        checkNoJoinClause(entity, conditions);
+        return targets;
+    }
+
+    protected void checkNoJoinClause(MetaClass entity, List<RowLevelCondition> conditions) {
         if (conditions.stream().anyMatch(condition -> !isBlank(condition.join()))) {
             // A join can only be added from the root alias (QueryTransformer#addJoinAndWhere re-bases it there),
             // so it would narrow another entity or name a path that does not exist.
@@ -421,7 +634,6 @@ public class JpqlAccessSupport {
                             + "applied only when %s is the entity the query selects from: rewrite the query that way",
                     entity.getName(), entity.getName()));
         }
-        return targets;
     }
 
     /**
@@ -463,15 +675,40 @@ public class JpqlAccessSupport {
 
         /**
          * The entity's aliases and the path prefixes reaching it in the outer query, each mapped to its null check
-         * or {@code null}.
+         * or {@code null}. Their conditions go to the outer {@code where}.
          */
         protected final Map<String, @Nullable String> outerTargets = new LinkedHashMap<>();
+
+        /**
+         * Variables declared for the entity by a {@code left join} of the outer query. Their conditions go to the
+         * join's own {@code on}, so that a hidden record is joined as an absent one.
+         */
+        protected final Set<String> leftJoinTargets = new LinkedHashSet<>();
+
+        /**
+         * Outer reference paths whose primary key the query reads ({@code d.parent} for {@code d.parent.id}), each
+         * mapped to its null check or {@code null}. Each is rewritten into a left join of its own.
+         */
+        protected final Map<String, @Nullable String> idPathTargets = new LinkedHashMap<>();
 
         /**
          * Whether the entity also occurs where an outer condition cannot reach it: in a subquery, or as a
          * collection without an alias.
          */
         protected boolean inner;
+
+        protected boolean hasOnTargets() {
+            return !leftJoinTargets.isEmpty() || !idPathTargets.isEmpty();
+        }
+    }
+
+    /**
+     * An entity's row-level conditions sorted by how they go into a join's {@code on} clause.
+     *
+     * @param plain      conditions added as they are
+     * @param navigating conditions wrapped into a subquery on the entity, since they navigate a reference of it
+     */
+    protected record LeftJoinConditions(List<String> plain, List<String> navigating) {
     }
 
     /**

@@ -34,8 +34,10 @@ import test_support.SecuredDataLoadTestSupport;
 import test_support.entity.Document;
 import test_support.entity.SecretDocument;
 import test_support.role.SecDocumentReadRole;
+import test_support.role.SecDocumentRowLevelRole;
 
 import javax.sql.DataSource;
+import java.util.Arrays;
 import java.util.List;
 
 import static io.jmix.aitools.dataload.validation.validator.UsedEntitiesValidator.USED_ENTITY_UNKNOWN_CODE;
@@ -130,12 +132,73 @@ class JpqlAccessExcludedSubtypeTest {
     }
 
     @Test
-    void execute_leftJoinToBase_keepsRecordsWithoutReference() {
-        JpqlExecutionResult result = support.execute(
-                "select d.title as title from aitls_Document d left join d.parent p order by d.title", "title");
+    void execute_leftJoinToBase_keepsRowWithExcludedRecordEmpty() {
+        JpqlExecutionResult result = support.execute("select d.title as title, p.title as parentTitle "
+                + "from aitls_Document d left join d.parent p order by d.title", "title", "parentTitle");
 
-        // `Child of secret` refers to an excluded record: the row goes, as with a row-level condition.
-        assertEquals(List.of("Child of plan", "Public plan"), column(result, "title"));
+        // `Child of secret` refers to an excluded record: the row stays, the record is joined as an absent one.
+        assertEquals(List.of("Child of plan", "Child of secret", "Public plan"), column(result, "title"));
+        assertEquals(Arrays.asList("Public plan", null, null), column(result, "parentTitle"));
+    }
+
+    @Test
+    void execute_leftJoinOnClauseToBase_doesNotProbeExcludedRecord() {
+        JpqlExecutionResult result = support.execute("select d.title as title, p.title as parentTitle "
+                + "from aitls_Document d left join d.parent p on p.title like 'TAX%' order by d.title",
+                "title", "parentTitle");
+
+        assertEquals(List.of("Child of plan", "Child of secret", "Public plan"), column(result, "title"));
+        assertEquals(Arrays.asList(null, null, null), column(result, "parentTitle"));
+    }
+
+    @Test
+    void execute_idOfExcludedReference_keepsRowWithEmptyId() {
+        JpqlExecutionResult result = support.execute("select d.title as title, d.parent.id as parentId "
+                + "from aitls_Document d order by d.title", "title", "parentId");
+
+        assertEquals(List.of("Child of plan", "Child of secret", "Public plan"), column(result, "title"));
+        assertEquals(Arrays.asList(1L, null, null), column(result, "parentId").stream()
+                .map(value -> value == null ? null : ((Number) value).longValue()).toList());
+    }
+
+    @Test
+    void execute_leftJoinToBaseWithRowLevelPolicy_keepsRowsWithHiddenAndExcludedRecordsEmpty() {
+        support.loginAs(SecDocumentReadRole.CODE, SecDocumentRowLevelRole.CODE);
+
+        JpqlExecutionResult result = support.execute("select d.title as title, p.title as parentTitle "
+                + "from aitls_Document d left join d.parent p order by d.title", "title", "parentTitle");
+
+        // The platform hides the root `Public plan`; as a parent it is hidden by the row-level policy, and
+        // `TAX-SECRET-001` is excluded: both rows stay with the parent empty.
+        assertEquals(List.of("Child of plan", "Child of secret"), column(result, "title"));
+        assertEquals(Arrays.asList(null, null), column(result, "parentTitle"));
+    }
+
+    @Test
+    void execute_idThroughLongerPath_keepsPathSemanticsForPrefix() {
+        systemAuthenticator.runWithSystem(() -> {
+            Document childOfPlan = dataManager.load(Document.class).id(4L).one();
+            Document childOfSecret = dataManager.load(Document.class).id(3L).one();
+            dataManager.saveWithoutReload(document(Document.class, 5L, "Grandchild of plan", childOfPlan),
+                    document(Document.class, 6L, "Grandchild of secret", childOfSecret));
+        });
+
+        JpqlExecutionResult result = support.execute("select d.title as title, d.parent.parent.id as grandParentId "
+                + "from aitls_Document d order by d.title", "title", "grandParentId");
+
+        // Only `d.<ref>.<id>` becomes a left join: `d.parent.parent` is a path prefix, so a row whose grandparent
+        // is excluded goes, as for an inner join, instead of staying with an empty id.
+        assertEquals(List.of("Grandchild of plan"), column(result, "title"));
+        assertEquals(List.of(1L), column(result, "grandParentId").stream()
+                .map(value -> ((Number) value).longValue()).toList());
+    }
+
+    @Test
+    void execute_countOverLeftJoinToBase_countsVisibleRecords() {
+        JpqlExecutionResult result = support.execute(
+                "select count(d) as cnt from aitls_Document d left join d.parent p", "cnt");
+
+        assertEquals(List.of(3L), column(result, "cnt"));
     }
 
     @Test

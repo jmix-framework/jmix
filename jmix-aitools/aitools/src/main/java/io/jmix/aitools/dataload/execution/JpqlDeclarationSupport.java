@@ -26,6 +26,7 @@ import io.jmix.data.impl.jpql.DomainModelBuilder;
 import io.jmix.data.impl.jpql.QueryTree;
 import io.jmix.data.impl.jpql.tree.BaseJoinNode;
 import io.jmix.data.impl.jpql.tree.IdentificationVariableNode;
+import io.jmix.data.impl.jpql.tree.JoinVariableNode;
 import io.jmix.data.impl.jpql.tree.PathNode;
 import io.jmix.data.impl.jpql.tree.QueryNode;
 import io.jmix.data.impl.jpql.tree.SelectionSourceNode;
@@ -63,6 +64,16 @@ public class JpqlDeclarationSupport {
     protected volatile DomainModel domainModel;
 
     /**
+     * Tells whether the join is a {@code left join}, {@code outer} or not.
+     *
+     * @param join a join declaring a variable
+     * @return whether it is a left join
+     */
+    public static boolean isLeftJoin(JoinVariableNode join) {
+        return join.getJoinSpec() != null && join.getJoinSpec().toLowerCase(Locale.ROOT).startsWith("left");
+    }
+
+    /**
      * Reads every identification variable the query declares in {@code from}, {@code join} and {@code in (…)},
      * including subqueries.
      *
@@ -93,7 +104,7 @@ public class JpqlDeclarationSupport {
                     ? effectiveEntityName
                     : variableNode.getEntityNameFromQuery();
             addDeclaration(declarations, variableEntities,
-                    new Declaration(variableNode.getVariableName(), entityName, null, null, nested));
+                    new Declaration(variableNode.getVariableName(), entityName, null, null, false, nested));
         } else if (node instanceof BaseJoinNode joinNode && joinNode.getVariableName() != null) {
             addDeclaration(declarations, variableEntities, joinDeclaration(joinNode, variableEntities, nested));
         }
@@ -122,24 +133,25 @@ public class JpqlDeclarationSupport {
 
     protected Declaration joinDeclaration(BaseJoinNode joinNode, Map<String, String> variableEntities,
                                           boolean nested) {
+        boolean leftJoin = joinNode instanceof JoinVariableNode variableNode && isLeftJoin(variableNode);
         Tree source = joinNode.getChildCount() > 0 ? joinNode.getChild(0) : null;
         if (source instanceof TreatPathNode treatNode) {
             return new Declaration(joinNode.getVariableName(), treatNode.getSubtype(), treatNode.asPathString(), null,
-                    nested);
+                    leftJoin, nested);
         }
         if (source instanceof PathNode pathNode) {
             String joinPath = pathNode.asPathString();
             MetaProperty joined = joinedProperty(pathNode, variableEntities);
-            // A left join finding nothing is told by the owner's foreign key, which an `on` clause cannot change.
+            // For a join narrowed in the `where`: the owner's foreign key tells that it refers to no record.
             String nullCheck = !joined.getRange().getCardinality().isMany() && metadataTools.isOwningSide(joined)
                     ? joinPath
                     : null;
             return new Declaration(joinNode.getVariableName(), joined.getRange().asClass().getName(), joinPath,
-                    nullCheck, nested);
+                    nullCheck, leftJoin, nested);
         }
         if (source != null && metadata.findClass(source.getText()) != null) {
             // An entity join: `join aitls_Customer c on ...`.
-            return new Declaration(joinNode.getVariableName(), source.getText(), null, null, nested);
+            return new Declaration(joinNode.getVariableName(), source.getText(), null, null, leftJoin, nested);
         }
         throw new IllegalStateException("Unsupported join declaration of " + joinNode.getVariableName());
     }
@@ -188,9 +200,10 @@ public class JpqlDeclarationSupport {
      * @param entityName the entity it ranges over
      * @param joinPath   the path it joins, or {@code null} for a {@code from} declaration or an entity join
      * @param nullCheck  the path whose {@code is null} tells that the join found no record, or {@code null}
+     * @param leftJoin   whether it is declared by a {@code left join}
      * @param nested     whether it is declared in a subquery
      */
     public record Declaration(String variable, String entityName, @Nullable String joinPath,
-                                 @Nullable String nullCheck, boolean nested) {
+                              @Nullable String nullCheck, boolean leftJoin, boolean nested) {
     }
 }

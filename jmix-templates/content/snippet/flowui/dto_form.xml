@@ -54,7 +54,7 @@ def initDefaultFieldAttrs(attr) {
 	def lookupActions = false
 
 	if (attr.isEntityType()) {
-		field.tag = 'entityPicker'
+		field.tag = attr.getLookupComponentTag()
 		lookupActions = true
 	}
 
@@ -89,17 +89,25 @@ def initDefaultFieldAttrs(attr) {
 	}
 
 	if(lookupActions) {
-		def actions = attr.getLookupActions()
+		def isComboBox = field.tag == 'entityComboBox'
+		// entityComboBox: only actions declared in @LookupField; entityPicker: declared or module defaults
+		def actions = isComboBox ? attr.getLookupFieldActions() : attr.getLookupActions()
+		StringBuilder builder = new StringBuilder()
 		if(!actions.isEmpty()) {
-			StringBuilder builder = new StringBuilder()
 			builder.append("<actions>")
-			for(String action: attr.getLookupActions()) {
-				if (['entity_open', 'entity_lookup', 'entity_clear', 'entity_openComposition'].contains(action)) {
-					builder.append("<action id=\"${api.camelCase(action)}Action\" type=\"$action\"/>")
-				}
+			for(String action: actions) {
+				builder.append("<action id=\"${api.camelCase(action)}Action\" type=\"$action\"/>")
 			}
 			builder.append("</actions>")
-            field.text = builder.toString()
+		}
+		if(isComboBox) {
+			def itemsQuery = attr.getLookupItemsQueryXml()
+			if(itemsQuery != null) {
+				builder.append(itemsQuery)
+			}
+		}
+		if(builder.length() > 0) {
+			field.text = builder.toString()
 		}
 	}
 

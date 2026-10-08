@@ -19,6 +19,7 @@ package io.jmix.core.impl;
 import io.jmix.core.*;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.constraint.AccessConstraint;
+import io.jmix.core.entity.EntitySystemAccess;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.entity.KeyValueEntity;
 import io.jmix.core.impl.metadata.MetadataGenerationManager;
@@ -78,6 +79,12 @@ public class UnconstrainedDataManagerImpl implements UnconstrainedDataManager {
 
     @Autowired
     protected ObjectProvider<CrossDataStoreReferenceLoader> crossDataStoreReferenceLoaderProvider;
+
+    @Autowired
+    protected FetchPlanRepository fetchPlanRepository;
+
+    @Autowired
+    protected ReferenceValuesSupport referenceValuesSupport;
 
     @Autowired
     protected ExtendedEntities extendedEntities;
@@ -366,7 +373,25 @@ public class UnconstrainedDataManagerImpl implements UnconstrainedDataManager {
     public <T> T getReference(Class<T> entityClass, Object id) {
         T entity = metadata.create(entityClass, id);
         entityStates.makePatch(entity);
+        initReferenceLoadedState(entity);
         return entity;
+    }
+
+    /**
+     * Makes the reference report as loaded only its primary key and the attributes set on it later.
+     */
+    protected void initReferenceLoadedState(Object entity) {
+        referenceValuesSupport.clearInitialValues(entity);
+
+        ReferenceLoadedPropertiesInfo loadedPropertiesInfo = new ReferenceLoadedPropertiesInfo();
+        String primaryKeyName = metadataTools.getPrimaryKeyName(metadata.getClass(entity));
+        if (primaryKeyName != null) {
+            loadedPropertiesInfo.registerProperty(primaryKeyName, true);
+        }
+        EntityEntry entityEntry = EntitySystemAccess.getEntityEntry(entity);
+        entityEntry.setLoadedPropertiesInfo(loadedPropertiesInfo);
+        // not weak, so that it is copied with the entity entry and serialized
+        entityEntry.addPropertyChangeListener(ReferenceLoadedPropertiesInfo.MarkingLoadedOnSetListener.INSTANCE, false);
     }
 
     @Override
@@ -399,7 +424,11 @@ public class UnconstrainedDataManagerImpl implements UnconstrainedDataManager {
                     if (entityStates.isLoaded(entity, relatedPropertyName)) {
                         Object refEntity = EntityValues.getValue(entity, property.getName());
                         if (refEntity == null) {
-                            EntityValues.setValue(entity, relatedPropertyName, null);
+                            // A new entity has no stale reference to clear: its null reference means
+                            // "never resolved", and the related property value may have been set directly.
+                            if (!entityStates.isNew(entity)) {
+                                EntityValues.setValue(entity, relatedPropertyName, null);
+                            }
                         } else {
                             Object refEntityId = EntityValues.getId(refEntity);
                             MetaClass refEntityMetaClass = metadata.getClass(refEntity);
@@ -428,10 +457,16 @@ public class UnconstrainedDataManagerImpl implements UnconstrainedDataManager {
         return repeatRequired;
     }
 
-    protected void readCrossDataStoreReferences(Collection<?> entities, FetchPlan fetchPlan, MetaClass metaClass,
+    protected void readCrossDataStoreReferences(Collection<?> entities, @Nullable FetchPlan fetchPlan, MetaClass metaClass,
                                                 boolean joinTransaction) {
-        if (stores.getAdditional().isEmpty() || entities.isEmpty() || fetchPlan == null)
+        if (stores.getAdditional().isEmpty() || entities.isEmpty())
             return;
+
+        if (fetchPlan == null) {
+            // Data stores load with the base fetch plan when it is not specified explicitly,
+            // so process cross-datastore references against the same plan.
+            fetchPlan = fetchPlanRepository.getFetchPlan(metaClass, FetchPlan.BASE);
+        }
 
         CrossDataStoreReferenceLoader crossDataStoreReferenceLoader = crossDataStoreReferenceLoaderProvider.getObject(
                 metaClass, fetchPlan, joinTransaction);

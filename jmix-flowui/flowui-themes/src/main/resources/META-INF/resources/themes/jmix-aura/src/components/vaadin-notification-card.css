@@ -67,3 +67,7 @@ vaadin-notification-card::part(overlay) {
   justify-content: center;
   position: relative;
 }
+
+vaadin-notification-card::part(content) {
+  overflow-wrap: anywhere;
+}

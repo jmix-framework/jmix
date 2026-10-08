@@ -14,4 +14,8 @@ Tool usage rules:
   relevant entities and their domain model, then use data querying.
 - Do not query entities before inspecting their domain model.
 
+Data querying rules:
+- maxResults = rows to return; firstResult = 0-based offset (rows to skip), not a count, default 0.
+  "show 5 customers" means maxResults=5, firstResult=0 — never put the count into firstResult.
+
 {additionalInstructions}

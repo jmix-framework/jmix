@@ -17,11 +17,14 @@
 package data_components
 
 import io.jmix.core.DataManager
+import io.jmix.core.querycondition.PropertyCondition
 import io.jmix.flowui.model.CollectionContainer
 import io.jmix.flowui.model.CollectionLoader
 import io.jmix.flowui.model.DataComponents
 import org.springframework.beans.factory.annotation.Autowired
 import test_support.entity.Foo
+import test_support.entity.Zoo
+import test_support.entity.element_collection.EcAlpha
 import test_support.spec.DataContextSpec
 
 import java.util.function.Consumer
@@ -120,5 +123,47 @@ class CollectionLoaderTest extends DataContextSpec {
         then:
 
         1 * preLoadListener.accept({ it.loadContext.query.queryString == 'select e from test_Foo e where e.name = :name' })
+    }
+
+    def "distinct is not set for a condition crossing a to-many association"() {
+        CollectionLoader<Zoo> loader = factory.createCollectionLoader()
+        CollectionContainer<Zoo> container = factory.createCollectionContainer(Zoo)
+        loader.setContainer(container)
+        loader.setQuery('select e from test_Zoo e')
+
+        when: "condition on a nested attribute of a m2m collection"
+
+        loader.setCondition(PropertyCondition.contains('animals.name', 'Rex'))
+        def loadContext = loader.createLoadContext()
+
+        then: "the condition is generated as an 'exists' subquery producing no duplicates, so no 'select distinct' \
+is added (distinct fails on Oracle if the entity contains a LOB attribute)"
+
+        !loadContext.query.distinct
+
+        when: "condition on an own attribute"
+
+        loader.setCondition(PropertyCondition.contains('name', 'Zoo'))
+        loadContext = loader.createLoadContext()
+
+        then:
+
+        !loadContext.query.distinct
+    }
+
+    def "distinct is set for a condition on an element collection"() {
+        CollectionLoader<EcAlpha> loader = factory.createCollectionLoader()
+        CollectionContainer<EcAlpha> container = factory.createCollectionContainer(EcAlpha)
+        loader.setContainer(container)
+        loader.setQuery('select e from test_EcAlpha e')
+
+        when:
+
+        loader.setCondition(PropertyCondition.contains('tags', 'x'))
+        def loadContext = loader.createLoadContext()
+
+        then: "element collections keep join-based condition generation which can multiply rows"
+
+        loadContext.query.distinct
     }
 }

@@ -57,6 +57,7 @@ public class CopyFilesStartupTask implements StartupTask {
     public static void copyProjectResources(StartupContext context) {
         copyProjectFrontend(context);
         copyProjectMetaInfResources(context);
+        copyProjectMetaInfThemes(context);
         copyProjectLegacyThemes(context);
     }
 
@@ -88,13 +89,49 @@ public class CopyFilesStartupTask implements StartupTask {
             return;
         }
 
-        logFileCopying("project META-INF/resources/frontend folder");
+        logFileCopying("project META-INF/resources folder");
 
         try {
             FileUtils.copyDirectory(projectMetaInf, designerMetaInf);
             log.info("Project META-INFO folder has been copied successfully from {} to {}", projectMetaInf, designerMetaInf);
         } catch (IOException e) {
             log.warn("Cannot copy project META-INF folder from {} to {}", projectMetaInf, designerMetaInf, e);
+        }
+    }
+
+    /**
+     * Support for projects that keep theme files in {@code META-INF/resources/themes}
+     * and reference them via {@code @StyleSheet("themes/my-theme/styles.css")}.
+     * <p>
+     * Such requests are handled by {@code StaticFileServer} as theme assets, and in
+     * development bundle mode it looks them up only in the frontend {@code themes} folder
+     * and in {@code frontend/generated/jar-resources/themes}, throwing otherwise. In a real
+     * application build the files get into {@code jar-resources} because the project
+     * resources output folder is scanned as a classpath entry, but the dev server
+     * classpath contains jars only. So mirror them into the designer frontend folder,
+     * which is the first location being checked.
+     * <p>
+     * {@code jar-resources} is not suitable as a target: Vaadin frontend tasks run after
+     * the startup tasks and delete everything there they haven't copied themselves.
+     */
+    private static void copyProjectMetaInfThemes(StartupContext context) {
+        File projectThemes = context.getProjectMetaInfThemesFolder();
+        File designerThemes = context.getDesignerFrontendThemesFolder();
+
+        if (!projectThemes.exists() || !projectThemes.isDirectory()) {
+            log.info("Project META-INF themes folder {} does not exist, skipping mirror", projectThemes);
+            return;
+        }
+
+        logFileCopying("project META-INF/resources/themes folder");
+
+        try {
+            FileUtils.copyDirectory(projectThemes, designerThemes);
+            log.info("Project META-INF themes folder has been copied successfully from {} to {}",
+                    projectThemes, designerThemes);
+        } catch (IOException e) {
+            log.warn("Cannot copy project META-INF themes folder from {} to {}",
+                    projectThemes, designerThemes, e);
         }
     }
 

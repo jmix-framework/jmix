@@ -31,6 +31,7 @@
 
 /* Premium */
 
+@import './aichat/index.css';
 @import './bpm/index.css';
 @import './dynmodel/index.css';
 @import './groupgrid/index.css';
@@ -39,4 +40,5 @@
 @import './notifications/index.css';
 @import './tabbedmode/index.css';
 @import './uiconstraints/index.css';
+@import './uirecovery/index.css';
 @import './stormbpmn/index.css';

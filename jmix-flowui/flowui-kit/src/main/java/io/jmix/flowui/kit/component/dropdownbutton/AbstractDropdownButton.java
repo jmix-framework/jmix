@@ -571,6 +571,7 @@ public abstract class AbstractDropdownButton extends Composite<JmixMenuBar>
             setEnabled(action.isEnabled());
             setVisible(action.isVisible());
             updateContent(action.getText(), action.getIconComponent());
+            item.setTooltipText(action.getDescription());
 
             item.addClickListener(this::onItemClick);
             action.addPropertyChangeListener(this::onActionPropertyChange);
@@ -591,6 +592,9 @@ public abstract class AbstractDropdownButton extends Composite<JmixMenuBar>
                     break;
                 case Action.PROP_VISIBLE:
                     setVisible((Boolean) event.getNewValue());
+                    break;
+                case Action.PROP_DESCRIPTION:
+                    item.setTooltipText(action.getDescription());
                     break;
                 default:
             }

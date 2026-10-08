@@ -56,7 +56,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 @ViewController("msgtmp_MessageTemplate.detail")
 @ViewDescriptor("message-template-detail-view.xml")
 @EditedEntityContainer("messageTemplateDc")
-@DialogMode(minWidth = "64em")
+@DialogMode(minWidth = "64em", resizable = true)
 public class MessageTemplateDetailView extends StandardDetailView<MessageTemplate> {
 
     @ViewComponent

@@ -32,8 +32,6 @@ import org.jspecify.annotations.Nullable;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 /**
  * Role provider that gets roles from classes annotated with
@@ -96,10 +94,7 @@ public class AnnotatedResourceRoleProvider implements ResourceRoleProvider {
 
     private void buildRolesCache() {
         Set<String> classNames = classpathScanner.getClassNames(ResourceRoleDetector.class);
-
-        roles = classNames.stream()
-                .map(annotatedRoleBuilder::createResourceRole)
-                .collect(Collectors.toMap(ResourceRole::getCode, Function.identity()));
+        roles = AnnotatedRoleCodeMapBuilder.build(classNames, annotatedRoleBuilder::createResourceRole, "resource");
     }
 
 }

@@ -22,11 +22,13 @@ import java.util.List;
 
 /**
  * Filters introspected entity descriptors down to the ones that may be exposed to the current user.
+ * Also filters the properties of each remaining entity down to the ones that may be exposed.
  */
 public interface AvailableEntityFilter {
 
     /**
-     * Filters the given descriptors, keeping only the available ones.
+     * Filters the given descriptors, keeping only the available entities and, within them,
+     * only the available properties.
      *
      * @param entityDescriptors descriptors to filter
      * @return descriptors that remain available

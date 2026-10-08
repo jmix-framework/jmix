@@ -41,6 +41,21 @@ public interface DiagramEngine {
     String constructEntityDescription(String entityName, String dataStoreName, List<AttributeModel> attributeModelList);
 
     /**
+     * Constructs a description of an entity, marking the entity itself when it is defined at runtime
+     * rather than on the classpath.
+     *
+     * @param entityName         the name of the entity to be described
+     * @param dataStoreName      the name of the data store where the entity resides
+     * @param attributeModelList a list of attributes that define the structure of the entity
+     * @param dynamic            whether the entity itself is dynamic
+     * @return a string representing the description of the entity in the required format
+     */
+    default String constructEntityDescription(String entityName, String dataStoreName,
+                                              List<AttributeModel> attributeModelList, boolean dynamic) {
+        return constructEntityDescription(entityName, dataStoreName, attributeModelList);
+    }
+
+    /**
      * Constructs a string representation of a relationship between two entities in a specific format
      * for use with a diagramming library.
      *

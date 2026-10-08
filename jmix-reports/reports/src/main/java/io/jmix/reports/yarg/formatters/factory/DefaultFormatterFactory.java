@@ -25,15 +25,12 @@ import io.jmix.reports.yarg.formatters.impl.docx.HtmlImportProcessor;
 import io.jmix.reports.yarg.formatters.impl.docx.HtmlImportProcessorImpl;
 import io.jmix.reports.yarg.formatters.impl.xls.DocumentConverter;
 import io.jmix.reports.yarg.formatters.impl.xls.DocumentConverterImpl;
-import io.jmix.reports.yarg.structure.BandData;
-import io.jmix.reports.yarg.structure.ReportTemplate;
 import io.jmix.reports.yarg.util.groovy.Scripting;
 import org.jspecify.annotations.NullMarked;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.ClassUtils;
 
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -99,6 +96,13 @@ public class DefaultFormatterFactory implements ReportFormatterFactory {
             return docxFormatter;
         });
         FormatterCreator xlsxCreator = factoryInput -> {
+            if (factoryInput.isStreaming()) {
+                StreamingXlsxFormatter streamingFormatter = new StreamingXlsxFormatter(factoryInput);
+                streamingFormatter.setDefaultFormatProvider(defaultFormatProvider);
+                streamingFormatter.setDocumentConverter(documentConverter);
+                streamingFormatter.setScripting(scripting);
+                return streamingFormatter;
+            }
             XlsxFormatter xlsxFormatter = new XlsxFormatter(factoryInput);
             xlsxFormatter.setDefaultFormatProvider(defaultFormatProvider);
             xlsxFormatter.setDocumentConverter(documentConverter);
@@ -174,9 +178,6 @@ public class DefaultFormatterFactory implements ReportFormatterFactory {
     @NullMarked
     public ReportFormatter createFormatter(FormatterFactoryInput factoryInput) {
         String templateExtension = factoryInput.templateExtension;
-        BandData rootBand = factoryInput.rootBand;
-        ReportTemplate reportTemplate = factoryInput.reportTemplate;
-        OutputStream outputStream = factoryInput.outputStream;
 
         FormatterCreator formatterCreator = formattersMap.get(templateExtension);
         if (formatterCreator == null) {
@@ -189,6 +190,11 @@ public class DefaultFormatterFactory implements ReportFormatterFactory {
         }
 
         return reportFormatter;
+    }
+
+    @Override
+    public boolean supportsStreaming(String templateExtension) {
+        return "xlsx".equalsIgnoreCase(templateExtension);
     }
 
     protected void setDefaultInlinersProvider() {
@@ -213,7 +219,7 @@ public class DefaultFormatterFactory implements ReportFormatterFactory {
     }
 
     @NullMarked
-    protected static interface FormatterCreator {
+    protected interface FormatterCreator {
         ReportFormatter create(FormatterFactoryInput formatterFactoryInput);
     }
 }

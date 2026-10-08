@@ -27,6 +27,9 @@ import org.dom4j.DocumentHelper
 import org.dom4j.Element
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import test_support.entity.lookup_field.LfMemNoteHolder
+import test_support.entity.lookup_field.LfNoteHolder
+import test_support.entity.lookup_field.LfOrder
 import test_support.entity.sales.Customer
 import test_support.entity.sales.Order
 import test_support.entity.viewtemplate.ComponentXmlDatatypesEntity
@@ -176,6 +179,158 @@ class ComponentXmlFactoryTest extends FlowuiTestSpecification {
 
         then:
         thrown(UnsupportedOperationException)
+    }
+
+    def "VIEW annotation produces entityPicker with default association actions"() {
+        when:
+        def element = lfElement('viewCountry')
+
+        then:
+        element.name == 'entityPicker'
+        element.element('actions').elements('action')*.attributeValue('id') == ['entityLookup', 'entityClear']
+    }
+
+    def "class VIEW annotation actions are used on entityPicker"() {
+        when:
+        def element = lfElement('city')
+
+        then:
+        element.name == 'entityPicker'
+        element.element('actions').elements('action')*.attributeValue('type') ==
+                ['entity_lookup', 'entity_open', 'entity_clear']
+    }
+
+    def "field DROPDOWN overrides class VIEW and produces entityComboBox bound to an items container with inherited class actions"() {
+        when:
+        def element = lfElement('dropdownCity')
+
+        then:
+        element.name == 'entityComboBox'
+        element.attributeValue('itemsContainer') == 'dropdownCityItemsDc'
+        element.element('itemsQuery') == null
+        element.element('actions').elements('action')*.attributeValue('id') ==
+                ['entity_lookup', 'entity_open', 'entity_clear']
+    }
+
+    def "eager class DROPDOWN produces entityComboBox bound to a generated items container"() {
+        when:
+        def element = lfElement('country')
+
+        then:
+        element.name == 'entityComboBox'
+        element.attributeValue('itemsContainer') == 'countryItemsDc'
+        element.element('itemsQuery') == null
+    }
+
+    def "createItemsContainerXml emits a JPA collection with an instance-name-ordered loader"() {
+        when:
+        def property = metadata.getClass(LfOrder).getProperty('country')
+        def xml = componentXmlFactory.createItemsContainerXml(property)
+        def collection = DocumentHelper.parseText(xml).rootElement
+
+        then:
+        collection.name == 'collection'
+        collection.attributeValue('id') == 'countryItemsDc'
+        collection.attributeValue('class') == 'test_support.entity.lookup_field.LfCountry'
+        collection.element('fetchPlan').attributeValue('extends') == '_instance_name'
+        def loader = collection.element('loader')
+        loader.attributeValue('readOnly') == 'true'
+        loader.element('query').text.trim() == 'select e from test_LfCountry e order by e.name'
+    }
+
+    def "createItemsContainerXml omits the query element for a non-JPA entity"() {
+        when:
+        def property = metadata.getClass(LfMemNoteHolder).getProperty('dict')
+        def xml = componentXmlFactory.createItemsContainerXml(property)
+        def collection = DocumentHelper.parseText(xml).rootElement
+
+        then:
+        collection.name == 'collection'
+        collection.attributeValue('id') == 'dictItemsDc'
+        collection.attributeValue('class') == 'test_support.entity.lookup_field.LfMemDict'
+        collection.element('fetchPlan').attributeValue('extends') == '_instance_name'
+        def loader = collection.element('loader')
+        loader != null
+        loader.element('query') == null
+    }
+
+    def "createItemsContainerXml returns empty for non-eager reference properties"() {
+        expect:
+        componentXmlFactory.createItemsContainerXml(metadata.getClass(LfOrder).getProperty(propertyName)) == ''
+
+        where:
+        propertyName << ['product', 'supplier', 'tag', 'viewCountry']
+    }
+
+    def "createItemsContainerXml returns empty for a non-reference property"() {
+        expect:
+        componentXmlFactory.createItemsContainerXml(datatypesMetaClass.getProperty('stringValue')) == ''
+    }
+
+    def "byInstanceName class DROPDOWN produces byInstanceName itemsQuery ignoring searchStringFormat"() {
+        when:
+        def element = lfElement('product')
+
+        then:
+        element.name == 'entityComboBox'
+        def iq = element.element('itemsQuery')
+        iq.attributeValue('byInstanceName') == 'true'
+        iq.attributeValue('searchStringFormat') == null
+    }
+
+    def "explicit query class DROPDOWN produces query itemsQuery"() {
+        when:
+        def element = lfElement('supplier')
+
+        then:
+        element.name == 'entityComboBox'
+        def iq = element.element('itemsQuery')
+        iq.attributeValue('byInstanceName') == null
+        iq.element('query').text.contains(':searchString')
+        iq.attributeValue('searchStringFormat') == '(?i)%${inputString}%'
+        iq.attributeValue('escapeValueForLike') == 'true'
+    }
+
+    def "explicit query without searchString degrades to an eager items container"() {
+        when:
+        def element = lfElement('broken')
+
+        then:
+        element.name == 'entityComboBox'
+        element.attributeValue('itemsContainer') == 'brokenItemsDc'
+        element.element('itemsQuery') == null
+    }
+
+    def "byInstanceName with no string instance-name properties degrades to entityPicker"() {
+        when:
+        def element = lfElement('event')
+
+        then:
+        element.name == 'entityPicker'
+    }
+
+    def "itemsQuery on VIEW type produces entityPicker"() {
+        when:
+        def element = lfElement('tag')
+
+        then:
+        element.name == 'entityPicker'
+    }
+
+    def "DROPDOWN on noop-store entity degrades to entityPicker"() {
+        given:
+        def property = metadata.getClass(LfNoteHolder).getProperty('note')
+
+        when:
+        def element = createElement(property, null)
+
+        then:
+        element.name == 'entityPicker'
+    }
+
+    Element lfElement(String propertyName) {
+        def property = metadata.getClass(LfOrder).getProperty(propertyName)
+        return createElement(property, null)
     }
 
     Element createElement(String propertyName, String dataContainerId = null) {

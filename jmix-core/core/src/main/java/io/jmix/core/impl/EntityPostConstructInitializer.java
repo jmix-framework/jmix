@@ -21,6 +21,7 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import io.jmix.core.CoreProperties;
 import io.jmix.core.EntityInitializer;
 import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
@@ -42,6 +43,9 @@ public class EntityPostConstructInitializer implements EntityInitializer {
     @Autowired
     protected ApplicationContext applicationContext;
 
+    @Autowired
+    protected CoreProperties coreProperties;
+
     // stores methods in the execution order, all methods are accessible
     protected LoadingCache<Class<?>, List<Method>> postConstructMethodsCache =
             CacheBuilder.newBuilder()
@@ -51,6 +55,11 @@ public class EntityPostConstructInitializer implements EntityInitializer {
                             return getPostConstructMethodsNotCached(concreteClass);
                         }
                     });
+
+    @Override
+    public boolean isApplicableToExistingEntity() {
+        return coreProperties.isInvokePostConstructOnEntityDeserialization();
+    }
 
     @Override
     public void initEntity(Object entity) {

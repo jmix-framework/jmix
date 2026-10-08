@@ -61,6 +61,14 @@ public class RoleRepositoryProviderUtils<T extends BaseRole> {
         return roles;
     }
 
+    public Collection<T> getAllRoles(boolean includePolicies) {
+        Collection<T> roles = new ArrayList<>();
+        for (RoleProvider<T> roleProvider : roleProviders) {
+            roles.addAll(roleProvider.getAllRoles(includePolicies));
+        }
+        return roles;
+    }
+
     @Nullable
     public T findRoleByCodeExcludeVisited(String roleCode, Set<String> visited, BiConsumer<T, T> roleMergingOperation) {
         visited.add(roleCode);

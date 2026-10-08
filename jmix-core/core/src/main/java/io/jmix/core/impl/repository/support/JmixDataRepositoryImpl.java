@@ -96,7 +96,7 @@ public class JmixDataRepositoryImpl<T, ID> implements JmixDataRepository<T, ID> 
     }
 
     @Override
-    public List<T> findAll(FetchPlan fetchPlan) {
+    public List<T> findAll(@Nullable FetchPlan fetchPlan) {
         return allLoader().fetchPlan(fetchPlan).list();
     }
 

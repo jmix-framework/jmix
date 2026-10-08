@@ -16,14 +16,24 @@
 package io.jmix.reports.yarg.formatters.factory;
 
 import io.jmix.reports.yarg.formatters.ReportFormatter;
+import io.jmix.reports.yarg.formatters.StreamingReportFormatter;
 import org.jspecify.annotations.NullMarked;
 
 /**
- * This interface describes a factory which spawns formatters. The default implementation is io.jmix.reports.yarg.formatters.factory.DefaultFormatterFactory
+ * This interface describes a factory which spawns formatters. The default implementation is DefaultFormatterFactory
  */
 @NullMarked
 public interface ReportFormatterFactory {
 
     ReportFormatter createFormatter(FormatterFactoryInput factoryInput);
 
+    /**
+     * Whether {@link #createFormatter(FormatterFactoryInput)} returns a
+     * {@link StreamingReportFormatter} for the given template extension
+     * when the factory input is marked as streaming. Reports with a streaming band fall back to the
+     * regular materialized rendering for templates whose formatter cannot stream.
+     */
+    default boolean supportsStreaming(String templateExtension) {
+        return false;
+    }
 }

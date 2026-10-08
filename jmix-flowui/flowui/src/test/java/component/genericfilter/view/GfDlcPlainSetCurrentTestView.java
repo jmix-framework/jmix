@@ -42,7 +42,7 @@ public class GfDlcPlainSetCurrentTestView extends StandardView {
                 .property("number")
                 .operation(PropertyFilter.Operation.EQUAL)
                 .build();
-        genericFilter.runtimeConfigurationBuilder()
+        genericFilter.filterConfigurationBuilder()
                 .id("match")
                 .name("Match")
                 .add(match, "FLT_MATCH")
@@ -53,7 +53,7 @@ public class GfDlcPlainSetCurrentTestView extends StandardView {
                 .property("number")
                 .operation(PropertyFilter.Operation.EQUAL)
                 .build();
-        genericFilter.runtimeConfigurationBuilder()
+        genericFilter.filterConfigurationBuilder()
                 .id("other")
                 .name("Other")
                 .add(other, "FLT_OTHER")

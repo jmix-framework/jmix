@@ -78,12 +78,15 @@ public class EmailerTest {
     @Autowired
     private FetchPlanRepository fetchPlanRepository;
 
+    @Autowired
+    private TestEmailQueueProcessor emailQueueProcessor;
+
     @BeforeEach
     public void setUp() throws Exception {
         EmailerConfigPropertiesAccess.setScheduledSendingDelayCallCount(emailerProperties, 0);
 
         // send pending emails which might be in the queue
-        emailer.processQueuedEmails();
+        emailQueueProcessor.processQueuedEmailsAndWait();
         testMailSender.clearBuffer();
     }
 
@@ -214,7 +217,7 @@ public class EmailerTest {
         assertNull(sendingMsg.getContentText());             // null
 
         // run scheduler
-        emailer.processQueuedEmails();
+        emailQueueProcessor.processQueuedEmailsAndWait();
 
         sendingMsg = reload(message, "sendingMessage.loadFromQueue");
         assertNotNull(sendingMsg.getContentTextFile());
@@ -240,7 +243,7 @@ public class EmailerTest {
         assertEquals(SendingStatus.QUEUE, sendingMsg.getStatus());
 
         // run scheduler
-        emailer.processQueuedEmails();
+        emailQueueProcessor.processQueuedEmailsAndWait();
 
         // check
         assertEquals(1, testMailSender.getBufferSize());
@@ -298,7 +301,7 @@ public class EmailerTest {
                 .build();
         emailer.sendEmailAsync(myInfo);
 
-        emailer.processQueuedEmails();
+        emailQueueProcessor.processQueuedEmailsAndWait();
         assertEquals("implicit2@example.com", testMailSender.fetchSentEmail().getFrom()[0].toString());
     }
 
@@ -327,7 +330,7 @@ public class EmailerTest {
                 .build();
         emailer.sendEmailAsync(myInfo);
 
-        emailer.processQueuedEmails();
+        emailQueueProcessor.processQueuedEmailsAndWait();
         msg = testMailSender.fetchSentEmail();
         assertEquals("explicit2@example.com", msg.getFrom()[0].toString());
     }
@@ -371,12 +374,12 @@ public class EmailerTest {
         testMailSender.failPlease();
         try {
             // try once
-            emailer.processQueuedEmails();
+            emailQueueProcessor.processQueuedEmailsAndWait();
             sendingMsg = reload(sendingMsg);
             assertEquals(SendingStatus.QUEUE, sendingMsg.getStatus());
 
             // try second time
-            emailer.processQueuedEmails();
+            emailQueueProcessor.processQueuedEmailsAndWait();
             sendingMsg = reload(sendingMsg);
             assertEquals(SendingStatus.QUEUE, sendingMsg.getStatus());
 
@@ -385,7 +388,7 @@ public class EmailerTest {
         }
 
         // marks as sent in the next tick
-        emailer.processQueuedEmails();
+        emailQueueProcessor.processQueuedEmailsAndWait();
         sendingMsg = reload(sendingMsg);
         assertEquals(SendingStatus.SENT, sendingMsg.getStatus());
         assertEquals(3, sendingMsg.getAttemptsLimit().intValue());
@@ -423,7 +426,7 @@ public class EmailerTest {
         testMailSender.failPlease();
         try {
             // try once
-            emailer.processQueuedEmails();
+            emailQueueProcessor.processQueuedEmailsAndWait();
             sendingMsg = reload(sendingMsg);
             assertEquals(SendingStatus.QUEUE, sendingMsg.getStatus());
 
@@ -432,7 +435,7 @@ public class EmailerTest {
         }
 
         // success now
-        emailer.processQueuedEmails();
+        emailQueueProcessor.processQueuedEmailsAndWait();
         sendingMsg = reload(sendingMsg);
         assertEquals(SendingStatus.SENT, sendingMsg.getStatus());
         assertEquals(2, sendingMsg.getAttemptsLimit().intValue());
@@ -463,7 +466,7 @@ public class EmailerTest {
         assertNotNull(message);
 
         assertTrue(testMailSender.isEmpty());
-        emailer.processQueuedEmails();
+        emailQueueProcessor.processQueuedEmailsAndWait();
 
         // check
         assertEquals(1, testMailSender.getBufferSize());
@@ -485,7 +488,7 @@ public class EmailerTest {
 
             EmailInfo emailInfo2 = EmailInfoBuilder.create("nikolay@example.com", "Test Email 6", "Test Body 6").build();
             emailer.sendEmailAsync(emailInfo2);
-            emailer.processQueuedEmails();
+            emailQueueProcessor.processQueuedEmailsAndWait();
 
             for (int i = 0; i < 2; i++) {
                 MimeMessage msg = testMailSender.fetchSentEmail();
@@ -523,7 +526,7 @@ public class EmailerTest {
                 .build();
         emailer.sendEmailAsync(myInfo);
 
-        emailer.processQueuedEmails();
+        emailQueueProcessor.processQueuedEmailsAndWait();
 
         MimeMessage msg = testMailSender.fetchSentEmail();
         MimeBodyPart firstAttachment = getFirstAttachment(msg);
@@ -568,7 +571,7 @@ public class EmailerTest {
                 .build();
         emailer.sendEmailAsync(myInfo);
 
-        emailer.processQueuedEmails();
+        emailQueueProcessor.processQueuedEmailsAndWait();
 
         MimeMessage msg = testMailSender.fetchSentEmail();
         MimeBodyPart attachment = getInlineAttachment(msg);
@@ -612,7 +615,7 @@ public class EmailerTest {
                 .build();
         emailer.sendEmailAsync(myInfo);
 
-        emailer.processQueuedEmails();
+        emailQueueProcessor.processQueuedEmailsAndWait();
 
         MimeMessage msg = testMailSender.fetchSentEmail();
         MimeBodyPart attachment = getFirstAttachment(msg);

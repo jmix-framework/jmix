@@ -33,6 +33,7 @@ import io.jmix.data.impl.*;
 import io.jmix.eclipselink.impl.entitycache.QueryCacheManager;
 import jakarta.annotation.PostConstruct;
 import org.eclipse.persistence.descriptors.changetracking.ChangeTracker;
+import org.eclipse.persistence.internal.descriptors.PersistenceEntity;
 import org.eclipse.persistence.internal.descriptors.changetracking.AttributeChangeListener;
 import org.eclipse.persistence.internal.sessions.AbstractSession;
 import org.eclipse.persistence.internal.sessions.ObjectChangeSet;
@@ -361,6 +362,19 @@ public class EclipselinkPersistenceSupport implements ApplicationContextAware {
         getUncheckedEntityEntry(instance).setLoadedPropertiesInfo(loadedPropertiesInfoFactory.create());
     }
 
+    /**
+     * Returns a new instance to its initial state after the transaction rollback, so it can be saved again.
+     */
+    protected void restoreNewEntityState(Object instance) {
+        getEntityEntry(instance).setNew(true);
+        getEntityEntry(instance).setDetached(false);
+        if (instance instanceof PersistenceEntity) {
+            // Clear the primary key cached by EclipseLink on the rolled back persist, otherwise a subsequent
+            // save would resolve the instance by the stale key even if the id attribute has been changed.
+            ((PersistenceEntity) instance)._persistence_setId(null);
+        }
+    }
+
     protected void fireFlush(String storeName) {
         if (lifecycleListeners == null) {
             return;
@@ -583,12 +597,17 @@ public class EclipselinkPersistenceSupport implements ApplicationContextAware {
                                 getEntityEntry(instance).setNew(false);
                             }
                         } else { // commit failed or the transaction was rolled back
+                            boolean wasNew = getEntityEntry(instance).isNew();
                             makeDetached(instance);
-                            for (Object entity : container.getNewDetachedInstances()) {
-                                getEntityEntry(entity).setNew(true);
-                                getEntityEntry(entity).setDetached(false);
+                            if (wasNew) {
+                                restoreNewEntityState(instance);
                             }
                         }
+                    }
+                }
+                if (status != TransactionSynchronization.STATUS_COMMITTED) {
+                    for (Object entity : container.getNewDetachedInstances()) {
+                        restoreNewEntityState(entity);
                     }
                 }
                 for (AfterCompleteTransactionListener listener : afterCompleteTxListeners) {

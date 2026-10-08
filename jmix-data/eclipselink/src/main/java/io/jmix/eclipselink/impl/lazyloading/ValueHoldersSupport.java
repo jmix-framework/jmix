@@ -27,6 +27,8 @@ import org.eclipse.persistence.internal.indirection.QueryBasedValueHolder;
 import org.eclipse.persistence.internal.indirection.UnitOfWorkQueryValueHolder;
 import io.jmix.core.common.util.ReflectionHelper;
 import org.eclipse.persistence.internal.indirection.WrappingValueHolder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.Field;
@@ -34,13 +36,26 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class ValueHoldersSupport {
 
+    private static final Logger log = LoggerFactory.getLogger(ValueHoldersSupport.class);
+
+    /**
+     * Returns a value holder of the given single-value reference attribute, woven into the entity class
+     * by the enhancing process.
+     * <p>
+     * Returns {@code null} if no value holder field is woven for the attribute, which means the attribute
+     * was not lazy at enhancing time (e.g. a {@code @OneToOne(mappedBy = ...)} attribute declared without
+     * {@code fetch = FetchType.LAZY}). Such attributes are always loaded eagerly by the ORM and do not
+     * participate in lazy loading.
+     */
+    @Nullable
     public static Object getSingleValueHolder(Object entity, String propertyName) {
         Object valueHolder;
         try {
             Field valueHolderField = getValueHolderField(entity, propertyName);
             if (valueHolderField == null) {
-                throw new RuntimeException(String.format("Unable to access value holder for property: %s on entity %s",
-                        propertyName, entity.getClass().getName()));
+                log.trace("No value holder field is woven for property '{}' of entity {} - the attribute is not lazy",
+                        propertyName, entity.getClass().getName());
+                return null;
             }
 
             ReflectionUtils.makeAccessible(valueHolderField);

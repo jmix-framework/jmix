@@ -18,13 +18,12 @@ package io.jmix.flowui.xml.layout.support;
 
 import com.google.common.base.Strings;
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.data.provider.Query;
 import io.jmix.core.*;
-import io.jmix.core.common.util.ParamsMap;
 import io.jmix.core.common.util.ReflectionHelper;
 import io.jmix.core.impl.FetchPlanLoader;
 import io.jmix.flowui.component.HasDataComponents;
 import io.jmix.flowui.component.SupportsItemsFetchCallback;
+import io.jmix.flowui.component.factory.ItemsFetchCallbackSupport;
 import io.jmix.flowui.data.SupportsItemsContainer;
 import io.jmix.flowui.data.SupportsItemsEnum;
 import io.jmix.flowui.data.SupportsValueSource;
@@ -32,9 +31,9 @@ import io.jmix.flowui.data.value.ContainerValueSource;
 import io.jmix.flowui.exception.GuiDevelopmentException;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.model.InstanceContainer;
-import io.jmix.flowui.sys.substitutor.StringSubstitutor;
 import io.jmix.flowui.xml.layout.ComponentLoader.Context;
 import io.jmix.flowui.xml.layout.LoaderResolver;
+import io.jmix.core.metamodel.model.MetaClass;
 import org.dom4j.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,6 +44,7 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Scope;
 import org.jspecify.annotations.Nullable;
 
+import java.util.List;
 import java.util.Optional;
 
 @org.springframework.stereotype.Component("flowui_DataLoaderSupport")
@@ -54,7 +54,6 @@ public class DataLoaderSupport implements ApplicationContextAware {
     private static final Logger log = LoggerFactory.getLogger(DataLoaderSupport.class);
 
     protected static final String ITEMS_QUERY_ELEMENT = "itemsQuery";
-    protected static final String VALUE_PARAMETER = "value";
 
     protected Context context;
     protected ApplicationContext applicationContext;
@@ -194,27 +193,51 @@ public class DataLoaderSupport implements ApplicationContextAware {
     @SuppressWarnings({"rawtypes", "unchecked"})
     protected void loadEntityItemsQueryInternal(SupportsItemsFetchCallback<?, String> component,
                                                 Element itemsElement, Class<?> entityClass) {
+        ItemsFetchCallbackSupport callbackSupport = applicationContext.getBean(ItemsFetchCallbackSupport.class);
+        boolean byInstanceName = loaderSupport.loadBoolean(itemsElement, "byInstanceName").orElse(false);
+
+        if (byInstanceName) {
+            loadByInstanceNameItemsQuery(component, itemsElement, entityClass, callbackSupport);
+            return;
+        }
+
         String queryString = loadQuery((Component) component, itemsElement);
         String searchStringFormat = loadSearchStringFormat(itemsElement);
         boolean escapeValue = loadEscapeValueForLike(itemsElement);
-
         FetchPlan fetchPlan = loadFetchPlan(itemsElement, entityClass);
 
-        DataManager dataManager = applicationContext.getBean(DataManager.class);
-        component.setItemsFetchCallback(query -> {
-            String searchString = getSearchString(query, searchStringFormat, escapeValue);
+        component.setItemsFetchCallback((SupportsItemsFetchCallback.FetchCallback) callbackSupport
+                .createEntityFetchCallback(entityClass, queryString, searchStringFormat, escapeValue, fetchPlan));
+    }
 
-            FluentLoader.ByQuery loader = dataManager.load(entityClass)
-                    .query(queryString)
-                    .parameter("searchString", searchString)
-                    .firstResult(query.getOffset())
-                    .maxResults(query.getLimit());
-            if (fetchPlan != null) {
-                loader.fetchPlan(fetchPlan);
-            }
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    protected void loadByInstanceNameItemsQuery(SupportsItemsFetchCallback<?, String> component,
+                                                Element itemsElement, Class<?> entityClass,
+                                                ItemsFetchCallbackSupport callbackSupport) {
+        if (loadSearchStringFormat(itemsElement) != null || loadEscapeValueForLike(itemsElement)) {
+            log.warn("'searchStringFormat' and 'escapeValueForLike' are ignored for a byInstanceName " +
+                    "itemsQuery of component '{}'", ((Component) component).getId().orElse("null"));
+        }
 
-            return loader.list().stream();
-        });
+        MetaClass metaClass = metadata.getClass(entityClass);
+        List<String> searchProperties = callbackSupport.resolveInstanceNameSearchProperties(metaClass);
+        if (searchProperties.isEmpty()) {
+            log.warn("byInstanceName itemsQuery of component '{}' for entity '{}' has no string " +
+                    "instance-name properties, items are not loaded lazily",
+                    ((Component) component).getId().orElse("null"), metaClass.getName());
+            return;
+        }
+
+        FetchPlan fetchPlan = loadFetchPlan(itemsElement, entityClass);
+        if (fetchPlan == null) {
+            fetchPlan = fetchPlanRepository.getFetchPlan(metaClass, FetchPlan.INSTANCE_NAME);
+        }
+        Sort sort = Sort.by(callbackSupport.getInstanceNameSortOrders(metaClass));
+
+        component.setItemsFetchCallback((SupportsItemsFetchCallback.FetchCallback) callbackSupport
+                .createEntityFetchCallback(entityClass,
+                        searchString -> callbackSupport.buildInstanceNameCondition(searchProperties, searchString),
+                        sort, fetchPlan));
     }
 
     /**
@@ -234,24 +257,16 @@ public class DataLoaderSupport implements ApplicationContextAware {
         loadValueItemsQueryInternal(component, itemsElement);
     }
 
+    @SuppressWarnings("unchecked")
     protected void loadValueItemsQueryInternal(SupportsItemsFetchCallback<?, String> component,
                                                Element itemsElement) {
         String queryString = loadQuery((Component) component, itemsElement);
         String searchStringFormat = loadSearchStringFormat(itemsElement);
         boolean escapeValue = loadEscapeValueForLike(itemsElement);
 
-        DataManager dataManager = applicationContext.getBean(DataManager.class);
-        component.setItemsFetchCallback(query -> {
-            String searchString = getSearchString(query, searchStringFormat, escapeValue);
-
-            return dataManager.loadValues(queryString)
-                    .properties(VALUE_PARAMETER)
-                    .parameter("searchString", searchString)
-                    .firstResult(query.getOffset())
-                    .maxResults(query.getLimit())
-                    .list().stream()
-                    .map(entity -> entity.getValue(VALUE_PARAMETER));
-        });
+        ItemsFetchCallbackSupport callbackSupport = applicationContext.getBean(ItemsFetchCallbackSupport.class);
+        ((SupportsItemsFetchCallback<Object, String>) component).setItemsFetchCallback(
+                callbackSupport.createValuesFetchCallback(queryString, searchStringFormat, escapeValue));
     }
 
     protected String loadQuery(Component component, Element itemsElement) {
@@ -303,21 +318,6 @@ public class DataLoaderSupport implements ApplicationContextAware {
                         fetchPlanRepository.getFetchPlan(metaClass, fetchPlanName));
 
         return builder.build();
-    }
-
-    protected String getSearchString(Query<?, String> query,
-                                     @Nullable String searchStringFormat, boolean escapeValue) {
-        String searchString = query.getFilter().orElse("");
-        if (escapeValue) {
-            searchString = QueryUtils.escapeForLike(searchString);
-        }
-
-        if (!Strings.isNullOrEmpty(searchStringFormat)) {
-            StringSubstitutor substitutor = applicationContext.getBean(StringSubstitutor.class);
-            searchString = substitutor.substitute(searchStringFormat, ParamsMap.of("inputString", searchString));
-        }
-
-        return searchString;
     }
 
     public <E> void loadItemsContainer(SupportsItemsContainer<E> component, Element element) {

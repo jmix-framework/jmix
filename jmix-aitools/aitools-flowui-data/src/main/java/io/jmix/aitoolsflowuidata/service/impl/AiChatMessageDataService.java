@@ -16,6 +16,7 @@
 
 package io.jmix.aitoolsflowuidata.service.impl;
 
+import com.google.common.collect.Lists;
 import io.jmix.aitoolsflowui.model.AiConversation;
 import io.jmix.aitoolsflowui.model.AiChatMessage;
 import io.jmix.aitoolsflowui.model.AiChatMessageType;
@@ -34,8 +35,11 @@ import io.jmix.core.usersubstitution.CurrentUserSubstitution;
 import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -44,6 +48,8 @@ import java.util.UUID;
  * mapped to and from the {@link AiChatMessage} model.
  */
 public class AiChatMessageDataService implements AiChatMessageService {
+
+    protected static final int LATEST_MESSAGES_CHUNK_SIZE = 500;
 
     @Autowired
     protected UnconstrainedDataManager dataManager;
@@ -106,6 +112,55 @@ public class AiChatMessageDataService implements AiChatMessageService {
                 .fetchPlan(FetchPlan.BASE)
                 .list();
         return messageConverter.convertToModel(messages, conversation);
+    }
+
+    @Override
+    public Map<AiConversation, AiChatMessage> loadLatestMessages(Collection<AiConversation> conversations,
+                                                                 @Nullable AiChatMessageType type) {
+        Preconditions.checkNotNullArgument(conversations);
+        Map<UUID, AiConversation> conversationsById = new HashMap<>();
+        for (AiConversation conversation : conversations) {
+            conversationsById.put(conversation.getId(), conversation);
+        }
+
+        // The type filter also goes into the correlated subquery: restricted to a type, "latest" means the
+        // latest message of that type, not the latest message overall when it happens to match.
+        String query = "select m from aitls_AiChatMessageEntity m "
+                + "where m.conversation.id in :conversationIds "
+                + "and m.conversation.username = :username "
+                + (type != null ? "and m.type = :type " : "")
+                + "and m.createdDate = (select max(m2.createdDate) from aitls_AiChatMessageEntity m2 "
+                + "where m2.conversation.id = m.conversation.id"
+                + (type != null ? " and m2.type = :type" : "") + ")";
+
+        Map<UUID, AiChatMessageEntity> latestEntities = new HashMap<>();
+        // Chunked so the IN list stays within what every supported database accepts.
+        for (List<UUID> chunk : Lists.partition(new ArrayList<>(conversationsById.keySet()),
+                LATEST_MESSAGES_CHUNK_SIZE)) {
+            Map<String, Object> parameters = new HashMap<>();
+            parameters.put("conversationIds", chunk);
+            parameters.put("username", currentUsername());
+            if (type != null) {
+                parameters.put("type", messageConverter.convertToEntityType(type));
+            }
+            List<AiChatMessageEntity> candidates = dataManager.load(AiChatMessageEntity.class)
+                    .query(query)
+                    .parameters(parameters)
+                    .fetchPlan(FetchPlan.BASE)
+                    .list();
+            for (AiChatMessageEntity candidate : candidates) {
+                // Same-instant ties resolve like loadLatestMessage: the greater id wins.
+                latestEntities.merge(candidate.getConversation().getId(), candidate,
+                        (first, second) -> first.getId().compareTo(second.getId()) >= 0 ? first : second);
+            }
+        }
+
+        Map<AiConversation, AiChatMessage> result = new HashMap<>();
+        latestEntities.forEach((conversationId, entity) -> {
+            AiConversation conversation = conversationsById.get(conversationId);
+            result.put(conversation, messageConverter.convertToModel(entity, conversation));
+        });
+        return result;
     }
 
     protected void checkOwner(AiConversationEntity conversation) {

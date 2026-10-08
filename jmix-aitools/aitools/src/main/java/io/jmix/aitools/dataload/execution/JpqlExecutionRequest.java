@@ -16,7 +16,9 @@
 
 package io.jmix.aitools.dataload.execution;
 
+import io.jmix.aitools.dataload.json.EmptyObjectTolerantListDeserializer;
 import org.jspecify.annotations.Nullable;
+import tools.jackson.databind.annotation.JsonDeserialize;
 
 import java.util.List;
 
@@ -28,7 +30,9 @@ public class JpqlExecutionRequest {
     protected String userText;
 
     protected String jpql;
+    @JsonDeserialize(using = EmptyObjectTolerantListDeserializer.class)
     protected List<JpqlExecutionParameter> parameters = List.of();
+    @JsonDeserialize(using = EmptyObjectTolerantListDeserializer.class)
     protected List<String> resultProperties = List.of();
 
     protected Integer maxResults;

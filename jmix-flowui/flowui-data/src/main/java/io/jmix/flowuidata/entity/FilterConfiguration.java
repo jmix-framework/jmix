@@ -16,6 +16,8 @@
 
 package io.jmix.flowuidata.entity;
 
+import io.jmix.core.annotation.DeletedBy;
+import io.jmix.core.annotation.DeletedDate;
 import io.jmix.core.annotation.TenantId;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.SystemLevel;
@@ -23,8 +25,13 @@ import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.core.metamodel.annotation.JmixProperty;
 import jakarta.persistence.*;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
 
 import java.io.Serializable;
+import java.time.OffsetDateTime;
 import java.util.UUID;
 
 @JmixEntity
@@ -37,6 +44,30 @@ public class FilterConfiguration implements Serializable {
     @Column(name = "ID", nullable = false)
     @JmixGeneratedValue
     protected UUID id;
+
+    @CreatedBy
+    @Column(name = "CREATED_BY")
+    protected String createdBy;
+
+    @CreatedDate
+    @Column(name = "CREATED_DATE")
+    protected OffsetDateTime createdDate;
+
+    @LastModifiedBy
+    @Column(name = "LAST_MODIFIED_BY")
+    protected String lastModifiedBy;
+
+    @LastModifiedDate
+    @Column(name = "LAST_MODIFIED_DATE")
+    protected OffsetDateTime lastModifiedDate;
+
+    @DeletedBy
+    @Column(name = "DELETED_BY")
+    protected String deletedBy;
+
+    @DeletedDate
+    @Column(name = "DELETED_DATE")
+    protected OffsetDateTime deletedDate;
 
     @Column(name = "COMPONENT_ID", nullable = false)
     protected String componentId;
@@ -72,6 +103,54 @@ public class FilterConfiguration implements Serializable {
 
     public void setId(UUID id) {
         this.id = id;
+    }
+
+    public String getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    public OffsetDateTime getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(OffsetDateTime createdDate) {
+        this.createdDate = createdDate;
+    }
+
+    public String getLastModifiedBy() {
+        return lastModifiedBy;
+    }
+
+    public void setLastModifiedBy(String lastModifiedBy) {
+        this.lastModifiedBy = lastModifiedBy;
+    }
+
+    public OffsetDateTime getLastModifiedDate() {
+        return lastModifiedDate;
+    }
+
+    public void setLastModifiedDate(OffsetDateTime lastModifiedDate) {
+        this.lastModifiedDate = lastModifiedDate;
+    }
+
+    public String getDeletedBy() {
+        return deletedBy;
+    }
+
+    public void setDeletedBy(String deletedBy) {
+        this.deletedBy = deletedBy;
+    }
+
+    public OffsetDateTime getDeletedDate() {
+        return deletedDate;
+    }
+
+    public void setDeletedDate(OffsetDateTime deletedDate) {
+        this.deletedDate = deletedDate;
     }
 
     public String getComponentId() {

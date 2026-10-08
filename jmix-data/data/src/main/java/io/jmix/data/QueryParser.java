@@ -56,6 +56,16 @@ public interface QueryParser {
     boolean hasIsNotNullCondition(String attribute);
 
     /**
+     * Returns true if the main query contains a condition on the given attribute of the main entity,
+     * e.g. {@code e.customer = :param} for the 'customer' attribute. Conditions on nested attributes
+     * (e.g. {@code e.customer.name = :param}) and conditions located in subqueries
+     * (e.g. {@code exists (select p from Payment p where p.customer = e.customer)}) are not taken into account.
+     */
+    default boolean hasConditionOnAttribute(String attribute) {
+        return false;
+    }
+
+    /**
      * Returns true if SELECT query contains joins
      */
     boolean isQueryWithJoins();

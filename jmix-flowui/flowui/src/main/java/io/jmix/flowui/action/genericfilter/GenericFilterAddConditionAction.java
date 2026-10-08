@@ -237,6 +237,7 @@ public class GenericFilterAddConditionAction extends GenericFilterAction<Generic
                 .withSelectValidator(selectValidator)
                 .withSelectHandler(selectHandler)
                 .build();
+        dialog.setResizable(target.isAddConditionDialogResizable());
 
         AddConditionView addConditionView = dialog.getView();
         addConditionView.setConditions(filterConditions);

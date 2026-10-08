@@ -19,6 +19,7 @@ package dialog.view;
 import com.vaadin.flow.router.Route;
 import io.jmix.flowui.Dialogs;
 import io.jmix.flowui.action.DialogAction;
+import io.jmix.flowui.app.inputdialog.InputParameter;
 import io.jmix.flowui.view.StandardView;
 import io.jmix.flowui.view.ViewController;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,6 +49,12 @@ public class DialogsTestView extends StandardView {
                         new DialogAction(DialogAction.Type.NO)
                                 .withHandler(__ -> noPressed = true)
                 )
+                .open();
+    }
+
+    public void openInputDialog() {
+        dialogs.createInputDialog(this)
+                .withParameter(InputParameter.stringParameter("name"))
                 .open();
     }
 }

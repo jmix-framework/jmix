@@ -55,6 +55,10 @@ public abstract class AbstractUploadFieldLoader<C extends AbstractSingleUploadFi
         getLoaderSupport().loadInteger(element, "maxFileSize", resultComponent::setMaxFileSize);
         loadAcceptedFileTypes(element)
                 .ifPresent(types -> resultComponent.setAcceptedFileTypes(types.toArray(new String[0])));
+        loadAcceptedMimeTypes(element)
+                .ifPresent(types -> resultComponent.setAcceptedMimeTypes(types.toArray(new String[0])));
+        loadAcceptedFileExtensions(element)
+                .ifPresent(types -> resultComponent.setAcceptedFileExtensions(types.toArray(new String[0])));
 
         getLoaderSupport().loadBoolean(element, "dropAllowed", resultComponent::setDropAllowed);
 
@@ -148,7 +152,19 @@ public abstract class AbstractUploadFieldLoader<C extends AbstractSingleUploadFi
     }
 
     protected Optional<List<String>> loadAcceptedFileTypes(Element element) {
-        return loadString(element, "acceptedFileTypes")
+        return loadFileTypeList(element, "acceptedFileTypes");
+    }
+
+    protected Optional<List<String>> loadAcceptedMimeTypes(Element element) {
+        return loadFileTypeList(element, "acceptedMimeTypes");
+    }
+
+    protected Optional<List<String>> loadAcceptedFileExtensions(Element element) {
+        return loadFileTypeList(element, "acceptedFileExtensions");
+    }
+
+    protected Optional<List<String>> loadFileTypeList(Element element, String attribute) {
+        return loadString(element, attribute)
                 .map(s -> Splitter.onPattern("[\\s,]+")
                         .omitEmptyStrings()
                         .trimResults()

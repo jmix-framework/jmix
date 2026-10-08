@@ -27,14 +27,18 @@ import test_support.BaseRestDsIntegrationTest;
 import test_support.entity.ContactType;
 import test_support.entity.Customer;
 import test_support.entity.CustomerContact;
+import test_support.entity.Employee;
 import test_support.service.CustomerService;
 import test_support.service.SampleService;
 
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.OffsetDateTime;
+import java.time.OffsetTime;
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -96,6 +100,61 @@ public class RemoteServiceTest extends BaseRestDsIntegrationTest {
     }
 
     @Test
+    void testReplacedEntityResult() {
+        Employee employee = sampleService.replacedEntityMethod();
+
+        assertThat(employee).isNotNull();
+        assertThat(employee.getName()).isEqualTo("John Doe");
+        assertThat(employee.getExtInfo()).isEqualTo("Ext info");
+    }
+
+    @Test
+    void testReplacedEntityListResult() {
+        List<Employee> employees = sampleService.replacedEntityListMethod();
+
+        assertThat(employees).isNotEmpty();
+        assertThat(employees.get(0).getName()).isEqualTo("John Doe");
+    }
+
+    @Test
+    void testReplacedEntityParam() {
+        Employee employee = dataManager.load(Employee.class).all().maxResults(1).one();
+
+        String name = sampleService.replacedEntityParamMethod(employee);
+
+        assertThat(name).isEqualTo(employee.getName());
+    }
+
+    @Test
+    void testReplacedEntityInPojoResult() {
+        SampleService.SamplePojoWithReplacedEntity pojo = sampleService.pojoWithReplacedEntityMethod();
+
+        assertThat(pojo).isNotNull();
+        assertThat(pojo.getName()).isEqualTo("pojo");
+        assertThat(pojo.getEmployee()).isNotNull();
+        assertThat(pojo.getEmployee().getName()).isEqualTo("John Doe");
+        assertThat(pojo.getEmployee().getExtInfo()).isEqualTo("Ext info");
+    }
+
+    @Test
+    void testReplacedEntityInPojoListResult() {
+        List<SampleService.SamplePojoWithReplacedEntity> pojos = sampleService.pojoWithReplacedEntityListMethod();
+
+        assertThat(pojos).hasSize(1);
+        assertThat(pojos.get(0).getEmployee().getName()).isEqualTo("John Doe");
+    }
+
+    @Test
+    void testReplacedEntityInPojoParam() {
+        Employee employee = dataManager.load(Employee.class).all().maxResults(1).one();
+
+        String name = sampleService.pojoWithReplacedEntityParamMethod(
+                new SampleService.SamplePojoWithReplacedEntity("pojo", employee));
+
+        assertThat(name).isEqualTo(employee.getName());
+    }
+
+    @Test
     void testSimpleTypes() throws Exception {
         sampleService.voidMethod();
 
@@ -116,6 +175,22 @@ public class RemoteServiceTest extends BaseRestDsIntegrationTest {
 
         Integer i1 = sampleService.intWrapperMethod(1);
         assertThat(i1).isEqualTo(1);
+    }
+
+    @Test
+    void testStringWithSpecialCharacters() {
+        List<String> values = List.of(
+                "say \"hi\"",
+                "C:\\temp",
+                "C:\\new",
+                "C:\\xyz",
+                "ends with \\",
+                "line1\nline2",
+                "col1\tcol2");
+
+        for (String value : values) {
+            assertThat(sampleService.stringMethod(value)).isEqualTo(value);
+        }
     }
 
     @Test
@@ -154,6 +229,27 @@ public class RemoteServiceTest extends BaseRestDsIntegrationTest {
         assertThat(resultOffsetDateTime).isEqualTo(offsetDateTime);
 
         // ZonedDateTime is not supported by entities and REST
+    }
+
+    @Test
+    void testDatesInPojo() throws Exception {
+        SampleService.SamplePojoWithDates pojo = new SampleService.SamplePojoWithDates();
+        pojo.setDate(new SimpleDateFormat("yyyy-MM-dd HH:mm").parse("2025-04-26 18:44"));
+        pojo.setLocalDate(LocalDate.parse("2025-04-26"));
+        pojo.setLocalDateTime(LocalDateTime.parse("2025-04-26T18:44"));
+        pojo.setLocalTime(LocalTime.parse("18:44"));
+        pojo.setOffsetDateTime(OffsetDateTime.parse("2025-04-26T18:44+04:00"));
+        pojo.setOffsetTime(OffsetTime.parse("18:44+04:00"));
+
+        SampleService.SamplePojoWithDates resultPojo = sampleService.pojoWithDatesMethod(pojo);
+
+        assertThat(resultPojo).isNotNull();
+        assertThat(resultPojo.getDate()).isEqualTo(pojo.getDate());
+        assertThat(resultPojo.getLocalDate()).isEqualTo(pojo.getLocalDate());
+        assertThat(resultPojo.getLocalDateTime()).isEqualTo(pojo.getLocalDateTime());
+        assertThat(resultPojo.getLocalTime()).isEqualTo(pojo.getLocalTime());
+        assertThat(resultPojo.getOffsetDateTime()).isEqualTo(pojo.getOffsetDateTime());
+        assertThat(resultPojo.getOffsetTime()).isEqualTo(pojo.getOffsetTime());
     }
 
     @Test

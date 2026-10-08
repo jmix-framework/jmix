@@ -18,10 +18,6 @@ package io.jmix.reports.yarg.formatters.impl.docx;
 
 import io.jmix.reports.yarg.formatters.impl.AbstractFormatter;
 import io.jmix.reports.yarg.formatters.impl.DocxFormatterDelegate;
-import io.jmix.reports.yarg.formatters.impl.docx.RegexpCollectionFinder;
-import io.jmix.reports.yarg.formatters.impl.docx.RegexpFinder;
-import io.jmix.reports.yarg.formatters.impl.docx.TableManager;
-import io.jmix.reports.yarg.formatters.impl.docx.TextMerger;
 import org.docx4j.TraversalUtil;
 import org.docx4j.XmlUtils;
 import org.docx4j.wml.*;
@@ -35,13 +31,13 @@ import java.util.regex.Matcher;
 
 public class TableCollector extends TraversalUtil.CallbackImpl {
     private DocxFormatterDelegate docxFormatter;
-    protected Stack<io.jmix.reports.yarg.formatters.impl.docx.TableManager> currentTables = new Stack<io.jmix.reports.yarg.formatters.impl.docx.TableManager>();
-    protected Set<io.jmix.reports.yarg.formatters.impl.docx.TableManager> tableManagers = new LinkedHashSet<io.jmix.reports.yarg.formatters.impl.docx.TableManager>();
+    protected Stack<TableManager> currentTables = new Stack<TableManager>();
+    protected Set<TableManager> tableManagers = new LinkedHashSet<TableManager>();
 
     public TableCollector(DocxFormatterDelegate docxFormatter) {this.docxFormatter = docxFormatter;}
 
     public List<Object> apply(Object object) {
-        final io.jmix.reports.yarg.formatters.impl.docx.TableManager currentTable = !currentTables.isEmpty() ? currentTables.peek() : null;
+        final TableManager currentTable = !currentTables.isEmpty() ? currentTables.peek() : null;
         if (currentTable == null || currentTable.isSkipIt()) {
             return null;
         }
@@ -90,7 +86,7 @@ public class TableCollector extends TraversalUtil.CallbackImpl {
         return null;
     }
 
-    protected void findNameForCurrentTable(final io.jmix.reports.yarg.formatters.impl.docx.TableManager currentTable) {
+    protected void findNameForCurrentTable(final TableManager currentTable) {
         new TraversalUtil(currentTable.firstRow,
                 new RegexpFinder<P>(docxFormatter, AbstractFormatter.BAND_NAME_DECLARATION_PATTERN, P.class) {
                     @Override
@@ -121,7 +117,7 @@ public class TableCollector extends TraversalUtil.CallbackImpl {
                 }
 
                 if (o instanceof Tbl) {
-                    currentTables.push(new io.jmix.reports.yarg.formatters.impl.docx.TableManager(docxFormatter, (Tbl) o));
+                    currentTables.push(new TableManager(docxFormatter, (Tbl) o));
                 }
 
                 this.apply(o);

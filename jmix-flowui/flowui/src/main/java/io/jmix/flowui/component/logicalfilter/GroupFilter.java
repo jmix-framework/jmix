@@ -32,6 +32,7 @@ import io.jmix.flowui.UiComponentProperties;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.component.SupportsResponsiveSteps;
 import io.jmix.flowui.component.WrapperUtils;
+import io.jmix.flowui.component.filter.BaseConditionSupport;
 import io.jmix.flowui.component.filter.FilterComponent;
 import io.jmix.flowui.component.filter.SingleFilterComponent;
 import io.jmix.flowui.component.filter.SingleFilterComponentBase;
@@ -71,6 +72,7 @@ public class GroupFilter extends Composite<VerticalLayout>
 
     @Internal
     protected boolean conditionModificationDelegated = false;
+    protected Runnable loaderConditionRecomposeDelegate;
 
     protected List<ResponsiveStep> responsiveSteps;
     protected Div summaryComponent;
@@ -84,6 +86,7 @@ public class GroupFilter extends Composite<VerticalLayout>
 
     protected FormLayout conditionsLayout;
     protected Map<FilterComponent, FormLayout.FormItem> filterComponentFormItemMap;
+    protected Map<FilterComponent, Registration> operationChangeRegistrations = new HashMap<>();
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
@@ -212,29 +215,15 @@ public class GroupFilter extends Composite<VerticalLayout>
             return;
         }
 
-        Condition currentCondition = dataLoader.getCondition();
-        // Re-capture the loader's own condition only when it was replaced externally (a different
-        // object than the filter's last output); the filter never adopts its own output.
-        if (!initialDataLoaderConditionInitialized
-                || (lastConditionSetByFilter != null && currentCondition != lastConditionSetByFilter)) {
-            initialDataLoaderCondition = copy(currentCondition);
-            initialDataLoaderConditionInitialized = true;
-        }
-
-        LogicalCondition resultCondition;
-        if (initialDataLoaderCondition instanceof LogicalCondition initialLogicalCondition) {
-            resultCondition = ((LogicalCondition) copy(initialLogicalCondition));
-            Objects.requireNonNull(resultCondition).add(getQueryCondition());
-        } else if (initialDataLoaderCondition != null) {
-            resultCondition = LogicalCondition.and()
-                    .add(initialDataLoaderCondition)
-                    .add(getQueryCondition());
-        } else {
-            resultCondition = getQueryCondition();
-        }
-
-        dataLoader.setCondition(resultCondition);
-        lastConditionSetByFilter = resultCondition;
+        // The base-condition capture heuristic and the base-AND-output composition are shared with
+        // GenericFilter.updateDataLoaderCondition via BaseConditionSupport; keep the two in sync there.
+        BaseConditionSupport.Result result = BaseConditionSupport.recompose(dataLoader.getCondition(),
+                initialDataLoaderCondition, initialDataLoaderConditionInitialized, lastConditionSetByFilter,
+                getQueryCondition(), this::copy);
+        initialDataLoaderCondition = result.baseCondition();
+        initialDataLoaderConditionInitialized = true;
+        dataLoader.setCondition(result.loaderCondition());
+        lastConditionSetByFilter = result.loaderCondition();
     }
 
     @Override
@@ -254,9 +243,64 @@ public class GroupFilter extends Composite<VerticalLayout>
 
     @Override
     public void apply() {
-        if (dataLoader != null && autoApply) {
-            dataLoader.load();
+        if (dataLoader != null) {
+            // Compose "base AND own conditions" before loading if the application replaced the
+            // loader condition since the last contribution: a standalone group recomposes itself,
+            // a delegated group asks its owner through the delegate the owner has set.
+            recomposeLoaderConditionIfOutdated();
+            if (autoApply) {
+                dataLoader.load();
+            }
         }
+    }
+
+    /**
+     * Recomposes the loader condition if the application has replaced it since the last
+     * contribution; an untouched loader condition is left as is. A group with a recomposition
+     * delegate forwards the request to it instead of composing itself; child components of this
+     * group receive this method as their delegate, so a request from any nesting level reaches
+     * the outermost owner.
+     */
+    protected void recomposeLoaderConditionIfOutdated() {
+        if (loaderConditionRecomposeDelegate != null) {
+            loaderConditionRecomposeDelegate.run();
+        } else if (!isConditionModificationDelegated() && isLoaderConditionOutdated()) {
+            updateDataLoaderCondition();
+        }
+    }
+
+    /**
+     * Sets the recomposition callback this group forwards to instead of composing the loader
+     * condition itself: for a configuration's root group the owning filter sets it at creation,
+     * for a nested group the owning group sets it on add and clears it on removal.
+     *
+     * @param loaderConditionRecomposeDelegate the owner's recomposition callback, or {@code null}
+     */
+    @Internal
+    public void setLoaderConditionRecomposeDelegate(@Nullable Runnable loaderConditionRecomposeDelegate) {
+        this.loaderConditionRecomposeDelegate = loaderConditionRecomposeDelegate;
+    }
+
+    /**
+     * Sets or clears the recomposition delegate on a child component of this group, so the
+     * child's direct load can first let the group's chain recompose an outdated loader condition.
+     */
+    protected void setLoaderConditionRecomposeDelegateOn(FilterComponent filterComponent,
+                                                         @Nullable Runnable delegate) {
+        if (filterComponent instanceof SingleFilterComponentBase<?> singleFilterComponent) {
+            singleFilterComponent.setLoaderConditionRecomposeDelegate(delegate);
+        } else if (filterComponent instanceof GroupFilter groupFilter) {
+            groupFilter.setLoaderConditionRecomposeDelegate(delegate);
+        }
+    }
+
+    /**
+     * Returns whether the loader condition was replaced by the application since this group
+     * composed it last, so the composition no longer contains this group's conditions.
+     */
+    protected boolean isLoaderConditionOutdated() {
+        return dataLoader != null
+                && BaseConditionSupport.isReplacedExternally(dataLoader.getCondition(), lastConditionSetByFilter);
     }
 
     @Override
@@ -282,6 +326,7 @@ public class GroupFilter extends Composite<VerticalLayout>
 
         filterComponent.setConditionModificationDelegated(true);
         filterComponent.setAutoApply(isAutoApply());
+        setLoaderConditionRecomposeDelegateOn(filterComponent, this::recomposeLoaderConditionIfOutdated);
         getQueryCondition().add(filterComponent.getQueryCondition());
 
         if (ownFilterComponentsOrder == null) {
@@ -293,7 +338,18 @@ public class GroupFilter extends Composite<VerticalLayout>
         addFilterComponentToConditionsLayout(conditionsLayout, filterComponent);
 
         if (filterComponent instanceof PropertyFilter) {
-            ((PropertyFilter<?>) filterComponent).addOperationChangeListener(operationChangeEvent -> apply());
+            // Keep the registration so remove() can detach it; otherwise re-adding a component
+            // (e.g. on a filter re-navigation restore) would accumulate stale apply() listeners.
+            // Apply on the user's gesture only: a programmatic operation change (e.g. the URL binder
+            // restoring the filter state) must not fire a load of its own, consistently with the
+            // value path, which is gated by isFromClient in SingleFilterComponentBase.
+            Registration operationChangeRegistration = ((PropertyFilter<?>) filterComponent)
+                    .addOperationChangeListener(operationChangeEvent -> {
+                        if (operationChangeEvent.isFromClient()) {
+                            apply();
+                        }
+                    });
+            operationChangeRegistrations.put(filterComponent, operationChangeRegistration);
         }
 
         if (!isConditionModificationDelegated()) {
@@ -324,6 +380,12 @@ public class GroupFilter extends Composite<VerticalLayout>
                 ownFilterComponentsOrder = null;
             }
 
+            Registration operationChangeRegistration = operationChangeRegistrations.remove(filterComponent);
+            if (operationChangeRegistration != null) {
+                operationChangeRegistration.remove();
+            }
+            setLoaderConditionRecomposeDelegateOn(filterComponent, null);
+
             FormLayout.FormItem formItem = null;
             if (filterComponent instanceof SingleFilterComponent) {
                 getDataLoader().removeParameter(((SingleFilterComponent<?>) filterComponent).getParameterName());
@@ -353,7 +415,16 @@ public class GroupFilter extends Composite<VerticalLayout>
 
     @Override
     public void removeAll() {
+        if (ownFilterComponentsOrder != null) {
+            for (FilterComponent filterComponent : ownFilterComponentsOrder) {
+                setLoaderConditionRecomposeDelegateOn(filterComponent, null);
+            }
+        }
         ownFilterComponentsOrder = null;
+
+        operationChangeRegistrations.values().forEach(Registration::remove);
+        operationChangeRegistrations.clear();
+
         updateConditionsLayout();
 
         if (!isConditionModificationDelegated()) {

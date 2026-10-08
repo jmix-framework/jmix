@@ -21,6 +21,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 import org.jspecify.annotations.Nullable;
 
+import java.time.Duration;
+
 @ConfigurationProperties(prefix = "jmix.datatools")
 public class DatatoolsProperties {
 
@@ -37,6 +39,14 @@ public class DatatoolsProperties {
         protected final String host;
 
         /**
+         * The path under which the diagramming server serves its endpoints, appended to {@link #host}.
+         * Set the property to an empty value when the server is deployed at the root context or when
+         * {@link #host} already contains the path: the path of the host is not replaced but prepended,
+         * so keeping both results in a doubled prefix.
+         */
+        protected final String path;
+
+        /**
          * Engine type. PlantUML by default
          */
         protected final EngineType engineType;
@@ -49,12 +59,22 @@ public class DatatoolsProperties {
          */
         protected final boolean publicServerEnabled;
 
+        /**
+         * The maximum time to wait for a response from the diagramming server. Rendering a large data model may
+         * take the server longer than the default.
+         */
+        protected final Duration readTimeout;
+
         public DataModelDiagram(@Nullable String host,
+                                @DefaultValue("plantuml") String path,
                                 @DefaultValue("PLANTUML") EngineType engineType,
-                                @DefaultValue("true") boolean publicServerEnabled) {
+                                @DefaultValue("true") boolean publicServerEnabled,
+                                @DefaultValue("10s") Duration readTimeout) {
             this.host = host;
+            this.path = path;
             this.engineType = engineType;
             this.publicServerEnabled = publicServerEnabled;
+            this.readTimeout = readTimeout;
         }
 
         public EngineType getEngineType() {
@@ -67,6 +87,20 @@ public class DatatoolsProperties {
         }
 
         /**
+         * @see #path
+         */
+        public String getPath() {
+            return path;
+        }
+
+        /**
+         * @see #readTimeout
+         */
+        public Duration getReadTimeout() {
+            return readTimeout;
+        }
+
+        /**
          * @see #publicServerEnabled
          */
         public boolean isPublicServerEnabled() {
@@ -76,7 +110,7 @@ public class DatatoolsProperties {
 
     public DatatoolsProperties(@Nullable DataModelDiagram dataModelDiagram) {
         this.dataModelDiagram = dataModelDiagram == null
-                ? new DataModelDiagram(null, EngineType.PLANTUML, true)
+                ? new DataModelDiagram(null, "plantuml", EngineType.PLANTUML, true, Duration.ofSeconds(10))
                 : dataModelDiagram;
     }
 

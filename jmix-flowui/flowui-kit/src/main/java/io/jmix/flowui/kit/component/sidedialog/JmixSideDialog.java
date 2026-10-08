@@ -25,7 +25,7 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.*;
 
-public class JmixSideDialog extends Composite<JmixSideDialogOverlay> implements HasComponents {
+public class JmixSideDialog extends Composite<JmixSideDialogOverlay> implements HasComponents, HasAriaRole {
 
     protected DrawerHeader header;
     protected DrawerFooter footer;
@@ -411,7 +411,7 @@ public class JmixSideDialog extends Composite<JmixSideDialogOverlay> implements 
 
     /**
      * @return the ARIA role for the overlay element or {@code null} if not set
-     * @deprecated Use {@link #getRole()} instead
+     * @deprecated Use {@link #getAriaRole()} instead
      */
     @Deprecated(since = "3.0", forRemoval = true)
     @Nullable
@@ -423,7 +423,7 @@ public class JmixSideDialog extends Composite<JmixSideDialogOverlay> implements 
      * Sets the ARIA role for the overlay element, used by screen readers.
      *
      * @param role the ARIA role to set
-     * @deprecated Use {@link #setRole(String)} instead
+     * @deprecated Use {@link #setAriaRole(String)} instead
      */
     @Deprecated(since = "3.0", forRemoval = true)
     public void setOverlayRole(String role) {
@@ -432,18 +432,22 @@ public class JmixSideDialog extends Composite<JmixSideDialogOverlay> implements 
 
     /**
      * @return the ARIA role for the dialog element or {@code null} if not set
+     * @deprecated Use {@link #getAriaRole()} instead
      */
+    @Deprecated(since = "3.1", forRemoval = true)
     public @Nullable String getRole() {
-        return getContent().getRole();
+        return getAriaRole().orElse(null);
     }
 
     /**
      * Sets the ARIA role for the dialog element, used by screen readers.
      *
      * @param role the ARIA role to set
+     * @deprecated Use {@link #setAriaRole(String)} instead
      */
+    @Deprecated(since = "3.1", forRemoval = true)
     public void setRole(String role) {
-        getContent().setRole(role);
+        setAriaRole(role);
     }
 
     @Override

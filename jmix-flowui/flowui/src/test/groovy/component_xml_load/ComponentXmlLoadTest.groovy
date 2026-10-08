@@ -285,6 +285,7 @@ class ComponentXmlLoadTest extends FlowuiTestSpecification {
             (getItem("viewItem") as ViewUserMenuItem).getText() == "viewItemText"
             (getItem("viewItem") as ViewUserMenuItem).getViewClass() == ComponentView
             (getItem("viewItem") as ViewUserMenuItem).getOpenMode() == OpenMode.DIALOG
+            getItem("secondActionItem").item.element.getProperty("tooltip") == "Action Description"
         }
     }
 
@@ -320,6 +321,7 @@ class ComponentXmlLoadTest extends FlowuiTestSpecification {
             (getItem("secondActionItem") as ActionItem).getAction().getText() == "Action Text"
             ((getItem("componentItem") as ComponentItem).getContent() as Span).getText() == "content"
             (getItem("textItem") as TextItem).getText() == "textItemContent"
+            getItem("secondActionItem").item.element.getProperty("tooltip") == "Action Description"
         }
     }
 
@@ -357,6 +359,7 @@ class ComponentXmlLoadTest extends FlowuiTestSpecification {
             (getItem("secondActionItem") as ActionItem).getAction().getText() == "Action Text"
             ((getItem("componentItem") as ComponentItem).getContent() as Span).getText() == "content"
             (getItem("textItem") as TextItem).getText() == "textItemContent"
+            getItem("secondActionItem").item.element.getProperty("tooltip") == "Action Description"
         }
     }
 
@@ -400,6 +403,18 @@ class ComponentXmlLoadTest extends FlowuiTestSpecification {
         verifyAll(componentView.uploadWithReceiverFqn) {
             id.get() == "uploadWithReceiverFqn"
             receiver instanceof FileTemporaryStorageBuffer
+        }
+    }
+
+    def "Load upload component with accepted MIME types and file extensions from XML"() {
+        when: "Open the ComponentView"
+        def componentView = navigateToView(ComponentView.class)
+
+        then: "Accepted MIME types and file extensions will be loaded"
+        verifyAll(componentView.acceptedTypesUpload) {
+            id.get() == "acceptedTypesUpload"
+            acceptedMimeTypes == ["image/png", "image/jpeg"]
+            acceptedFileExtensions == [".pdf", ".doc"]
         }
     }
 

@@ -67,7 +67,10 @@ public class CommonNonJpqlConstructsValidator implements JpqlResultValidator, Or
 
         List<JpqlValidationIssue> issues = new ArrayList<>();
 
-        String normalizedJpql = jpql.trim().toLowerCase(Locale.ROOT);
+        // Empty string literals so SQL keywords inside them (e.g. 'no limit applies') are not
+        // mistaken for SQL pagination, date functions or CURRENT_* calls.
+        String scannableJpql = stripStringLiterals(jpql);
+        String normalizedJpql = scannableJpql.trim().toLowerCase(Locale.ROOT);
 
         if (containsWord(normalizedJpql, "limit") || containsWord(normalizedJpql, "offset")) {
             issues.add(new JpqlValidationIssue(SQL_PAGINATION_CODE,
@@ -85,9 +88,9 @@ public class CommonNonJpqlConstructsValidator implements JpqlResultValidator, Or
                     SQL_DATE_FUNCTION_GUIDANCE));
         }
 
-        if (CURRENT_DATE_WITH_PARENTHESES_PATTERN.matcher(jpql).find()
-                || CURRENT_TIME_WITH_PARENTHESES_PATTERN.matcher(jpql).find()
-                || CURRENT_TIMESTAMP_WITH_PARENTHESES_PATTERN.matcher(jpql).find()) {
+        if (CURRENT_DATE_WITH_PARENTHESES_PATTERN.matcher(scannableJpql).find()
+                || CURRENT_TIME_WITH_PARENTHESES_PATTERN.matcher(scannableJpql).find()
+                || CURRENT_TIMESTAMP_WITH_PARENTHESES_PATTERN.matcher(scannableJpql).find()) {
             issues.add(new JpqlValidationIssue(CURRENT_FUNCTION_PARENTHESES_CODE,
                     "JPQL CURRENT_DATE, CURRENT_TIME, and CURRENT_TIMESTAMP must be used without parentheses",
                     CURRENT_FUNCTION_PARENTHESES_GUIDANCE));

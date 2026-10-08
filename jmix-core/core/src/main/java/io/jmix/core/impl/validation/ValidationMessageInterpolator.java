@@ -19,8 +19,8 @@ package io.jmix.core.impl.validation;
 import io.jmix.core.MessageTools;
 import io.jmix.core.Messages;
 import io.jmix.core.security.CurrentAuthentication;
-import org.hibernate.validator.internal.engine.messageinterpolation.InterpolationTerm;
 import org.hibernate.validator.internal.engine.messageinterpolation.InterpolationTermType;
+import org.hibernate.validator.internal.engine.messageinterpolation.TermInterpolator;
 import org.hibernate.validator.internal.engine.messageinterpolation.parser.Token;
 import org.hibernate.validator.internal.engine.messageinterpolation.parser.TokenCollector;
 import org.hibernate.validator.internal.engine.messageinterpolation.parser.TokenIterator;
@@ -78,12 +78,12 @@ public class ValidationMessageInterpolator implements MessageInterpolator {
         TokenCollector tokenCollector = new TokenCollector(resolvedMessage, InterpolationTermType.PARAMETER);
         List<Token> tokens = tokenCollector.getTokenList();
 
-        resolvedMessage = interpolateExpression(new TokenIterator(tokens), context, locale);
+        resolvedMessage = interpolateExpression(new TokenIterator(resolvedMessage, tokens), context, locale);
 
         tokenCollector = new TokenCollector(resolvedMessage, InterpolationTermType.EL);
         tokens = tokenCollector.getTokenList();
 
-        resolvedMessage = interpolateExpression(new TokenIterator(tokens), context, locale);
+        resolvedMessage = interpolateExpression(new TokenIterator(resolvedMessage, tokens), context, locale);
 
         resolvedMessage = replaceEscapedLiterals(resolvedMessage);
 
@@ -91,11 +91,11 @@ public class ValidationMessageInterpolator implements MessageInterpolator {
     }
 
     protected String interpolateExpression(TokenIterator tokenIterator, Context context, Locale locale) {
+        TermInterpolator termInterpolator = new TermInterpolator(expressionFactory);
         while (tokenIterator.hasMoreInterpolationTerms()) {
             String term = tokenIterator.nextInterpolationTerm();
 
-            InterpolationTerm expression = new InterpolationTerm(term, locale, expressionFactory);
-            String resolvedExpression = expression.interpolate(context);
+            String resolvedExpression = termInterpolator.interpolate(context, term, locale);
             tokenIterator.replaceCurrentInterpolationTerm(resolvedExpression);
         }
         return tokenIterator.getInterpolatedMessage();
@@ -111,7 +111,7 @@ public class ValidationMessageInterpolator implements MessageInterpolator {
 
     protected String interpolateMessage(String message, Locale locale) {
         TokenCollector tokenCollector = new TokenCollector(message, InterpolationTermType.PARAMETER);
-        TokenIterator tokenIterator = new TokenIterator(tokenCollector.getTokenList());
+        TokenIterator tokenIterator = new TokenIterator(message, tokenCollector.getTokenList());
         while (tokenIterator.hasMoreInterpolationTerms()) {
             String term = tokenIterator.nextInterpolationTerm();
             String resolvedParameterValue = resolveParameter(term, locale);

@@ -16,10 +16,13 @@
 
 package io.jmix.email.authentication.impl;
 
-import io.jmix.core.DataManager;
+import io.jmix.core.UnconstrainedDataManager;
 import io.jmix.email.EmailerProperties;
 import io.jmix.email.authentication.EmailRefreshTokenManager;
+import io.jmix.email.authentication.OAuth2ClientType;
 import io.jmix.email.entity.RefreshToken;
+import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NullMarked;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.jspecify.annotations.Nullable;
@@ -27,6 +30,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.UUID;
 
+@NullMarked
 @Component("email_EmailRefreshTokenManager")
 public class EmailRefreshTokenManagerImpl implements EmailRefreshTokenManager {
 
@@ -35,10 +39,10 @@ public class EmailRefreshTokenManagerImpl implements EmailRefreshTokenManager {
     protected static final UUID DEFAULT_REFRESH_TOKEN_ID = UUID.fromString("0198c7b9-4abc-77b6-9088-fb080c13200b");
     protected static final String DEFAULT_REFRESH_TOKEN_REGISTRATION_ID = "email_default";
 
-    protected final DataManager dataManager;
+    protected final UnconstrainedDataManager dataManager;
     protected final EmailerProperties emailerProperties;
 
-    public EmailRefreshTokenManagerImpl(DataManager dataManager,
+    public EmailRefreshTokenManagerImpl(UnconstrainedDataManager dataManager,
                                         EmailerProperties emailerProperties) {
         this.dataManager = dataManager;
         this.emailerProperties = emailerProperties;
@@ -46,6 +50,11 @@ public class EmailRefreshTokenManagerImpl implements EmailRefreshTokenManager {
 
     @Override
     public RefreshToken storeRefreshTokenValue(String refreshTokenValue) {
+        return storeRefreshTokenValue(refreshTokenValue, OAuth2ClientType.CONFIDENTIAL);
+    }
+
+    @Override
+    public RefreshToken storeRefreshTokenValue(String refreshTokenValue, OAuth2ClientType clientType) {
         log.debug("Storing refresh token to database...");
 
         RefreshToken refreshToken = loadRefreshToken();
@@ -56,7 +65,17 @@ public class EmailRefreshTokenManagerImpl implements EmailRefreshTokenManager {
             refreshToken.setRegistrationId(DEFAULT_REFRESH_TOKEN_REGISTRATION_ID);
         }
         refreshToken.setTokenValue(refreshTokenValue);
+        refreshToken.setClientType(clientType);
         return dataManager.save(refreshToken);
+    }
+
+    @Override
+    public OAuth2ClientType getRefreshTokenClientType() {
+        RefreshToken refreshToken = loadRefreshToken();
+        // An absent or unknown stored value (getClientType() returns null for unknown ids) falls
+        // back to the confidential type - the behavior of versions that predate the column
+        OAuth2ClientType clientType = refreshToken == null ? null : refreshToken.getClientType();
+        return clientType != null ? clientType : OAuth2ClientType.CONFIDENTIAL;
     }
 
     @Override
@@ -67,8 +86,14 @@ public class EmailRefreshTokenManagerImpl implements EmailRefreshTokenManager {
             return refreshToken.getTokenValue();
         }
 
-        log.debug("Refresh token was not found in database. Using value from properties");
-        return emailerProperties.getOAuth2().getRefreshToken();
+        String initialValue = emailerProperties.getOAuth2().getRefreshToken();
+        if (StringUtils.isNotBlank(initialValue)) {
+            log.debug("Refresh token was not found in database. Using initial value from application properties");
+            return initialValue;
+        }
+
+        throw new IllegalStateException("No refresh token available. Store it using the email connection view" +
+                " or set the 'jmix.email.oauth2.refresh-token' application property as an initial value");
     }
 
     @Nullable

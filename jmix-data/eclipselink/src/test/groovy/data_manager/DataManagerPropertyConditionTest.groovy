@@ -26,7 +26,9 @@ import org.springframework.beans.factory.annotation.Qualifier
 import test_support.DataSpec
 import test_support.entity.TestAppEntity
 import test_support.entity.TestAppEntityItem
+import test_support.entity.sec.Role
 import test_support.entity.sec.User
+import test_support.entity.sec.UserRole
 
 class DataManagerPropertyConditionTest extends DataSpec {
 
@@ -361,6 +363,282 @@ class DataManagerPropertyConditionTest extends DataSpec {
         list == [testAppEntity2]
     }
 
+    def "load using PropertyCondition 'member of' combined through OR"() {
+
+        TestAppEntity entityWithTwoItems = dataManager.create(TestAppEntity)
+        entityWithTwoItems.name = 'test one'
+        entityWithTwoItems.number = '42'
+
+        TestAppEntity entityWithoutItems = dataManager.create(TestAppEntity)
+        entityWithoutItems.name = 'test two'
+        entityWithoutItems.number = '42'
+
+        TestAppEntity entityWithTargetItem = dataManager.create(TestAppEntity)
+        entityWithTargetItem.name = 'test three'
+
+        TestAppEntity entityNotMatching = dataManager.create(TestAppEntity)
+        entityNotMatching.name = 'test four'
+
+        TestAppEntityItem item1 = dataManager.create(TestAppEntityItem)
+        item1.name = 'one one'
+        item1.appEntity = entityWithTwoItems
+
+        TestAppEntityItem item2 = dataManager.create(TestAppEntityItem)
+        item2.name = 'one two'
+        item2.appEntity = entityWithTwoItems
+
+        TestAppEntityItem targetItem = dataManager.create(TestAppEntityItem)
+        targetItem.name = 'three one'
+        targetItem.appEntity = entityWithTargetItem
+
+        dataManager.save(entityWithTwoItems, entityWithoutItems, entityWithTargetItem, entityNotMatching,
+                item1, item2, targetItem)
+
+        when: "a 'member of' condition is combined with another condition through OR"
+
+        def list = dataManager.load(TestAppEntity)
+                .condition(LogicalCondition.or(
+                        PropertyCondition.memberOfCollection("items", targetItem),
+                        PropertyCondition.equal("number", '42')
+                ))
+                .list()
+
+        then: "entities matching only the other condition are not lost and no entity is duplicated"
+
+        list.size() == 3
+        list.toSet() == [entityWithTwoItems, entityWithoutItems, entityWithTargetItem] as Set
+    }
+
+    def "load using PropertyCondition 'member of' on a nested collection combined through OR"() {
+
+        TestAppEntity appEntity = dataManager.create(TestAppEntity)
+        appEntity.name = 'test one'
+
+        TestAppEntityItem item1 = dataManager.create(TestAppEntityItem)
+        item1.name = 'one one'
+        item1.appEntity = appEntity
+
+        TestAppEntityItem item2 = dataManager.create(TestAppEntityItem)
+        item2.name = 'one two'
+        item2.appEntity = appEntity
+
+        TestAppEntityItem standaloneItem = dataManager.create(TestAppEntityItem)
+        standaloneItem.name = 'standalone'
+
+        dataManager.save(appEntity, item1, item2, standaloneItem)
+
+        when: "a 'member of' condition on a collection behind a nullable to-one reference is combined through OR"
+
+        def list = dataManager.load(TestAppEntityItem)
+                .condition(LogicalCondition.or(
+                        PropertyCondition.memberOfCollection("appEntity.items", item1),
+                        PropertyCondition.equal("name", 'standalone')
+                ))
+                .list()
+
+        then: "the item without the reference matches by name, items whose collection contains the value match once"
+
+        list.size() == 3
+        list.toSet() == [item1, item2, standaloneItem] as Set
+    }
+
+    def "load using PropertyCondition 'not member of' combined through OR"() {
+
+        TestAppEntity entityWithTargetItem = dataManager.create(TestAppEntity)
+        entityWithTargetItem.name = 'test one'
+        entityWithTargetItem.number = '1'
+
+        TestAppEntity entityMatchingNumber = dataManager.create(TestAppEntity)
+        entityMatchingNumber.name = 'test two'
+        entityMatchingNumber.number = '42'
+
+        TestAppEntity entityWithOtherItems = dataManager.create(TestAppEntity)
+        entityWithOtherItems.name = 'test three'
+        entityWithOtherItems.number = '1'
+
+        TestAppEntityItem targetItem = dataManager.create(TestAppEntityItem)
+        targetItem.name = 'one one'
+        targetItem.appEntity = entityWithTargetItem
+
+        TestAppEntityItem item1 = dataManager.create(TestAppEntityItem)
+        item1.name = 'three one'
+        item1.appEntity = entityWithOtherItems
+
+        TestAppEntityItem item2 = dataManager.create(TestAppEntityItem)
+        item2.name = 'three two'
+        item2.appEntity = entityWithOtherItems
+
+        dataManager.save(entityWithTargetItem, entityMatchingNumber, entityWithOtherItems,
+                targetItem, item1, item2)
+
+        when: "a 'not member of' condition is combined with another condition through OR"
+
+        def list = dataManager.load(TestAppEntity)
+                .condition(LogicalCondition.or(
+                        PropertyCondition.notMemberOfCollection("items", targetItem),
+                        PropertyCondition.equal("number", '42')
+                ))
+                .list()
+
+        then: "the entity containing the value is excluded, the rest match exactly once"
+
+        list.size() == 2
+        list.toSet() == [entityMatchingNumber, entityWithOtherItems] as Set
+    }
+
+    def "load using PropertyCondition 'not member of' on a nested collection combined through OR"() {
+
+        TestAppEntity appEntityWithTarget = dataManager.create(TestAppEntity)
+        appEntityWithTarget.name = 'test one'
+
+        TestAppEntity appEntityWithoutTarget = dataManager.create(TestAppEntity)
+        appEntityWithoutTarget.name = 'test two'
+
+        TestAppEntityItem targetItem = dataManager.create(TestAppEntityItem)
+        targetItem.name = 'one one'
+        targetItem.appEntity = appEntityWithTarget
+
+        TestAppEntityItem siblingItem = dataManager.create(TestAppEntityItem)
+        siblingItem.name = 'one two'
+        siblingItem.appEntity = appEntityWithTarget
+
+        TestAppEntityItem otherItem = dataManager.create(TestAppEntityItem)
+        otherItem.name = 'two one'
+        otherItem.appEntity = appEntityWithoutTarget
+
+        TestAppEntityItem standaloneItem = dataManager.create(TestAppEntityItem)
+        standaloneItem.name = 'standalone'
+
+        dataManager.save(appEntityWithTarget, appEntityWithoutTarget,
+                targetItem, siblingItem, otherItem, standaloneItem)
+
+        when: "a 'not member of' condition on a collection behind a nullable to-one reference is combined through OR"
+
+        def list = dataManager.load(TestAppEntityItem)
+                .condition(LogicalCondition.or(
+                        PropertyCondition.notMemberOfCollection("appEntity.items", targetItem),
+                        PropertyCondition.equal("name", 'one one')
+                ))
+                .list()
+
+        then: "items whose collection contains the value match only by name, the rest match exactly once"
+
+        list.size() == 3
+        list.toSet() == [targetItem, otherItem, standaloneItem] as Set
+    }
+
+    def "load using PropertyCondition 'is collection empty' on a nested collection"() {
+
+        User userWithRoles = dataManager.create(User)
+        userWithRoles.login = 'u1'
+        userWithRoles.name = 'user one'
+
+        Role role = dataManager.create(Role)
+        role.name = 'role one'
+
+        UserRole userRole = dataManager.create(UserRole)
+        userRole.user = userWithRoles
+        userRole.role = role
+
+        User userNoRoles = dataManager.create(User)
+        userNoRoles.login = 'u2'
+        userNoRoles.name = 'user two'
+
+        TestAppEntity entityWithRoles = dataManager.create(TestAppEntity)
+        entityWithRoles.name = 'test one'
+        entityWithRoles.author = userWithRoles
+
+        TestAppEntity entityNoRoles = dataManager.create(TestAppEntity)
+        entityNoRoles.name = 'test two'
+        entityNoRoles.author = userNoRoles
+
+        TestAppEntity entityNoAuthor = dataManager.create(TestAppEntity)
+        entityNoAuthor.name = 'test three'
+
+        dataManager.save(userWithRoles, role, userRole, userNoRoles,
+                entityWithRoles, entityNoRoles, entityNoAuthor)
+
+        when: "'is empty' condition on a collection behind a to-one reference"
+
+        def list = dataManager.load(TestAppEntity)
+                .condition(PropertyCondition.isCollectionEmpty("author.userRoles", true))
+                .list()
+
+        then: "only entities with an empty collection or without the reference match"
+
+        list.size() == 2
+        list.toSet() == [entityNoRoles, entityNoAuthor] as Set
+
+        when: "'is not empty' condition on a collection behind a to-one reference"
+
+        list = dataManager.load(TestAppEntity)
+                .condition(PropertyCondition.isCollectionEmpty("author.userRoles", false))
+                .list()
+
+        then: "only entities with a non-empty collection match"
+
+        list == [entityWithRoles]
+
+        cleanup:
+        jdbc.update("DELETE FROM TEST_APP_ENTITY")
+        jdbc.update("DELETE FROM SEC_USER_ROLE")
+        jdbc.update("DELETE FROM SEC_ROLE")
+        jdbc.update("DELETE FROM SEC_USER")
+    }
+
+    def "load using PropertyCondition 'is collection empty' on a nested collection combined through OR"() {
+
+        User userWithRoles = dataManager.create(User)
+        userWithRoles.login = 'u1'
+        userWithRoles.name = 'user one'
+
+        Role role = dataManager.create(Role)
+        role.name = 'role one'
+
+        UserRole userRole = dataManager.create(UserRole)
+        userRole.user = userWithRoles
+        userRole.role = role
+
+        User userNoRoles = dataManager.create(User)
+        userNoRoles.login = 'u2'
+        userNoRoles.name = 'user two'
+
+        TestAppEntity entityWithRoles = dataManager.create(TestAppEntity)
+        entityWithRoles.name = 'test one'
+        entityWithRoles.author = userWithRoles
+
+        TestAppEntity entityNoRoles = dataManager.create(TestAppEntity)
+        entityNoRoles.name = 'test two'
+        entityNoRoles.author = userNoRoles
+
+        TestAppEntity entityNotMatching = dataManager.create(TestAppEntity)
+        entityNotMatching.name = 'test three'
+        entityNotMatching.author = userWithRoles
+
+        dataManager.save(userWithRoles, role, userRole, userNoRoles,
+                entityWithRoles, entityNoRoles, entityNotMatching)
+
+        when: "an 'is empty' condition is combined with another condition through OR"
+
+        def list = dataManager.load(TestAppEntity)
+                .condition(LogicalCondition.or(
+                        PropertyCondition.isCollectionEmpty("author.userRoles", true),
+                        PropertyCondition.equal("name", 'test one')
+                ))
+                .list()
+
+        then: "both branches of the OR contribute to the result"
+
+        list.size() == 2
+        list.toSet() == [entityWithRoles, entityNoRoles] as Set
+
+        cleanup:
+        jdbc.update("DELETE FROM TEST_APP_ENTITY")
+        jdbc.update("DELETE FROM SEC_USER_ROLE")
+        jdbc.update("DELETE FROM SEC_ROLE")
+        jdbc.update("DELETE FROM SEC_USER")
+    }
+
     def "load using PropertyCondition for collection properties"() {
 
         TestAppEntity testAppEntity1 = dataManager.create(TestAppEntity)
@@ -432,6 +710,10 @@ class DataManagerPropertyConditionTest extends DataSpec {
         propertyConditionGenerator.generateWhere(context).contains("cje_0.name =")
     }
 
+    // A condition on a path crossing a to-many association is generated as a self-contained 'exists'
+    // subquery instead of a top-level join, so the main query does not require 'select distinct'
+    // which fails on Oracle if the entity contains a LOB attribute (ORA-00932).
+
     def "PropertyCondition generator join to many test"() {
         when:
 
@@ -439,11 +721,14 @@ class DataManagerPropertyConditionTest extends DataSpec {
         def context = new ConditionGenerationContext(property)
         context.entityName = "test_TestAppEntity"
         context.entityAlias = "e"
+        def joinClause = propertyConditionGenerator.generateJoin(context)
+        def whereClause = propertyConditionGenerator.generateWhere(context)
 
         then:
 
-        propertyConditionGenerator.generateJoin(context).contains("join e.items ")
-        propertyConditionGenerator.generateWhere(context).contains(context.joinAlias + ".name =")
+        joinClause == ""
+        whereClause.startsWith("exists (select 1 from test_TestAppEntityItem cje_0 where cje_0 member of e.items and ")
+        whereClause.contains("cje_0.name =")
     }
 
     def "PropertyCondition generator join to one and many test"() {
@@ -453,11 +738,14 @@ class DataManagerPropertyConditionTest extends DataSpec {
         def context = new ConditionGenerationContext(property)
         context.entityName = "test_TestAppEntityItem"
         context.entityAlias = "e"
+        def joinClause = propertyConditionGenerator.generateJoin(context)
+        def whereClause = propertyConditionGenerator.generateWhere(context)
 
-        then:
+        then: "the to-one prefix is joined at the top level, the collection goes into the subquery"
 
-        propertyConditionGenerator.generateJoin(context).contains(" left join e.appEntity cje_0 left join cje_0.items cje_1")
-        propertyConditionGenerator.generateWhere(context).contains(context.joinAlias + ".name =")
+        joinClause == " left join e.appEntity cje_0"
+        whereClause.startsWith("exists (select 1 from test_TestAppEntityItem cje_1 where cje_1 member of cje_0.items and ")
+        whereClause.contains("cje_1.name =")
     }
 
 
@@ -468,11 +756,16 @@ class DataManagerPropertyConditionTest extends DataSpec {
         def context = new ConditionGenerationContext(property)
         context.entityName = "test_TestAppEntity"
         context.entityAlias = "e"
+        def joinClause = propertyConditionGenerator.generateJoin(context)
+        def whereClause = propertyConditionGenerator.generateWhere(context)
 
-        then:
+        then: "all joins following the first to-many property are inside the subquery"
 
-        propertyConditionGenerator.generateJoin(context).count("join ") == 3
-        propertyConditionGenerator.generateWhere(context).contains(context.joinAlias + ".name =")
+        joinClause == ""
+        whereClause.startsWith("exists (select 1 from test_TestAppEntityItem cje_0" +
+                " left join cje_0.appEntity cje_1 left join cje_1.items cje_2" +
+                " where cje_0 member of e.items and ")
+        whereClause.contains("cje_2.name =")
     }
 
     def "PropertyCondition generator multiple join to one and many test"() {
@@ -487,9 +780,11 @@ class DataManagerPropertyConditionTest extends DataSpec {
 
         then:
 
-        joinClause.count("join ") == 4
-        joinClause.count("left join cje_") == 3
-        whereClause.contains(context.joinAlias + ".name =")
+        joinClause == " left join e.appEntity cje_0"
+        whereClause.startsWith("exists (select 1 from test_TestAppEntityItem cje_1" +
+                " left join cje_1.appEntity cje_2 left join cje_2.items cje_3" +
+                " where cje_1 member of cje_0.items and ")
+        whereClause.contains("cje_3.name =")
     }
 
     def "basic outer join generation test"() {

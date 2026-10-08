@@ -34,6 +34,11 @@ import test_support.entity.TestOrder
 
 class DatabaseRoleProviderTest extends SecurityDataSpecification {
 
+    static final String ROLE1_LOCALIZED_NAMES = 'de=Rolle eins\nen=Role one'
+    static final String ROLE1_LOCALIZED_DESCRIPTIONS = 'en=The first role'
+    static final String ROLE3_LOCALIZED_NAMES = 'de=Rolle drei\nen=Role three'
+    static final String ROLE3_LOCALIZED_DESCRIPTIONS = 'en=The third role'
+
     @Autowired
     DatabaseResourceRoleProvider databaseResourceRoleProvider
 
@@ -153,11 +158,139 @@ class DatabaseRoleProviderTest extends SecurityDataSpecification {
 
     }
 
+    def "get all resource roles without policies"() {
+        when:
+        def roles = databaseResourceRoleProvider.getAllRoles(false)
+
+        then:
+        roles.size() == 1
+        def role1 = roles.find { it.code == 'role1' }
+        role1 != null
+        role1.resourcePolicies.isEmpty()
+    }
+
+    def "get all resource roles with policies via flag"() {
+        when:
+        def roles = databaseResourceRoleProvider.getAllRoles(true)
+
+        then:
+        def role1 = roles.find { it.code == 'role1' }
+        role1.resourcePolicies.size() == 2
+    }
+
+    def "get all row level roles without policies"() {
+        when:
+        def roles = databaseRowLevelRoleProvider.getAllRoles(false)
+
+        then:
+        roles.size() == 2
+        roles.every { it.rowLevelPolicies.isEmpty() }
+    }
+
+    def "find resource role by code still loads policies"() {
+        when:
+        def role = databaseResourceRoleProvider.getRoleByCode('role1')
+
+        then:
+        role.resourcePolicies.size() == 2
+    }
+
+    def "a #kind role carries the localized values of its entity, whichever way its provider builds it"() {
+        given:
+        def provider = kind == 'resource' ? databaseResourceRoleProvider : databaseRowLevelRoleProvider
+
+        when: "the role is built with its policies, without them and by its code"
+        def roles = [provider.getAllRoles(true).find { it.code == code },
+                     provider.getAllRoles(false).find { it.code == code },
+                     provider.findRoleByCode(code)]
+
+        then:
+        roles*.localizedNames == [localizedNames] * 3
+        roles*.localizedDescriptions == [localizedDescriptions] * 3
+
+        where:
+        kind        | code    || localizedNames        | localizedDescriptions
+        'resource'  | 'role1' || ROLE1_LOCALIZED_NAMES | ROLE1_LOCALIZED_DESCRIPTIONS
+        'row-level' | 'role3' || ROLE3_LOCALIZED_NAMES | ROLE3_LOCALIZED_DESCRIPTIONS
+    }
+
+    def "values that cannot be read are kept as stored and reported at warn with the code, once for the same values"() {
+        given: "the lists build their roles on every load"
+        def brokenValues = brokenLocalizedValues('reported once')
+        saveRoleWithLocalizedValues(brokenValues)
+
+        expect: "the first build reports them and the next ones do not; the role carries them as they are stored"
+        reportsBothBundles(brokenValueWarnings { databaseResourceRoleProvider.getAllRoles(false) })
+        brokenValueWarnings { databaseResourceRoleProvider.getAllRoles(false) }.isEmpty()
+        brokenValueWarnings { databaseResourceRoleProvider.findRoleByCode('broken') }.isEmpty()
+        databaseResourceRoleProvider.findRoleByCode('broken').localizedNames == brokenValues
+
+        when: "the values change and still cannot be read"
+        saveRoleWithLocalizedValues(brokenLocalizedValues('changed'))
+
+        then:
+        reportsBothBundles(brokenValueWarnings { databaseResourceRoleProvider.findRoleByCode('broken') })
+
+        when: "the values are repaired and later broken the same way again"
+        saveRoleWithLocalizedValues('de=Repariert')
+        databaseResourceRoleProvider.getAllRoles(false)
+        saveRoleWithLocalizedValues(brokenLocalizedValues('changed'))
+
+        then:
+        reportsBothBundles(brokenValueWarnings { databaseResourceRoleProvider.getAllRoles(false) })
+    }
+
+    /**
+     * Localized values with a malformed escape.
+     */
+    private static String brokenLocalizedValues(String text) {
+        "de=${text}\nru=\\u00"
+    }
+
+    /**
+     * Saves a resource role with the code 'broken' and the localized values, or gives the role saved before these
+     * values.
+     */
+    private void saveRoleWithLocalizedValues(String localizedValues) {
+        ResourceRoleEntity role = dataManager.load(ResourceRoleEntity)
+                .query('e.code = :code')
+                .parameter('code', 'broken')
+                .optional()
+                .orElseGet { metadata.create(ResourceRoleEntity).tap { code = 'broken'; name = 'Broken' } }
+        role.localizedNames = localizedValues
+        role.localizedDescriptions = localizedValues
+        dataManager.save(role)
+    }
+
+    private static boolean reportsBothBundles(List<String> warnings) {
+        ['localizedNames', 'localizedDescriptions'].every { property ->
+            warnings.any { it.contains("Cannot read the ${property} of role 'broken'") }
+        }
+    }
+
+    /**
+     * The warnings about the localized values of the role 'broken' that building roles logs. The simple SLF4J logger of
+     * the tests prints to the standard error as it is when a record is logged.
+     */
+    private static List<String> brokenValueWarnings(Closure buildRoles) {
+        def standardError = System.err
+        def captured = new ByteArrayOutputStream()
+        System.setErr(new PrintStream(captured, true, 'UTF-8'))
+        try {
+            buildRoles()
+        } finally {
+            System.setErr(standardError)
+        }
+        captured.toString('UTF-8').readLines().findAll { it.contains(' WARN ') && it.contains("of role 'broken'") }
+    }
+
     private void prepareTestData() {
         ResourceRoleEntity role1 = metadata.create(ResourceRoleEntity)
         role1.code = 'role1'
         role1.name = 'Role1'
         role1.description = 'Role1\nrole1'
+        role1.localizedNames = ROLE1_LOCALIZED_NAMES
+        role1.localizedDescriptions = ROLE1_LOCALIZED_DESCRIPTIONS
 
         def entitiesToSave = []
 
@@ -176,6 +309,8 @@ class DatabaseRoleProviderTest extends SecurityDataSpecification {
         RowLevelRoleEntity role3 = metadata.create(RowLevelRoleEntity)
         role3.code = 'role3'
         role3.name = 'Role3'
+        role3.localizedNames = ROLE3_LOCALIZED_NAMES
+        role3.localizedDescriptions = ROLE3_LOCALIZED_DESCRIPTIONS
 
         entitiesToSave << createJpqlRowLevelPolicyEntity('test_Order', 'where1', 'join1', role3)
         entitiesToSave << createJpqlRowLevelPolicyEntity('test_Customer', 'where2', 'join2', role3)

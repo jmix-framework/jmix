@@ -16,8 +16,6 @@
 
 package io.jmix.aitools.dataload.repair.impl;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jmix.aitools.ChatClientFactory;
 import io.jmix.aitools.dataload.execution.GeneratedJpqlParameter;
 import io.jmix.aitools.dataload.execution.GeneratedJpqlResult;
@@ -27,9 +25,15 @@ import io.jmix.aitools.dataload.repair.JpqlRepairer;
 import io.jmix.aitools.dataload.validation.JpqlValidationIssue;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -40,6 +44,8 @@ import java.util.*;
  * issues, then parses the corrected JPQL from the model's JSON reply.
  */
 public class DefaultJpqlRepairer implements JpqlRepairer, InitializingBean {
+
+    private static final Logger log = LoggerFactory.getLogger(DefaultJpqlRepairer.class);
 
     @Autowired
     protected JpqlRepairerPromptProvider jpqlRepairerPromptProvider;
@@ -58,6 +64,7 @@ public class DefaultJpqlRepairer implements JpqlRepairer, InitializingBean {
 
     @NullMarked
     @Override
+    @Nullable
     public GeneratedJpqlResult repair(JpqlRepairRequest request) {
         return executePrompt(request);
     }
@@ -97,6 +104,18 @@ public class DefaultJpqlRepairer implements JpqlRepairer, InitializingBean {
         return builder.toString();
     }
 
+    /**
+     * Re-prompts the model with the previous query and its validation issues and parses the corrected
+     * query from the reply.
+     * <p>
+     * Returns {@code null} when the reply yields no query draft (empty, or no parseable JSON object). The
+     * caller then keeps the original validation issues instead of failing with a technical error, and the
+     * raw reply is logged.
+     *
+     * @param request repair request with the previous query and its validation issues
+     * @return repaired query draft, or {@code null} if the reply could not be parsed
+     */
+    @Nullable
     protected GeneratedJpqlResult executePrompt(JpqlRepairRequest request) {
         String repairPrompt = readPromptTemplate();
         String userPrompt = repairPrompt.formatted(
@@ -113,14 +132,22 @@ public class DefaultJpqlRepairer implements JpqlRepairer, InitializingBean {
                 .content();
 
         if (content == null || content.isBlank()) {
-            throw new IllegalStateException("LLM returned an empty response");
+            log.warn("JPQL repair failed: the model returned an empty response");
+            return null;
+        }
+
+        int jsonStart = content.indexOf('{');
+        if (jsonStart < 0) {
+            log.warn("JPQL repair failed: the model response contains no JSON object. Response: {}", content);
+            return null;
         }
 
         GeneratedJpqlPayload payload;
         try {
-            payload = objectMapper.readValue(content, GeneratedJpqlPayload.class);
-        } catch (JsonProcessingException e) {
-            throw new IllegalStateException("Cannot parse LLM response as JSON: " + content, e);
+            payload = objectMapper.readValue(content.substring(jsonStart), GeneratedJpqlPayload.class);
+        } catch (JacksonException e) {
+            log.warn("JPQL repair failed: cannot parse the model response as JSON. Response: {}", content, e);
+            return null;
         }
 
         return mapToGeneratedJpqlResult(payload);
@@ -169,13 +196,15 @@ public class DefaultJpqlRepairer implements JpqlRepairer, InitializingBean {
     }
 
     protected ObjectMapper createObjectMapper() {
-        return new ObjectMapper();
+        return JsonMapper.builder()
+                .disable(DeserializationFeature.FAIL_ON_TRAILING_TOKENS)
+                .build();
     }
 
     protected String toJson(Object object) {
         try {
             return objectMapper.writeValueAsString(object);
-        } catch (JsonProcessingException e) {
+        } catch (JacksonException e) {
             throw new IllegalStateException("Cannot serialize object to JSON", e);
         }
     }

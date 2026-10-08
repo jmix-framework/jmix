@@ -37,10 +37,33 @@ public interface EmailRefreshTokenManager {
     RefreshToken storeRefreshTokenValue(String refreshTokenValue);
 
     /**
+     * Stores provided token value and the OAuth2 client type the token was issued to.
+     * It will override previous value of refresh token.
+     *
+     * @param refreshTokenValue token value
+     * @param clientType        client type the token was issued to
+     * @return stored {@link RefreshToken} instance
+     */
+    default RefreshToken storeRefreshTokenValue(String refreshTokenValue, OAuth2ClientType clientType) {
+        return storeRefreshTokenValue(refreshTokenValue);
+    }
+
+    /**
+     * Gets the OAuth2 client type the stored refresh token was issued to.
+     *
+     * @return stored client type, or {@link OAuth2ClientType#CONFIDENTIAL} when unknown
+     */
+    default OAuth2ClientType getRefreshTokenClientType() {
+        return OAuth2ClientType.CONFIDENTIAL;
+    }
+
+    /**
      * Gets current value of refresh token.
      *
-     * @return token value stored in database.
-     * If no token value is stored - return token value from application property 'jmix.email.oauth2.refreshToken'
+     * @return token value stored in database. If no token value is stored, the initial value from
+     * the 'jmix.email.oauth2.refresh-token' application property is returned. Once a token is stored
+     * in the database, the stored value always takes precedence over the property.
+     * @throws IllegalStateException if no token is stored and the application property is not set
      */
     String getRefreshTokenValue();
 

@@ -16,6 +16,7 @@
 
 package io.jmix.autoconfigure.aitools;
 
+import io.jmix.aitools.AiToolsDataLoadConfiguration;
 import io.jmix.aitools.dataload.introspection.AvailableEntityFilter;
 import io.jmix.aitools.dataload.introspection.impl.DefaultAvailableEntityFilter;
 import io.jmix.aitools.dataload.prompt.DataLoadChatSystemPromptProvider;
@@ -31,9 +32,12 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnBooleanProp
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
 
 @AutoConfiguration
+@ConditionalOnBooleanProperty(value = "jmix.aitools.enabled", matchIfMissing = true)
 @ConditionalOnBooleanProperty(value = "jmix.aitools.dataload.enabled", matchIfMissing = true)
+@Import(AiToolsDataLoadConfiguration.class)
 public class AiToolsDataLoadAutoConfiguration {
 
     @Bean("aitls_JpaDomainModelIntrospector")

@@ -57,6 +57,8 @@ public class BandDefinition implements ReportBand {
 
     protected Boolean multiDataSet = false;
 
+    protected Boolean streaming = false;
+
     public UUID getId() {
         return id;
     }
@@ -148,5 +150,14 @@ public class BandDefinition implements ReportBand {
 
     public void setMultiDataSet(Boolean multiDataSet) {
         this.multiDataSet = multiDataSet;
+    }
+
+    @Override
+    public Boolean getStreaming() {
+        return streaming;
+    }
+
+    public void setStreaming(Boolean streaming) {
+        this.streaming = streaming;
     }
 }

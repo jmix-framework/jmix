@@ -160,7 +160,10 @@ interface StudioLayouts {
             xmlElement = StudioXmlElements.ACCORDION,
             icon = "io/jmix/flowui/kit/meta/icon/layout/accordion.svg",
             documentationLink = "%VERSION%/flow-ui/vc/layouts/accordion.html",
-            propertyGroups = StudioPropertyGroups.AutoWidthLayoutDefaultProperties.class)
+            propertyGroups = StudioPropertyGroups.AutoWidthLayoutDefaultProperties.class,
+            properties = @StudioProperty(
+                    xmlAttribute = StudioXmlAttributes.HEADING_LEVEL,
+                    type = StudioPropertyType.INTEGER))
     Accordion accordion();
 
     @StudioComponent(

@@ -202,6 +202,9 @@ public class ComponentView extends StandardView {
     public JmixUpload uploadWithReceiverFqn;
 
     @ViewComponent
+    public JmixUpload acceptedTypesUpload;
+
+    @ViewComponent
     public CodeEditor codeEditorId;
 
     @ViewComponent

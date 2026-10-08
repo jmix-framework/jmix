@@ -17,17 +17,23 @@
 package io.jmix.aitools.dataload.execution;
 
 import io.jmix.aitools.AiToolsDataLoadProperties;
+import io.jmix.aitools.ExcludeFromAi;
 import io.jmix.aitools.dataload.execution.JpqlValidationAndRepairService.OperationResult;
 import io.jmix.aitools.dataload.validation.JpqlValidationResult;
 import io.jmix.core.AccessManager;
 import io.jmix.core.DataManager;
 import io.jmix.core.FluentValuesLoader;
 import io.jmix.core.Metadata;
+import io.jmix.core.MetadataTools;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.entity.KeyValueEntity;
+import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.core.metamodel.model.MetaProperty;
+import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.metamodel.model.MetadataObject;
 import io.jmix.core.security.AccessDeniedException;
 import io.jmix.core.security.EntityOp;
+import io.jmix.data.QueryParser;
 import io.jmix.data.QueryTransformerFactory;
 import io.jmix.data.accesscontext.LoadValuesAccessContext;
 import org.jspecify.annotations.Nullable;
@@ -37,6 +43,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -53,28 +60,34 @@ public class JpqlExecutionService {
     @Autowired
     protected JpqlValidationAndRepairService validateAndRepair;
     @Autowired
+    protected JpqlAccessSupport accessSupport;
+    @Autowired
     protected JpqlParameterConversionService jpqlParameterConversionService;
     @Autowired
     protected AiToolsDataLoadProperties dataLoadProperties;
     @Autowired
     protected DataManager dataManager;
-    @Autowired(required = false)
+    @Autowired
     protected AccessManager accessManager;
-    @Autowired(required = false)
+    @Autowired
     protected QueryTransformerFactory queryTransformerFactory;
-    @Autowired(required = false)
+    @Autowired
     protected Metadata metadata;
+    @Autowired
+    protected MetadataTools metadataTools;
 
     /**
      * Validates, repairs if needed and executes the query described by the request.
      * <p>
      * This method runs the full pipeline: it validates and (if needed) repairs the
-     * query, enforces data-access constraints, converts the parameters to their Java types and runs
-     * the query through {@link DataManager#loadValues}. One extra row is fetched to detect whether
-     * more results are available.
+     * query, enforces data-access constraints for every entity the query reads (see {@link JpqlAccessSupport}),
+     * converts the parameters to their Java types and runs the query through {@link DataManager#loadValues}. One
+     * extra row is fetched to detect whether more results are available. A query that cannot be narrowed as the
+     * current user's permissions require is not executed; the result carries the reason as its execution error.
      *
      * @param request query to execute together with its parameters and paging hints
      * @return result with the fetched rows on success, or with validation/execution failure details
+     * @throws AccessDeniedException if the current user may not read an entity the query reads
      */
     public JpqlExecutionResult execute(JpqlExecutionRequest request) {
         Preconditions.checkNotNullArgument(request, "request is null");
@@ -83,12 +96,23 @@ public class JpqlExecutionService {
         GeneratedJpqlResult generatedResult = vrResult.getGeneratedResult();
         JpqlValidationResult validationResult = vrResult.getValidationResult();
         if (vrResult.isFailed()) {
-            return JpqlExecutionResult.failed(generatedResult, validationResult, false);
+            return JpqlExecutionResult.failed(generatedResult, validationResult, vrResult.isRepaired());
         }
 
-        List<Integer> deniedSelectedIndexes = resolveDeniedSelectedIndexes(generatedResult.getJpql());
-        List<String> retainedProperties = retainPermittedProperties(request.getResultProperties(), deniedSelectedIndexes);
         Integer effectiveMaxResults = getEffectiveMaxResult(generatedResult.getMaxResults());
+
+        String executableJpql;
+        try {
+            executableJpql = applyAccessConstraints(generatedResult);
+        } catch (JpqlAccessConstraintException e) {
+            // Not a denial: the user may read the data, but the query has to be written differently. The model
+            // reads the message as the execution error and can rewrite the query.
+            return JpqlExecutionResult.failed(generatedResult, validationResult, effectiveMaxResults,
+                    vrResult.isRepaired(), e.getMessage());
+        }
+
+        List<Integer> excludedSelectedIndexes = resolveExcludedSelectedIndexes(generatedResult.getJpql());
+        List<String> retainedProperties = retainPermittedProperties(request.getResultProperties(), excludedSelectedIndexes);
 
         if (!request.getResultProperties().isEmpty() && retainedProperties.isEmpty()) {
             // Every selected column is inaccessible to the current user: there is nothing to return,
@@ -102,10 +126,11 @@ public class JpqlExecutionService {
                 jpqlParameterConversionService.convert(toExecutionParameters(generatedResult));
 
         try {
-            ExecutionRows executionRows = executeQuery(request, generatedResult, executionParameters,
-                    effectiveMaxResults, generatedResult.getFirstResult());
+            log.debug("Executing JPQL with columns {}: {}", request.getResultProperties(), executableJpql);
+            ExecutionRows executionRows = executeQuery(request, withJpql(generatedResult, executableJpql),
+                    executionParameters, effectiveMaxResults, generatedResult.getFirstResult());
 
-            List<Map<String, Object>> rows = retainProperties(executionRows.rows(),
+            List<Map<String, @Nullable Object>> rows = retainProperties(executionRows.rows(),
                     request.getResultProperties(), retainedProperties);
 
             return new JpqlExecutionResult(generatedResult, validationResult, rows,
@@ -119,6 +144,51 @@ public class JpqlExecutionService {
             return JpqlExecutionResult.failed(generatedResult, validationResult, effectiveMaxResults,
                     vrResult.isRepaired(), e.getMessage());
         }
+    }
+
+    /**
+     * Applies the current user's access constraints to the generated query, returning the text to execute: the
+     * query itself, or the query with the row-level conditions of the entities it reads woven in.
+     *
+     * @param generatedResult validated generated query with its parameters
+     * @return the text to execute
+     * @throws AccessDeniedException         if the current user may not read an entity the query reads
+     * @throws JpqlAccessConstraintException if the query cannot be narrowed as the user's permissions require, or the
+     *                                       constraints cannot be applied to it
+     */
+    protected String applyAccessConstraints(GeneratedJpqlResult generatedResult) {
+        List<String> parameterNames = generatedResult.getParameters().stream()
+                .map(GeneratedJpqlParameter::getName)
+                .toList();
+        try {
+            return accessSupport.applyAccessConstraints(generatedResult.getJpql(), parameterNames);
+        } catch (JpqlAccessConstraintException e) {
+            log.debug("Query refused by access checks: {}", e.getMessage());
+            throw e;
+        } catch (AccessDeniedException e) {
+            throw e;
+        } catch (RuntimeException e) {
+            // E.g. a row-level condition that is not valid JPQL once re-based onto a path: a query the constraints
+            // cannot be applied to is not executed.
+            log.error("Cannot apply access constraints to query", e);
+            throw new JpqlAccessConstraintException("Access constraints cannot be applied to the query: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Returns the generated result with the given text to execute. The result returned to the caller keeps the
+     * validated text, so the model never sees the row-level conditions applied for execution.
+     *
+     * @param generatedResult validated generated result
+     * @param jpql            text to execute
+     * @return the generated result itself when the text is unchanged, otherwise a copy carrying the text
+     */
+    protected GeneratedJpqlResult withJpql(GeneratedJpqlResult generatedResult, String jpql) {
+        if (jpql.equals(generatedResult.getJpql())) {
+            return generatedResult;
+        }
+        return new GeneratedJpqlResult(jpql, generatedResult.getParameters(), generatedResult.getExplanation(),
+                generatedResult.getWarnings(), generatedResult.getMaxResults(), generatedResult.getFirstResult());
     }
 
     protected List<JpqlExecutionParameter> toExecutionParameters(GeneratedJpqlResult generatedJpqlResult) {
@@ -138,15 +208,11 @@ public class JpqlExecutionService {
      * Resolves the positions of the selected columns the current user is not allowed to read.
      *
      * @param jpqlQuery query whose data access is being checked
-     * @return positions (in select-clause order) of the denied columns, or an empty list if access
-     * checking is unavailable or all selected columns are readable
+     * @return positions (in select-clause order) of the denied columns, or an empty list if all selected
+     * columns are readable
      * @throws AccessDeniedException if the current user cannot read the queried entity
      */
     protected List<Integer> resolveDeniedSelectedIndexes(String jpqlQuery) {
-        if (accessManager == null || queryTransformerFactory == null || metadata == null) {
-            return List.of();
-        }
-
         LoadValuesAccessContext queryContext = new LoadValuesAccessContext(jpqlQuery, queryTransformerFactory, metadata);
         accessManager.applyRegisteredConstraints(queryContext);
 
@@ -165,22 +231,82 @@ public class JpqlExecutionService {
     }
 
     /**
-     * Returns the result properties that stay readable, dropping the ones at the denied select
-     * positions so the inaccessible columns are omitted from the result.
+     * Resolves the positions of the selected columns that must be dropped from the result: those the
+     * current user is not allowed to read, plus those mapping to an attribute hidden from the AI
+     * (annotated {@link io.jmix.core.annotation.Secret} or {@link ExcludeFromAi}). The hidden-attribute
+     * guard is defense in depth — such an attribute is already unknown to introspection and rejected by
+     * JPQL validation — so its value is never returned even if a query reaches execution through another
+     * path.
      *
-     * @param resultProperties      result property names in select-clause order
-     * @param deniedSelectedIndexes positions of the denied columns
+     * @param jpqlQuery query whose selected columns are being resolved
+     * @return positions (in select-clause order) of the columns to drop, without duplicates
+     * @throws AccessDeniedException if the current user cannot read the queried entity
+     */
+    protected List<Integer> resolveExcludedSelectedIndexes(String jpqlQuery) {
+        List<Integer> excluded = new ArrayList<>(resolveDeniedSelectedIndexes(jpqlQuery));
+        for (Integer hiddenIndex : resolveHiddenSelectedIndexes(jpqlQuery)) {
+            if (!excluded.contains(hiddenIndex)) {
+                excluded.add(hiddenIndex);
+            }
+        }
+        return excluded;
+    }
+
+    /**
+     * Resolves the positions of the selected columns that map to an attribute hidden from the AI
+     * (annotated {@link io.jmix.core.annotation.Secret} or {@link ExcludeFromAi}).
+     *
+     * @param jpqlQuery query whose selected columns are being inspected
+     * @return positions (in select-clause order) of the hidden columns, or an empty list when the
+     * query cannot be parsed
+     */
+    protected List<Integer> resolveHiddenSelectedIndexes(String jpqlQuery) {
+        try {
+            QueryParser queryParser = queryTransformerFactory.parser(jpqlQuery);
+            List<Integer> hiddenIndexes = new ArrayList<>();
+            int selectedIndex = 0;
+            for (QueryParser.QueryPath queryPath : queryParser.getQueryPaths()) {
+                if (queryPath.isSelectedPath()) {
+                    if (isHiddenSelectedPath(queryPath)) {
+                        hiddenIndexes.add(selectedIndex);
+                    }
+                    selectedIndex++;
+                }
+            }
+            return hiddenIndexes;
+        } catch (RuntimeException e) {
+            return List.of();
+        }
+    }
+
+    protected boolean isHiddenSelectedPath(QueryParser.QueryPath queryPath) {
+        MetaClass metaClass = metadata.getClass(queryPath.getEntityName());
+        MetaPropertyPath propertyPath = metaClass.getPropertyPath(queryPath.getPropertyPath());
+        if (propertyPath == null) {
+            return false;
+        }
+        MetaProperty metaProperty = propertyPath.getMetaProperty();
+        return metadataTools.isSecret(metaProperty)
+                || metaProperty.getAnnotations().containsKey(ExcludeFromAi.class.getName());
+    }
+
+    /**
+     * Returns the result properties that stay in the result, dropping the ones at the excluded select
+     * positions (denied by security or mapping to an attribute hidden from the AI).
+     *
+     * @param resultProperties        result property names in select-clause order
+     * @param excludedSelectedIndexes positions of the columns to drop
      * @return the retained property names, in their original order
      */
     protected List<String> retainPermittedProperties(List<String> resultProperties,
-                                                     List<Integer> deniedSelectedIndexes) {
-        if (deniedSelectedIndexes.isEmpty()) {
+                                                     List<Integer> excludedSelectedIndexes) {
+        if (excludedSelectedIndexes.isEmpty()) {
             return resultProperties;
         }
 
         List<String> retained = new ArrayList<>(resultProperties.size());
         for (int i = 0; i < resultProperties.size(); i++) {
-            if (!deniedSelectedIndexes.contains(i)) {
+            if (!excludedSelectedIndexes.contains(i)) {
                 retained.add(resultProperties.get(i));
             }
         }
@@ -188,27 +314,28 @@ public class JpqlExecutionService {
     }
 
     /**
-     * Rebuilds each row keeping only the retained properties, in their original order.
+     * Rebuilds each row keeping only the retained properties, in their original order. Null values are kept
+     * distinct from empty strings.
      *
      * @param rows               fetched rows keyed by all result properties
      * @param resultProperties   all result property names the rows are keyed by
      * @param retainedProperties property names to keep in the output rows
      * @return rows containing only the retained properties, or the original rows if nothing is dropped
      */
-    protected List<Map<String, Object>> retainProperties(List<Map<String, Object>> rows,
-                                                         List<String> resultProperties,
-                                                         List<String> retainedProperties) {
+    protected List<Map<String, @Nullable Object>> retainProperties(List<Map<String, @Nullable Object>> rows,
+                                                                   List<String> resultProperties,
+                                                                   List<String> retainedProperties) {
         if (retainedProperties.size() == resultProperties.size()) {
             return rows;
         }
 
-        List<Map<String, Object>> retainedRows = new ArrayList<>(rows.size());
-        for (Map<String, Object> row : rows) {
-            Map<String, Object> retainedRow = new LinkedHashMap<>();
+        List<Map<String, @Nullable Object>> retainedRows = new ArrayList<>(rows.size());
+        for (Map<String, @Nullable Object> row : rows) {
+            Map<String, @Nullable Object> retainedRow = new LinkedHashMap<>();
             for (String property : retainedProperties) {
-                retainedRow.put(property, row.getOrDefault(property, ""));
+                retainedRow.put(property, row.get(property));
             }
-            retainedRows.add(Map.copyOf(retainedRow));
+            retainedRows.add(Collections.unmodifiableMap(retainedRow));
         }
         return List.copyOf(retainedRows);
     }
@@ -232,23 +359,22 @@ public class JpqlExecutionService {
         boolean hasMore = loadedRows.size() > maxResults;
         int rowCount = hasMore ? maxResults : loadedRows.size();
 
-        List<Map<String, Object>> rows = new ArrayList<>(rowCount);
+        List<Map<String, @Nullable Object>> rows = new ArrayList<>(rowCount);
         for (int i = 0; i < rowCount; i++) {
             KeyValueEntity entity = loadedRows.get(i);
-            Map<String, Object> valueRow = toValueRow(entity, request.getResultProperties());
+            Map<String, @Nullable Object> valueRow = toValueRow(entity, request.getResultProperties());
             rows.add(valueRow);
         }
 
         return createExecutionRows(List.copyOf(rows), hasMore);
     }
 
-    protected Map<String, Object> toValueRow(KeyValueEntity keyValueEntity, List<String> resultProperties) {
-        Map<String, Object> row = new LinkedHashMap<>();
+    protected Map<String, @Nullable Object> toValueRow(KeyValueEntity keyValueEntity, List<String> resultProperties) {
+        Map<String, @Nullable Object> row = new LinkedHashMap<>();
         for (String property : resultProperties) {
-            Object value = keyValueEntity.getValue(property);
-            row.put(property, value == null ? "" : value);
+            row.put(property, keyValueEntity.getValue(property));
         }
-        return Map.copyOf(row);
+        return Collections.unmodifiableMap(row);
     }
 
     protected Integer getEffectiveMaxResult(@Nullable Integer maxResults) {
@@ -262,7 +388,7 @@ public class JpqlExecutionService {
         return requested;
     }
 
-    protected ExecutionRows createExecutionRows(List<Map<String, Object>> rows, boolean hasMore) {
+    protected ExecutionRows createExecutionRows(List<Map<String, @Nullable Object>> rows, boolean hasMore) {
         return new ExecutionRows(rows, hasMore);
     }
 
@@ -272,6 +398,6 @@ public class JpqlExecutionService {
      * @param rows    the fetched rows
      * @param hasMore {@code true} if more rows are available beyond {@code rows}
      */
-    protected record ExecutionRows(List<Map<String, Object>> rows, boolean hasMore) {
+    protected record ExecutionRows(List<Map<String, @Nullable Object>> rows, boolean hasMore) {
     }
 }

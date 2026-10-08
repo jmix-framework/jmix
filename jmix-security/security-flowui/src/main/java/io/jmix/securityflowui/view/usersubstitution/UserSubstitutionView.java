@@ -28,6 +28,7 @@ import io.jmix.core.usersubstitution.event.UserSubstitutionsChangedEvent;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.model.CollectionLoader;
 import io.jmix.flowui.view.*;
+import io.jmix.flowui.view.navigation.UrlParamSerializer;
 import io.jmix.security.usersubstitution.UserSubstitutionModel;
 import io.jmix.security.usersubstitution.UserSubstitutionPersistence;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,6 +58,8 @@ public class UserSubstitutionView extends StandardView {
     protected UserRepository userRepository;
     @Autowired
     protected ViewValidation viewValidation;
+    @Autowired
+    protected UrlParamSerializer urlParamSerializer;
     @Autowired(required = false)
     protected UserSubstitutionPersistence userSubstitutionPersistence;
 
@@ -77,9 +80,12 @@ public class UserSubstitutionView extends StandardView {
     }
 
     protected void findUsername(BeforeEnterEvent event) {
-        username = event.getRouteParameters().get(ROUTE_PARAM_NAME)
+        String serializedUsername = event.getRouteParameters().get(ROUTE_PARAM_NAME)
                 .orElseThrow(() ->
                         new IllegalStateException(String.format("Entity '%s' not found", ROUTE_PARAM_NAME)));
+
+        username = urlParamSerializer.deserialize(String.class, serializedUsername);
+
         userSubstitutionsDl.setParameter("username", username);
     }
 

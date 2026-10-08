@@ -26,11 +26,15 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import io.jmix.core.impl.metadata.GenerationStateStore;
+import io.jmix.core.impl.metadata.MetadataGenerationManager;
+import io.jmix.core.impl.metadata.MetadataGenerationRetiredEvent;
 import io.jmix.search.index.IndexConfiguration;
 import jakarta.json.spi.JsonProvider;
 import jakarta.json.stream.JsonGenerator;
 import jakarta.json.stream.JsonParser;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 import java.io.StringReader;
@@ -48,14 +52,12 @@ public class ElasticsearchIndexSettingsProvider {
     protected final List<ElasticsearchIndexSettingsConfigurer> customConfigurers;
     protected final List<ElasticsearchIndexSettingsConfigurer> systemConfigurers;
 
-    protected final ElasticsearchIndexSettingsConfigurationContext context;
-
-    protected final Map<Class<?>, IndexSettings> effectiveIndexSettings;
-
-    protected final IndexSettings commonIndexSettings;
-    protected final IndexSettingsAnalysis commonAnalysisSettings;
+    protected final GenerationStateStore<State> stateStore = new GenerationStateStore<>();
 
     protected final ObjectMapper objectMapper = new ObjectMapper();
+
+    @Autowired
+    protected MetadataGenerationManager metadataGenerationManager;
 
     @Autowired
     public ElasticsearchIndexSettingsProvider(List<ElasticsearchIndexSettingsConfigurer> configurers, ElasticsearchClient client) {
@@ -64,17 +66,15 @@ public class ElasticsearchIndexSettingsProvider {
         this.customConfigurers = new ArrayList<>();
         this.systemConfigurers = new ArrayList<>();
         prepareConfigurers(configurers);
-
-        this.context = configureContext();
-
-        this.commonIndexSettings = context.getCommonIndexSettingsBuilder().build();
-        this.commonAnalysisSettings = context.getCommonAnalysisBuilder().build();
-        this.effectiveIndexSettings = new ConcurrentHashMap<>();
     }
 
     public IndexSettings getSettingsForIndex(IndexConfiguration indexConfiguration) {
+        State state = getState();
+        ElasticsearchIndexSettingsConfigurationContext context = state.context;
+        IndexSettings commonIndexSettings = state.commonIndexSettings;
+        IndexSettingsAnalysis commonAnalysisSettings = state.commonAnalysisSettings;
         Class<?> entityClass = indexConfiguration.getEntityClass();
-        IndexSettings resultIndexSettings = this.effectiveIndexSettings.get(entityClass);
+        IndexSettings resultIndexSettings = state.effectiveIndexSettings.get(entityClass);
         if (resultIndexSettings == null) {
             Map<Class<?>, IndexSettings.Builder> indexSettingsBuilders = context.getAllSpecificIndexSettingsBuilders();
             IndexSettings entityIndexSettings;
@@ -153,9 +153,29 @@ public class ElasticsearchIndexSettingsProvider {
             }
 
             resultIndexSettings = deserializeIndexSettings(resultIndexSettingsNode.toString());
-            this.effectiveIndexSettings.put(entityClass, resultIndexSettings);
+            state.effectiveIndexSettings.put(entityClass, resultIndexSettings);
         }
         return resultIndexSettings;
+    }
+
+    /**
+     * Removes index settings cached for a retired metadata generation.
+     *
+     * @param event retired-generation event
+     */
+    @EventListener
+    public void onMetadataGenerationRetired(MetadataGenerationRetiredEvent event) {
+        stateStore.remove(event.getGenerationId());
+    }
+
+    /**
+     * Returns the settings state of the metadata generation pinned or current for the calling thread. The
+     * configurers are run once per generation, so they see the index configurations and entity classes of
+     * that generation.
+     */
+    protected State getState() {
+        return stateStore.getOrCreate(metadataGenerationManager.getPinnedOrCurrentGenerationId(),
+                () -> new State(configureContext()));
     }
 
     protected ElasticsearchIndexSettingsConfigurationContext configureContext() {
@@ -238,13 +258,14 @@ public class ElasticsearchIndexSettingsProvider {
     }
 
     protected boolean isNewApiUsed(Class<?> entityClass) {
-        Map<Class<?>, IndexSettings.Builder> indexSettingsBuilders = context.getAllSpecificIndexSettingsBuilders();
+        State state = getState();
+        Map<Class<?>, IndexSettings.Builder> indexSettingsBuilders = state.context.getAllSpecificIndexSettingsBuilders();
         boolean hasEntitySpecificIndexSettings = indexSettingsBuilders.containsKey(entityClass);
-        boolean hasCommonIndexSettings = !isEmptySettings(commonIndexSettings);
+        boolean hasCommonIndexSettings = !isEmptySettings(state.commonIndexSettings);
 
-        Map<Class<?>, IndexSettingsAnalysis.Builder> analysisBuilders = context.getAllSpecificAnalysisBuilders();
+        Map<Class<?>, IndexSettingsAnalysis.Builder> analysisBuilders = state.context.getAllSpecificAnalysisBuilders();
         boolean hasEntitySpecificAnalysisSettings = analysisBuilders.containsKey(entityClass);
-        boolean hasCommonAnalysisSettings = !isEmptyAnalysisSettings(commonAnalysisSettings);
+        boolean hasCommonAnalysisSettings = !isEmptyAnalysisSettings(state.commonAnalysisSettings);
 
         return hasEntitySpecificAnalysisSettings
                || hasCommonAnalysisSettings
@@ -260,5 +281,23 @@ public class ElasticsearchIndexSettingsProvider {
     protected boolean isEmptyAnalysisSettings(IndexSettingsAnalysis settings) {
         ObjectNode settingsNode = toObjectNode(settings);
         return settingsNode.isEmpty();
+    }
+
+    /**
+     * Index settings of one metadata generation: the context configured by the configurers and the settings
+     * computed from it, cached by entity class.
+     */
+    protected static class State {
+
+        protected final ElasticsearchIndexSettingsConfigurationContext context;
+        protected final IndexSettings commonIndexSettings;
+        protected final IndexSettingsAnalysis commonAnalysisSettings;
+        protected final Map<Class<?>, IndexSettings> effectiveIndexSettings = new ConcurrentHashMap<>();
+
+        protected State(ElasticsearchIndexSettingsConfigurationContext context) {
+            this.context = context;
+            this.commonIndexSettings = context.getCommonIndexSettingsBuilder().build();
+            this.commonAnalysisSettings = context.getCommonAnalysisBuilder().build();
+        }
     }
 }

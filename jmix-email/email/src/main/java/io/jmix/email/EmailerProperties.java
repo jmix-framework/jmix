@@ -19,6 +19,7 @@ package io.jmix.email;
 import io.jmix.email.entity.SendingAttachment;
 import io.jmix.email.entity.SendingMessage;
 import jakarta.validation.constraints.PositiveOrZero;
+import org.jspecify.annotations.Nullable;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 import org.springframework.validation.annotation.Validated;
@@ -282,24 +283,27 @@ public class EmailerProperties {
         protected final boolean enabled;
 
         /**
-         * Name of SMTP server provider.
+         * Name of SMTP server provider. Required when OAuth2 authentication is enabled, unless a custom
+         * {@code OAuth2TokenProvider} bean is defined by the application.
          * <p>
          * Available values: google, microsoft
          */
         protected final String provider;
 
         /**
-         * Client id of application to connect via OAuth2
+         * Client id of application to connect via OAuth2. Required when OAuth2 authentication is enabled.
          */
         protected final String clientId;
 
         /**
-         * Secret of application to connect via OAuth2
+         * Secret of application to connect via OAuth2. Required when OAuth2 authentication is enabled.
          */
         protected final String secret;
 
         /**
-         * Refresh token value to get access token. This value will be used if no refresh token is stored in database.
+         * Initial refresh token value used to get access token. This value is used only while no refresh token
+         * is stored in the database. Once a token is stored (via the email connection view or automatically after
+         * provider-side token rotation), the stored value takes precedence.
          */
         protected final String refreshToken;
 
@@ -308,18 +312,28 @@ public class EmailerProperties {
          */
         protected final String tenantId;
 
+        /**
+         * Redirect URI used by the authorization code flow when connecting a mailbox account.
+         * If not set, the URI is derived from the current request. Set it explicitly when the
+         * application is behind a reverse proxy and the derived URI is wrong. The value must be
+         * registered as a redirect URI of the OAuth client.
+         */
+        protected final String redirectUri;
+
         public OAuth2(@DefaultValue("false") boolean enabled,
-                      @DefaultValue("google") String provider,
-                      @DefaultValue("client") String clientId,
-                      @DefaultValue("secret") String secret,
-                      @DefaultValue("") String refreshToken,
-                      @DefaultValue("common") String tenantId) {
+                      @Nullable String provider,
+                      @Nullable String clientId,
+                      @Nullable String secret,
+                      @Nullable String refreshToken,
+                      @DefaultValue("common") String tenantId,
+                      @Nullable String redirectUri) {
             this.enabled = enabled;
             this.provider = provider;
             this.clientId = clientId;
             this.secret = secret;
             this.refreshToken = refreshToken;
             this.tenantId = tenantId;
+            this.redirectUri = redirectUri;
         }
 
         /**
@@ -332,6 +346,7 @@ public class EmailerProperties {
         /**
          * @see #provider
          */
+        @Nullable
         public String getProvider() {
             return provider;
         }
@@ -339,6 +354,7 @@ public class EmailerProperties {
         /**
          * @see #clientId
          */
+        @Nullable
         public String getClientId() {
             return clientId;
         }
@@ -346,6 +362,7 @@ public class EmailerProperties {
         /**
          * @see #secret
          */
+        @Nullable
         public String getSecret() {
             return secret;
         }
@@ -353,6 +370,7 @@ public class EmailerProperties {
         /**
          * @see #refreshToken
          */
+        @Nullable
         public String getRefreshToken() {
             return refreshToken;
         }
@@ -362,6 +380,14 @@ public class EmailerProperties {
          */
         public String getTenantId() {
             return tenantId;
+        }
+
+        /**
+         * @see #redirectUri
+         */
+        @Nullable
+        public String getRedirectUri() {
+            return redirectUri;
         }
     }
 }

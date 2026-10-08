@@ -45,6 +45,11 @@ import org.springframework.web.util.UriBuilder;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Set;
 
 @SuppressWarnings("UnnecessaryLocalVariable")
 @Component("restds_RestInvoker")
@@ -54,6 +59,9 @@ public class RestInvoker implements InitializingBean {
     private static final Logger log = LoggerFactory.getLogger(RestInvoker.class);
 
     public static final String DEFAULT_AUTHENTICATOR = "restds_RestClientCredentialsAuthenticator";
+
+    private static final Set<String> STORE_PARAMETER_NAMES =
+            Set.of("fetchPlan", "limit", "offset", "sort", "filter", "returnCount");
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -73,21 +81,59 @@ public class RestInvoker implements InitializingBean {
     private ApplicationContext applicationContext;
 
 
+    /**
+     * Parameters of loading one entity by id.
+     *
+     * @param additionalParams parameters added to the query string of the request. Names that the store sets itself
+     *                         ({@code fetchPlan}, {@code limit}, {@code offset}, {@code sort}, {@code filter},
+     *                         {@code returnCount}) and {@code null} values are not allowed.
+     */
     public record LoadParams(String entityName,
-                                 Object id,
-                                 @Nullable String fetchPlan) {
+                             Object id,
+                             @Nullable String fetchPlan,
+                             Map<String, Object> additionalParams) {
+
+        public LoadParams {
+            additionalParams = checkAdditionalParams(additionalParams);
+        }
+
+        public LoadParams(String entityName, Object id, @Nullable String fetchPlan) {
+            this(entityName, id, fetchPlan, Map.of());
+        }
 
         public LoadParams(String entityName, Object id) {
             this(entityName, id, null);
         }
-
     }
+
+    /**
+     * Parameters of loading a list of entities.
+     *
+     * @param additionalParams parameters added to the query string of a GET request, or as fields of the JSON body
+     *                         when {@code filter} is set and the search endpoint is used. Names that the store sets
+     *                         itself ({@code fetchPlan}, {@code limit}, {@code offset}, {@code sort}, {@code filter},
+     *                         {@code returnCount}) and {@code null} values are not allowed.
+     */
     public record LoadListParams(String entityName,
                                  int limit,
                                  int offset,
                                  @Nullable String sort,
                                  @Nullable String filter,
-                                 @Nullable String fetchPlan) {
+                                 @Nullable String fetchPlan,
+                                 Map<String, Object> additionalParams) {
+
+        public LoadListParams {
+            additionalParams = checkAdditionalParams(additionalParams);
+        }
+
+        public LoadListParams(String entityName,
+                              int limit,
+                              int offset,
+                              @Nullable String sort,
+                              @Nullable String filter,
+                              @Nullable String fetchPlan) {
+            this(entityName, limit, offset, sort, filter, fetchPlan, Map.of());
+        }
 
         public LoadListParams(String entityName, @Nullable String filter) {
             this(entityName, 1, 0, null, filter, null);
@@ -148,11 +194,16 @@ public class RestInvoker implements InitializingBean {
     }
 
     private URI createLoadUri(UriBuilder uriBuilder, LoadParams params) {
+        Map<String, Object> uriVariables = new HashMap<>();
         uriBuilder.path(basePath + entitiesPath + "/{entityName}/{id}");
+        uriVariables.put("entityName", params.entityName());
+        uriVariables.put("id", params.id());
         if (params.fetchPlan() != null) {
             uriBuilder.queryParam("fetchPlan", "{fetchPlan}");
+            uriVariables.put("fetchPlan", params.fetchPlan());
         }
-        return uriBuilder.build(params.entityName(), params.id(), params.fetchPlan());
+        addAdditionalQueryParams(uriBuilder, params.additionalParams(), uriVariables);
+        return uriBuilder.build(uriVariables);
     }
 
     public String loadList(LoadListParams params) {
@@ -198,6 +249,9 @@ public class RestInvoker implements InitializingBean {
                     rootNode.put("fetchPlan", params.fetchPlan());
                 }
             }
+            for (Map.Entry<String, Object> entry : params.additionalParams().entrySet()) {
+                rootNode.set(entry.getKey(), objectMapper.valueToTree(entry.getValue()));
+            }
             if (returnCount) {
                 rootNode.put("returnCount", true);
             }
@@ -209,7 +263,9 @@ public class RestInvoker implements InitializingBean {
     }
 
     private URI createLoadListUri(UriBuilder uriBuilder, LoadListParams params, boolean returnCount) {
+        Map<String, Object> uriVariables = new HashMap<>();
         uriBuilder.path(basePath + entitiesPath + "/{entityName}");
+        uriVariables.put("entityName", params.entityName());
         if (params.sort() != null) {
             uriBuilder.queryParam("sort", params.sort());
         }
@@ -219,26 +275,65 @@ public class RestInvoker implements InitializingBean {
         uriBuilder.queryParam("offset", params.offset());
         if (params.fetchPlan() != null) {
             uriBuilder.queryParam("fetchPlan", "{fetchPlan}");
+            uriVariables.put("fetchPlan", params.fetchPlan());
         }
         if (returnCount) {
             uriBuilder.queryParam("returnCount", true);
         }
-        return uriBuilder.build(params.entityName(), params.fetchPlan());
+        addAdditionalQueryParams(uriBuilder, params.additionalParams(), uriVariables);
+        return uriBuilder.build(uriVariables);
+    }
+
+    /*
+     * Values are passed as URI variables, so they are encoded and not read as URI templates.
+     */
+    private void addAdditionalQueryParams(UriBuilder uriBuilder, Map<String, Object> additionalParams,
+                                          Map<String, Object> uriVariables) {
+        int index = 0;
+        for (Map.Entry<String, Object> entry : additionalParams.entrySet()) {
+            String variableName = "additionalParam" + index++;
+            uriBuilder.queryParam(entry.getKey(), "{" + variableName + "}");
+            uriVariables.put(variableName, entry.getValue());
+        }
+    }
+
+    private static Map<String, Object> checkAdditionalParams(Map<String, Object> additionalParams) {
+        for (Map.Entry<String, Object> entry : additionalParams.entrySet()) {
+            if (STORE_PARAMETER_NAMES.contains(entry.getKey())) {
+                throw new IllegalArgumentException("Request parameter '" + entry.getKey()
+                        + "' is set by the REST data store and cannot be added");
+            }
+            if (entry.getValue() == null) {
+                throw new IllegalArgumentException("Value of request parameter '" + entry.getKey() + "' is null");
+            }
+        }
+        return Collections.unmodifiableMap(new LinkedHashMap<>(additionalParams));
     }
 
     public long count(String entityName, @Nullable String filter) {
+        return count(entityName, filter, Map.of());
+    }
+
+    /**
+     * Counts entities.
+     *
+     * @param additionalParams parameters added to the request, with the same rules as in
+     *                         {@link LoadListParams#additionalParams()}
+     */
+    public long count(String entityName, @Nullable String filter, Map<String, Object> additionalParams) {
+        LoadListParams params = new LoadListParams(entityName, 1, 0, null, filter, null, additionalParams);
         ResponseEntity<Void> response;
         try {
             if (filter == null) {
                 response = restClient.get()
                         .uri(uriBuilder ->
-                                createLoadListUri(uriBuilder, new LoadListParams(entityName, null), true))
+                                createLoadListUri(uriBuilder, params, true))
                         .retrieve()
                         .toBodilessEntity();
             } else {
                 response = restClient.post()
                         .uri(basePath + entitiesPath + "/{entityName}/search", entityName)
-                        .body(createSearchPostBody(new LoadListParams(entityName, filter), true))
+                        .body(createSearchPostBody(params, true))
                         .retrieve()
                         .toBodilessEntity();
             }

@@ -17,12 +17,11 @@
 package component.genericfilter
 
 import component.genericfilter.view.GenericFilterInitialConditionTestView
-import io.jmix.core.querycondition.Condition
-import io.jmix.core.querycondition.LogicalCondition
-import io.jmix.core.querycondition.PropertyCondition
 import io.jmix.flowui.component.genericfilter.GenericFilter
 import org.springframework.boot.test.context.SpringBootTest
 import test_support.spec.FlowuiTestSpecification
+
+import static component.genericfilter.TestFilterConditions.countPropertyConditions
 
 /**
  * Regression test: activating a configuration during {@code onInit} must not pollute the data
@@ -50,13 +49,4 @@ class GenericFilterInitialConditionTest extends FlowuiTestSpecification {
         countPropertyConditions(filter.dataLoader.condition) == 1
     }
 
-    protected static int countPropertyConditions(Condition condition) {
-        if (condition instanceof PropertyCondition) {
-            return 1
-        }
-        if (condition instanceof LogicalCondition) {
-            return condition.conditions.inject(0) { acc, c -> acc + countPropertyConditions(c) }
-        }
-        return 0
-    }
 }

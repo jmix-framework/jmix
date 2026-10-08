@@ -74,6 +74,7 @@ public class ViewRegistry implements ApplicationContextAware {
     public static final String DETAIL_VIEW_SUFFIX = ".detail";
     public static final String LIST_VIEW_SUFFIX = ".list";
     public static final String LOOKUP_VIEW_SUFFIX = ".lookup";
+    public static final String READ_VIEW_SUFFIX = ".read";
 
     protected Metadata metadata;
     protected Resources resources;
@@ -90,6 +91,7 @@ public class ViewRegistry implements ApplicationContextAware {
     protected Map<Class<?>, ViewInfo> primaryDetailViews = new HashMap<>();
     protected Map<Class<?>, ViewInfo> primaryListViews = new HashMap<>();
     protected Map<Class<?>, ViewInfo> primaryLookupViews = new HashMap<>();
+    protected Map<Class<?>, ViewInfo> primaryReadViews = new HashMap<>();
 
     protected List<ViewControllersConfiguration> configurations = Collections.emptyList();
 
@@ -206,6 +208,7 @@ public class ViewRegistry implements ApplicationContextAware {
         primaryDetailViews.clear();
         primaryListViews.clear();
         primaryLookupViews.clear();
+        primaryReadViews.clear();
 
         loadViewConfigurations();
         loadViewTemplateConfigurations();
@@ -270,10 +273,10 @@ public class ViewRegistry implements ApplicationContextAware {
         MetaClass originalMetaClass = extendedEntities.getOriginalOrThisMetaClass(definition.getEntityMetaClass());
         Class<?> entityClass = originalMetaClass.getJavaClass();
 
-        if (definition.getType() == ViewTemplateType.LIST) {
-            primaryListViews.put(entityClass, viewInfo);
-        } else if (definition.getType() == ViewTemplateType.DETAIL) {
-            primaryDetailViews.put(entityClass, viewInfo);
+        switch (definition.getType()) {
+            case LIST -> primaryListViews.put(entityClass, viewInfo);
+            case DETAIL -> primaryDetailViews.put(entityClass, viewInfo);
+            case READ -> primaryReadViews.put(entityClass, viewInfo);
         }
     }
 
@@ -285,6 +288,7 @@ public class ViewRegistry implements ApplicationContextAware {
         registerPrimaryDetailView(viewInfo, annotationMetadata);
         registerPrimaryListView(viewInfo, annotationMetadata);
         registerPrimaryLookupView(viewInfo, annotationMetadata);
+        registerPrimaryReadView(viewInfo, annotationMetadata);
 
         views.put(id, viewInfo);
     }
@@ -305,6 +309,12 @@ public class ViewRegistry implements ApplicationContextAware {
         getAnnotationValue(annotationMetadata, PrimaryLookupView.class)
                 .ifPresent(aClass ->
                         primaryLookupViews.put(aClass, viewInfo));
+    }
+
+    protected void registerPrimaryReadView(ViewInfo viewInfo, AnnotationMetadata annotationMetadata) {
+        getAnnotationValue(annotationMetadata, PrimaryReadView.class)
+                .ifPresent(aClass ->
+                        primaryReadViews.put(aClass, viewInfo));
     }
 
     protected Optional<Class<?>> getAnnotationValue(AnnotationMetadata annotationMetadata,
@@ -496,6 +506,56 @@ public class ViewRegistry implements ApplicationContextAware {
     }
 
     /**
+     * Returns standard id of the read view for an entity, for example {@code Customer.read}.
+     *
+     * @param metaClass entity metaclass
+     */
+    public String getReadViewId(MetaClass metaClass) {
+        return getMetaClassViewId(metaClass, READ_VIEW_SUFFIX);
+    }
+
+    /**
+     * Returns read view information by entity metaclass.
+     *
+     * @param metaClass entity metaclass
+     * @return view's registration information
+     * @throws NoSuchViewException if no read view is registered for the entity
+     */
+    public ViewInfo getReadViewInfo(MetaClass metaClass) {
+        return getViewInfo(getAvailableReadViewId(metaClass));
+    }
+
+    /**
+     * Returns read view information by entity class.
+     *
+     * @param entityClass entity class
+     * @return view's registration information
+     * @throws NoSuchViewException if no read view is registered for the entity
+     */
+    public ViewInfo getReadViewInfo(Class<?> entityClass) {
+        MetaClass metaClass = metadata.getSession().getClass(entityClass);
+        return getReadViewInfo(metaClass);
+    }
+
+    /**
+     * Returns read view information by entity instance.
+     *
+     * @param entity entity instance
+     * @return view's registration information
+     * @throws NoSuchViewException if no read view is registered for the entity
+     */
+    public ViewInfo getReadViewInfo(Object entity) {
+        MetaClass metaClass = metadata.getClass(entity);
+        return getReadViewInfo(metaClass);
+    }
+
+    protected String getReadViewIdInternal(MetaClass metaClass) {
+        MetaClass originalMetaClass = extendedEntities.getOriginalOrThisMetaClass(metaClass);
+        ViewInfo viewInfo = primaryReadViews.get(originalMetaClass.getJavaClass());
+        return viewInfo != null ? viewInfo.getId() : getReadViewId(metaClass);
+    }
+
+    /**
      * Returns list or lookup view information by entity metaclass.
      *
      * @param metaClass entity metaclass
@@ -598,6 +658,23 @@ public class ViewRegistry implements ApplicationContextAware {
         return hasView(id) ? id : getListViewIdInternal(metaClass);
     }
 
+    /**
+     * Returns read view id by entity metaclass determined by the following procedure:
+     * <ol>
+     *     <li>If a view annotated with @{@link PrimaryReadView} exists, its id is used</li>
+     *     <li>Otherwise, if a view with {@code <entity_name>.read} id exists, its id is used</li>
+     *     <li>Otherwise, if a view annotated with @{@link PrimaryDetailView} exists, its id is used</li>
+     *     <li>Otherwise, a view with {@code <entity_name>.detail} id is used</li>
+     * </ol>
+     *
+     * @param metaClass entity metaclass
+     * @return view's id
+     */
+    public String getAvailableReadViewId(MetaClass metaClass) {
+        String id = getReadViewIdInternal(metaClass);
+        return hasView(id) ? id : getDetailViewIdInternal(metaClass);
+    }
+
 
     protected String getListViewIdInternal(MetaClass metaClass) {
         MetaClass originalMetaClass = extendedEntities.getOriginalOrThisMetaClass(metaClass);
@@ -609,6 +686,12 @@ public class ViewRegistry implements ApplicationContextAware {
         MetaClass originalMetaClass = extendedEntities.getOriginalOrThisMetaClass(metaClass);
         ViewInfo viewInfo = primaryLookupViews.get(originalMetaClass.getJavaClass());
         return viewInfo != null ? viewInfo.getId() : getLookupViewId(metaClass);
+    }
+
+    protected String getDetailViewIdInternal(MetaClass metaClass) {
+        MetaClass originalMetaClass = extendedEntities.getOriginalOrThisMetaClass(metaClass);
+        ViewInfo viewInfo = primaryDetailViews.get(originalMetaClass.getJavaClass());
+        return viewInfo != null ? viewInfo.getId() : getDetailViewId(metaClass);
     }
 
     /**
@@ -704,6 +787,22 @@ public class ViewRegistry implements ApplicationContextAware {
     }
 
     /**
+     * Registers a primary read view for the given entity class.
+     *
+     * @param entityClass entity class
+     * @param viewInfo    view info to associate as the primary read view
+     */
+    public void setPrimaryReadView(Class<?> entityClass, ViewInfo viewInfo) {
+        lock.writeLock().lock();
+        try {
+            initIfNeeded();
+            primaryReadViews.put(entityClass, viewInfo);
+        } finally {
+            lock.writeLock().unlock();
+        }
+    }
+
+    /**
      * Returns {@code true} if a primary list view is registered for the given entity class.
      *
      * @param entityClass entity class
@@ -728,6 +827,21 @@ public class ViewRegistry implements ApplicationContextAware {
         try {
             checkInitialized();
             return primaryDetailViews.containsKey(entityClass);
+        } finally {
+            lock.readLock().unlock();
+        }
+    }
+
+    /**
+     * Returns {@code true} if a primary read view is registered for the given entity class.
+     *
+     * @param entityClass entity class
+     */
+    public boolean hasPrimaryReadView(Class<?> entityClass) {
+        lock.readLock().lock();
+        try {
+            checkInitialized();
+            return primaryReadViews.containsKey(entityClass);
         } finally {
             lock.readLock().unlock();
         }
@@ -760,6 +874,22 @@ public class ViewRegistry implements ApplicationContextAware {
         try {
             initIfNeeded();
             return primaryDetailViews.remove(entityClass) != null;
+        } finally {
+            lock.writeLock().unlock();
+        }
+    }
+
+    /**
+     * Removes the primary read view registration for the given entity class.
+     *
+     * @param entityClass entity class
+     * @return {@code true} if a primary read view was registered for the entity class
+     */
+    public boolean removePrimaryReadView(Class<?> entityClass) {
+        lock.writeLock().lock();
+        try {
+            initIfNeeded();
+            return primaryReadViews.remove(entityClass) != null;
         } finally {
             lock.writeLock().unlock();
         }

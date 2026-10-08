@@ -18,7 +18,6 @@ package io.jmix.quartzflowui.view.jobs;
 
 import com.google.common.base.Strings;
 import com.google.common.base.Supplier;
-import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.combobox.ComboBoxBase;
@@ -37,11 +36,14 @@ import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.view.*;
 import io.jmix.quartz.model.*;
+import io.jmix.quartz.service.JobSaveContext;
 import io.jmix.quartz.service.QuartzService;
 import io.jmix.quartz.util.QuartzJobClassFinder;
 import io.jmix.quartz.util.ScheduleDescriptionProvider;
 import io.jmix.quartzflowui.accesscontext.UiQuartzAdministrationAccessContext;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.Nullable;
+import org.quartz.JobKey;
 import org.quartz.TriggerKey;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -91,7 +93,6 @@ public class JobModelDetailView extends StandardDetailView<JobModel> {
     protected AccessManager accessManager;
 
     protected boolean replaceJobIfExists = true;
-    protected boolean deleteObsoleteJob = false;
     protected String obsoleteJobName = null;
     protected String obsoleteJobGroup = null;
     protected List<String> jobGroupNames;
@@ -165,31 +166,6 @@ public class JobModelDetailView extends StandardDetailView<JobModel> {
             jobGroupField.setItems(jobGroupNames);
             jobGroupField.setValue(newJobGroupName);
         }
-        if (!Strings.isNullOrEmpty(obsoleteJobGroup)
-                && !Strings.isNullOrEmpty(newJobGroupName)
-                && !obsoleteJobGroup.equals(newJobGroupName)) {
-            deleteObsoleteJob = true;
-        }
-    }
-
-    @Subscribe("jobGroupField")
-    protected void onJobGroupFieldChange(AbstractField.ComponentValueChangeEvent<ComboBox<String>, String> event) {
-        String currentValue = event.getValue();
-        if (!Strings.isNullOrEmpty(obsoleteJobGroup)
-                && !Strings.isNullOrEmpty(currentValue)
-                && !obsoleteJobGroup.equals(currentValue)) {
-            deleteObsoleteJob = true;
-        }
-    }
-
-    @Subscribe("jobNameField")
-    protected void onjobNameFieldChange(AbstractField.ComponentValueChangeEvent<TextField, String> event) {
-        String currentValue = event.getValue();
-        if (!Strings.isNullOrEmpty(obsoleteJobName)
-                && !Strings.isNullOrEmpty(currentValue)
-                && !obsoleteJobName.equals(currentValue)) {
-            deleteObsoleteJob = true;
-        }
     }
 
     @SuppressWarnings("ConstantConditions")
@@ -237,6 +213,32 @@ public class JobModelDetailView extends StandardDetailView<JobModel> {
         obsoleteJobGroup = getEditedEntity().getJobGroup();
     }
 
+    /**
+     * Returns the key the edited job currently has in the Quartz engine, or {@code null} for a new job.
+     */
+    @Nullable
+    protected JobKey getOriginalJobKey() {
+        return !replaceJobIfExists || Strings.isNullOrEmpty(obsoleteJobName)
+                ? null
+                : JobKey.jobKey(obsoleteJobName, Strings.emptyToNull(obsoleteJobGroup));
+    }
+
+    /**
+     * Defines whether the job key (name and group) differs from the one the view was opened with,
+     * which means the job must be recreated under the new key on save.
+     * An empty group is considered equal to the default group.
+     */
+    protected boolean isJobKeyChanged() {
+        JobKey originalJobKey = getOriginalJobKey();
+        JobModel jobModel = getEditedEntity();
+        if (originalJobKey == null || Strings.isNullOrEmpty(jobModel.getJobName())) {
+            //new job or job name is not filled yet - nothing to recreate
+            return false;
+        }
+        return !originalJobKey.equals(
+                JobKey.jobKey(jobModel.getJobName(), Strings.emptyToNull(jobModel.getJobGroup())));
+    }
+
     public static <T> Predicate<T> distinctByKey(
             Function<? super T, ?> keyExtractor) {
 
@@ -254,7 +256,7 @@ public class JobModelDetailView extends StandardDetailView<JobModel> {
 
         // if jobKey is changed it is necessary to delete job by it old jobKey and create new one
         // job should be deleted only if it is possible to create new one
-        if (deleteObsoleteJob && quartzService.checkJobExists(currentJobName, currentJobGroup)) {
+        if (isJobKeyChanged() && quartzService.checkJobExists(currentJobName, currentJobGroup)) {
             errors.add(messageBundle.formatMessage("jobAlreadyExistsValidationMessage", currentJobName,
                     Strings.isNullOrEmpty(currentJobGroup) ? "DEFAULT" : currentJobGroup));
         }
@@ -318,11 +320,8 @@ public class JobModelDetailView extends StandardDetailView<JobModel> {
 
     @Subscribe
     protected void onBeforeCommitChanges(BeforeSaveEvent event) {
-        if (deleteObsoleteJob) {
-            quartzService.deleteJob(obsoleteJobName, obsoleteJobGroup);
-        }
-
-        quartzService.updateQuartzJob(getEditedEntity(), jobDataParamsDc.getItems(), triggerModelDc.getItems(), replaceJobIfExists);
+        quartzService.saveJob(new JobSaveContext(getEditedEntity())
+                .setOriginalJobKey(getOriginalJobKey()));
     }
 
     @Install(target = Target.DATA_CONTEXT)

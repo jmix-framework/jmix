@@ -60,6 +60,17 @@ public class JmixFormatterFactory extends DefaultFormatterFactory {
         formattersMap.put("pivot", factoryInput -> beanFactory.getBean(PivotTableFormatter.class, factoryInput));
 
         FormatterCreator xlsxCreator = factoryInput -> {
+            if (factoryInput.isStreaming()) {
+                JmixStreamingXlsxFormatter streamingFormatter =
+                        beanFactory.getBean(JmixStreamingXlsxFormatter.class, factoryInput);
+                streamingFormatter.setDefaultFormatProvider(defaultFormatProvider);
+                streamingFormatter.setScripting(scripting);
+                streamingFormatter.setDocumentConverter(documentConverter);
+                streamingFormatter.setRowAccessWindowSize(
+                        reportsProperties.getStreaming().getRowAccessWindowSize());
+                return streamingFormatter;
+            }
+
             XlsxFormatter xlsxFormatter = beanFactory.getBean(JmixXlsxFormatter.class, factoryInput);
             xlsxFormatter.setDefaultFormatProvider(defaultFormatProvider);
             xlsxFormatter.setDocumentConverter(documentConverter);

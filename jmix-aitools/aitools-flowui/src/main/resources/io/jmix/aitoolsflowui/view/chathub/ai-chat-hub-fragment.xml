@@ -20,12 +20,10 @@
         <collection id="recentConversationsDc"
                     class="io.jmix.aitoolsflowui.model.AiConversation">
             <fetchPlan extends="_base"/>
-            <loader id="recentConversationsDl" readOnly="true"/>
         </collection>
         <collection id="historyConversationsDc"
                     class="io.jmix.aitoolsflowui.model.AiConversation">
             <fetchPlan extends="_base"/>
-            <loader id="historyConversationsDl" readOnly="true"/>
         </collection>
     </data>
     <content>

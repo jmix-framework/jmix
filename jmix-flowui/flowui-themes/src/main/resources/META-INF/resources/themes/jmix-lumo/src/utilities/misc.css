@@ -26,7 +26,8 @@
 }
 
 vaadin-button.link-button,
-vaadin-button.dialog-close-button {
+vaadin-button.dialog-close-button,
+vaadin-button.dialog-header-button {
     font-size: inherit;
     line-height: inherit;
 
@@ -40,7 +41,8 @@ vaadin-button.dialog-close-button {
 }
 
 vaadin-button.link-button::part(label),
-vaadin-button.dialog-close-button::part(label) {
+vaadin-button.dialog-close-button::part(label),
+vaadin-button.dialog-header-button::part(label) {
     line-height: inherit;
     overflow: visible;
     padding: 0px;
@@ -50,6 +52,7 @@ vaadin-button.link-button {
     border: none;
 }
 
-vaadin-button.dialog-close-button {
+vaadin-button.dialog-close-button,
+vaadin-button.dialog-header-button {
     color: var(--lumo-contrast);
 }

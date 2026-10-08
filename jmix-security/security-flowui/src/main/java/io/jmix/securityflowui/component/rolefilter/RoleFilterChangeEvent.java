@@ -63,8 +63,10 @@ public class RoleFilterChangeEvent extends ComponentEvent<RoleFilter> {
     }
 
     public boolean matches(BaseRole role) {
-        return (name == null || StringUtils.containsIgnoreCase(role.getName(), name))
-                && (code == null || StringUtils.containsIgnoreCase(role.getCode(), code))
-                && (source == null || StringUtils.containsIgnoreCase(role.getSource(), getSourceValueAsString()));
+        // The name is resolved last and only for a name filled in, since resolving it costs more than the other checks.
+        return (code == null || StringUtils.containsIgnoreCase(role.getCode(), code))
+                && (source == null || StringUtils.containsIgnoreCase(role.getSource(), getSourceValueAsString()))
+                && (StringUtils.isEmpty(name)
+                        || StringUtils.containsIgnoreCase(getSource().getLocalizedName(role), name));
     }
 }

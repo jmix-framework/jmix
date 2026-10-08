@@ -27,4 +27,9 @@ dependencies {
     api project(':flowui')
 
     compileOnly project(':security-flowui')
+
+    testImplementation project(':flowui-test-assist')
+    testImplementation project(':framework-test-support')
+    testImplementation project(':eclipselink')
+    testRuntimeOnly 'org.hsqldb:hsqldb'
 }

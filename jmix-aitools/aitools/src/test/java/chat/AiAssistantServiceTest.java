@@ -16,8 +16,10 @@
 
 package chat;
 
+import io.jmix.aitools.dataload.tool.DomainModelDiscoveryTool;
 import io.jmix.aitools.service.AiAssistantService;
 import io.jmix.core.security.SystemAuthenticator;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -46,6 +48,11 @@ class AiAssistantServiceTest {
 
     @Autowired
     SystemAuthenticator systemAuthenticator;
+
+    @BeforeEach
+    void resetChatModel() {
+        stubChatModel.reset();
+    }
 
     @Test
     @DisplayName("send() attaches a system message rendered from the default template")
@@ -78,5 +85,24 @@ class AiAssistantServiceTest {
                 "Reserved {additionalInstructions} placeholder must be bound (rendered, not literal); was: " + systemText);
         assertTrue(!systemText.contains("{responseLanguage}"),
                 "{responseLanguage} placeholder must be bound (rendered, not literal); was: " + systemText);
+    }
+
+    @Test
+    @DisplayName("send() survives a call of a tool that takes a ToolContext")
+    void testSurvivesCallOfToolTakingToolContext() {
+        stubChatModel.enqueueToolCall(DomainModelDiscoveryTool.AVAILABLE_ENTITIES_TOOL, "{}");
+        stubChatModel.setContent("stub-response");
+
+        systemAuthenticator.begin();
+        try {
+            assertEquals("stub-response", aiChatService.send("list the entities"));
+        } finally {
+            systemAuthenticator.end();
+        }
+
+        assertTrue(stubChatModel.getLastPrompt().getInstructions().stream()
+                        .map(Message::getMessageType)
+                        .anyMatch(MessageType.TOOL::equals),
+                "The tool result should have been sent back to the model");
     }
 }

@@ -31,6 +31,7 @@ import io.jmix.flowui.fragment.Fragment;
 import io.jmix.flowui.fragment.FragmentUtils;
 import io.jmix.flowui.kit.component.menubar.JmixMenuBarItem;
 import io.jmix.flowui.kit.component.menubar.JmixMenuBarRootItem;
+import io.jmix.flowui.kit.component.usermenu.JmixUserMenu;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -78,7 +79,9 @@ public class UiTestIdSupport {
 
         Component component = attachEvent.getSource();
 
-        if (component instanceof JmixListMenu || component instanceof HorizontalMenu) {
+        if (component instanceof JmixListMenu
+                || component instanceof HorizontalMenu
+                || component instanceof JmixUserMenu) {
             setMenuTestId(component);
         } else {
             setTestId(component);
@@ -86,8 +89,9 @@ public class UiTestIdSupport {
     }
 
     /**
-     * Sets a special static ID attribute for testing for the {@link JmixListMenu} and {@link HorizontalMenu} components
-     * and for their nested components (like a {@link Details}, {@link ListItem} etc.).
+     * Sets a special static ID attribute for testing for the {@link JmixListMenu}, {@link HorizontalMenu}
+     * and {@link JmixUserMenu} components and for their nested components (like a {@link Details}, {@link ListItem},
+     * menu bar items etc.).
      *
      * @param component menu component
      */

@@ -22,8 +22,11 @@
 		// This accentuates the need for the creation of a real window
 		// e.g. var jQuery = require("jquery")(window);
 		// See ticket #14549 for more info
+		// Jmix: pass no `noGlobal` flag so window.jQuery/window.$ are exposed even on the CommonJS
+		// path. pivot.js and the pivot renderers are bundled as ESM, so their UMD wrappers fall
+		// through to the global branch and reference bare `jQuery`.
 		module.exports = global.document ?
-			factory( global, true ) :
+			factory( global ) :
 			function( w ) {
 				if ( !w.document ) {
 					throw new Error( "jQuery requires a window with a document" );

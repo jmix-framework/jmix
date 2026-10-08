@@ -103,8 +103,13 @@ public class SecurityConfiguration {
 
         List<SessionAuthenticationStrategy> strategies = new LinkedList<>();
 
-        strategies.add(registerSessionAuthenticationStrategy);
+        // ConcurrentSessionControlAuthenticationStrategy must run before RegisterSessionAuthenticationStrategy:
+        // it counts the sessions currently registered for the principal to decide which ones to expire, so the
+        // new session must not be registered yet. Registering first inflates the count and expires one session
+        // too many (with maximum-sessions-per-user=1 it expires both the previous and the new session). This is
+        // the same order Spring Security uses in SessionManagementConfigurer.
         strategies.add(concurrentSessionControlStrategy);
+        strategies.add(registerSessionAuthenticationStrategy);
         strategies.add(jmixSessionAuthenticationStrategy());
         return strategies;
     }

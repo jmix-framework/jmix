@@ -837,6 +837,61 @@ class DataContextMergeTest extends DataContextSpec {
     }
 
     @IgnoreIf({Boolean.valueOf(System.getenv("JMIX_ECLIPSELINK_DISABLELAZYLOADING"))})
+    def "non-root merge of entity with unloaded reference does not overwrite reference set on managed instance"() {
+        // Mirrors the "add to one-to-many collection from a lookup" flow, where AddAction merges each
+        // selected item and then sets the master reference on it in memory. Here:
+        //  - managedOrder is in the context and its customer reference is reassigned in memory to
+        //    managedCustomer2 (mimicking the master-reference assignment after merge);
+        //  - then orderLine, which references orderSlim (the SAME order, but loaded without customer),
+        //    is merged. This triggers a non-root merge of orderSlim into managedOrder.
+        // The non-root merge must NOT replace managedOrder.customer by copying the uninstantiated value
+        // holder from orderSlim. Before the fix, managedOrder.customer reverted to the persisted value.
+        //
+        // orderFull / managedOrder    orderSlim  (same DB row, different fetch plan)
+        //   number: '1'                 number: '1'
+        //   customer: customer1         customer: <not loaded>
+        //
+        // orderLine
+        //   order: orderSlim
+        //
+        // After merge, managedOrder.customer is reassigned to managedCustomer2 in memory, then orderLine
+        // is merged. managedOrder.customer must remain managedCustomer2.
+
+        DataContext context = factory.createDataContext()
+
+        given:
+        Customer customer1 = dataManager.save(new Customer(name: 'c1', address: new Address()))
+        Customer customer2 = dataManager.save(new Customer(name: 'c2', address: new Address()))
+        Order order1 = dataManager.save(new Order(number: '1', customer: customer1))
+
+        def orderFull = dataManager.load(Id.of(order1))
+                .fetchPlan { it.addAll('number', 'customer.name') }
+                .one()
+        def orderSlim = dataManager.load(Id.of(order1))
+                .fetchPlan { it.add('number') }
+                .one()
+
+        when: "order is merged and its customer reference is reassigned in memory"
+        def managedOrder = context.merge(orderFull)
+        def managedCustomer2 = context.merge(customer2)
+        managedOrder.customer = managedCustomer2
+
+        then:
+        managedOrder.customer == managedCustomer2
+
+        when: "entity referencing the slim version of the same order is merged"
+        OrderLine orderLine = new OrderLine(quantity: 1, order: orderSlim)
+        makeDetached(orderLine)
+        context.merge(orderLine)
+
+        then: "the in-memory customer reference is preserved, not overwritten by the unloaded value holder"
+        managedOrder.customer == managedCustomer2
+
+        cleanup:
+        dataManager.remove(order1, customer1, customer2)
+    }
+
+    @IgnoreIf({Boolean.valueOf(System.getenv("JMIX_ECLIPSELINK_DISABLELAZYLOADING"))})
     def "merge into entity with not loaded local property"() {
         DataContext context = factory.createDataContext()
 
@@ -891,6 +946,156 @@ class DataContextMergeTest extends DataContextSpec {
 //        fg_local == null
 //
 //    }
+
+    @IgnoreIf({Boolean.valueOf(System.getenv("JMIX_ECLIPSELINK_DISABLELAZYLOADING"))})
+    def "root non-fresh merge of partially loaded copy does not regress loaded state"() {
+        DataContext context = factory.createDataContext()
+
+        given: "an order whose customer and description are loaded and managed"
+        Customer customer1 = dataManager.save(new Customer(name: 'c1', address: new Address()))
+        Order order1 = dataManager.save(new Order(number: '1', description: 'd1', customer: customer1))
+
+        def orderFull = dataManager.load(Id.of(order1))
+                .fetchPlan { it.addAll('number', 'description', 'customer.name') }
+                .one()
+        Order managedOrder = context.merge(orderFull)
+
+        expect:
+        entityStates.isLoaded(managedOrder, 'description')
+        entityStates.isLoaded(managedOrder, 'customer')
+
+        when: "a slim copy of the same order is merged as root, non-fresh"
+        def orderSlim = dataManager.load(Id.of(order1))
+                .fetchPlan { it.add('number') }
+                .one()
+        context.merge(orderSlim)
+
+        then: "previously loaded attributes remain loaded"
+        entityStates.isLoaded(managedOrder, 'description')
+        entityStates.isLoaded(managedOrder, 'customer')
+        managedOrder.description == 'd1'
+        managedOrder.customer == customer1
+
+        cleanup:
+        dataManager.remove(order1, customer1)
+    }
+
+    @IgnoreIf({Boolean.valueOf(System.getenv("JMIX_ECLIPSELINK_DISABLELAZYLOADING"))})
+    def "root non-fresh merge does not regress loaded state of nested plan attributes"() {
+        DataContext context = factory.createDataContext()
+
+        given: "both copies are partially loaded, one with a nested fetch plan"
+        Customer customer1 = dataManager.save(new Customer(name: 'c1', address: new Address()))
+        Order order1 = dataManager.save(new Order(number: '1', customer: customer1))
+
+        def orderWithCustomer = dataManager.load(Id.of(order1))
+                .fetchPlan { it.addAll('number', 'customer.name') }
+                .one()
+        Order managedOrder = context.merge(orderWithCustomer)
+
+        expect:
+        entityStates.isLoaded(managedOrder, 'customer')
+
+        when: "a copy with a flat fetch plan is merged as root, non-fresh"
+        def orderSlim = dataManager.load(Id.of(order1))
+                .fetchPlan { it.add('number') }
+                .one()
+        context.merge(orderSlim)
+
+        then: "the union of fetch groups must still contain 'customer'"
+        entityStates.isLoaded(managedOrder, 'customer')
+
+        cleanup:
+        dataManager.remove(order1, customer1)
+    }
+
+    @IgnoreIf({Boolean.valueOf(System.getenv("JMIX_ECLIPSELINK_DISABLELAZYLOADING"))})
+    def "root merge of slim copy does not overwrite reference set on managed instance"() {
+        DataContext context = factory.createDataContext()
+
+        given:
+        Customer customer1 = dataManager.save(new Customer(name: 'c1', address: new Address()))
+        Customer customer2 = dataManager.save(new Customer(name: 'c2', address: new Address()))
+        Order order1 = dataManager.save(new Order(number: '1', customer: customer1))
+
+        def orderFull = dataManager.load(Id.of(order1))
+                .fetchPlan { it.addAll('number', 'customer.name') }
+                .one()
+        def orderSlim = dataManager.load(Id.of(order1))
+                .fetchPlan { it.add('number') }
+                .one()
+
+        when: "order is merged and its customer reference is reassigned in memory"
+        Order managedOrder = context.merge(orderFull)
+        Customer managedCustomer2 = context.merge(customer2)
+        managedOrder.customer = managedCustomer2
+
+        then:
+        managedOrder.customer == managedCustomer2
+
+        when: "the slim copy of the same order is merged as root (the AddAction / lookup-selection flow)"
+        context.merge(orderSlim)
+
+        then: "the in-memory reference is preserved"
+        entityStates.isLoaded(managedOrder, 'customer')
+        managedOrder.customer == managedCustomer2
+
+        cleanup:
+        dataManager.remove(order1, customer1, customer2)
+    }
+
+    @IgnoreIf({Boolean.valueOf(System.getenv("JMIX_ECLIPSELINK_DISABLELAZYLOADING"))})
+    def "root non-fresh merge of a fuller copy applies newly loaded datatype values"() {
+        DataContext context = factory.createDataContext()
+
+        given: "an order first merged from a slim copy that loads only 'number'"
+        Customer customer1 = dataManager.save(new Customer(name: 'c1', address: new Address()))
+        Order order1 = dataManager.save(new Order(number: '1', description: 'd1', customer: customer1))
+
+        def orderSlim = dataManager.load(Id.of(order1)).fetchPlan { it.add('number') }.one()
+        Order managedOrder = context.merge(orderSlim)
+
+        expect: "'description' is not loaded on the managed instance yet"
+        !entityStates.isLoaded(managedOrder, 'description')
+
+        when: "a fuller copy that also loads 'description' is merged as root, non-fresh"
+        def orderFull = dataManager.load(Id.of(order1)).fetchPlan { it.addAll('number', 'description') }.one()
+        context.merge(orderFull)
+
+        then: "the newly loaded value is applied - not left null while reporting loaded"
+        entityStates.isLoaded(managedOrder, 'description')
+        managedOrder.description == 'd1'
+
+        cleanup:
+        dataManager.remove(order1, customer1)
+    }
+
+    @IgnoreIf({Boolean.valueOf(System.getenv("JMIX_ECLIPSELINK_DISABLELAZYLOADING"))})
+    def "root non-fresh merge does not let a later save null out a newly loaded value"() {
+        DataContext context = factory.createDataContext()
+
+        given: "an order merged from a slim copy (only 'number'), then a fuller copy (adds 'description')"
+        Customer customer1 = dataManager.save(new Customer(name: 'c1', address: new Address()))
+        Order order1 = dataManager.save(new Order(number: '1', description: 'd1', customer: customer1))
+
+        def orderSlim = dataManager.load(Id.of(order1)).fetchPlan { it.add('number') }.one()
+        Order managedOrder = context.merge(orderSlim)
+
+        def orderFull = dataManager.load(Id.of(order1)).fetchPlan { it.addAll('number', 'description') }.one()
+        context.merge(orderFull)
+
+        when: "the user edits another attribute and saves"
+        managedOrder.number = '2'
+        context.save()
+
+        then: "the untouched 'description' keeps its real database value (not overwritten with null)"
+        def reloaded = dataManager.load(Id.of(order1)).fetchPlan { it.addAll('number', 'description') }.one()
+        reloaded.number == '2'
+        reloaded.description == 'd1'
+
+        cleanup:
+        dataManager.remove(reloaded, customer1)
+    }
 
     private UUID uuid(int val) {
         new UUID(val, 0)

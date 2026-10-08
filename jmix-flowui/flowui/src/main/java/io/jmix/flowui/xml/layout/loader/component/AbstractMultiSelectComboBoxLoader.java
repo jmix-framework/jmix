@@ -17,6 +17,7 @@
 package io.jmix.flowui.xml.layout.loader.component;
 
 import com.vaadin.flow.component.combobox.MultiSelectComboBox;
+import com.vaadin.flow.component.combobox.PartialMatchMode;
 import io.jmix.flowui.xml.layout.loader.AbstractComponentLoader;
 import io.jmix.flowui.xml.layout.support.DataLoaderSupport;
 
@@ -38,7 +39,9 @@ public abstract class AbstractMultiSelectComboBoxLoader<C extends MultiSelectCom
         loadInteger(element, "pageSize", resultComponent::setPageSize);
         loadBoolean(element, "autofocus", resultComponent::setAutofocus);
         loadBoolean(element, "allowCustomValue", resultComponent::setAllowCustomValue);
+        loadEnum(element, PartialMatchMode.class, "partialMatchMode", resultComponent::setPartialMatchMode);
         loadBoolean(element, "selectedItemsOnTop", resultComponent::setSelectedItemsOnTop);
+        loadBoolean(element, "collapseChips", resultComponent::setCollapseChips);
         loadString(element, "overlayWidth", resultComponent::setOverlayWidth);
         loadEnum(element, MultiSelectComboBox.AutoExpandMode.class, "autoExpand",
                 resultComponent::setAutoExpand);
@@ -56,6 +59,7 @@ public abstract class AbstractMultiSelectComboBoxLoader<C extends MultiSelectCom
         componentLoader().loadValidationAttributes(resultComponent, element, context);
         componentLoader().loadAllowedCharPattern(resultComponent, element, context);
         componentLoader().loadAriaLabel(resultComponent, element);
+        componentLoader().loadAriaDescription(resultComponent, element);
 
         componentLoader().loadFragmentRenderer(element, resultComponent::setRenderer);
     }

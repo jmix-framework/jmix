@@ -41,4 +41,10 @@
             <column name="LAST_MODIFIED_DATE" type="${offsetDateTime.type}"/>
         </createTable>
     </changeSet>
+
+    <changeSet id="2" author="email">
+        <addColumn tableName="EMAIL_REFRESH_TOKEN">
+            <column name="CLIENT_TYPE" type="VARCHAR(32)"/>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>

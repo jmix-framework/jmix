@@ -216,9 +216,9 @@ public class OOServer {
                 File oldProfileDir = new File(instanceProfileDir.getParentFile(),
                         instanceProfileDir.getName() + ".old." + System.currentTimeMillis());
                 if (instanceProfileDir.renameTo(oldProfileDir)) {
-                    log.warn("could not delete profileDir: " + ioException.getMessage() + "; renamed it to " + oldProfileDir);
+                    log.warn("Could not delete profileDir: {}; renamed it to {}", ioException.getMessage(), oldProfileDir);
                 } else {
-                    log.error("could not delete profileDir: " + ioException.getMessage());
+                    log.error("Could not delete profileDir: {}", ioException.getMessage());
                 }
             }
         }

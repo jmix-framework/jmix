@@ -19,6 +19,7 @@ package test_support.entity.viewtemplate;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.flowui.view.template.DetailViewTemplate;
 import io.jmix.flowui.view.template.ListViewTemplate;
+import io.jmix.flowui.view.template.ReadViewTemplate;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
@@ -32,13 +33,20 @@ import test_support.entity.TestBaseEntity;
 @Entity(name = "test_ViewTemplateEntity")
 @ListViewTemplate(
         parentMenu = "templateViews",
+        menuIcon = "vaadin:table",
         viewRoute = "templates/view-template/list"
 )
 @DetailViewTemplate(
         parentMenu = "templateViews",
+        menuIcon = "PENCIL",
         viewId = "test_ViewTemplateEntity.edit",
         viewTitle = "Template entity editor",
         viewRoute = "templates/view-template/detail"
+)
+@ReadViewTemplate(
+        viewId = "test_ViewTemplateEntity.show",
+        viewTitle = "Template entity card",
+        viewRoute = "templates/view-template/show"
 )
 public class ViewTemplateTestEntity extends TestBaseEntity {
 

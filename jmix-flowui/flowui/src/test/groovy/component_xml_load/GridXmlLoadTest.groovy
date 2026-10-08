@@ -20,10 +20,14 @@ import com.vaadin.flow.component.HasText
 import com.vaadin.flow.component.grid.ColumnTextAlign
 import com.vaadin.flow.component.grid.Grid
 import com.vaadin.flow.component.grid.dnd.GridDropMode
+import com.vaadin.flow.component.UI
 import com.vaadin.flow.component.html.Anchor
 import com.vaadin.flow.component.html.AnchorTarget
+import com.vaadin.flow.component.html.Div
 import com.vaadin.flow.component.html.Hr
 import com.vaadin.flow.component.icon.VaadinIcon
+import com.vaadin.flow.component.popover.Popover
+import com.vaadin.flow.component.popover.PopoverPosition
 import component.standarddetailview.view.OrderDetailTestView
 import component_xml_load.screen.GridView
 import io.jmix.core.DataManager
@@ -31,6 +35,7 @@ import io.jmix.flowui.component.grid.DataGridColumn
 import io.jmix.flowui.component.grid.EnhancedDataGrid
 import io.jmix.flowui.component.grid.renderer.DetailButtonRenderer
 import io.jmix.flowui.component.grid.renderer.DetailLinkRenderer
+import io.jmix.flowui.component.grid.renderer.PopoverRenderer
 import io.jmix.flowui.kit.component.grid.GridMenuItemActionWrapper
 import io.jmix.flowui.testassist.UiTestUtils
 import io.jmix.flowui.view.OpenMode
@@ -285,6 +290,80 @@ class GridXmlLoadTest extends FlowuiTestSpecification {
 
         then: "detail view is opened"
         UiTestUtils.getCurrentView() instanceof OrderDetailTestView
+    }
+
+    def "Load dataGrid popoverRenderer from XML"() {
+        given: "Screen with a dataGrid"
+        def gridView = navigateToView(GridView.class)
+        gridView.loadData()
+
+        when: "popoverRenderer dataGrid is loaded"
+        def order = gridView.popoverRendererDataGrid.items.items[0] as Order
+        def renderer = gridView.popoverRendererDataGrid.getColumnByKey("number").renderer as PopoverRenderer
+        def defaultRenderer = gridView.popoverRendererDataGrid.getColumnByKey("date").renderer as PopoverRenderer
+
+        then: "popoverRenderer attributes are loaded"
+        verifyAll(renderer) {
+            position == PopoverPosition.TOP_START
+            classNames == "popover-cell, test-popover"
+            css == "font-weight: 600;"
+        }
+
+        and: "omitted attributes keep their defaults"
+        verifyAll(defaultRenderer) {
+            position == PopoverPosition.BOTTOM_START
+            classNames == null
+            css == null
+        }
+
+        when: "cell component is created"
+        def cell = renderer.createComponent(order) as Div
+
+        then: "cell component is configured"
+        verifyAll(cell) {
+            text == order.number
+            classNames.containsAll(["jmix-popover-renderer-button", "popover-cell", "test-popover"])
+            style.get("font-weight") == "600"
+        }
+
+        when: "cell component is attached"
+        UI.getCurrent().add(cell)
+
+        then: "popover is added to the UI targeting the cell component"
+        def popover = UI.getCurrent().children
+                .filter { it instanceof Popover }
+                .map { it as Popover }
+                .filter { it.target.is(cell) }
+                .findFirst()
+                .orElse(null)
+
+        popover != null
+        popover.position == PopoverPosition.TOP_START
+        (popover.children.findFirst().get() as Div).text == order.number
+
+        and: "the popover gets the configured class names"
+        popover.classNames.containsAll(["jmix-popover-renderer-popover", "popover-cell", "test-popover"])
+
+        when: "inline CSS is read from the popover"
+        popover.style
+
+        then: "the popover turns out not to support styles at all, hence css is applied to the cell only"
+        thrown UnsupportedOperationException
+    }
+
+    def "Load dataGrid popoverRenderer with an empty value"() {
+        given: "Screen with a dataGrid"
+        def gridView = navigateToView(GridView.class)
+        gridView.loadData()
+
+        and: "An order without a number"
+        def emptyOrder = dataManager.create(Order)
+
+        when: "cell component is created for the empty value"
+        def renderer = gridView.popoverRendererDataGrid.getColumnByKey("number").renderer as PopoverRenderer
+
+        then: "no component is rendered"
+        renderer.createComponent(emptyOrder) == null
     }
 
     def "Load treeDataGrid component from XML"() {

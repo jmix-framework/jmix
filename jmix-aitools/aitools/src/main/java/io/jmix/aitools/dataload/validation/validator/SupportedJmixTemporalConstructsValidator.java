@@ -27,6 +27,8 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static io.jmix.aitools.dataload.validation.validator.JpqlValidatorSupport.stripStringLiterals;
+
 
 /**
  * Checks that only supported Jmix date macros are used: {@code @between}, {@code @today},
@@ -57,7 +59,9 @@ public class SupportedJmixTemporalConstructsValidator implements JpqlResultValid
 
         List<JpqlValidationIssue> issues = new ArrayList<>();
 
-        Matcher macroMatcher = MACRO_PATTERN.matcher(jpql);
+        // Empty string literals so a macro-like token inside them (e.g. '@unknownMacro(x)') is not
+        // mistaken for an actual Jmix query macro.
+        Matcher macroMatcher = MACRO_PATTERN.matcher(stripStringLiterals(jpql));
         while (macroMatcher.find()) {
             String macroName = macroMatcher.group(1).toLowerCase(Locale.ROOT);
             if (!SUPPORTED_MACROS.contains(macroName)) {

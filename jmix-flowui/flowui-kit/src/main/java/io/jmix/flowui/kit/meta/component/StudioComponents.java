@@ -17,8 +17,10 @@
 package io.jmix.flowui.kit.meta.component;
 
 import com.vaadin.flow.component.Html;
+import com.vaadin.flow.component.Svg;
 import com.vaadin.flow.component.applayout.DrawerToggle;
 import com.vaadin.flow.component.avatar.Avatar;
+import com.vaadin.flow.component.badge.Badge;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.checkbox.CheckboxGroup;
 import com.vaadin.flow.component.combobox.ComboBox;
@@ -35,9 +37,14 @@ import com.vaadin.flow.component.login.LoginOverlay;
 import com.vaadin.flow.component.markdown.Markdown;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.popover.Popover;
 import com.vaadin.flow.component.progressbar.ProgressBar;
 import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
 import com.vaadin.flow.component.select.Select;
+import com.vaadin.flow.component.slider.DecimalRangeSlider;
+import com.vaadin.flow.component.slider.DecimalSlider;
+import com.vaadin.flow.component.slider.IntegerRangeSlider;
+import com.vaadin.flow.component.slider.IntegerSlider;
 import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.component.textfield.*;
 import com.vaadin.flow.component.timepicker.TimePicker;
@@ -144,6 +151,22 @@ interface StudioComponents {
                     StudioPropertyGroups.FontIconDefaultProperties.class
             })
     FontIcon fontIcon();
+
+    @StudioComponent(
+            name = "Badge",
+            classFqn = "com.vaadin.flow.component.badge.Badge",
+            category = "Components",
+            xmlElement = StudioXmlElements.BADGE,
+            icon = "io/jmix/flowui/kit/meta/icon/component/badge.svg",
+            documentationLink = "%VERSION%/flow-ui/vc/components/badge.html",
+            propertyGroups = StudioPropertyGroups.BadgeComponent.class,
+            propertiesBindings = {
+                    @StudioPropertiesBinding(
+                            source = "dataContainer",
+                            item = "property"
+                    )
+            })
+    Badge badge();
 
     @StudioComponent(
             name = "BigDecimalField",
@@ -595,6 +618,15 @@ interface StudioComponents {
             }
     )
     PasswordField passwordField();
+
+    @StudioComponent(
+            name = "Popover",
+            classFqn = "com.vaadin.flow.component.popover.Popover",
+            category = "Components",
+            xmlElement = StudioXmlElements.POPOVER,
+            icon = "io/jmix/flowui/kit/meta/icon/component/popover.svg",
+            propertyGroups = StudioPropertyGroups.PopoverComponent.class)
+    Popover popover();
 
     @StudioComponent(
             name = "ProgressBar",
@@ -1157,7 +1189,11 @@ interface StudioComponents {
             propertyGroups = {
                     StudioPropertyGroups.BaseSizedComponentWithClassNames.class,
                     StudioPropertyGroups.Content.class
-            })
+            },
+            properties = @StudioProperty(
+                    xmlAttribute = StudioXmlAttributes.LINE_BREAKS,
+                    type = StudioPropertyType.BOOLEAN,
+                    defaultValue = "false"))
     Markdown markdown();
 
     @StudioComponent(
@@ -1182,4 +1218,87 @@ interface StudioComponents {
             }
     )
     JmixMarkdownEditor markdownEditor();
+
+    @StudioComponent(
+            name = "Svg",
+            classFqn = "com.vaadin.flow.component.Svg",
+            category = "Components",
+            xmlElement = StudioXmlElements.SVG,
+            icon = "io/jmix/flowui/kit/meta/icon/component/svg.svg",
+            availableChildren = @StudioAvailableChildrenInfo(
+                    availableTags = @StudioAvailableChildrenInfo.TagInfo(
+                            qualifiedName = "content",
+                            maxCount = 1
+                    )
+            ),
+            propertyGroups = StudioPropertyGroups.SvgComponent.class)
+    Svg svg();
+
+    @StudioComponent(
+            name = "IntegerSlider",
+            classFqn = "io.jmix.flowui.component.slider.JmixIntegerSlider",
+            category = "Components",
+            xmlElement = StudioXmlElements.INTEGER_SLIDER,
+            icon = "io/jmix/flowui/kit/meta/icon/component/integerSlider.svg",
+            documentationLink = "%VERSION%/flow-ui/vc/components/integerSlider.html",
+            convertStrategy = @StudioConvertStrategy(tagsToConvertInto = {
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "decimalSlider"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "integerField")
+            }),
+            propertyGroups = StudioPropertyGroups.IntegerSliderComponent.class,
+            propertiesBindings = {
+                    @StudioPropertiesBinding(
+                            source = "dataContainer",
+                            item = "property"
+                    )
+            }
+    )
+    IntegerSlider integerSlider();
+
+    @StudioComponent(
+            name = "DecimalSlider",
+            classFqn = "io.jmix.flowui.component.slider.JmixDecimalSlider",
+            category = "Components",
+            xmlElement = StudioXmlElements.DECIMAL_SLIDER,
+            icon = "io/jmix/flowui/kit/meta/icon/component/decimalSlider.svg",
+            documentationLink = "%VERSION%/flow-ui/vc/components/decimalSlider.html",
+            convertStrategy = @StudioConvertStrategy(tagsToConvertInto = {
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "integerSlider"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "numberField")
+            }),
+            propertyGroups = StudioPropertyGroups.DecimalSliderComponent.class,
+            propertiesBindings = {
+                    @StudioPropertiesBinding(
+                            source = "dataContainer",
+                            item = "property"
+                    )
+            }
+    )
+    DecimalSlider decimalSlider();
+
+    @StudioComponent(
+            name = "IntegerRangeSlider",
+            classFqn = "com.vaadin.flow.component.slider.IntegerRangeSlider",
+            category = "Components",
+            xmlElement = StudioXmlElements.INTEGER_RANGE_SLIDER,
+            icon = "io/jmix/flowui/kit/meta/icon/component/integerRangeSlider.svg",
+            documentationLink = "%VERSION%/flow-ui/vc/components/integerRangeSlider.html",
+            convertStrategy = @StudioConvertStrategy(tagsToConvertInto = {
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "decimalRangeSlider")
+            }),
+            propertyGroups = StudioPropertyGroups.IntegerRangeSliderComponent.class)
+    IntegerRangeSlider integerRangeSlider();
+
+    @StudioComponent(
+            name = "DecimalRangeSlider",
+            classFqn = "com.vaadin.flow.component.slider.DecimalRangeSlider",
+            category = "Components",
+            xmlElement = StudioXmlElements.DECIMAL_RANGE_SLIDER,
+            icon = "io/jmix/flowui/kit/meta/icon/component/decimalRangeSlider.svg",
+            documentationLink = "%VERSION%/flow-ui/vc/components/decimalRangeSlider.html",
+            convertStrategy = @StudioConvertStrategy(tagsToConvertInto = {
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "integerRangeSlider")
+            }),
+            propertyGroups = StudioPropertyGroups.DecimalRangeSliderComponent.class)
+    DecimalRangeSlider decimalRangeSlider();
 }

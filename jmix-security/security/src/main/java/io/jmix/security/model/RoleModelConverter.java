@@ -46,11 +46,17 @@ public class RoleModelConverter {
     }
 
     public ResourceRoleModel createResourceRoleModel(ResourceRole role) {
+        return createResourceRoleModel(role, true);
+    }
+
+    public ResourceRoleModel createResourceRoleModel(ResourceRole role, boolean withPolicies) {
         ResourceRoleModel roleModel = metadata.create(ResourceRoleModel.class);
 
         initBaseParameters(roleModel, role);
         roleModel.setScopes(role.getScopes());
-        roleModel.setResourcePolicies(createResourcePolicyModels(role.getResourcePolicies()));
+        if (withPolicies) {
+            roleModel.setResourcePolicies(createResourcePolicyModels(role.getResourcePolicies()));
+        }
 
         entityStates.setNew(roleModel, false);
 
@@ -59,11 +65,17 @@ public class RoleModelConverter {
 
 
     public RowLevelRoleModel createRowLevelRoleModel(RowLevelRole role) {
+        return createRowLevelRoleModel(role, true);
+    }
+
+    public RowLevelRoleModel createRowLevelRoleModel(RowLevelRole role, boolean withPolicies) {
         RowLevelRoleModel roleModel = metadata.create(RowLevelRoleModel.class);
 
         initBaseParameters(roleModel, role);
 
-        roleModel.setRowLevelPolicies(createRowLevelPolicyModels(role.getRowLevelPolicies()));
+        if (withPolicies) {
+            roleModel.setRowLevelPolicies(createRowLevelPolicyModels(role.getRowLevelPolicies()));
+        }
 
         entityStates.setNew(roleModel, false);
 
@@ -78,6 +90,10 @@ public class RoleModelConverter {
         roleModel.setCode(role.getCode());
         roleModel.setDescription(role.getDescription());
         roleModel.setName(role.getName());
+        roleModel.setNameMessageKey(role.getNameMessageKey());
+        roleModel.setDescriptionMessageKey(role.getDescriptionMessageKey());
+        roleModel.setLocalizedNames(role.getLocalizedNames());
+        roleModel.setLocalizedDescriptions(role.getLocalizedDescriptions());
         roleModel.setSource(RoleSourceType.fromId(role.getSource()));
         roleModel.setChildRoles(role.getChildRoles());
         roleModel.setCustomProperties(role.getCustomProperties());

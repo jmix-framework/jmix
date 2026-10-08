@@ -28,6 +28,7 @@ import io.jmix.reports.yarg.formatters.impl.xlsx.Document;
 import io.jmix.reports.yarg.formatters.impl.xlsx.Range;
 import io.jmix.reports.yarg.formatters.impl.xlsx.RangeDependencies;
 import io.jmix.reports.yarg.formatters.impl.xlsx.XlsxImage;
+import io.jmix.reports.yarg.formatters.impl.xlsx.XlsxUtils;
 import io.jmix.reports.yarg.formatters.impl.xlsx.hints.XslxHintProcessor;
 import io.jmix.reports.yarg.structure.BandData;
 import io.jmix.reports.yarg.structure.BandOrientation;
@@ -40,13 +41,15 @@ import jakarta.xml.bind.Unmarshaller;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.DateUtil;
-import org.apache.poi.ss.usermodel.Drawing;
 import org.apache.poi.ss.usermodel.Picture;
+import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.ss.util.ImageUtils;
 import org.apache.poi.xssf.usermodel.XSSFClientAnchor;
 import org.apache.poi.xssf.usermodel.XSSFDrawing;
 import org.apache.poi.xssf.usermodel.XSSFFormulaEvaluator;
+import org.apache.poi.xssf.usermodel.XSSFName;
 import org.apache.poi.xssf.usermodel.XSSFPicture;
 import org.apache.poi.xssf.usermodel.XSSFShape;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -82,11 +85,16 @@ import java.time.LocalTime;
 import java.util.*;
 import java.util.List;
 import java.util.regex.Matcher;
+import java.util.stream.Collectors;
 
 import static io.jmix.reports.yarg.formatters.impl.xlsx.XlsxUtils.attachImageToCell;
 import static io.jmix.reports.yarg.formatters.impl.xlsx.XlsxUtils.computeColumnIndex;
 import static io.jmix.reports.yarg.formatters.impl.xlsx.XlsxUtils.deleteCTAnchor;
+import static io.jmix.reports.yarg.formatters.impl.xlsx.XlsxUtils.formatPrintArea;
 import static io.jmix.reports.yarg.formatters.impl.xlsx.XlsxUtils.getOrCreateWorksheetDrawing;
+import static io.jmix.reports.yarg.formatters.impl.xlsx.XlsxUtils.parsePrintAreas;
+import static io.jmix.reports.yarg.formatters.impl.xlsx.XlsxUtils.rebasePrintArea;
+import static io.jmix.reports.yarg.formatters.impl.xlsx.XlsxUtils.spansAllRows;
 
 public class XlsxFormatter extends AbstractFormatter {
 
@@ -107,6 +115,10 @@ public class XlsxFormatter extends AbstractFormatter {
     protected Set<CellWithBand> outerFormulas = new HashSet<>();
 
     protected Map<String, List<XlsxImage>> templateImages = new HashMap<>();
+    /**
+     * Template merged regions that stick out of the band they are copied with, mapped to their copies in the result.
+     */
+    protected RangeDependencies outerMergeRegions = new RangeDependencies();
 
     protected Map<String, Range> lastRenderedRangeForBandName = new HashMap<>();
     protected Map<Worksheet, Long> lastRowForSheet = new HashMap<>();
@@ -158,6 +170,7 @@ public class XlsxFormatter extends AbstractFormatter {
         updateConditionalFormatting();
         updateHeaderAndFooter();
         updateSheetNames();
+        updatePrintAreas();
         hintProcessor.apply();
 
         saveAndClose();
@@ -278,7 +291,8 @@ public class XlsxFormatter extends AbstractFormatter {
                             if (!isCellInBand(srcSheet.getSheetName(), row, col)) {
                                 break;
                             }
-                            String cellAddress = srcSheet.getSheetName() + "_" + srcCell.getAddress().toString();
+                            String cellAddress = getTemplateImageKey(srcSheet.getSheetName(),
+                                    srcCell.getAddress().formatAsString());
                             if (!templateImages.containsKey(cellAddress)) {
                                 templateImages.put(cellAddress, new ArrayList<>());
                             }
@@ -482,6 +496,146 @@ public class XlsxFormatter extends AbstractFormatter {
         }
     }
 
+    /**
+     * Re-bases each sheet's print area onto the rendered report, so that printing the report covers everything
+     * rendered for the template print area, see {@link XlsxUtils#rebasePrintArea}, and refers it to the sheet as it
+     * is renamed from band data.
+     */
+    protected void updatePrintAreas() {
+        RangeDependencies bandBlocks = null;
+        for (CTDefinedName definedName : result.getWorkbook().getDefinedNames().getDefinedName()) {
+            if (!XSSFName.BUILTIN_PRINT_AREA.equals(definedName.getName())) {
+                continue;
+            }
+            List<Range> printAreas = parsePrintAreas(definedName.getValue(), SpreadsheetVersion.EXCEL2007);
+            // a formula is left as it is, as are the references to several sheets
+            if (printAreas == null || printAreas.stream().map(Range::getSheet)
+                    .anyMatch(sheet -> sheet == null || !sheet.equals(printAreas.get(0).getSheet()))) {
+                continue;
+            }
+            try {
+                List<Range> resultPrintAreas = new ArrayList<>(printAreas);
+                Range printArea = printAreas.get(0);
+                // several areas are not re-based, whole columns cover every rendered row anyway
+                if (printAreas.size() == 1 && !spansAllRows(printArea, SpreadsheetVersion.EXCEL2007)) {
+                    if (bandBlocks == null) {
+                        bandBlocks = getRenderedBandBlocks();
+                    }
+                    Range resultPrintArea = rebasePrintArea(printArea, bandBlocks, getRenderedObjects(printArea),
+                            SpreadsheetVersion.EXCEL2007);
+                    if (resultPrintArea != null) {
+                        resultPrintAreas.set(0, resultPrintArea);
+                    }
+                }
+                String sheet = getPrintAreaSheet(definedName, printArea.getSheet());
+                if (!sheet.equals(printArea.getSheet()) || !resultPrintAreas.equals(printAreas)) {
+                    definedName.setValue(resultPrintAreas.stream()
+                            .map(area -> formatPrintArea(new Range(sheet, area.getFirstColumn(), area.getFirstRow(),
+                                    area.getLastColumn(), area.getLastRow()), SpreadsheetVersion.EXCEL2007))
+                            .collect(Collectors.joining(",")));
+                }
+            } catch (RuntimeException e) {
+                // the print area must not break the report
+                log.warn("Unable to re-base the print area {}, it is kept as authored", definedName.getValue(), e);
+            }
+        }
+    }
+
+    /**
+     * Returns the name of the sheet the print area belongs to as it is written in a formula: the sheet may have been
+     * renamed from band data, see {@link #updateSheetNames()}, while the print area and the band ranges keep the name
+     * of the template sheet.
+     */
+    protected String getPrintAreaSheet(CTDefinedName printAreaName, String templateSheet) {
+        Long sheetIndex = printAreaName.getLocalSheetId();
+        List<Sheet> sheets = result.getWorkbook().getSheets().getSheet();
+        return sheetIndex != null && sheetIndex >= 0 && sheetIndex < sheets.size()
+                ? sheets.get(sheetIndex.intValue()).getName().replace("'", "''")
+                : templateSheet;
+    }
+
+    /**
+     * Returns the template range of each rendered band mapped to the range covering the blocks of all its instances,
+     * see {@link XlsxUtils#getRenderedBandBlocks}.
+     */
+    protected RangeDependencies getRenderedBandBlocks() {
+        return XlsxUtils.getRenderedBandBlocks(rootBand, bandsForRanges::resultForBand, this::getBandRange);
+    }
+
+    /**
+     * Returns the template ranges of the objects intersecting the template print area that keep their size, mapped
+     * to the ranges they are rendered to: the merged regions copied with the bands they stick out of, see
+     * {@link #outerMergeRegions}, and the drawings. A chart is moved with the band it intersects, other drawings stay
+     * in place, except for the pictures copied into the band cells, which the band blocks cover.
+     */
+    protected RangeDependencies getRenderedObjects(Range printArea) {
+        RangeDependencies objects = new RangeDependencies();
+        for (Range mergeRange : outerMergeRegions.templates()) {
+            if (printArea.intersects(mergeRange)) {
+                for (Range resultMergeRange : outerMergeRegions.resultsForTemplate(mergeRange)) {
+                    objects.addDependency(mergeRange, resultMergeRange);
+                }
+            }
+        }
+        String sheetName = printArea.getSheet();
+        // the number of pictures extractTemplateImages() has copied into band cells, by the cell they are anchored in
+        Map<String, Integer> copiedPictures = new HashMap<>();
+        templateImages.forEach((key, images) -> copiedPictures.put(key, images.size()));
+        for (Object anchor : getTemplateDrawingAnchors(sheetName)) {
+            Range templateAnchor = XlsxUtils.getAnchorRange(sheetName, anchor);
+            if (templateAnchor == null) {
+                continue;
+            }
+            boolean picture = anchor instanceof CTTwoCellAnchor twoCellAnchor && twoCellAnchor.getPic() != null
+                    || anchor instanceof CTOneCellAnchor oneCellAnchor && oneCellAnchor.getPic() != null;
+            if (picture) {
+                // the first pictures anchored in a cell are the ones copied into it
+                String key = getTemplateImageKey(sheetName, new CellAddress(templateAnchor.getFirstRow() - 1,
+                        templateAnchor.getFirstColumn() - 1).formatAsString());
+                if (copiedPictures.getOrDefault(key, 0) > 0) {
+                    copiedPictures.merge(key, -1, Integer::sum);
+                    continue;
+                }
+            }
+            if (printArea.intersects(templateAnchor)) {
+                Document.ChartWrapper chart = result.getChartSpaces().get(templateAnchor);
+                objects.addDependency(templateAnchor,
+                        chart != null ? XlsxUtils.getAnchorRange(sheetName, chart.getAnchor()) : templateAnchor);
+            }
+        }
+        return objects;
+    }
+
+    /**
+     * Returns the anchors of the drawing objects on the template sheet.
+     */
+    protected List<Object> getTemplateDrawingAnchors(String sheetName) {
+        for (Document.SheetWrapper sheetWrapper : template.getWorksheets()) {
+            if (!sheetWrapper.getName().equals(sheetName)) {
+                continue;
+            }
+            Worksheet worksheet = template.getWorksheetContents(sheetWrapper);
+            RelationshipsPart relationships = sheetWrapper.getWorksheet().getRelationshipsPart();
+            if (worksheet.getDrawing() != null && relationships != null
+                    && relationships.getPart(worksheet.getDrawing().getId())
+                    instanceof org.docx4j.openpackaging.parts.DrawingML.Drawing drawing) {
+                try {
+                    return drawing.getContents().getEGAnchor();
+                } catch (Docx4JException e) {
+                    throw new RuntimeException("Unable to get drawing contents", e);
+                }
+            }
+        }
+        return Collections.emptyList();
+    }
+
+    /**
+     * Returns the key of the pictures anchored in the template cell in {@link #templateImages}.
+     */
+    protected String getTemplateImageKey(String sheetName, String cellReference) {
+        return sheetName + "_" + cellReference;
+    }
+
     protected void processOuterFormulas() {
         for (CellWithBand cellWithWithBand : outerFormulas) {
             Cell cellWithFormula = cellWithWithBand.cell;
@@ -672,6 +826,9 @@ public class XlsxFormatter extends AbstractFormatter {
                             resultMergeRegion.setRef(resultMergeRange.toRange());
                             resultMergeRegion.setParent(resultSheet.getMergeCells());
                             resultSheet.getMergeCells().getMergeCell().add(resultMergeRegion);
+                            if (!templateRange.contains(mergeRange)) {
+                                outerMergeRegions.addDependency(mergeRange, resultMergeRange);
+                            }
                         }
                     }
                 }
@@ -846,7 +1003,7 @@ public class XlsxFormatter extends AbstractFormatter {
 
         if (resultSheet.getSheetData().getRow().size() < firstRow.getR() + templateRange.getLastRow() - templateRange.getFirstRow()) {
             for (int i = 0; i < templateRange.getLastRow() - templateRange.getFirstRow(); i++) {
-                Row row = createNewRow(resultSheet);
+                createNewRow(resultSheet);
             }
         }
         return firstRow;
@@ -970,7 +1127,6 @@ public class XlsxFormatter extends AbstractFormatter {
             newRow.getC().add(newCell);
             newCell.setParent(newRow);
 
-            WorksheetPart worksheet = result.getWorksheets().get(0).getWorksheet();
             WorksheetPart worksheetPart = null;
             for (Document.SheetWrapper sheetWrapper : result.getWorksheets()) {
                 Worksheet contents;
@@ -1011,7 +1167,7 @@ public class XlsxFormatter extends AbstractFormatter {
         int newRowNum = newRow.getR().intValue() - 1;
         int newColNum = computeColumnIndex(newCell.getR()) - 1;
 
-        List<XlsxImage> images = templateImages.get(templateRange.getSheet() + "_" + templateCell.getR());
+        List<XlsxImage> images = templateImages.get(getTemplateImageKey(templateRange.getSheet(), templateCell.getR()));
 
         if (images != null && !images.isEmpty()) {
             for (XlsxImage image : images) {

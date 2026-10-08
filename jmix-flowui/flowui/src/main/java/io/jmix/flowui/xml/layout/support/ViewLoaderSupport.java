@@ -19,6 +19,7 @@ package io.jmix.flowui.xml.layout.support;
 import io.jmix.flowui.facet.Facet;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.model.ViewData;
+import io.jmix.flowui.view.ReadView;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewActions;
 import io.jmix.flowui.view.ViewControllerUtils;
@@ -77,7 +78,7 @@ public class ViewLoaderSupport implements ApplicationContextAware {
         Element dataElement = element.element("data");
         if (dataElement != null) {
             ViewData viewData = ViewControllerUtils.getViewData(view);
-            dataComponentsLoaderSupport.load(viewData, dataElement);
+            dataComponentsLoaderSupport.load(viewData, dataElement, view instanceof ReadView);
             ((ComponentLoaderContext) context).setDataHolder(viewData);
         }
     }

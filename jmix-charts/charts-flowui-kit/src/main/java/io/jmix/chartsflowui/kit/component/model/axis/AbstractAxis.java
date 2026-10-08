@@ -34,6 +34,8 @@ public abstract class AbstractAxis<T extends AbstractAxis<T>> extends ChartObser
 
     protected BoundaryGap boundaryGap;
 
+    protected Boolean containShape;
+
     protected String min;
 
     protected JsFunction minFunction;
@@ -184,6 +186,16 @@ public abstract class AbstractAxis<T extends AbstractAxis<T>> extends ChartObser
 
     public void setBoundaryGap(String min, String max) {
         this.boundaryGap = new BoundaryGap(min, max);
+        markAsDirty();
+    }
+
+    @Nullable
+    public Boolean getContainShape() {
+        return containShape;
+    }
+
+    public void setContainShape(Boolean containShape) {
+        this.containShape = containShape;
         markAsDirty();
     }
 
@@ -609,6 +621,12 @@ public abstract class AbstractAxis<T extends AbstractAxis<T>> extends ChartObser
     @SuppressWarnings("unchecked")
     public T withBoundaryGap(String min, String max) {
         setBoundaryGap(min, max);
+        return (T) this;
+    }
+
+    @SuppressWarnings("unchecked")
+    public T withContainShape(Boolean containShape) {
+        setContainShape(containShape);
         return (T) this;
     }
 

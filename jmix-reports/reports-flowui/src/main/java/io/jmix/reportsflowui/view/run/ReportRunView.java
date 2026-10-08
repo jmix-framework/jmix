@@ -166,7 +166,8 @@ public class ReportRunView extends StandardListView<Report> {
         if (this.reports != null) {
             filterDetails.setVisible(false);
         }
-        openInSpreadsheetAction.setVisible(spreadsheetViewSupport != null);
+        openInSpreadsheetAction.setVisible(
+                spreadsheetViewSupport != null && spreadsheetViewSupport.isSpreadsheetViewAccessible());
     }
 
     @Subscribe("reportDataGrid.runReport")

@@ -1,0 +1,68 @@
+.login-form-main-layout {
+    background-color: var(--lumo-shade-5pct);
+}
+
+.login-form-wrapper {
+    max-width: calc(var(--lumo-size-m) * 10);
+    background: var(--lumo-base-color) linear-gradient(var(--lumo-tint-5pct), var(--lumo-tint-5pct));
+    padding: var(--lumo-space-l);
+    border-radius: var(--lumo-border-radius-m);
+    align-items: stretch;
+}
+
+.login-form-wrapper > *[has-label] {
+    padding-top: 0;
+}
+
+.login-form-header {
+    margin-top: calc(var(--lumo-font-size-xxxl) - var(--lumo-font-size-xxl));
+    color: var(--lumo-header-text-color);
+    font-size: var(--lumo-font-size-xxl);
+    font-weight: 600;
+    line-height: var(--lumo-line-height-xs);
+}
+
+.login-form-error-message {
+    background-color: var(--lumo-error-color-10pct);
+    padding: var(--lumo-space-m);
+    padding-left: var(--lumo-size-m);
+    border-radius: var(--lumo-border-radius-m);
+    margin-top: var(--lumo-space-m);
+    margin-bottom: var(--lumo-space-s);
+    color: var(--lumo-error-text-color);
+}
+
+.login-form-error-message:before {
+    content: var(--lumo-icons-error);
+    font-family: lumo-icons;
+    font-size: var(--lumo-icon-size-m);
+    position: absolute;
+    width: var(--lumo-size-m);
+    height: 1em;
+    line-height: 1;
+    text-align: center;
+    margin-left: calc(var(--lumo-size-m) * -0.95);
+}
+
+.login-form-error-message-title {
+    margin: 0 0 0.25em;
+    color: inherit;
+}
+
+.login-form-error-message-description {
+    font-size: var(--lumo-font-size-s);
+    line-height: var(--lumo-line-height-s);
+    margin: 0;
+    opacity: 0.9;
+}
+
+.login-form-settings-wrapper {
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
+.login-form-locale-select {
+    width: 100%;
+    max-width: var(--jmix-login-form-locales-select-width, 8em);
+}

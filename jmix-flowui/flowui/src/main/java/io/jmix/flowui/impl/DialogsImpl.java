@@ -1559,10 +1559,24 @@ public class DialogsImpl implements Dialogs {
 
         @Nullable
         @Override
+        public String getAriaRole() {
+            return sideDialog.getAriaRole().orElse(null);
+        }
+
+        @Override
+        public SideDialogBuilder withAriaRole(String role) {
+            sideDialog.setAriaRole(role);
+            return this;
+        }
+
+        @Deprecated(since = "3.1", forRemoval = true)
+        @Nullable
+        @Override
         public String getOverlayRole() {
             return sideDialog.getOverlayRole();
         }
 
+        @Deprecated(since = "3.1", forRemoval = true)
         @Override
         public SideDialogBuilder withOverlayRole(String role) {
             sideDialog.setOverlayRole(role);

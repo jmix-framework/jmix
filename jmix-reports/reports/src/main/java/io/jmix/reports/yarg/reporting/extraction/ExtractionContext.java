@@ -26,7 +26,7 @@ import java.util.Map;
 /**
  * This interface implementation should presents extraction context dependent state
  *
- * <p>The default implementation is <b>io.jmix.reports.yarg.reporting.extraction.ExtractionContextImpl</b></p>
+ * <p>The default implementation is <b>ExtractionContextImpl</b></p>
  */
 @NullMarked
 public interface ExtractionContext {

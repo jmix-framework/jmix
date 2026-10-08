@@ -1,0 +1,105 @@
+/*
+ * Copyright 2026 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+.uirec-draft-list-hint,
+.uirec-draft-list-empty {
+    color: var(--vaadin-text-color-secondary);
+    font-size: var(--aura-font-size-s);
+}
+
+.uirec-draft-list-buttons {
+    gap: var(--vaadin-gap-s);
+}
+
+.uirec-draft-grid::part(items) {
+    grid-gap: var(--vaadin-gap-s);
+}
+
+.uirec-draft-card {
+    background: var(--vaadin-background-color);
+    border: 1px solid var(--vaadin-border-color);
+    border-radius: var(--vaadin-radius-m);
+    box-sizing: border-box;
+    gap: 0;
+    margin: 0;
+    /* The body link carries the padding, so it covers the whole card except the discard button. */
+    padding: 0 var(--vaadin-padding-s) 0 0;
+}
+
+.uirec-draft-card-body {
+    align-self: stretch;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+    gap: var(--vaadin-gap-xs);
+    min-width: 0;
+    padding: var(--vaadin-padding-s);
+    text-decoration: none;
+}
+
+/* The body link takes the keyboard focus, but the ring is drawn around the whole card. */
+.uirec-draft-card:has(.uirec-draft-card-body:focus-visible) {
+    outline: var(--vaadin-focus-ring-width) solid var(--vaadin-focus-ring-color);
+    outline-offset: 1px;
+}
+
+.uirec-draft-card-body:focus-visible {
+    outline: none;
+}
+
+.uirec-draft-card:has(.uirec-draft-card-body:hover) {
+    border-color: var(--vaadin-focus-ring-color);
+}
+
+.uirec-draft-card-title {
+    font-size: var(--aura-font-size-m);
+    font-weight: 600;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.uirec-draft-card-record {
+    color: var(--vaadin-text-color);
+    font-size: var(--aura-font-size-s);
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.uirec-draft-card-date {
+    color: var(--vaadin-text-color-secondary);
+    font-size: var(--aura-font-size-xs);
+}
+
+.uirec-draft-card-discard {
+    flex: none;
+}
+
+/* Forced colors replace the hover border colour with the palette colour; a system colour is kept, so
+   Highlight marks the hover, with an extra outline to make it visible next to the black or white border. */
+@media (forced-colors: active) {
+    .uirec-draft-card:has(.uirec-draft-card-body:hover) {
+        border-color: Highlight;
+    }
+
+    /* Together with the border it gives a 2px line. Not applied to a focused card, to keep its focus ring. */
+    .uirec-draft-card:has(.uirec-draft-card-body:hover:not(:focus-visible)) {
+        outline: 1px solid Highlight;
+    }
+}

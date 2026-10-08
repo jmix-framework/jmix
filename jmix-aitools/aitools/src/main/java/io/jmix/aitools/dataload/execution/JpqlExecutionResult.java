@@ -33,7 +33,7 @@ public class JpqlExecutionResult {
     protected GeneratedJpqlResult generatedJpqlResult;
     protected JpqlValidationResult validationResult;
 
-    protected List<Map<String, Object>> rows;
+    protected List<Map<String, @Nullable Object>> rows;
     protected boolean hasMore;
 
     protected boolean repaired;
@@ -50,7 +50,7 @@ public class JpqlExecutionResult {
     /**
      * @param generatedJpqlResult generated (and possibly repaired) query draft
      * @param validationResult    validation result of the processed query
-     * @param rows                fetched rows, each a property-name-to-value map
+     * @param rows                fetched rows, each a property-name-to-value map; a value may be {@code null}
      * @param maxResults          effective maximum number of rows
      * @param firstResult         applied row offset
      * @param hasMore             whether more rows are available beyond {@code maxResults}
@@ -60,7 +60,7 @@ public class JpqlExecutionResult {
      */
     public JpqlExecutionResult(GeneratedJpqlResult generatedJpqlResult,
                                JpqlValidationResult validationResult,
-                               List<Map<String, Object>> rows,
+                               List<Map<String, @Nullable Object>> rows,
                                @Nullable Integer maxResults,
                                @Nullable Integer firstResult,
                                boolean hasMore,
@@ -131,12 +131,12 @@ public class JpqlExecutionResult {
     }
 
     /**
-     * Returns the fetched rows as an unmodifiable list, each row being a property-name-to-value map.
-     * Empty if the query was not executed or returned nothing.
+     * Returns the fetched rows as an unmodifiable list, each row being a property-name-to-value map whose values
+     * may be {@code null}. Empty if the query was not executed or returned nothing.
      *
      * @return fetched rows, never {@code null}
      */
-    public List<Map<String, Object>> getRows() {
+    public List<Map<String, @Nullable Object>> getRows() {
         return Collections.unmodifiableList(rows);
     }
 

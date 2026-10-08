@@ -23,4 +23,9 @@ dependencies {
     api project(':quartz')
 
     implementation 'org.springframework.boot:spring-boot-autoconfigure'
+
+    testImplementation 'org.springframework:spring-test'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }

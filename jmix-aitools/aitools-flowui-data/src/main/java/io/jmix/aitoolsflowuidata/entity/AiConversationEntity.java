@@ -31,7 +31,9 @@ import java.util.List;
 import java.util.UUID;
 
 @JmixEntity
-@Table(name = "AITLS_AI_CONVERSATION_ENTITY")
+@Table(name = "AITLS_AI_CONVERSATION_ENTITY", indexes = {
+        @Index(name = "IDX_AITLS_AI_CONV_ENT_USERNAME", columnList = "USERNAME")
+})
 @Entity(name = "aitls_AiConversationEntity")
 public class AiConversationEntity {
 

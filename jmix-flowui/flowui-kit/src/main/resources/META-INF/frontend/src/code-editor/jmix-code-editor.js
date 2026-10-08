@@ -29,6 +29,30 @@ import {LumoInjectionMixin} from '@vaadin/vaadin-themable-mixin/lumo-injection-m
 import {ThemableMixin} from '@vaadin/vaadin-themable-mixin/vaadin-themable-mixin.js';
 import {jmixCodeEditorStyles} from './styles/jmix-code-editor-base-styles';
 
+/*
+ * Ace appends the suggestions popup to the document body, so the popup is painted in the regular
+ * stacking context. Vaadin shows overlays as popovers, i.e. in the browser top layer, which is painted
+ * above the regular content regardless of the `z-index`, therefore the popup is promoted to the top
+ * layer as well. See `JmixCodeEditor#_configureSuggestionsPopup()`.
+ */
+ace.require('ace/lib/dom').importCssString(`
+    .ace_editor.ace_autocomplete[popover] {
+        /* The user agent stylesheet centers a popover using 'inset: 0' and 'margin: auto', which
+           overrides the position assigned to the popup by Ace. */
+        inset: auto;
+        margin: 0;
+        /* A modal overlay disables pointer events on the document body. */
+        pointer-events: auto;
+    }
+
+    /* Ace measures the popup right after making it visible and before the popup is promoted to the
+       top layer, so the popup must keep its box while it is not shown as a popover. Ace hides the
+       popup by an inline 'display: none' style, which still wins over this rule. */
+    .ace_editor.ace_autocomplete[popover]:not(:popover-open) {
+        display: block;
+    }
+`, 'jmix-code-editor-autocomplete.css');
+
 class JmixCodeEditor extends ResizeMixin(InputFieldMixin(ThemableMixin(ElementMixin(PolylitMixin(LumoInjectionMixin(LitElement)))))) {
 
     static get is() {
@@ -50,7 +74,9 @@ class JmixCodeEditor extends ResizeMixin(InputFieldMixin(ThemableMixin(ElementMi
                 <div part="input-field"
                      .readonly="${this.readonly}"
                      .disabled="${this.disabled}"
-                     .invalid="${this.invalid}"></div>
+                     .invalid="${this.invalid}">
+                    <div class="jmix-code-editor-canvas"></div>
+                </div>
 
                 <div part="helper-text">
                     <slot name="helper"></slot>
@@ -195,17 +221,30 @@ class JmixCodeEditor extends ResizeMixin(InputFieldMixin(ThemableMixin(ElementMi
     }
 
     /** @protected */
+    connectedCallback() {
+        super.connectedCallback();
+
+        if (this._editor !== undefined && this.theme === undefined) {
+            this.initApplicationThemeObserver();
+            this._applyTheme();
+        }
+    }
+
+    /** @protected */
+    disconnectedCallback() {
+        super.disconnectedCallback();
+
+        this._disconnectApplicationThemeObserver();
+    }
+
+    /** @protected */
     ready() {
         super.ready();
 
-        const editor = this.shadowRoot.querySelector('[part="input-field"]');
-
-        if (this.theme === undefined) {
-            this.initApplicationThemeObserver();
-        }
+        const editor = this.shadowRoot.querySelector('.jmix-code-editor-canvas');
 
         this._editor = ace.edit(editor, {
-            theme: "ace/theme/" + this.theme,
+            theme: "ace/theme/" + (this.theme ?? this._getApplicationEditorTheme()),
             mode: "ace/mode/" + this.mode,
             highlightActiveLine: this.highlightActiveLine,
             highlightGutterLine: this.highlightGutterLine,
@@ -223,6 +262,10 @@ class JmixCodeEditor extends ResizeMixin(InputFieldMixin(ThemableMixin(ElementMi
             enableLiveAutocompletion: this.liveSuggestionsEnabled,
             useWorker: false
         });
+
+        if (this.theme === undefined) {
+            this.initApplicationThemeObserver();
+        }
 
         this._tooltipController = new TooltipController(this);
         this._tooltipController.setPosition('top');
@@ -245,11 +288,13 @@ class JmixCodeEditor extends ResizeMixin(InputFieldMixin(ThemableMixin(ElementMi
 
         this.initSuggestionListeners();
         this.updateSuggestions();
+        this.initSuggestionsPopup();
     }
 
     initApplicationThemeObserver() {
-        // Apply current application theme as initial value
-        this._applyTheme()
+        // 'ready()' is reached from within 'super.connectedCallback()', so both may request the
+        // observer during the same attach: the previous one must be released, not just replaced.
+        this._disconnectApplicationThemeObserver();
 
         this._applicationThemeObserver = new MutationObserver(mutations => {
             if (mutations.filter(mutation =>
@@ -337,12 +382,75 @@ class JmixCodeEditor extends ResizeMixin(InputFieldMixin(ThemableMixin(ElementMi
     }
 
     /**
+     * Subscribes to the creation of the popup in which the suggestions are shown. Ace creates the
+     * popup lazily, on the first suggestions request.
+     */
+    initSuggestionsPopup() {
+        const {Autocomplete} = ace.require('ace/autocomplete');
+        const completer = Autocomplete.for(this._editor);
+
+        const createPopup = completer.$init.bind(completer);
+        completer.$init = () => this._configureSuggestionsPopup(createPopup());
+    }
+
+    /**
+     * Promotes the suggestions popup to the browser top layer for the time it is shown. Otherwise,
+     * the popup of an editor placed in a Vaadin overlay, e.g. in a dialog window, is completely
+     * covered by that overlay.
+     *
+     * @private
+     */
+    _configureSuggestionsPopup(popup) {
+        const element = popup.container;
+        element.popover = 'manual';
+
+        // The popup is added to the top layer anew every time it is shown, so that it is placed
+        // above the overlays opened in the meantime.
+        popup.on('show', () => {
+            if (!element.matches(':popover-open')) {
+                element.showPopover();
+            }
+        });
+
+        popup.on('hide', () => {
+            if (element.matches(':popover-open')) {
+                element.hidePopover();
+            }
+        });
+
+        return popup;
+    }
+
+    /**
      * @protected
      */
     _applyTheme() {
-        const currentTheme = this._getCurrentApplicationTheme();
+        if (this._editor === undefined) {
+            return;
+        }
 
-        this.theme = currentTheme === 'dark' ? 'nord_dark' : 'textmate';
+        // The application theme is applied to the editor directly instead of being written to the
+        // 'theme' property: otherwise an implicitly applied theme is indistinguishable from a theme
+        // set explicitly, and the latter gets silently overwritten.
+        this._editor.setTheme("ace/theme/" + this._getApplicationEditorTheme());
+    }
+
+    /**
+     * @protected
+     */
+    _disconnectApplicationThemeObserver() {
+        if (this._applicationThemeObserver !== undefined) {
+            this._applicationThemeObserver.disconnect();
+            this._applicationThemeObserver = undefined;
+        }
+    }
+
+    /**
+     * @return the editor theme matching the current application theme
+     * @protected
+     */
+    _getApplicationEditorTheme() {
+        return this._getCurrentApplicationTheme() === 'dark' ? 'nord_dark' : 'textmate';
     }
 
     /**
@@ -398,6 +506,9 @@ class JmixCodeEditor extends ResizeMixin(InputFieldMixin(ThemableMixin(ElementMi
         if (this._editor === undefined) {
             return;
         }
+
+        // An explicitly set theme wins over the application theme.
+        this._disconnectApplicationThemeObserver();
 
         this._editor.setTheme("ace/theme/" + theme);
     }

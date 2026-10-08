@@ -18,6 +18,7 @@ package io.jmix.messagetemplatesflowui.view.messagetemplatepreview;
 
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.Html;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.component.textarea.JmixTextArea;
@@ -69,6 +70,8 @@ public class MessageTemplatePreviewView extends StandardView {
 
     protected void initHtmlLayout() {
         openInNewTabButton.setVisible(true);
+
+        contentBox.setAlignItems(FlexComponent.Alignment.STRETCH);
 
         // <div> wrapping required to avoid 'HTML must contain exactly one top-level element' exception
         Html html = new Html("<div>%s</div>".formatted(content));

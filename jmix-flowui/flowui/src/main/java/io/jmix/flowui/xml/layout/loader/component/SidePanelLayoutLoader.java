@@ -48,6 +48,7 @@ public class SidePanelLayoutLoader extends AbstractComponentLoader<SidePanelLayo
     public void loadComponent() {
         componentLoader().loadSizeAttributes(resultComponent, element);
         componentLoader().loadClassNames(resultComponent, element);
+        componentLoader().loadThemeNames(resultComponent, element);
 
         loadEnum(element, SidePanelPosition.class, "sidePanelPosition", resultComponent::setSidePanelPosition);
         loadBoolean(element, "sidePanelOverlay", resultComponent::setSidePanelOverlay);
@@ -55,6 +56,7 @@ public class SidePanelLayoutLoader extends AbstractComponentLoader<SidePanelLayo
         loadBoolean(element, "closeOnOutsideClick", resultComponent::setCloseOnOutsideClick);
         loadBoolean(element, "displayAsOverlayOnSmallDevices", resultComponent::setDisplayAsOverlayOnSmallDevices);
         loadString(element, "overlayAriaLabel", resultComponent::setOverlayAriaLabel);
+        loadBoolean(element, "sidePanelResizable", resultComponent::setSidePanelResizable);
         loadString(element, "sidePanelHorizontalMaxSize", resultComponent::setSidePanelHorizontalMaxSize);
         loadString(element, "sidePanelHorizontalMinSize", resultComponent::setSidePanelHorizontalMinSize);
         loadString(element, "sidePanelHorizontalSize", resultComponent::setSidePanelHorizontalSize);

@@ -55,11 +55,12 @@ public class LegacyUiTimerSupport {
     /**
      * When legacy monitoring is on, modern {@code Observation}-based {@code Timer} and
      * {@code LongTaskTimer} for the same {@code jmix.ui.*} metric names would collide with the
-     * legacy registrations under different tag schemas. {@code PrometheusMeterRegistry} keeps the
-     * first registration and silently drops conflicting ones. Suppress the modern side at the
-     * registry level by denying any meter under {@code jmix.ui.*} that carries the modern-schema
-     * marker tag {@code lifecycle.name}. Tracing spans don't go through {@code MeterRegistry} and
-     * are not affected.
+     * legacy registrations under different tag schemas.
+     * Since Micrometer 1.17, PrometheusMeterRegistry keeps both conflicting registrations,
+     * so this filter is the sole guard preventing modern-schema series from appearing alongside legacy ones.
+     * Suppress the modern side at the registry level by denying any meter under {@code jmix.ui.*}
+     * that carries the modern-schema marker tag {@code lifecycle.name}.
+     * Tracing spans don't go through {@code MeterRegistry} and are not affected.
      */
     @PostConstruct
     protected void suppressObservationMetersInLegacyMode() {

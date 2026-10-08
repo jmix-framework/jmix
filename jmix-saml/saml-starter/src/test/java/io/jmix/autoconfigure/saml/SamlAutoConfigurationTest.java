@@ -42,7 +42,7 @@ class SamlAutoConfigurationTest {
                 .withBean(SamlUserMapper.class, () -> mock(SamlUserMapper.class))
                 .run(context -> {
                     assertThat(context).hasNotFailed();
-                    assertThat(context).doesNotHaveBean(SamlAutoConfiguration.DefaulSamlVaadinWebSecurity.class);
+                    assertThat(context).doesNotHaveBean(SamlAutoConfiguration.DefaultSamlVaadinWebSecurity.class);
                 });
     }
 
@@ -62,7 +62,7 @@ class SamlAutoConfigurationTest {
     }
 
     /**
-     * Mimics {@link SamlAutoConfiguration.DefaulSamlVaadinWebSecurity} without building the Vaadin filter chain:
+     * Mimics {@link SamlAutoConfiguration.DefaultSamlVaadinWebSecurity} without building the Vaadin filter chain:
      * the inherited dependencies are injected regardless of how the chain is configured.
      */
     @EnableWebSecurity

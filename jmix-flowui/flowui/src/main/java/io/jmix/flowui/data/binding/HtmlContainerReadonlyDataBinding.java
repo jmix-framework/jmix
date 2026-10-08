@@ -26,8 +26,12 @@ import org.jspecify.annotations.NullMarked;
 /**
  * Binds {@link HtmlContainer} with {@link ValueSource}, {@link InstanceContainer} or {@link CollectionContainer}
  * to show entity property value.
+ *
+ * @deprecated use {@link TextComponentReadonlyDataBinding} instead, it supports any component
+ * that implements {@link com.vaadin.flow.component.HasText}
  */
 @NullMarked
+@Deprecated(since = "3.1", forRemoval = true)
 public interface HtmlContainerReadonlyDataBinding {
 
     /**

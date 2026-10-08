@@ -20,7 +20,9 @@ import io.jmix.core.DataManager;
 import io.jmix.core.Id;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
+import io.jmix.core.querycondition.PropertyCondition;
 import io.jmix.data.PersistenceHints;
 import io.jmix.search.index.impl.dynattr.DynamicAttributesSupport;
 import io.jmix.search.listener.dynattr.DynamicAttributeReferenceFieldResolver;
@@ -77,6 +79,13 @@ public class DependentEntitiesLoader {
             for (MetaPropertyPath propertyPath : properties) {
                 log.debug("Load entities '{}' dependent via property '{}'", entityName, propertyPath);
 
+                if (isNonJpaProperty(propertyPath)) {
+                    // The JPQL below does not compile for such a property, and a failed query inside the save
+                    // transaction marks it rollback-only.
+                    result.addAll(loadDependentEntityIdsByCondition(metaClass, propertyPath, targetEntityId));
+                    continue;
+                }
+
                 DependentEntitiesQuery dependentEntitiesQuery = new DependentEntitiesQueryBuilder(metadataTools, dynamicAttributeReferenceFieldResolver, dynamicAttributesSupport)
                         .loadEntity(metaClass)
                         .byProperty(propertyPath)
@@ -96,6 +105,35 @@ public class DependentEntitiesLoader {
         }
 
         return result;
+    }
+
+    /**
+     * A {@code jmix-dynattr} attribute is not JPA-mapped either, but it has a query of its own and is excluded here.
+     */
+    protected boolean isNonJpaProperty(MetaPropertyPath propertyPath) {
+        return !dynamicAttributesSupport.isDynamicAttribute(propertyPath) && !metadataTools.isJpa(propertyPath);
+    }
+
+    protected List<Id<?>> loadDependentEntityIdsByCondition(MetaClass metaClass,
+                                                            MetaPropertyPath propertyPath,
+                                                            Id<?> targetEntityId) {
+        for (MetaProperty property : propertyPath.getMetaProperties()) {
+            if (property.getRange().getCardinality().isMany()) {
+                log.warn("Dependent entities '{}' via non-JPA collection property '{}' are not reloaded: " +
+                        "a collection cannot be expressed as a property condition", metaClass.getName(), propertyPath);
+                return List.of();
+            }
+        }
+        List<Id<?>> refObjectIds = dataManager.load(metaClass.getJavaClass())
+                .condition(PropertyCondition.equal(propertyPath.toPathString(), targetEntityId.getValue()))
+                .hint(PersistenceHints.SOFT_DELETION, false)
+                .joinTransaction(true)
+                .list()
+                .stream()
+                .map(Id::of)
+                .collect(Collectors.toList());
+        log.debug("Loaded primary keys of dependent references by condition ({}): {}", refObjectIds.size(), refObjectIds);
+        return refObjectIds;
     }
 
     protected List<Id<?>> performLoadingDependentEntityIds(MetaClass metaClass, DependentEntitiesQuery dependentEntitiesQuery) {

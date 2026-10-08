@@ -31,6 +31,7 @@ import com.vaadin.flow.component.textfield.TextArea;
 import io.jmix.core.CoreProperties;
 import io.jmix.core.MessageTools;
 import io.jmix.core.Metadata;
+import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.flowui.Dialogs;
 import io.jmix.flowui.Notifications;
@@ -88,6 +89,8 @@ public class RowLevelPolicyModelDetailView extends StandardDetailView<RowLevelPo
     private Notifications notifications;
     @Autowired
     private Metadata metadata;
+    @Autowired
+    private MetadataTools metadataTools;
     @Autowired(required = false)
     private RolePersistence rolePersistence;
     @Autowired
@@ -114,6 +117,7 @@ public class RowLevelPolicyModelDetailView extends StandardDetailView<RowLevelPo
 
         if ("type".equals(property)) {
             initFieldsAccessForType();
+            resetEntityNameIfNotApplicable();
         }
 
         if ("entityName".equals(property)
@@ -148,6 +152,7 @@ public class RowLevelPolicyModelDetailView extends StandardDetailView<RowLevelPo
 
         switch (type) {
             case JPQL:
+                entityNameField.getListDataView().setFilter(this::isJpaEntity);
                 actionField.setReadOnly(true);
 
                 joinClauseField.setVisible(true);
@@ -158,6 +163,7 @@ public class RowLevelPolicyModelDetailView extends StandardDetailView<RowLevelPo
                 getEditedEntity().setScript(null);
                 break;
             case PREDICATE:
+                entityNameField.getListDataView().removeFilters();
                 actionField.setReadOnly(isReadOnly());
 
                 joinClauseField.setVisible(false);
@@ -270,5 +276,19 @@ public class RowLevelPolicyModelDetailView extends StandardDetailView<RowLevelPo
     private boolean isSecurityDataGroovyEnabled() {
         return coreProperties.isUnsafeRuntimeFeaturesEnabled()
                 && environment.getProperty("jmix.security.data.groovy-enabled", Boolean.class, true);
+    }
+
+    private void resetEntityNameIfNotApplicable() {
+        RowLevelPolicyModel policy = getEditedEntity();
+        if (policy.getType() == RowLevelPolicyType.JPQL
+                && policy.getEntityName() != null
+                && !isJpaEntity(policy.getEntityName())) {
+            policy.setEntityName(null);
+        }
+    }
+
+    private boolean isJpaEntity(String entityName) {
+        MetaClass metaClass = metadata.findClass(entityName);
+        return metaClass != null && metadataTools.isJpaEntity(metaClass);
     }
 }

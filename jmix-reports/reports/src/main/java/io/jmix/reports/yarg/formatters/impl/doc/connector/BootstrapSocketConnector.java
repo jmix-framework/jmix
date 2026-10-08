@@ -16,9 +16,6 @@
 
 package io.jmix.reports.yarg.formatters.impl.doc.connector;
 
-import io.jmix.reports.yarg.formatters.impl.doc.connector.BootstrapConnector;
-import io.jmix.reports.yarg.formatters.impl.doc.connector.BootstrapException;
-import io.jmix.reports.yarg.formatters.impl.doc.connector.OOServer;
 import com.sun.star.uno.XComponentContext;
 
 import java.util.function.Supplier;

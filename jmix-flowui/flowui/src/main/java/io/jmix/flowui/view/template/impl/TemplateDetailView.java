@@ -17,11 +17,13 @@
 package io.jmix.flowui.view.template.impl;
 
 import io.jmix.flowui.model.InstanceContainer;
+import io.jmix.flowui.view.DialogMode;
 import io.jmix.flowui.view.StandardDetailView;
 
 /**
  * Generic base controller for template-generated detail views.
  */
+@DialogMode(width = "64em", resizable = true, maximizable = true)
 public class TemplateDetailView extends StandardDetailView<Object> {
 
     protected static final String DEFAULT_EDITED_ENTITY_CONTAINER_ID = "entityDc";

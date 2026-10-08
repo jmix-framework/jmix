@@ -21,6 +21,7 @@ import io.jmix.aitools.dataload.execution.JpqlParameterConversionService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -49,5 +50,16 @@ class JpqlParameterConversionServiceTest {
                 "statuses", "Integer", List.of(20, 30)));
 
         assertEquals(List.of(20, 30), converted);
+    }
+
+    @Test
+    @DisplayName("Preserves null elements of an IN collection")
+    void testPreservesNullCollectionElements() {
+        UUID id = UUID.randomUUID();
+
+        Object converted = service.convert(new JpqlExecutionParameter(
+                "ids", "UUID", Arrays.asList(id.toString(), null)));
+
+        assertEquals(Arrays.asList(id, null), converted);
     }
 }

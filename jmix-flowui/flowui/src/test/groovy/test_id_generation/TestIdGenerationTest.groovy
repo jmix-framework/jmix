@@ -65,5 +65,12 @@ class TestIdGenerationTest extends FlowuiTestSpecification {
 
         then: "ID must be calculated based on the data binding"
         dataGrid.element.getAttribute(UI_TEST_ID) == "test_OrderDataGrid"
+
+        when: "UiTestId is calculated for UserMenu popup items"
+        def userMenu = view.userMenu
+
+        then: "Each popup item must have a test id based on its id and menu-bar-item class suffix"
+        userMenu.getItem("textItem").element.getAttribute(UI_TEST_ID) == "textItemJmixMenuBarItem"
+        userMenu.getItem("actionItem").element.getAttribute(UI_TEST_ID) == "actionItemJmixMenuBarItem"
     }
 }

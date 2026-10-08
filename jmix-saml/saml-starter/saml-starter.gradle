@@ -21,7 +21,7 @@ base {
 
 repositories {
     maven {
-        url 'https://build.shibboleth.net/nexus/content/repositories/releases' //todo for org.opensaml
+        url 'https://build.shibboleth.net/nexus/content/repositories/releases' // for org.opensaml
     }
 }
 
@@ -31,7 +31,6 @@ dependencies {
     implementation project(':core-starter')
     implementation project(':security-starter')
 
-    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
     implementation 'org.springframework.boot:spring-boot-autoconfigure'
     implementation 'org.springframework.boot:spring-boot-starter-security-saml2'
 

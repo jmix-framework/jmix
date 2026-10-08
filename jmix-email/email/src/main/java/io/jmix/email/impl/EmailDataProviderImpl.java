@@ -39,6 +39,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Date;
@@ -150,7 +151,7 @@ public class EmailDataProviderImpl implements EmailDataProvider {
         if (msg.getContentTextFile() != null) {
             byte[] bodyContent;
             try {
-                bodyContent = IOUtils.toByteArray(getFileStorage().openStream(msg.getContentTextFile()));
+                bodyContent = readFileContent(msg.getContentTextFile());
             } catch (IOException e) {
                 throw new FileStorageException(FileStorageException.Type.IO_EXCEPTION, "Unable to load file from file storage", e);
             }
@@ -234,19 +235,25 @@ public class EmailDataProviderImpl implements EmailDataProvider {
     protected void loadBodyAndAttachments(SendingMessage message) {
         try {
             if (message.getContentTextFile() != null) {
-                byte[] bodyContent = IOUtils.toByteArray(getFileStorage().openStream(message.getContentTextFile()));
+                byte[] bodyContent = readFileContent(message.getContentTextFile());
                 String body = bodyTextFromByteArray(bodyContent);
                 message.setContentText(body);
             }
 
             for (SendingAttachment attachment : message.getAttachments()) {
                 if (attachment.getContentFile() != null) {
-                    byte[] content = IOUtils.toByteArray(getFileStorage().openStream(attachment.getContentFile()));
+                    byte[] content = readFileContent(attachment.getContentFile());
                     attachment.setContent(content);
                 }
             }
         } catch (IOException e) {
             log.error("Failed to load body or attachments for {}", message);
+        }
+    }
+
+    protected byte[] readFileContent(FileRef fileRef) throws IOException {
+        try (InputStream inputStream = getFileStorage().openStream(fileRef)) {
+            return IOUtils.toByteArray(inputStream);
         }
     }
 

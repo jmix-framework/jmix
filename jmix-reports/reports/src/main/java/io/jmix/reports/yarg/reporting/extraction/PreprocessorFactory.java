@@ -25,7 +25,7 @@ import org.jspecify.annotations.NullMarked;
  * if relation not set, implementation should present default params preprocessor</p>
  * <p><b>ex:</b> {@code (query, params, consumer)-> consumer.apply(query, params) }</p>
  *
- * <p>The default implementation is <b>io.jmix.reports.yarg.reporting.extraction.DefaultPreprocessorFactory</b></p>
+ * <p>The default implementation is <b>DefaultPreprocessorFactory</b></p>
  */
 @NullMarked
 public interface PreprocessorFactory {

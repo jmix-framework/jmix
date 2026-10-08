@@ -177,14 +177,4 @@ public class JsonDataLoader extends AbstractDataLoader {
             parentBand = parentBand.getParentBand();
         }
     }
-
-    protected void addParentBandDataToParameters(BandData parentBand, Map<String, Object> currentParams) {
-        if (parentBand != null) {
-            String parentBandName = parentBand.getName();
-
-            for (Map.Entry<String, Object> entry : parentBand.getData().entrySet()) {
-                currentParams.put(parentBandName + "." + entry.getKey(), entry.getValue());
-            }
-        }
-    }
 }

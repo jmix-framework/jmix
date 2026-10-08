@@ -304,6 +304,28 @@ public final class StudioPropertyGroups {
     }
 
     @StudioPropertyGroup(properties = @StudioProperty(
+            xmlAttribute = StudioXmlAttributes.ARIA_DESCRIBED_BY,
+            type = StudioPropertyType.STRING))
+    public interface AriaDescribedBy {
+    }
+
+    @StudioPropertyGroup
+    public interface HasAriaDescription extends AriaDescribedBy {
+    }
+
+    @StudioPropertyGroup(properties = @StudioProperty(
+            xmlAttribute = StudioXmlAttributes.ACCESSIBLE_NAME_START,
+            type = StudioPropertyType.LOCALIZED_STRING))
+    public interface AccessibleNameStart {
+    }
+
+    @StudioPropertyGroup(properties = @StudioProperty(
+            xmlAttribute = StudioXmlAttributes.ACCESSIBLE_NAME_END,
+            type = StudioPropertyType.LOCALIZED_STRING))
+    public interface AccessibleNameEnd {
+    }
+
+    @StudioPropertyGroup(properties = @StudioProperty(
             xmlAttribute = StudioXmlAttributes.TAB_INDEX,
             type = StudioPropertyType.INTEGER))
     public interface TabIndex {
@@ -362,6 +384,20 @@ public final class StudioPropertyGroups {
             type = StudioPropertyType.VALUES_LIST,
             category = StudioProperty.Category.VALIDATION))
     public interface AcceptedFileTypes {
+    }
+
+    @StudioPropertyGroup(properties = @StudioProperty(
+            xmlAttribute = StudioXmlAttributes.ACCEPTED_MIME_TYPES,
+            type = StudioPropertyType.VALUES_LIST,
+            category = StudioProperty.Category.VALIDATION))
+    public interface AcceptedMimeTypes {
+    }
+
+    @StudioPropertyGroup(properties = @StudioProperty(
+            xmlAttribute = StudioXmlAttributes.ACCEPTED_FILE_EXTENSIONS,
+            type = StudioPropertyType.VALUES_LIST,
+            category = StudioProperty.Category.VALIDATION))
+    public interface AcceptedFileExtensions {
     }
 
     @StudioPropertyGroup(properties = @StudioProperty(
@@ -437,6 +473,15 @@ public final class StudioPropertyGroups {
     }
 
     @StudioPropertyGroup(properties = @StudioProperty(
+            xmlAttribute = StudioXmlAttributes.ARIA_LINK_MODE,
+            type = StudioPropertyType.ENUMERATION,
+            classFqn = "com.vaadin.flow.component.shared.Tooltip$AriaLinkMode",
+            defaultValue = "NONE",
+            options = {"NONE", "ARIA_DESCRIBED_BY", "ARIA_LABELLED_BY"}))
+    public interface AriaLinkMode {
+    }
+
+    @StudioPropertyGroup(properties = @StudioProperty(
             xmlAttribute = StudioXmlAttributes.AUTO_APPLY,
             type = StudioPropertyType.BOOLEAN))
     public interface AutoApply {
@@ -473,6 +518,29 @@ public final class StudioPropertyGroups {
             defaultValue = "NONE",
             options = {"NONE", "SENTENCES", "WORDS", "CHARACTERS"}))
     public interface Autocapitalize {
+    }
+
+    @StudioPropertyGroup(properties = @StudioProperty(
+            xmlAttribute = StudioXmlAttributes.INPUT_MODE,
+            type = StudioPropertyType.ENUMERATION,
+            classFqn = "com.vaadin.flow.component.InputMode",
+            options = {"NONE", "TEXT", "DECIMAL", "NUMERIC", "TEL", "SEARCH", "EMAIL", "URL"}))
+    public interface InputMode {
+    }
+
+    @StudioPropertyGroup(properties = @StudioProperty(
+            xmlAttribute = StudioXmlAttributes.PARTIAL_MATCH_MODE,
+            type = StudioPropertyType.ENUMERATION,
+            classFqn = "com.vaadin.flow.component.combobox.PartialMatchMode",
+            defaultValue = "NONE",
+            options = {"NONE", "FIRST_MATCH", "ONLY_MATCH"}))
+    public interface PartialMatchMode {
+    }
+
+    @StudioPropertyGroup(properties = @StudioProperty(
+            xmlAttribute = StudioXmlAttributes.DIALOG_ACCESSIBLE_NAME,
+            type = StudioPropertyType.LOCALIZED_STRING))
+    public interface DialogAccessibleName {
     }
 
     @StudioPropertyGroup(properties = @StudioProperty(
@@ -864,6 +932,13 @@ public final class StudioPropertyGroups {
     }
 
     @StudioPropertyGroup(properties = @StudioProperty(
+            xmlAttribute = StudioXmlAttributes.FOCUS_SELECTED_ITEM,
+            type = StudioPropertyType.BOOLEAN,
+            defaultValue = "false"))
+    public interface FocusSelectedItem {
+    }
+
+    @StudioPropertyGroup(properties = @StudioProperty(
             xmlAttribute = StudioXmlAttributes.FONT_FAMILY,
             type = StudioPropertyType.STRING,
             category = StudioProperty.Category.LOOK_AND_FEEL))
@@ -902,6 +977,14 @@ public final class StudioPropertyGroups {
             category = StudioProperty.Category.POSITION,
             defaultValue = "false"))
     public interface Frozen {
+    }
+
+    @StudioPropertyGroup(properties = @StudioProperty(
+            xmlAttribute = StudioXmlAttributes.FROZEN_TO_END,
+            type = StudioPropertyType.BOOLEAN,
+            category = StudioProperty.Category.POSITION,
+            defaultValue = "false"))
+    public interface FrozenToEnd {
     }
 
     @StudioPropertyGroup(properties = @StudioProperty(
@@ -1159,9 +1242,24 @@ public final class StudioPropertyGroups {
 
     @StudioPropertyGroup(properties = @StudioProperty(
             xmlAttribute = StudioXmlAttributes.VALUE,
+            type = StudioPropertyType.LOCALIZED_STRING,
+            category = StudioProperty.Category.GENERAL,
+            required = true))
+    public interface RequiredLocalizedStringValue {
+    }
+
+    @StudioPropertyGroup(properties = @StudioProperty(
+            xmlAttribute = StudioXmlAttributes.VALUE,
             type = StudioPropertyType.STRING,
             category = StudioProperty.Category.GENERAL))
     public interface StringValue {
+    }
+
+    @StudioPropertyGroup(properties = @StudioProperty(
+            xmlAttribute = StudioXmlAttributes.VALUE,
+            type = StudioPropertyType.LOCALIZED_STRING,
+            category = StudioProperty.Category.GENERAL))
+    public interface LocalizedStringValue {
     }
 
     @StudioPropertyGroup(properties = @StudioProperty(
@@ -1271,6 +1369,14 @@ public final class StudioPropertyGroups {
             type = StudioPropertyType.INTEGER,
             category = StudioProperty.Category.VALIDATION))
     public interface MinLength {
+    }
+
+    @StudioPropertyGroup(properties = @StudioProperty(
+            xmlAttribute = StudioXmlAttributes.MIN_MAX_VISIBLE,
+            type = StudioPropertyType.BOOLEAN,
+            category = StudioProperty.Category.LOOK_AND_FEEL,
+            defaultValue = "false"))
+    public interface MinMaxVisible {
     }
 
     @StudioPropertyGroup(properties = @StudioProperty(
@@ -1643,6 +1749,14 @@ public final class StudioPropertyGroups {
 
     @StudioPropertyGroup(properties = @StudioProperty(
             xmlAttribute = StudioXmlAttributes.STEP,
+            type = StudioPropertyType.INTEGER,
+            category = StudioProperty.Category.GENERAL,
+            defaultValue = "1"))
+    public interface IntegerStep {
+    }
+
+    @StudioPropertyGroup(properties = @StudioProperty(
+            xmlAttribute = StudioXmlAttributes.STEP,
             type = StudioPropertyType.STRING,
             category = StudioProperty.Category.GENERAL,
             options = {"900s", "15m", "20m", "30m", "2h", "3h", "4h", "6h", "8h", "12h"}))
@@ -1743,6 +1857,14 @@ public final class StudioPropertyGroups {
             options = {"small", "large", "tertiary", "tertiary-inline", "primary", "success", "warning", "error",
                     "contrast", "icon", "contained", "outlined"}))
     public interface ButtonThemeNames {
+    }
+
+    @StudioPropertyGroup(properties = @StudioProperty(
+            xmlAttribute = StudioXmlAttributes.THEME_NAMES,
+            type = StudioPropertyType.VALUES_LIST,
+            category = StudioProperty.Category.LOOK_AND_FEEL,
+            options = {"arrow", "no-padding"}))
+    public interface PopoverThemeNames {
     }
 
     @StudioPropertyGroup(properties = @StudioProperty(
@@ -1855,6 +1977,14 @@ public final class StudioPropertyGroups {
             type = StudioPropertyType.LOCALIZED_STRING,
             category = StudioProperty.Category.GENERAL))
     public interface Username {
+    }
+
+    @StudioPropertyGroup(properties = @StudioProperty(
+            xmlAttribute = StudioXmlAttributes.VALUE_ALWAYS_VISIBLE,
+            type = StudioPropertyType.BOOLEAN,
+            category = StudioProperty.Category.LOOK_AND_FEEL,
+            defaultValue = "false"))
+    public interface ValueAlwaysVisible {
     }
 
     @StudioPropertyGroup(properties = @StudioProperty(
@@ -2240,15 +2370,17 @@ public final class StudioPropertyGroups {
     }
 
     @StudioPropertyGroup
-    public interface TextInputFieldDefaultProperties extends BaseTextFieldComponent, RequiredAttributes {
+    public interface TextInputFieldDefaultProperties extends BaseTextFieldComponent, HasAriaDescription,
+            RequiredAttributes {
     }
 
     @StudioPropertyGroup
     public interface MultiSelectComboBoxDefaultProperties extends BaseSizedEnabledComponentWithClassName,
-            HasAriaLabelAndFocusableAttributes, AllowCustomValue, AllowedCharPattern, Autofocus, AutoOpen,
-            OverlayWidth, ClearButtonVisible, CollectionOrInstanceDataContainer, ErrorMessage, HelperText,
-            ItemsContainerTypeParameterV, ItemsEnum, Label, MetaClassTypeParameterV, Opened, PageSize,
-            Placeholder, PropertyTypeParameterV, ReadOnly, Required, TextInputFieldThemeNames, Title {
+            HasAriaLabelAndFocusableAttributes, HasAriaDescription, PartialMatchMode, AllowCustomValue,
+            AllowedCharPattern, Autofocus, AutoOpen, OverlayWidth, ClearButtonVisible,
+            CollectionOrInstanceDataContainer, ErrorMessage, HelperText, ItemsContainerTypeParameterV, ItemsEnum, Label,
+            MetaClassTypeParameterV, Opened, PageSize, Placeholder, PropertyTypeParameterV, ReadOnly, Required,
+            TextInputFieldThemeNames, Title {
     }
 
     @StudioPropertyGroup
@@ -2278,7 +2410,7 @@ public final class StudioPropertyGroups {
     }
 
     @StudioPropertyGroup
-    public interface CheckboxComponent extends BooleanFieldComponent, Indeterminate {
+    public interface CheckboxComponent extends BooleanFieldComponent, HasAriaDescription, Indeterminate {
     }
 
     @StudioPropertyGroup
@@ -2286,8 +2418,8 @@ public final class StudioPropertyGroups {
     }
 
     @StudioPropertyGroup
-    public interface TextFieldComponent extends TextInputFieldDefaultProperties, AllowedCharPattern, Datatype,
-            MaxLength, MinLength, Pattern, PropertyTypeParameterV, TrimEnabled {
+    public interface TextFieldComponent extends TextInputFieldDefaultProperties, InputMode, AllowedCharPattern,
+            Datatype, MaxLength, MinLength, Pattern, PropertyTypeParameterV, TrimEnabled {
     }
 
     @StudioPropertyGroup
@@ -2301,13 +2433,71 @@ public final class StudioPropertyGroups {
     }
 
     @StudioPropertyGroup
-    public interface EntityComboBoxComponent extends FieldDefaultProperties, AllowedCharPattern, AllowCustomValue,
-            Autofocus, AutoOpen, OverlayWidth, ItemsContainerTypeParameterV, MetaClassTypeParameterV, Opened,
-            PageSize, Pattern, Placeholder, PropertyTypeParameterV, TextInputFieldThemeNames, Title {
+    public interface EntityComboBoxComponent extends FieldDefaultProperties, HasAriaDescription, PartialMatchMode,
+            AllowedCharPattern, AllowCustomValue, Autofocus, AutoOpen, FocusSelectedItem, OverlayWidth,
+            ItemsContainerTypeParameterV, MetaClassTypeParameterV, Opened, PageSize, Pattern, Placeholder,
+            PropertyTypeParameterV, TextInputFieldThemeNames, Title {
     }
 
     @StudioPropertyGroup
     public interface EntityPickerComponent extends ValuePickerComponent, MetaClassTypeParameterV {
+    }
+
+    @StudioPropertyGroup(properties = {
+            @StudioProperty(xmlAttribute = StudioXmlAttributes.TARGET,
+                    type = StudioPropertyType.COMPONENT_REF,
+                    category = StudioProperty.Category.GENERAL),
+            @StudioProperty(xmlAttribute = StudioXmlAttributes.POSITION,
+                    type = StudioPropertyType.ENUMERATION,
+                    classFqn = "com.vaadin.flow.component.popover.PopoverPosition",
+                    defaultValue = "BOTTOM_START",
+                    category = StudioProperty.Category.GENERAL,
+                    options = {"TOP_START", "TOP", "TOP_END",
+                            "BOTTOM_START", "BOTTOM", "BOTTOM_END",
+                            "START_TOP", "START", "START_BOTTOM",
+                            "END_TOP", "END", "END_BOTTOM"}),
+            @StudioProperty(xmlAttribute = StudioXmlAttributes.MODAL,
+                    type = StudioPropertyType.BOOLEAN, defaultValue = "false",
+                    category = StudioProperty.Category.GENERAL),
+            @StudioProperty(xmlAttribute = StudioXmlAttributes.BACKDROP_VISIBLE,
+                    type = StudioPropertyType.BOOLEAN, defaultValue = "false",
+                    category = StudioProperty.Category.GENERAL),
+            @StudioProperty(xmlAttribute = StudioXmlAttributes.AUTOFOCUS,
+                    type = StudioPropertyType.BOOLEAN, defaultValue = "false",
+                    category = StudioProperty.Category.GENERAL),
+            @StudioProperty(xmlAttribute = StudioXmlAttributes.TAB_FOCUS_ENABLED,
+                    type = StudioPropertyType.BOOLEAN, defaultValue = "true",
+                    category = StudioProperty.Category.GENERAL),
+            @StudioProperty(xmlAttribute = StudioXmlAttributes.CLOSE_ON_ESC,
+                    type = StudioPropertyType.BOOLEAN, defaultValue = "true",
+                    category = StudioProperty.Category.GENERAL),
+            @StudioProperty(xmlAttribute = StudioXmlAttributes.CLOSE_ON_OUTSIDE_CLICK,
+                    type = StudioPropertyType.BOOLEAN, defaultValue = "true",
+                    category = StudioProperty.Category.GENERAL),
+            @StudioProperty(xmlAttribute = StudioXmlAttributes.OPEN_ON_CLICK,
+                    type = StudioPropertyType.BOOLEAN, defaultValue = "true",
+                    category = StudioProperty.Category.GENERAL),
+            @StudioProperty(xmlAttribute = StudioXmlAttributes.OPEN_ON_FOCUS,
+                    type = StudioPropertyType.BOOLEAN, defaultValue = "false",
+                    category = StudioProperty.Category.GENERAL),
+            @StudioProperty(xmlAttribute = StudioXmlAttributes.OPEN_ON_HOVER,
+                    type = StudioPropertyType.BOOLEAN, defaultValue = "false",
+                    category = StudioProperty.Category.GENERAL),
+            @StudioProperty(xmlAttribute = StudioXmlAttributes.FOCUS_DELAY,
+                    type = StudioPropertyType.INTEGER,
+                    category = StudioProperty.Category.GENERAL),
+            @StudioProperty(xmlAttribute = StudioXmlAttributes.HOVER_DELAY,
+                    type = StudioPropertyType.INTEGER,
+                    category = StudioProperty.Category.GENERAL),
+            @StudioProperty(xmlAttribute = StudioXmlAttributes.HIDE_DELAY,
+                    type = StudioPropertyType.INTEGER,
+                    category = StudioProperty.Category.GENERAL),
+            @StudioProperty(xmlAttribute = StudioXmlAttributes.ARIA_ROLE,
+                    type = StudioPropertyType.STRING, defaultValue = "dialog",
+                    category = StudioProperty.Category.GENERAL)
+    })
+    public interface PopoverComponent extends Id, Visible, Enabled, ClassNames, HasAriaLabel,
+            Width, Height, PopoverThemeNames {
     }
 
     @StudioPropertyGroup
@@ -2331,7 +2521,7 @@ public final class StudioPropertyGroups {
     }
 
     @StudioPropertyGroup
-    public interface GridColumnDefaultProperties extends AutoWidth, FlexGrow, Footer, Frozen, Header, Key,
+    public interface GridColumnDefaultProperties extends AutoWidth, FlexGrow, Footer, Frozen, FrozenToEnd, Header, Key,
             ResizableWithParentDefaultValueRef, ColumnSortable, Visible, WidthWithDefaultValueUndefined {
     }
 
@@ -2367,8 +2557,9 @@ public final class StudioPropertyGroups {
 
     @StudioPropertyGroup
     public interface FileUploadFieldDefaultProperties extends BaseSizedEnabledComponentWithClassName,
-            HasRequiredAndValidationAttributes, AcceptedFileTypes, ClearButtonAriaLabel, ClearButtonVisible,
-            ConnectingStatusText, CollectionOrInstanceDataContainer, DropAllowed, FileNameVisible,
+            HasRequiredAndValidationAttributes, AcceptedFileTypes, AcceptedMimeTypes, AcceptedFileExtensions,
+            ClearButtonAriaLabel, ClearButtonVisible,
+            ConnectingStatusText, CollectionOrInstanceDataContainer, DropAllowedWithTrueDefaultValue, FileNameVisible,
             FileNotSelectedText, FileTooBigText, HelperText, IncorrectFileTypeText, Label, MaxFileSize,
             ProcessingStatusText, Property, ReadOnly, RemainingTimeText, RemainingTimeUnknownText,
             UploadDialogCancelText, UploadDialogTitle, UploadIcon, UploadText {
@@ -2511,8 +2702,8 @@ public final class StudioPropertyGroups {
     }
 
     @StudioPropertyGroup
-    public interface RequiredStringNameAndValueAndType extends RequiredStringNameAndValue,
-            TypeContainerRefLoaderRefIcon {
+    public interface RequiredStringNameAndValueAndType extends RequiredStringName,
+            RequiredLocalizedStringValue, TypeContainerRefLoaderRefIcon {
     }
 
     @StudioPropertyGroup
@@ -2639,7 +2830,7 @@ public final class StudioPropertyGroups {
                             type = StudioPropertyType.COMPONENT_REF,
                             category = StudioProperty.Category.GENERAL,
                             required = true,
-                            componentRefTags = "genericFilter"),
+                            componentRefTags = StudioXmlElements.GENERIC_FILTER),
                     @StudioProperty(
                             xmlAttribute = StudioXmlAttributes.CONFIGURATION_PARAM,
                             type = StudioPropertyType.STRING),
@@ -2739,7 +2930,7 @@ public final class StudioPropertyGroups {
                             defaultValue = "false")
             }
     )
-    public interface TooltipComponent extends HideDelay, RequiredText, Opened {
+    public interface TooltipComponent extends HideDelay, RequiredText, Opened, AriaLinkMode {
     }
 
     @StudioPropertyGroup(
@@ -2749,7 +2940,7 @@ public final class StudioPropertyGroups {
                             type = StudioPropertyType.COMPONENT_REF,
                             category = StudioProperty.Category.GENERAL,
                             required = true,
-                            componentRefTags = {"simplePagination"}),
+                            componentRefTags = {StudioXmlElements.SIMPLE_PAGINATION}),
                     @StudioProperty(
                             xmlAttribute = StudioXmlAttributes.FIRST_RESULT_PARAM,
                             type = StudioPropertyType.STRING),
@@ -2766,7 +2957,7 @@ public final class StudioPropertyGroups {
             type = StudioPropertyType.COMPONENT_REF,
             category = StudioProperty.Category.GENERAL,
             required = true,
-            componentRefTags = "propertyFilter"))
+            componentRefTags = StudioXmlElements.PROPERTY_FILTER))
     public interface FacetPropertyFilterComponent extends IdAndParam {
     }
 
@@ -2775,7 +2966,7 @@ public final class StudioPropertyGroups {
             type = StudioPropertyType.COMPONENT_REF,
             category = StudioProperty.Category.GENERAL,
             required = true,
-            componentRefTags = {"dataGrid", "treeDataGrid", "groupDataGrid"}))
+            componentRefTags = {StudioXmlElements.DATA_GRID, StudioXmlElements.TREE_DATA_GRID}))
     public interface DataGridFilterComponent extends IdAndParam {
     }
 
@@ -2868,7 +3059,7 @@ public final class StudioPropertyGroups {
             xmlAttribute = StudioXmlAttributes.REF_COLUMN,
             type = StudioPropertyType.COMPONENT_REF,
             required = true,
-            componentRefTags = {"column"}))
+            componentRefTags = {StudioXmlElements.COLUMN}))
     public interface GridColumnVisibilityMenuItemComponent extends Text {
     }
 
@@ -2946,6 +3137,28 @@ public final class StudioPropertyGroups {
     @StudioPropertyGroup(
             properties = {
                     @StudioProperty(
+                            xmlAttribute = StudioXmlAttributes.NUMBER,
+                            type = StudioPropertyType.INTEGER,
+                            category = StudioProperty.Category.GENERAL),
+                    @StudioProperty(
+                            xmlAttribute = StudioXmlAttributes.ARIA_ROLE,
+                            type = StudioPropertyType.STRING,
+                            category = StudioProperty.Category.GENERAL),
+                    @StudioProperty(
+                            xmlAttribute = StudioXmlAttributes.THEME_NAMES,
+                            type = StudioPropertyType.VALUES_LIST,
+                            category = StudioProperty.Category.LOOK_AND_FEEL,
+                            options = {"contrast", "dot", "error", "filled", "icon-only", "number-only", "success",
+                                    "warning", "small"})
+            }
+    )
+    public interface BadgeComponent extends BaseSizedComponentWithClassNames, TextAttributes, Icon,
+            DataBindingAttributes {
+    }
+
+    @StudioPropertyGroup(
+            properties = {
+                    @StudioProperty(
                             xmlAttribute = StudioXmlAttributes.DISABLE_ON_CLICK,
                             type = StudioPropertyType.BOOLEAN,
                             category = StudioProperty.Category.LOOK_AND_FEEL,
@@ -2975,16 +3188,16 @@ public final class StudioPropertyGroups {
                             options = {"helper-above-field", "vertical", "horizontal"})
             }
     )
-    public interface CheckboxGroupComponent extends SelectionFieldComponent, RequiredAttributes {
+    public interface CheckboxGroupComponent extends SelectionFieldComponent, HasAriaDescription, RequiredAttributes {
     }
 
     @StudioPropertyGroup(properties = @StudioProperty(
             xmlAttribute = StudioXmlAttributes.AUTO_OPEN,
             type = StudioPropertyType.BOOLEAN,
             defaultValue = "true"))
-    public interface ComboBoxComponent extends FieldDefaultProperties, Title, Pattern, PageSize, Datatype, ItemsEnum,
-            Autofocus, Placeholder, OverlayWidth, AllowCustomValue, ClearButtonVisible, PropertyTypeParameterV,
-            TextInputFieldThemeNames {
+    public interface ComboBoxComponent extends FieldDefaultProperties, HasAriaDescription, PartialMatchMode, Title,
+            Pattern, PageSize, Datatype, ItemsEnum, Autofocus, Placeholder, OverlayWidth, AllowCustomValue,
+            FocusSelectedItem, ClearButtonVisible, PropertyTypeParameterV, TextInputFieldThemeNames {
     }
 
     @StudioPropertyGroup(
@@ -2997,6 +3210,10 @@ public final class StudioPropertyGroups {
                             options = {"VERTICAL", "HORIZONTAL", "BOTH", "NONE"}),
                     @StudioProperty(
                             xmlAttribute = StudioXmlAttributes.SELECTED_ITEMS_ON_TOP,
+                            type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "false"),
+                    @StudioProperty(
+                            xmlAttribute = StudioXmlAttributes.COLLAPSE_CHIPS,
                             type = StudioPropertyType.BOOLEAN,
                             defaultValue = "false")
             }
@@ -3061,9 +3278,9 @@ public final class StudioPropertyGroups {
                             type = StudioPropertyType.LOCALIZED_STRING)
             }
     )
-    public interface DatePickerComponent extends FieldDefaultProperties, Name, Opened, AutoOpen, Placeholder,
-            WeekNumbersVisible, ClearButtonVisible, AllowedCharPattern, ValidationStringMin, ValidationStringMax,
-            PropertyTypeParameterV, TextInputFieldThemeNames {
+    public interface DatePickerComponent extends FieldDefaultProperties, HasAriaDescription, DialogAccessibleName, Name,
+            Opened, AutoOpen, Placeholder, WeekNumbersVisible, ClearButtonVisible, AllowedCharPattern,
+            ValidationStringMin, ValidationStringMax, PropertyTypeParameterV, TextInputFieldThemeNames {
     }
 
     @StudioPropertyGroup(
@@ -3087,11 +3304,16 @@ public final class StudioPropertyGroups {
                     @StudioProperty(
                             xmlAttribute = StudioXmlAttributes.TIME_PLACEHOLDER,
                             type = StudioPropertyType.LOCALIZED_STRING,
+                            category = StudioProperty.Category.GENERAL),
+                    @StudioProperty(
+                            xmlAttribute = StudioXmlAttributes.DEFAULT_TIME,
+                            type = StudioPropertyType.STRING,
                             category = StudioProperty.Category.GENERAL)
             }
     )
-    public interface DateTimePickerComponent extends FieldDefaultProperties, TimeStep, AutoOpen, WeekNumbersVisible,
-            ValidationStringMin, ValidationStringMax, PropertyTypeParameterV, TextInputFieldThemeNames {
+    public interface DateTimePickerComponent extends FieldDefaultProperties, DialogAccessibleName, TimeStep, AutoOpen,
+            WeekNumbersVisible, ValidationStringMin, ValidationStringMax, PropertyTypeParameterV,
+            TextInputFieldThemeNames {
     }
 
     @StudioPropertyGroup(properties = @StudioProperty(
@@ -3125,6 +3347,58 @@ public final class StudioPropertyGroups {
             ValidationIntegerMin, ValidationIntegerMax, StepButtonsVisible {
     }
 
+    @StudioPropertyGroup
+    public interface SliderDefaultProperties extends FieldDefaultProperties, HasAriaDescription, Property,
+            ValueChangeModeAttributes, MinMaxVisible, ValueAlwaysVisible {
+    }
+
+    @StudioPropertyGroup(properties = @StudioProperty(
+            xmlAttribute = StudioXmlAttributes.VALUE,
+            type = StudioPropertyType.INTEGER,
+            category = StudioProperty.Category.GENERAL))
+    public interface IntegerSliderComponent extends SliderDefaultProperties, IntegerMin, IntegerMax, IntegerStep {
+    }
+
+    @StudioPropertyGroup(properties = @StudioProperty(
+            xmlAttribute = StudioXmlAttributes.VALUE,
+            type = StudioPropertyType.DOUBLE,
+            category = StudioProperty.Category.GENERAL))
+    public interface DecimalSliderComponent extends SliderDefaultProperties, DoubleMinWithGeneralCategory,
+            DoubleMaxWithGeneralCategory, Step {
+    }
+
+    @StudioPropertyGroup
+    public interface RangeSliderDefaultProperties extends BaseSizedEnabledComponentWithClassName,
+            HasFocusableAttributes, AccessibleNameStart, AccessibleNameEnd, ErrorMessage, HelperText, Label,
+            ReadOnly, Required, ValueChangeModeAttributes, MinMaxVisible, ValueAlwaysVisible {
+    }
+
+    @StudioPropertyGroup(properties = {
+            @StudioProperty(
+                    xmlAttribute = StudioXmlAttributes.START_VALUE,
+                    type = StudioPropertyType.INTEGER,
+                    category = StudioProperty.Category.GENERAL),
+            @StudioProperty(
+                    xmlAttribute = StudioXmlAttributes.END_VALUE,
+                    type = StudioPropertyType.INTEGER,
+                    category = StudioProperty.Category.GENERAL)})
+    public interface IntegerRangeSliderComponent extends RangeSliderDefaultProperties, IntegerMin, IntegerMax,
+            IntegerStep {
+    }
+
+    @StudioPropertyGroup(properties = {
+            @StudioProperty(
+                    xmlAttribute = StudioXmlAttributes.START_VALUE,
+                    type = StudioPropertyType.DOUBLE,
+                    category = StudioProperty.Category.GENERAL),
+            @StudioProperty(
+                    xmlAttribute = StudioXmlAttributes.END_VALUE,
+                    type = StudioPropertyType.DOUBLE,
+                    category = StudioProperty.Category.GENERAL)})
+    public interface DecimalRangeSliderComponent extends RangeSliderDefaultProperties,
+            DoubleMinWithGeneralCategory, DoubleMaxWithGeneralCategory, Step {
+    }
+
     @StudioPropertyGroup(properties = @StudioProperty(
             xmlAttribute = StudioXmlAttributes.REVEAL_BUTTON_VISIBLE,
             type = StudioPropertyType.BOOLEAN,
@@ -3139,7 +3413,7 @@ public final class StudioPropertyGroups {
             type = StudioPropertyType.VALUES_LIST,
             category = StudioProperty.Category.LOOK_AND_FEEL,
             options = {"vertical", "horizontal", "helper-above-field"}))
-    public interface RadioButtonGroupComponent extends SelectionFieldComponent, Required, Datatype,
+    public interface RadioButtonGroupComponent extends SelectionFieldComponent, HasAriaDescription, Required, Datatype,
             ItemsContainerTypeParameterV {
     }
 
@@ -3174,8 +3448,8 @@ public final class StudioPropertyGroups {
                                     "helper-above-field"})
             }
     )
-    public interface SelectComponent extends FieldDefaultProperties, Datatype, Autofocus, Placeholder, OverlayWidth,
-            PropertyTypeParameterV {
+    public interface SelectComponent extends FieldDefaultProperties, HasAriaDescription, Datatype, Autofocus,
+            Placeholder, OverlayWidth, PropertyTypeParameterV {
     }
 
     @StudioPropertyGroup(
@@ -3213,9 +3487,9 @@ public final class StudioPropertyGroups {
             }
     )
     public interface TextAreaComponent extends ValidatableBaseFieldComponent, HasAriaLabelAndFocusableAttributes,
-            ValueChangeModeAttributes, Pattern, Required, Property, MinLength, MaxLength, Autofocus, Autoselect,
-            TrimEnabled, StringValue, Placeholder, Autocorrect, Autocomplete, Autocapitalize, TextAreaThemeNames,
-            ClearButtonVisible, AllowedCharPattern {
+            HasAriaDescription, ValueChangeModeAttributes, Pattern, Required, Property, MinLength, MaxLength, Autofocus,
+            Autoselect, TrimEnabled, StringValue, Placeholder, Autocorrect, Autocomplete, Autocapitalize,
+            TextAreaThemeNames, ClearButtonVisible, AllowedCharPattern {
     }
 
     @StudioPropertyGroup(
@@ -3242,8 +3516,9 @@ public final class StudioPropertyGroups {
             classFqn = "io.jmix.core.metamodel.datatype.Datatype",
             options = {"offsetTime", "localTime", "time"},
             typeParameter = "V"))
-    public interface TimePickerComponent extends FieldDefaultProperties, TimeStep, AutoOpen, Placeholder,
-            ClearButtonVisible, AllowedCharPattern, ValidationStringMin, ValidationStringMax, PropertyTypeParameterV {
+    public interface TimePickerComponent extends FieldDefaultProperties, HasAriaDescription, TimeStep, AutoOpen,
+            Placeholder, ClearButtonVisible, AllowedCharPattern, ValidationStringMin, ValidationStringMax,
+            PropertyTypeParameterV {
     }
 
     @StudioPropertyGroup(
@@ -3262,16 +3537,30 @@ public final class StudioPropertyGroups {
                             xmlAttribute = StudioXmlAttributes.LOCALES_VISIBLE,
                             type = StudioPropertyType.BOOLEAN,
                             category = StudioProperty.Category.GENERAL,
-                            defaultValue = "true")
+                            defaultValue = "true"),
+                    @StudioProperty(
+                            xmlAttribute = StudioXmlAttributes.HEADING_LEVEL,
+                            type = StudioPropertyType.INTEGER,
+                            category = StudioProperty.Category.GENERAL,
+                            defaultValue = "1")
             }
     )
     public interface LoginFormComponent extends BaseComponentWithClassNames, Enabled {
     }
 
-    @StudioPropertyGroup(properties = @StudioProperty(
-            xmlAttribute = StudioXmlAttributes.FORGOT_PASSWORD_BUTTON_VISIBLE,
-            type = StudioPropertyType.BOOLEAN,
-            category = StudioProperty.Category.GENERAL))
+    @StudioPropertyGroup(
+            properties = {
+                    @StudioProperty(
+                            xmlAttribute = StudioXmlAttributes.FORGOT_PASSWORD_BUTTON_VISIBLE,
+                            type = StudioPropertyType.BOOLEAN,
+                            category = StudioProperty.Category.GENERAL),
+                    @StudioProperty(
+                            xmlAttribute = StudioXmlAttributes.HEADING_LEVEL,
+                            type = StudioPropertyType.INTEGER,
+                            category = StudioProperty.Category.GENERAL,
+                            defaultValue = "1")
+            }
+    )
     public interface LoginOverlayComponent extends BaseComponentWithClassNames, Opened, Enabled {
     }
 
@@ -3311,8 +3600,8 @@ public final class StudioPropertyGroups {
     }
 
     @StudioPropertyGroup
-    public interface ImageHtmlComponent extends BaseSizedComponentWithClassNames, Title, Enabled, DataBindingAttributes,
-            TextAttributes, ClickShortcut, HasAriaLabel, AlternateText, ImageResource, ImageThemeNames {
+    public interface ImageHtmlComponent extends BaseSizedComponentWithClassNames, Title, DataBindingAttributes,
+            ClickShortcut, HasAriaLabel, AlternateText, ImageResource, ImageThemeNames {
     }
 
     @StudioPropertyGroup(
@@ -3349,7 +3638,15 @@ public final class StudioPropertyGroups {
                             xmlAttribute = StudioXmlAttributes.UPLOAD_HANDLER_TYPE,
                             type = StudioPropertyType.ENUMERATION,
                             defaultValue = "IN_MEMORY",
-                            options = {"IN_MEMORY", "FILE_TEMPORARY_STORAGE"})
+                            options = {"IN_MEMORY", "FILE_TEMPORARY_STORAGE"}),
+                    @StudioProperty(
+                            xmlAttribute = StudioXmlAttributes.ACCEPTED_MIME_TYPES,
+                            type = StudioPropertyType.VALUES_LIST,
+                            category = StudioProperty.Category.GENERAL),
+                    @StudioProperty(
+                            xmlAttribute = StudioXmlAttributes.ACCEPTED_FILE_EXTENSIONS,
+                            type = StudioPropertyType.VALUES_LIST,
+                            category = StudioProperty.Category.GENERAL)
             }
     )
     public interface UploadComponent extends SizedComponentDefaultProperties, UploadText, UploadIcon,
@@ -3365,6 +3662,11 @@ public final class StudioPropertyGroups {
 
     @StudioPropertyGroup(
             properties = {
+                    @StudioProperty(
+                            xmlAttribute = StudioXmlAttributes.ADD_CONDITION_DIALOG_RESIZABLE,
+                            type = StudioPropertyType.BOOLEAN,
+                            category = StudioProperty.Category.SIZE,
+                            defaultValue = "false"),
                     @StudioProperty(
                             xmlAttribute = StudioXmlAttributes.AUTO_APPLY,
                             type = StudioPropertyType.BOOLEAN,
@@ -3605,7 +3907,7 @@ public final class StudioPropertyGroups {
                             type = StudioPropertyType.COMPONENT_REF,
                             category = StudioProperty.Category.GENERAL,
                             required = true,
-                            componentRefTags = {"dataGrid", "treeDataGrid"}),
+                            componentRefTags = {StudioXmlElements.DATA_GRID, StudioXmlElements.TREE_DATA_GRID}),
                     @StudioProperty(
                             xmlAttribute = StudioXmlAttributes.EXCLUDE,
                             type = StudioPropertyType.VALUES_LIST),
@@ -3644,7 +3946,7 @@ public final class StudioPropertyGroups {
                             type = StudioPropertyType.COMPONENT_REF,
                             category = StudioProperty.Category.GENERAL,
                             required = true,
-                            componentRefTags = {"listMenu", "horizontalMenu"}),
+                            componentRefTags = {StudioXmlElements.LIST_MENU, StudioXmlElements.HORIZONTAL_MENU}),
                     @StudioProperty(
                             xmlAttribute = StudioXmlAttributes.FILTER_MODE,
                             type = StudioPropertyType.ENUMERATION,
@@ -3692,9 +3994,16 @@ public final class StudioPropertyGroups {
 
     @StudioPropertyGroup(properties = @StudioProperty(
             xmlAttribute = StudioXmlAttributes.FILE,
-            type = StudioPropertyType.STRING,
+            type = StudioPropertyType.LOCALIZED_STRING,
             category = StudioProperty.Category.GENERAL))
     public interface HtmlComponent extends BaseComponentWithClassNames, Content {
+    }
+
+    @StudioPropertyGroup(properties = @StudioProperty(
+            xmlAttribute = StudioXmlAttributes.FILE,
+            type = StudioPropertyType.STRING,
+            category = StudioProperty.Category.GENERAL))
+    public interface SvgComponent extends BaseComponentWithClassNames {
     }
 
     @StudioPropertyGroup(
@@ -3794,6 +4103,10 @@ public final class StudioPropertyGroups {
                             defaultValue = "RIGHT",
                             options = {"LEFT", "RIGHT", "INLINE_START", "INLINE_END", "TOP", "BOTTOM"}),
                     @StudioProperty(
+                            xmlAttribute = StudioXmlAttributes.SIDE_PANEL_RESIZABLE,
+                            type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "false"),
+                    @StudioProperty(
                             xmlAttribute = StudioXmlAttributes.SIDE_PANEL_VERTICAL_MAX_SIZE,
                             type = StudioPropertyType.STRING,
                             category = StudioProperty.Category.SIZE,
@@ -3820,7 +4133,12 @@ public final class StudioPropertyGroups {
                             defaultValue = "true"),
                     @StudioProperty(
                             xmlAttribute = StudioXmlAttributes.OVERLAY_ARIA_LABEL,
-                            type = StudioPropertyType.LOCALIZED_STRING)
+                            type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(
+                            xmlAttribute = StudioXmlAttributes.THEME_NAMES,
+                            type = StudioPropertyType.VALUES_LIST,
+                            category = StudioProperty.Category.LOOK_AND_FEEL,
+                            options = {"resizer-small"})
             }
     )
     public interface SidePanelLayoutComponent extends BaseComponent, MinAndMaxWidth, MinAndMaxHeight,

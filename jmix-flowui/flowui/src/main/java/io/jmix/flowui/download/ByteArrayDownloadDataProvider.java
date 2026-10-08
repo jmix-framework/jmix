@@ -65,7 +65,8 @@ public class ByteArrayDownloadDataProvider implements DownloadDataProvider {
         try {
             FileUtils.writeByteArrayToFile(file, data);
         } catch (IOException e) {
-            throw new RuntimeException("Unable to write byte data to temp file", e);
+            throw new RuntimeException("Unable to write byte data to temp file " + file.getAbsolutePath()
+                    + ". Check that the jmix.core.temp-dir directory is writable", e);
         }
 
         log.debug("Stored {} bytes of data to temporary file {}", data.length, file.getAbsolutePath());

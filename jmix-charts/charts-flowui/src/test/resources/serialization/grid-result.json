@@ -12,6 +12,8 @@
       "width": "50%",
       "height": "50%",
       "containLabel": true,
+      "outerBoundsMode": "same",
+      "outerBoundsContain": "axisLabel",
       "backgroundColor": "#FFFFF0",
       "borderColor": "#FFFFF0",
       "borderWidth": 13,

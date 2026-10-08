@@ -34,6 +34,8 @@ public class FormatterFactoryInput {
 
     protected ReportOutputType outputType = null;
 
+    protected boolean streaming = false;
+
     public FormatterFactoryInput(String templateExtension, BandData rootBand, ReportTemplate reportTemplate, OutputStream outputStream) {
         if (templateExtension == null) {
             throw new NullPointerException("templateExtension can not be null");
@@ -54,6 +56,12 @@ public class FormatterFactoryInput {
         this.outputType = outputType;
     }
 
+    public FormatterFactoryInput(String templateExtension, BandData rootBand, ReportTemplate reportTemplate,
+                                 ReportOutputType outputType, OutputStream outputStream, boolean streaming) {
+        this(templateExtension, rootBand, reportTemplate, outputType, outputStream);
+        this.streaming = streaming;
+    }
+
     public String getTemplateExtension() {
         return templateExtension;
     }
@@ -72,5 +80,12 @@ public class FormatterFactoryInput {
 
     public ReportOutputType getOutputType() {
         return outputType;
+    }
+
+    /**
+     * @return true if the report declares a streaming band, requesting the streaming XLSX engine
+     */
+    public boolean isStreaming() {
+        return streaming;
     }
 }

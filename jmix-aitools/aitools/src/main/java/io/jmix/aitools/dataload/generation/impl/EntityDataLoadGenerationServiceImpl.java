@@ -16,12 +16,12 @@
 
 package io.jmix.aitools.dataload.generation.impl;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jmix.aitools.ChatClientFactory;
 import io.jmix.aitools.ResponseLanguageProvider;
 import io.jmix.aitools.dataload.EntityDataLoadQuery;
 import io.jmix.aitools.dataload.execution.GeneratedJpqlParameter;
+import io.jmix.aitools.dataload.generation.EntityDataLoadUserMessageComposer;
+import io.jmix.aitools.dataload.generation.EntityDataLoadGenerationRequest;
 import io.jmix.aitools.dataload.generation.EntityDataLoadGenerationService;
 import io.jmix.aitools.dataload.generation.EntityDataLoadQueryPayload;
 import io.jmix.aitools.dataload.prompt.EntityDataLoadPromptProvider;
@@ -36,6 +36,10 @@ import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.util.Collections;
 import java.util.List;
@@ -55,6 +59,8 @@ public class EntityDataLoadGenerationServiceImpl implements EntityDataLoadGenera
     protected AiToolRegistry aiToolRegistry;
     @Autowired
     protected ResponseLanguageProvider responseLanguageProvider;
+    @Autowired
+    protected EntityDataLoadUserMessageComposer userMessageComposer;
 
     @Nullable
     protected ChatClient chatClient;
@@ -68,28 +74,35 @@ public class EntityDataLoadGenerationServiceImpl implements EntityDataLoadGenera
 
     @NullMarked
     @Override
-    public EntityDataLoadQuery generate(String userText) {
-        Preconditions.checkNotEmptyString(userText);
+    public EntityDataLoadQuery generate(EntityDataLoadGenerationRequest request) {
+        Preconditions.checkNotEmptyString(request.getPrompt());
 
-        String content = buildChatClientPrompt(userText)
+        String content = buildChatClientPrompt(request)
                 .call()
                 .content();
         if (content == null || content.isBlank()) {
             throw new IllegalStateException("LLM returned an empty response");
         }
 
+        int jsonStart = content.indexOf('{');
+        if (jsonStart < 0) {
+            throw new IllegalStateException("LLM response contains no JSON object: " + content);
+        }
+
         EntityDataLoadQueryPayload payload;
         try {
-            payload = objectMapper.readValue(content, EntityDataLoadQueryPayload.class);
-        } catch (JsonProcessingException e) {
+            payload = objectMapper.readValue(content.substring(jsonStart), EntityDataLoadQueryPayload.class);
+        } catch (JacksonException e) {
             throw new IllegalStateException("Cannot parse LLM response as JSON: " + content, e);
         }
 
         return mapToQueryDraft(payload);
     }
 
-    protected ChatClient.ChatClientRequestSpec buildChatClientPrompt(String userText) {
+    protected ChatClient.ChatClientRequestSpec buildChatClientPrompt(EntityDataLoadGenerationRequest request) {
         checkChatClient();
+
+        String userText = userMessageComposer.compose(request);
 
         return Objects.requireNonNull(chatClient)
                 .prompt()
@@ -152,6 +165,8 @@ public class EntityDataLoadGenerationServiceImpl implements EntityDataLoadGenera
     }
 
     protected ObjectMapper createObjectMapper() {
-        return new ObjectMapper();
+        return JsonMapper.builder()
+                .disable(DeserializationFeature.FAIL_ON_TRAILING_TOKENS)
+                .build();
     }
 }

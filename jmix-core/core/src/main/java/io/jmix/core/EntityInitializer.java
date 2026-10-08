@@ -25,4 +25,12 @@ import org.jspecify.annotations.NullMarked;
 public interface EntityInitializer {
 
     void initEntity(Object entity);
+
+    /**
+     * Returns true if this initializer should be invoked when an instance is created for an entity that already
+     * exists, for example when the entity is deserialized from JSON.
+     */
+    default boolean isApplicableToExistingEntity() {
+        return true;
+    }
 }

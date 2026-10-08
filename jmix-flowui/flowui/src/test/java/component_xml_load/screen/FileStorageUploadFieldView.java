@@ -40,6 +40,8 @@ public class FileStorageUploadFieldView extends StandardView {
     public FileStorageUploadField disabledFileStorageUploadField;
     @ViewComponent
     public FileStorageUploadField localizedFileStorageUploadField;
+    @ViewComponent
+    public FileStorageUploadField acceptedTypesFileStorageUploadField;
 
     public boolean vceOccurred;
 

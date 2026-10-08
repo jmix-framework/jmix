@@ -20,6 +20,7 @@ import org.apache.commons.collections4.ListUtils;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 
+import java.time.Duration;
 import java.util.List;
 
 @ConfigurationProperties(prefix = "jmix.oidc")
@@ -50,18 +51,25 @@ public class OidcProperties {
      */
     FilterChain filterChain;
 
+    /**
+     * Set of properties to configure loading of the JWK Set from the OpenID provider.
+     */
+    Jwks jwks;
+
     public OidcProperties(
             @DefaultValue("true") boolean useDefaultConfiguration,
             @DefaultValue("{baseUrl}") String postLogoutRedirectUri,
             @DefaultValue DefaultClaimsRolesMapperConfig defaultClaimsRolesMapper,
             @DefaultValue JwtAuthenticationConverterConfig jwtAuthenticationConverter,
-            @DefaultValue FilterChain filterChain
+            @DefaultValue FilterChain filterChain,
+            @DefaultValue Jwks jwks
     ) {
         this.useDefaultConfiguration = useDefaultConfiguration;
         this.postLogoutRedirectUri = postLogoutRedirectUri;
         this.defaultClaimsRolesMapper = defaultClaimsRolesMapper;
         this.jwtAuthenticationConverter = jwtAuthenticationConverter;
         this.filterChain = filterChain;
+        this.jwks = jwks;
     }
 
     public boolean isUseDefaultConfiguration() {
@@ -82,6 +90,10 @@ public class OidcProperties {
 
     public FilterChain getFilterChain() {
         return filterChain;
+    }
+
+    public Jwks getJwks() {
+        return jwks;
     }
 
     public static class DefaultClaimsRolesMapperConfig {
@@ -137,6 +149,33 @@ public class OidcProperties {
 
         public String getUsernameClaim() {
             return usernameClaim;
+        }
+    }
+
+    public static class Jwks {
+
+        /**
+         * Connect timeout for HTTP requests loading the JWK Set from the OpenID provider.
+         */
+        Duration connectTimeout;
+
+        /**
+         * Read timeout for HTTP requests loading the JWK Set from the OpenID provider.
+         */
+        Duration readTimeout;
+
+        public Jwks(@DefaultValue("3s") Duration connectTimeout,
+                    @DefaultValue("5s") Duration readTimeout) {
+            this.connectTimeout = connectTimeout;
+            this.readTimeout = readTimeout;
+        }
+
+        public Duration getConnectTimeout() {
+            return connectTimeout;
+        }
+
+        public Duration getReadTimeout() {
+            return readTimeout;
         }
     }
 

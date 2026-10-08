@@ -68,7 +68,9 @@ class JmixSidePanelLayoutDialog extends DialogBaseMixin(ThemePropertyMixin(LumoI
                 role="dialog"
                 focus-trap
                 exportparts="backdrop, overlay, content"
-            ></jmix-side-panel-layout-dialog-overlay>
+            >
+                <slot name="sidePanelContentSlot" slot="sidePanelContentSlot"></slot>
+            </jmix-side-panel-layout-dialog-overlay>
         `;
     }
 

@@ -15,4 +15,7 @@
  */
 
 @import './dynmod-settings-view.css';
+@import './dynmod-settings-history-view.css';
+@import './dynmod-ai-builder.css';
+@import './dynmod-ai-model-panel.css';
 @import './misc.css';

@@ -100,7 +100,7 @@ public class AiConversationDataService implements AiConversationService {
     public List<AiConversation> loadConversations() {
         List<AiConversationEntity> conversations = dataManager.load(AiConversationEntity.class)
                 .condition(PropertyCondition.equal("username", currentUsername()))
-                .sort(Sort.by(Sort.Order.desc("createdDate")))
+                .sort(Sort.by(Sort.Order.desc("createdDate"), Sort.Order.desc("id")))
                 .fetchPlan(FetchPlan.BASE)
                 .list();
         return convert(conversations);

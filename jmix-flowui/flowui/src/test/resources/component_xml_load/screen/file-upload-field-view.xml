@@ -78,5 +78,8 @@
         <fileUploadField id="disabledFileUploadField"
                          enabled="false"/>
         <fileUploadField id="localizedFileUploadField"/>
+        <fileUploadField id="acceptedTypesFileUploadField"
+                         acceptedMimeTypes="image/png, image/jpeg"
+                         acceptedFileExtensions=".pdf, .doc"/>
     </layout>
 </view>

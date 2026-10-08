@@ -83,6 +83,6 @@ class UserUiTest {
         dataManager.load(User::class.java)
                 .query("e.username like ?1", "test-user-%")
                 .list()
-                .forEach { u: User? -> dataManager.remove(u) }
+                .forEach { u: User -> dataManager.remove(u) }
     }
 }

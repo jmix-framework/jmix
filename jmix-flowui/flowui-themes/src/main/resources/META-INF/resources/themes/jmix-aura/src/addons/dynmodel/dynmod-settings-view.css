@@ -21,6 +21,20 @@
     justify-content: center;
 }
 
+.dynmod-settings-view .dynmod-attribute-features {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: var(--vaadin-gap-xs);
+    align-items: center;
+    overflow: hidden;
+}
+
+/* Badges keep their own width and stay on one line, so a row never grows past the standard height. */
+.dynmod-settings-view .dynmod-attribute-features > * {
+    flex: 0 0 auto;
+    white-space: nowrap;
+}
+
 .dynmod-settings-view {
     container-type: inline-size;
     container-name: dynmod-settings-view;
@@ -28,10 +42,14 @@
 
 .dynmod-settings-view .header-box {
     align-items: end;
-    justify-content: space-between;
     flex-wrap: wrap-reverse;
     gap: var(--vaadin-gap-s);
     width: 100%;
+}
+
+/* The buttons stay next to the fields before them, and the editor mode switch goes to the end. */
+.dynmod-settings-view .header-box .tab-list {
+    margin-inline-start: auto;
 }
 
 .dynmod-settings-view .entities-layout {
@@ -60,5 +78,14 @@
 
     .dynmod-settings-view .header-box .tab-list {
         align-self: stretch;
+        margin-inline-start: 0;
     }
+}
+
+.dynamic-view-handler-model-detail-view .component-id-renderer {
+    gap: var(--vaadin-gap-xs);
+}
+
+.dynamic-view-handler-model-detail-view .component-id-renderer-tag {
+    color: var(--vaadin-text-color-secondary);
 }

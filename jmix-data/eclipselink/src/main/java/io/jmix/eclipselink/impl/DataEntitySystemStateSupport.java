@@ -17,6 +17,10 @@
 package io.jmix.eclipselink.impl;
 
 import io.jmix.core.*;
+import io.jmix.core.entity.EntitySystemAccess;
+import io.jmix.core.entity.LoadedPropertiesInfo;
+import io.jmix.core.impl.ReferenceLoadedPropertiesInfo;
+import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.eclipselink.impl.lazyloading.AbstractValueHolder;
 import io.jmix.eclipselink.impl.lazyloading.IndirectListWrapper;
@@ -58,6 +62,21 @@ public class DataEntitySystemStateSupport extends EntitySystemStateSupport {
     }
 
     public void mergeSystemState(Entity src, Entity dst) {
+        if (EntitySystemAccess.getEntityEntry(src).getLoadedPropertiesInfo()
+                instanceof ReferenceLoadedPropertiesInfo srcReferenceInfo) {
+            // A reference has no state to merge. Its set attributes are copied into the destination, so they are
+            // added to its fetch group (a null fetch group means that all attributes are fetched).
+            if (dst instanceof FetchGroupTracker dstTracker && dstTracker._persistence_getFetchGroup() != null) {
+                dstTracker._persistence_setFetchGroup(
+                        mergeReferenceFetchGroup(dstTracker._persistence_getFetchGroup(), dst, srcReferenceInfo));
+            }
+            return;
+        }
+
+        // read before the copy below replaces it with the source's
+        LoadedPropertiesInfo dstLoadedPropertiesInfoBeforeCopy =
+                EntitySystemAccess.getEntityEntry(dst).getLoadedPropertiesInfo();
+
         super.copySystemState(src, dst);
 
         if (src instanceof FetchGroupTracker && dst instanceof FetchGroupTracker) {
@@ -66,6 +85,12 @@ public class DataEntitySystemStateSupport extends EntitySystemStateSupport {
             if (dstFetchGroup == null && entityStates.isNew(dst)) {
                 // dst is a new entity replaced by committed one
                 ((FetchGroupTracker) dst)._persistence_setFetchGroup(srcFetchGroup);
+            } else if (dstFetchGroup == null
+                    && dstLoadedPropertiesInfoBeforeCopy instanceof ReferenceLoadedPropertiesInfo referenceInfo) {
+                // a reference has no fetch group: take the source's plus the attributes set on the reference,
+                // so that EclipseLink does not ignore them on save
+                ((FetchGroupTracker) dst)._persistence_setFetchGroup(
+                        mergeReferenceFetchGroup(srcFetchGroup, dst, referenceInfo));
             } else {
                 ((FetchGroupTracker) dst)._persistence_setFetchGroup(mergeFetchGroups(srcFetchGroup, dstFetchGroup));
             }
@@ -115,6 +140,27 @@ public class DataEntitySystemStateSupport extends EntitySystemStateSupport {
                 }
             }
         }
+    }
+
+    /**
+     * Returns the given fetch group plus the persistent attributes loaded in the reference, or {@code null} if the
+     * given fetch group is {@code null} (all attributes are fetched).
+     */
+    @Nullable
+    protected FetchGroup mergeReferenceFetchGroup(@Nullable FetchGroup fetchGroup, Entity dst,
+                                                  ReferenceLoadedPropertiesInfo referenceInfo) {
+        if (fetchGroup == null) {
+            return null;
+        }
+        Set<String> attributes = new HashSet<>(getFetchGroupAttributes(fetchGroup));
+        MetaClass metaClass = metadata.getClass(dst);
+        for (String name : referenceInfo.getLoadedProperties()) {
+            MetaProperty metaProperty = metaClass.findProperty(name);
+            if (metaProperty != null && metadataTools.isJpa(metaProperty)) {
+                attributes.add(name);
+            }
+        }
+        return new JmixEntityFetchGroup(new EntityFetchGroup(attributes), entityStates);
     }
 
     @Nullable

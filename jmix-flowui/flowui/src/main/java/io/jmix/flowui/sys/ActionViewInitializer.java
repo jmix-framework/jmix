@@ -22,8 +22,10 @@ import io.jmix.flowui.view.DialogWindow.AfterCloseEvent;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.builder.DetailWindowBuilder;
 import io.jmix.flowui.view.builder.LookupWindowBuilder;
+import io.jmix.flowui.view.builder.ReadWindowBuilder;
 import io.jmix.flowui.view.builder.WindowBuilder;
 import io.jmix.flowui.view.navigation.DetailViewNavigator;
+import io.jmix.flowui.view.navigation.ReadViewNavigator;
 import io.jmix.flowui.view.navigation.ViewNavigator;
 import org.jspecify.annotations.Nullable;
 
@@ -132,7 +134,47 @@ public class ActionViewInitializer {
         return navigator;
     }
 
+    public <E> ReadViewNavigator<E> initNavigator(ReadViewNavigator<E> navigator) {
+        if (viewClass != null) {
+            navigator = navigator.withViewClass(viewClass);
+        }
+
+        if (viewId != null) {
+            navigator = navigator.withViewId(viewId);
+        }
+
+        if (routeParametersProvider != null) {
+            navigator = navigator.withRouteParameters(routeParametersProvider.getRouteParameters());
+        }
+
+        if (queryParametersProvider != null) {
+            navigator = navigator.withQueryParameters(queryParametersProvider.getQueryParameters());
+        }
+
+        return navigator;
+    }
+
     public <E, V extends View<?>> DetailWindowBuilder<E, V> initWindowBuilder(DetailWindowBuilder<E, V> windowBuilder) {
+        if (viewClass != null) {
+            windowBuilder = windowBuilder.withViewClass((Class) viewClass);
+        }
+
+        if (viewId != null) {
+            windowBuilder = windowBuilder.withViewId(viewId);
+        }
+
+        if (afterCloseHandler != null) {
+            windowBuilder = windowBuilder.withAfterCloseListener((Consumer) afterCloseHandler);
+        }
+
+        if (viewConfigurer != null) {
+            windowBuilder = windowBuilder.withViewConfigurer((Consumer) viewConfigurer);
+        }
+
+        return windowBuilder;
+    }
+
+    public <E, V extends View<?>> ReadWindowBuilder<E, V> initWindowBuilder(ReadWindowBuilder<E, V> windowBuilder) {
         if (viewClass != null) {
             windowBuilder = windowBuilder.withViewClass((Class) viewClass);
         }

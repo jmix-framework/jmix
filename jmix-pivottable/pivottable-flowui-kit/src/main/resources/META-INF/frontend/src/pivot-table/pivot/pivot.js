@@ -7,7 +7,7 @@
 
   callWithJQuery = function(pivotModule) {
     if (typeof exports === "object" && typeof module === "object") {
-      return pivotModule(require("jquery"));
+      return pivotModule(require("../jquery/jquery.js"));
     } else if (typeof define === "function" && define.amd) {
       return define(["jquery"], pivotModule);
     } else {

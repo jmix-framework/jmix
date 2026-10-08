@@ -93,7 +93,7 @@
                 <column property="jobClass"/>
                 <column property="jobState"/>
                 <column property="jobSource"/>
-                <column key="jobScheduleDescription" header="msg://column.jobScheduleDescription.header"/>
+                <column key="jobScheduleDescription" header="msg://column.jobScheduleDescription.header" sortable="true"/>
                 <column property="description"/>
                 <column key="lastFireDate" header="msg://io.jmix.quartz.model/JobModel.lastFireDate"/>
                 <column key="nextFireDate" header="msg://io.jmix.quartz.model/JobModel.nextFireDate"/>

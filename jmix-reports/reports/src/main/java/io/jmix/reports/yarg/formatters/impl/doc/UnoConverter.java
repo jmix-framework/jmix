@@ -15,8 +15,6 @@
  */
 package io.jmix.reports.yarg.formatters.impl.doc;
 
-import com.sun.star.uno.Any;
-import com.sun.star.uno.Type;
 import com.sun.star.uno.UnoRuntime;
 
 public final class UnoConverter {
@@ -25,7 +23,4 @@ public final class UnoConverter {
         return (T) UnoRuntime.queryInterface(type, object);
     }
 
-    public static Any createAny(Object o) {
-        return new Any(new Type(o.getClass()), o);
-    }
 }

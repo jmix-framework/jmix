@@ -121,7 +121,7 @@ public class AiChatDataService implements AiChatService, InitializingBean {
 
         AiChatMessageEntity userMessage = loadUserMessage(userMessageId);
         AiConversationEntity conversation = userMessage.getConversation();
-        List<Message> history = loadHistory(conversation.getId());
+        List<Message> history = loadHistory(conversation.getId(), userMessage);
 
         AiChatMessageEntity placeholder = createAssistantPlaceholder(conversation);
         try {
@@ -180,8 +180,13 @@ public class AiChatDataService implements AiChatService, InitializingBean {
         return currentUserSubstitution.getEffectiveUser().getUsername();
     }
 
-    protected List<Message> loadHistory(UUID conversationId) {
-        return loadRecentMessages(conversationId, dataProperties.getChatMemoryMaxMessages()).stream()
+    protected List<Message> loadHistory(UUID conversationId, AiChatMessageEntity currentUserMessage) {
+        List<AiChatMessageEntity> recent = loadRecentMessages(conversationId, dataProperties.getChatMemoryMaxMessages());
+        if (recent.isEmpty()) {
+            // Never send an empty history: the request must always include the current user message.
+            recent = List.of(currentUserMessage);
+        }
+        return recent.stream()
                 .map(this::mapEntityToMessage)
                 .toList();
     }

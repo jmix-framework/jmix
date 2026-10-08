@@ -69,8 +69,11 @@ public class LimitOffsetAllEntitiesLoader extends AbstractAllEntitiesLoader {
 
     /**
      * Sequential data loading
+     *
+     * @param collectionLoader      loader of the exported data grid, the source of the query and its parameters
      * @param exportedEntityVisitor {@link ExportedEntityVisitor#visitEntity(EntityExportContext)}
-     * @param loadBatchSize {@link GridExportProperties#getExportAllBatchSize()} number of entities loaded in one query
+     * @param loadBatchSize         number of entities loaded in one query, either the one requested by the exporter
+     *                              or {@link GridExportProperties#getExportAllBatchSize()}
      */
     @Override
     protected void loadEntities(CollectionLoader<?> collectionLoader, ExportedEntityVisitor exportedEntityVisitor,

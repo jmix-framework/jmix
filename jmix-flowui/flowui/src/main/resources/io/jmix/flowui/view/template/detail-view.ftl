@@ -27,6 +27,9 @@
             </#list>
             <loader/>
         </instance>
+        <#list properties as property>
+        ${componentXmlFactory.createItemsContainerXml(property)}
+        </#list>
     </data>
     <facets>
         <dataLoadCoordinator auto="true"/>

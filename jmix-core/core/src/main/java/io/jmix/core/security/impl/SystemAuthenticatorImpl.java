@@ -18,7 +18,6 @@ package io.jmix.core.security.impl;
 
 import com.google.common.base.Strings;
 import io.jmix.core.JmixOrder;
-import io.jmix.core.impl.logging.LogMdc;
 import io.jmix.core.security.SecurityContextHelper;
 import io.jmix.core.security.SystemAuthenticationToken;
 import io.jmix.core.security.SystemAuthenticator;
@@ -31,6 +30,8 @@ import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import org.jspecify.annotations.Nullable;
@@ -65,7 +66,10 @@ public class SystemAuthenticatorImpl extends SystemAuthenticatorSupport implemen
             throw new IllegalStateException("AuthenticationManager is not defined");
         }
 
-        pushAuthentication(SecurityContextHelper.getAuthentication());
+        // The previous context is saved as an instance and never modified: it may be shared with other threads
+        // of the same HTTP session.
+        SecurityContext previous = SecurityContextHolder.getContext();
+        pushSecurityContext(previous);
         try {
             Authentication authentication;
 
@@ -79,12 +83,14 @@ public class SystemAuthenticatorImpl extends SystemAuthenticatorSupport implemen
                 authentication = authenticationManager.authenticate(authToken);
             }
 
-            SecurityContextHelper.setAuthentication(authentication);
+            SecurityContext context = SecurityContextHolder.createEmptyContext();
+            context.setAuthentication(authentication);
+            SecurityContextHelper.installContext(context);
 
             return authentication;
 
         } catch (AuthenticationException e) {
-            pollAuthentication();
+            pollSecurityContext();
             throw e;
         }
     }
@@ -96,10 +102,9 @@ public class SystemAuthenticatorImpl extends SystemAuthenticatorSupport implemen
 
     @Override
     public void end() {
-        log.trace("Set previous Authentication");
-        Authentication previous = pollAuthentication();
-        SecurityContextHelper.setAuthentication(previous);
-        LogMdc.setup(previous);
+        log.trace("Set previous SecurityContext");
+        SecurityContext previous = pollSecurityContext();
+        SecurityContextHelper.restoreContext(previous);
     }
 
     @Override

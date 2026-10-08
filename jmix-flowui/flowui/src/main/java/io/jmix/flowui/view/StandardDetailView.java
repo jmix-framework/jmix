@@ -30,6 +30,7 @@ import com.vaadin.flow.shared.Registration;
 import io.jmix.core.*;
 import io.jmix.core.accesscontext.InMemoryCrudEntityContext;
 import io.jmix.core.annotation.Internal;
+import io.jmix.core.common.event.Subscription;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -55,6 +56,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static java.util.Objects.requireNonNull;
 
@@ -353,6 +355,15 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
         return close(StandardOutcome.DISCARD);
     }
 
+    @Override
+    public OperationResult close(CloseAction closeAction) {
+        if (isSaveActionPerformed() && StandardOutcome.CLOSE.getCloseAction().equals(closeAction)) {
+            return super.close(StandardOutcome.SAVE.getCloseAction());
+        }
+
+        return super.close(closeAction);
+    }
+
     /**
      * @return whether a notification will be shown in case of successful save
      */
@@ -517,7 +528,13 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
 
         // if only new entities are registered as modified in DataContext,
         // check whether they were modified after opening the view
-        return isModifiedAfterOpen();
+        if (!isModifiedAfterOpen()) {
+            return false;
+        }
+        // modifiedAfterOpen latches true on any ChangeEvent and is never lowered on revert, so it cannot
+        // be trusted alone. Attribute-level tracking drops an entity from the modified set once its edits
+        // are reverted to baseline, so an empty modified set here means everything was reverted.
+        return !dataContext.getModified().isEmpty();
     }
 
     @Override
@@ -675,13 +692,45 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
 
             setModifiedAfterOpen(modifiedAfterOpen);
         } else {
-            getEditedEntityLoader().setEntityId(requireNonNull(EntityValues.getId(entityToEdit)));
+            InstanceLoader<T> loader = getEditedEntityLoader();
+            if (isEntityModifiedInParentContext()) {
+                mergeEntityToEditAfterLoad(loader, entityToEdit);
+            }
+            loader.setEntityId(requireNonNull(EntityValues.getId(entityToEdit)));
         }
     }
 
+    /*
+     * The entity is modified in a parent data context, but it is reloaded because its loaded attributes don't cover
+     * the container's fetch plan. Merging the parent's instance over the reloaded one keeps the parent's unsaved
+     * changes, while the attributes that only the reloaded instance has keep the values from the data store.
+     */
+    private void mergeEntityToEditAfterLoad(InstanceLoader<T> loader, T entityToEdit) {
+        AtomicReference<Subscription> subscription = new AtomicReference<>();
+        subscription.set(loader.addPostLoadListener(event -> {
+            subscription.get().remove();
+            getViewData().getDataContext().merge(entityToEdit);
+        }));
+    }
+
     private boolean doNotReloadEditedEntity() {
+        return doNotReloadEditedEntity(getEditedEntityContainer());
+    }
+
+    /**
+     * Returns whether the entity passed to {@link #setEntityToEdit(Object)} should be set to the container as is
+     * instead of being reloaded from the data store. It is the case when the entity is modified in a parent data
+     * context and its loaded attributes cover the container's fetch plan. If the entity is not modified in a
+     * parent data context, the entity is used as is only when reloading is turned off by
+     * {@link #setReloadEdited(boolean)}.
+     * <p>
+     * A view that creates the edited entity container itself can invoke this method with the created container
+     * to make the same decision. The method must be invoked after {@link #setEntityToEdit(Object)}.
+     *
+     * @param container container the edited entity is going to be set to
+     */
+    protected boolean doNotReloadEditedEntity(InstanceContainer<T> container) {
         if (isEntityModifiedInParentContext()) {
-            InstanceContainer<T> container = getEditedEntityContainer();
             FetchPlan fetchPlan = container.getFetchPlan();
             if (fetchPlan == null) {
                 MetadataTools metadataTools = getMetadataTools();

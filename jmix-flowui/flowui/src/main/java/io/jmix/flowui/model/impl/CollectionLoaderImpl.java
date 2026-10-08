@@ -32,6 +32,7 @@ import io.jmix.flowui.monitoring.DataLoaderLifeCycle;
 import io.jmix.flowui.observation.DataLoaderObservationInfo;
 import io.jmix.flowui.observation.UiObservationSupport;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
 import org.jspecify.annotations.Nullable;
 
@@ -60,6 +61,13 @@ public class CollectionLoaderImpl<E> implements CollectionLoader<E> {
     protected List<QueryStringProcessor> queryStringProcessors;
     @Autowired
     protected UiObservationSupport uiObservationSupport;
+
+    /**
+     * With the legacy join-based condition generation, a condition on a path crossing a to-many
+     * association joins the collection at the top level and requires 'distinct' to avoid duplicates.
+     */
+    @Value("${jmix.eclipselink.use-inner-join-in-condition:false}")
+    protected boolean useInnerJoinInCondition;
 
     protected DataContext dataContext;
     protected CollectionContainer<E> container;
@@ -200,6 +208,12 @@ public class CollectionLoaderImpl<E> implements CollectionLoader<E> {
             }
             if (metadataTools.isElementCollection(mpp.getMetaProperty())) {
                 return true;
+            }
+            if (!useInnerJoinInCondition) {
+                // a condition on a path crossing a to-many association is generated as a self-contained
+                // 'exists' subquery which cannot multiply rows, so 'distinct' (failing on Oracle if the
+                // entity contains a LOB attribute) is not required
+                return false;
             }
             MetaProperty[] metaProperties = mpp.getMetaProperties();
             //length - 1 because no duplicates will be produced if the only x-to-many property is the last one

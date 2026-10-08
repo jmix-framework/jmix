@@ -485,7 +485,7 @@ public abstract class AbstractDataStore implements DataStore {
     protected FetchPlan getFetchPlanForSave(Map<Object, FetchPlan> fetchPlans, Object entity) {
         FetchPlan fetchPlan = fetchPlans.get(entity);
         if (fetchPlan == null) {
-            fetchPlan = entityStates.getCurrentFetchPlan(entity);
+            fetchPlan = entityStates.getFetchPlanForReloadAfterSave(entity);
         }
         return fetchPlan;
     }

@@ -23,7 +23,7 @@ import java.io.Serializable;
 
 /**
  * This interface describes reporting result object.
- * Generally returned by io.jmix.reports.yarg.reporting.ReportingAPI
+ * Generally returned by ReportingAPI
  */
 @NullMarked
 public interface ReportOutputDocument extends Serializable {

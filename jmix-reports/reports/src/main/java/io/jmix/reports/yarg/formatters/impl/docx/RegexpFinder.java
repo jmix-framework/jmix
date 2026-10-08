@@ -17,7 +17,6 @@
 package io.jmix.reports.yarg.formatters.impl.docx;
 
 import io.jmix.reports.yarg.formatters.impl.DocxFormatterDelegate;
-import io.jmix.reports.yarg.formatters.impl.docx.AbstractRegexpFinder;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

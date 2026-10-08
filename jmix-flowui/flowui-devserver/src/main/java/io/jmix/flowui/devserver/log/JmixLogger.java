@@ -16,7 +16,8 @@
 
 package io.jmix.flowui.devserver.log;
 
-import java.util.Arrays;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.Date;
 import java.util.List;
 
@@ -46,7 +47,7 @@ public class JmixLogger extends AbstractLogger {
 
     @Override
     protected void handleNormalizedLoggingCall(Level level, Marker marker, String messagePattern, Object[] arguments, Throwable throwable) {
-        String throwableMsg = throwable == null ? "" : "\n" + Arrays.toString(throwable.getStackTrace());
+        String throwableMsg = throwable == null ? "" : "\n" + stackTraceOf(throwable);
         if (isImportantLog()) {
             JmixLoggerUtils.logInFile(
                     new Date() + " "
@@ -106,6 +107,20 @@ public class JmixLogger extends AbstractLogger {
     @Override
     public boolean isErrorEnabled(Marker marker) {
         return true;
+    }
+
+    /**
+     * Renders the exception type, message and {@code Caused by} chain, not only the frames
+     * of the outermost exception: without the type and the message entries like
+     * {@code ExceptionInInitializerError} or {@code NoClassDefFoundError} are impossible
+     * to tell apart in the log.
+     */
+    private static String stackTraceOf(Throwable throwable) {
+        StringWriter writer = new StringWriter();
+        try (PrintWriter printWriter = new PrintWriter(writer)) {
+            throwable.printStackTrace(printWriter);
+        }
+        return writer.toString();
     }
 
     private boolean isImportantLog() {

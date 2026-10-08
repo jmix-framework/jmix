@@ -23,14 +23,18 @@ import org.springframework.boot.test.context.SpringBootTest
 import test_support.entity.Foo
 import test_support.entity.sales.*
 import test_support.spec.FlowuiTestSpecification
+import view_registry.view.address.AddressDetailView
 import view_registry.view.customer.CustomerDetailView
+import view_registry.view.customer.CustomerReadView
 import view_registry.view.customer.CustomerLookupView
 import view_registry.view.customer.CustomerPrimaryListView
 import view_registry.view.order.OrderPrimaryListView
 import view_registry.view.product.ProductListView
 import view_registry.view.product.ProductPrimaryDetailView
+import view_registry.view.product.ProductPrimaryReadView
 import view_registry.view.product.ProductPrimaryLookupView
 import view_registry.view.producttag.ProductTagListView
+import view_registry.view.producttag.ProductTagPrimaryDetailView
 
 @SpringBootTest
 class ViewRegistryTest extends FlowuiTestSpecification {
@@ -134,5 +138,74 @@ class ViewRegistryTest extends FlowuiTestSpecification {
 
         then:
         thrown(NoSuchViewException)
+    }
+
+    /* Read view */
+
+    def "find read view with @PrimaryReadView"() {
+        when:
+        def viewInfo = viewRegistry.getReadViewInfo(Product)
+
+        then:
+        viewInfo.id == ProductPrimaryReadView.VIEW_ID
+    }
+
+    def "find read view with read view id convention"() {
+        when:
+        def viewInfo = viewRegistry.getReadViewInfo(Customer)
+
+        then:
+        viewInfo.id == CustomerReadView.VIEW_ID
+    }
+
+    def "read view resolution falls back to @PrimaryDetailView"() {
+        when:
+        def viewInfo = viewRegistry.getReadViewInfo(ProductTag)
+
+        then:
+        viewInfo.id == ProductTagPrimaryDetailView.VIEW_ID
+    }
+
+    def "read view resolution falls back to the detail view id convention"() {
+        when:
+        def viewInfo = viewRegistry.getReadViewInfo(Address)
+
+        then:
+        viewInfo.id == AddressDetailView.VIEW_ID
+    }
+
+    def "no read view and no detail view found"() {
+        when:
+        viewRegistry.getReadViewInfo(Order)
+
+        then:
+        thrown(NoSuchViewException)
+    }
+
+    def "primary read view can be registered and removed at runtime"() {
+        given: "an entity whose read view is found by the convention, and another read view to point at"
+        def replacement = viewRegistry.getViewInfo(ProductPrimaryReadView.VIEW_ID)
+
+        expect: "nothing is registered for it yet"
+        !viewRegistry.hasPrimaryReadView(Customer)
+        viewRegistry.getReadViewInfo(Customer).id == CustomerReadView.VIEW_ID
+
+        when: "the replacement is registered as the entity's primary read view"
+        viewRegistry.setPrimaryReadView(Customer, replacement)
+
+        then: "resolution returns it instead of the conventional one"
+        viewRegistry.hasPrimaryReadView(Customer)
+        viewRegistry.getReadViewInfo(Customer).id == ProductPrimaryReadView.VIEW_ID
+
+        when: "the registration is removed"
+        def removed = viewRegistry.removePrimaryReadView(Customer)
+
+        then: "resolution falls back to the convention again"
+        removed
+        !viewRegistry.hasPrimaryReadView(Customer)
+        viewRegistry.getReadViewInfo(Customer).id == CustomerReadView.VIEW_ID
+
+        and: "removing it twice reports that there was nothing to remove"
+        !viewRegistry.removePrimaryReadView(Customer)
     }
 }

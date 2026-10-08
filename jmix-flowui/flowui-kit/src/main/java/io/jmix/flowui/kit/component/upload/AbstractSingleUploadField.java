@@ -67,6 +67,8 @@ public abstract class AbstractSingleUploadField<C extends AbstractSingleUploadFi
     protected static final String FILE_NAME_COMPONENT_EMPTY_CLASS_NAME = "empty";
     protected static final String CLEAR_COMPONENT_CLASS_NAME = "jmix-upload-field-clear";
 
+    protected static final String DROP_ALLOWED_PROPERTY = "dropAllowed";
+
     protected static final String FILE_NOT_SELECTED = "File is not selected";
     protected static final String UPLOAD = "Upload";
     protected static final String CLEAR_COMPONENT_ARIA_LABEL = "Remove file";
@@ -87,6 +89,7 @@ public abstract class AbstractSingleUploadField<C extends AbstractSingleUploadFi
 
     protected boolean clearButtonVisible = false;
     protected boolean fileNameVisible = false;
+    protected boolean dropAllowed = true;
 
     public AbstractSingleUploadField(V defaultValue) {
         super(defaultValue);
@@ -104,6 +107,7 @@ public abstract class AbstractSingleUploadField<C extends AbstractSingleUploadFi
         initClearComponent(clearComponent);
 
         updateComponentsVisibility();
+        updateDropZoneState();
 
         attachContent(content);
     }
@@ -162,6 +166,11 @@ public abstract class AbstractSingleUploadField<C extends AbstractSingleUploadFi
         Component uploadButtonComponent = createUploadButtonComponent();
         initUploadButtonComponent(uploadButtonComponent);
         upload.setUploadButton(uploadButtonComponent);
+
+        // Files are dropped onto the field's drop zone, which wraps the upload button.
+        // The button must not handle drops on its own: a drop event bubbles from the
+        // button up to the drop zone, so both handlers would add the same file twice.
+        upload.setDropAllowed(false);
     }
 
     protected abstract UploadHandler createUploadHandler();
@@ -213,6 +222,7 @@ public abstract class AbstractSingleUploadField<C extends AbstractSingleUploadFi
         super.setReadOnly(readOnly);
 
         updateComponentsVisibility();
+        updateDropZoneState();
     }
 
     @Override
@@ -220,6 +230,8 @@ public abstract class AbstractSingleUploadField<C extends AbstractSingleUploadFi
         super.setEnabled(enabled);
 
         uploadButton.setEnabled(enabled);
+
+        updateDropZoneState();
     }
 
     /**
@@ -348,7 +360,9 @@ public abstract class AbstractSingleUploadField<C extends AbstractSingleUploadFi
 
     /**
      * @return the list of accepted file types for upload
+     * @deprecated use {@link #getAcceptedMimeTypes()} and {@link #getAcceptedFileExtensions()} instead
      */
+    @Deprecated(since = "3.1", forRemoval = true)
     public List<String> getAcceptedFileTypes() {
         return uploadButton.getAcceptedFileTypes();
     }
@@ -362,9 +376,51 @@ public abstract class AbstractSingleUploadField<C extends AbstractSingleUploadFi
      *
      * @param acceptedFileTypes the allowed file types to be uploaded, or {@code null} to clear any restrictions
      * @see Upload#setAcceptedFileTypes(String...)
+     * @deprecated use {@link #setAcceptedMimeTypes(String...)} and/or {@link #setAcceptedFileExtensions(String...)} instead
      */
+    @Deprecated(since = "3.1", forRemoval = true)
     public void setAcceptedFileTypes(String... acceptedFileTypes) {
         uploadButton.setAcceptedFileTypes(acceptedFileTypes);
+    }
+
+    /**
+     * @return the list of accepted MIME types for upload
+     */
+    public List<String> getAcceptedMimeTypes() {
+        return uploadButton.getAcceptedMimeTypes();
+    }
+
+    /**
+     * Sets the MIME types that the server accepts. Wildcards are allowed, e.g. {@code "image/*"}, {@code "application/pdf"}.
+     * <p>
+     * Cannot be combined with {@link #setAcceptedFileTypes(String...)} and requires an upload handler
+     * (not the deprecated {@code Receiver} API).
+     *
+     * @param acceptedMimeTypes the allowed MIME types to be uploaded, or empty to clear any restrictions
+     * @see Upload#setAcceptedMimeTypes(String...)
+     */
+    public void setAcceptedMimeTypes(String... acceptedMimeTypes) {
+        uploadButton.setAcceptedMimeTypes(acceptedMimeTypes);
+    }
+
+    /**
+     * @return the list of accepted file extensions for upload
+     */
+    public List<String> getAcceptedFileExtensions() {
+        return uploadButton.getAcceptedFileExtensions();
+    }
+
+    /**
+     * Sets the file extensions that the server accepts, each starting with a dot, e.g. {@code ".pdf"}, {@code ".jpg"}.
+     * <p>
+     * Cannot be combined with {@link #setAcceptedFileTypes(String...)} and requires an upload handler
+     * (not the deprecated {@code Receiver} API).
+     *
+     * @param acceptedFileExtensions the allowed file extensions to be uploaded, or empty to clear any restrictions
+     * @see Upload#setAcceptedFileExtensions(String...)
+     */
+    public void setAcceptedFileExtensions(String... acceptedFileExtensions) {
+        uploadButton.setAcceptedFileExtensions(acceptedFileExtensions);
     }
 
     /**
@@ -412,21 +468,23 @@ public abstract class AbstractSingleUploadField<C extends AbstractSingleUploadFi
 
     /**
      * @return {@code true} if file dropping is enabled, {@code false} otherwise.
-     * @see Upload#isDropAllowed()
      */
     public boolean isDropAllowed() {
-        return uploadButton.isDropAllowed();
+        return dropAllowed;
     }
 
     /**
      * Sets whether the component supports dropping files for uploading. The default value is {@code true}.
      * <p>
-     * See {@link Upload#setDropAllowed(boolean)} for details.
+     * Files can be dropped anywhere on the field's input area, not only onto the upload button.
+     * Dropping is always off while the field is read-only or disabled, regardless of this setting.
      *
      * @param allowed {@code true} to enable dropping
      */
     public void setDropAllowed(boolean allowed) {
-        uploadButton.setDropAllowed(allowed);
+        dropAllowed = allowed;
+
+        updateDropZoneState();
     }
 
     /**
@@ -639,6 +697,15 @@ public abstract class AbstractSingleUploadField<C extends AbstractSingleUploadFi
         } else {
             component.getElement().setAttribute(ElementConstants.ARIA_LABEL_ATTRIBUTE_NAME, ariaLabel);
         }
+    }
+
+    /**
+     * Pushes the effective drop state to the client, where the field's input area acts as
+     * a drop zone. Dropping is only offered when it is allowed and the field can accept a
+     * file at all.
+     */
+    protected void updateDropZoneState() {
+        getElement().setProperty(DROP_ALLOWED_PROPERTY, dropAllowed && isEnabled() && !isReadOnly());
     }
 
     protected void updateComponentsVisibility() {

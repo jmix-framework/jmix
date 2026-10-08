@@ -22,7 +22,7 @@ import org.jspecify.annotations.NullMarked;
 
 /**
  * This interface describes a factory which spawns data loaders. The default implementation is
- * io.jmix.reports.yarg.loaders.factory.DefaultLoaderFactory
+ * DefaultLoaderFactory
  */
 @NullMarked
 public interface ReportLoaderFactory {

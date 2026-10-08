@@ -23,10 +23,14 @@ import io.jmix.rest.annotation.RestService;
 import io.jmix.samples.restservice.entity.ContactType;
 import io.jmix.samples.restservice.entity.Customer;
 import io.jmix.samples.restservice.entity.CustomerContact;
+import io.jmix.samples.restservice.entity.Employee;
 
 import java.net.URI;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.OffsetDateTime;
+import java.time.OffsetTime;
 import java.util.*;
 
 @RestService("SampleService")
@@ -138,6 +142,40 @@ public class SampleService {
     }
 
     @RestMethod
+    public Employee replacedEntityMethod() {
+        return dataManager.load(Employee.class).all().maxResults(1).one();
+    }
+
+    @RestMethod
+    public List<Employee> replacedEntityListMethod() {
+        return dataManager.load(Employee.class).all().maxResults(3).list();
+    }
+
+    @RestMethod
+    public String replacedEntityParamMethod(Employee param) {
+        return param.getName();
+    }
+
+    @RestMethod
+    public SamplePojoWithReplacedEntity pojoWithReplacedEntityMethod() {
+        return new SamplePojoWithReplacedEntity("pojo", loadEmployee());
+    }
+
+    @RestMethod
+    public List<SamplePojoWithReplacedEntity> pojoWithReplacedEntityListMethod() {
+        return List.of(new SamplePojoWithReplacedEntity("pojo", loadEmployee()));
+    }
+
+    @RestMethod
+    public String pojoWithReplacedEntityParamMethod(SamplePojoWithReplacedEntity param) {
+        return param.getEmployee().getName();
+    }
+
+    private Employee loadEmployee() {
+        return dataManager.load(Employee.class).all().maxResults(1).one();
+    }
+
+    @RestMethod
     public ContactType enumMethod(ContactType param) {
         return param;
     }
@@ -149,6 +187,11 @@ public class SampleService {
 
     @RestMethod
     public SamplePojoWithEntity pojoWithEntityMethod(SamplePojoWithEntity param) {
+        return param;
+    }
+
+    @RestMethod
+    public SamplePojoWithDates pojoWithDatesMethod(SamplePojoWithDates param) {
         return param;
     }
 
@@ -199,6 +242,63 @@ public class SampleService {
     }
 
     public record MultipleParamsPojo(int number, String str, Customer entity, SamplePojo pojo) {}
+
+    public static class SamplePojoWithDates {
+        private Date date;
+        private LocalDate localDate;
+        private LocalDateTime localDateTime;
+        private LocalTime localTime;
+        private OffsetDateTime offsetDateTime;
+        private OffsetTime offsetTime;
+
+        public Date getDate() {
+            return date;
+        }
+
+        public void setDate(Date date) {
+            this.date = date;
+        }
+
+        public LocalDate getLocalDate() {
+            return localDate;
+        }
+
+        public void setLocalDate(LocalDate localDate) {
+            this.localDate = localDate;
+        }
+
+        public LocalDateTime getLocalDateTime() {
+            return localDateTime;
+        }
+
+        public void setLocalDateTime(LocalDateTime localDateTime) {
+            this.localDateTime = localDateTime;
+        }
+
+        public LocalTime getLocalTime() {
+            return localTime;
+        }
+
+        public void setLocalTime(LocalTime localTime) {
+            this.localTime = localTime;
+        }
+
+        public OffsetDateTime getOffsetDateTime() {
+            return offsetDateTime;
+        }
+
+        public void setOffsetDateTime(OffsetDateTime offsetDateTime) {
+            this.offsetDateTime = offsetDateTime;
+        }
+
+        public OffsetTime getOffsetTime() {
+            return offsetTime;
+        }
+
+        public void setOffsetTime(OffsetTime offsetTime) {
+            this.offsetTime = offsetTime;
+        }
+    }
 
     public static class SamplePojo {
         private String name;
@@ -276,4 +376,33 @@ public class SampleService {
     public record SampleRecord(String name, int age) {}
 
     public record SampleRecordWithEntity(String name, Customer customer) {}
+
+    public static class SamplePojoWithReplacedEntity {
+        private String name;
+        private Employee employee;
+
+        public SamplePojoWithReplacedEntity() {
+        }
+
+        public SamplePojoWithReplacedEntity(String name, Employee employee) {
+            this.name = name;
+            this.employee = employee;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public Employee getEmployee() {
+            return employee;
+        }
+
+        public void setEmployee(Employee employee) {
+            this.employee = employee;
+        }
+    }
 }

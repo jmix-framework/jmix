@@ -64,7 +64,17 @@ public class ReportRestController {
     public void runReport(@PathVariable String entityId,
                           @RequestBody(required = false) String body, HttpServletResponse response) {
         ReportRestResult result = controllerManager.runReport(entityId, body);
+        writeReport(result, response, entityId);
+    }
 
+    @PostMapping(value = "/run/code/{code}")
+    public void runReportByCode(@PathVariable String code,
+                                @RequestBody(required = false) String body, HttpServletResponse response) {
+        ReportRestResult result = controllerManager.runReportByCode(code, body);
+        writeReport(result, response, code);
+    }
+
+    protected void writeReport(ReportRestResult result, HttpServletResponse response, String reportRef) {
         try {
             String fileName = URLEncodeUtils.encodeUtf8(result.getDocumentName());
 
@@ -79,7 +89,7 @@ public class ReportRestController {
             IOUtils.copy(new ByteArrayInputStream(result.getContent()), os);
             os.flush();
         } catch (IOException e) {
-            log.error("Error on downloading the report {}", entityId, e);
+            log.error("Error on downloading the report {}", reportRef, e);
             throw new RestAPIException("Error on downloading the report", "", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

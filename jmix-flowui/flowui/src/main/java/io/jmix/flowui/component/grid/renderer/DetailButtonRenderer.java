@@ -24,6 +24,7 @@ import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.ViewNavigators;
 import io.jmix.flowui.component.ListDataComponent;
 import io.jmix.flowui.kit.component.button.JmixButton;
+import io.jmix.flowui.kit.xml.layout.support.LoaderUtils;
 import io.jmix.flowui.view.OpenMode;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.builder.DetailWindowBuilder;
@@ -103,7 +104,7 @@ public class DetailButtonRenderer<E> extends AbstractDetailRenderer<JmixButton, 
         JmixButton button = uiComponents.create(JmixButton.class);
 
         if (themeNames != null) {
-            split(themeNames).forEach(button::addThemeName);
+            LoaderUtils.split(themeNames, button::addThemeName);
         }
 
         return button;

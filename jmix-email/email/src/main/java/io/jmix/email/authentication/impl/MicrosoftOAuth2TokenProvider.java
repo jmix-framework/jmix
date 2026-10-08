@@ -19,12 +19,15 @@ package io.jmix.email.authentication.impl;
 import com.microsoft.aad.msal4j.*;
 import io.jmix.email.EmailerProperties;
 import io.jmix.email.authentication.EmailRefreshTokenManager;
+import io.jmix.email.authentication.OAuth2ClientType;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 
 import java.net.MalformedURLException;
 import java.util.Collections;
+import java.util.Date;
 import java.util.Set;
-import java.util.concurrent.CompletableFuture;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
@@ -32,22 +35,54 @@ public class MicrosoftOAuth2TokenProvider extends AbstractOAuth2TokenProvider {
 
     private static final Logger log = getLogger(MicrosoftOAuth2TokenProvider.class);
 
+    protected static final long EXPIRATION_SKEW_MILLIS = 2 * 60 * 1000;
+
+    protected final RefreshTokenCapturingCacheAspect cacheAspect = new RefreshTokenCapturingCacheAspect();
+
+    protected AbstractClientApplicationBase clientApplication;
+    protected IAuthenticationResult cachedResult;
+
+    /**
+     * Refresh token value the provider considers to be currently persisted. It is used to detect external
+     * token updates (via the email connection view or another application node) that require re-initialization
+     * of the client application.
+     */
+    protected String currentRefreshToken;
+
+    /**
+     * Client type the stored refresh token was issued to (see {@link #buildClientApplication(OAuth2ClientType)}).
+     */
+    protected OAuth2ClientType currentClientType;
+
     public MicrosoftOAuth2TokenProvider(EmailerProperties emailerProperties, EmailRefreshTokenManager refreshTokenManager) {
         super(emailerProperties, refreshTokenManager);
     }
 
     @Override
-    public String getAccessToken() {
+    @NonNull
+    public synchronized String getAccessToken() {
         try {
-            log.debug("Try to get access token");
-            IClientCredential credential = createCredential();
-            ConfidentialClientApplication app = buildClientApplication(credential);
-            Set<String> scopes = getScopes();
+            String storedRefreshToken = getRefreshToken();
+            OAuth2ClientType clientType = refreshTokenManager.getRefreshTokenClientType();
+            if (clientApplication == null || !storedRefreshToken.equals(currentRefreshToken)
+                    || clientType != currentClientType) {
+                log.debug("Initializing Microsoft client application ({})", clientType);
+                clientApplication = buildClientApplication(clientType);
+                currentRefreshToken = storedRefreshToken;
+                currentClientType = clientType;
+                cachedResult = null;
+            }
 
-            RefreshTokenParameters params = RefreshTokenParameters.builder(scopes, getRefreshToken()).build();
+            if (cachedResult != null && !isExpiringSoon(cachedResult)) {
+                return cachedResult.accessToken();
+            }
 
-            CompletableFuture<IAuthenticationResult> future = app.acquireToken(params);
-            IAuthenticationResult result = future.get();
+            IAuthenticationResult result = acquireTokenSilently();
+            if (result == null) {
+                result = acquireTokenByRefreshToken(currentRefreshToken);
+            }
+            cachedResult = result;
+            persistRotatedRefreshToken();
 
             log.debug("Access token has been acquired with scopes: {} (expiration date = {})",
                     result.scopes(), result.expiresOnDate());
@@ -57,8 +92,90 @@ public class MicrosoftOAuth2TokenProvider extends AbstractOAuth2TokenProvider {
         }
     }
 
+    /**
+     * Tries to get a token from the MSAL cache, refreshing it silently if needed. MSAL uses the latest
+     * rotated refresh token stored in its internal cache for silent refreshes.
+     *
+     * @return authentication result or null if silent acquisition is not possible
+     */
+    @Nullable
+    protected IAuthenticationResult acquireTokenSilently() {
+        try {
+            Set<IAccount> accounts = clientApplication.getAccounts().get();
+            if (accounts == null || accounts.isEmpty()) {
+                return null;
+            }
+            SilentParameters parameters = SilentParameters
+                    .builder(getScopes(), accounts.iterator().next())
+                    .build();
+            return clientApplication.acquireTokenSilently(parameters).get();
+        } catch (Exception e) {
+            log.debug("Silent token acquisition failed, the token will be acquired by refresh token", e);
+            return null;
+        }
+    }
+
+    protected IAuthenticationResult acquireTokenByRefreshToken(String refreshToken) throws Exception {
+        RefreshTokenParameters parameters = RefreshTokenParameters.builder(getScopes(), refreshToken).build();
+        return clientApplication.acquireToken(parameters).get();
+    }
+
+    protected boolean isExpiringSoon(IAuthenticationResult result) {
+        Date expiresOn = result.expiresOnDate();
+        return expiresOn == null || expiresOn.getTime() - System.currentTimeMillis() < EXPIRATION_SKEW_MILLIS;
+    }
+
+    /**
+     * Microsoft rotates the refresh token on every redemption. Stores the latest rotated value so that
+     * authentication survives application restarts after the originally configured token becomes invalid.
+     */
+    protected void persistRotatedRefreshToken() {
+        String rotatedToken = getCapturedRefreshToken();
+        if (rotatedToken == null || rotatedToken.equals(currentRefreshToken)) {
+            return;
+        }
+        try {
+            // The rotated token keeps the client type of the original one
+            refreshTokenManager.storeRefreshTokenValue(rotatedToken,
+                    currentClientType != null ? currentClientType : OAuth2ClientType.CONFIDENTIAL);
+            currentRefreshToken = rotatedToken;
+            log.debug("Rotated refresh token has been stored");
+        } catch (Exception e) {
+            log.error("Failed to store rotated refresh token." +
+                    " The previously stored value may become invalid over time", e);
+        }
+    }
+
+    @Nullable
+    protected String getCapturedRefreshToken() {
+        return cacheAspect.getLatestRefreshToken();
+    }
+
     protected IClientCredential createCredential() {
         return ClientCredentialFactory.createFromSecret(getSecret());
+    }
+
+    /**
+     * Entra binds a refresh token to the client type it was issued to (a token obtained by the
+     * device code flow is rejected when redeemed with a client secret - AADSTS700025), so the
+     * client application flavor must match the stored token.
+     */
+    protected AbstractClientApplicationBase buildClientApplication(OAuth2ClientType clientType) {
+        return clientType == OAuth2ClientType.PUBLIC
+                ? buildPublicClientApplication()
+                : buildClientApplication(createCredential());
+    }
+
+    protected PublicClientApplication buildPublicClientApplication() {
+        try {
+            return PublicClientApplication
+                    .builder(getClientId())
+                    .authority(buildAuthorityUrl())
+                    .setTokenCacheAccessAspect(cacheAspect)
+                    .build();
+        } catch (MalformedURLException e) {
+            throw new RuntimeException("Unable to build client application", e);
+        }
     }
 
     protected ConfidentialClientApplication buildClientApplication(IClientCredential credential) {
@@ -66,6 +183,7 @@ public class MicrosoftOAuth2TokenProvider extends AbstractOAuth2TokenProvider {
             return ConfidentialClientApplication
                     .builder(getClientId(), credential)
                     .authority(buildAuthorityUrl())
+                    .setTokenCacheAccessAspect(cacheAspect)
                     .build();
         } catch (MalformedURLException e) {
             throw new RuntimeException("Unable to build client application", e);
@@ -87,4 +205,5 @@ public class MicrosoftOAuth2TokenProvider extends AbstractOAuth2TokenProvider {
     protected String getTenant() {
         return emailerProperties.getOAuth2().getTenantId();
     }
+
 }

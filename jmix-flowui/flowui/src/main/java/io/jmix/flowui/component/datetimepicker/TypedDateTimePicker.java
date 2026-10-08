@@ -105,6 +105,7 @@ public class TypedDateTimePicker<V extends Comparable> extends DateTimePicker
                 .setDateFormat(messages.getMessage("dateFormat"))
                 .setToday(messages.getMessage("datepicker.today"))
                 .setCancel(messages.getMessage("datepicker.cancel"))
+                .setDialogAccessibleName(messages.getMessage("datepicker.dialogAccessibleName"))
                 .setWeekdays(getWeekdayNames(locale))
                 .setWeekdaysShort(getShortWeekdayNames(locale))
                 .setMonthNames(getMonthNames(locale))

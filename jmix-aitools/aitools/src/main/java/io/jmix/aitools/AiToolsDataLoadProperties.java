@@ -25,7 +25,7 @@ import java.util.List;
 public class AiToolsDataLoadProperties {
 
     /**
-     * Whether the data-load autoconfiguration is enabled.
+     * Whether the data-load feature (its services, validators and AI tools) is enabled.
      */
     Boolean enabled;
 
@@ -33,6 +33,14 @@ public class AiToolsDataLoadProperties {
      * Whether system-level entities are excluded from the model exposed to the AI.
      */
     Boolean excludeSystemLevelEntities;
+
+    /**
+     * Whether system-level attributes are hidden from the model exposed to the AI.
+     * <p>
+     * Unlike {@link #excludeSystemLevelEntities}, this only hides the attributes from domain-model
+     * discovery: a hidden attribute stays queryable, so a generated query may still reference it.
+     */
+    Boolean excludeSystemLevelAttributes;
 
     /**
      * Maximum number of attempts to repair an invalid generated query.
@@ -81,6 +89,7 @@ public class AiToolsDataLoadProperties {
 
     public AiToolsDataLoadProperties(@DefaultValue("true") Boolean enabled,
                                      @DefaultValue("true") Boolean excludeSystemLevelEntities,
+                                     @DefaultValue("true") Boolean excludeSystemLevelAttributes,
                                      @DefaultValue("1") Integer maxRepairAttempts,
                                      @DefaultValue("20") Integer jpqlExecutionMaxResult,
                                      @DefaultValue("100") Integer jpqlExecutionMaxResultLimit,
@@ -90,6 +99,7 @@ public class AiToolsDataLoadProperties {
                                      @DefaultValue("io.jmix") List<String> excludePackages) {
         this.enabled = enabled;
         this.excludeSystemLevelEntities = excludeSystemLevelEntities;
+        this.excludeSystemLevelAttributes = excludeSystemLevelAttributes;
         this.maxRepairAttempts = maxRepairAttempts;
         this.jpqlExecutionMaxResult = jpqlExecutionMaxResult;
         this.jpqlExecutionMaxResultLimit = jpqlExecutionMaxResultLimit;
@@ -111,6 +121,13 @@ public class AiToolsDataLoadProperties {
      */
     public Boolean getExcludeSystemLevelEntities() {
         return excludeSystemLevelEntities;
+    }
+
+    /**
+     * @see #excludeSystemLevelAttributes
+     */
+    public Boolean getExcludeSystemLevelAttributes() {
+        return excludeSystemLevelAttributes;
     }
 
     /**

@@ -32,8 +32,6 @@ import org.jspecify.annotations.Nullable;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 /**
  * Role provider that gets row level roles from classes annotated with
@@ -97,9 +95,6 @@ public class AnnotatedRowLevelRoleProvider implements RowLevelRoleProvider {
 
     private void buildRolesCache() {
         Set<String> classNames = classpathScanner.getClassNames(RowLevelRoleDetector.class);
-
-        roles = classNames.stream()
-                .map(annotatedRoleBuilder::createRowLevelRole)
-                .collect(Collectors.toMap(RowLevelRole::getCode, Function.identity()));
+        roles = AnnotatedRoleCodeMapBuilder.build(classNames, annotatedRoleBuilder::createRowLevelRole, "row-level");
     }
 }

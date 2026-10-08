@@ -40,9 +40,7 @@ public class StudioPivotTablePreviewLoader implements StudioPreviewComponentLoad
         JmixPivotTable<StudioPivotTableShape> resultComponent = new JmixPivotTable<>();
         createData(resultComponent);
 
-        loadClassNames(resultComponent, componentElement);
-        loadEnabled(resultComponent, componentElement);
-        loadSizeAttributes(resultComponent, componentElement);
+        loadComponentBaseAttributes(resultComponent, componentElement);
 
         loadOptions(resultComponent, componentElement);
 

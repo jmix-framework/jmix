@@ -19,7 +19,6 @@ package io.jmix.flowui.kit.component.sidepanellayout;
 import com.google.common.base.Strings;
 import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.dependency.JsModule;
-import com.vaadin.flow.dom.Element;
 import com.vaadin.flow.dom.ElementUtil;
 import com.vaadin.flow.dom.PropertyChangeEvent;
 import com.vaadin.flow.shared.Registration;
@@ -27,7 +26,7 @@ import org.jspecify.annotations.Nullable;
 
 @Tag("jmix-side-panel-layout")
 @JsModule("./src/side-panel-layout/jmix-side-panel-layout.js")
-public class JmixSidePanelLayout extends Component implements HasSize, HasStyle {
+public class JmixSidePanelLayout extends Component implements HasSize, HasStyle, HasTheme {
 
     protected Component content;
     protected Component sidePanelContent;
@@ -202,6 +201,34 @@ public class JmixSidePanelLayout extends Component implements HasSize, HasStyle 
     }
 
     /**
+     * Returns whether the user can resize the side panel at runtime by dragging its inner edge.
+     *
+     * @return {@code true} if the side panel is user-resizable
+     */
+    public boolean isSidePanelResizable() {
+        return getElement().getProperty("sidePanelResizable", false);
+    }
+
+    /**
+     * Sets whether the user can resize the side panel at runtime by dragging the handle on its
+     * inner edge. Horizontal positions ({@link SidePanelPosition#LEFT}, {@link SidePanelPosition#RIGHT},
+     * {@link SidePanelPosition#INLINE_START}, {@link SidePanelPosition#INLINE_END}) resize the width;
+     * vertical positions ({@link SidePanelPosition#TOP}, {@link SidePanelPosition#BOTTOM}) resize the
+     * height. Dragging stays within the configured min/max bounds.
+     * <p>
+     * The handle is styled like the {@code SplitLayout} splitter and reserves a thin strip on the
+     * panel's inner edge. The {@code resizer-small} theme name (see {@link #addThemeName(String)})
+     * renders it as a hairline whose grip appears on hover.
+     * <p>
+     * The default value is {@code false}.
+     *
+     * @param resizable whether the side panel is user-resizable
+     */
+    public void setSidePanelResizable(boolean resizable) {
+        getElement().setProperty("sidePanelResizable", resizable);
+    }
+
+    /**
      * @return the aria-label for the overlay or {@code null} if no aria-label is set.
      */
     @Nullable
@@ -229,6 +256,7 @@ public class JmixSidePanelLayout extends Component implements HasSize, HasStyle 
      *
      * @return the width defined for the side panel or {@code null} if width is not set
      */
+    @Synchronize(property = "sidePanelHorizontalSize", value = "side-panel-horizontal-size-changed")
     @Nullable
     public String getSidePanelHorizontalSize() {
         return getElement().getProperty("sidePanelHorizontalSize");
@@ -318,6 +346,7 @@ public class JmixSidePanelLayout extends Component implements HasSize, HasStyle 
      *
      * @return the height defined for the side panel or {@code null} if the height is not set
      */
+    @Synchronize(property = "sidePanelVerticalSize", value = "side-panel-vertical-size-changed")
     @Nullable
     public String getSidePanelVerticalSize() {
         return getElement().getProperty("sidePanelVerticalSize");
@@ -473,6 +502,17 @@ public class JmixSidePanelLayout extends Component implements HasSize, HasStyle 
         return addListener(SidePanelCloseEvent.class, listener);
     }
 
+    /**
+     * Adds a listener notified once after the user finishes resizing the side panel.
+     *
+     * @param listener listener to add
+     * @return a registration for removing the listener
+     */
+    public Registration addSidePanelAfterResizeListener(
+            ComponentEventListener<SidePanelAfterResizeEvent> listener) {
+        return addListener(SidePanelAfterResizeEvent.class, listener);
+    }
+
     protected void doSetOpened(boolean opened, boolean fromClient) {
         getElement().setProperty("sidePanelOpened", opened);
 
@@ -514,16 +554,6 @@ public class JmixSidePanelLayout extends Component implements HasSize, HasStyle 
                         ") is not a child of this component");
             }
         }
-
-        Element[] existingChildren = getChildren()
-                .map(Component::getElement)
-                .toList()
-                .toArray(new Element[0]);
-
-        // When fullscreen enabled and the side panel is opened, removed components are not deleted from
-        // the client side. We need to explicitly send existing children to the client to delete the
-        // difference.
-        getElement().callJsFunction("_updateControllers", (Object[]) existingChildren);
     }
 
     protected void updateContentInert(boolean modal) {

@@ -58,6 +58,7 @@ public abstract class BaseLoaderConfig {
         loaders.put("sidePanelLayout", SidePanelLayoutLoader.class);
 
         /* Components */
+        loaders.put("badge", BadgeLoader.class);
         loaders.put("button", ButtonLoader.class);
         loaders.put("textField", TextFieldLoader.class);
         loaders.put("emailField", EmailFieldLoader.class);
@@ -65,6 +66,10 @@ public abstract class BaseLoaderConfig {
         loaders.put("passwordField", PasswordFieldLoader.class);
         loaders.put("bigDecimalField", BigDecimalFieldLoader.class);
         loaders.put("integerField", IntegerFieldLoader.class);
+        loaders.put("integerSlider", IntegerSliderLoader.class);
+        loaders.put("decimalSlider", DecimalSliderLoader.class);
+        loaders.put("integerRangeSlider", IntegerRangeSliderLoader.class);
+        loaders.put("decimalRangeSlider", DecimalRangeSliderLoader.class);
         loaders.put("progressBar", ProgressBarLoader.class);
         loaders.put("radioButtonGroup", RadioButtonGroupLoader.class);
         loaders.put("checkboxGroup", CheckboxGroupLoader.class);
@@ -117,6 +122,8 @@ public abstract class BaseLoaderConfig {
         loaders.put("twinColumn", TwinColumnLoader.class);
         loaders.put("markdown", MarkdownLoader.class);
         loaders.put("markdownEditor", MarkdownEditorLoader.class);
+        loaders.put("popover", PopoverLoader.class);
+        loaders.put("svg", SvgLoader.class);
 
         /* HTML components */
         loaders.put("param", ParamLoader.class);

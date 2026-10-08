@@ -291,6 +291,32 @@ interface StudioElements {
     void detailButtonRenderer();
 
     @StudioElement(
+            name = "PopoverRenderer",
+            classFqn = "io.jmix.flowui.component.grid.renderer.PopoverRenderer",
+            xmlElement = "popoverRenderer",
+            target = {"com.vaadin.flow.component.grid.Grid.Column"},
+            unsupportedTarget = {"io.jmix.flowui.kit.component.grid.EditorActionsColumn"},
+            documentationLink = "%VERSION%/flow-ui/vc/components/dataGrid.html#renderers",
+            properties = {
+                    @StudioProperty(xmlAttribute = "position",
+                            type = StudioPropertyType.ENUMERATION,
+                            classFqn = "com.vaadin.flow.component.popover.PopoverPosition",
+                            defaultValue = "BOTTOM_START",
+                            options = {"TOP_START", "TOP", "TOP_END",
+                                    "BOTTOM_START", "BOTTOM", "BOTTOM_END",
+                                    "START_TOP", "START", "START_BOTTOM",
+                                    "END_TOP", "END", "END_BOTTOM"}),
+                    @StudioProperty(xmlAttribute = "classNames",
+                            category = StudioProperty.Category.LOOK_AND_FEEL,
+                            type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "css",
+                            category = StudioProperty.Category.LOOK_AND_FEEL,
+                            type = StudioPropertyType.STRING)
+            }
+    )
+    void popoverRenderer();
+
+    @StudioElement(
             name = "ComponentItem",
             classFqn = "io.jmix.flowui.kit.component.dropdownbutton.ComponentItem",
             xmlElement = StudioXmlElements.COMPONENT_ITEM,
@@ -700,6 +726,10 @@ interface StudioElements {
                     StudioPropertyGroups.RequiredEntityClass.class,
                     StudioPropertyGroups.BaseComboBoxItemsQuery.class,
                     StudioPropertyGroups.FetchPlan.class
+            },
+            properties = {
+                    @StudioProperty(xmlAttribute = "byInstanceName", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "false", category = StudioProperty.Category.GENERAL)
             })
     void entityItemsQuery();
 
@@ -815,7 +845,9 @@ interface StudioElements {
 
                     "io.jmix.flowui.kit.component.button.JmixButton",
                     "io.jmix.flowui.kit.component.combobutton.ComboButton",
-                    "io.jmix.flowui.kit.component.dropdownbutton.DropdownButton"},
+                    "io.jmix.flowui.kit.component.dropdownbutton.DropdownButton",
+
+                    "com.vaadin.flow.component.badge.Badge"},
             unlimitedCount = false,
             isInjectable = false,
             injectionIdentifier = StudioComponent.EMPTY_INJECTION_IDENTIFIER,
@@ -1008,6 +1040,17 @@ interface StudioElements {
             )
     )
     VerticalLayout fragmentContent();
+
+    @StudioElement(
+            name = "Property",
+            classFqn = "io.jmix.flowui.kit.stub.StudioActionPropertyElement",
+            xmlElement = StudioXmlElements.PROPERTY,
+            icon = "io/jmix/flowui/kit/meta/icon/element/property.svg",
+            propertyGroups = {
+                    StudioPropertyGroups.RequiredStringName.class,
+                    StudioPropertyGroups.LocalizedStringValue.class
+            })
+    void actionProperty();
 
     @StudioElement(
             name = "Property",
@@ -1214,4 +1257,11 @@ interface StudioElements {
             target = "com.vaadin.flow.component.markdown.Markdown"
     )
     void markdownContent();
+
+    @StudioElement(
+            name = "Svg Content",
+            xmlElement = StudioXmlElements.CONTENT,
+            target = "com.vaadin.flow.component.Svg"
+    )
+    void svgContent();
 }

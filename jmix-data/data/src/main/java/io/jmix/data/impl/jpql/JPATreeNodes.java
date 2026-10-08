@@ -64,6 +64,18 @@ public class JPATreeNodes {
         return new CommonTree(new CommonToken(JPA2Lexer.LOWER, "lower"));
     }
 
+    public static Tree createFunctionStart() {
+        return new CommonTree(new CommonToken(JPA2Lexer.T__105, "function("));
+    }
+
+    public static Tree createComma() {
+        return new CommonTree(new CommonToken(JPA2Lexer.T__66, ","));
+    }
+
+    public static Tree createStringLiteral(String value) {
+        return new CommonTree(new CommonToken(JPA2Lexer.STRING_LITERAL, "'" + value + "'"));
+    }
+
     public static AggregateExpressionNode createAggregateExpression() {
         return new AggregateExpressionNode(JPA2Lexer.T_AGGREGATE_EXPR);
     }

@@ -40,6 +40,14 @@ public interface RoleRepository<T extends BaseRole> {
     Collection<T> getAllRoles();
 
     /**
+     * Returns all roles. When {@code includePolicies} is {@code false}, implementations may skip
+     * loading role policies to speed up listing scenarios that do not need them.
+     */
+    default Collection<T> getAllRoles(boolean includePolicies) {
+        return getAllRoles();
+    }
+
+    /**
      * Invalidates role cache. The method must be invoked after each role modification, for example, when database role
      * is changed with the UI or annotated role is hot deployed.
      */

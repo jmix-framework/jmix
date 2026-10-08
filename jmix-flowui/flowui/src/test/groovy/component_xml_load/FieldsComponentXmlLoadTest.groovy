@@ -183,6 +183,7 @@ class FieldsComponentXmlLoadTest extends FlowuiTestSpecification {
             allowCustomValue
             autofocus
             autoOpen
+            focusSelectedItem
             classNames.containsAll(["cssClassName1", "cssClassName2"])
             datatype.class == StringDatatype
             style.get("color") == "red"
@@ -238,6 +239,7 @@ class FieldsComponentXmlLoadTest extends FlowuiTestSpecification {
             clearButtonVisible
             datatype.class == LocalDateDatatype
             i18n.dateFormats.containsAll(["yyyy-MM-dd", "MM/dd/yyyy", "dd.MM.yyyy"])
+            i18n.dialogAccessibleName == "dialogAccessibleNameString"
             enabled
             height == "50px"
             helperText == "helperTextString"
@@ -336,6 +338,8 @@ class FieldsComponentXmlLoadTest extends FlowuiTestSpecification {
             datatype.class == DateTimeDatatype
             datePlaceholder == "datePlaceholderString"
             datePickerI18n.dateFormats.containsAll(["yyyy-MM-dd", "MM/dd/yyyy", "dd.MM.yyyy"])
+            datePickerI18n.dialogAccessibleName == "dialogAccessibleNameString"
+            defaultTime == LocalTime.of(9, 30)
             enabled
             height == "50px"
             helperText == "helperTextString"

@@ -22,6 +22,8 @@ import io.jmix.reports.entity.ParameterType;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 
+import java.time.Duration;
+
 @ConfigurationProperties(prefix = "jmix.reports.client")
 public class ReportsClientProperties {
 
@@ -59,18 +61,26 @@ public class ReportsClientProperties {
      */
     OpenMode tableOutputOpenMode;
 
+    /**
+     * Defines the timeout for generating the query of an LLM data set in the report editor. Generation calls
+     * an LLM, so it takes noticeably longer than an ordinary request.
+     */
+    Duration llmQueryGenerationTimeout;
+
     public ReportsClientProperties(@DefaultValue("false") boolean useBackgroundReportProcessing,
                                    @DefaultValue("10000") long backgroundReportProcessingTimeoutMs,
                                    @DefaultValue("false") boolean enableTabSymbolInDataSetEditor,
                                    @DefaultValue("false") boolean useMultiSelectComboBoxPickerForListOfEntitiesParameterComponent,
                                    @DefaultValue("false") boolean showReportTableViewInMenu,
-                                   @DefaultValue("DIALOG") OpenMode tableOutputOpenMode) {
+                                   @DefaultValue("DIALOG") OpenMode tableOutputOpenMode,
+                                   @DefaultValue("120s") Duration llmQueryGenerationTimeout) {
         this.useBackgroundReportProcessing = useBackgroundReportProcessing;
         this.backgroundReportProcessingTimeoutMs = backgroundReportProcessingTimeoutMs;
         this.enableTabSymbolInDataSetEditor = enableTabSymbolInDataSetEditor;
         this.useMultiSelectComboBoxPickerForListOfEntitiesParameterComponent = useMultiSelectComboBoxPickerForListOfEntitiesParameterComponent;
         this.showReportTableViewInMenu = showReportTableViewInMenu;
         this.tableOutputOpenMode = tableOutputOpenMode;
+        this.llmQueryGenerationTimeout = llmQueryGenerationTimeout;
     }
 
     /**
@@ -113,5 +123,12 @@ public class ReportsClientProperties {
      */
     public OpenMode getTableOutputOpenMode() {
         return tableOutputOpenMode;
+    }
+
+    /**
+     * @see #llmQueryGenerationTimeout
+     */
+    public Duration getLlmQueryGenerationTimeout() {
+        return llmQueryGenerationTimeout;
     }
 }

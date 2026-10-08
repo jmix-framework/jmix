@@ -49,7 +49,10 @@
 
     function ChartInternal(api) {
         var $$ = this;
-        $$.d3 = window.d3 ? window.d3 : typeof require !== 'undefined' ? require("d3") : undefined;
+        // Jmix: dropped the CommonJS require("d3") fallback. plugin/d3/d3.js is imported before
+        // this file and always assigns the global (`this.d3 = d3` with `this === window`), so the
+        // global is guaranteed; a static require("d3") only breaks bundlers (no npm d3 dependency).
+        $$.d3 = window.d3;
         $$.api = api;
         $$.config = $$.getDefaultConfig();
         $$.data = {};
@@ -8198,5 +8201,9 @@
     } else {
         window.c3 = c3;
     }
+
+    // Jmix: always expose the global, like plugin/d3/d3.js does. c3_renderers is bundled as ESM and
+    // falls through to the global branch of its own UMD wrapper, where it references bare `c3`.
+    window.c3 = window.c3 || c3;
 
 })(window);

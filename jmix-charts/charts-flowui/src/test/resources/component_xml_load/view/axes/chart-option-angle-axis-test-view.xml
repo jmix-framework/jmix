@@ -25,6 +25,7 @@
                     clockwise="false"
                     type="VALUE"
                     nonCategoryBoundaryGap="0 10"
+                    containShape="false"
                     min="0"
                     max="100"
                     scale="false"

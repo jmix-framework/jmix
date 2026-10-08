@@ -37,6 +37,7 @@ import io.jmix.flowui.DialogWindows;
 import io.jmix.flowui.Notifications;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.ViewNavigators;
+import io.jmix.flowui.exception.NoSuchViewException;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.theme.StyleUtility;
 import io.jmix.flowui.view.*;
@@ -92,6 +93,8 @@ public class SearchResultsView extends StandardView {
     protected SearchProperties searchProperties;
     @Autowired
     protected MetadataTools metadataTools;
+    @Autowired
+    protected ViewRegistry viewRegistry;
 
     protected SearchResult searchResult;
     protected String searchStrategy;
@@ -288,6 +291,14 @@ public class SearchResultsView extends StandardView {
 
     protected void openEntityView(SearchResultEntry entry, String entityName) {
         MetaClass metaClass = metadata.getSession().getClass(entityName);
+        if (!hasDetailView(metaClass)) {
+            // A runtime-defined entity may have no detail view at all.
+            String message = messageBundle.formatMessage("noDetailView", messageTools.getEntityCaption(metaClass));
+            notifications.create(message)
+                    .withType(Notifications.Type.WARNING)
+                    .show();
+            return;
+        }
         Object entity = reloadEntity(metaClass, idSerialization.stringToId(entry.getDocId()));
         if (OpenMode.DIALOG.equals(searchFieldContext.getOpenMode())) {
             dialogWindows.detail(this, metaClass.getJavaClass())
@@ -298,6 +309,15 @@ public class SearchResultsView extends StandardView {
                     .withBackwardNavigation(true)
                     .editEntity(entity)
                     .navigate();
+        }
+    }
+
+    protected boolean hasDetailView(MetaClass metaClass) {
+        try {
+            viewRegistry.getDetailViewInfo(metaClass);
+            return true;
+        } catch (NoSuchViewException e) {
+            return false;
         }
     }
 
@@ -367,7 +387,8 @@ public class SearchResultsView extends StandardView {
     protected Object reloadEntity(MetaClass metaClass, Object entityId) {
         return dataManager
                 .load(metaClass.getJavaClass())
-                .id(entityId)
+                // A store is given the identifier value; only the JPA store unwraps an Id itself.
+                .id(entityId instanceof Id<?> id ? id.getValue() : entityId)
                 .fetchPlan(FetchPlan.LOCAL)
                 .one();
     }

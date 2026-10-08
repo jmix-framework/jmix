@@ -22,7 +22,7 @@ import io.jmix.flowui.component.validation.AbstractValidator;
 import io.jmix.flowui.exception.ComponentValidationException;
 import io.jmix.reports.entity.ReportInputParameter;
 import io.jmix.reports.exception.ReportParametersValidationException;
-import io.jmix.reportsflowui.view.ReportParameterValidator;
+import io.jmix.reports.runner.ReportInputParameterValidator;
 import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
@@ -33,7 +33,7 @@ public class ReportParamFieldValidator extends AbstractValidator<Object> {
 
     protected final ReportInputParameter inputParameter;
     protected final Component component;
-    protected ReportParameterValidator reportParameterValidator;
+    protected ReportInputParameterValidator reportParameterValidator;
 
     public ReportParamFieldValidator(Component component, ReportInputParameter inputParameter) {
         Preconditions.checkNotNullArgument(inputParameter, "ReportInputParameter is not defined");
@@ -48,7 +48,7 @@ public class ReportParamFieldValidator extends AbstractValidator<Object> {
     }
 
     private void autowireDependencies() {
-        this.reportParameterValidator = applicationContext.getBean(ReportParameterValidator.class);
+        this.reportParameterValidator = applicationContext.getBean(ReportInputParameterValidator.class);
     }
 
     @Override

@@ -18,6 +18,7 @@ package io.jmix.search.index.queue.impl;
 
 import io.jmix.core.*;
 import io.jmix.core.common.util.Preconditions;
+import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.security.SystemAuthenticator;
 import io.jmix.data.StoreAwareLocator;
@@ -390,6 +391,16 @@ public class JpaIndexingQueueManager implements IndexingQueueManager {
         log.debug("Primary key of entity '{}': '{}'", entityName, primaryKeyName);
         if (primaryKeyName == null) {
             throw new IllegalArgumentException(String.format("Unable to enqueue instances of entity '%s' - entity doesn't have primary key", entityName));
+        }
+
+        if (!metadataTools.isJpaEntity(metaClass)) {
+            return dataManager.load(metaClass.getJavaClass())
+                    .all()
+                    .fetchPlanProperties(primaryKeyName)
+                    .list()
+                    .stream()
+                    .map(EntityValues::getId)
+                    .toList();
         }
 
         List<?> rawIds;

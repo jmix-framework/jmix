@@ -18,6 +18,7 @@ package io.jmix.flowui.asynctask;
 
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.context.SecurityContextImpl;
 
 import java.util.function.Supplier;
 
@@ -34,7 +35,7 @@ public class DelegatingSecuritySupplier<T> implements Supplier<T> {
     private final SecurityContext securityContext;
 
     public DelegatingSecuritySupplier(Supplier<T> delegate) {
-        this(delegate, SecurityContextHolder.getContext());
+        this(delegate, copyOfCurrentContext());
     }
 
     public DelegatingSecuritySupplier(Supplier<T> delegate, SecurityContext securityContext) {
@@ -49,7 +50,19 @@ public class DelegatingSecuritySupplier<T> implements Supplier<T> {
             SecurityContextHolder.setContext(securityContext);
             return delegate.get();
         } finally {
-            SecurityContextHolder.setContext(originalSecurityContext);
+            if (SecurityContextHolder.createEmptyContext().equals(originalSecurityContext)) {
+                SecurityContextHolder.clearContext();
+            } else {
+                SecurityContextHolder.setContext(originalSecurityContext);
+            }
         }
+    }
+
+    /**
+     * The current context instance may be shared with the HTTP session and other threads, so the delegate gets a
+     * copy holding the same {@link org.springframework.security.core.Authentication}.
+     */
+    private static SecurityContext copyOfCurrentContext() {
+        return new SecurityContextImpl(SecurityContextHolder.getContext().getAuthentication());
     }
 }

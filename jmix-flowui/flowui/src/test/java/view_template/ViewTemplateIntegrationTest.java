@@ -18,15 +18,20 @@ package view_template;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.icon.FontIcon;
+import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteConfiguration;
 import com.vaadin.flow.router.RouteParameters;
 import io.jmix.core.DataManager;
 import io.jmix.core.Metadata;
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.flowui.Views;
+import io.jmix.flowui.DialogWindows;
 import io.jmix.flowui.ViewNavigators;
+import io.jmix.flowui.Views;
 import io.jmix.flowui.component.UiComponentUtils;
+import io.jmix.flowui.action.list.CreateAction;
+import io.jmix.flowui.action.list.EditAction;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.menu.MenuConfig;
 import io.jmix.flowui.menu.MenuItem;
@@ -35,13 +40,7 @@ import io.jmix.flowui.model.InstanceContainer;
 import io.jmix.flowui.testassist.FlowuiTestAssistConfiguration;
 import io.jmix.flowui.testassist.UiTest;
 import io.jmix.flowui.testassist.UiTestUtils;
-import io.jmix.flowui.view.ViewControllerUtils;
-import io.jmix.flowui.view.StandardDetailView;
-import io.jmix.flowui.view.View;
-import io.jmix.flowui.view.ViewInfo;
-import io.jmix.flowui.view.ViewController;
-import io.jmix.flowui.view.ViewDescriptor;
-import io.jmix.flowui.view.ViewRegistry;
+import io.jmix.flowui.view.*;
 import io.jmix.flowui.view.navigation.ViewNavigationSupport;
 import io.jmix.flowui.view.template.impl.TemplateDetailView;
 import io.jmix.flowui.view.template.impl.TemplateListView;
@@ -54,6 +53,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 import test_support.FlowuiTestConfiguration;
 import test_support.entity.viewtemplate.ViewTemplateBindingsEntity;
 import test_support.entity.viewtemplate.ViewTemplateFilteringEntity;
+import test_support.entity.viewtemplate.ViewTemplateMasterEntity;
 import test_support.entity.viewtemplate.ViewTemplateParamsEntity;
 import test_support.entity.viewtemplate.ViewTemplateTestEntity;
 
@@ -76,12 +76,14 @@ public class ViewTemplateIntegrationTest {
     protected static final String PARAMS_VIEW_ID = "test_ViewTemplateParamsEntity.browse";
     protected static final String FILTERED_LIST_VIEW_ID = "test_ViewTemplateFilteringEntity.list";
     protected static final String FILTERED_DETAIL_VIEW_ID = "test_ViewTemplateFilteringEntity.edit";
+    protected static final String DIALOG_MODE_LIST_VIEW_ID = "test_ViewTemplateDialogModeEntity.list";
     protected static final String BINDINGS_LIST_VIEW_ID = "test_ViewTemplateBindingsEntity.list";
     protected static final String BINDINGS_DETAIL_VIEW_ID = "test_ViewTemplateBindingsEntity.detail";
     protected static final String MASTER_DETAIL_VIEW_ID = "test_ViewTemplateMasterEntity.detail";
     protected static final String LINE_DETAIL_VIEW_ID = "test_ViewTemplateLineEntity.detail";
     protected static final String MSG_TITLE_LIST_VIEW_ID = "test_ViewTemplateMsgTitleEntity.list";
     protected static final String MSG_TITLE_DETAIL_VIEW_ID = "test_ViewTemplateMsgTitleEntity.detail";
+    protected static final String LOOKUP_DETAIL_VIEW_ID = "test_ViewTemplateLookupEntity.edit";
     protected static final String LIST_VIEW_ROUTE = "templates/view-template/list";
     protected static final String DETAIL_VIEW_BASE_ROUTE = "templates/view-template/detail";
     protected static final String DETAIL_VIEW_ROUTE = DETAIL_VIEW_BASE_ROUTE + "/:id";
@@ -109,6 +111,9 @@ public class ViewTemplateIntegrationTest {
 
     @Autowired
     ViewNavigators viewNavigators;
+
+    @Autowired
+    DialogWindows dialogWindows;
 
     @Autowired
     DataManager dataManager;
@@ -184,6 +189,33 @@ public class ViewTemplateIntegrationTest {
         assertEquals(DETAIL_VIEW_ID, detailItem.getView());
         assertEquals("Template entity editor", detailItem.getTitle());
         assertTrue(detailItem.getUrlQueryParameters().isEmpty());
+    }
+
+    @Test
+    void testMenuIconAppliedToTemplateMenuItems() {
+        MenuItem parentItem = findTemplateViewsRootItem().orElseThrow();
+
+        MenuItem listItem = findChildItem(parentItem, LIST_VIEW_ID).orElseThrow();
+        Component listIcon = listItem.getIcon();
+        assertInstanceOf(Icon.class, listIcon);
+        assertEquals("vaadin:table", listIcon.getElement().getAttribute("icon"));
+
+        // A name without the collection prefix is resolved through the predefined icon sets
+        MenuItem detailItem = findChildItem(parentItem, DETAIL_VIEW_ID).orElseThrow();
+        Component detailIcon = detailItem.getIcon();
+        assertInstanceOf(FontIcon.class, detailIcon);
+        assertTrue(List.of(((FontIcon) detailIcon).getIconClassNames()).contains("jmix-font-icon-pencil"));
+    }
+
+    @Test
+    void testMenuIconIsNotAppliedToParentMenuItem() {
+        assertNull(findTemplateViewsRootItem().orElseThrow().getIcon());
+    }
+
+    @Test
+    void testMenuItemHasNoIconWhenMenuIconIsNotSpecified() {
+        MenuItem listItem = findMenuItemByView(MSG_TITLE_LIST_VIEW_ID).orElseThrow();
+        assertNull(listItem.getIcon());
     }
 
     @Test
@@ -286,6 +318,42 @@ public class ViewTemplateIntegrationTest {
     }
 
     @Test
+    void testListTemplateOpensDetailInDialogWhenDialogModeParamIsSet() {
+        String listDescriptor = getDescriptor(DIALOG_MODE_LIST_VIEW_ID);
+
+        assertTrue(listDescriptor.contains("<property name=\"openMode\" value=\"DIALOG\"/>"));
+
+        View<?> view = views.create(DIALOG_MODE_LIST_VIEW_ID);
+        DataGrid<?> dataGrid = (DataGrid<?>) UiComponentUtils.getComponent(view, "dataGrid");
+
+        CreateAction<?> createAction = (CreateAction<?>) dataGrid.getAction("createAction");
+        EditAction<?> editAction = (EditAction<?>) dataGrid.getAction("editAction");
+
+        assertNotNull(createAction);
+        assertNotNull(editAction);
+        assertEquals(OpenMode.DIALOG, createAction.getOpenMode());
+        assertEquals(OpenMode.DIALOG, editAction.getOpenMode());
+    }
+
+    @Test
+    void testListTemplateKeepsDefaultOpenModeWithoutDialogModeParam() {
+        String listDescriptor = getDescriptor(LIST_VIEW_ID);
+
+        assertFalse(listDescriptor.contains("openMode"));
+
+        View<?> view = views.create(LIST_VIEW_ID);
+        DataGrid<?> dataGrid = (DataGrid<?>) UiComponentUtils.getComponent(view, "dataGrid");
+
+        CreateAction<?> createAction = (CreateAction<?>) dataGrid.getAction("createAction");
+        EditAction<?> editAction = (EditAction<?>) dataGrid.getAction("editAction");
+
+        assertNotNull(createAction);
+        assertNotNull(editAction);
+        assertNull(createAction.getOpenMode());
+        assertNull(editAction.getOpenMode());
+    }
+
+    @Test
     void testStockTemplatesUseLiteralBuiltInTemplateIds() {
         String listDescriptor = getDescriptor(LIST_VIEW_ID);
         String detailDescriptor = getDescriptor(DETAIL_VIEW_ID);
@@ -348,6 +416,27 @@ public class ViewTemplateIntegrationTest {
 
         assertFalse(detailDescriptor.contains("<tabSheet"));
         assertTrue(detailDescriptor.contains("<formLayout id=\"form\" dataContainer=\"entityDc\""));
+    }
+
+    @Test
+    void testDetailTemplateRendersLookupFieldAnnotatedReferenceAsEntityComboBox() {
+        String detailDescriptor = getDescriptor(LOOKUP_DETAIL_VIEW_ID);
+
+        // LfProduct carries a class-level @LookupField(type = DROPDOWN,
+        // itemsQuery = @LookupItemsQuery(byInstanceName = true)), so the template-generated
+        // field for the "product" reference must be an entityComboBox with a byInstanceName
+        // itemsQuery, not the default entityPicker.
+        assertTrue(detailDescriptor.contains("id=\"productField\""));
+        assertTrue(detailDescriptor.contains("<entityComboBox"));
+        assertTrue(detailDescriptor.contains("byInstanceName=\"true\""));
+        assertFalse(detailDescriptor.contains("<entityPicker"));
+
+        // LfCountry carries a class-level @LookupField(type = DROPDOWN) (eager, query-based),
+        // so the template must also generate a top-level items container for the "country"
+        // reference and bind the entityComboBox to it via itemsContainer.
+        assertTrue(detailDescriptor.contains("<collection id=\"countryItemsDc\""));
+        assertTrue(detailDescriptor.contains("select e from test_LfCountry e"));
+        assertTrue(detailDescriptor.contains("itemsContainer=\"countryItemsDc\""));
     }
 
     @Test
@@ -463,6 +552,22 @@ public class ViewTemplateIntegrationTest {
         View<?> currentView = UiTestUtils.getCurrentView();
         assertEquals(detailViewInfo.getControllerClass(), currentView.getClass());
         assertEquals(DETAIL_VIEW_ID, currentView.getId().orElseThrow());
+    }
+
+    @Test
+    void testTemplateDetailViewOpenedInDialogHasDefaultWidthAndIsResizableAndMaximizable() {
+        navigationSupport.navigate(LIST_VIEW_ID);
+        View<?> listView = UiTestUtils.getCurrentView();
+
+        // The master entity renders a tab sheet, whose content must not decide the dialog size.
+        DialogWindow<?> dialog = dialogWindows.detail(listView, ViewTemplateMasterEntity.class)
+                .newEntity()
+                .open();
+
+        assertEquals(MASTER_DETAIL_VIEW_ID, dialog.getView().getId().orElseThrow());
+        assertEquals("64em", dialog.getWidth());
+        assertTrue(dialog.isResizable());
+        assertTrue(dialog.isMaximizable());
     }
 
     protected Optional<MenuItem> findTemplateViewsRootItem() {

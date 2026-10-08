@@ -28,5 +28,9 @@ public enum ViewTemplateType {
     /**
      * Detail view template.
      */
-    DETAIL
+    DETAIL,
+    /**
+     * Read view template.
+     */
+    READ
 }

@@ -15,7 +15,6 @@
  */
 package io.jmix.reports.yarg.formatters.impl.xls;
 
-import io.jmix.reports.yarg.formatters.impl.xls.Area;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.poi.ss.formula.ptg.AreaPtg;
 import org.apache.poi.ss.formula.ptg.RefPtg;

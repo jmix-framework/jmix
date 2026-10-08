@@ -26,4 +26,9 @@ dependencies {
 
     implementation 'org.springframework.ai:spring-ai-client-chat'
     implementation 'org.springframework.ai:spring-ai-model'
+
+    testImplementation project(':eclipselink-starter')
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testRuntimeOnly 'org.hsqldb:hsqldb'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }

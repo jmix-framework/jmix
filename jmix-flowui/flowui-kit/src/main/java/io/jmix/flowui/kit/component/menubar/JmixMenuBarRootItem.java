@@ -16,17 +16,14 @@
 
 package io.jmix.flowui.kit.component.menubar;
 
-import com.vaadin.flow.component.menubar.MenuBar;
+import com.vaadin.flow.component.shared.Tooltip.TooltipPosition;
 import com.vaadin.flow.function.SerializableRunnable;
 
-// CAUTION: copied from com.vaadin.flow.component.menubar.MenuBarRootItem [last update Vaadin 25.1.6]
+// CAUTION: copied from com.vaadin.flow.component.menubar.MenuBarRootItem [last update Vaadin 25.3.0]
 public class JmixMenuBarRootItem extends JmixMenuBarItem {
 
-    protected JmixMenuBar menuBar;
-
-    JmixMenuBarRootItem(MenuBar menuBar, SerializableRunnable contentReset) {
-        super(null, contentReset);
-        this.menuBar = (JmixMenuBar) menuBar;
+    JmixMenuBarRootItem(JmixMenuBar menuBar, SerializableRunnable contentReset) {
+        super(menuBar, contentReset);
     }
 
     @Override
@@ -55,7 +52,7 @@ public class JmixMenuBarRootItem extends JmixMenuBarItem {
     @Override
     public void addClassName(String className) {
         super.addClassName(className);
-        updateClassName();
+        menuBar.updateButtons();
     }
 
     /**
@@ -64,7 +61,7 @@ public class JmixMenuBarRootItem extends JmixMenuBarItem {
     @Override
     public void addClassNames(String... classNames) {
         super.addClassNames(classNames);
-        updateClassName();
+        menuBar.updateButtons();
     }
 
     /**
@@ -73,7 +70,7 @@ public class JmixMenuBarRootItem extends JmixMenuBarItem {
     @Override
     public void setClassName(String className) {
         super.setClassName(className);
-        updateClassName();
+        menuBar.updateButtons();
     }
 
     /**
@@ -82,7 +79,7 @@ public class JmixMenuBarRootItem extends JmixMenuBarItem {
     @Override
     public void setClassName(String className, boolean set) {
         super.setClassName(className, set);
-        updateClassName();
+        menuBar.updateButtons();
     }
 
     /**
@@ -91,7 +88,7 @@ public class JmixMenuBarRootItem extends JmixMenuBarItem {
     @Override
     public boolean removeClassName(String className) {
         var result = super.removeClassName(className);
-        updateClassName();
+        menuBar.updateButtons();
         return result;
     }
 
@@ -101,12 +98,24 @@ public class JmixMenuBarRootItem extends JmixMenuBarItem {
     @Override
     public void removeClassNames(String... classNames) {
         super.removeClassNames(classNames);
-        updateClassName();
+        menuBar.updateButtons();
     }
 
-    protected void updateClassName() {
-        getElement().executeJs(
-                "window.Vaadin.Flow.menubarConnector.setClassName(this)");
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setTooltipText(String tooltipText) {
+        super.setTooltipText(tooltipText);
+        menuBar.updateButtons();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setTooltipPosition(TooltipPosition position) {
+        super.setTooltipPosition(position);
         menuBar.updateButtons();
     }
 }

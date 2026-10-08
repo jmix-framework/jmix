@@ -151,9 +151,13 @@ public class MetaClassImpl extends MetadataObjectImpl implements MetaClass {
         ((MetaClassImpl) ancestorClass).addDescendant(this);
     }
 
+    /**
+     * Appends a new property, or replaces an already registered one keeping its position.
+     * Use {@link #reorderOwnProperties(List)} to change the order.
+     */
     public void registerProperty(MetaProperty metaProperty) {
         LinkedHashMap<String, MetaProperty> newOwnProperties = new LinkedHashMap<>(ownPropertyByName);
-        newOwnProperties.remove(metaProperty.getName());
+        // LinkedHashMap.put keeps the position of an existing key.
         newOwnProperties.put(metaProperty.getName(), metaProperty);
         publishOwnPropertySnapshots(newOwnProperties);
         rebuildPropertySnapshots();
@@ -168,6 +172,37 @@ public class MetaClassImpl extends MetadataObjectImpl implements MetaClass {
             rebuildPropertySnapshots();
             refreshDescendantSnapshots();
         }
+    }
+
+    /**
+     * Redistributes the named own properties over the positions they already occupy, in the order
+     * given; every other property keeps its position. Unknown names and duplicates are ignored.
+     *
+     * @param propertyNames own property names in the order they should take
+     */
+    public void reorderOwnProperties(List<String> propertyNames) {
+        List<MetaProperty> reordered = new ArrayList<>();
+        Set<String> reorderedNames = new HashSet<>();
+        for (String propertyName : propertyNames) {
+            MetaProperty property = ownPropertyByName.get(propertyName);
+            if (property != null && reorderedNames.add(propertyName)) {
+                reordered.add(property);
+            }
+        }
+        if (reordered.size() < 2) {
+            return;
+        }
+        LinkedHashMap<String, MetaProperty> newOwnProperties = new LinkedHashMap<>();
+        int nextReordered = 0;
+        for (MetaProperty ownProperty : ownProperties) {
+            MetaProperty property = reorderedNames.contains(ownProperty.getName())
+                    ? reordered.get(nextReordered++)
+                    : ownProperty;
+            newOwnProperties.put(property.getName(), property);
+        }
+        publishOwnPropertySnapshots(newOwnProperties);
+        rebuildPropertySnapshots();
+        refreshDescendantSnapshots();
     }
 
     @Override

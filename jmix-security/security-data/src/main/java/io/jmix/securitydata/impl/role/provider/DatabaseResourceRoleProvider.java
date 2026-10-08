@@ -48,39 +48,56 @@ public class DatabaseResourceRoleProvider extends BaseDatabaseRoleProvider<Resou
 
     @Override
     protected void buildFetchPlan(FetchPlanBuilder fetchPlanBuilder) {
-        fetchPlanBuilder
-                .addAll("name", "code", "description", "childRoles", "scopes", "sysTenantId")
-                .add("resourcePolicies", FetchPlan.BASE);
+        buildFetchPlan(fetchPlanBuilder, true);
     }
 
+    @Override
+    protected void buildFetchPlan(FetchPlanBuilder fetchPlanBuilder, boolean includePolicies) {
+        fetchPlanBuilder.addAll("name", "code", "description", "localizedNames", "localizedDescriptions",
+                "childRoles", "scopes", "sysTenantId");
+        if (includePolicies) {
+            fetchPlanBuilder.add("resourcePolicies", FetchPlan.BASE);
+        }
+    }
+
+    @Override
     protected ResourceRole buildRole(Object entity) {
+        return buildRole(entity, true);
+    }
+
+    @Override
+    protected ResourceRole buildRole(Object entity, boolean includePolicies) {
         ResourceRoleEntity roleEntity = (ResourceRoleEntity) entity;
 
         ResourceRole role = new ResourceRole();
         role.setName(roleEntity.getName());
         role.setCode(roleEntity.getCode());
         role.setDescription(roleEntity.getDescription());
+        role.setLocalizedNames(roleEntity.getLocalizedNames());
+        role.setLocalizedDescriptions(roleEntity.getLocalizedDescriptions());
         role.setSource(RoleSource.DATABASE);
         role.setChildRoles(roleEntity.getChildRoles());
         role.getCustomProperties().put("databaseId", roleEntity.getId().toString());
         role.setScopes(roleEntity.getScopes() == null ? Collections.emptySet() : roleEntity.getScopes());
         role.setTenantId(roleEntity.getSysTenantId());
 
-        List<ResourcePolicyEntity> resourcePolicyEntities = roleEntity.getResourcePolicies();
-        if (resourcePolicyEntities != null) {
-            List<ResourcePolicy> resourcePolicies = resourcePolicyEntities.stream()
-                    .map(e -> {
-                        Map<String, String> customProperties = new HashMap<>();
-                        customProperties.put("databaseId", e.getId().toString());
-                        return ResourcePolicy.builder(e.getType(), e.getResource())
-                                .withAction(e.getAction())
-                                .withEffect(e.getEffect())
-                                .withPolicyGroup(e.getPolicyGroup())
-                                .withCustomProperties(customProperties)
-                                .build();
-                    })
-                    .collect(Collectors.toList());
-            role.setResourcePolicies(resourcePolicies);
+        if (includePolicies) {
+            List<ResourcePolicyEntity> resourcePolicyEntities = roleEntity.getResourcePolicies();
+            if (resourcePolicyEntities != null) {
+                List<ResourcePolicy> resourcePolicies = resourcePolicyEntities.stream()
+                        .map(e -> {
+                            Map<String, String> customProperties = new HashMap<>();
+                            customProperties.put("databaseId", e.getId().toString());
+                            return ResourcePolicy.builder(e.getType(), e.getResource())
+                                    .withAction(e.getAction())
+                                    .withEffect(e.getEffect())
+                                    .withPolicyGroup(e.getPolicyGroup())
+                                    .withCustomProperties(customProperties)
+                                    .build();
+                        })
+                        .collect(Collectors.toList());
+                role.setResourcePolicies(resourcePolicies);
+            }
         }
 
         return role;

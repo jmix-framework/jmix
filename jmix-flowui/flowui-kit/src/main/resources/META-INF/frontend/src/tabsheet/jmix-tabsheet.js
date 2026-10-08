@@ -66,13 +66,14 @@ import { TabSheetMixin } from '@vaadin/tabsheet/src/vaadin-tabsheet-mixin.js';
  * @fires {CustomEvent} items-changed - Fired when the `items` property changes.
  * @fires {CustomEvent} selected-changed - Fired when the `selected` property changes.
  *
+ * @attr {string} theme - The theme variants to apply to the component.
  * @customElement
  * @extends HTMLElement
  * @mixes TabSheetMixin
  * @mixes ElementMixin
  * @mixes ThemableMixin
  */
-// CAUTION: copied from @vaadin/tabsheet [last update Vaadin 25.1.6]
+// CAUTION: copied from @vaadin/tabsheet [last update Vaadin 25.3.0]
 class JmixTabSheet extends TabSheetMixin(ThemableMixin(ElementMixin(PolylitMixin(LumoInjectionMixin(LitElement))))) {
     static get is() {
         return 'jmix-tabsheet';

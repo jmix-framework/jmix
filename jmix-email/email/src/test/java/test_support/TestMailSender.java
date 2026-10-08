@@ -24,8 +24,8 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.stereotype.Component;
 
 import jakarta.mail.internet.MimeMessage;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Used by functional tests.
@@ -34,9 +34,12 @@ import java.util.List;
  */
 @Component
 public class TestMailSender extends JavaMailSenderImpl {
-    private List<MimeMessage> myMessages = new ArrayList<>();
+    // Emails are sent on the emailer's executor threads and checked on the test thread.
+    private List<MimeMessage> myMessages = new CopyOnWriteArrayList<>();
 
-    private boolean mustFail;
+    private volatile boolean mustFail;
+
+    private volatile String lastSendThreadName;
 
     public void clearBuffer() {
         myMessages.clear();
@@ -59,6 +62,11 @@ public class TestMailSender extends JavaMailSenderImpl {
             throw new MailSendException("Smtp server not available");
         }
         myMessages.add(mimeMessage);
+        lastSendThreadName = Thread.currentThread().getName();
+    }
+
+    public String getLastSendThreadName() {
+        return lastSendThreadName;
     }
 
     public boolean isEmpty() {

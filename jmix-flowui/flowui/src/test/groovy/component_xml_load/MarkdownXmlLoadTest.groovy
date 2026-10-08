@@ -35,6 +35,7 @@ class MarkdownXmlLoadTest extends FlowuiTestSpecification {
         then: "Specific iframe attributes will be loaded"
         verifyAll(view.markdown) {
             content == "Content"
+            lineBreaks
             className == "className1"
             style.get("color") == "red"
             !visible

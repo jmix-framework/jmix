@@ -17,6 +17,7 @@
 package io.jmix.saml;
 
 import org.apache.commons.collections4.ListUtils;
+import org.jspecify.annotations.Nullable;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 
@@ -26,15 +27,44 @@ import java.util.List;
 public class SamlProperties {
 
     /**
-     * Whether to force 'redirect' binding for logout requests.
-     * If true, logout requests will always use the 'redirect' binding. Otherwise, the binding will be determined
-     * based on the RelyingPartyRegistration
+     * Whether to force the 'redirect' binding for the outgoing SAML LogoutRequest. If true, the LogoutRequest
+     * sent to the asserting party always uses the 'redirect' binding, regardless of the binding declared in the
+     * asserting party metadata. Otherwise, the binding is determined by the {@code RelyingPartyRegistration}.
+     * <p>
+     * Only the outgoing LogoutRequest is affected. The binding of the service provider's own single logout
+     * endpoint, which receives the LogoutResponse from the asserting party, is configured separately with the
+     * standard {@code spring.security.saml2.relyingparty.registration.<id>.singlelogout.binding} property and
+     * defaults to POST. If the asserting party returns the LogoutResponse via the 'redirect' binding, set that
+     * property to {@code redirect}, otherwise the return from the asserting party fails with HTTP 401.
      */
     boolean forceRedirectBindingLogout;
     /**
-     * Maximum number of concurrent user mapping processes within {@link io.jmix.saml.mapper.user.BaseSamlUserMapper}.
+     * Number of lock stripes used by {@link io.jmix.saml.mapper.user.BaseSamlUserMapper} to serialize concurrent
+     * mapping of the same username within this JVM. Mappings of the same username always share one lock; mappings
+     * of different usernames may occasionally share a stripe and briefly wait for each other. The locks do not
+     * work across cluster nodes - the unique database constraint on the username is the actual guard against
+     * duplicate user creation.
      */
     int maxConcurrentUserMapping;
+
+    /**
+     * URL to redirect to when SAML single logout completes or cannot be performed.
+     */
+    String logoutSuccessUrl;
+
+    /**
+     * Whether to expose the SAML service provider metadata endpoint ('/saml2/metadata' and
+     * '/saml2/metadata/{registrationId}'). The metadata XML is used to configure the identity provider.
+     */
+    boolean exposeMetadata;
+
+    /**
+     * Name of the SAML assertion attribute to take the username from. By default, the username is taken from
+     * the subject NameID. Set this property when the identity provider releases a 'transient' NameID (its value
+     * changes on every login, which breaks user synchronization) or when a specific attribute (e.g. email)
+     * should identify the user.
+     */
+    String usernameAttribute;
 
     /**
      * DefaultSamlAssertionRolesMapper configuration.
@@ -48,10 +78,16 @@ public class SamlProperties {
 
     public SamlProperties(@DefaultValue("true") boolean forceRedirectBindingLogout,
                           @DefaultValue("128") int maxConcurrentUserMapping,
+                          @DefaultValue("/") String logoutSuccessUrl,
+                          @DefaultValue("true") boolean exposeMetadata,
+                          @Nullable String usernameAttribute,
                           @DefaultValue DefaultSamlAssertionRolesMapperConfig defaultSamlAssertionRolesMapper,
                           @DefaultValue FilterChain filterChain) {
         this.forceRedirectBindingLogout = forceRedirectBindingLogout;
         this.maxConcurrentUserMapping = maxConcurrentUserMapping;
+        this.logoutSuccessUrl = logoutSuccessUrl;
+        this.exposeMetadata = exposeMetadata;
+        this.usernameAttribute = usernameAttribute;
 
         this.defaultSamlAssertionRolesMapper = defaultSamlAssertionRolesMapper;
         this.filterChain = filterChain;
@@ -69,6 +105,28 @@ public class SamlProperties {
      */
     public int getMaxConcurrentUserMapping() {
         return maxConcurrentUserMapping;
+    }
+
+    /**
+     * @see #logoutSuccessUrl
+     */
+    public String getLogoutSuccessUrl() {
+        return logoutSuccessUrl;
+    }
+
+    /**
+     * @see #exposeMetadata
+     */
+    public boolean isExposeMetadata() {
+        return exposeMetadata;
+    }
+
+    /**
+     * @see #usernameAttribute
+     */
+    @Nullable
+    public String getUsernameAttribute() {
+        return usernameAttribute;
     }
 
     /**

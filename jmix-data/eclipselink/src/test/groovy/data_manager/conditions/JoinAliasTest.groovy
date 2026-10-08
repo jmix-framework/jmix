@@ -84,12 +84,13 @@ class JoinAliasTest extends BaseConditionJoinTest {
         def where = logicalConditionGenerator.generateWhere(context)
 
 
-        then: "correct prefix is used"
-        join == " left join e.compatibleBs c0 left join c0.recommendedCs c1   left join e.compatibleBs c2  left join e.compatibleCs c3"
-        where.contains("c1.maxSpeed < ")
+        then: "correct prefix is used, conditions on to-many paths are generated as 'exists' subqueries"
+        join.isBlank()
+        where.contains("exists (select 1 from test_ModuleB c0 left join c0.recommendedCs c1" +
+                " where c0 member of e.compatibleBs and c1.maxSpeed < ")
         where.contains("e.name like ")
-        where.contains("c2.maxCount = :maxCount")
-        where.contains("c3.maxSpeed = ")
+        where.contains("exists (select 1 from test_ModuleB c2 where c2 member of e.compatibleBs and c2.maxCount = :maxCount)")
+        where.contains("exists (select 1 from test_ModuleC c3 where c3 member of e.compatibleCs and c3.maxSpeed = ")
     }
 
     private void propagatePropertiesToChildContexts(ConditionGenerationContext generationContext) {

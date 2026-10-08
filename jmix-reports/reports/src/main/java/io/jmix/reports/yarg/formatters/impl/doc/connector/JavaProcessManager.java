@@ -16,7 +16,6 @@
 
 package io.jmix.reports.yarg.formatters.impl.doc.connector;
 
-import io.jmix.reports.yarg.formatters.impl.doc.connector.ProcessManager;
 import org.jspecify.annotations.NullMarked;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,7 +34,7 @@ public class JavaProcessManager implements ProcessManager {
 
     @Override
     public void kill(Process process, List<Long> pids) {
-        log.info("Java office process manager is going to kill following processes " + pids);
+        log.info("Java office process manager is going to kill following processes {}", pids);
         if (process != null)
             process.destroy();
     }

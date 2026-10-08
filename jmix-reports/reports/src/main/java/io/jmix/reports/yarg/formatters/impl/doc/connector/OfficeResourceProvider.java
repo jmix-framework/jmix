@@ -49,7 +49,7 @@ public class OfficeResourceProvider {
     private static AtomicLong counter = new AtomicLong();
 
     protected XComponentContext xComponentContext;
-    protected io.jmix.reports.yarg.formatters.impl.doc.connector.OfficeIntegration officeIntegration;
+    protected OfficeIntegration officeIntegration;
     private File temporaryFile;
 
     public OfficeResourceProvider(XComponentContext xComponentContext, OfficeIntegration officeIntegration) throws Exception {

@@ -19,7 +19,6 @@ import com.google.common.base.Joiner;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import io.jmix.reports.yarg.exception.OpenOfficeException;
 import io.jmix.reports.yarg.exception.ReportingInterruptedException;
-import org.jspecify.annotations.NullMarked;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -91,7 +90,7 @@ public class OfficeIntegration implements OfficeIntegrationAPI {
     }
 
     @Override
-    public void runTaskWithTimeout(final OfficeTask officeTask, int timeoutInSeconds) throws io.jmix.reports.yarg.formatters.impl.doc.connector.NoFreePortsException {
+    public void runTaskWithTimeout(final OfficeTask officeTask, int timeoutInSeconds) throws NoFreePortsException {
         final OfficeConnection connection = acquireConnection();
         Future future = null;
         try {
@@ -106,7 +105,7 @@ public class OfficeIntegration implements OfficeIntegrationAPI {
             throw new ReportingInterruptedException("Open office task interrupted");
         } catch (ExecutionException ex) {
             connection.close();
-            if (ex.getCause() instanceof io.jmix.reports.yarg.formatters.impl.doc.connector.BootstrapException
+            if (ex.getCause() instanceof BootstrapException
                     || ex.getCause() instanceof com.sun.star.comp.helper.BootstrapException) {
                 throw new OpenOfficeException("Failed to connect to open office. Please check open office path " + openOfficePath, ex);
             }
@@ -119,7 +118,7 @@ public class OfficeIntegration implements OfficeIntegrationAPI {
             } finally {
                 connection.close();
             }
-            if (tex.getCause() instanceof io.jmix.reports.yarg.formatters.impl.doc.connector.BootstrapException
+            if (tex.getCause() instanceof BootstrapException
                     || tex.getCause() instanceof com.sun.star.comp.helper.BootstrapException) {
                 throw new OpenOfficeException("Failed to connect to open office. Please check open office path " + openOfficePath, tex);
             }
@@ -185,7 +184,7 @@ public class OfficeIntegration implements OfficeIntegrationAPI {
                         .build());
     }
 
-    protected OfficeConnection acquireConnection() throws io.jmix.reports.yarg.formatters.impl.doc.connector.NoFreePortsException {
+    protected OfficeConnection acquireConnection() throws NoFreePortsException {
         final OfficeConnection connection = connectionsQueue.poll();
         if (connection != null) {
             return connection;

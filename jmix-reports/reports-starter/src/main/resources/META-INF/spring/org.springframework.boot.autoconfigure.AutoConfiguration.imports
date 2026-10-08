@@ -1,1 +1,2 @@
 io.jmix.autoconfigure.reports.ReportsAutoConfiguration
+io.jmix.autoconfigure.reports.ReportsLlmAutoConfiguration

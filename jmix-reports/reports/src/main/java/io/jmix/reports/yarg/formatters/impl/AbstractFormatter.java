@@ -45,7 +45,6 @@ import java.util.regex.Pattern;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public abstract class AbstractFormatter implements ReportFormatter {
-    public static final String SIMPLE_ALIAS_REGEXP = "\\$\\{([A-z0-9_]+?)\\}";
 
     public static final String ALIAS_GROUP = "([A-z0-9_\\.]+?)";
     public static final String STRING_FUNCTION_GROUP = "(\\[\\d+\\])";

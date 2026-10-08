@@ -16,7 +16,6 @@
 
 package io.jmix.flowui.view.template;
 
-import io.jmix.core.annotation.Experimental;
 import io.jmix.core.entity.annotation.MetaAnnotation;
 
 import java.lang.annotation.Retention;
@@ -26,7 +25,6 @@ import java.lang.annotation.Target;
 /**
  * Declares that the framework should generate a detail view for the annotated entity at runtime.
  */
-@Experimental
 @Target({java.lang.annotation.ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @MetaAnnotation
@@ -46,6 +44,15 @@ public @interface DetailViewTemplate {
      * Parent menu item id. If empty, the framework does not create a menu item.
      */
     String parentMenu() default "";
+
+    /**
+     * Menu item icon. Accepted values are described in the documentation on default icons,
+     * for example {@code "vaadin:table"} or {@code "TABLE"}.
+     * <p>
+     * If empty, the menu item has no icon. The value is ignored if {@code parentMenu} is empty.
+     * If the value cannot be resolved to an icon, it is ignored and a warning is logged.
+     */
+    String menuIcon() default "";
 
     /**
      * View id. If empty, the framework uses {@code <entityName>.detail}.

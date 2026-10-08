@@ -30,6 +30,7 @@
     <layout>
         <genericFilter id="genericFilterId"
                        dataLoader="ordersDl"
+                       addConditionDialogResizable="true"
                        autoApply="false"
                        applyShortcut="ALT-P"
                        classNames="cssClassName1, cssClassName2"

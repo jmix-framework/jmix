@@ -64,15 +64,15 @@ public class GenericFilterClearValuesAction extends GenericFilterAction<GenericF
     public void execute() {
         checkTarget();
 
-        List<FilterComponent> ownFilterComponents = target.getCurrentConfiguration()
+        List<FilterComponent> filterComponents = target.getCurrentConfiguration()
                 .getRootLogicalFilterComponent()
-                .getOwnFilterComponents();
+                .getFilterComponents();
 
-        if (ownFilterComponents.isEmpty()) {
+        if (filterComponents.isEmpty()) {
             return;
         }
 
-        ownFilterComponents.stream()
+        filterComponents.stream()
                 .filter(filterComponent -> filterComponent instanceof HasValue)
                 .forEach(filterComponent -> {
                     filterComponent.setAutoApply(false);

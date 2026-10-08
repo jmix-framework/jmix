@@ -1134,6 +1134,24 @@
         <xs:attribute name="width" type="xs:string"/>
         <xs:attribute name="height" type="xs:string"/>
         <xs:attribute name="containLabel" type="xs:boolean"/>
+        <xs:attribute name="outerBoundsMode">
+            <xs:simpleType>
+                <xs:restriction>
+                    <xs:enumeration value="AUTO"/>
+                    <xs:enumeration value="NONE"/>
+                    <xs:enumeration value="SAME"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="outerBoundsContain">
+            <xs:simpleType>
+                <xs:restriction>
+                    <xs:enumeration value="AUTO"/>
+                    <xs:enumeration value="ALL"/>
+                    <xs:enumeration value="AXIS_LABEL"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
         <xs:attribute name="backgroundColor" type="colorType"/>
         <xs:attribute name="borderColor" type="colorType"/>
         <xs:attribute name="borderWidth" type="xs:integer"/>
@@ -2199,6 +2217,7 @@
                         </xs:restriction>
                     </xs:simpleType>
                 </xs:attribute>
+                <xs:attribute name="nameMoveOverlap" type="xs:boolean"/>
 
                 <xs:attributeGroup ref="hasAxisName"/>
             </xs:extension>
@@ -2260,6 +2279,7 @@
         <xs:attribute name="type" type="axisType"/>
         <xs:attribute name="categoryBoundaryGap" type="xs:boolean"/>
         <xs:attribute name="nonCategoryBoundaryGap" type="xs:string"/>
+        <xs:attribute name="containShape" type="xs:boolean"/>
         <xs:attribute name="min" type="xs:string"/>
         <xs:attribute name="minFunction" type="xs:string"/>
         <xs:attribute name="max" type="xs:string"/>

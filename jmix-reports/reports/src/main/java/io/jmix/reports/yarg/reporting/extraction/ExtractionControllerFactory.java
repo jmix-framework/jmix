@@ -25,9 +25,9 @@ import java.util.function.BiFunction;
 /**
  * This interface implementation may holding relation between report band orientation and related controller logic
  * if relation not set, default controller should be returned
- * <p>The default controller implementation is <b>io.jmix.reports.yarg.reporting.extraction.controller.DefaultExtractionController</b></p>
+ * <p>The default controller implementation is <b>DefaultExtractionController</b></p>
  *
- * <p>The default implementation is <b>io.jmix.reports.yarg.reporting.extraction.DefaultExtractionControllerFactory</b></p>
+ * <p>The default implementation is <b>DefaultExtractionControllerFactory</b></p>
  */
 @NullMarked
 public interface ExtractionControllerFactory {

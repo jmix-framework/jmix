@@ -18,9 +18,15 @@ package io.jmix.aitoolsflowui.view.chat;
 
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.ComponentEvent;
+import com.vaadin.flow.component.ComponentEventListener;
+import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.shared.Tooltip;
 import com.vaadin.flow.function.SerializableSupplier;
+import com.vaadin.flow.shared.Registration;
+import io.jmix.aitoolsflowui.AiToolsFlowuiProperties;
 import io.jmix.aitoolsflowui.model.*;
 import io.jmix.aitoolsflowui.service.*;
 import io.jmix.aitoolsflowui.view.chat.support.*;
@@ -34,8 +40,10 @@ import io.jmix.flowui.Dialogs;
 import io.jmix.flowui.Notifications;
 import io.jmix.flowui.app.inputdialog.DialogActions;
 import io.jmix.flowui.app.inputdialog.DialogOutcome;
+import io.jmix.flowui.app.inputdialog.InputDialog;
 import io.jmix.flowui.app.inputdialog.InputParameter;
 import io.jmix.flowui.component.UiComponentUtils;
+import io.jmix.flowui.component.validation.ValidationErrors;
 import io.jmix.flowui.component.virtuallist.JmixVirtualList;
 import io.jmix.flowui.fragment.Fragment;
 import io.jmix.flowui.fragment.FragmentDescriptor;
@@ -63,6 +71,7 @@ import java.util.*;
  */
 @Experimental
 @FragmentDescriptor("ai-chat-fragment.xml")
+@JsModule("./aitools/ai-chat-timeline-scroll.js")
 public class AiChatFragment extends Fragment<VerticalLayout> {
 
     private static final Logger log = LoggerFactory.getLogger(AiChatFragment.class);
@@ -85,6 +94,12 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
     protected TimelineItemFactory timelineItemFactory;
     @Autowired
     protected AiChatService chatService;
+    @Autowired
+    protected AiToolsFlowuiProperties properties;
+    @Autowired
+    protected ConversationTitleSupport titleSupport;
+    @Autowired
+    protected AiConversationAutoTitleService autoTitleService;
 
     @ViewComponent
     protected MessageBundle messageBundle;
@@ -105,6 +120,9 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
     protected AiChatInputFragment composerFragment;
 
     @Nullable
+    protected Tooltip conversationTitleTooltip;
+
+    @Nullable
     protected AiConversation conversation;
     @Nullable
     protected TimelineItem activeThinkingItem;
@@ -113,6 +131,9 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
     protected boolean readOnly;
 
     protected boolean chatUnavailableWarned;
+
+    @Nullable
+    protected AiConversationTitleMode titleModeOverride;
 
     @Nullable
     protected SerializableSupplier<Component> aiAvatarIconSupplier;
@@ -167,6 +188,42 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
     public void setReadOnly(boolean readOnly) {
         this.readOnly = readOnly;
         refreshComposerVisibility();
+    }
+
+    /**
+     * Hides the conversation title, for a host that already names the conversation in its own chrome — a
+     * view title, a tab, a dialog header — and would otherwise show the same name twice. The title row
+     * itself stays, carrying the title-edit button.
+     * <p>
+     * {@link TitleChangeEvent} fires either way, so a hidden title still keeps the host's own title in sync
+     * with renames. The fragment stores no flag of its own, so the choice survives conversation reloads.
+     *
+     * @param titleVisible {@code false} to hide the conversation title; visible by default
+     */
+    public void setTitleVisible(boolean titleVisible) {
+        conversationTitle.setVisible(titleVisible);
+    }
+
+    /**
+     * Adds a listener notified whenever the displayed conversation title changes — when a conversation is
+     * bound and after it is renamed. Hosts use it to keep their own title in sync (page title, tab title).
+     *
+     * @param listener listener to add
+     * @return a registration for removing the listener
+     */
+    public Registration addTitleChangeListener(
+            ComponentEventListener<TitleChangeEvent> listener) {
+        return getEventBus().addListener(TitleChangeEvent.class, listener);
+    }
+
+    /**
+     * Sets the generation title mode for this chat. Overrides the application-level
+     * {@code jmix.aitools.ui.conversation-title-mode}.
+     *
+     * @param titleMode the title mode for this chat, or {@code null} to use the application-level setting
+     */
+    public void setTitleMode(@Nullable AiConversationTitleMode titleMode) {
+        this.titleModeOverride = titleMode;
     }
 
     /**
@@ -231,15 +288,26 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
             return;
         }
 
+        String trimmedMessage = userMessage.trim();
         AiChatMessage savedUserMessage;
         try {
-            savedUserMessage = messageService.createMessage(conversation, AiChatMessageType.USER, userMessage.trim());
+            savedUserMessage = messageService.createMessage(conversation, AiChatMessageType.USER, trimmedMessage);
         } catch (Exception e) {
             log.error("Failed to persist user message", e);
             notifications.create(messageBundle.getMessage("aiChatFragment.errorProcessingMessage"))
                     .withType(Notifications.Type.ERROR)
                     .show();
             return;
+        }
+
+        // Auto-titling happens on the first message only.
+        // It is optional and must never break sending.
+        if (timelineItemsDc.getItems().isEmpty()) {
+            try {
+                applyAutoTitle(trimmedMessage);
+            } catch (RuntimeException e) {
+                log.warn("Automatic conversation titling failed; continuing with the message", e);
+            }
         }
 
         composerFragment.clear();
@@ -256,6 +324,71 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
         composerFragment.setSubmitHandler(this::sendMessage);
 
         refreshAll();
+    }
+
+    /**
+     * Titles the conversation by its first message according to the effective {@link AiConversationTitleMode}.
+     *
+     * @param trimmedMessage the trimmed first user message
+     */
+    protected void applyAutoTitle(String trimmedMessage) {
+        if (conversation == null) {
+            return;
+        }
+        AiConversationTitleMode mode = resolveTitleMode();
+        if (mode == AiConversationTitleMode.NONE) {
+            return;
+        }
+        String initialTitle = applyFirstMessageTitle(trimmedMessage);
+        if (initialTitle != null && mode == AiConversationTitleMode.GENERATED) {
+            startTitleGeneration(trimmedMessage, initialTitle);
+        }
+    }
+
+    @Nullable
+    protected String applyFirstMessageTitle(String trimmedMessage) {
+        if (conversation == null) {
+            return null;
+        }
+        String title = titleSupport.buildInitialTitle(trimmedMessage);
+        if (title.isBlank()) {
+            return null;
+        }
+        conversation.setTitle(title);
+        conversation = conversationService.save(conversation);
+        applyConversationTitleText(title);
+        return title;
+    }
+
+    protected void startTitleGeneration(String trimmedMessage, String expectedTitle) {
+        UUID conversationId = Objects.requireNonNull(Objects.requireNonNull(conversation).getId());
+
+        autoTitleService.generateAndApplyAsync(conversationId, trimmedMessage, expectedTitle,
+                appliedTitle -> reflectGeneratedTitle(conversationId, expectedTitle, appliedTitle));
+    }
+
+    /**
+     * Shows the generated title, which is already persisted, unless the fragment was detached or the
+     * conversation was renamed meanwhile.
+     *
+     * @param conversationId id of the conversation that was titled
+     * @param expectedTitle  first-message title the conversation must still carry
+     * @param appliedTitle   the generated title, or {@code null} when nothing was applied
+     */
+    protected void reflectGeneratedTitle(UUID conversationId, String expectedTitle, @Nullable String appliedTitle) {
+        if (appliedTitle == null
+                || !isAttached()
+                || conversation == null
+                || !conversationId.equals(conversation.getId())
+                || !Objects.equals(expectedTitle, conversation.getTitle())) {
+            return;
+        }
+        conversation.setTitle(appliedTitle);
+        applyConversationTitleText(appliedTitle);
+    }
+
+    protected AiConversationTitleMode resolveTitleMode() {
+        return titleModeOverride != null ? titleModeOverride : properties.getConversationTitleMode();
     }
 
     protected void processUserMessage(AiChatMessage savedUserMessage) {
@@ -365,13 +498,25 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
     }
 
     protected void refreshAll() {
-        conversationTitle.setText(conversation != null ? conversation.getTitle() : "");
+        applyConversationTitleText(conversation != null ? conversation.getTitle() : null);
 
         timelineItemsDc.setItems(timelineItemFactory.buildTimelineItems(loadMessages()));
         scrollToBottom();
 
         refreshComposerVisibility();
         warnIfAiUnavailable();
+    }
+
+    protected void applyConversationTitleText(@Nullable String title) {
+        String text = title != null ? title : "";
+        conversationTitle.setText(text);
+        if (conversationTitleTooltip == null) {
+            conversationTitleTooltip = Tooltip.forComponent(conversationTitle);
+        }
+        // An empty tooltip text is not displayed, so a cleared header shows none.
+        conversationTitleTooltip.setText(text);
+
+        fireEvent(new TitleChangeEvent(this, title));
     }
 
     protected void warnIfAiUnavailable() {
@@ -451,55 +596,13 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
             // for the conditional case — it would yank a user who scrolled up.
             timelineList.scrollToIndex(size - 1);
         }
-        // Rows have variable height and, crucially, assistant answers render
-        // through the <vaadin-markdown> web component which parses and lays
-        // out its content asynchronously *after* the row's initial render,
-        // in bursts. A one-shot re-pin fires before that growth lands; an
-        // "until scrollHeight is stable" loop exits during a lull between
-        // bursts (leaving the scroll "lower, but not at the bottom"). Instead
-        // we react to the actual cause: a MutationObserver re-pins on every
-        // DOM change (markdown rendering, row recycling) and we also re-pin
-        // every frame for a bounded window, then disconnect.
-        //
-        // "Stick to bottom" intent lives in l.__stick, kept up to date by a
-        // one-shot user-scroll listener: content growth alone fires no scroll
-        // event (so it never clears the flag), and our own pins land at the
-        // bottom (so they keep it set) — only a genuine user scroll-up clears
-        // it. force=true resets the flag; force=false honours it and bails out
-        // when the user is reading higher up. The per-element stop handle
-        // cancels an in-flight pin when a new scroll request arrives (e.g.
-        // back-to-back streaming updates) so loops don't stack.
-        timelineList.getElement().executeJs("""
-                        const l = this;
-                        const force = $0;
-                        const THRESHOLD = 50;
-                        if (!l.__stickInit) {
-                          l.__stickInit = true;
-                          l.__stick = true;
-                          l.addEventListener('scroll', () => {
-                            l.__stick = l.scrollTop + l.clientHeight >= l.scrollHeight - THRESHOLD;
-                          }, { passive: true });
-                        }
-                        if (force) { l.__stick = true; }
-                        if (!l.__stick) { return; }
-                        if (l.__scrollPinStop) { l.__scrollPinStop(); }
-                        const toBottom = () => { if (l.__stick) { l.scrollTop = l.scrollHeight; } };
-                        const mo = new MutationObserver(toBottom);
-                        mo.observe(l, { childList: true, subtree: true,
-                                        characterData: true, attributes: true });
-                        const stop = () => { l.__scrollPinStop = null; mo.disconnect(); };
-                        l.__scrollPinStop = stop;
-                        let frames = 0;
-                        const tick = () => {
-                          if (l.__scrollPinStop !== stop) { return; }
-                          if (!l.__stick) { stop(); return; }
-                          toBottom();
-                          if (++frames < 120) { requestAnimationFrame(tick); }
-                          else { stop(); }
-                        };
-                        requestAnimationFrame(tick);
-                        """,
-                force);
+        // The client-side sticking (pin to the bottom while the answer's markdown
+        // lays out asynchronously; detach synchronously on a user scroll gesture)
+        // lives in the ai-chat-timeline-scroll.js module (imported via @JsModule),
+        // which registers window.jmixAiTools.stickToBottom. Called here with the
+        // list element and the force flag. See that file and
+        // docs/features/aitools/specs/chat-timeline-auto-scroll.md.
+        timelineList.getElement().executeJs("window.jmixAiTools.stickToBottom(this, $0)", force);
     }
 
     protected AiChatMessage createTransientAssistantMessage(String content) {
@@ -543,6 +646,7 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
                                 .withRequired(true)
                                 .withDefaultValue(currentTitle)
                 )
+                .withValidator(this::validateTitle)
                 .withActions(DialogActions.OK_CANCEL)
                 .withCloseListener(closeEvent -> {
                     if (!closeEvent.closedWith(DialogOutcome.OK)) {
@@ -560,9 +664,43 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
                     // Reloading conversation while awaiting LLM answer
                     // may break UI.
                     conversation = conversationService.save(conversation);
-                    conversationTitle.setText(Objects.requireNonNull(conversation).getTitle());
+                    applyConversationTitleText(Objects.requireNonNull(conversation).getTitle());
                 })
                 .open();
     }
 
+    protected ValidationErrors validateTitle(InputDialog.ValidationContext context) {
+        String title = context.getValue("title");
+        if (title != null && title.trim().length() > AiConversation.TITLE_MAX_LENGTH) {
+            return ValidationErrors.of(messageBundle.formatMessage(
+                    "aiChatFragment.editConversationTitleDialog.titleTooLong", AiConversation.TITLE_MAX_LENGTH));
+        }
+        return ValidationErrors.none();
+    }
+
+    /**
+     * Fired when the title of the displayed conversation changes: a conversation is bound to the fragment,
+     * or the bound conversation is renamed.
+     */
+    public static class TitleChangeEvent extends ComponentEvent<AiChatFragment> {
+
+        @Nullable
+        protected final String title;
+
+        public TitleChangeEvent(AiChatFragment source, @Nullable String title) {
+            super(source, false);
+
+            this.title = title;
+        }
+
+        /**
+         * Returns the new conversation title.
+         *
+         * @return the new title, or {@code null} when no conversation is bound or it has no title
+         */
+        @Nullable
+        public String getTitle() {
+            return title;
+        }
+    }
 }

@@ -42,6 +42,22 @@
                 <textField id="codeField" property="code" readOnly="true"/>
                 <textArea id="descriptionField" property="description" height="9.5em"/>
                 <textField id="sourceField" property="source" readOnly="true"/>
+                <valuePicker id="localizedNamesField" property="localizedNames">
+                    <actions>
+                        <action id="editRoleLocalizedValues" type="sec_editRoleLocalizedValues"/>
+                        <action id="clear" type="value_clear"/>
+                    </actions>
+                </valuePicker>
+                <valuePicker id="localizedDescriptionsField" property="localizedDescriptions">
+                    <actions>
+                        <action id="editRoleLocalizedValues" type="sec_editRoleLocalizedValues">
+                            <properties>
+                                <property name="multiline" value="true"/>
+                            </properties>
+                        </action>
+                        <action id="clear" type="value_clear"/>
+                    </actions>
+                </valuePicker>
             </formLayout>
 
             <tabSheet id="tabSheet" minHeight="30em" alignSelf="STRETCH">

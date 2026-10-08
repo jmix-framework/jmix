@@ -430,6 +430,7 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
         loadResourceString(element, "header", context.getMessageGroup(), column::setHeader);
         loadResourceString(element, "footer", context.getMessageGroup(), column::setFooter);
         loadBoolean(element, "frozen", column::setFrozen);
+        loadBoolean(element, "frozenToEnd", column::setFrozenToEnd);
         loadInteger(element, "flexGrow", column::setFlexGrow);
         loadBoolean(element, "autoWidth", column::setAutoWidth);
         loadBoolean(element, "visible", column::setVisible);

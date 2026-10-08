@@ -1,0 +1,17 @@
+{
+	"properties": {
+		"textValue": {
+			"type": "text",
+			"fields": {
+				"prefix": {
+					"type": "text",
+					"analyzer": "jmix_prefix_analyzer",
+					"search_analyzer": "jmix_prefix_search_analyzer"
+				}
+			}
+		},
+		"_instance_name": {
+			"type": "text"
+		}
+	}
+}

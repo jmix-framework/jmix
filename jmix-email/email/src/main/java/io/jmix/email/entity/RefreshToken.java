@@ -16,8 +16,11 @@
 
 package io.jmix.email.entity;
 
+import io.jmix.core.annotation.Secret;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
+import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.JmixEntity;
+import io.jmix.email.authentication.OAuth2ClientType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.data.annotation.CreatedBy;
@@ -38,6 +41,8 @@ public class RefreshToken {
     @Id
     private UUID id;
 
+    @SystemLevel
+    @Secret
     @Lob
     @Column(name = "TOKEN_VALUE", nullable = false)
     @NotNull
@@ -45,6 +50,9 @@ public class RefreshToken {
 
     @Column(name = "REGISTRATION_ID")
     private String registrationId;
+
+    @Column(name = "CLIENT_TYPE")
+    private String clientType;
 
     @Column(name = "VERSION", nullable = false)
     @Version
@@ -72,6 +80,14 @@ public class RefreshToken {
 
     public void setRegistrationId(String registrationId) {
         this.registrationId = registrationId;
+    }
+
+    public OAuth2ClientType getClientType() {
+        return OAuth2ClientType.fromId(clientType);
+    }
+
+    public void setClientType(OAuth2ClientType clientType) {
+        this.clientType = clientType == null ? null : clientType.getId();
     }
 
     public String getTokenValue() {

@@ -528,6 +528,7 @@ public class JmixUserMenu<USER> extends Composite<JmixMenuBar>
 
             item.setEnabled(action.isEnabled());
             item.setVisible(action.isVisible());
+            item.setTooltipText(action.getDescription());
 
             item.addClickListener(this::onItemClick);
             action.addPropertyChangeListener(this::onActionPropertyChange);
@@ -548,6 +549,9 @@ public class JmixUserMenu<USER> extends Composite<JmixMenuBar>
                     break;
                 case Action.PROP_VISIBLE:
                     setVisible((Boolean) event.getNewValue());
+                    break;
+                case Action.PROP_DESCRIPTION:
+                    item.setTooltipText(action.getDescription());
                     break;
                 default:
             }

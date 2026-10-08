@@ -17,10 +17,6 @@
 package io.jmix.reports.yarg.formatters.impl.docx;
 
 import io.jmix.reports.yarg.formatters.impl.DocxFormatterDelegate;
-import io.jmix.reports.yarg.formatters.impl.docx.TableCollector;
-import io.jmix.reports.yarg.formatters.impl.docx.TableManager;
-import io.jmix.reports.yarg.formatters.impl.docx.TextVisitor;
-import io.jmix.reports.yarg.formatters.impl.docx.TextWrapper;
 import org.docx4j.TraversalUtil;
 import org.docx4j.model.structure.HeaderFooterPolicy;
 import org.docx4j.model.structure.SectionWrapper;
@@ -34,7 +30,7 @@ public class DocumentWrapper {
     protected DocxFormatterDelegate docxFormatter;
     protected WordprocessingMLPackage wordprocessingMLPackage;
     protected MainDocumentPart mainDocumentPart;
-    protected Set<io.jmix.reports.yarg.formatters.impl.docx.TableManager> tables;
+    protected Set<TableManager> tables;
     protected Set<TextWrapper> texts;
 
     public DocumentWrapper(DocxFormatterDelegate docxFormatter, WordprocessingMLPackage wordprocessingMLPackage) {

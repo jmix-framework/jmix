@@ -17,23 +17,27 @@
 package io.jmix.aitools.dataload.validation.validator;
 
 import io.jmix.core.JmixOrder;
+import io.jmix.core.impl.QueryParamValuesManager;
 import io.jmix.aitools.dataload.execution.GeneratedJpqlParameter;
 import io.jmix.aitools.dataload.execution.GeneratedJpqlResult;
 import io.jmix.aitools.dataload.validation.JpqlResultValidator;
 import io.jmix.aitools.dataload.validation.JpqlValidationIssue;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.Ordered;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-import static io.jmix.aitools.dataload.validation.validator.JpqlValidatorSupport.stripStringLiterals;
+import static io.jmix.aitools.dataload.validation.validator.JpqlValidatorSupport.referencedParameters;
 
 /**
  * Checks that the JPQL named parameters and the declared parameters match — flagging both
  * parameters used in the query but missing from the declaration, and declared parameters that the
  * query never uses.
+ * <p>
+ * Also rejects a declared parameter whose value the application supplies ({@code current_user_*},
+ * {@code session_*}, {@code current_locale}): row-level policies refer to those, and a declared value would
+ * take the place of the application's.
  */
 @Component("aitls_ParametersValidator")
 public class ParametersValidator implements JpqlResultValidator, Ordered {
@@ -45,7 +49,12 @@ public class ParametersValidator implements JpqlResultValidator, Ordered {
     public static final String PARAMETER_UNUSED_CODE = "parameter.unusedInJpql";
     public static final String PARAMETER_UNUSED_GUIDANCE = "Remove parameters that are not used in the JPQL text.";
 
-    protected static final Pattern PARAMETER_PATTERN = Pattern.compile(":([A-Za-z_][A-Za-z0-9_]*)");
+    public static final String PARAMETER_RESERVED_CODE = "parameter.reserved";
+    public static final String PARAMETER_RESERVED_GUIDANCE = "The application supplies the value of this parameter:"
+            + " give the parameter another name.";
+
+    @Autowired
+    protected QueryParamValuesManager queryParamValuesManager;
 
     @Override
     public List<JpqlValidationIssue> validate(GeneratedJpqlResult result) {
@@ -56,7 +65,7 @@ public class ParametersValidator implements JpqlResultValidator, Ordered {
 
         List<JpqlValidationIssue> issues = new ArrayList<>();
 
-        Set<String> jpqlParameters = extractParameterNames(jpql);
+        Set<String> jpqlParameters = referencedParameters(jpql);
         Set<String> dtoParameters = new LinkedHashSet<>();
         for (GeneratedJpqlParameter parameter : result.getParameters()) {
             dtoParameters.add(parameter.getName());
@@ -77,21 +86,18 @@ public class ParametersValidator implements JpqlResultValidator, Ordered {
             }
         }
 
+        for (String parameterName : dtoParameters) {
+            if (queryParamValuesManager.supports(parameterName)) {
+                issues.add(new JpqlValidationIssue(PARAMETER_RESERVED_CODE,
+                        "Parameter is reserved: " + parameterName, PARAMETER_RESERVED_GUIDANCE));
+            }
+        }
+
         return issues;
     }
 
     @Override
     public int getOrder() {
         return JmixOrder.HIGHEST_PRECEDENCE + 1200;
-    }
-
-    protected Set<String> extractParameterNames(String jpql) {
-        Set<String> parameterNames = new LinkedHashSet<>();
-        // Strip string literals first: a ':'-prefixed word inside a literal is not a JPQL parameter.
-        Matcher matcher = PARAMETER_PATTERN.matcher(stripStringLiterals(jpql));
-        while (matcher.find()) {
-            parameterNames.add(matcher.group(1));
-        }
-        return parameterNames;
     }
 }

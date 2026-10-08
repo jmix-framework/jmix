@@ -41,4 +41,11 @@ public interface SpreadsheetViewSupport {
      * @return {@code true} if the file was successfully opened, {@code false} otherwise
      */
     boolean open(@Nullable View<?> owner, FileRef fileRef);
+
+    /**
+     * @return whether the current user is allowed to open the spreadsheet viewer view. Report views use it
+     * to hide the "open in spreadsheet" action from users who lack access to that view, so the action is
+     * not offered when activating it would be denied.
+     */
+    boolean isSpreadsheetViewAccessible();
 }

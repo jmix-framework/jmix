@@ -26,6 +26,7 @@ import io.jmix.flowui.component.validation.ValidationErrors;
 import io.jmix.flowui.view.*;
 import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportInputParameter;
+import io.jmix.reports.entity.ReportOutputType;
 import io.jmix.reports.entity.ReportTemplate;
 import io.jmix.reports.exception.MissingDefaultTemplateException;
 import io.jmix.reports.exception.ReportParametersValidationException;
@@ -34,7 +35,7 @@ import io.jmix.reportsflowui.runner.ParametersDialogShowMode;
 import io.jmix.reportsflowui.runner.ReportExecutionPresentationIds;
 import io.jmix.reportsflowui.runner.ReportPresentationRegistry;
 import io.jmix.reportsflowui.runner.UiReportRunner;
-import io.jmix.reportsflowui.view.ReportParameterValidator;
+import io.jmix.reports.runner.ReportInputParameterValidator;
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.jspecify.annotations.Nullable;
@@ -56,7 +57,7 @@ public class InputParametersDialog extends StandardView {
     @Autowired
     protected UiReportRunner uiReportRunner;
     @Autowired
-    protected ReportParameterValidator reportParameterValidator;
+    protected ReportInputParameterValidator reportParameterValidator;
     @Autowired
     protected ViewValidation viewValidation;
     @Autowired
@@ -69,6 +70,7 @@ public class InputParametersDialog extends StandardView {
     protected ReportPresentationRegistry reportPresentationRegistry;
 
     protected String templateCode;
+    protected ReportOutputType outputType;
     protected String outputFileName;
     protected boolean bulkPrint;
     protected Report report;
@@ -82,6 +84,10 @@ public class InputParametersDialog extends StandardView {
 
     public void setTemplateCode(@Nullable String templateCode) {
         this.templateCode = templateCode;
+    }
+
+    public void setOutputType(@Nullable ReportOutputType outputType) {
+        this.outputType = outputType;
     }
 
     public void setOutputFileName(@Nullable String outputFileName) {
@@ -127,6 +133,7 @@ public class InputParametersDialog extends StandardView {
             inputParametersFragment.setInputParameter(inputParameter);
             inputParametersFragment.setParameters(parameters);
             inputParametersFragment.setBulkPrint(bulkPrint);
+            inputParametersFragment.setOutputType(outputType);
             inputParametersFragment.setPresentationId(presentationId);
         }
         inputParametersLayout.add(inputParametersFragment);

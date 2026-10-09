@@ -18,7 +18,7 @@ package io.jmix.search.index.impl;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.jmix.search.SearchProperties;
-import io.jmix.search.index.IndexConfiguration;
+import io.jmix.search.index.*;
 import io.jmix.search.index.mapping.IndexConfigurationManager;
 import io.jmix.search.index.mapping.IndexMappingConfiguration;
 import org.jspecify.annotations.NonNull;
@@ -37,8 +37,8 @@ public class BaseIndexManagerTestImpl extends BaseIndexManager<Object, Object, O
     }
 
     @Override
-    public boolean createIndex(IndexConfiguration indexConfiguration) {
-        return false;
+    protected IndexManipulationResult createIndex(IndexConfiguration indexConfiguration, String indexName) {
+        return IndexManipulationResult.SUCCESS;
     }
 
     @Override

@@ -75,7 +75,10 @@ public class ContributedIndexDefinition {
     }
 
     /**
-     * @return explicit index name, or {@code null} to derive it from the entity name
+     * @return the pattern the index name of this entity is built from, or {@code null} to build it from the
+     * application-wide pattern. The placeholders {@code {entityName}} and {@code {tenantId}} are replaced and
+     * everything else is taken as written, so a value without placeholders is the index name itself. An entity
+     * whose data is stored in a separate index per tenant must have {@code {tenantId}} in its pattern
      */
     @Nullable
     public String getIndexName() {
@@ -114,9 +117,12 @@ public class ContributedIndexDefinition {
         }
 
         /**
-         * Sets an explicit index name. By default, the name is derived from the entity name.
+         * Sets the pattern the index name of this entity is built from. By default, the application-wide pattern
+         * is used.
          *
-         * @param indexName index name, or {@code null} to derive it from the entity name
+         * @param indexName index name pattern, or {@code null} to use the application-wide one. A value without
+         *                  the {@code {entityName}} and {@code {tenantId}} placeholders is the index name itself;
+         *                  an entity stored in a separate index per tenant must have {@code {tenantId}} in it
          * @return builder
          */
         public Builder withIndexName(@Nullable String indexName) {

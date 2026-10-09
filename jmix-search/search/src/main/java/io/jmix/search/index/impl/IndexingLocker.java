@@ -17,6 +17,7 @@
 package io.jmix.search.index.impl;
 
 import io.jmix.search.index.mapping.IndexConfigurationManager;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -35,20 +36,23 @@ public class IndexingLocker {
 
     protected final IndexConfigurationManager indexConfigurationManager;
 
+    /**
+     * Asks the index configurations nothing: both maps fill themselves on first use.
+     * <p>
+     * They used to be prefilled, one lock per indexed entity. That stopped working when the unit of work became
+     * the pair of an entity and a tenant - a prefilled lock is keyed by the entity name alone and no longer
+     * matches what a caller looks up - and it was redundant even before, because every lookup goes through
+     * {@code computeIfAbsent}.
+     * <p>
+     * It was also not free. Asking for the indexed entities builds the index definitions, and a bean constructor
+     * runs before Liquibase has created the schema. An application that has the Dynamic Attributes module could
+     * not start on a database without the attribute tables: resolving the dynamic attributes of an entity reads
+     * them, and here that read happened too early.
+     */
     @Autowired
     public IndexingLocker(IndexConfigurationManager indexConfigurationManager) {
-        Map<String, ReentrantLock> tmpEnqueueAllLocks = new ConcurrentHashMap<>();
-        indexConfigurationManager.getAllIndexedEntities().forEach(
-                entity -> tmpEnqueueAllLocks.put(entity, new ReentrantLock())
-        );
-        this.enqueueAllLocks = tmpEnqueueAllLocks;
-
-        Map<String, ReentrantLock> tmpEnqueueingSessionOperationLocks = new ConcurrentHashMap<>();
-        indexConfigurationManager.getAllIndexedEntities().forEach(
-                entity -> tmpEnqueueingSessionOperationLocks.put(entity, new ReentrantLock())
-        );
-        this.enqueueingSessionOperationLocks = tmpEnqueueingSessionOperationLocks;
-
+        this.enqueueAllLocks = new ConcurrentHashMap<>();
+        this.enqueueingSessionOperationLocks = new ConcurrentHashMap<>();
         this.indexConfigurationManager = indexConfigurationManager;
     }
 
@@ -84,47 +88,73 @@ public class IndexingLocker {
         return reindexingLock.isLocked();
     }
 
-    public boolean tryLockEntityForEnqueueIndexAll(String entityName) {
+    /**
+     * Keeps two bulk enqueueings of the same records from running at once, which would fill the queue with
+     * duplicates and move the session's position twice.
+     * <p>
+     * The records are those of one entity of one tenant, so that work on one tenant does not exclude work on
+     * another. An entity that is not split has a null tenant and is keyed by its name alone, as before.
+     */
+    public boolean tryLockEntityForEnqueueIndexAll(String entityName, @Nullable String tenantId) {
         checkEntityInIndexingScope(entityName);
-        ReentrantLock lock = enqueueAllLocks.computeIfAbsent(entityName, key -> new ReentrantLock());
+        ReentrantLock lock = enqueueAllLocks.computeIfAbsent(sessionKey(entityName, tenantId),
+                key -> new ReentrantLock());
         return lock.tryLock();
     }
 
-    public void unlockEntityForEnqueueIndexAll(String entityName) {
-        checkEntityInIndexingScope(entityName);
-        ReentrantLock lock = enqueueAllLocks.get(entityName);
+    public void unlockEntityForEnqueueIndexAll(String entityName, @Nullable String tenantId) {
+        ReentrantLock lock = enqueueAllLocks.get(sessionKey(entityName, tenantId));
         if (lock != null) {
             lock.unlock();
         }
     }
 
-    public boolean tryLockEnqueueingSession(String entityName) {
-        ReentrantLock lock = acquireEnqueueingSessionLock(entityName);
+    public boolean tryLockEnqueueingSession(String entityName, @Nullable String tenantId) {
+        ReentrantLock lock = acquireEnqueueingSessionLock(entityName, tenantId);
         return lock.tryLock();
     }
 
-    public boolean tryLockEnqueueingSession(String entityName, long timeout, TimeUnit unit) {
-        ReentrantLock lock = acquireEnqueueingSessionLock(entityName);
+    public boolean tryLockEnqueueingSession(String entityName, @Nullable String tenantId,
+                                            long timeout, TimeUnit unit) {
+        ReentrantLock lock = acquireEnqueueingSessionLock(entityName, tenantId);
         try {
             return lock.tryLock(timeout, unit);
         } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
             throw new RuntimeException("Lock of enqueueing session failed", e);
         }
     }
 
-    public void unlockEnqueueingSession(String entityName) {
-        checkEntityInIndexingScope(entityName);
-        ReentrantLock lock = enqueueingSessionOperationLocks.get(entityName);
+    public void unlockEnqueueingSession(String entityName, @Nullable String tenantId) {
+        ReentrantLock lock = enqueueingSessionOperationLocks.get(sessionKey(entityName, tenantId));
         if (lock != null) {
             lock.unlock();
         }
     }
 
-    protected ReentrantLock acquireEnqueueingSessionLock(String entityName) {
-        checkEntityInIndexingScope(entityName);
-        return enqueueingSessionOperationLocks.computeIfAbsent(entityName, key -> new ReentrantLock());
+    /**
+     * Asks nothing about the entity: the caller decides whether it has to be in the indexed set.
+     * <p>
+     * An operation that removes what an entity left behind runs for an entity that is no longer indexed, and it
+     * needs this lock just as much as the operations that create work.
+     */
+    protected ReentrantLock acquireEnqueueingSessionLock(String entityName, @Nullable String tenantId) {
+        return enqueueingSessionOperationLocks.computeIfAbsent(sessionKey(entityName, tenantId),
+                key -> new ReentrantLock());
     }
 
+    /**
+     * An enqueueing session belongs to one entity of one tenant, so operations on the sessions of different
+     * tenants of the same entity have nothing to exclude each other from.
+     */
+    protected String sessionKey(String entityName, @Nullable String tenantId) {
+        return tenantId == null ? entityName : entityName + '/' + tenantId;
+    }
+
+    /**
+     * Guards taking a lock, not releasing it: a release runs in a {@code finally} block, where a throw would leave
+     * the lock held and would replace the exception that is being propagated.
+     */
     protected void checkEntityInIndexingScope(String entityName) {
         if (!indexConfigurationManager.isDirectlyIndexed(entityName)) {
             throw new IllegalArgumentException(String.format("Entity '%s' is not configured for indexing", entityName));

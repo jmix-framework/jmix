@@ -17,14 +17,31 @@
 package io.jmix.search.index.impl;
 
 import io.jmix.core.Id;
+import io.jmix.search.index.IndexConfiguration;
+import io.jmix.search.index.IndexManipulationResult;
+import io.jmix.search.index.IndexOperationResult;
+import io.jmix.search.index.mapping.IndexConfigurationManager;
 import io.jmix.search.index.queue.IndexingQueueManager;
 import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Collection;
 import java.util.List;
 
+import static java.util.Objects.requireNonNull;
+
 @NullMarked
 public class NoopIndexingQueueManager implements IndexingQueueManager {
+
+    protected final IndexConfigurationManager indexConfigurationManager;
+
+    @Autowired
+    protected IndexLayout indexLayout;
+
+    public NoopIndexingQueueManager(IndexConfigurationManager indexConfigurationManager) {
+        this.indexConfigurationManager = indexConfigurationManager;
+    }
 
     @Override
     public int emptyQueue() {
@@ -32,7 +49,7 @@ public class NoopIndexingQueueManager implements IndexingQueueManager {
     }
 
     @Override
-    public int emptyQueue(String entityName) {
+    public int emptyQueue(@Nullable String entityName, @Nullable String tenantId) {
         return 0;
     }
 
@@ -52,6 +69,11 @@ public class NoopIndexingQueueManager implements IndexingQueueManager {
     }
 
     @Override
+    public int enqueueIndexByEntityId(Id<?> entityId, @Nullable String tenantId) {
+        return 0;
+    }
+
+    @Override
     public int enqueueIndexCollectionByEntityIds(Collection<Id<?>> entityIds) {
         return 0;
     }
@@ -62,7 +84,7 @@ public class NoopIndexingQueueManager implements IndexingQueueManager {
     }
 
     @Override
-    public int enqueueIndexAll(String entityName) {
+    public int enqueueIndexAll(@Nullable String entityName, @Nullable String tenantId) {
         return 0;
     }
 
@@ -72,39 +94,77 @@ public class NoopIndexingQueueManager implements IndexingQueueManager {
     }
 
     @Override
-    public void initAsyncEnqueueIndexAll() { }
-
-    @Override
-    public boolean initAsyncEnqueueIndexAll(String entityName) {
-        return false;
+    public List<String> getEntityNamesOfEnqueueingSessions(@Nullable String tenantId) {
+        return List.of();
     }
 
     @Override
-    public void suspendAsyncEnqueueIndexAll() { }
-
-    @Override
-    public boolean suspendAsyncEnqueueIndexAll(String entityName) {
-        return false;
+    public List<IndexOperationResult<IndexManipulationResult>> initAsyncEnqueueIndexAll() {
+        return List.of();
     }
 
     @Override
-    public void resumeAsyncEnqueueIndexAll() { }
-
-    @Override
-    public boolean resumeAsyncEnqueueIndexAll(String entityName) {
-        return false;
+    public List<IndexOperationResult<IndexManipulationResult>> initAsyncEnqueueIndexAll(String entityName) {
+        return createResult(entityName, null);
     }
 
     @Override
-    public void terminateAsyncEnqueueIndexAll() { }
+    public List<IndexOperationResult<IndexManipulationResult>> initAsyncEnqueueIndexAll(@Nullable String entityName, @Nullable String tenantId) {
+        return createResult(entityName, tenantId);
+    }
 
     @Override
-    public boolean terminateAsyncEnqueueIndexAll(String entityName) {
-        return false;
+    public List<IndexOperationResult<IndexManipulationResult>> suspendAsyncEnqueueIndexAll() {
+        return List.of();
+    }
+
+    @Override
+    public List<IndexOperationResult<IndexManipulationResult>> suspendAsyncEnqueueIndexAll(String entityName) {
+        return createResult(entityName, null);
+    }
+
+    @Override
+    public List<IndexOperationResult<IndexManipulationResult>> suspendAsyncEnqueueIndexAll(@Nullable String entityName, @Nullable String tenantId) {
+        return createResult(entityName, tenantId);
+    }
+
+    @Override
+    public List<IndexOperationResult<IndexManipulationResult>> resumeAsyncEnqueueIndexAll() {
+        return List.of();
+    }
+
+    @Override
+    public List<IndexOperationResult<IndexManipulationResult>> resumeAsyncEnqueueIndexAll(String entityName) {
+        return createResult(entityName, null);
+    }
+
+    @Override
+    public List<IndexOperationResult<IndexManipulationResult>> resumeAsyncEnqueueIndexAll(@Nullable String entityName, @Nullable String tenantId) {
+        return createResult(entityName, tenantId);
+    }
+
+    @Override
+    public List<IndexOperationResult<IndexManipulationResult>> terminateAsyncEnqueueIndexAll() {
+        return List.of();
+    }
+
+    @Override
+    public List<IndexOperationResult<IndexManipulationResult>> terminateAsyncEnqueueIndexAll(String entityName) {
+        return createResult(entityName, null);
+    }
+
+    @Override
+    public List<IndexOperationResult<IndexManipulationResult>> terminateAsyncEnqueueIndexAll(@Nullable String entityName, @Nullable String tenantId) {
+        return createResult(entityName, tenantId);
     }
 
     @Override
     public int processNextEnqueueingSession() {
+        return 0;
+    }
+
+    @Override
+    public int processNextEnqueueingSession(@Nullable String tenantId) {
         return 0;
     }
 
@@ -114,12 +174,27 @@ public class NoopIndexingQueueManager implements IndexingQueueManager {
     }
 
     @Override
+    public int processNextEnqueueingSession(@Nullable String tenantId, int batchSize) {
+        return 0;
+    }
+
+    @Override
     public int processEnqueueingSession(String entityName) {
         return 0;
     }
 
     @Override
+    public int processEnqueueingSession(String entityName, @Nullable String tenantId) {
+        return 0;
+    }
+
+    @Override
     public int processEnqueueingSession(String entityName, int batchSize) {
+        return 0;
+    }
+
+    @Override
+    public int processEnqueueingSession(String entityName, @Nullable String tenantId, int batchSize) {
         return 0;
     }
 
@@ -135,6 +210,11 @@ public class NoopIndexingQueueManager implements IndexingQueueManager {
 
     @Override
     public int enqueueDeleteByEntityId(Id<?> entityId) {
+        return 0;
+    }
+
+    @Override
+    public int enqueueDeleteByEntityId(Id<?> entityId, @Nullable String tenantId) {
         return 0;
     }
 
@@ -161,5 +241,33 @@ public class NoopIndexingQueueManager implements IndexingQueueManager {
     @Override
     public int processEntireQueue(int batchSize) {
         return 0;
+    }
+
+    /**
+     * @param entityName entity name, or null for every indexed entity - the interface allows both, and a search
+     *                   that is switched off answers the same way for either
+     */
+    protected List<IndexOperationResult<IndexManipulationResult>> createResult(@Nullable String entityName,
+                                                                               @Nullable String tenantId) {
+        Collection<IndexConfiguration> configurations = entityName == null
+                ? indexConfigurationManager.getAllIndexConfigurations()
+                : List.of(indexConfigurationManager.getIndexConfigurationByEntityName(entityName));
+        return configurations.stream()
+                .flatMap(configuration -> failureRows(configuration, tenantId).stream())
+                .toList();
+    }
+
+    protected List<IndexOperationResult<IndexManipulationResult>> failureRows(IndexConfiguration configuration,
+                                                                              @Nullable String tenantId) {
+        String entityName = configuration.getEntityName();
+        if (tenantId == null) {
+            return indexLayout.allIndexes(configuration).stream()
+                    .map(index -> new IndexOperationResult<>(
+                            entityName, index.indexName(), index.tenantId(), IndexManipulationResult.FAILURE))
+                    .toList();
+        }
+        String indexName = indexLayout.indexName(configuration, tenantId);
+        return List.of(
+                new IndexOperationResult<>(entityName, requireNonNull(indexName), tenantId, IndexManipulationResult.FAILURE));
     }
 }

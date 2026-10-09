@@ -18,17 +18,22 @@ package io.jmix.search.index;
 
 import io.jmix.core.Id;
 import io.jmix.core.IdSerialization;
+import io.jmix.core.Metadata;
 import io.jmix.core.security.Authenticated;
 import io.jmix.search.SearchProperties;
+import io.jmix.search.index.impl.MultitenancyAdapter;
 import io.jmix.search.index.mapping.IndexConfigurationManager;
 import io.jmix.search.index.queue.IndexingQueueManager;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.Nullable;
 import org.springframework.jmx.export.annotation.*;
 import org.springframework.stereotype.Component;
 
+import java.util.Collection;
 import java.util.List;
-import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @ManagedResource(description = "Manages entity indexing for full text search", objectName = "jmix.search:type=EntityIndexing")
 @Component("search_EntityIndexingManagementFacade")
@@ -46,6 +51,10 @@ public class EntityIndexingManagementFacade {
     protected IndexConfigurationManager indexConfigurationManager;
     @Autowired
     protected SearchProperties searchProperties;
+    @Autowired
+    protected MultitenancyAdapter multitenancyAdapter;
+    @Autowired
+    protected Metadata metadata;
 
     @ManagedAttribute(description = "Strategy of index synchronization")
     public String getIndexSchemaManagementStrategy() {
@@ -71,25 +80,27 @@ public class EntityIndexingManagementFacade {
 
     @Authenticated
     @ManagedOperation(description = "Synchronously enqueues all instances of provided indexed entity. " +
-            "Don't use it on a huge amount of data")
+                                    "Don't use it on a huge amount of data")
     @ManagedOperationParameters({
             @ManagedOperationParameter(name = "entityName", description = "Name of entity configured for indexing, e.g. demo_Order")
     })
     public String enqueueIndexAll(String entityName) {
-        InputValidationResult inputValidationResult = validateInputEntity(entityName);
+        String entity = StringUtils.trimToNull(entityName);
+        InputValidationResult inputValidationResult = validateInputEntity(entity);
         if (!inputValidationResult.isValid()) {
             return inputValidationResult.getMessage();
         }
 
-        int amount = indexingQueueManager.enqueueIndexAll(entityName);
-        return String.format("%d instances of entity '%s' have been enqueued", amount, entityName);
+        int amount = indexingQueueManager.enqueueIndexAll(entity);
+        return String.format("%d instances of entity '%s' have been enqueued", amount, entity);
     }
 
     @Authenticated
     @ManagedOperation(description = "Init async enqueueing process for all indexed entities")
     public String initAsyncEnqueueing() {
-        indexingQueueManager.initAsyncEnqueueIndexAll();
-        return "Async enqueueing process has been initialized for all indexed entities";
+        List<IndexOperationResult<IndexManipulationResult>> results =
+                indexingQueueManager.initAsyncEnqueueIndexAll();
+        return formatResults("Init async enqueueing", results);
     }
 
     @Authenticated
@@ -98,20 +109,22 @@ public class EntityIndexingManagementFacade {
             @ManagedOperationParameter(name = "entityName", description = "Name of entity configured for indexing, e.g. demo_Order")
     })
     public String initAsyncEnqueueing(String entityName) {
-        InputValidationResult inputValidationResult = validateInputEntity(entityName);
+        String entity = StringUtils.trimToNull(entityName);
+        InputValidationResult inputValidationResult = validateInputEntity(entity);
         if (!inputValidationResult.isValid()) {
             return inputValidationResult.getMessage();
         }
 
-        indexingQueueManager.initAsyncEnqueueIndexAll(entityName);
-        return String.format("Async enqueueing process has been initialized for entity '%s'", entityName);
+        indexingQueueManager.initAsyncEnqueueIndexAll(entity);
+        return String.format("Async enqueueing process has been initialized for entity '%s'", entity);
     }
 
     @Authenticated
     @ManagedOperation(description = "Suspend async enqueueing process")
     public String suspendAsyncEnqueueing() {
-        indexingQueueManager.suspendAsyncEnqueueIndexAll();
-        return "All async enqueueing processed has been suspended";
+        List<IndexOperationResult<IndexManipulationResult>> results =
+                indexingQueueManager.suspendAsyncEnqueueIndexAll();
+        return formatResults("Suspend async enqueueing", results);
     }
 
     @Authenticated
@@ -120,20 +133,22 @@ public class EntityIndexingManagementFacade {
             @ManagedOperationParameter(name = "entityName", description = "Name of entity configured for indexing, e.g. demo_Order")
     })
     public String suspendAsyncEnqueueing(String entityName) {
-        InputValidationResult inputValidationResult = validateInputEntity(entityName);
+        String entity = StringUtils.trimToNull(entityName);
+        InputValidationResult inputValidationResult = validateInputEntity(entity);
         if (!inputValidationResult.isValid()) {
             return inputValidationResult.getMessage();
         }
 
-        indexingQueueManager.suspendAsyncEnqueueIndexAll(entityName);
-        return String.format("Async enqueueing process has been suspended for entity '%s'", entityName);
+        indexingQueueManager.suspendAsyncEnqueueIndexAll(entity);
+        return String.format("Async enqueueing process has been suspended for entity '%s'", entity);
     }
 
     @Authenticated
     @ManagedOperation(description = "Resume all previously suspended async enqueueing processes")
     public String resumeAsyncEnqueueing() {
-        indexingQueueManager.resumeAsyncEnqueueIndexAll();
-        return "All async enqueueing processed has been resumed";
+        List<IndexOperationResult<IndexManipulationResult>> results =
+                indexingQueueManager.resumeAsyncEnqueueIndexAll();
+        return formatResults("Resume async enqueueing", results);
     }
 
     @Authenticated
@@ -142,20 +157,22 @@ public class EntityIndexingManagementFacade {
             @ManagedOperationParameter(name = "entityName", description = "Name of entity configured for indexing, e.g. demo_Order")
     })
     public String resumeAsyncEnqueueing(String entityName) {
-        InputValidationResult inputValidationResult = validateInputEntity(entityName);
+        String entity = StringUtils.trimToNull(entityName);
+        InputValidationResult inputValidationResult = validateInputEntity(entity);
         if (!inputValidationResult.isValid()) {
             return inputValidationResult.getMessage();
         }
 
-        indexingQueueManager.resumeAsyncEnqueueIndexAll(entityName);
-        return String.format("Async enqueueing process has been resumed for entity '%s'", entityName);
+        indexingQueueManager.resumeAsyncEnqueueIndexAll(entity);
+        return String.format("Async enqueueing process has been resumed for entity '%s'", entity);
     }
 
     @Authenticated
     @ManagedOperation(description = "Terminate async enqueueing process")
     public String terminateAsyncEnqueueing() {
-        indexingQueueManager.terminateAsyncEnqueueIndexAll();
-        return "All async enqueueing processed has been terminated";
+        List<IndexOperationResult<IndexManipulationResult>> results =
+                indexingQueueManager.terminateAsyncEnqueueIndexAll();
+        return formatResults("Terminate async enqueueing", results);
     }
 
     @Authenticated
@@ -164,13 +181,14 @@ public class EntityIndexingManagementFacade {
             @ManagedOperationParameter(name = "entityName", description = "Name of entity configured for indexing, e.g. demo_Order")
     })
     public String terminateAsyncEnqueueing(String entityName) {
-        InputValidationResult inputValidationResult = validateInputEntity(entityName);
+        String entity = StringUtils.trimToNull(entityName);
+        InputValidationResult inputValidationResult = validateInputEntity(entity);
         if (!inputValidationResult.isValid()) {
             return inputValidationResult.getMessage();
         }
 
-        indexingQueueManager.terminateAsyncEnqueueIndexAll(entityName);
-        return String.format("Async enqueueing process has been stopped for entity '%s'", entityName);
+        indexingQueueManager.terminateAsyncEnqueueIndexAll(entity);
+        return String.format("Async enqueueing process has been stopped for entity '%s'", entity);
     }
 
     @Authenticated
@@ -179,13 +197,14 @@ public class EntityIndexingManagementFacade {
             @ManagedOperationParameter(name = "entityName", description = "Name of entity configured for indexing, e.g. demo_Order")
     })
     public String enqueueNextBatch(String entityName) {
-        InputValidationResult inputValidationResult = validateInputEntity(entityName);
+        String entity = StringUtils.trimToNull(entityName);
+        InputValidationResult inputValidationResult = validateInputEntity(entity);
         if (!inputValidationResult.isValid()) {
             return inputValidationResult.getMessage();
         }
 
-        int processed = indexingQueueManager.processEnqueueingSession(entityName);
-        return String.format("Enqueued %d instances of entity '%s'", processed, entityName);
+        int processed = indexingQueueManager.processEnqueueingSession(entity);
+        return String.format("Enqueued %d instances of entity '%s'", processed, entity);
     }
 
     @Authenticated
@@ -202,7 +221,7 @@ public class EntityIndexingManagementFacade {
             @ManagedOperationParameter(name = "id", description = "Id of target entity instance")
     })
     public String indexEntityInstance(String entityName, String id) {
-        String serializedId = entityName + "." + id;
+        String serializedId = StringUtils.trimToNull(entityName) + "." + StringUtils.trimToNull(id);
         Id<?> entityId = idSerialization.stringToId(serializedId);
         IndexResult indexResult = entityIndexer.indexByEntityId(entityId);
 
@@ -227,7 +246,7 @@ public class EntityIndexingManagementFacade {
             @ManagedOperationParameter(name = "id", description = "Id of target entity instance")
     })
     public String enqueueIndexEntityInstance(String entityName, String id) {
-        String serializedId = entityName + "." + id;
+        String serializedId = StringUtils.trimToNull(entityName) + "." + StringUtils.trimToNull(id);
         Id<?> entityId = idSerialization.stringToId(serializedId);
         int enqueued = indexingQueueManager.enqueueIndexByEntityId(entityId);
 
@@ -247,7 +266,7 @@ public class EntityIndexingManagementFacade {
             @ManagedOperationParameter(name = "id", description = "Idd of target entity instance")
     })
     public String deleteEntityInstanceFromIndex(String entityName, String id) {
-        String serializedId = entityName + "." + id;
+        String serializedId = StringUtils.trimToNull(entityName) + "." + StringUtils.trimToNull(id);
         Id<?> entityId = idSerialization.stringToId(serializedId);
         IndexResult indexResult = entityIndexer.deleteByEntityId(entityId);
 
@@ -272,7 +291,7 @@ public class EntityIndexingManagementFacade {
             @ManagedOperationParameter(name = "id", description = "Id of target entity instance")
     })
     public String enqueueDeleteEntityInstanceFromIndex(String entityName, String id) {
-        String serializedId = entityName + "." + id;
+        String serializedId = StringUtils.trimToNull(entityName) + "." + StringUtils.trimToNull(id);
         Id<?> entityId = idSerialization.stringToId(serializedId);
         int enqueued = indexingQueueManager.enqueueDeleteByEntityId(entityId);
 
@@ -286,20 +305,171 @@ public class EntityIndexingManagementFacade {
     }
 
     @Authenticated
+    @ManagedOperation(description = "Init async enqueueing process. Leave a field empty to cover everything: no entity means every "
+                                    + "indexed entity, no tenant means every tenant")
+    @ManagedOperationParameters({
+            @ManagedOperationParameter(name = "entityName", description = "Name of entity configured for indexing, e.g. demo_Order; empty for all"),
+            @ManagedOperationParameter(name = "tenantId", description = "Tenant id; empty for all")
+    })
+    public String initAsyncEnqueueing(String entityName, String tenantId) {
+        return withScope(entityName, tenantId, true,
+                scope -> formatResults("Init async enqueueing", indexingQueueManager.initAsyncEnqueueIndexAll(scope.entityName(), scope.tenantId())));
+    }
+
+    @Authenticated
+    @ManagedOperation(description = "Suspend async enqueueing process. Leave a field empty to cover everything: no entity means every "
+                                    + "indexed entity, no tenant means every tenant")
+    @ManagedOperationParameters({
+            @ManagedOperationParameter(name = "entityName", description = "Name of entity configured for indexing, e.g. demo_Order; empty for all"),
+            @ManagedOperationParameter(name = "tenantId", description = "Tenant id; empty for all")
+    })
+    public String suspendAsyncEnqueueing(String entityName, String tenantId) {
+        return withScope(entityName, tenantId, false,
+                scope -> formatResults("Suspend async enqueueing", indexingQueueManager.suspendAsyncEnqueueIndexAll(scope.entityName(), scope.tenantId())));
+    }
+
+    @Authenticated
+    @ManagedOperation(description = "Resume async enqueueing process. Leave a field empty to cover everything: no entity means every "
+                                    + "indexed entity, no tenant means every tenant")
+    @ManagedOperationParameters({
+            @ManagedOperationParameter(name = "entityName", description = "Name of entity configured for indexing, e.g. demo_Order; empty for all"),
+            @ManagedOperationParameter(name = "tenantId", description = "Tenant id; empty for all")
+    })
+    public String resumeAsyncEnqueueing(String entityName, String tenantId) {
+        return withScope(entityName, tenantId, true,
+                scope -> formatResults("Resume async enqueueing", indexingQueueManager.resumeAsyncEnqueueIndexAll(scope.entityName(), scope.tenantId())));
+    }
+
+    @Authenticated
+    @ManagedOperation(description = "Terminate async enqueueing process. Leave a field empty to cover everything: no entity means every "
+                                    + "indexed entity, no tenant means every tenant")
+    @ManagedOperationParameters({
+            @ManagedOperationParameter(name = "entityName", description = "Name of entity configured for indexing, e.g. demo_Order; empty for all"),
+            @ManagedOperationParameter(name = "tenantId", description = "Tenant id; empty for all")
+    })
+    public String terminateAsyncEnqueueing(String entityName, String tenantId) {
+        return withScope(entityName, tenantId, false, false, scope -> {
+            List<IndexOperationResult<IndexManipulationResult>> results =
+                    indexingQueueManager.terminateAsyncEnqueueIndexAll(scope.entityName(), scope.tenantId());
+            if (scope.entityName() != null && scope.configurations().isEmpty()) {
+                // No configuration means no index to name a row against, so there are no rows to format - but
+                // the sessions were removed, and "no indexes to work with" would read as if nothing happened.
+                return String.format("Terminate async enqueueing: entity '%s' is no longer indexed,"
+                        + " the enqueueing sessions it left behind have been removed", scope.entityName());
+            }
+            return formatResults("Terminate async enqueueing", results);
+        });
+    }
+
+    @Authenticated
+    @ManagedOperation(description = "Async enqueue next batch. Leave a field empty to cover everything: no entity "
+                                    + "means the next available session, no tenant means every tenant")
+    @ManagedOperationParameters({
+            @ManagedOperationParameter(name = "entityName", description = "Name of entity configured for indexing, e.g. demo_Order; empty for the next available session"),
+            @ManagedOperationParameter(name = "tenantId", description = "Tenant id; empty for all")
+    })
+    public String enqueueNextBatch(String entityName, String tenantId) {
+        return withScope(entityName, tenantId, true, scope -> {
+            int processed = scope.entityName() == null
+                    ? indexingQueueManager.processNextEnqueueingSession(scope.tenantId())
+                    : indexingQueueManager.processEnqueueingSession(scope.entityName(), scope.tenantId());
+            // Worded as the operations of the same name are: an administrator moving from the one-field form to
+            // this one is doing the same thing and should read the same sentence.
+            return String.format("Enqueued %d instances", processed);
+        });
+    }
+
+    @Authenticated
+    @ManagedOperation(description = "Entities to be asynchronously enqueued. Leave the field empty for every tenant")
+    @ManagedOperationParameters({
+            @ManagedOperationParameter(name = "tenantId", description = "Tenant id; empty for all")
+    })
+    public List<String> getEntityNamesOfAsyncEnqueueingSessions(String tenantId) {
+        String tenant = StringUtils.trimToNull(tenantId);
+        return tenant == null
+                ? indexingQueueManager.getEntityNamesOfEnqueueingSessions()
+                : indexingQueueManager.getEntityNamesOfEnqueueingSessions(tenant);
+    }
+
+    @Authenticated
+    @ManagedOperation(description = "Validates index schemas. Leave a field empty to cover everything: no entity "
+                                    + "means every indexed entity, no tenant means every tenant")
+    @ManagedOperationParameters({
+            @ManagedOperationParameter(name = "entityName", description = "Name of entity configured for indexing, e.g. demo_Order; empty for all"),
+            @ManagedOperationParameter(name = "tenantId", description = "Tenant id; empty for all")
+    })
+    public String validateIndexes(String entityName, String tenantId) {
+        return withScope(entityName, tenantId, false,
+                scope -> formatResults("Validation", indexManager.validateIndexes(scope.configurations(), scope.tenantId())));
+    }
+
+    @Authenticated
+    @ManagedOperation(description = "Synchronizes index schemas. Leave a field empty to cover everything. "
+                                    + "This may cause deletion of indexes with all their data - depends on schema management strategy")
+    @ManagedOperationParameters({
+            @ManagedOperationParameter(name = "entityName", description = "Name of entity configured for indexing, e.g. demo_Order; empty for all"),
+            @ManagedOperationParameter(name = "tenantId", description = "Tenant id; empty for all")
+    })
+    public String synchronizeIndexSchemas(String entityName, String tenantId) {
+        return withScope(entityName, tenantId, true,
+                scope -> formatResults("Synchronization", indexManager.synchronizeIndexSchemas(scope.configurations(), scope.tenantId())));
+    }
+
+    @Authenticated
+    @ManagedOperation(description = "Drops and creates indexes. Leave a field empty to cover everything. All data of "
+                                    + "the indexes it reaches will be lost")
+    @ManagedOperationParameters({
+            @ManagedOperationParameter(name = "entityName", description = "Name of entity configured for indexing, e.g. demo_Order; empty for all"),
+            @ManagedOperationParameter(name = "tenantId", description = "Tenant id; empty for all")
+    })
+    public String recreateIndexes(String entityName, String tenantId) {
+        return withScope(entityName, tenantId, true,
+                scope -> formatResults("Recreation", indexManager.recreateIndexes(scope.configurations(), scope.tenantId())));
+    }
+
+    @Authenticated
+    @ManagedOperation(description = "Deletes indexes. Leave a field empty to cover everything. All data of the indexes "
+                                    + "it reaches will be lost, and the items the indexing queue held for them are discarded")
+    @ManagedOperationParameters({
+            @ManagedOperationParameter(name = "entityName", description = "Name of entity configured for indexing, e.g. demo_Order; empty for all"),
+            @ManagedOperationParameter(name = "tenantId", description = "Tenant id; empty for all")
+    })
+    public String deleteIndexes(String entityName, String tenantId) {
+        return withScope(entityName, tenantId, false,
+                scope -> formatResults("Deletion", indexManager.deleteIndexes(scope.configurations(), scope.tenantId())));
+    }
+
+    @Authenticated
+    @ManagedOperation(description = "Synchronously enqueues instances for indexing. Leave a field empty to cover "
+                                    + "everything. Don't use it on a huge amount of data")
+    @ManagedOperationParameters({
+            @ManagedOperationParameter(name = "entityName", description = "Name of entity configured for indexing, e.g. demo_Order; empty for all"),
+            @ManagedOperationParameter(name = "tenantId", description = "Tenant id; empty for all")
+    })
+    public String enqueueIndexAll(String entityName, String tenantId) {
+        return withScope(entityName, tenantId, true, scope -> {
+            int amount = indexingQueueManager.enqueueIndexAll(scope.entityName(), scope.tenantId());
+            return String.format("%d instances have been enqueued", amount);
+        });
+    }
+
+    @Authenticated
+    @ManagedOperation(description = "Removes items from Indexing Queue. Leave a field empty to cover everything")
+    @ManagedOperationParameters({
+            @ManagedOperationParameter(name = "entityName", description = "Name of entity configured for indexing, e.g. demo_Order; empty for all"),
+            @ManagedOperationParameter(name = "tenantId", description = "Tenant id; empty for all")
+    })
+    public String emptyIndexingQueue(String entityName, String tenantId) {
+        return withScope(entityName, tenantId, false, false, scope -> {
+            int deleted = indexingQueueManager.emptyQueue(scope.entityName(), scope.tenantId());
+            return String.format("%d items have been removed from Indexing Queue", deleted);
+        });
+    }
+
+    @Authenticated
     @ManagedOperation(description = "Validates schemas of all search indexes defined in application.")
     public String validateIndexes() {
-        Map<IndexConfiguration, IndexValidationStatus> validationResult = indexManager.validateIndexes();
-        StringBuilder sb = new StringBuilder("Validation result:");
-        validationResult.forEach((config, status) -> sb.append(System.lineSeparator()).append("\t")
-                .append(
-                        formatSingleStatusString(
-                                config.getEntityName(),
-                                config.getIndexName(),
-                                status.name()
-                        )
-                )
-        );
-        return sb.toString();
+        return formatResults("Validation", indexManager.validateIndexes());
     }
 
     @Authenticated
@@ -308,74 +478,44 @@ public class EntityIndexingManagementFacade {
             @ManagedOperationParameter(name = "entityName", description = "Name of entity configured for indexing, e.g. demo_Order")
     })
     public String validateIndex(String entityName) {
-        InputValidationResult inputValidationResult = validateInputEntity(entityName);
+        String entity = StringUtils.trimToNull(entityName);
+        InputValidationResult inputValidationResult = validateInputEntity(entity);
         if (!inputValidationResult.isValid()) {
             return inputValidationResult.getMessage();
         }
 
-        IndexConfiguration indexConfiguration = indexConfigurationManager.getIndexConfigurationByEntityName(entityName);
-        IndexValidationStatus status = indexManager.validateIndex(indexConfiguration);
-        return "Validation result: " + formatSingleStatusString(
-                indexConfiguration.getEntityName(),
-                indexConfiguration.getIndexName(),
-                status.name()
-        );
+        IndexConfiguration indexConfiguration = indexConfigurationManager.getIndexConfigurationByEntityName(entity);
+        return formatResults("Validation", indexManager.validateIndexes(List.of(indexConfiguration), null));
     }
 
     @Authenticated
     @ManagedOperation(description = "Synchronizes schemas of all search indexes defined in application. " +
-            "This may cause deletion of indexes with all their data - depends on schema management strategy")
+                                    "This may cause deletion of indexes with all their data - depends on schema management strategy")
     public String synchronizeIndexSchemas() {
-        Map<IndexConfiguration, IndexSynchronizationStatus> synchronizationResult = indexManager.synchronizeIndexSchemas();
-        StringBuilder sb = new StringBuilder("Synchronization result:");
-        synchronizationResult.forEach((config, status) -> sb.append(System.lineSeparator()).append("\t")
-                .append(
-                        formatSingleStatusString(
-                                config.getEntityName(),
-                                config.getIndexName(),
-                                status.name()
-                        )
-                )
-        );
-        return sb.toString();
+        return formatResults("Synchronization", indexManager.synchronizeIndexSchemas());
     }
 
     @Authenticated
     @ManagedOperation(description = "Synchronizes schema of index related to provided entity. " +
-            "This may cause deletion of this index with all data - depends on schema management strategy")
+                                    "This may cause deletion of this index with all data - depends on schema management strategy")
     @ManagedOperationParameters({
             @ManagedOperationParameter(name = "entityName", description = "Name of entity configured for indexing, e.g. demo_Order")
     })
     public String synchronizeIndexSchema(String entityName) {
-        InputValidationResult inputValidationResult = validateInputEntity(entityName);
+        String entity = StringUtils.trimToNull(entityName);
+        InputValidationResult inputValidationResult = validateInputEntity(entity);
         if (!inputValidationResult.isValid()) {
             return inputValidationResult.getMessage();
         }
 
-        IndexConfiguration indexConfiguration = indexConfigurationManager.getIndexConfigurationByEntityName(entityName);
-        IndexSynchronizationStatus status = indexManager.synchronizeIndexSchema(indexConfiguration);
-        return "Synchronization result: " + formatSingleStatusString(
-                indexConfiguration.getEntityName(),
-                indexConfiguration.getIndexName(),
-                status.name()
-        );
+        IndexConfiguration indexConfiguration = indexConfigurationManager.getIndexConfigurationByEntityName(entity);
+        return formatResults("Synchronization", indexManager.synchronizeIndexSchemas(List.of(indexConfiguration), null));
     }
 
     @Authenticated
     @ManagedOperation(description = "Drops and creates all search indexes defined in application. All data will be lost.")
     public String recreateIndexes() {
-        Map<IndexConfiguration, Boolean> recreationResult = indexManager.recreateIndexes();
-        StringBuilder sb = new StringBuilder("Recreation result:");
-        recreationResult.forEach((config, created) -> sb.append(System.lineSeparator()).append("\t")
-                .append(
-                        formatSingleStatusString(
-                                config.getEntityName(),
-                                config.getIndexName(),
-                                created ? "SUCCESS" : "FAILURE"
-                        )
-                )
-        );
-        return sb.toString();
+        return formatResults("Recreation", indexManager.recreateIndexes());
     }
 
     @Authenticated
@@ -384,18 +524,14 @@ public class EntityIndexingManagementFacade {
             @ManagedOperationParameter(name = "entityName", description = "Name of entity configured for indexing, e.g. demo_Order")
     })
     public String recreateIndex(String entityName) {
-        InputValidationResult inputValidationResult = validateInputEntity(entityName);
+        String entity = StringUtils.trimToNull(entityName);
+        InputValidationResult inputValidationResult = validateInputEntity(entity);
         if (!inputValidationResult.isValid()) {
             return inputValidationResult.getMessage();
         }
 
-        IndexConfiguration indexConfiguration = indexConfigurationManager.getIndexConfigurationByEntityName(entityName);
-        boolean created = indexManager.recreateIndex(indexConfiguration);
-        return "Recreation result: " + formatSingleStatusString(
-                indexConfiguration.getEntityName(),
-                indexConfiguration.getIndexName(),
-                created ? "SUCCESS" : "FAILURE"
-        );
+        IndexConfiguration indexConfiguration = indexConfigurationManager.getIndexConfigurationByEntityName(entity);
+        return formatResults("Recreation", indexManager.recreateIndexes(List.of(indexConfiguration), null));
     }
 
     @Authenticated
@@ -425,26 +561,91 @@ public class EntityIndexingManagementFacade {
             @ManagedOperationParameter(name = "entityName", description = "Name of entity configured for indexing, e.g. demo_Order")
     })
     public String emptyIndexingQueue(String entityName) {
-        InputValidationResult inputValidationResult = validateInputEntity(entityName);
+        String entity = StringUtils.trimToNull(entityName);
+        InputValidationResult inputValidationResult = validateInputEntity(entity);
         if (!inputValidationResult.isValid()) {
             return inputValidationResult.getMessage();
         }
 
-        int deleted = indexingQueueManager.emptyQueue(entityName);
-        return String.format("%d items for entity '%s' have been removed from Indexing Queue", deleted, entityName);
+        int deleted = indexingQueueManager.emptyQueue(entity);
+        return String.format("%d items for entity '%s' have been removed from Indexing Queue", deleted, entity);
     }
 
     @Authenticated
     @ManagedOperation(description = "Recalculates all index configurations, including the dynamic attributes analysis, and synchronizes index schemas." +
-            "Synchronizes schemas of all search indexes defined in application. " +
-            "This may cause deletion of indexes with all their data - depends on schema management strategy")
+                                    "Synchronizes schemas of all search indexes defined in application. " +
+                                    "This may cause deletion of indexes with all their data - depends on schema management strategy")
     public String synchronizeIndexSchemasWithIndexDefinitionsRefresh() {
         indexConfigurationManager.refreshIndexDefinitions();
         return synchronizeIndexSchemas();
     }
 
-    protected String formatSingleStatusString(String entityName, String indexName, String status) {
-        return String.format("Entity=%s, Index=%s, Status=%s", entityName, indexName, status);
+    /**
+     * Resolves what the two text fields of a scoped operation mean and runs the operation, or reports why it cannot
+     * run. An empty field is "everything": no entity means every indexed entity, no tenant means every tenant.
+     *
+     * @param tenantMustExist whether the operation creates or schedules something, and so needs a tenant that
+     *                        exists. Operations that clean up or report take a tenant that is already gone:
+     *                        removing what a deleted tenant left behind is one of their jobs
+     */
+    protected String withScope(@Nullable String entityName, @Nullable String tenantId, boolean tenantMustExist,
+                               Function<Scope, String> operation) {
+        return withScope(entityName, tenantId, tenantMustExist, true, operation);
+    }
+
+    /**
+     * @param entityMustBeIndexed whether the operation needs an entity that is still in the indexed set. Only the
+     *                            operations that clear away what an entity left behind may say no: such an entity
+     *                            has no index configuration, so an operation that works through one has nothing
+     *                            to do, while the leftovers would become unreachable if this refused
+     */
+    protected String withScope(@Nullable String entityName, @Nullable String tenantId, boolean tenantMustExist,
+                               boolean entityMustBeIndexed, Function<Scope, String> operation) {
+        String entity = StringUtils.trimToNull(entityName);
+        String tenant = StringUtils.trimToNull(tenantId);
+
+        if (entity != null) {
+            InputValidationResult entityValidation = validateInputEntity(entity);
+            if (!entityValidation.isValid()) {
+                if (entityMustBeIndexed || metadata.findClass(entity) == null) {
+                    return entityValidation.getMessage();
+                }
+                return operation.apply(new Scope(entity, tenant, List.of()));
+            }
+        }
+        if (tenant != null && tenantMustExist && !multitenancyAdapter.getAvailableTenants().contains(tenant)) {
+            return String.format("Tenant '%s' does not exist", tenant);
+        }
+
+        Collection<IndexConfiguration> configurations = entity == null
+                ? indexConfigurationManager.getAllIndexConfigurations()
+                : List.of(indexConfigurationManager.getIndexConfigurationByEntityName(entity));
+        return operation.apply(new Scope(entity, tenant, configurations));
+    }
+
+    /**
+     * The scope of a management operation: the entities it covers and the tenant it is limited to, both already
+     * resolved from what was typed into the console.
+     */
+    protected record Scope(@Nullable String entityName,
+                           @Nullable String tenantId,
+                           Collection<IndexConfiguration> configurations) {
+    }
+
+    protected static <RT extends AtomicIndexOperationResult> String formatResults(
+            String operationName,
+            List<IndexOperationResult<RT>> results) {
+        if (results.isEmpty()) {
+            return operationName + " result: no indexes to work with";
+        }
+        return results.stream()
+                .map(r -> String.format("Entity=%s, Index=%s, Tenant=%s, Status=%s",
+                        r.entityName(),
+                        r.indexName(),
+                        r.tenantId() == null ? "-" : r.tenantId(),
+                        r.result()))
+                .collect(Collectors.joining(System.lineSeparator() + "\t",
+                        operationName + " result:" + System.lineSeparator() + "\t", ""));
     }
 
     protected InputValidationResult validateInputEntity(String entityName) {

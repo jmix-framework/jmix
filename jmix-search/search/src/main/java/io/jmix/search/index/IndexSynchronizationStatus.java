@@ -16,11 +16,16 @@
 
 package io.jmix.search.index;
 
-public enum IndexSynchronizationStatus {
+public enum IndexSynchronizationStatus implements AtomicIndexOperationResult {
     MISSING,
     IRRELEVANT,
     CREATED,
     RECREATED,
     UPDATED,
-    ACTUAL
+    ACTUAL;
+
+    @Override
+    public boolean isSuccess() {
+        return this == ACTUAL || this == CREATED || this == RECREATED || this == UPDATED;
+    }
 }

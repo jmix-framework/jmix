@@ -17,11 +17,16 @@
 package io.jmix.search.index.queue.impl;
 
 import io.jmix.core.DataManager;
+import io.jmix.core.FluentLoader;
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.entity.KeyValueEntity;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
+import io.jmix.core.common.util.Preconditions;
+import io.jmix.search.index.*;
+import io.jmix.search.index.impl.IndexLayout;
+import io.jmix.search.index.impl.MultitenancyAdapter;
 import io.jmix.search.index.impl.IndexingLocker;
 import io.jmix.search.index.mapping.IndexConfigurationManager;
 import io.jmix.search.index.queue.entity.EnqueueingSession;
@@ -32,9 +37,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import org.jspecify.annotations.Nullable;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
+import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
 @NullMarked
@@ -53,17 +60,41 @@ public class EnqueueingSessionManager {
     protected IndexConfigurationManager indexConfigurationManager;
     @Autowired
     protected IndexingLocker locker;
+    @Autowired
+    protected MultitenancyAdapter multitenancyAdapter;
+
+    @Autowired
+    protected IndexLayout indexLayout;
 
     /**
      * Initializes session for provided entity.
      * Existing session will be removed and created again.
      *
      * @param entityName entity name
-     * @return true if operation was successfully performed, false otherwise
+     * @return tenantless or tenant-specific result of session initialization
      */
-    public boolean initSession(String entityName) {
-        return executeManagementAction(entityName, 10000, () -> {
-            EnqueueingSession existingSession = getSession(entityName);
+    public List<IndexOperationResult<IndexManipulationResult>> initSession(String entityName) {
+        return applyForAllTenantsOrTenantless(entityName, this::initSessionInternal);
+    }
+
+    /**
+     * Initializes session for provided entity and tenant.
+     * Existing session will be removed and created again.
+     *
+     * @param entityName entity name
+     * @param tenantId   tenant id
+     * @return result of session initialization, one row per affected index
+     * @throws IllegalArgumentException if the entity is not tenant-aware
+     * @throws IllegalStateException    if multitenancy is not available
+     */
+    public List<IndexOperationResult<IndexManipulationResult>> initSession(String entityName, @Nullable String tenantId) {
+        IndexManipulationResult result = initSessionInternal(entityName, tenantId);
+        return toResult(entityName, tenantId, result);
+    }
+
+    protected IndexManipulationResult initSessionInternal(String entityName, @Nullable String tenantId) {
+        return executeManagementAction(entityName, tenantId, 10000, () -> {
+            EnqueueingSession existingSession = getSession(entityName, tenantId);
             if (existingSession != null) {
                 dataManager.remove(existingSession);
             }
@@ -74,12 +105,14 @@ public class EnqueueingSessionManager {
             MetaProperty orderingProperty = resolveOrderingProperty(entityClass);
 
             effectiveSession.setEntityName(entityName);
+            effectiveSession.setTenantId(tenantId);
             effectiveSession.setStatus(EnqueueingSessionStatus.ACTIVE);
             effectiveSession.setOrderingProperty(orderingProperty.getName());
             effectiveSession.setLastProcessedValue(null);
 
             dataManager.save(effectiveSession);
-            return true;
+
+            return IndexManipulationResult.SUCCESS;
         });
     }
 
@@ -89,8 +122,27 @@ public class EnqueueingSessionManager {
      * @return list of entity names
      */
     public List<String> loadEntityNamesOfSessions() {
-        String queryString = "select e.entityName from search_EnqueueingSession e";
-        List<KeyValueEntity> loadedValues = dataManager.loadValues(queryString).properties("entityName").list();
+        String queryString = "select distinct e.entityName from search_EnqueueingSession e";
+        List<KeyValueEntity> loadedValues = dataManager.loadValues(queryString)
+                .properties("entityName")
+                .list();
+        return loadedValues.stream()
+                .map(v -> (String) v.getValue("entityName"))
+                .collect(Collectors.toList());
+    }
+
+    public List<String> loadEntityNamesOfSessions(@Nullable String tenantId) {
+        String queryString = "select distinct e.entityName from search_EnqueueingSession e";
+        if (tenantId == null) {
+            queryString += " where e.tenantId is null";
+        } else {
+            queryString += " where e.tenantId = :tenantId";
+        }
+        var valuesLoader = dataManager.loadValues(queryString).properties("entityName");
+        if (tenantId != null) {
+            valuesLoader.parameter("tenantId", tenantId);
+        }
+        List<KeyValueEntity> loadedValues = valuesLoader.list();
         return loadedValues.stream().map(v -> (String) v.getValue("entityName")).collect(Collectors.toList());
     }
 
@@ -98,19 +150,38 @@ public class EnqueueingSessionManager {
      * Prevents session from being executed.
      *
      * @param entityName entity name
-     * @return true if operation was successfully performed, false otherwise
+     * @return tenantless or tenant-specific result of session suspension
      */
-    public boolean suspendSession(String entityName) {
-        return executeManagementAction(entityName, 10000, () -> {
-            EnqueueingSession session = getSession(entityName);
+    public List<IndexOperationResult<IndexManipulationResult>> suspendSession(String entityName) {
+        return applyForAllTenantsOrTenantless(entityName, this::suspendSessionInternal);
+    }
+
+    /**
+     * Prevents session from being executed for provided entity and tenant.
+     *
+     * @param entityName entity name
+     * @param tenantId   tenant id
+     * @return result of session suspension, one row per affected index
+     * @throws IllegalArgumentException if the entity is not tenant-aware
+     * @throws IllegalStateException    if multitenancy is not available
+     */
+    public List<IndexOperationResult<IndexManipulationResult>> suspendSession(String entityName,
+                                                                           @Nullable String tenantId) {
+        IndexManipulationResult result = suspendSessionInternal(entityName, tenantId);
+        return toResult(entityName, tenantId, result);
+    }
+
+    protected IndexManipulationResult suspendSessionInternal(String entityName, @Nullable String tenantId) {
+        return executeManagementAction(entityName, tenantId, 10000, () -> {
+            EnqueueingSession session = getSession(entityName, tenantId);
             if (session != null) {
                 if (EnqueueingSessionStatus.ACTIVE.equals(session.getStatus())) {
                     session.setStatus(EnqueueingSessionStatus.SUSPENDED);
                     dataManager.save(session);
                 }
-                return true;
+                return IndexManipulationResult.SUCCESS;
             }
-            return false;
+            return IndexManipulationResult.FAILURE;
         });
     }
 
@@ -118,19 +189,38 @@ public class EnqueueingSessionManager {
      * Resumes previously suspended session.
      *
      * @param entityName entity name
-     * @return true if operation was successfully performed, false otherwise
+     * @return tenantless or tenant-specific result of session resumption
      */
-    public boolean resumeSession(String entityName) {
-        return executeManagementAction(entityName, 10000, () -> {
-            EnqueueingSession session = getSession(entityName);
+    public List<IndexOperationResult<IndexManipulationResult>> resumeSession(String entityName) {
+        return applyForAllTenantsOrTenantless(entityName, this::resumeSessionInternal);
+    }
+
+    /**
+     * Resumes previously suspended session for provided entity and tenant.
+     *
+     * @param entityName entity name
+     * @param tenantId   tenant id
+     * @return result of session resumption, one row per affected index
+     * @throws IllegalArgumentException if the entity is not tenant-aware
+     * @throws IllegalStateException    if multitenancy is not available
+     */
+    public List<IndexOperationResult<IndexManipulationResult>> resumeSession(String entityName,
+                                                                           @Nullable String tenantId) {
+        IndexManipulationResult result = resumeSessionInternal(entityName, tenantId);
+        return toResult(entityName, tenantId, result);
+    }
+
+    protected IndexManipulationResult resumeSessionInternal(String entityName, @Nullable String tenantId) {
+        return executeManagementAction(entityName, tenantId, 10000, () -> {
+            EnqueueingSession session = getSession(entityName, tenantId);
             if (session != null) {
                 if (EnqueueingSessionStatus.SUSPENDED.equals(session.getStatus())) {
                     session.setStatus(EnqueueingSessionStatus.ACTIVE);
                     dataManager.save(session);
                 }
-                return true;
+                return IndexManipulationResult.SUCCESS;
             }
-            return false;
+            return IndexManipulationResult.FAILURE;
         });
     }
 
@@ -138,31 +228,55 @@ public class EnqueueingSessionManager {
      * Removes provided session.
      *
      * @param session session
-     * @return true if operation was successfully performed, false otherwise
+     * @return result of session removal, one row per affected index
      */
-    public boolean removeSession(EnqueueingSession session) {
+    public List<IndexOperationResult<IndexManipulationResult>> removeSession(EnqueueingSession session) {
         String entityName = session.getEntityName();
-        return executeManagementAction(entityName, 10000, () -> {
+        IndexManipulationResult result = executeManagementAction(entityName, session.getTenantId(), 10000, () -> {
             Optional<EnqueueingSession> currentSessionOpt = reloadSession(session);
             currentSessionOpt.ifPresent(currentSession -> dataManager.remove(currentSession));
-            return true;
-        });
+            return IndexManipulationResult.SUCCESS;
+        }, false);
+        return toResult(entityName, session.getTenantId(), result);
     }
 
     /**
      * Removes session by provided entity name.
      *
      * @param entityName entity name
-     * @return true if operation was successfully performed, false otherwise
+     * @return tenantless or tenant-specific result of session removal
      */
-    public boolean removeSession(String entityName) {
-        return executeManagementAction(entityName, 10000, () -> {
-            EnqueueingSession session = getSession(entityName);
+    public List<IndexOperationResult<IndexManipulationResult>> removeSession(String entityName) {
+        return applyForAllTenantsOrTenantless(entityName, this::removeSessionInternal);
+    }
+
+    /**
+     * Removes session by provided entity name and tenant.
+     *
+     * @param entityName entity name
+     * @param tenantId   tenant id
+     * @return result of session removal, one row per affected index
+     * @throws IllegalArgumentException if the entity is not tenant-aware
+     * @throws IllegalStateException    if multitenancy is not available
+     */
+    public List<IndexOperationResult<IndexManipulationResult>> removeSession(String entityName,
+                                                                           @Nullable String tenantId) {
+        IndexManipulationResult result = removeSessionInternal(entityName, tenantId);
+        return toResult(entityName, tenantId, result);
+    }
+
+    /**
+     * Removing a session is how an entity that left the indexed set gets its leftovers cleared, so it does not
+     * demand that the entity still be indexed.
+     */
+    protected IndexManipulationResult removeSessionInternal(String entityName, @Nullable String tenantId) {
+        return executeManagementAction(entityName, tenantId, 10000, () -> {
+            EnqueueingSession session = loadEnqueueingSessionEntityByEntityName(entityName, tenantId).orElse(null);
             if (session != null) {
                 dataManager.remove(session);
             }
-            return true;
-        });
+            return IndexManipulationResult.SUCCESS;
+        }, false);
     }
 
     /**
@@ -173,8 +287,24 @@ public class EnqueueingSessionManager {
      */
     @Nullable
     public EnqueueingSession getSession(String entityName) {
+        if (!indexConfigurationManager.isDirectlyIndexed(entityName)) {
+            throw new IllegalArgumentException(
+                    String.format("Unable to get enqueuing session for non-indexed entity '%s'", entityName)
+            );
+        }
+        if (indexLayout.isSplitByTenants(indexConfigurationManager.getIndexConfigurationByEntityName(entityName))) {
+            throw new IllegalArgumentException(
+                    String.format("Unable to get enqueuing session for tenant-aware entity '%s' without tenant id", entityName)
+            );
+        }
+        return getSession(entityName, null);
+    }
+
+    @Nullable
+    public EnqueueingSession getSession(String entityName, @Nullable String tenantId) {
         if (indexConfigurationManager.isDirectlyIndexed(entityName)) {
-            Optional<EnqueueingSession> enqueueingSessionEntityOpt = loadEnqueueingSessionEntityByEntityName(entityName);
+            validateTenantId(entityName, tenantId);
+            Optional<EnqueueingSession> enqueueingSessionEntityOpt = loadEnqueueingSessionEntityByEntityName(entityName, tenantId);
             return enqueueingSessionEntityOpt.orElse(null);
         } else {
             throw new IllegalArgumentException(
@@ -190,10 +320,52 @@ public class EnqueueingSessionManager {
      */
     @Nullable
     public EnqueueingSession getNextActiveSession() {
+        String query = "WHERE e.status = :status ORDER BY e.createdDate ASC";
         Optional<EnqueueingSession> session = dataManager.load(EnqueueingSession.class)
-                .query("WHERE e.status = :status ORDER BY e.createdDate ASC")
+                .query(query)
                 .parameter("status", EnqueueingSessionStatus.ACTIVE)
                 .optional();
+        return session.orElse(null);
+    }
+
+    /**
+     * Gets the next active session of the provided entity, whatever tenant it belongs to.
+     * <p>
+     * A session belongs to one entity of one tenant, so an entity split by tenants has a session per tenant. An
+     * operation addressed to the entity alone covers all of them and takes them one at a time, oldest first.
+     *
+     * @param entityName entity name
+     * @return some active session of that entity, or null if it has none
+     */
+    @Nullable
+    public EnqueueingSession getNextActiveSessionOfEntity(String entityName) {
+        String query = "WHERE e.status = :status AND e.entityName = :entityName ORDER BY e.createdDate ASC";
+        return dataManager.load(EnqueueingSession.class)
+                .query(query)
+                .parameter("status", EnqueueingSessionStatus.ACTIVE)
+                .parameter("entityName", entityName)
+                .optional()
+                .orElse(null);
+    }
+
+    @Nullable
+    public EnqueueingSession getNextActiveSession(@Nullable String tenantId) {
+        validateTenantId(null, tenantId);
+        String query = "WHERE e.status = :status";
+        if (tenantId == null) {
+            query += " AND e.tenantId is null";
+        } else {
+            query += " AND e.tenantId = :tenantId";
+        }
+        query += " ORDER BY e.createdDate ASC";
+
+        FluentLoader.ByQuery<EnqueueingSession> loader = dataManager.load(EnqueueingSession.class)
+                .query(query)
+                .parameter("status", EnqueueingSessionStatus.ACTIVE);
+        if (tenantId != null) {
+            loader.parameter("tenantId", tenantId);
+        }
+        Optional<EnqueueingSession> session = loader.optional();
         return session.orElse(null);
     }
 
@@ -205,10 +377,10 @@ public class EnqueueingSessionManager {
      */
     public void updateOrderingValue(EnqueueingSession session, @Nullable Object lastOrderingValue) {
         String entityName = session.getEntityName();
-        executeManagementAction(entityName, 10000, () -> {
+        executeManagementAction(entityName, session.getTenantId(), 10000, () -> {
             EnqueueingSession currentSession = reloadSession(session).orElse(null);
             if (currentSession == null) {
-                return false;
+                return IndexManipulationResult.FAILURE;
             }
 
             String rawOrderingValue;
@@ -220,7 +392,7 @@ public class EnqueueingSessionManager {
 
             currentSession.setLastProcessedValue(rawOrderingValue);
             dataManager.save(currentSession);
-            return true;
+            return IndexManipulationResult.SUCCESS;
         });
     }
 
@@ -228,9 +400,15 @@ public class EnqueueingSessionManager {
         return dataManager.load(EnqueueingSession.class).id(session.getId()).optional();
     }
 
-    protected Optional<EnqueueingSession> loadEnqueueingSessionEntityByEntityName(String entityName) {
+    protected Optional<EnqueueingSession> loadEnqueueingSessionEntityByEntityName(String entityName, @Nullable String tenantId) {
+        if (tenantId == null) {
+            return dataManager.load(EnqueueingSession.class)
+                    .query("where e.entityName = ?1 and e.tenantId is null", entityName)
+                    .optional();
+        }
         return dataManager.load(EnqueueingSession.class)
-                .query("where e.entityName = ?1", entityName).optional();
+                .query("where e.entityName = ?1 and e.tenantId = ?2", entityName, tenantId)
+                .optional();
     }
 
     protected MetaProperty resolveOrderingProperty(MetaClass entityClass) {
@@ -251,19 +429,36 @@ public class EnqueueingSessionManager {
         return primaryKeyProperty;
     }
 
-    protected boolean executeManagementAction(String entityName, int lockTimeoutMs, SessionManagementAction action) {
-        if (indexConfigurationManager.isDirectlyIndexed(entityName)) {
-            log.debug("Try to lock enqueueing session for entity '{}'", entityName);
-            if (!locker.tryLockEnqueueingSession(entityName, lockTimeoutMs, TimeUnit.MILLISECONDS)) {
-                log.info("Unable to lock enqueuing session for entity '{}': session is locked", entityName);
-                return false;
+    protected IndexManipulationResult executeManagementAction(String entityName, @Nullable String tenantId, int lockTimeoutMs, SessionManagementAction action) {
+        return executeManagementAction(entityName, tenantId, lockTimeoutMs, action, true);
+    }
+
+    /**
+     * Runs an action on the session of one entity and tenant, under the lock of that session.
+     *
+     * @param entityMustBeIndexed whether the entity has to be in the indexed set. An operation that creates or
+     *                            resumes work needs it; an operation that removes what an entity left behind is
+     *                            refused by it - and removing a session of an entity that is no longer indexed is
+     *                            the only way such a session can ever be got rid of
+     */
+    protected IndexManipulationResult executeManagementAction(String entityName, @Nullable String tenantId,
+                                                              int lockTimeoutMs, SessionManagementAction action,
+                                                              boolean entityMustBeIndexed) {
+        Preconditions.checkNotEmptyString(entityName);
+        validateTenantId(entityName, tenantId);
+        if (!entityMustBeIndexed || indexConfigurationManager.isDirectlyIndexed(entityName)) {
+            log.debug("Try to lock enqueueing session for entity '{}' and tenant '{}'", entityName, tenantId);
+            if (!locker.tryLockEnqueueingSession(entityName, tenantId, lockTimeoutMs, TimeUnit.MILLISECONDS)) {
+                log.info("Unable to lock enqueuing session for entity '{}' and tenant '{}': session is locked",
+                        entityName, tenantId);
+                return IndexManipulationResult.FAILURE;
             }
 
             try {
                 return action.execute();
             } finally {
-                locker.unlockEnqueueingSession(entityName);
-                log.debug("Unlock enqueueing session for entity '{}'", entityName);
+                locker.unlockEnqueueingSession(entityName, tenantId);
+                log.debug("Unlock enqueueing session for entity '{}' and tenant '{}'", entityName, tenantId);
             }
         } else {
             throw new IllegalArgumentException(
@@ -272,13 +467,99 @@ public class EnqueueingSessionManager {
         }
     }
 
+    protected void validateTenantId(@Nullable String entityName, @Nullable String tenantId) {
+        if (tenantId == null) {
+            return;
+        }
+        Preconditions.checkNotEmptyString(tenantId);
+        if (entityName != null && !indexConfigurationManager.isDirectlyIndexed(entityName)) {
+            // An entity that left the indexed set has no configuration to ask about the split. Its leftovers are
+            // addressed by the tenant they were written with, and refusing here would make them unreachable.
+            return;
+        }
+        if (entityName == null) {
+            // There is no configuration to ask, so the only thing that can be checked is the add-on itself.
+            if (!multitenancyAdapter.isMultitenancyActive()) {
+                throw new IllegalStateException("Multitenancy is not available");
+            }
+            return;
+        }
+        if (!indexLayout.isSplitByTenants(indexConfigurationManager.getIndexConfigurationByEntityName(entityName))) {
+            throw new IllegalArgumentException(
+                    String.format("Index of entity '%s' is not split by tenants", entityName)
+            );
+        }
+    }
+
     protected String convertOrderingValueToString(Object orderingValue) {
         return orderingValue.toString();
+    }
+
+    protected List<IndexOperationResult<IndexManipulationResult>> applyForAllTenantsOrTenantless(
+            String entityName,
+            BiFunction<String, String, IndexManipulationResult> action) {
+        IndexConfiguration config = indexConfigurationManager.getIndexConfigurationByEntityNameOpt(entityName)
+                .orElse(null);
+        if (config == null) {
+            // The entity has left the indexed set, so it has no indexes to enumerate. Its sessions are still in
+            // the table, and they are what the operation has to reach: the tenants come from the rows themselves.
+            tenantsOfSessions(entityName).forEach(tenantId -> action.apply(entityName, tenantId));
+            return List.of();
+        }
+        return indexLayout.allIndexes(config)
+                .stream()
+                .map(index -> new IndexOperationResult<>(
+                        entityName,
+                        index.indexName(),
+                        index.tenantId(),
+                        action.apply(entityName, index.tenantId())))
+                .toList();
+    }
+
+    /**
+     * @return the tenant of every session of the entity, a null element for a session that carries none
+     */
+    protected List<String> tenantsOfSessions(String entityName) {
+        return dataManager.load(EnqueueingSession.class)
+                .query("where e.entityName = ?1", entityName)
+                .list()
+                .stream()
+                .map(EnqueueingSession::getTenantId)
+                .toList();
+    }
+
+    /**
+     * Turns the outcome of an operation on one session into the row that names the index it was performed on.
+     * <p>
+     * Two kinds of session have no index to be named against: one of a split entity that carries no tenant - a
+     * leftover of an application that was upgraded, or of a tenant that has been removed - and one of an entity
+     * that is no longer indexed at all. The operation itself is still performed, and the session is gone or
+     * suspended as asked; what cannot be produced is the row, so none is returned rather than one naming an
+     * index that does not exist.
+     */
+    protected List<IndexOperationResult<IndexManipulationResult>> toResult(String entityName,
+                                                                     @Nullable String tenantId,
+                                                                     IndexManipulationResult result) {
+        IndexConfiguration config = indexConfigurationManager.getIndexConfigurationByEntityNameOpt(entityName)
+                .orElse(null);
+        if (config == null) {
+            log.warn("Entity '{}' is no longer indexed: the operation is done, but there is no index to report it"
+                    + " against", entityName);
+            return List.of();
+        }
+        String indexName = indexLayout.indexName(config, tenantId);
+        if (indexName == null) {
+            log.warn("Session of entity '{}' carries no tenant while the entity is split by tenants: the "
+                    + "operation is done, but there is no index to report it against", entityName);
+            return List.of();
+        }
+        return List.of(new IndexOperationResult<>(entityName, indexName, tenantId, result));
     }
 
     @NullMarked
     protected interface SessionManagementAction {
 
-        boolean execute();
+        IndexManipulationResult execute();
     }
+
 }

@@ -69,26 +69,25 @@ public class SearchRequestContext<T> {
     }
 
     public List<IndexSearchRequestScope> getIndexSearchRequestScopes() {
-        if (requestPreparingState == UNPROCESSED) {
-            throw requestPreparingIsNotFinishedException();
-        }
-        if (requestPreparingState == NO_AVAILABLE_ENTITIES) {
-            throw noEntitiesForSearchingException();
-        }
+        assertReady();
         return indexSearchRequestScopes;
     }
 
     public Set<String> getEffectiveIndexes() {
+        assertReady();
+        return indexSearchRequestScopes
+                .stream()
+                .map(IndexSearchRequestScope::indexName)
+                .collect(Collectors.toSet());
+    }
+
+    protected void assertReady() {
         if (requestPreparingState == UNPROCESSED) {
             throw requestPreparingIsNotFinishedException();
         }
         if (requestPreparingState == NO_AVAILABLE_ENTITIES) {
             throw noEntitiesForSearchingException();
         }
-        return indexSearchRequestScopes
-                .stream()
-                .map(indexSearchData -> indexSearchData.indexConfiguration().getIndexName())
-                .collect(Collectors.toSet());
     }
 
     private static IllegalStateException requestPreparingIsNotFinishedException() {

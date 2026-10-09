@@ -27,6 +27,7 @@ dependencies {
     api project(':eclipselink')
     api project(':security')
     compileOnly project(':dynattr')
+    compileOnly project(':multitenancy')
 
     api 'org.apache.lucene:lucene-queryparser'
 
@@ -46,6 +47,7 @@ dependencies {
     testImplementation project(':eclipselink')
     testImplementation project(':dynattr')
     testImplementation project(':localfs')
+    testImplementation project(':multitenancy')
     testImplementation 'org.liquibase:liquibase-core'
     testImplementation 'org.junit.jupiter:junit-jupiter-engine'
     testImplementation 'org.junit.jupiter:junit-jupiter-params'

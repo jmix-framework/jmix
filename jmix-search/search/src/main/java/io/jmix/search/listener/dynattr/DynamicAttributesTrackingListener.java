@@ -21,10 +21,12 @@ import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.dynattr.DynamicAttributes;
 import io.jmix.dynattr.impl.DynamicAttributeChangeEvent;
+import io.jmix.search.index.impl.MultitenancyAdapter;
 import io.jmix.search.index.mapping.IndexConfigurationManager;
 import io.jmix.search.index.queue.IndexingQueueManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.jspecify.annotations.Nullable;
 import org.springframework.context.event.EventListener;
 
 import java.util.HashSet;
@@ -53,15 +55,18 @@ public class DynamicAttributesTrackingListener {
     protected final IndexingQueueManager indexingQueueManager;
     protected final EntityStates entityStates;
     protected final MetadataTools metadataTools;
+    protected final MultitenancyAdapter multitenancyAdapter;
 
     public DynamicAttributesTrackingListener(IndexConfigurationManager indexConfigurationManager,
                                              IndexingQueueManager indexingQueueManager,
                                              EntityStates entityStates,
-                                             MetadataTools metadataTools) {
+                                             MetadataTools metadataTools,
+                                             MultitenancyAdapter multitenancyAdapter) {
         this.indexConfigurationManager = indexConfigurationManager;
         this.indexingQueueManager = indexingQueueManager;
         this.entityStates = entityStates;
         this.metadataTools = metadataTools;
+        this.multitenancyAdapter = multitenancyAdapter;
     }
 
     @EventListener
@@ -84,13 +89,27 @@ public class DynamicAttributesTrackingListener {
         if (indexConfigurationManager.isDirectlyIndexed(entityMetaName)) {
             log.debug("{} is directly indexed", rawId);
             if (isNew) {
-                indexingQueueManager.enqueueIndexByEntityId(entityId);
+                indexingQueueManager.enqueueIndexByEntityId(entityId, tenantOfChangedRecord(rawObject));
             } else {
                 if (isUpdateRequired(metaClass.getJavaClass(), dynamicAttributes.getKeys())) {
-                    indexingQueueManager.enqueueIndexByEntityId(entityId);
+                    indexingQueueManager.enqueueIndexByEntityId(entityId, tenantOfChangedRecord(rawObject));
                 }
             }
         }
+    }
+
+    /**
+     * @return tenant of the record, or {@code null} if it belongs to none or its tenant cannot be read
+     */
+    @Nullable
+    protected String tenantOfChangedRecord(Object entity) {
+        // Without it the item carries no tenant, and an item that does not name its tenant waits whenever any index
+        // of its entity is unavailable - the queue cannot tell whether that index is the one it is addressed to.
+        if (!multitenancyAdapter.isTenantIdReadable(entity)) {
+            log.debug("Tenant of {} cannot be read, the queue item will not carry it", entity);
+            return null;
+        }
+        return multitenancyAdapter.getTenantIdForInstance(entity);
     }
 
     protected boolean isUpdateRequired(Class<?> entityClass, Set<String> attributeList) {

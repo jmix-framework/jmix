@@ -25,7 +25,10 @@ import io.jmix.data.impl.jpql.tree.BaseJoinNode;
 import io.jmix.data.impl.jpql.tree.GroupByNode;
 import io.jmix.data.impl.jpql.tree.IdentificationVariableNode;
 import io.jmix.data.impl.jpql.tree.JoinVariableNode;
+import io.jmix.data.impl.jpql.transform.QueryTreeTransformer;
 import io.jmix.data.impl.jpql.tree.PathNode;
+import io.jmix.data.impl.jpql.tree.QueryNode;
+import io.jmix.data.impl.jpql.tree.SelectedItemsNode;
 import io.jmix.data.impl.jpql.tree.SelectionSourceNode;
 import org.antlr.runtime.RecognitionException;
 import org.antlr.runtime.tree.CommonTree;
@@ -109,6 +112,16 @@ public class JpqlLeftJoinSupport {
         }
 
         /**
+         * Adds a condition to the main query's {@code where}, in conjunction with its own condition if any.
+         *
+         * @param condition JPQL condition
+         * @throws IllegalStateException if the condition cannot be parsed
+         */
+        public void addWhereCondition(String condition) {
+            new QueryTreeTransformer(tree).mixinWhereConditionsIntoTree(parseCondition(condition));
+        }
+
+        /**
          * Adds a condition to the {@code on} clause of the join declaring the variable, in conjunction with the
          * clause's own condition if any.
          *
@@ -168,9 +181,12 @@ public class JpqlLeftJoinSupport {
                 if (!inOwnerOn.isEmpty() && JpqlDeclarationSupport.isLeftJoin(join)) {
                     throw new JpqlAccessConstraintException(String.format(
                             "The query reads %1$s.%2$s.%3$s in the on clause of the join declaring %1$s, where it "
-                                    + "cannot be narrowed to the records available to the current user. Join "
-                                    + "%1$s.%2$s with a variable of its own and use that variable's %3$s; a "
-                                    + "condition in the where clause removes rows that the left join keeps",
+                                    + "cannot be narrowed to the records available to the current user. To test "
+                                    + "whether %1$s refers to a record, compare the reference itself: "
+                                    + "%1$s.%2$s is not null reads only the foreign key of %1$s. To compare the key "
+                                    + "with a value, join %1$s.%2$s with a variable of its own and use that "
+                                    + "variable's %3$s; a condition in the where clause removes rows that the left "
+                                    + "join keeps",
                             owner, reference, primaryKey));
                 }
             }
@@ -182,9 +198,10 @@ public class JpqlLeftJoinSupport {
                 throw new IllegalStateException("The query reads no primary key through " + referencePath);
             }
             if (toRewrite.isEmpty()) {
-                return new JoinedIdPath(null, true);
+                return new JoinedIdPath(null, true, false);
             }
 
+            boolean selected = toRewrite.stream().anyMatch(this::isInMainSelect);
             String alias = newVariable();
             for (PathNode path : toRewrite) {
                 path.deleteChild(0);
@@ -202,7 +219,7 @@ public class JpqlLeftJoinSupport {
             declaration.source().insertChild(declaration.index() + 1,
                     parseJoin("left join " + referencePath + " " + alias));
             declaration.source().freshenParentAndChildIndexes();
-            return new JoinedIdPath(alias, !inOwnerOn.isEmpty());
+            return new JoinedIdPath(alias, !inOwnerOn.isEmpty(), selected);
         }
 
         /**
@@ -230,6 +247,18 @@ public class JpqlLeftJoinSupport {
             return finder.getFoundNodes().stream()
                     .filter(path -> isIdPath(path, owner, reference, primaryKey))
                     .toList();
+        }
+
+        protected boolean isInMainSelect(PathNode path) {
+            for (Tree node = path.getParent(); node != null; node = node.getParent()) {
+                if (node instanceof SelectedItemsNode) {
+                    return node.getParent() == tree.getAstTree();
+                }
+                if (node instanceof QueryNode) {
+                    return false;
+                }
+            }
+            return false;
         }
 
         protected List<PathNode> referencePathsInGroupBy(String owner, String reference) {
@@ -294,7 +323,7 @@ public class JpqlLeftJoinSupport {
             } catch (RecognitionException | RuntimeException e) {
                 // The condition carries row-level policy text, which the message must not pass on to the caller.
                 log.debug("Cannot parse condition [{}]", condition, e);
-                throw new IllegalStateException("Cannot parse a condition to add to a join's on clause");
+                throw new IllegalStateException("Cannot parse a condition to add to the query");
             }
         }
 
@@ -314,8 +343,11 @@ public class JpqlLeftJoinSupport {
          *                          was left in an inner join's {@code on}
          * @param leftInInnerJoinOn whether some paths were left in the {@code on} of the inner join declaring the
          *                          path's variable; the reference still has to be narrowed in the {@code where}
+         * @param selected          whether a rewritten path is selected by the main query. A selected path is an
+         *                          inner join, which the added left join is not: the caller keeps the rows without
+         *                          a reference out
          */
-        public record JoinedIdPath(@Nullable String variable, boolean leftInInnerJoinOn) {
+        public record JoinedIdPath(@Nullable String variable, boolean leftInInnerJoinOn, boolean selected) {
         }
 
         /**

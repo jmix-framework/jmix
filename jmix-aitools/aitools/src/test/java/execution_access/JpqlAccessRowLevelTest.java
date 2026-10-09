@@ -325,7 +325,25 @@ class JpqlAccessRowLevelTest {
                 "select o.number, o.customer.id from aitls_Order o", List.of());
 
         assertEquals("select o.number, aitlsjoin1.id from aitls_order o "
-                + "left join o.customer aitlsjoin1 on aitlsjoin1.name <> 'hiddenco'", normalized(constrained));
+                + "left join o.customer aitlsjoin1 on aitlsjoin1.name <> 'hiddenco' "
+                + "where o.id in (select aitlsjoin2.id from aitls_order aitlsjoin2 where aitlsjoin2.customer is not null)",
+                normalized(constrained));
+    }
+
+    @Test
+    void execute_idOfInverseReference_keepsInnerJoinOfPath() {
+        ship("ORD-VisibleCo", "HIDDEN");
+        ship("ORD-OtherCo", "TRK-1");
+        support.loginAs(SecOrderReadRole.CODE, SecCustomerReadRole.CODE, SecOrderShipmentRowLevelRole.CODE);
+
+        JpqlExecutionResult result = support.execute("select o.number as number, o.shipment.id as shipmentId "
+                + "from aitls_Order o order by o.number", "number", "shipmentId");
+
+        // A selected `o.shipment.id` is an inner join: `ORD-HiddenCo` has no shipment and is not returned, as in
+        // plain JPQL; the hidden shipment of `ORD-VisibleCo` leaves the row with the id empty.
+        assertEquals(List.of("ORD-OtherCo", "ORD-VisibleCo"), column(result, "number"));
+        List<Object> shipmentIds = column(result, "shipmentId");
+        assertTrue(shipmentIds.get(0) != null && shipmentIds.get(1) == null, shipmentIds::toString);
     }
 
     @Test
@@ -338,6 +356,19 @@ class JpqlAccessRowLevelTest {
         assertFalse(result.isExecuted());
         String error = String.valueOf(result.getExecutionError());
         assertTrue(error.contains("on clause"), error);
+        // The hint points at the form that runs: the reference itself, which reads the owner's foreign key only.
+        assertTrue(error.contains("o.customer is not null"), error);
+    }
+
+    @Test
+    void execute_referenceInOnOfLeftJoinDeclaringItsOwner_executes() {
+        support.loginAs(SecOrderReadRole.CODE, SecCustomerReadRole.CODE, SecCustomerRowLevelRole.CODE);
+
+        // The rewrite the refusal above suggests: `o.customer` reads the foreign key of `o`, not the customer.
+        JpqlExecutionResult result = support.execute("select o.number as number "
+                + "from aitls_OrderLine l left join l.order o on o.customer is not null order by o.number", "number");
+
+        assertEquals(List.of("ORD-HiddenCo", "ORD-OtherCo", "ORD-VisibleCo"), column(result, "number"));
     }
 
     @Test

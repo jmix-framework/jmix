@@ -156,9 +156,36 @@ class JpqlAccessExcludedSubtypeTest {
         JpqlExecutionResult result = support.execute("select d.title as title, d.parent.id as parentId "
                 + "from aitls_Document d order by d.title", "title", "parentId");
 
-        assertEquals(List.of("Child of plan", "Child of secret", "Public plan"), column(result, "title"));
-        assertEquals(Arrays.asList(1L, null, null), column(result, "parentId").stream()
+        // A selected `d.parent.id` is an inner join: `Public plan` has no parent and is not returned, as in plain
+        // JPQL; `Child of secret` refers to an excluded record and stays with the id empty.
+        assertEquals(List.of("Child of plan", "Child of secret"), column(result, "title"));
+        assertEquals(Arrays.asList(1L, null), column(result, "parentId").stream()
                 .map(value -> value == null ? null : ((Number) value).longValue()).toList());
+    }
+
+    @Test
+    void execute_idOfExcludedReferenceInGroupBy_groupsOnlyRowsWithReference() {
+        JpqlExecutionResult result = support.execute("select d.parent.id as parentId, count(d) as cnt "
+                + "from aitls_Document d group by d.parent", "parentId", "cnt");
+
+        // One group for the visible parent, one empty group for the excluded one; `Public plan`, with no parent,
+        // is in neither.
+        List<Object> parentIds = column(result, "parentId");
+        assertEquals(2, parentIds.size(), parentIds::toString);
+        assertTrue(parentIds.contains(null) && parentIds.stream()
+                .anyMatch(id -> id != null && ((Number) id).longValue() == 1L), parentIds::toString);
+        for (Object count : column(result, "cnt")) {
+            assertEquals(1L, ((Number) count).longValue());
+        }
+    }
+
+    @Test
+    void execute_idOfReferenceInWhereOnly_keepsRowsWithoutReference() {
+        JpqlExecutionResult result = support.execute("select d.title as title from aitls_Document d "
+                + "where d.parent.id = 1 or d.title = 'Public plan' order by d.title", "title");
+
+        // In the where, plain JPQL compares the foreign key and keeps a row without a parent: so does the rewrite.
+        assertEquals(List.of("Child of plan", "Public plan"), column(result, "title"));
     }
 
     @Test

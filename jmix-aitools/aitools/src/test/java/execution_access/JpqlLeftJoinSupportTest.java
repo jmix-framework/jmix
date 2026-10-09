@@ -29,6 +29,7 @@ import test_support.SecuredDataLoadTestConfiguration;
 import java.util.Locale;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -152,6 +153,46 @@ class JpqlLeftJoinSupportTest {
         String a = alias.toLowerCase(Locale.ROOT);
         assertEquals("select o.number, " + a + ".id from aitls_order o left join o.customer " + a
                 + " on " + a + ".name <> 'hiddenco' where " + a + ".id <> 5 order by " + a + ".id",
+                normalized(rewrite.getResult()));
+    }
+
+    @Test
+    void joinIdPath_pathInMainSelect_reportedSelected() {
+        JpqlLeftJoinSupport.Rewrite rewrite = leftJoinSupport.rewrite(
+                "select o.number, o.customer.id from aitls_Order o");
+
+        assertTrue(rewrite.joinIdPath("o.customer", "id").selected());
+    }
+
+    @Test
+    void joinIdPath_pathOutsideSelect_notReportedSelected() {
+        JpqlLeftJoinSupport.Rewrite rewrite = leftJoinSupport.rewrite(
+                "select o.number from aitls_Order o where o.customer.id = 5 or o.number = 'X' order by o.customer.id");
+
+        assertFalse(rewrite.joinIdPath("o.customer", "id").selected());
+    }
+
+    @Test
+    void joinIdPath_pathSelectedBySubqueryOnly_notReportedSelected() {
+        JpqlLeftJoinSupport.Rewrite rewrite = leftJoinSupport.rewrite("select o.number from aitls_Order o "
+                + "where exists (select o.customer.id from aitls_OrderLine l where l.order = o)");
+
+        JpqlLeftJoinSupport.Rewrite.JoinedIdPath joined = rewrite.joinIdPath("o.customer", "id");
+
+        assertFalse(joined.selected());
+        assertTrue(normalized(rewrite.getResult()).contains(
+                "select " + joined.variable().toLowerCase(Locale.ROOT) + ".id from"), rewrite.getResult());
+    }
+
+    @Test
+    void addWhereCondition_andsWithQueryWhere() {
+        JpqlLeftJoinSupport.Rewrite rewrite = leftJoinSupport.rewrite(
+                "select o.number from aitls_Order o where o.number <> 'X' order by o.number");
+
+        rewrite.addWhereCondition("o.id in (select x.id from aitls_Order x where x.customer is not null)");
+
+        assertEquals("select o.number from aitls_order o where (o.number <> 'x') "
+                + "and (o.id in (select x.id from aitls_order x where x.customer is not null)) order by o.number",
                 normalized(rewrite.getResult()));
     }
 

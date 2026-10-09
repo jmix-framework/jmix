@@ -19,6 +19,7 @@ package io.jmix.flowui.asynctask;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.UIDetachedException;
 import com.vaadin.flow.server.Command;
 import io.jmix.core.impl.metadata.MetadataGeneration;
 import io.jmix.core.impl.metadata.MetadataGenerationManager;
@@ -26,6 +27,7 @@ import io.jmix.core.impl.metadata.MetadataGenerationScope;
 import com.vaadin.flow.shared.Registration;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -374,6 +376,10 @@ public class UiAsyncTasks {
         return throwable -> {
             if (throwable instanceof TimeoutException) {
                 log.error("UI async task finished on timeout");
+            } else if (throwable instanceof CancellationException) {
+                log.debug("UI async task cancelled", throwable);
+            } else if (ExceptionUtils.getRootCause(throwable) instanceof UIDetachedException) {
+                log.debug("UI async task completed after UI was detached, skipping UI update", throwable);
             } else {
                 log.error("UI async task error", throwable);
             }

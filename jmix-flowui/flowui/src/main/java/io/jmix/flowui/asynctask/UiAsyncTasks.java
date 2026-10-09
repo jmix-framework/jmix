@@ -27,6 +27,7 @@ import io.jmix.core.impl.metadata.MetadataGenerationScope;
 import com.vaadin.flow.shared.Registration;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -377,21 +378,13 @@ public class UiAsyncTasks {
                 log.error("UI async task finished on timeout");
             } else if (throwable instanceof CancellationException) {
                 log.debug("UI async task cancelled", throwable);
-            } else if (findRootCause(throwable) instanceof UIDetachedException) {
+            } else if (ExceptionUtils.getRootCause(throwable) instanceof UIDetachedException) {
                 log.debug("UI async task completed after UI was detached, skipping UI update", throwable);
             } else {
                 log.error("UI async task error", throwable);
             }
             return null;
         };
-    }
-
-    protected Throwable findRootCause(Throwable throwable) {
-        Throwable cause = throwable;
-        while (cause.getCause() != null) {
-            cause = cause.getCause();
-        }
-        return cause;
     }
 
     public void setDefaultExceptionHandler(Function<Throwable, Void> defaultExceptionHandler) {

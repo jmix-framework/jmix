@@ -22,7 +22,6 @@ import ch.qos.logback.classic.spi.ILoggingEvent
 import ch.qos.logback.core.read.ListAppender
 import com.vaadin.flow.component.ComponentUtil
 import com.vaadin.flow.component.UI
-import com.vaadin.flow.component.UIDetachedException
 import com.vaadin.flow.component.html.Div
 import com.vaadin.flow.server.Command
 import io.jmix.flowui.asynctask.UiAsyncTasks
@@ -191,8 +190,9 @@ class UiAsyncTasksTest extends FlowuiTestSpecification {
     }
 
     protected void setupDetachedUi() {
-        def detachedUi = new DetachedUi()
+        def detachedUi = new UI()
         detachedUi.getInternals().setSession(vaadinSession)
+        detachedUi.getInternals().setSession(null)
         UI.setCurrent(detachedUi)
     }
 
@@ -209,13 +209,6 @@ class UiAsyncTasksTest extends FlowuiTestSpecification {
         Future<Void> access(Command command) {
             command.execute()
             return CompletableFuture.completedFuture(null)
-        }
-    }
-
-    static class DetachedUi extends UI {
-        @Override
-        Future<Void> access(Command command) {
-            throw new UIDetachedException()
         }
     }
 }

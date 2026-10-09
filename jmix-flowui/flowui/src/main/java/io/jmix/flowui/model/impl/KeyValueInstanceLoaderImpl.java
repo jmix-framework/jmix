@@ -34,6 +34,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.jspecify.annotations.Nullable;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -56,6 +57,7 @@ public class KeyValueInstanceLoaderImpl implements KeyValueInstanceLoader {
     protected KeyValueContainer container;
     protected String query;
     protected Condition condition;
+    protected List<ConditionContributor> conditionContributors = new ArrayList<>();
     protected Map<String, Object> parameters = new HashMap<>();
     protected Map<String, Serializable> hints = new HashMap<>();
     protected String storeName = Stores.MAIN;
@@ -125,7 +127,8 @@ public class KeyValueInstanceLoaderImpl implements KeyValueInstanceLoader {
 
         ValueLoadContext.Query query = loadContext.setQueryString(this.query);
 
-        query.setCondition(condition);
+        Condition effectiveCondition = getEffectiveCondition();
+        query.setCondition(effectiveCondition);
         query.setParameters(parameters);
         query.setMaxResults(1);
 
@@ -179,6 +182,19 @@ public class KeyValueInstanceLoaderImpl implements KeyValueInstanceLoader {
     @Override
     public void setCondition(@Nullable Condition condition) {
         this.condition = condition;
+    }
+
+    @Override
+    public Subscription addConditionContributor(ConditionContributor conditionContributor) {
+        Preconditions.checkNotNullArgument(conditionContributor);
+        conditionContributors.add(conditionContributor);
+        return () -> conditionContributors.remove(conditionContributor);
+    }
+
+    @Nullable
+    @Override
+    public Condition getEffectiveCondition() {
+        return DataLoadersHelper.composeEffectiveCondition(condition, conditionContributors);
     }
 
     @Override

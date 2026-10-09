@@ -60,6 +60,7 @@ public class InstanceLoaderImpl<E> implements InstanceLoader<E> {
     protected InstanceContainer<E> container;
     protected String query;
     protected Condition condition;
+    protected List<ConditionContributor> conditionContributors = new ArrayList<>();
     protected Map<String, Object> parameters = new HashMap<>();
     protected Object entityId;
     protected FetchPlan fetchPlan;
@@ -156,7 +157,8 @@ public class InstanceLoaderImpl<E> implements InstanceLoader<E> {
         } else {
             String queryString = QueryUtils.applyQueryStringProcessors(queryStringProcessors, this.query, entityClass);
             LoadContext.Query query = loadContext.setQueryString(queryString);
-            query.setCondition(condition);
+            Condition effectiveCondition = getEffectiveCondition();
+        query.setCondition(effectiveCondition);
             query.setParameters(parameters);
         }
 
@@ -222,6 +224,19 @@ public class InstanceLoaderImpl<E> implements InstanceLoader<E> {
     @Override
     public void setCondition(@Nullable Condition condition) {
         this.condition = condition;
+    }
+
+    @Override
+    public Subscription addConditionContributor(ConditionContributor conditionContributor) {
+        Preconditions.checkNotNullArgument(conditionContributor);
+        conditionContributors.add(conditionContributor);
+        return () -> conditionContributors.remove(conditionContributor);
+    }
+
+    @Nullable
+    @Override
+    public Condition getEffectiveCondition() {
+        return DataLoadersHelper.composeEffectiveCondition(condition, conditionContributors);
     }
 
     @Override

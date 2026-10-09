@@ -16,6 +16,7 @@
 
 package io.jmix.flowui.model;
 
+import io.jmix.core.common.event.Subscription;
 import io.jmix.core.querycondition.Condition;
 
 import io.jmix.flowui.monitoring.DataLoaderMonitoringInfo;
@@ -78,6 +79,33 @@ public interface DataLoader {
      * Sets the root condition which will be used together with the query when loading entities.
      */
     void setCondition(@Nullable Condition condition);
+
+    /**
+     * Registers a contributor whose current condition is combined with the condition of this
+     * loader on every load. The resulting query condition is the conjunction of
+     * {@link #getCondition()} and the non-null contributions; the loader copies each contribution,
+     * so a contributor keeps sole ownership of its condition instance.
+     *
+     * @param conditionContributor the contributor to register
+     * @return a subscription that unregisters the contributor
+     * @throws UnsupportedOperationException if this implementation does not support condition
+     *         contributors
+     */
+    default Subscription addConditionContributor(ConditionContributor conditionContributor) {
+        throw new UnsupportedOperationException(
+                getClass().getName() + " does not support condition contributors");
+    }
+
+    /**
+     * Returns the condition the next load would use: the conjunction of {@link #getCondition()}
+     * and the current contributions of the registered condition contributors. With no registered
+     * contributors it is the same as {@link #getCondition()}. The returned condition is composed
+     * for reading; modifying it has no effect on this loader.
+     */
+    @Nullable
+    default Condition getEffectiveCondition() {
+        return getCondition();
+    }
 
     /**
      * Returns the map of query parameters.

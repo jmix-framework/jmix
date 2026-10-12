@@ -1,0 +1,3 @@
+| キー       | 種類       | 説明                                                                                                                                                                                                |
+| -------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `action` | `string` | 実行されたアクション. `opened`、`edited`、`deleted`、`pinned`、`unpinned`、`closed`、`reopened`、`assigned`、`unassigned`、`labeled`、`unlabeled`、`locked`、`unlocked`、`transferred`、`milestoned`、`demilestoned`のいずれか。 |

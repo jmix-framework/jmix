@@ -1,0 +1,1 @@
+Atividade relacionada a uma listagem de patrocínios. {% data reusables.webhooks.action_type_desc %} Para obter mais informações, consulte "[Sobre os Patrocinadores do GitHub](/sponsors/getting-started-with-github-sponsors/about-github-sponsors)".

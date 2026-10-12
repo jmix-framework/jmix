@@ -1,0 +1,1 @@
+`changes`|`object`| アクションが`edited`の場合、コメントへの変更。 `changes[body][from]`|`string` | アクションが`edited`の場合、以前のバージョンのボディ。 `pull_request`|`object` | コメントが属する[Pull Request](/rest/reference/pulls)。 `comment`|`object` | [コメント](/rest/reference/pulls#comments)自体。

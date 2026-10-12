@@ -1,0 +1,1 @@
+Por padrão, todos os repositórios públicos são incluídos no {% data variables.product.prodname_archive %}, uma parceria entre {% data variables.product.prodname_dotcom %} e organizações como a Software Heritage Foundation e Internet Archive para garantir a preservação a longo prazo do software de código aberto mundial.

@@ -1,0 +1,1 @@
+Você também pode usar {% data variables.product.prodname_security_advisories %} para republicar as informações de uma vulnerabilidade de segurança que você já revelou em outro lugar, copiando e colando as informações de vulnerabilidade em uma nova consultoria de segurança.

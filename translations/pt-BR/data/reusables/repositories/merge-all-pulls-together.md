@@ -1,0 +1,1 @@
+Você não pode realizar o merge de pull requests individuais em uma bifurcação privada temporária. Em vez disso, você pode fazer merge de todos os pull requests abertos de uma vez, na consultoria de segurança correspondente.

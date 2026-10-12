@@ -1,0 +1,1 @@
+{% data variables.product.prodname_dependabot %} e todos os recursos relacionados estão cobertos pelos Termos de Serviço de [{% data variables.product.prodname_dotcom %}](/github/site-policy/github-terms-of-service).

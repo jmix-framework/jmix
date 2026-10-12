@@ -1,0 +1,1 @@
+{% data variables.product.prodname_code_scanning_capc %} は、開発者が {% data variables.product.prodname_dotcom %} リポジトリ内のコードを分析して、セキュリティの脆弱性とコーディングエラーを見つけることができる機能です。 分析によって特定されたすべての問題は{% data variables.product.product_name %}に表示されます。

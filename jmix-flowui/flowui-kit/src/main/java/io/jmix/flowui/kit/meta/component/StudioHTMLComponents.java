@@ -562,6 +562,7 @@ interface StudioHTMLComponents {
             category = "HTML",
             xmlElement = StudioXmlElements.RANGE_INPUT,
             icon = "io/jmix/flowui/kit/meta/icon/html/rangeInput.svg",
+            documentationLink = "%VERSION%/flow-ui/vc/html.html",
             propertyGroups = StudioHtmlComponentPropertyGroups.RangeInputComponent.class)
     RangeInput rangeInput();
 
@@ -690,6 +691,7 @@ interface StudioHTMLComponents {
             category = "HTML",
             xmlElement = StudioXmlElements.TERM,
             icon = "io/jmix/flowui/kit/meta/icon/html/htmlComponent.svg",
+            documentationLink = "%VERSION%/flow-ui/vc/html.html",
             propertyGroups = StudioHtmlComponentPropertyGroups.BaseClickableHtmlContainer.class,
             propertiesBindings = {
                     @StudioPropertiesBinding(
@@ -706,6 +708,7 @@ interface StudioHTMLComponents {
             category = "HTML",
             xmlElement = StudioXmlElements.DESCRIPTION,
             icon = "io/jmix/flowui/kit/meta/icon/html/htmlComponent.svg",
+            documentationLink = "%VERSION%/flow-ui/vc/html.html",
             propertyGroups = StudioHtmlComponentPropertyGroups.BaseClickableHtmlContainer.class,
             propertiesBindings = {
                     @StudioPropertiesBinding(
@@ -732,7 +735,7 @@ interface StudioHTMLComponents {
             category = "HTML",
             xmlElement = StudioXmlElements.FIELD_SET,
             icon = "io/jmix/flowui/kit/meta/icon/html/htmlComponent.svg",
-            documentationLink = "%VERSION%/flow-ui/vc/html-components/fieldSet.html",
+            documentationLink = "%VERSION%/flow-ui/vc/html-components/fieldset.html",
             convertStrategy = @StudioConvertStrategy(tagsToConvertInto = {
                     @StudioConvertStrategy.TagInfo(qualifiedName = "hbox"),
                     @StudioConvertStrategy.TagInfo(qualifiedName = "vbox"),

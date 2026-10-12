@@ -104,6 +104,7 @@ interface StudioLayouts {
             category = "Layouts",
             xmlElement = StudioXmlElements.FLEX_LAYOUT,
             icon = "io/jmix/flowui/kit/meta/icon/layout/hbox.svg",
+            documentationLink = "%VERSION%/flow-ui/vc/layouts/flexLayout.html",
             convertStrategy = @StudioConvertStrategy(tagsToConvertInto = {
                     @StudioConvertStrategy.TagInfo(qualifiedName = "div"),
                     @StudioConvertStrategy.TagInfo(qualifiedName = "hbox"),
@@ -172,6 +173,7 @@ interface StudioLayouts {
             category = "Layouts",
             xmlElement = StudioXmlElements.SIDE_PANEL_LAYOUT,
             icon = "io/jmix/flowui/kit/meta/icon/layout/sidePanelLayout.svg",
+            documentationLink = "%VERSION%/flow-ui/vc/layouts/sidePanelLayout.html",
             propertyGroups = StudioPropertyGroups.SidePanelLayoutComponent.class,
             availableChildren = @StudioAvailableChildrenInfo(totalChildrenCount = 2),
             xmlElementInitializer = @StudioXmlElementInitializer(
@@ -245,6 +247,7 @@ interface StudioLayouts {
             classFqn = "io.jmix.flowui.component.card.JmixCard",
             category = "Layouts",
             xmlElement = StudioXmlElements.CARD,
+            documentationLink = "%VERSION%/flow-ui/vc/layouts/card.html",
             propertyGroups = StudioPropertyGroups.CardComponent.class,
             availableChildren = @StudioAvailableChildrenInfo(
                     availableTags = {
@@ -267,6 +270,7 @@ interface StudioLayouts {
             category = "Layouts",
             xmlElement = StudioXmlElements.GRID_LAYOUT,
             icon = "io/jmix/flowui/kit/meta/icon/layout/gridLayout.svg",
+            documentationLink = "%VERSION%/flow-ui/vc/layouts/gridLayout.html",
             propertyGroups = StudioPropertyGroups.GridLayoutComponent.class,
             supplyHandlers = {
                     @StudioSupplyHandler(

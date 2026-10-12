@@ -17,8 +17,10 @@
 package io.jmix.flowui.kit.meta.component.preview;
 
 import java.math.BigDecimal;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Base64;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -138,6 +140,19 @@ final class StudioStandardComponentsPreviewLoader implements StudioPreviewCompon
 
     private static final String COMBO_BOX_PICKER = "comboBoxPicker";
 
+    private static final String CLASSPATH_PREFIX = "classpath:";
+    private static final String BASE64_DATA_SEPARATOR = ";base64,";
+
+    /**
+     * The Svg palette icon. Inline markup on purpose: it depends on no served resource.
+     */
+    private static final String SVG_PLACEHOLDER = "<svg xmlns='http://www.w3.org/2000/svg' width='48' height='48'"
+            + " viewBox='0 0 16 16' fill='none'>"
+            + "<path d='M3 12C3 5 13 11 13 4' stroke='#9AA7B0' stroke-width='1.3' stroke-linecap='round'/>"
+            + "<rect x='1.5' y='10.5' width='3' height='3' fill='#9AA7B0'/>"
+            + "<rect x='11.5' y='2.5' width='3' height='3' fill='#9AA7B0'/>"
+            + "</svg>";
+
     private static final Map<String, Supplier<Component>> FACTORIES = Map.<String, Supplier<Component>>ofEntries(
             Map.entry(StudioXmlElements.BADGE, Badge::new),
             // containers
@@ -254,13 +269,14 @@ final class StudioStandardComponentsPreviewLoader implements StudioPreviewCompon
                 LoaderUtils.loadBoolean(element, "lineBreaks", markdown::setLineBreaks);
                 return markdown;
             },
-            // Only inline content renders: the runtime reads "file" through Resources (classpath/file/web),
-            // which a spring-free kit loader cannot do. An empty Svg is the honest placeholder.
+            // Inline content wins, as in the runtime SvgLoader. "file" is read by Studio through the
+            // environment. With nothing to render (unresolvable file, markup set by the controller)
+            // a placeholder keeps the component visible and selectable instead of a zero-size div.
             StudioXmlElements.SVG, (element, environment) -> inlineContent(element)
-                    .map(String::trim)
-                    .filter(content -> content.contains("<svg"))
+                    .filter(StudioStandardComponentsPreviewLoader::isSvgMarkup)
+                    .or(() -> loadSvgFile(element, environment))
                     .map(Svg::new)
-                    .orElseGet(Svg::new),
+                    .orElseGet(() -> new Svg(SVG_PLACEHOLDER)),
             // "resource" is the attribute the runtime ImageLoader maps onto setSrc. Absolute URLs are
             // applied as-is; classpath/theme resources are resolved to data URLs by the environment.
             // Unlike svgIcon, an unresolvable classpath resource is NOT applied as a raw src:
@@ -288,6 +304,36 @@ final class StudioStandardComponentsPreviewLoader implements StudioPreviewCompon
         }
         String resolved = environment.resolveStaticResource(resource);
         return resolved != null ? resolved : resource;
+    }
+
+    /**
+     * The markup of an svg {@code file}: Studio resolves the project resource to a base64 data URL.
+     * {@code classpath:} is the runtime {@code Resources} prefix, unknown to the static resource lookup.
+     */
+    private static Optional<String> loadSvgFile(Element element, StudioPreviewEnvironment environment) {
+        return LoaderUtils.loadString(element, "file")
+                .map(file -> file.startsWith(CLASSPATH_PREFIX) ? file.substring(CLASSPATH_PREFIX.length()) : file)
+                .map(environment::resolveStaticResource)
+                .flatMap(StudioStandardComponentsPreviewLoader::decodeBase64DataUrl)
+                .filter(StudioStandardComponentsPreviewLoader::isSvgMarkup);
+    }
+
+    private static Optional<String> decodeBase64DataUrl(String dataUrl) {
+        int separator = dataUrl.indexOf(BASE64_DATA_SEPARATOR);
+        if (!dataUrl.startsWith("data:") || separator < 0) {
+            return Optional.empty();
+        }
+        try {
+            byte[] content = Base64.getDecoder().decode(dataUrl.substring(separator + BASE64_DATA_SEPARATOR.length()));
+            return Optional.of(new String(content, StandardCharsets.UTF_8));
+        } catch (IllegalArgumentException e) {
+            return Optional.empty();
+        }
+    }
+
+    // Svg rejects content without an <svg> element
+    private static boolean isSvgMarkup(String content) {
+        return content.contains("<svg");
     }
 
     /**

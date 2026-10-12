@@ -64,12 +64,6 @@ vaadin-grid:not([overflow])::part(last-footer-row-cell last-column-cell):after {
  * with its own full-size clip mask and stops painting parts of the page until the drag
  * ends. A translucent background gives the same visual cue without backdrop-filter.
  */
- * While a column is dragged, the base styles dim every cell with a ::after "curtain"
- * that uses backdrop-filter. On grids with a few hundred rendered cells Chrome fails
- * to composite all of these layers: header texts go blank and the lower part of the
- * grid is not painted until the drag ends. A plain translucent overlay gives the same
- * visual cue without creating a backdrop root per cell.
- */
 vaadin-grid[reordering]::part(cell)::after {
   backdrop-filter: none;
   background: color-mix(in srgb, currentColor 6%, transparent);

@@ -11,24 +11,12 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
+    If your intent is to make both the apex and www versions redirect to ui.com, the usual setup is:
 
-    steps:
-    - uses: actions/checkout@v4
-    - name: Set up JDK 11
-      uses: actions/setup-java@v4
-      with:
-        java-version: '11'
-        distribution: 'temurin'
-        server-id: github # Value of the distributionManagement/repository/id field of the pom.xml
-        settings-path: ${{ github.workspace }} # location for the settings.xml file
+Primary custom domain: ui.com
+Redirecting alias: www.ui.com → ui.com via DNS/CNAME or a small redirect service
+In GitHub Pages, keep only the site’s primary custom domain configured, then handle the second hostname with a redirect
+If you want, I can help you implement the redirect setup for:
 
-    - name: Build with Maven
-      run: mvn -B package --file pom.xml
-
-    - name: Publish to GitHub Packages Apache Maven
-      run: mvn deploy -s $GITHUB_WORKSPACE/settings.xml
-      env:
-        GITHUB_TOKEN: ${{ github.token }}
+ui.com as the canonical domain, and
+www.ui.com redirecting to it.

@@ -16,7 +16,9 @@
 
 package io.jmix.flowui.devserver;
 
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Stream;
 
 import com.vaadin.flow.component.AttachEvent;
@@ -36,6 +38,9 @@ import org.slf4j.LoggerFactory;
 public class MainLayout extends Div implements RouterLayout {
 
     public static final String PROJECT_STYLE_SHEETS_ATTRIBUTE = "ProjectStyleSheets";
+
+    // com.vaadin.flow.theme.lumo.Lumo.STYLESHEET, com.vaadin.flow.theme.aura.Aura.STYLESHEET
+    private static final Set<String> BASE_THEME_STYLE_SHEETS = Set.of("lumo/lumo.css", "aura/aura.css");
 
     private static final Logger log = LoggerFactory.getLogger(MainLayout.class);
 
@@ -59,13 +64,21 @@ public class MainLayout extends Div implements RouterLayout {
         }
     }
 
+    /**
+     * Project stylesheets replace the legacy {@code @Theme} ones only when they define a theme themselves.
+     * Otherwise they complement it: a legacy theme project declares {@code @StyleSheet(Lumo.UTILITY_STYLESHEET)}
+     * as Vaadin 25 requires, and older Studio versions pass only the {@code @StyleSheet} values.
+     */
     static List<String> selectStyleSheets(Object projectStyleSheets, List<String> legacyStyleSheets) {
         List<String> projectPaths = projectStyleSheets instanceof List<?> list
                 ? validStyleSheets(list.stream())
                 : List.of();
-        return projectPaths.isEmpty()
-                ? validStyleSheets(legacyStyleSheets.stream())
-                : projectPaths;
+        if (projectPaths.stream().anyMatch(BASE_THEME_STYLE_SHEETS::contains)) {
+            return projectPaths;
+        }
+        Set<String> result = new LinkedHashSet<>(validStyleSheets(legacyStyleSheets.stream()));
+        result.addAll(projectPaths);
+        return List.copyOf(result);
     }
 
     private static List<String> validStyleSheets(Stream<?> styleSheets) {

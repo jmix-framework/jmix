@@ -35,6 +35,8 @@ import io.jmix.flowui.kit.meta.component.preview.processor.StudioLayoutComponent
 import org.dom4j.Element;
 import org.junit.jupiter.api.Test;
 
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 
@@ -169,18 +171,80 @@ class StudioPreviewParityTest {
     }
 
     @Test
-    void svg_rendersInlineContentAndStaysEmptyWithoutIt() {
+    void svg_rendersInlineContent() {
         Element view = view("<svg id='logo' classNames='logo-svg'><content><![CDATA["
                 + "<svg xmlns='http://www.w3.org/2000/svg'><circle r='4'/></svg>]]></content></svg>");
         Svg svg = assertInstanceOf(Svg.class, load(view.element("svg"), view));
         assertEquals("logo", svg.getId().orElseThrow());
         assertTrue(svg.hasClassName("logo-svg"));
-        assertTrue(svg.getElement().getProperty("innerHTML").contains("<circle r='4'/>"));
+        assertTrue(svgMarkup(svg).contains("<circle r='4'/>"));
+    }
 
-        // The runtime resolves "file" through Resources, which a spring-free kit loader cannot do.
-        view = view("<svg file='icons/logo.svg'/>");
-        svg = assertInstanceOf(Svg.class, load(view.element("svg"), view));
-        assertNull(svg.getElement().getProperty("innerHTML"));
+    @Test
+    void svg_rendersFileResolvedByStudio() {
+        StudioPreviewEnvironment environment = svgFileEnvironment("META-INF/resources/icons/logo.svg",
+                "<?xml version='1.0' encoding='UTF-8'?><svg xmlns='http://www.w3.org/2000/svg'><rect/></svg>");
+
+        for (String file : List.of("META-INF/resources/icons/logo.svg",
+                "classpath:META-INF/resources/icons/logo.svg")) {
+            Element view = view("<svg id='logo' file='" + file + "'/>");
+            Svg svg = assertInstanceOf(Svg.class,
+                    StudioPreviewComponentProvider.loadSingleComponent(view.element("svg"), view, environment));
+            assertEquals("logo", svg.getId().orElseThrow());
+            assertEquals("<svg xmlns='http://www.w3.org/2000/svg'><rect/></svg>", svgMarkup(svg));
+        }
+
+        Element view = view("<svg file='META-INF/resources/icons/logo.svg'><content><![CDATA["
+                + "<svg xmlns='http://www.w3.org/2000/svg'><circle r='4'/></svg>]]></content></svg>");
+        Svg svg = assertInstanceOf(Svg.class,
+                StudioPreviewComponentProvider.loadSingleComponent(view.element("svg"), view, environment));
+        assertTrue(svgMarkup(svg).contains("<circle r='4'/>"), "inline content wins over file, as at runtime");
+    }
+
+    @Test
+    void svg_showsPlaceholderWhenNothingRenders() {
+        Element bareView = view("<svg/>");
+        String placeholder = svgMarkup(assertInstanceOf(Svg.class, StudioPreviewComponentProvider
+                .loadSingleComponent(bareView.element("svg"), bareView, StudioPreviewEnvironment.NOOP)));
+        assertTrue(placeholder.startsWith("<svg"), "an old Studio (NOOP environment) gets it too");
+
+        StudioPreviewEnvironment environment = svgFileEnvironment("icons/logo.svg", "not an svg");
+        for (String descriptor : List.of(
+                "<svg/>",                                   // markup set from the controller
+                "<svg file='icons/missing.svg'/>",          // Studio can't resolve it
+                "<svg file='icons/logo.svg'/>",             // resolved, but not svg markup
+                "<svg file='https://example.com/logo.svg'/>",
+                "<svg><content><svg><rect/></svg></content></svg>")) { // markup not wrapped in CDATA
+            Element view = view(descriptor);
+            Svg svg = assertInstanceOf(Svg.class,
+                    StudioPreviewComponentProvider.loadSingleComponent(view.element("svg"), view, environment));
+            assertEquals(placeholder, svgMarkup(svg), descriptor);
+        }
+    }
+
+    StudioPreviewEnvironment svgFileEnvironment(String path, String content) {
+        String dataUrl = "data:image/svg+xml;base64,"
+                + Base64.getEncoder().encodeToString(content.getBytes(StandardCharsets.UTF_8));
+        return new StudioPreviewEnvironment() {
+            @Override
+            public String resolveMessage(String messageKey) {
+                return null;
+            }
+
+            @Override
+            public String propertyCaption(String dataContainerId, String metaClass, String propertyPath) {
+                return null;
+            }
+
+            @Override
+            public String resolveStaticResource(String resourcePath) {
+                return path.equals(resourcePath) ? dataUrl : null;
+            }
+        };
+    }
+
+    String svgMarkup(Svg svg) {
+        return svg.getElement().getProperty("innerHTML");
     }
 
     @Test

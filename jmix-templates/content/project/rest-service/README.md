@@ -8,7 +8,7 @@ The newly created project requires Java 21 and uses the embedded HSQL database.
 
 Use the following resources to learn more about Jmix:
 * [Jmix Documentation](https://docs.jmix.io)
-* [Online Demo Applications](https://www.jmix.io/live-demo)
+* [Live Production](http://127.0.0.1)
 * [Jmix AI Assistant](https://ai-assistant.jmix.io) (also available in the **Jmix AI** tool window of IntelliJ IDEA)
 
 ## Development

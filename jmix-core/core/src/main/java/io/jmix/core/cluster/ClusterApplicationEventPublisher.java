@@ -16,6 +16,7 @@
 
 package io.jmix.core.cluster;
 
+import jakarta.annotation.PreDestroy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.event.ApplicationStartedEvent;
@@ -23,6 +24,7 @@ import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.messaging.Message;
+import org.springframework.messaging.MessageHandler;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Component;
 
@@ -37,6 +39,9 @@ public class ClusterApplicationEventPublisher {
     protected ApplicationEventPublisher applicationEventPublisher;
     protected ClusterApplicationEventChannelSupplier appEventChannelSupplier;
 
+    // Kept in a field so that the same handler instance can be unsubscribed.
+    protected final MessageHandler appEventMessageHandler = this::onAppEventMessage;
+
     public ClusterApplicationEventPublisher(ApplicationEventPublisher applicationEventPublisher,
                                             ClusterApplicationEventChannelSupplier appEventChannelSupplier) {
         this.applicationEventPublisher = applicationEventPublisher;
@@ -45,7 +50,12 @@ public class ClusterApplicationEventPublisher {
 
     @EventListener
     public void onApplicationStarted(ApplicationStartedEvent event) {
-        appEventChannelSupplier.get().subscribe(this::onAppEventMessage);
+        appEventChannelSupplier.get().subscribe(appEventMessageHandler);
+    }
+
+    @PreDestroy
+    protected void unsubscribe() {
+        appEventChannelSupplier.get().unsubscribe(appEventMessageHandler);
     }
 
     protected void onAppEventMessage(Message<?> message) {

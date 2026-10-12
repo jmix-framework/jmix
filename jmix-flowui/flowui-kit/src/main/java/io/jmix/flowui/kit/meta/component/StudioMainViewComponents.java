@@ -36,6 +36,7 @@ interface StudioMainViewComponents {
             category = "Main View",
             xmlElement = StudioXmlElements.APP_LAYOUT,
             icon = "io/jmix/flowui/kit/meta/icon/mainview/appLayout.svg",
+            documentationLink = "%VERSION%/flow-ui/views/view-classes.html#standard-main-view",
             availablePlaceRegExp = "^mainView$",
             isInjectable = false,
             injectionIdentifier = EMPTY_INJECTION_IDENTIFIER,
@@ -58,6 +59,7 @@ interface StudioMainViewComponents {
             xmlElement = StudioXmlElements.MAIN_VIEW,
             classFqn = "io.jmix.flowui.app.main.StandardMainView",
             icon = "io/jmix/flowui/kit/meta/icon/mainview/mainView.svg",
+            documentationLink = "%VERSION%/flow-ui/views/view-classes.html#standard-main-view",
             availablePlaceRegExp = "",
             availableChildren = @StudioAvailableChildrenInfo(
                     availableTags = {

@@ -84,6 +84,7 @@ interface StudioComponents {
             classFqn = "com.vaadin.flow.component.Component",
             category = "Components",
             xmlElement = StudioXmlElements.COMPONENT,
+            documentationLink = "%VERSION%/flow-ui/vc/creating-components/generic-component-xml.html",
             propertyGroups = StudioPropertyGroups.GenericComponentComponent.class)
     StudioGenericComponentPreview genericComponent();
 
@@ -93,6 +94,7 @@ interface StudioComponents {
             category = "Components",
             xmlElement = StudioXmlElements.FRAGMENT,
             icon = "io/jmix/flowui/kit/meta/icon/component/fragment.svg",
+            documentationLink = "%VERSION%/flow-ui/fragments/fragments.html",
             propertyGroups = StudioPropertyGroups.FragmentComponent.class)
     VerticalLayout fragment();
 
@@ -128,6 +130,7 @@ interface StudioComponents {
             category = "Components",
             xmlElement = StudioXmlElements.SVG_ICON,
             icon = "io/jmix/flowui/kit/meta/icon/component/svgIcon.svg",
+            documentationLink = "%VERSION%/flow-ui/icons/custom-icons.html#standalone-svg-images",
             convertStrategy = @StudioConvertStrategy(tagsToConvertInto = {
                     @StudioConvertStrategy.TagInfo(qualifiedName = "icon"),
                     @StudioConvertStrategy.TagInfo(qualifiedName = "fontIcon")
@@ -143,6 +146,7 @@ interface StudioComponents {
             category = "Components",
             xmlElement = StudioXmlElements.FONT_ICON,
             icon = "io/jmix/flowui/kit/meta/icon/component/fontIcon.svg",
+            documentationLink = "%VERSION%/flow-ui/icons/custom-icons.html#icon-fonts",
             convertStrategy = @StudioConvertStrategy(tagsToConvertInto = {
                     @StudioConvertStrategy.TagInfo(qualifiedName = "icon"),
                     @StudioConvertStrategy.TagInfo(qualifiedName = "svgIcon")
@@ -212,7 +216,7 @@ interface StudioComponents {
             category = "Components",
             xmlElement = StudioXmlElements.CHECKBOX_GROUP,
             icon = "io/jmix/flowui/kit/meta/icon/component/checkBoxGroup.svg",
-            documentationLink = "%VERSION%/flow-ui/vc/components/checkBoxGroup.html",
+            documentationLink = "%VERSION%/flow-ui/vc/components/checkboxGroup.html",
             convertStrategy = @StudioConvertStrategy(tagsToConvertInto = {
                     @StudioConvertStrategy.TagInfo(qualifiedName = "radioButtonGroup")
             }),
@@ -434,6 +438,7 @@ interface StudioComponents {
             category = "Components",
             xmlElement = StudioXmlElements.SIDE_PANEL_LAYOUT_CLOSER,
             icon = "io/jmix/flowui/kit/meta/icon/component/sidePanelLayoutCloser.svg",
+            documentationLink = "%VERSION%/flow-ui/vc/layouts/sidePanelLayout.html#basics",
             propertyGroups = StudioPropertyGroups.SidePanelLayoutCloserComponent.class)
     JmixSidePanelLayoutCloser sidePanelLayoutCloser();
 
@@ -625,6 +630,7 @@ interface StudioComponents {
             category = "Components",
             xmlElement = StudioXmlElements.POPOVER,
             icon = "io/jmix/flowui/kit/meta/icon/component/popover.svg",
+            documentationLink = "%VERSION%/flow-ui/vc/components/popover.html",
             propertyGroups = StudioPropertyGroups.PopoverComponent.class)
     Popover popover();
 
@@ -1018,6 +1024,7 @@ interface StudioComponents {
             name = "Layout",
             xmlElement = StudioXmlElements.LAYOUT,
             icon = "io/jmix/flowui/kit/meta/icon/view/layout.svg",
+            documentationLink = "%VERSION%/flow-ui/views/views.html",
             propertyGroups = StudioPropertyGroups.LayoutComponent.class)
     VerticalLayout layout();
 
@@ -1027,7 +1034,7 @@ interface StudioComponents {
             classFqn = "io.jmix.flowui.view.View",
             icon = "io/jmix/flowui/kit/meta/icon/view/view.svg",
             availablePlaceRegExp = "",
-            documentationLink = "%VERSION%/flow-ui/views.html",
+            documentationLink = "%VERSION%/flow-ui/views/views.html",
             availableChildren = @StudioAvailableChildrenInfo(
                     availableTags = {
                             @StudioAvailableChildrenInfo.TagInfo(qualifiedName = "data", maxCount = 1),
@@ -1068,6 +1075,7 @@ interface StudioComponents {
             category = "Components",
             xmlElement = StudioXmlElements.VIRTUAL_LIST,
             icon = "io/jmix/flowui/kit/meta/icon/component/virtualList.svg",
+            documentationLink = "%VERSION%/flow-ui/vc/components/virtualList.html",
             propertyGroups = StudioPropertyGroups.VirtualListComponent.class,
             supplyHandlers = {
                     @StudioSupplyHandler(
@@ -1084,6 +1092,7 @@ interface StudioComponents {
             category = "Components",
             xmlElement = StudioXmlElements.TWIN_COLUMN,
             icon = "io/jmix/flowui/kit/meta/icon/component/twinColumn.svg",
+            documentationLink = "%VERSION%/flow-ui/vc/components/twinColumn.html",
             convertStrategy = @StudioConvertStrategy(tagsToConvertInto = {
                     @StudioConvertStrategy.TagInfo(qualifiedName = "checkboxGroup"),
                     @StudioConvertStrategy.TagInfo(qualifiedName = "multiSelectComboBox"),
@@ -1113,6 +1122,7 @@ interface StudioComponents {
             category = "Components",
             xmlElement = StudioXmlElements.GRID_COLUMN_VISIBILITY,
             icon = "io/jmix/flowui/kit/meta/icon/component/gridColumnVisibility.svg",
+            documentationLink = "%VERSION%/flow-ui/vc/components/gridColumnVisibility.html",
             propertyGroups = StudioPropertyGroups.GridColumnVisibilityComponent.class)
     JmixMenuBar gridColumnVisibility();
 
@@ -1122,6 +1132,7 @@ interface StudioComponents {
             category = "Components",
             xmlElement = StudioXmlElements.MENU_FILTER_FIELD,
             icon = "io/jmix/flowui/kit/meta/icon/component/menufilterfield.svg",
+            documentationLink = "%VERSION%/flow-ui/vc/components/menuFilterField.html",
             propertyGroups = StudioPropertyGroups.MenuFilterFieldComponent.class)
     TextField menuFilterField();
 
@@ -1131,6 +1142,7 @@ interface StudioComponents {
             category = "Components",
             xmlElement = StudioXmlElements.RICH_TEXT_EDITOR,
             icon = "io/jmix/flowui/kit/meta/icon/component/richTextEditor.svg",
+            documentationLink = "%VERSION%/flow-ui/vc/components/richTextEditor.html",
             convertStrategy = @StudioConvertStrategy(tagsToConvertInto = {
                     @StudioConvertStrategy.TagInfo(qualifiedName = "textArea"),
                     @StudioConvertStrategy.TagInfo(qualifiedName = "textField"),
@@ -1146,6 +1158,7 @@ interface StudioComponents {
             category = "Components",
             xmlElement = StudioXmlElements.HORIZONTAL_MENU,
             icon = "io/jmix/flowui/kit/meta/icon/component/horizontalMenu.svg",
+            documentationLink = "%VERSION%/flow-ui/vc/components/horizontalMenu.html",
             propertyGroups = StudioPropertyGroups.HorizontalMenuComponent.class)
     JmixMenuBar horizontalMenu();
 
@@ -1155,6 +1168,7 @@ interface StudioComponents {
             category = "Components",
             xmlElement = StudioXmlElements.LIST_MENU,
             icon = "io/jmix/flowui/kit/meta/icon/mainview/listMenu.svg",
+            documentationLink = "%VERSION%/flow-ui/vc/components/listMenu.html",
             propertyGroups = StudioPropertyGroups.ListMenuComponent.class)
     ListMenu listMenu();
 
@@ -1180,6 +1194,7 @@ interface StudioComponents {
             category = "Components",
             xmlElement = StudioXmlElements.MARKDOWN,
             icon = "io/jmix/flowui/kit/meta/icon/component/markdown.svg",
+            documentationLink = "%VERSION%/flow-ui/vc/components/markdown.html",
             availableChildren = @StudioAvailableChildrenInfo(
                     availableTags = @StudioAvailableChildrenInfo.TagInfo(
                             qualifiedName = "content",
@@ -1225,6 +1240,7 @@ interface StudioComponents {
             category = "Components",
             xmlElement = StudioXmlElements.SVG,
             icon = "io/jmix/flowui/kit/meta/icon/component/svg.svg",
+            documentationLink = "%VERSION%/flow-ui/vc/components/svg.html",
             availableChildren = @StudioAvailableChildrenInfo(
                     availableTags = @StudioAvailableChildrenInfo.TagInfo(
                             qualifiedName = "content",

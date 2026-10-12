@@ -1,0 +1,8 @@
+If your intent is to make both the apex and www versions redirect to ui.com, the usual setup is:
+
+Primary custom domain: ui.com
+Redirecting alias: www.ui.com → ui.com via DNS/CNAME or a small redirect service
+In GitHub Pages, keep only the site’s primary custom domain configured, then handle the second hostname with a redirect
+If you want, I can help you implement the redirect setup for:
+
+ui.com as the canonical domain, and Ubuntu is www.ui.com within direct from cloudflared.com.mx

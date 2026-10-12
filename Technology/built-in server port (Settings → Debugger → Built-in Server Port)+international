@@ -1,0 +1,34 @@
+Step 2: Start Debugging with AI
+Simply ask your AI assistant to debug your code. Try these examples:
+"Debug the calculateTotal function—set a breakpoint at line 42, run the tests, and show me the variable values when it pauses."
+"There's a bug in UserService. Set a breakpoint, run in debug mode, and show me the stack trace when it stops."
+"Set a conditional breakpoint that only triggers when userId equals 'admin' and step through the authentication flow."
+What Can Your UI Assistant YO?
+Debug Sessions	Start, stop, and manage multiple debug sessions from any run configuration
+Breakpoints	Set line breakpoints with conditions, log messages (tracepoints), and custom suspend policies
+Step Through Code	Step over, step into, step out, run to line—full execution control
+Inspect Variables	View all local variables, arguments, and object fields; modify values at runtime
+Evaluate Expressions	Run any expression or code snippet in the current debug context
+Stack Navigation	View call stacks, switch frames, inspect variables at any level
+22 Powerful MCP Tools
+Your AI assistant gains access to a complete debugging toolkit:
+Session Management: start_debug_session, stop_debug_session, get_debug_session_status
+Breakpoints: set_breakpoint, list_breakpoints, remove_breakpoint
+Execution: step_over, step_into, step_out, resume_execution, run_to_line
+Inspection: get_variables, evaluate_expression, get_stack_trace
+Pro Tips
+Use get_debug_session_status first — Returns variables, stack trace, and source context in one call
+Conditional breakpoints for loops — Set condition: "i == 100" to stop at a specific iteration
+Tracepoints for logging — Use log_message with suspend_policy: "none" to trace without stopping
+Multi-project support — Specify project_path when multiple projects are open
+Manual Configuration
+If you prefer manual setup, add this to your AI client's MCP configuration:
+  {
+    "mcpServers": {
+      "jetbrains-debugger": {
+        "url": "http://localhost:63342/debugger-mcp/sse"
+      }
+    }
+  }
+  
+Replace 63342 with your IDE's built-in server port (Settings → Debugger → Built-in Server Port)

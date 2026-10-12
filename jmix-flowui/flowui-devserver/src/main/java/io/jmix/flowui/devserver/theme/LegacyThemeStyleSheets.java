@@ -16,7 +16,7 @@
 
 package io.jmix.flowui.devserver.theme;
 
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -27,12 +27,13 @@ import java.util.Set;
  */
 public final class LegacyThemeStyleSheets {
 
+    // Base themes first: project themes override them
     private static final List<String> DEFAULT_LUMO_STYLESHEETS =
             List.of(
-                    // io.jmix.flowui.theme.lumo.JmixLumo.STYLESHEET
-                    "themes/jmix-lumo/jmix-lumo.css",
                     // com.vaadin.flow.theme.lumo.Lumo.STYLESHEET
-                    "lumo/lumo.css"
+                    "lumo/lumo.css",
+                    // io.jmix.flowui.theme.lumo.JmixLumo.STYLESHEET
+                    "themes/jmix-lumo/jmix-lumo.css"
             );
 
     private static volatile List<String> styleSheets = List.of();
@@ -45,8 +46,8 @@ public final class LegacyThemeStyleSheets {
     }
 
     public static void setStyleSheets(List<String> styleSheets) {
-        Set<String> result = new HashSet<>(styleSheets);
-        result.addAll(DEFAULT_LUMO_STYLESHEETS);
+        Set<String> result = new LinkedHashSet<>(DEFAULT_LUMO_STYLESHEETS);
+        result.addAll(styleSheets);
         LegacyThemeStyleSheets.styleSheets = List.copyOf(result);
     }
 }

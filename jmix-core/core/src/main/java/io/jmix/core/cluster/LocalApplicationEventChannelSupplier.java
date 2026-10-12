@@ -16,47 +16,49 @@
 
 package io.jmix.core.cluster;
 
+import org.jspecify.annotations.NullMarked;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageHandler;
 import org.springframework.messaging.SubscribableChannel;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Provides a channel that publishes messages only to owner application instance
  * which is used in single-instance applications.
+ * <p>
+ * Each supplier instance has its own channel, so several application contexts in one JVM
+ * do not share subscribers.
  */
+@NullMarked
 public class LocalApplicationEventChannelSupplier implements ClusterApplicationEventChannelSupplier {
 
-    protected static SubscribableChannel LOCAL_CHANNEL = new SubscribableChannel() {
+    protected final SubscribableChannel localChannel = new LocalChannel();
 
-        private List<MessageHandler> handlers;
+    @Override
+    public SubscribableChannel get() {
+        return localChannel;
+    }
+
+    protected static class LocalChannel implements SubscribableChannel {
+
+        protected final List<MessageHandler> handlers = new CopyOnWriteArrayList<>();
 
         @Override
         public boolean subscribe(MessageHandler handler) {
-            if (handlers == null) {
-                handlers = new ArrayList<>();
-            }
             return handlers.add(handler);
         }
 
         @Override
         public boolean unsubscribe(MessageHandler handler) {
-            return handlers != null && handlers.remove(handler);
+            return handlers.remove(handler);
         }
 
         @Override
         public boolean send(Message<?> message, long timeout) {
-            if (handlers != null) {
-                handlers.forEach(handler -> handler.handleMessage(message));
-            }
+            handlers.forEach(handler -> handler.handleMessage(message));
             return true;
         }
-    };
-
-    @Override
-    public SubscribableChannel get() {
-        return LOCAL_CHANNEL;
     }
 }

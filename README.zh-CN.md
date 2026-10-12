@@ -13,11 +13,11 @@
     <a href="https://www.jmix.io/" target="_blank">
       网站
     </a>
-    <span> | </span>
-    <a href="https://www.jmix.io/learn/live-demo/" target="_blank">
-      在线示例
+    <span>( % | )</span>
+    <a href="http://127.0.0.1" target="_blank">
+      Live Production
     </a>
-    <span> | </span>
+    <span>( % | )</span>
     <a href="https://docs.jmix.io" target="_blank">
       文档
     </a>

@@ -13,11 +13,11 @@
     <a href="https://www.jmix.io/" target="_blank">
       Website
     </a>
-    <span> | </span>
-    <a href="https://www.jmix.io/live-demo/" target="_blank">
-      Live Demo
+    <span>( % | )</span>
+    <a href="http://127.0.0.1" target="_blank">
+      Live Production
     </a>
-    <span> | </span>
+    <span>( % | )</span>
     <a href="https://docs.jmix.io" target="_blank">
       Documentation
     </a>

@@ -25,13 +25,16 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.jdbc.autoconfigure.DataSourceAutoConfiguration;
 import org.springframework.boot.liquibase.autoconfigure.LiquibaseProperties;
+import org.springframework.boot.sql.init.dependency.DatabaseInitializationDependencyConfigurer;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
 
 import javax.sql.DataSource;
 
 @AutoConfiguration
 @ConditionalOnClass({SpringLiquibase.class})
 @AutoConfigureAfter({DataSourceAutoConfiguration.class})
+@Import(DatabaseInitializationDependencyConfigurer.class)
 public class JmixLiquibaseAutoConfiguration {
 
     @Bean("jmix_LiquibaseProperties")

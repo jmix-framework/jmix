@@ -1,0 +1,68 @@
+Using Cascade: a solver will work on your request, followed by a review pass and fixes if needed.
+
+Main pass completed
+Old HEAD: ea7a94036f82013fccec8bb3c68f635253e316f7
+New HEAD: 84a04c3a2a9b3c1453bed0b5b87d9636108a7c05
+Ran terminal command: git show --format=fuller --stat ea7a94036f && echo '--- parent ---' && git rev-parse ea7a94036f^ && echo '--- current blob ---' && git ls-tree ea7a94036f -- gradlew.bat && echo '--- parent blob ---' && git ls-tree ea7a94036f^ -- gradlew.bat
+override custom - Old HEAD:ea7a94036f82013fccec8bb3c68f635253e316f7
+to overwrite - New HEAD:84a04c3a2a9b3c1453bed0b5b87d9636108a7c05 to change defaults withwindows-dmg-recovery.yml to overwrite orgin internal partition
+Ran terminal command: git log --all --oneline --follow -- gradlew.bat | head -20
+
+Ran terminal command: git status --short && git diff --cached --stat && git hash-object gradlew.bat
+Current repository state:
+
+HEAD: 84a04c3a2a9b3c1453bed0b5b87d9636108a7c05
+windows-dmg-recovery.yml remains staged
+
+Review pass completed
+
+Fix-up pass completed
+
+Ran terminal command: git status --short && git rev-parse HEAD HEAD^ && git log -1 --format='%H%n%P%n%s'
+
+Ran terminal command: git hash-object gradlew.bat && git rev-parse HEAD:gradlew.bat HEAD^:gradlew.bat && git diff HEAD^ HEAD -- gradlew.bat
+
+Ran terminal command: git diff --cached --stat && git diff --cached --name-status
+
+Ran terminal command: for ref in origin/master upstream/master upstream/main; do if git rev-parse --verify "$ref" >/dev/null 2>&1; then printf '%s ' "$ref"; git rev-parse "$ref:gradlew.bat" 2>/dev/null || echo missing; fi; done
+
+Ran terminal command: git branch -r --contains ea7a94036f82013fccec8bb3c68f635253e316f7
+
+Ran terminal command: git show --stat --oneline HEAD && git show --format=fuller --no-patch HEAD
+
+Ask User
+Completed with input: {
+  "question": "Which exact content should replace blob `3185a43f78` before I rewrite HEAD?",
+  "choices": [
+    "Use the current valid Gradle wrapper and rewrite HEAD only (Recommended)",
+    "Use gradlew.bat from origin/master (identical content, so blob hash will remain unchanged)",
+    "I will provide different gradlew.bat contents"
+  ]
+}
+
+Ran terminal command: git show origin/master:gradlew.bat > /tmp/jmix-intended-gradlew.bat && cmp -s /tmp/jmix-intended-gradlew.bat gradlew.bat && git commit --amend --no-edit --allow-empty --only -- gradlew.bat && rm /tmp/jmix-intended-gradlew.bat
+
+Ran terminal command: git rev-parse HEAD HEAD^ HEAD:gradlew.bat origin/master:gradlew.bat && git status --short
+
+Ran terminal command: git diff HEAD^ HEAD -- gradlew.bat && git diff --cached --stat && git log -1 --format='%H%n%P%n%B'
+
+Localhost HEAD was rewritten successfully:
+
+- **Old HEAD:** `ea7a94036f82013fccec8bb3c68f635253e316f7`
+- **New HEAD:** `84a04c3a2a9b3c1453bed0b5b87d9636108a7c05`
+- `gradlew.bat` now matches `origin/master`.
+- Wrapper blob remains `3185a43f78fabec15ca99b0ca6bf1e666218d5ca` because the contents are byte-for-byte identical.
+- The staged `windows-dmg-recovery.yml` change was preserved outside the rewritten commit.
+- The remote branch was not force-pushed.
+
+
+
+ d70cce47a790247f977487c852d498655e987a00
+Message: Add recovery workflow and dev container
+Added:
+Dockerfile
+devcontainer.json
+.dockerignore
+windows-dmg-recovery.yml
+Worktree is clean.
+Commit includes the required Co-authored-by trailer.

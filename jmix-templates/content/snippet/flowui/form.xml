@@ -114,6 +114,8 @@ def initDefaultFieldAttrs(attr) {
 			def itemsQuery = attr.getLookupItemsQueryXml()
 			if(itemsQuery != null) {
 				builder.append(itemsQuery)
+			} else if(attr.isLookupItemsContainerRequired()) {
+				fieldAttrs['itemsContainer'] = "${api.pluralForm(attr.name)}Dc"
 			}
 		}
 		if(builder.length() > 0) {

@@ -1,0 +1,3 @@
+# Depends On Database Initialization Detectors
+org.springframework.boot.sql.init.dependency.DependsOnDatabaseInitializationDetector=\
+io.jmix.autoconfigure.data.JmixJpaDependsOnDatabaseInitializationDetector

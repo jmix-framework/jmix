@@ -60,6 +60,9 @@ public interface AiDataLoadService {
      * Generates a JPQL query for the given natural-language request, executes it and returns
      * the query that ran (or failed validation), its validation result and the fetched rows. Runs
      * statelessly without persisting chat history.
+     * <p>
+     * The query runs as the current user, so the rows hold only the records that user may see. A related record
+     * hidden from the user reads as an absent one: an empty reference does not prove that the data is missing.
      *
      * @param userText user request in natural language
      * @return result containing the executed query or the one that failed validation, its validation

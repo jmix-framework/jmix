@@ -25,6 +25,7 @@ import io.jmix.data.impl.jpql.tree.BaseJoinNode;
 import io.jmix.data.impl.jpql.tree.GroupByNode;
 import io.jmix.data.impl.jpql.tree.IdentificationVariableNode;
 import io.jmix.data.impl.jpql.tree.JoinVariableNode;
+import io.jmix.data.impl.jpql.tree.OrderByNode;
 import io.jmix.data.impl.jpql.transform.QueryTreeTransformer;
 import io.jmix.data.impl.jpql.tree.PathNode;
 import io.jmix.data.impl.jpql.tree.QueryNode;
@@ -146,25 +147,26 @@ public class JpqlLeftJoinSupport {
         }
 
         /**
-         * Joins the entity a to-one reference path leads to under a new variable, and points every path reading
-         * the primary key through that reference at the new variable instead; a {@code group by} item equal to the
-         * reference path becomes the new variable's key too, so that the selected key stays a grouped expression.
-         * A path in the {@code on} clause of the inner join declaring the path's variable is left as it is, since
-         * the new join has to follow that declaration.
+         * Joins the entity a to-one reference path leads to under a new variable, and points every read of the
+         * reference at that variable instead: {@code <ref>.<pk>} becomes the variable's key, and the reference
+         * itself becomes the variable's key in a null test, a {@code group by} or an {@code order by} item, and the
+         * variable elsewhere. A path in the {@code on} clause of the inner join declaring the path's variable is
+         * left as it is, since the new join has to follow that declaration.
          *
          * @param referencePath path from a variable of the main query to a to-one reference, such as
          *                      {@code d.parent}
          * @param primaryKey    name of the referenced entity's primary key attribute
-         * @return the new variable, if any, and whether some paths were left in an inner join's {@code on}
+         * @return the new variable, if any, whether some paths were left in an inner join's {@code on}, and whether
+         * the main query selects the key through the reference
          * @throws IllegalArgumentException      if the path is not a variable followed by one attribute
          * @throws IllegalStateException         if the path's variable is not declared in the main query's
-         *                                       {@code from}, or the query reads no primary key through the path
-         * @throws JpqlAccessConstraintException if such a path occurs in the {@code on} clause of the left join
+         *                                       {@code from}, or the query does not read the reference
+         * @throws JpqlAccessConstraintException if the reference is read in the {@code on} clause of the left join
          *                                       declaring its variable: the new join cannot precede that join, and
          *                                       the path left as it is would read a hidden record. The query is
          *                                       left unchanged.
          */
-        public JoinedIdPath joinIdPath(String referencePath, String primaryKey) {
+        public JoinedReference joinReference(String referencePath, String primaryKey) {
             int dot = referencePath.indexOf('.');
             if (dot < 1 || dot == referencePath.length() - 1 || referencePath.indexOf('.', dot + 1) >= 0) {
                 throw new IllegalArgumentException("Not a reference of a variable: " + referencePath);
@@ -176,42 +178,41 @@ public class JpqlLeftJoinSupport {
             List<PathNode> inOwnerOn = new ArrayList<>();
             if (declaration.node() instanceof JoinVariableNode join) {
                 for (int i = 1; i < join.getChildCount(); i++) {
-                    inOwnerOn.addAll(idPaths(join.getChild(i), owner, reference, primaryKey));
+                    inOwnerOn.addAll(referenceReads(join.getChild(i), owner, reference, primaryKey));
                 }
                 if (!inOwnerOn.isEmpty() && JpqlDeclarationSupport.isLeftJoin(join)) {
                     throw new JpqlAccessConstraintException(String.format(
-                            "The query reads %1$s.%2$s.%3$s in the on clause of the join declaring %1$s, where it "
-                                    + "cannot be narrowed to the records available to the current user. To test "
-                                    + "whether %1$s refers to a record, compare the reference itself: "
-                                    + "%1$s.%2$s is not null reads only the foreign key of %1$s. To compare the key "
-                                    + "with a value, join %1$s.%2$s with a variable of its own and use that "
-                                    + "variable's %3$s; a condition in the where clause removes rows that the left "
-                                    + "join keeps",
-                            owner, reference, primaryKey));
+                            "The query reads %1$s.%2$s in the on clause of the join declaring %1$s, where it "
+                                    + "cannot be narrowed to the records available to the current user. Join "
+                                    + "%1$s.%2$s with a variable of its own and use that variable instead; a "
+                                    + "condition in the where clause removes rows that the left join keeps",
+                            owner, reference));
                 }
             }
 
-            List<PathNode> toRewrite = new ArrayList<>(idPaths(tree.getAstTree(), owner, reference, primaryKey));
+            List<PathNode> toRewrite = new ArrayList<>(referenceReads(tree.getAstTree(), owner, reference,
+                    primaryKey));
             toRewrite.removeIf(path -> inOwnerOn.stream().anyMatch(kept -> kept == path));
             if (toRewrite.isEmpty() && inOwnerOn.isEmpty()) {
-                // The caller found the path in the query: a path left unrewritten would read a hidden record.
-                throw new IllegalStateException("The query reads no primary key through " + referencePath);
+                // The caller found the reference read in the query: a read left unrewritten would see a hidden
+                // record.
+                throw new IllegalStateException("The query does not read " + referencePath);
             }
             if (toRewrite.isEmpty()) {
-                return new JoinedIdPath(null, true, false);
+                return new JoinedReference(null, true, false);
             }
 
-            boolean selected = toRewrite.stream().anyMatch(this::isInMainSelect);
+            boolean selected = toRewrite.stream()
+                    .anyMatch(path -> path.getChildCount() == 2 && isInMainSelect(path));
             String alias = newVariable();
             for (PathNode path : toRewrite) {
+                boolean readsKey = path.getChildCount() == 1 && readsKeyOfReference(path);
                 path.deleteChild(0);
-                path.renameVariableTo(alias);
-            }
-            // `group by <owner>.<reference>` groups by the owner's foreign key; the key now selected is the new
-            // variable's, so the grouping follows it, or the selected key is no longer a grouped expression.
-            for (PathNode path : referencePathsInGroupBy(owner, reference)) {
-                path.deleteChild(0);
-                path.addDefaultChild(primaryKey);
+                if (readsKey) {
+                    // Compared as a whole, the variable is the owner's foreign key to EclipseLink, which ignores
+                    // the join's `on`: only the joined record's key tells a hidden record from a visible one.
+                    path.addDefaultChild(primaryKey);
+                }
                 path.renameVariableTo(alias);
             }
             // Right after the owner's declaration: an earlier join's `on` may read the alias, and a variable
@@ -219,7 +220,7 @@ public class JpqlLeftJoinSupport {
             declaration.source().insertChild(declaration.index() + 1,
                     parseJoin("left join " + referencePath + " " + alias));
             declaration.source().freshenParentAndChildIndexes();
-            return new JoinedIdPath(alias, !inOwnerOn.isEmpty(), selected);
+            return new JoinedReference(alias, !inOwnerOn.isEmpty(), selected);
         }
 
         /**
@@ -241,12 +242,37 @@ public class JpqlLeftJoinSupport {
             return found.get(0);
         }
 
-        protected List<PathNode> idPaths(Tree root, String owner, String reference, String primaryKey) {
+        protected List<PathNode> referenceReads(Tree root, String owner, String reference, String primaryKey) {
             NodesFinder<PathNode> finder = NodesFinder.of(PathNode.class);
             new TreeVisitor().visit(root, finder);
             return finder.getFoundNodes().stream()
-                    .filter(path -> isIdPath(path, owner, reference, primaryKey))
+                    .filter(path -> owner.equalsIgnoreCase(path.getEntityVariableName())
+                            && path.getChildCount() > 0
+                            && reference.equals(path.getChild(0).getText()))
+                    .filter(path -> path.getChildCount() == 2 && primaryKey.equals(path.getChild(1).getText())
+                            || path.getChildCount() == 1 && !isJoinedPath(path))
                     .toList();
+        }
+
+        protected boolean isJoinedPath(PathNode path) {
+            return path.getParent() instanceof BaseJoinNode && path.getChildIndex() == 0;
+        }
+
+        protected boolean readsKeyOfReference(PathNode path) {
+            Tree parent = path.getParent();
+            int next = path.getChildIndex() + 1;
+            if (parent != null && next < parent.getChildCount() && "is".equalsIgnoreCase(parent.getChild(next).getText())) {
+                return true;
+            }
+            for (Tree node = parent; node != null; node = node.getParent()) {
+                if (node instanceof GroupByNode || node instanceof OrderByNode) {
+                    return true;
+                }
+                if (node instanceof QueryNode) {
+                    return false;
+                }
+            }
+            return false;
         }
 
         protected boolean isInMainSelect(PathNode path) {
@@ -259,29 +285,6 @@ public class JpqlLeftJoinSupport {
                 }
             }
             return false;
-        }
-
-        protected List<PathNode> referencePathsInGroupBy(String owner, String reference) {
-            List<PathNode> found = new ArrayList<>();
-            for (GroupByNode groupBy : tree.visit(NodesFinder.of(GroupByNode.class)).getFoundNodes()) {
-                NodesFinder<PathNode> finder = NodesFinder.of(PathNode.class);
-                new TreeVisitor().visit(groupBy, finder);
-                for (PathNode path : finder.getFoundNodes()) {
-                    if (owner.equalsIgnoreCase(path.getEntityVariableName())
-                            && path.getChildCount() == 1
-                            && reference.equals(path.getChild(0).getText())) {
-                        found.add(path);
-                    }
-                }
-            }
-            return found;
-        }
-
-        protected boolean isIdPath(PathNode path, String owner, String reference, String primaryKey) {
-            return owner.equalsIgnoreCase(path.getEntityVariableName())
-                    && path.getChildCount() == 2
-                    && reference.equals(path.getChild(0).getText())
-                    && primaryKey.equals(path.getChild(1).getText());
         }
 
         protected DeclarationSite declarationOf(String variable) {
@@ -337,17 +340,17 @@ public class JpqlLeftJoinSupport {
         }
 
         /**
-         * What {@link #joinIdPath(String, String)} did to the paths reading a primary key through a reference.
+         * What {@link #joinReference(String, String)} did to the reads of a reference.
          *
-         * @param variable          the variable now joining the reference, or {@code null} when every such path
-         *                          was left in an inner join's {@code on}
-         * @param leftInInnerJoinOn whether some paths were left in the {@code on} of the inner join declaring the
+         * @param variable          the variable now joining the reference, or {@code null} when every read was
+         *                          left in an inner join's {@code on}
+         * @param leftInInnerJoinOn whether some reads were left in the {@code on} of the inner join declaring the
          *                          path's variable; the reference still has to be narrowed in the {@code where}
-         * @param selected          whether a rewritten path is selected by the main query. A selected path is an
-         *                          inner join, which the added left join is not: the caller keeps the rows without
-         *                          a reference out
+         * @param selected          whether the main query selects the key through the reference. A selected path
+         *                          is an inner join, which the added left join is not: the caller keeps the rows
+         *                          without a reference out
          */
-        public record JoinedIdPath(@Nullable String variable, boolean leftInInnerJoinOn, boolean selected) {
+        public record JoinedReference(@Nullable String variable, boolean leftInInnerJoinOn, boolean selected) {
         }
 
         /**

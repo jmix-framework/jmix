@@ -356,19 +356,57 @@ class JpqlAccessRowLevelTest {
         assertFalse(result.isExecuted());
         String error = String.valueOf(result.getExecutionError());
         assertTrue(error.contains("on clause"), error);
-        // The hint points at the form that runs: the reference itself, which reads the owner's foreign key only.
-        assertTrue(error.contains("o.customer is not null"), error);
+        assertTrue(error.contains("Join o.customer with a variable of its own"), error);
     }
 
     @Test
-    void execute_referenceInOnOfLeftJoinDeclaringItsOwner_executes() {
+    void execute_referenceInOnOfLeftJoinDeclaringItsOwner_refused() {
         support.loginAs(SecOrderReadRole.CODE, SecCustomerReadRole.CODE, SecCustomerRowLevelRole.CODE);
 
-        // The rewrite the refusal above suggests: `o.customer` reads the foreign key of `o`, not the customer.
+        // `o.customer is not null` tells a hidden customer from an absent one as much as `o.customer.id` does.
         JpqlExecutionResult result = support.execute("select o.number as number "
-                + "from aitls_OrderLine l left join l.order o on o.customer is not null order by o.number", "number");
+                + "from aitls_OrderLine l left join l.order o on o.customer is not null", "number");
 
-        assertEquals(List.of("ORD-HiddenCo", "ORD-OtherCo", "ORD-VisibleCo"), column(result, "number"));
+        assertFalse(result.isExecuted());
+        String error = String.valueOf(result.getExecutionError());
+        assertTrue(error.contains("reads o.customer in the on clause"), error);
+    }
+
+    @Test
+    void execute_referenceNullTest_treatsHiddenRecordAsAbsent() {
+        support.loginAs(SecOrderReadRole.CODE, SecCustomerReadRole.CODE, SecCustomerRowLevelRole.CODE);
+
+        JpqlExecutionResult notNull = support.execute(
+                "select o.number as number from aitls_Order o where o.customer is not null order by o.number", "number");
+        JpqlExecutionResult isNull = support.execute(
+                "select o.number as number from aitls_Order o where o.customer is null order by o.number", "number");
+
+        // The same answer as `join o.customer c`: an order of a hidden customer refers to no visible customer.
+        assertEquals(List.of("ORD-OtherCo", "ORD-VisibleCo"), column(notNull, "number"));
+        assertEquals(List.of("ORD-HiddenCo"), column(isNull, "number"));
+    }
+
+    @Test
+    void execute_referenceComparedWithVariable_doesNotMatchHiddenRecord() {
+        support.loginAs(SecOrderReadRole.CODE, SecCustomerReadRole.CODE, SecCustomerRowLevelRole.CODE);
+
+        JpqlExecutionResult result = support.execute("select o.number as number from aitls_Order o, aitls_Customer c "
+                + "where o.customer = c order by o.number", "number");
+
+        assertEquals(List.of("ORD-OtherCo", "ORD-VisibleCo"), column(result, "number"));
+    }
+
+    @Test
+    void execute_groupByReference_groupsHiddenRecordsAsAbsent() {
+        support.loginAs(SecOrderReadRole.CODE, SecCustomerReadRole.CODE, SecCustomerRowLevelRole.CODE);
+        String jpql = "select count(o) as cnt from aitls_Order o group by o.customer";
+
+        String constrained = accessSupport.applyAccessConstraints(jpql, List.of());
+        JpqlExecutionResult result = support.execute(jpql, "cnt");
+
+        // Grouped by the joined customer's key, not the order's foreign key: hidden customers share the empty group.
+        assertTrue(normalized(constrained).contains("group by aitlsjoin1.id"), constrained);
+        assertEquals(3, column(result, "cnt").size());
     }
 
     @Test

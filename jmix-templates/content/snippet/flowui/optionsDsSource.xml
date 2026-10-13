@@ -2,9 +2,10 @@
 def optionsDatasourceAttrs = api.evaluateScript('optionsDatasources.groovy', ['view': view])
 %>
 <%if (optionsDatasourceAttrs) {
-    optionsDatasourceAttrs.each {attr ->%>
-        <collection id="${api.pluralForm(attr.name)}Dc" class="${attr.entityType.fqn}">
-            <loader id="${api.pluralForm(attr.name)}Dl" readOnly="true">
+    optionsDatasourceAttrs.unique { it.entityType.fqn }.each {attr ->
+        def containerId = api.pluralForm(attr.entityType.uncapitalizedClassName)%>
+        <collection id="${containerId}Dc" class="${attr.entityType.fqn}">
+            <loader id="${containerId}Dl" readOnly="true">
                 <query>
                     <![CDATA[select e from ${attr.entityType.name} e]]>
                 </query>

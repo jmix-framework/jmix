@@ -115,7 +115,7 @@ def initDefaultFieldAttrs(attr) {
 			if(itemsQuery != null) {
 				builder.append(itemsQuery)
 			} else if(attr.isLookupItemsContainerRequired()) {
-				fieldAttrs['itemsContainer'] = "${api.pluralForm(attr.name)}Dc"
+				fieldAttrs['itemsContainer'] = "${api.pluralForm(attr.entityType.uncapitalizedClassName)}Dc"
 			}
 		}
 		if(builder.length() > 0) {

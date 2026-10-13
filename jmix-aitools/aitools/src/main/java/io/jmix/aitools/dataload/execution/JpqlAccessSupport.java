@@ -220,18 +220,24 @@ public class JpqlAccessSupport {
         }
 
         MetaProperty[] properties = propertyPath.getMetaProperties();
-        if (outer && isIdOfReference(properties)) {
-            // `d.parent.id` reads the referenced record's key: rewritten into a left join of its own, so that a
-            // hidden record reads as an absent one instead of removing the row.
+        boolean idOfReference = isIdOfReference(properties);
+        if (outer && (idOfReference || isReadReference(properties, path, pathsPerPath, joinsPerPath))) {
+            // `d.parent.id` reads the referenced record's key and `d.parent is null` tells whether there is a
+            // record: both go through a left join of their own, so that a hidden record reads as an absent one.
             MetaClass referenced = properties[0].getRange().asClass();
-            Map<String, IdPathTarget> idPathTargets = occurrenceOf(entities, referenced.getName()).idPathTargets;
-            String target = path.getVariableName() + "." + properties[0].getName();
+            Map<String, ReferenceTarget> referenceTargets =
+                    occurrenceOf(entities, referenced.getName()).referenceTargets;
             // The variable is matched case-insensitively when rewriting, so `O.customer.id` and `o.customer.id`
             // are one reference and get one join.
-            if (idPathTargets.keySet().stream().noneMatch(target::equalsIgnoreCase)) {
-                idPathTargets.put(target, new IdPathTarget(
-                        metadataTools.isOwningSide(properties[0]) ? target : null, metaClass));
-            }
+            String spelled = path.getVariableName() + "." + properties[0].getName();
+            String target = referenceTargets.keySet().stream()
+                    .filter(spelled::equalsIgnoreCase)
+                    .findFirst()
+                    .orElse(spelled);
+            ReferenceTarget known = referenceTargets.get(target);
+            referenceTargets.put(target, new ReferenceTarget(
+                    metadataTools.isOwningSide(properties[0]) ? target : null, metaClass,
+                    idOfReference || known != null && known.readsRecord()));
             return;
         }
         StringBuilder prefix = new StringBuilder(path.getVariableName());
@@ -278,12 +284,42 @@ public class JpqlAccessSupport {
         return properties[1].getName().equals(metadataTools.getPrimaryKeyName(reference.getRange().asClass()));
     }
 
+    /**
+     * Tells whether a path is a to-one reference of a variable read by itself (`o.customer is null`,
+     * `o.customer = c`), not only as the path a join declares.
+     *
+     * @param properties   the path's properties
+     * @param path         the path
+     * @param pathsPerPath number of times each path occurs in the query, keyed in lower case
+     * @param joinsPerPath number of joins declared over each path, keyed in lower case
+     * @return whether the path reads the reference
+     */
+    protected boolean isReadReference(MetaProperty[] properties, QueryParser.QueryPath path,
+                                      Map<String, Integer> pathsPerPath, Map<String, Integer> joinsPerPath) {
+        if (properties.length != 1) {
+            return false;
+        }
+        MetaProperty reference = properties[0];
+        if (!reference.getRange().isClass() || reference.getRange().getCardinality().isMany()
+                || metadataTools.isJpaEmbeddable(reference.getRange().asClass())) {
+            return false;
+        }
+        String key = lowerCase(path.getFullPath());
+        return pathsPerPath.getOrDefault(key, 0) > joinsPerPath.getOrDefault(key, 0);
+    }
+
     protected String lowerCase(String name) {
         return name.toLowerCase(Locale.ROOT);
     }
 
     protected void checkEntityReadPermitted(QueryGraph graph) {
-        for (String entityName : graph.entities().keySet()) {
+        for (Map.Entry<String, EntityOccurrence> entry : graph.entities().entrySet()) {
+            if (entry.getValue().readsForeignKeyOnly()) {
+                // `o.customer is null` reads the owner's foreign key: it needs no READ on the customer, while a
+                // hidden customer still reads as absent.
+                continue;
+            }
+            String entityName = entry.getKey();
             MetaClass entity = metadata.findClass(entityName);
             if (entity == null) {
                 // Unknown to the data model: validation rejects it, and executing it would fail anyway.
@@ -316,8 +352,9 @@ public class JpqlAccessSupport {
      * @return the text with the conditions in the {@code on} clauses, unchanged when there is nothing to apply
      * @throws JpqlAccessConstraintException if a row-level condition to apply carries a join; if a navigating
      *                                       condition has to be wrapped into a subquery and the entity has no primary
-     *                                       key; or if a {@code <ref>.<id>} path occurs in the {@code on} clause of
-     *                                       the left join declaring its variable
+     *                                       key; or if a reference read through a {@code <ref>} or {@code <ref>.<id>}
+     *                                       path occurs in the {@code on} clause of the left join declaring its
+     *                                       variable
      * @throws IllegalStateException         if the query text cannot be rewritten as its graph requires
      */
     protected String applyLeftJoinConditions(String jpql, QueryGraph graph) {
@@ -340,29 +377,30 @@ public class JpqlAccessSupport {
             }
             List<String> variables = new ArrayList<>(occurrence.leftJoinTargets);
             String primaryKey = metadataTools.getPrimaryKeyName(entity);
-            if (primaryKey == null && !occurrence.idPathTargets.isEmpty()) {
-                // A registered id path reads the entity's key (isIdOfReference), so the key exists; never leave the
-                // path unconstrained if that ever changes.
+            if (primaryKey == null && !occurrence.referenceTargets.isEmpty()) {
+                // A read reference is told visible by the joined record's key; without one the read would stay
+                // unconstrained.
                 throw new IllegalStateException("Entity " + entity.getName() + " has no primary key, yet the query "
-                        + "reads it through " + occurrence.idPathTargets.keySet());
+                        + "reads it through " + occurrence.referenceTargets.keySet());
             }
             LeftJoinConditions leftJoinConditions = classifyConditions(entity, rowLevelConditions, primaryKey);
-            for (Map.Entry<String, IdPathTarget> idPath : occurrence.idPathTargets.entrySet()) {
-                String referencePath = idPath.getKey();
-                JpqlLeftJoinSupport.Rewrite.JoinedIdPath joined = rewrite.joinIdPath(referencePath, primaryKey);
+            for (Map.Entry<String, ReferenceTarget> reference : occurrence.referenceTargets.entrySet()) {
+                String referencePath = reference.getKey();
+                JpqlLeftJoinSupport.Rewrite.JoinedReference joined =
+                        rewrite.joinReference(referencePath, primaryKey);
                 String variable = joined.variable();
 
                 if (variable != null) {
                     variables.add(variable);
                 }
                 if (joined.selected()) {
-                    rewrite.addWhereCondition(referenceExistsCondition(referencePath, idPath.getValue().owner(),
+                    rewrite.addWhereCondition(referenceExistsCondition(referencePath, reference.getValue().owner(),
                             rewrite));
                 }
                 if (joined.leftInInnerJoinOn()) {
                     // An inner join drops a row without a visible record wherever it is narrowed: the path is
                     // narrowed in the `where` as a path prefix, by the passes that follow.
-                    occurrence.outerTargets.putIfAbsent(referencePath, idPath.getValue().nullCheck());
+                    occurrence.outerTargets.putIfAbsent(referencePath, reference.getValue().nullCheck());
                 }
             }
             for (String variable : variables) {
@@ -721,10 +759,10 @@ public class JpqlAccessSupport {
         protected final Set<String> leftJoinTargets = new LinkedHashSet<>();
 
         /**
-         * Outer reference paths whose primary key the query reads ({@code d.parent} for {@code d.parent.id}). Each is
-         * rewritten into a left join of its own.
+         * Outer references the query reads by themselves or through their primary key ({@code d.parent} for
+         * {@code d.parent is null} or {@code d.parent.id}). Each is rewritten into a left join of its own.
          */
-        protected final Map<String, IdPathTarget> idPathTargets = new LinkedHashMap<>();
+        protected final Map<String, ReferenceTarget> referenceTargets = new LinkedHashMap<>();
 
         /**
          * Whether the entity also occurs where an outer condition cannot reach it: in a subquery, or as a
@@ -733,18 +771,25 @@ public class JpqlAccessSupport {
         protected boolean inner;
 
         protected boolean hasOnTargets() {
-            return !leftJoinTargets.isEmpty() || !idPathTargets.isEmpty();
+            return !leftJoinTargets.isEmpty() || !referenceTargets.isEmpty();
+        }
+
+        protected boolean readsForeignKeyOnly() {
+            return outerTargets.isEmpty() && leftJoinTargets.isEmpty() && !inner
+                    && referenceTargets.values().stream().noneMatch(ReferenceTarget::readsRecord);
         }
     }
 
     /**
-     * A reference path whose primary key the query reads.
+     * A reference the query reads by itself or through its primary key.
      *
-     * @param nullCheck the path whose {@code is null} tells that no record is referred to, or {@code null} when the
-     *                  reference is not the owning side
-     * @param owner     entity the path's variable ranges over
+     * @param nullCheck   the path whose {@code is null} tells that no record is referred to, or {@code null} when the
+     *                    reference is not the owning side
+     * @param owner       entity the path's variable ranges over
+     * @param readsRecord whether the query reads the referenced record's key ({@code d.parent.id}), which needs READ
+     *                    on the referenced entity, rather than only the reference itself
      */
-    protected record IdPathTarget(@Nullable String nullCheck, MetaClass owner) {
+    protected record ReferenceTarget(@Nullable String nullCheck, MetaClass owner, boolean readsRecord) {
     }
 
     /**

@@ -143,11 +143,11 @@ class JpqlLeftJoinSupportTest {
     }
 
     @Test
-    void joinIdPath_rewritesPathsInEveryClause() {
+    void joinReference_rewritesPathsInEveryClause() {
         JpqlLeftJoinSupport.Rewrite rewrite = leftJoinSupport.rewrite(
                 "select o.number, o.customer.id from aitls_Order o where o.customer.id <> 5 order by o.customer.id");
 
-        String alias = rewrite.joinIdPath("o.customer", "id").variable();
+        String alias = rewrite.joinReference("o.customer", "id").variable();
         rewrite.addOnCondition(alias, alias + ".name <> 'HiddenCo'");
 
         String a = alias.toLowerCase(Locale.ROOT);
@@ -157,27 +157,27 @@ class JpqlLeftJoinSupportTest {
     }
 
     @Test
-    void joinIdPath_pathInMainSelect_reportedSelected() {
+    void joinReference_pathInMainSelect_reportedSelected() {
         JpqlLeftJoinSupport.Rewrite rewrite = leftJoinSupport.rewrite(
                 "select o.number, o.customer.id from aitls_Order o");
 
-        assertTrue(rewrite.joinIdPath("o.customer", "id").selected());
+        assertTrue(rewrite.joinReference("o.customer", "id").selected());
     }
 
     @Test
-    void joinIdPath_pathOutsideSelect_notReportedSelected() {
+    void joinReference_pathOutsideSelect_notReportedSelected() {
         JpqlLeftJoinSupport.Rewrite rewrite = leftJoinSupport.rewrite(
                 "select o.number from aitls_Order o where o.customer.id = 5 or o.number = 'X' order by o.customer.id");
 
-        assertFalse(rewrite.joinIdPath("o.customer", "id").selected());
+        assertFalse(rewrite.joinReference("o.customer", "id").selected());
     }
 
     @Test
-    void joinIdPath_pathSelectedBySubqueryOnly_notReportedSelected() {
+    void joinReference_pathSelectedBySubqueryOnly_notReportedSelected() {
         JpqlLeftJoinSupport.Rewrite rewrite = leftJoinSupport.rewrite("select o.number from aitls_Order o "
                 + "where exists (select o.customer.id from aitls_OrderLine l where l.order = o)");
 
-        JpqlLeftJoinSupport.Rewrite.JoinedIdPath joined = rewrite.joinIdPath("o.customer", "id");
+        JpqlLeftJoinSupport.Rewrite.JoinedReference joined = rewrite.joinReference("o.customer", "id");
 
         assertFalse(joined.selected());
         assertTrue(normalized(rewrite.getResult()).contains(
@@ -197,24 +197,48 @@ class JpqlLeftJoinSupportTest {
     }
 
     @Test
-    void joinIdPath_groupByReference_becomesJoinedKey() {
+    void joinReference_groupByReference_becomesJoinedKey() {
         JpqlLeftJoinSupport.Rewrite rewrite = leftJoinSupport.rewrite("select o.customer.id, count(o) "
                 + "from aitls_Order o where o.customer is not null group by o.customer order by o.customer");
 
-        String alias = rewrite.joinIdPath("o.customer", "id").variable();
+        String alias = rewrite.joinReference("o.customer", "id").variable();
 
         String a = alias.toLowerCase(Locale.ROOT);
         assertEquals("select " + a + ".id, count(o) from aitls_order o left join o.customer " + a
-                + " where o.customer is not null group by " + a + ".id order by o.customer",
+                + " where " + a + ".id is not null group by " + a + ".id order by " + a + ".id",
                 normalized(rewrite.getResult()));
     }
 
     @Test
-    void joinIdPath_leavesOtherPathsAndOwnJoinAlone() {
+    void joinReference_referenceNullTest_becomesJoinedKeyTest() {
+        JpqlLeftJoinSupport.Rewrite rewrite = leftJoinSupport.rewrite(
+                "select o.number from aitls_Order o where o.customer is not null or o.number = 'X'");
+
+        JpqlLeftJoinSupport.Rewrite.JoinedReference joined = rewrite.joinReference("o.customer", "id");
+
+        String a = joined.variable().toLowerCase(Locale.ROOT);
+        assertFalse(joined.selected());
+        assertEquals("select o.number from aitls_order o left join o.customer " + a
+                + " where " + a + ".id is not null or o.number = 'x'", normalized(rewrite.getResult()));
+    }
+
+    @Test
+    void joinReference_referenceComparedWithVariable_becomesVariable() {
+        JpqlLeftJoinSupport.Rewrite rewrite = leftJoinSupport.rewrite(
+                "select o.number from aitls_Order o, aitls_Customer c where o.customer = c");
+
+        String a = rewrite.joinReference("o.customer", "id").variable().toLowerCase(Locale.ROOT);
+
+        assertEquals("select o.number from aitls_order o left join o.customer " + a + ", aitls_customer c "
+                + "where " + a + " = c", normalized(rewrite.getResult()));
+    }
+
+    @Test
+    void joinReference_leavesOtherPathsAndOwnJoinAlone() {
         JpqlLeftJoinSupport.Rewrite rewrite = leftJoinSupport.rewrite(
                 "select o.customer.id, o.customer.name, c.id from aitls_Order o left join o.customer c");
 
-        String alias = rewrite.joinIdPath("o.customer", "id").variable();
+        String alias = rewrite.joinReference("o.customer", "id").variable();
 
         String a = alias.toLowerCase(Locale.ROOT);
         assertEquals("select " + a + ".id, o.customer.name, c.id from aitls_order o left join o.customer " + a
@@ -222,11 +246,11 @@ class JpqlLeftJoinSupportTest {
     }
 
     @Test
-    void joinIdPath_ownerIsFromVariable_newJoinPrecedesEarlierJoinReadingTheAlias() {
+    void joinReference_ownerIsFromVariable_newJoinPrecedesEarlierJoinReadingTheAlias() {
         JpqlLeftJoinSupport.Rewrite rewrite = leftJoinSupport.rewrite(
                 "select o.number from aitls_Order o join aitls_Customer c on c.id = o.customer.id");
 
-        String alias = rewrite.joinIdPath("o.customer", "id").variable();
+        String alias = rewrite.joinReference("o.customer", "id").variable();
 
         String a = alias.toLowerCase(Locale.ROOT);
         assertEquals("select o.number from aitls_order o left join o.customer " + a
@@ -234,12 +258,12 @@ class JpqlLeftJoinSupportTest {
     }
 
     @Test
-    void joinIdPath_ownerIsJoinVariable_newJoinRightAfterOwnerJoin() {
+    void joinReference_ownerIsJoinVariable_newJoinRightAfterOwnerJoin() {
         JpqlLeftJoinSupport.Rewrite rewrite = leftJoinSupport.rewrite(
                 "select p.number from aitls_OrderLine l join l.order p "
                         + "join aitls_Customer c on c.id = p.customer.id");
 
-        String alias = rewrite.joinIdPath("p.customer", "id").variable();
+        String alias = rewrite.joinReference("p.customer", "id").variable();
 
         String a = alias.toLowerCase(Locale.ROOT);
         assertEquals("select p.number from aitls_orderline l join l.order p left join p.customer " + a
@@ -247,23 +271,23 @@ class JpqlLeftJoinSupportTest {
     }
 
     @Test
-    void joinIdPath_pathInOnOfLeftJoinDeclaringOwner_refusedAndLeavesQueryUntouched() {
+    void joinReference_pathInOnOfLeftJoinDeclaringOwner_refusedAndLeavesQueryUntouched() {
         String jpql = "select o.number from aitls_Order o left join o.lines l on l.order.id = :p";
         JpqlLeftJoinSupport.Rewrite rewrite = leftJoinSupport.rewrite(jpql);
 
         JpqlAccessConstraintException e = assertThrows(JpqlAccessConstraintException.class,
-                () -> rewrite.joinIdPath("l.order", "id"));
+                () -> rewrite.joinReference("l.order", "id"));
 
         assertTrue(e.getMessage().contains("on clause"), e.getMessage());
         assertEquals(leftJoinSupport.rewrite(jpql).getResult(), rewrite.getResult());
     }
 
     @Test
-    void joinIdPath_pathOnlyInOnOfInnerJoinDeclaringOwner_leftInPlaceWithoutJoin() {
+    void joinReference_pathOnlyInOnOfInnerJoinDeclaringOwner_leftInPlaceWithoutJoin() {
         String jpql = "select o.number from aitls_Order o join aitls_OrderLine l on l.order.id = o.id";
         JpqlLeftJoinSupport.Rewrite rewrite = leftJoinSupport.rewrite(jpql);
 
-        JpqlLeftJoinSupport.Rewrite.JoinedIdPath joined = rewrite.joinIdPath("l.order", "id");
+        JpqlLeftJoinSupport.Rewrite.JoinedReference joined = rewrite.joinReference("l.order", "id");
 
         assertNull(joined.variable());
         assertTrue(joined.leftInInnerJoinOn());
@@ -271,11 +295,11 @@ class JpqlLeftJoinSupportTest {
     }
 
     @Test
-    void joinIdPath_pathInOnOfInnerJoinDeclaringOwner_rewritesOnlyOtherOccurrences() {
+    void joinReference_pathInOnOfInnerJoinDeclaringOwner_rewritesOnlyOtherOccurrences() {
         JpqlLeftJoinSupport.Rewrite rewrite = leftJoinSupport.rewrite(
                 "select l.order.id from aitls_Order o join aitls_OrderLine l on l.order.id = o.id");
 
-        JpqlLeftJoinSupport.Rewrite.JoinedIdPath joined = rewrite.joinIdPath("l.order", "id");
+        JpqlLeftJoinSupport.Rewrite.JoinedReference joined = rewrite.joinReference("l.order", "id");
 
         assertTrue(joined.leftInInnerJoinOn());
         String a = String.valueOf(joined.variable()).toLowerCase(Locale.ROOT);
@@ -284,20 +308,20 @@ class JpqlLeftJoinSupportTest {
     }
 
     @Test
-    void joinIdPath_notAReferenceOfVariable_throws() {
+    void joinReference_notAReferenceOfVariable_throws() {
         JpqlLeftJoinSupport.Rewrite rewrite = leftJoinSupport.rewrite(
                 "select o.number, o.customer.id from aitls_Order o");
 
-        assertThrows(IllegalArgumentException.class, () -> rewrite.joinIdPath("customer", "id"));
-        assertThrows(IllegalArgumentException.class, () -> rewrite.joinIdPath("o.customer.parent", "id"));
+        assertThrows(IllegalArgumentException.class, () -> rewrite.joinReference("customer", "id"));
+        assertThrows(IllegalArgumentException.class, () -> rewrite.joinReference("o.customer.parent", "id"));
     }
 
     @Test
-    void joinIdPath_noSuchPath_throwsAndLeavesQueryUntouched() {
+    void joinReference_noSuchPath_throwsAndLeavesQueryUntouched() {
         String jpql = "select o.number, o.customer.name from aitls_Order o";
         JpqlLeftJoinSupport.Rewrite rewrite = leftJoinSupport.rewrite(jpql);
 
-        assertThrows(IllegalStateException.class, () -> rewrite.joinIdPath("o.customer", "id"));
+        assertThrows(IllegalStateException.class, () -> rewrite.joinReference("o.customer", "id"));
 
         assertEquals(leftJoinSupport.rewrite(jpql).getResult(), rewrite.getResult());
     }

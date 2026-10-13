@@ -189,6 +189,17 @@ class JpqlAccessExcludedSubtypeTest {
     }
 
     @Test
+    void execute_referenceNullTestToBase_treatsExcludedRecordAsAbsent() {
+        JpqlExecutionResult notNull = support.execute("select d.title as title from aitls_Document d "
+                + "where d.parent is not null order by d.title", "title");
+        JpqlExecutionResult isNull = support.execute("select d.title as title from aitls_Document d "
+                + "where d.parent is null order by d.title", "title");
+
+        assertEquals(List.of("Child of plan"), column(notNull, "title"));
+        assertEquals(List.of("Child of secret", "Public plan"), column(isNull, "title"));
+    }
+
+    @Test
     void execute_leftJoinToBaseWithRowLevelPolicy_keepsRowsWithHiddenAndExcludedRecordsEmpty() {
         support.loginAs(SecDocumentReadRole.CODE, SecDocumentRowLevelRole.CODE);
 

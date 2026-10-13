@@ -94,7 +94,14 @@ public class JpqlExecutorTool implements DataLoadAiTool {
             - Always select explicit scalar or property expressions that can be returned as tabular values
             - Do not return an entity itself as a selected value - neither an alias (e) nor a reference attribute (e.customer); select its attributes instead
             - You may select properties of the root entity, properties reached through joins, and aggregate expressions
-            
+
+            DATA VISIBILITY:
+            - Results contain only the records the current user may see. A record hidden from the user behaves as an
+              absent one: a reference to it reads as empty, and a left join returns the row with the joined side empty.
+            - An empty reference or a missing related record therefore does not prove that the data is missing. When
+              answering about missing or unfilled data (e.g. "orders without a customer"), mention that some records
+              may be hidden by the user's access rights.
+
             PAGINATION RULES:
             - Default limit is 20 rows.
             - "maxResults" = how many rows to return. "firstResult" = 0-based offset (rows to skip), not a count; default 0.

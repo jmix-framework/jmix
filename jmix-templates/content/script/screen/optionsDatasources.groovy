@@ -1,8 +1,6 @@
+// entityComboBox from a DROPDOWN @LookupField without itemsQuery needs a collection container for its items
 def isLookupTypeDropdown(attr) {
-    def lookupAnn = attr.getAnnotation('Lookup')
-    return (lookupAnn != null
-            && lookupAnn.params['type']?.endsWith('DROPDOWN')
-            && (attr.hasAnnotation('OneToOne') || attr.hasAnnotation('ManyToOne')))
+    return attr.isEntityType() && attr.isLookupItemsContainerRequired()
 }
 
 def result = []

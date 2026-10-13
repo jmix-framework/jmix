@@ -126,6 +126,8 @@ public class EmailConnectionView extends StandardView {
     @Autowired
     protected ObjectProvider<OAuth2AuthorizationCodeFlow> authorizationCodeFlows;
 
+    protected SecureRandom secureRandom = new SecureRandom();
+
     @Subscribe
     public void onInit(final InitEvent event) {
         deviceCodeConnectButton.setEnabled(deviceCodeFlows.getIfAvailable() != null);
@@ -384,7 +386,7 @@ public class EmailConnectionView extends StandardView {
 
     protected String generateState() {
         byte[] bytes = new byte[32];
-        new SecureRandom().nextBytes(bytes);
+        secureRandom.nextBytes(bytes);
         return Base64.getUrlEncoder().withoutPadding().encodeToString(bytes);
     }
 

@@ -50,6 +50,7 @@ import io.jmix.flowui.view.ViewRegistry
 import io.jmix.flowui.view.navigation.ViewNavigationSupport
 import jakarta.servlet.ServletException
 import org.apache.commons.lang3.ArrayUtils
+import org.jspecify.annotations.Nullable
 import org.mockito.Mockito
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.ApplicationContext
@@ -88,6 +89,12 @@ class FlowuiTestSpecification extends Specification {
     protected VaadinSession vaadinSession
     protected UI ui
 
+    // Vaadin environment created for the current test, torn down after it
+    @Nullable
+    protected SpringServlet springServlet
+    @Nullable
+    protected TestServletContext servletContext
+
     void setup() {
         setupAuthentication()
         setupVaadinUi()
@@ -96,11 +103,15 @@ class FlowuiTestSpecification extends Specification {
     }
 
     void cleanup() {
-        removeAuthentication()
-        resetViewRegistry()
-        removeSystemUser()
-        closeOpenedNotifications()
-        closeOpenedDialogs()
+        try {
+            removeAuthentication()
+            resetViewRegistry()
+            removeSystemUser()
+            closeOpenedNotifications()
+            closeOpenedDialogs()
+        } finally {
+            tearDownVaadinUi()
+        }
     }
 
     /**
@@ -121,6 +132,7 @@ class FlowuiTestSpecification extends Specification {
 
     protected void setupVaadinUi() {
         SpringServlet springServlet = new TestSpringServlet(applicationContext, true)
+        this.springServlet = springServlet
 
         VaadinServletContextInitializer contextInitializer =
                 applicationContext.getBean(VaadinServletContextInitializer.class, applicationContext)
@@ -129,6 +141,7 @@ class FlowuiTestSpecification extends Specification {
             // Also, custom TestServletContext enables adding ServletContextListener from
             // VaadinServletContextInitializer.
             TestServletContext servletContext = new TestServletContext()
+            this.servletContext = servletContext
             servletContext.setAttribute(ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE, applicationContext)
             servletContext.setInitParameter(InitParameters.SERVLET_PARAMETER_PRODUCTION_MODE, "true")
 
@@ -172,6 +185,25 @@ class FlowuiTestSpecification extends Specification {
 
         ui.doInit(request, 1, APP_ID)
         UI.setCurrent(ui)
+    }
+
+    protected void tearDownVaadinUi() {
+        // Vaadin keeps the service (and the dev-mode handler, if started) in static state until they are destroyed.
+        try {
+            springServlet?.destroy()
+        } finally {
+            try {
+                servletContext?.fireServletContextDestroyed()
+            } finally {
+                springServlet = null
+                servletContext = null
+                vaadinSession = null
+                ui = null
+
+                CurrentInstance.clearAll()
+                RequestContextHolder.resetRequestAttributes()
+            }
+        }
     }
 
     /**

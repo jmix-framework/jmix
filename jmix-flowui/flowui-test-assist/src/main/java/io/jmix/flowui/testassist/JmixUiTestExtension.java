@@ -48,6 +48,7 @@ import io.jmix.flowui.view.navigation.ViewNavigationSupport;
 import jakarta.servlet.ServletException;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
+import org.jspecify.annotations.NullMarked;
 import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -99,26 +100,36 @@ import static org.springframework.web.context.WebApplicationContext.ROOT_WEB_APP
  * </pre>
  * For annotation-based approach use {@link UiTest} annotation to configure the extension.
  */
+@NullMarked
 public class JmixUiTestExtension implements TestInstancePostProcessor, BeforeEachCallback, AfterEachCallback {
 
     private static final String APP_ID = "testJmixUiAppId";
 
     public static final String WINDOW_NAME = "windowName";
 
-    protected String[] viewBasePackages;
+    protected String @Nullable [] viewBasePackages;
 
     // saving session and UI to avoid it be GC'ed
+    @Nullable
     protected VaadinSession vaadinSession;
+    @Nullable
     protected UI ui;
 
+    // Vaadin environment created for the current test, torn down after it
+    @Nullable
+    protected SpringServlet springServlet;
+    @Nullable
+    protected TestServletContext servletContext;
+
+    @Nullable
     protected UiTestAuthenticator uiTestAuthenticator;
+    @Nullable
     protected Class<? extends View> initialView;
 
     /**
      * @return view base packages or {@code null} if not set
      */
-    @Nullable
-    public String[] getViewBasePackages() {
+    public String @Nullable [] getViewBasePackages() {
         return viewBasePackages;
     }
 
@@ -130,7 +141,7 @@ public class JmixUiTestExtension implements TestInstancePostProcessor, BeforeEac
      * @param viewBasePackages view base packages
      * @return current instance of extension
      */
-    public JmixUiTestExtension withViewBasePackages(@Nullable String... viewBasePackages) {
+    public JmixUiTestExtension withViewBasePackages(String @Nullable ... viewBasePackages) {
         this.viewBasePackages = viewBasePackages;
         return this;
     }
@@ -181,13 +192,15 @@ public class JmixUiTestExtension implements TestInstancePostProcessor, BeforeEac
 
     @Override
     public void postProcessTestInstance(Object testInstance, ExtensionContext context) throws Exception {
-        initViewBasePackages(context);
-        initAuthentication(context);
-        initInitialView(context);
+        initExtension(context);
     }
 
     @Override
     public void beforeEach(ExtensionContext context) throws Exception {
+        // JUnit does not post-process the test instance for an extension registered through an instance field,
+        // so it is initialized here. Initialization only fills what is not set yet.
+        initExtension(context);
+
         setupAuthentication(context);
         setupVaadin(context);
         registerViewBasePackages(context);
@@ -197,16 +210,20 @@ public class JmixUiTestExtension implements TestInstancePostProcessor, BeforeEac
 
     @Override
     public void afterEach(ExtensionContext context) throws Exception {
-        removeAuthentication(context);
-        clearViewBasePackages(context);
-        closeOpenedNotifications(context);
-        closeOpenedDialogs(context);
+        try {
+            removeAuthentication(context);
+            clearViewBasePackages(context);
+            closeOpenedNotifications(context);
+            closeOpenedDialogs(context);
+        } finally {
+            tearDownVaadin(context);
+        }
     }
 
     protected void setupVaadin(ExtensionContext context) {
         ApplicationContext applicationContext = getApplicationContext(context);
 
-        SpringServlet springServlet = new TestSpringServlet(applicationContext, true);
+        springServlet = new TestSpringServlet(applicationContext, true);
 
         VaadinServletContextInitializer contextInitializer =
                 applicationContext.getBean(VaadinServletContextInitializer.class, applicationContext);
@@ -214,7 +231,7 @@ public class JmixUiTestExtension implements TestInstancePostProcessor, BeforeEac
             // We create custom servlet context to disable dev server via attribute (see DevModeServletContextListener).
             // Also, custom TestServletContext enables adding ServletContextListener from
             // VaadinServletContextInitializer.
-            TestServletContext servletContext = new TestServletContext();
+            servletContext = new TestServletContext();
             servletContext.setAttribute(ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE, applicationContext);
             servletContext.setInitParameter(InitParameters.SERVLET_PARAMETER_PRODUCTION_MODE, "true");
 
@@ -260,6 +277,30 @@ public class JmixUiTestExtension implements TestInstancePostProcessor, BeforeEac
         UI.setCurrent(ui);
     }
 
+    protected void tearDownVaadin(ExtensionContext context) {
+        // Vaadin keeps the service (and the dev-mode handler, if started) in static state until they are destroyed,
+        // which would keep the application context reachable after Spring closes it.
+        try {
+            if (springServlet != null) {
+                springServlet.destroy();
+            }
+        } finally {
+            try {
+                if (servletContext != null) {
+                    servletContext.fireServletContextDestroyed();
+                }
+            } finally {
+                springServlet = null;
+                servletContext = null;
+                vaadinSession = null;
+                ui = null;
+
+                CurrentInstance.clearAll();
+                RequestContextHolder.resetRequestAttributes();
+            }
+        }
+    }
+
     protected void registerViewBasePackages(ExtensionContext context) {
         ApplicationContext applicationContext = getApplicationContext(context);
 
@@ -280,7 +321,8 @@ public class JmixUiTestExtension implements TestInstancePostProcessor, BeforeEac
             result = new ArrayList<>(configurations);
         }
 
-        result.add(createViewControllersConfiguration(applicationContext, List.of(initialView.getPackageName())));
+        result.add(createViewControllersConfiguration(applicationContext,
+                List.of(Objects.requireNonNull(initialView).getPackageName())));
 
         setViewControllersConfigurations(context, result);
 
@@ -466,7 +508,7 @@ public class JmixUiTestExtension implements TestInstancePostProcessor, BeforeEac
     protected String[] getViewBasePackagesToRegister(ExtensionContext context) {
         String[] viewBasePackages = {};
         if (ArrayUtils.isNotEmpty(this.viewBasePackages)) {
-            viewBasePackages = this.viewBasePackages;
+            viewBasePackages = Objects.requireNonNull(this.viewBasePackages);
         } else {
             Optional<UiTest> annotationOpt =
                     AnnotationSupport.findAnnotation(context.getTestClass(), UiTest.class);
@@ -508,6 +550,12 @@ public class JmixUiTestExtension implements TestInstancePostProcessor, BeforeEac
             }
         }
         return InitialView.class;
+    }
+
+    private void initExtension(ExtensionContext context) {
+        initViewBasePackages(context);
+        initAuthentication(context);
+        initInitialView(context);
     }
 
     private void initViewBasePackages(ExtensionContext context) {

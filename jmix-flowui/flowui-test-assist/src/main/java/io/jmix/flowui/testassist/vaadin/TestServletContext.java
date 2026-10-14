@@ -41,4 +41,14 @@ public class TestServletContext extends MockServletContext {
             ((ServletContextListener) eventListener).contextInitialized(new ServletContextEvent(this));
         }
     }
+
+    /**
+     * Notifies the added listener that the context is shut down, so it can release what it started on
+     * initialization (e.g. the Vaadin dev-mode handler).
+     */
+    public void fireServletContextDestroyed() {
+        if (eventListener instanceof ServletContextListener) {
+            ((ServletContextListener) eventListener).contextDestroyed(new ServletContextEvent(this));
+        }
+    }
 }

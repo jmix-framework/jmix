@@ -505,7 +505,7 @@ dependencies {
         api 'org.freemarker:freemarker:2.3.35'
 
         api 'com.hazelcast.spring:hazelcast-spring-session:4.0.0'
-        api 'com.hazelcast:hazelcast:5.6.0'
+        api 'com.hazelcast:hazelcast:5.7.0'
 
         api 'org.postgresql:postgresql:42.7.11'
     }

@@ -17,6 +17,7 @@
 package io.jmix.security.impl.role;
 
 import io.jmix.security.model.BaseRole;
+import io.jmix.security.model.RoleSource;
 import io.jmix.security.role.RoleProvider;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
@@ -69,6 +70,26 @@ public class RoleRepositoryProviderUtils<T extends BaseRole> {
         return roles;
     }
 
+    /**
+     * Finds a role by its code and merges its child roles into it, at all levels.
+     * <p>
+     * The role is taken from the first provider that has it. Then each of its child roles is found the same way, with
+     * its own child roles already merged, and is passed together with the role to {@code roleMergingOperation}. The
+     * operation changes the role object returned by the provider, usually by adding the policies of the child role to
+     * the role's policies of all levels.
+     * <p>
+     * The child roles of a role with the {@link RoleSource#ANNOTATED_CLASS} source are not merged, because its
+     * policies already include the policies of the role interfaces it extends.
+     * <p>
+     * {@code visited} collects the codes of the roles found during the call, including {@code roleCode}. A child role
+     * whose code is already in it is skipped, so a cycle of child roles ends, and a child role that is reachable by
+     * several paths is merged only on the first path.
+     *
+     * @param roleCode             the code of the role to find
+     * @param visited              the codes of the roles that must not be merged again; the method adds codes to it
+     * @param roleMergingOperation the operation that merges a child role (second argument) into a role (first argument)
+     * @return the role with its child roles merged, or null if no provider has a role with this code
+     */
     @Nullable
     public T findRoleByCodeExcludeVisited(String roleCode, Set<String> visited, BiConsumer<T, T> roleMergingOperation) {
         visited.add(roleCode);
@@ -76,7 +97,7 @@ public class RoleRepositoryProviderUtils<T extends BaseRole> {
         for (RoleProvider<T> roleProvider : roleProviders) {
             T role = roleProvider.findRoleByCode(roleCode);
             if (role != null) {
-                if (role.getChildRoles() != null) {
+                if (role.getChildRoles() != null && !RoleSource.ANNOTATED_CLASS.equals(role.getSource())) {
                     for (String childCode : role.getChildRoles()) {
                         if (!visited.contains(childCode)) {
                             T childRole = findRoleByCodeExcludeVisited(childCode, visited, roleMergingOperation);

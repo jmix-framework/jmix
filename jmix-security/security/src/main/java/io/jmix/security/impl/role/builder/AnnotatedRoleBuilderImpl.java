@@ -28,11 +28,15 @@ import org.jspecify.annotations.NullMarked;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
+import java.util.function.Function;
 
 @NullMarked
 @Component("sec_AnnotatedRoleBuilder")
@@ -72,6 +76,8 @@ public class AnnotatedRoleBuilderImpl implements AnnotatedRoleBuilder {
         initBaseParameters(role, roleClass, roleAnnotation.name(), roleAnnotation.code(), roleAnnotation.description());
         role.setScopes(Sets.newHashSet(roleAnnotation.scope()));
         role.setResourcePolicies(extractResourcePolicies(roleClass));
+        role.setChildRoles(extractChildRoles(roleClass, io.jmix.security.role.annotation.ResourceRole.class,
+                io.jmix.security.role.annotation.ResourceRole::code));
 
         return role;
     }
@@ -86,6 +92,8 @@ public class AnnotatedRoleBuilderImpl implements AnnotatedRoleBuilder {
         RowLevelRole role = new RowLevelRole();
         initBaseParameters(role, roleClass, roleAnnotation.name(), roleAnnotation.code(), roleAnnotation.description());
         role.setRowLevelPolicies(extractRowLevelPolicies(roleClass));
+        role.setChildRoles(extractChildRoles(roleClass, io.jmix.security.role.annotation.RowLevelRole.class,
+                io.jmix.security.role.annotation.RowLevelRole::code));
 
         return role;
     }
@@ -149,6 +157,25 @@ public class AnnotatedRoleBuilderImpl implements AnnotatedRoleBuilder {
         }
 
         return path.contains("/") ? path : roleClass.getPackageName() + "/" + path;
+    }
+
+    /**
+     * Returns the codes of the roles that the role interface extends. A role is a parent interface with the same role
+     * annotation, found directly or through parent interfaces without that annotation. The policies of these roles are
+     * already among the policies of the role, because they are extracted from all methods of the role interface.
+     */
+    protected <A extends Annotation> Set<String> extractChildRoles(Class<?> roleClass, Class<A> annotationClass,
+                                                                   Function<A, String> codeExtractor) {
+        Set<String> childRoles = new LinkedHashSet<>();
+        for (Class<?> parentInterface : roleClass.getInterfaces()) {
+            A annotation = parentInterface.getAnnotation(annotationClass);
+            if (annotation != null) {
+                childRoles.add(codeExtractor.apply(annotation));
+            } else {
+                childRoles.addAll(extractChildRoles(parentInterface, annotationClass, codeExtractor));
+            }
+        }
+        return childRoles;
     }
 
     protected Collection<ResourcePolicy> extractResourcePolicies(Class<?> roleClass) {

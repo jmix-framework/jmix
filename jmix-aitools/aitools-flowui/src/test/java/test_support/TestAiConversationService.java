@@ -51,6 +51,19 @@ public class TestAiConversationService implements AiConversationService {
     }
 
     /**
+     * Creates a conversation owned by the given user and registers it.
+     *
+     * @param title    title of the conversation
+     * @param username owner of the conversation
+     * @return the registered conversation
+     */
+    public AiConversation addConversation(String title, String username) {
+        AiConversation conversation = addConversation(title);
+        conversation.setUsername(username);
+        return conversation;
+    }
+
+    /**
      * Creates a conversation with the given title and creation date and registers it.
      *
      * @param title       title of the conversation

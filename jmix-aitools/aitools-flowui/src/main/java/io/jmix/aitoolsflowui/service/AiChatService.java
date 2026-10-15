@@ -16,6 +16,7 @@
 
 package io.jmix.aitoolsflowui.service;
 
+import io.jmix.aitools.tool.AiToolStatusUpdateEvent;
 import io.jmix.aitools.tool.AiToolStatusUpdate;
 import io.jmix.aitoolsflowui.model.AiChatMessage;
 
@@ -34,7 +35,9 @@ public interface AiChatService {
      *
      * @param message the user message to answer
      * @return the assistant's reply text, or an empty string if no reply was produced
+     * @deprecated use {@link #generateResponse(AiChatResponseSpec)} and persist the response yourself
      */
+    @Deprecated(since = "3.2", forRemoval = true)
     String processMessage(AiChatMessage message);
 
     /**
@@ -44,11 +47,23 @@ public interface AiChatService {
      * @param message        the user message to answer
      * @param statusCallback receives progress updates during processing
      * @return the assistant's reply text, or an empty string if no reply was produced
+     * @deprecated use {@link #generateResponse(AiChatResponseSpec)} and persist the response yourself
      */
+    @Deprecated(since = "3.2", forRemoval = true)
     String processMessage(AiChatMessage message, Consumer<AiToolStatusUpdate> statusCallback);
 
     /**
-     * Returns whether AI chat is currently available, i.e. replies can be generated.
+     * Generates the assistant's response to the given user message without persisting anything. Status updates
+     * of the tools called while responding are published as {@link AiToolStatusUpdateEvent}s carrying the spec's
+     * correlation id when it has one.
+     *
+     * @param spec what to respond to and how
+     * @return the assistant's response text, or an empty string if the model produced none
+     */
+    String generateResponse(AiChatResponseSpec spec);
+
+    /**
+     * Returns whether AI chat is currently available, i.e. responses can be generated.
      *
      * @return {@code true} if chat is configured and ready to use
      */

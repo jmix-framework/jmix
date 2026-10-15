@@ -27,6 +27,13 @@ import com.vaadin.flow.component.shared.Tooltip;
 import com.vaadin.flow.function.SerializableSupplier;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.aitoolsflowui.AiToolsFlowuiProperties;
+import io.jmix.aitoolsflowui.generation.AiChatGenerationManager;
+import io.jmix.aitoolsflowui.generation.AiToolStatusFolding;
+import io.jmix.aitoolsflowui.generation.event.AiChatGenerationCompletedEvent;
+import io.jmix.aitoolsflowui.generation.event.AiChatGenerationEvent;
+import io.jmix.aitoolsflowui.generation.event.AiChatGenerationFailedEvent;
+import io.jmix.aitoolsflowui.generation.event.AiChatGenerationProgressEvent;
+import io.jmix.aitoolsflowui.generation.event.AiChatGenerationStartedEvent;
 import io.jmix.aitoolsflowui.model.*;
 import io.jmix.aitoolsflowui.service.*;
 import io.jmix.aitoolsflowui.view.chat.support.*;
@@ -54,8 +61,10 @@ import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.event.EventListener;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Encapsulates the "AI chat panel" UI — title row, message timeline, thinking
@@ -89,7 +98,7 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
     @Autowired
     protected AiConversationService conversationService;
     @Autowired
-    protected AssistantResponseTaskCoordinator assistantResponseTaskCoordinator;
+    protected AiChatGenerationManager generationManager;
     @Autowired
     protected TimelineItemFactory timelineItemFactory;
     @Autowired
@@ -126,7 +135,12 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
     protected AiConversation conversation;
     @Nullable
     protected TimelineItem activeThinkingItem;
-    protected boolean awaitingResponse;
+    /**
+     * The response the thinking indicator stands for; {@code null} until its started event arrives.
+     */
+    @Nullable
+    protected UUID shownGenerationId;
+    protected final List<AiToolStatusUpdate> thinkingStatuses = new ArrayList<>();
 
     protected boolean readOnly;
 
@@ -146,6 +160,10 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
     public void setConversation(@Nullable AiConversation conversation) {
         this.conversation = conversation;
         this.activeThinkingItem = null;
+        this.shownGenerationId = null;
+        this.thinkingStatuses.clear();
+        // A response shown as running in the previous conversation had disabled the composer.
+        setMessageInputEnabled(true);
 
         refreshAll();
     }
@@ -237,8 +255,8 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
 
     /**
      * Enables or disables the message composer. The fragment disables it
-     * automatically while an assistant response is in flight and re-enables
-     * it on completion; hosts can call this for additional read-only states.
+     * while it shows an assistant response as running and re-enables it when
+     * the response ends; hosts can call this for additional read-only states.
      *
      * @param enabled {@code true} to enable the composer, {@code false} to disable it
      */
@@ -246,33 +264,28 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
         composerFragment.setInputEnabled(enabled);
     }
 
-    @Subscribe(id = "editConversationTitleBtn", subject = "clickListener")
-    public void onEditConversationTitleBtnClick(final ClickEvent<JmixButton> event) {
-        openTitleEditDialog();
-    }
-
     /**
-     * Whether an assistant response is currently being generated for the bound
-     * conversation. Hosts can use this to warn the user before closing — the
-     * background task is scoped to the host view and is cancelled (losing the
-     * answer) when the view detaches.
+     * Whether the fragment shows an assistant response as running in the bound
+     * conversation. The response itself runs on the server and is not lost when
+     * the host view closes.
      *
-     * @return {@code true} while an assistant response is being generated
+     * @return {@code true} while an assistant response is shown as running
      */
     public boolean isAwaitingResponse() {
-        return awaitingResponse;
+        return activeThinkingItem != null;
     }
 
     /**
-     * Programmatic entry point to send a user message: persists it, appends it
-     * to the timeline, shows the thinking indicator, disables the composer and
-     * runs the assistant. Used by the composer's submit handler and by hosts
+     * Programmatic entry point to send a user message: persists it, starts the
+     * assistant's response on the server, appends the message to the timeline,
+     * shows the thinking indicator and disables the composer. Used by the
+     * composer's submit handler and by hosts
      * that start a conversation with an initial prompt (the chat-hub flow).
      *
      * @param userMessage message text to send; a {@code null} or blank value is ignored
      */
     public void sendMessage(@Nullable String userMessage) {
-        if (awaitingResponse) {
+        if (isAwaitingResponse()) {
             log.debug("Ignoring sendMessage call while awaiting an assistant response");
             return;
         }
@@ -289,11 +302,12 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
         }
 
         String trimmedMessage = userMessage.trim();
+        boolean firstMessage = timelineItemsDc.getItems().isEmpty();
         AiChatMessage savedUserMessage;
         try {
-            savedUserMessage = messageService.createMessage(conversation, AiChatMessageType.USER, trimmedMessage);
-        } catch (Exception e) {
-            log.error("Failed to persist user message", e);
+            savedUserMessage = generationManager.start(conversation, trimmedMessage);
+        } catch (RuntimeException e) {
+            log.error("Failed to start an assistant response", e);
             notifications.create(messageBundle.getMessage("aiChatFragment.errorProcessingMessage"))
                     .withType(Notifications.Type.ERROR)
                     .show();
@@ -302,7 +316,7 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
 
         // Auto-titling happens on the first message only.
         // It is optional and must never break sending.
-        if (timelineItemsDc.getItems().isEmpty()) {
+        if (firstMessage) {
             try {
                 applyAutoTitle(trimmedMessage);
             } catch (RuntimeException e) {
@@ -313,10 +327,6 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
         composerFragment.clear();
         appendTimelineItem(timelineItemFactory.createUserItem(savedUserMessage));
         showThinkingIndicator();
-        setMessageInputEnabled(false);
-        awaitingResponse = true;
-
-        processUserMessage(savedUserMessage);
     }
 
     @Subscribe
@@ -324,6 +334,51 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
         composerFragment.setSubmitHandler(this::sendMessage);
 
         refreshAll();
+    }
+
+    @Subscribe(id = "editConversationTitleBtn", subject = "clickListener")
+    public void onEditConversationTitleBtnClick(final ClickEvent<JmixButton> event) {
+        openTitleEditDialog();
+    }
+
+    @EventListener
+    public void onGenerationStarted(AiChatGenerationStartedEvent event) {
+        if (!event.belongsTo(conversation)) {
+            return;
+        }
+
+        UUID previousGenerationId = shownGenerationId;
+        shownGenerationId = event.getGenerationId();
+
+        if (previousGenerationId != null && !previousGenerationId.equals(shownGenerationId)) {
+            // Clear the statuses belong to the previous generation.
+            clearThinkingStatuses();
+        }
+
+        showThinkingIndicator();
+    }
+
+    @EventListener
+    public void onGenerationProgress(AiChatGenerationProgressEvent event) {
+        if (event.belongsTo(conversation)
+                && activeThinkingItem != null
+                && event.getGenerationId().equals(shownGenerationId)) {
+            appendThinkingStatusUpdate(event.getUpdate());
+        }
+    }
+
+    @EventListener
+    public void onGenerationCompleted(AiChatGenerationCompletedEvent event) {
+        if (event.belongsTo(conversation) && isShownOrNone(event)) {
+            handleAssistantResponseDone(event.getAssistantMessageId());
+        }
+    }
+
+    @EventListener
+    public void onGenerationFailed(AiChatGenerationFailedEvent event) {
+        if (event.belongsTo(conversation) && isShownOrNone(event)) {
+            showAssistantProcessingError();
+        }
     }
 
     /**
@@ -391,35 +446,28 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
         return titleModeOverride != null ? titleModeOverride : properties.getConversationTitleMode();
     }
 
-    protected void processUserMessage(AiChatMessage savedUserMessage) {
-        View<?> hostView = UiComponentUtils.findView(this);
-        if (hostView == null) {
-            log.warn("Fragment is not attached to a view — cannot run assistant response task");
-            return;
-        }
-        assistantResponseTaskCoordinator.run(
-                hostView,
-                Objects.requireNonNull(conversation),
-                savedUserMessage,
-                this::appendThinkingStatusUpdate,
-                this::handleAssistantResponseDone,
-                this::showAssistantProcessingError
-        );
+    /**
+     * An outcome is handled unless the fragment shows another response: then it is a late event of an earlier one.
+     *
+     * @param event outcome event of a response in the bound conversation
+     * @return {@code true} unless the fragment shows a different response
+     */
+    protected boolean isShownOrNone(AiChatGenerationEvent event) {
+        return shownGenerationId == null || shownGenerationId.equals(event.getGenerationId());
     }
 
-    protected void handleAssistantResponseDone(@Nullable AiChatMessage finalMessage) {
+    protected void handleAssistantResponseDone(UUID assistantMessageId) {
         activeThinkingItem = null;
-        awaitingResponse = false;
-        // Tools may persist side effects (including the new assistant message) in
-        // their own transaction, so the in-memory state is stale here. Re-binding
-        // by id reloads the conversation and its messages synchronously, after
-        // which the fresh assistant row can be stamped.
+        shownGenerationId = null;
+        thinkingStatuses.clear();
+
+        // Re-binding by id reloads the conversation (an automatic title may have landed) and its messages,
+        // after which the new assistant row can be stamped.
         if (conversation != null) {
             setConversationId(conversation.getId());
         }
-        if (finalMessage != null) {
-            markFreshAssistantItem(finalMessage.getId());
-        }
+
+        markFreshAssistantItem(assistantMessageId);
         forceMessageInputFocus();
     }
 
@@ -443,7 +491,6 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
     }
 
     protected void showAssistantProcessingError() {
-        awaitingResponse = false;
         removeThinkingIndicator();
         appendTimelineItem(timelineItemFactory.createAssistantItem(createTransientAssistantMessage(
                 messageBundle.getMessage("aiChatFragment.errorProcessingMessage"))));
@@ -452,9 +499,17 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
     }
 
     protected void showThinkingIndicator() {
+        if (activeThinkingItem != null) {
+            return;
+        }
+
+        thinkingStatuses.clear();
+
         AiChatMessage placeholder = createTransientAssistantMessage("");
         activeThinkingItem = timelineItemFactory.createThinkingItem(placeholder);
         appendTimelineItem(activeThinkingItem);
+
+        setMessageInputEnabled(false);
     }
 
     protected void removeThinkingIndicator() {
@@ -463,37 +518,31 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
         }
         timelineItemsDc.getMutableItems().remove(activeThinkingItem);
         activeThinkingItem = null;
+        shownGenerationId = null;
+        thinkingStatuses.clear();
+    }
+
+    protected void clearThinkingStatuses() {
+        thinkingStatuses.clear();
+
+        if (activeThinkingItem != null) {
+            activeThinkingItem.setStatusUpdates(new ArrayList<>());
+            refreshTimelineItem(activeThinkingItem);
+        }
     }
 
     protected void appendThinkingStatusUpdate(@Nullable AiToolStatusUpdate statusUpdate) {
-        if (activeThinkingItem == null
-                || statusUpdate == null
-                || statusUpdate.getMessage().isBlank()) {
+        if (activeThinkingItem == null || !AiToolStatusFolding.fold(thinkingStatuses, statusUpdate)) {
             return;
         }
 
-        List<TimelineItemStatus> statusUpdates = activeThinkingItem.getStatusUpdates();
-        if (!statusUpdates.isEmpty()) {
-            TimelineItemStatus last = statusUpdates.get(statusUpdates.size() - 1);
-            // Fold only into the last entry if it is still in-flight (no
-            // result yet). A completed entry with the same base message
-            // belongs to a previous tool call and must not swallow a fresh
-            // start phrase for the next call.
-            if (last.getMessage().equals(statusUpdate.getMessage()) && !last.isCompleted()) {
-                if (statusUpdate.isCompleted()) {
-                    statusUpdates.set(statusUpdates.size() - 1, createTimelineStatus(statusUpdate));
-                    refreshTimelineItem(activeThinkingItem);
-                    scrollToBottom(false);
-                }
-                return;
-            }
-        }
+        List<TimelineItemStatus> statuses = thinkingStatuses.stream()
+                .map(this::createTimelineStatus)
+                .collect(Collectors.toCollection(ArrayList::new));
 
-        statusUpdates.add(createTimelineStatus(statusUpdate));
-        if (statusUpdates.size() > 6) {
-            statusUpdates.remove(0);
-        }
+        activeThinkingItem.setStatusUpdates(statuses);
         refreshTimelineItem(activeThinkingItem);
+
         scrollToBottom(false);
     }
 

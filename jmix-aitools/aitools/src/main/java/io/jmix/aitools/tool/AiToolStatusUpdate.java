@@ -18,6 +18,8 @@ package io.jmix.aitools.tool;
 
 import org.jspecify.annotations.Nullable;
 
+import java.io.Serializable;
+
 /**
  * Ephemeral status update emitted by an AI tool through {@link AiToolStatusPublisher}.
  * <p>
@@ -37,7 +39,9 @@ import org.jspecify.annotations.Nullable;
  * </ol>
  * Use {@link #isCompleted()} to tell the two apart.
  */
-public class AiToolStatusUpdate {
+public class AiToolStatusUpdate implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     protected final String message;
 

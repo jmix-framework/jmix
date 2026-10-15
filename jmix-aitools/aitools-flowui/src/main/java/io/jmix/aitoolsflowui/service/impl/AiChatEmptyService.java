@@ -18,6 +18,7 @@ package io.jmix.aitoolsflowui.service.impl;
 
 import io.jmix.aitools.tool.AiToolStatusUpdate;
 import io.jmix.aitoolsflowui.model.AiChatMessage;
+import io.jmix.aitoolsflowui.service.AiChatResponseSpec;
 import io.jmix.aitoolsflowui.service.AiChatService;
 import io.jmix.aitoolsflowui.service.AiConversationService;
 import io.jmix.aitoolsflowui.service.AiChatMessageService;
@@ -44,10 +45,17 @@ public class AiChatEmptyService implements AiChatService {
     }
 
     @Override
+    public String generateResponse(AiChatResponseSpec spec) {
+        return "";
+    }
+
+    @Deprecated(since = "3.2", forRemoval = true)
+    @Override
     public String processMessage(AiChatMessage message) {
         return "";
     }
 
+    @Deprecated(since = "3.2", forRemoval = true)
     @Override
     public String processMessage(AiChatMessage message, Consumer<AiToolStatusUpdate> statusCallback) {
         return "";

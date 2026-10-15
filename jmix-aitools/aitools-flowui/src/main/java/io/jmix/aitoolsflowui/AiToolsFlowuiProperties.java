@@ -44,12 +44,19 @@ public class AiToolsFlowuiProperties {
      */
     AiConversationTitleMode conversationTitleMode;
 
+    /**
+     * Number of threads that generate assistant responses. Responses beyond it wait in a queue.
+     */
+    int generationPoolSize;
+
     public AiToolsFlowuiProperties(@DefaultValue("6") int chatHubRecentChatsCount,
                                    @DefaultValue("5m") Duration assistantResponseTimeout,
-                                   @DefaultValue("FIRST_MESSAGE") AiConversationTitleMode conversationTitleMode) {
+                                   @DefaultValue("FIRST_MESSAGE") AiConversationTitleMode conversationTitleMode,
+                                   @DefaultValue("10") int generationPoolSize) {
         this.chatHubRecentChatsCount = chatHubRecentChatsCount;
         this.assistantResponseTimeout = assistantResponseTimeout;
         this.conversationTitleMode = conversationTitleMode;
+        this.generationPoolSize = generationPoolSize;
     }
 
     /**
@@ -71,5 +78,12 @@ public class AiToolsFlowuiProperties {
      */
     public AiConversationTitleMode getConversationTitleMode() {
         return conversationTitleMode;
+    }
+
+    /**
+     * @see #generationPoolSize
+     */
+    public int getGenerationPoolSize() {
+        return generationPoolSize;
     }
 }

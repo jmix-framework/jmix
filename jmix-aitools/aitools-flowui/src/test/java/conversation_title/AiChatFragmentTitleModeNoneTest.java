@@ -16,16 +16,18 @@
 
 package conversation_title;
 
+import io.jmix.aitoolsflowui.generation.AiChatGenerationManager;
+import io.jmix.aitoolsflowui.model.AiChatMessageType;
 import io.jmix.aitoolsflowui.model.AiConversation;
 import io.jmix.aitoolsflowui.view.chat.AiChatFragment;
 import io.jmix.aitoolsflowui.view.chat.AiChatView;
-import io.jmix.aitoolsflowui.view.chat.support.AssistantResponseTaskCoordinator;
 import io.jmix.flowui.testassist.FlowuiTestAssistConfiguration;
 import io.jmix.flowui.testassist.UiTest;
 import io.jmix.flowui.testassist.UiTestUtils;
 import io.jmix.flowui.view.navigation.RouteSupport;
 import io.jmix.flowui.view.navigation.ViewNavigationSupport;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -35,6 +37,8 @@ import test_support.TestAiChatMessageService;
 import test_support.TestAiConversationService;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
 /**
  * The application-level {@code NONE} mode keeps the default title.
@@ -50,7 +54,13 @@ class AiChatFragmentTitleModeNoneTest {
     @Autowired TestAiConversationService conversationService;
     @Autowired TestAiChatMessageService messageService;
 
-    @MockitoBean AssistantResponseTaskCoordinator assistantResponseTaskCoordinator;
+    @MockitoBean AiChatGenerationManager generationManager;
+
+    @BeforeEach
+    void setUpGeneration() {
+        when(generationManager.start(any(), any())).thenAnswer(inv ->
+                messageService.createMessage(inv.getArgument(0), AiChatMessageType.USER, inv.getArgument(1)));
+    }
 
     @AfterEach
     void tearDown() {

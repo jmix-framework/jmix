@@ -27,35 +27,59 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * In-memory {@link AiChatMessageService} for UI tests.
+ * In-memory {@link AiChatMessageService} for UI tests. Thread-safe, since generations save answers from worker
+ * threads.
  */
 public class TestAiChatMessageService implements AiChatMessageService {
 
     @Autowired
     protected Metadata metadata;
 
-    protected final Map<UUID, List<AiChatMessage>> messagesByConversation = new LinkedHashMap<>();
+    protected final Map<UUID, List<AiChatMessage>> messagesByConversation = new ConcurrentHashMap<>();
+    protected final Map<AiChatMessageType, RuntimeException> failures = new ConcurrentHashMap<>();
 
     public void clear() {
         messagesByConversation.clear();
+        failures.clear();
+    }
+
+    /**
+     * Makes saving messages of the given type throw, until {@link #clear()} or a call with {@code null}.
+     *
+     * @param type      type of messages that fail to save
+     * @param exception exception to throw, or {@code null} to save them normally again
+     */
+    public void setFailure(AiChatMessageType type, @Nullable RuntimeException exception) {
+        if (exception == null) {
+            failures.remove(type);
+        } else {
+            failures.put(type, exception);
+        }
     }
 
     @Override
     public AiChatMessage createMessage(AiConversation conversation, AiChatMessageType type, String message) {
+        RuntimeException failure = failures.get(type);
+        if (failure != null) {
+            throw failure;
+        }
         AiChatMessage chatMessage = metadata.create(AiChatMessage.class);
         chatMessage.setConversation(conversation);
         chatMessage.setType(type);
         chatMessage.setContent(message);
         chatMessage.setCreatedDate(OffsetDateTime.now());
 
-        messagesByConversation.computeIfAbsent(conversation.getId(), id -> new ArrayList<>()).add(chatMessage);
+        messagesByConversation.computeIfAbsent(conversation.getId(),
+                id -> Collections.synchronizedList(new ArrayList<>())).add(chatMessage);
 
         return chatMessage;
     }
@@ -63,8 +87,7 @@ public class TestAiChatMessageService implements AiChatMessageService {
     @Nullable
     @Override
     public AiChatMessage loadLatestMessage(AiConversation conversation, @Nullable AiChatMessageType type) {
-        List<AiChatMessage> messages = messagesByConversation.getOrDefault(conversation.getId(), List.of());
-        return messages.stream()
+        return messagesOf(conversation).stream()
                 .filter(message -> type == null || type.equals(message.getType()))
                 .reduce((first, second) -> second)
                 .orElse(null);
@@ -72,7 +95,7 @@ public class TestAiChatMessageService implements AiChatMessageService {
 
     @Override
     public Collection<AiChatMessage> loadMessages(AiConversation conversation) {
-        return List.copyOf(messagesByConversation.getOrDefault(conversation.getId(), List.of()));
+        return messagesOf(conversation);
     }
 
     @Override
@@ -80,7 +103,7 @@ public class TestAiChatMessageService implements AiChatMessageService {
                                                                  @Nullable AiChatMessageType type) {
         Map<AiConversation, AiChatMessage> result = new LinkedHashMap<>();
         for (AiConversation conversation : conversations) {
-            messagesByConversation.getOrDefault(conversation.getId(), List.of()).stream()
+            messagesOf(conversation).stream()
                     .filter(message -> type == null || type.equals(message.getType()))
                     .max(Comparator.comparing(AiChatMessage::getCreatedDate))
                     .ifPresent(message -> result.put(conversation, message));
@@ -99,5 +122,15 @@ public class TestAiChatMessageService implements AiChatMessageService {
         AiChatMessage chatMessage = createMessage(conversation, AiChatMessageType.USER, "message");
         chatMessage.setCreatedDate(createdDate);
         return chatMessage;
+    }
+
+    protected List<AiChatMessage> messagesOf(AiConversation conversation) {
+        List<AiChatMessage> messages = messagesByConversation.get(conversation.getId());
+        if (messages == null) {
+            return List.of();
+        }
+        synchronized (messages) {
+            return List.copyOf(messages);
+        }
     }
 }

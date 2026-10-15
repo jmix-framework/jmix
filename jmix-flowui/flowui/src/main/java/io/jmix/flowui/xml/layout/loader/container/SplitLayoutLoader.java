@@ -17,6 +17,7 @@
 package io.jmix.flowui.xml.layout.loader.container;
 
 import com.vaadin.flow.component.splitlayout.SplitLayout;
+import com.vaadin.flow.component.splitlayout.SplitLayoutI18n;
 import io.jmix.flowui.component.splitlayout.JmixSplitLayout;
 import io.jmix.flowui.exception.GuiDevelopmentException;
 import io.jmix.flowui.xml.layout.ComponentLoader;
@@ -24,6 +25,7 @@ import io.jmix.flowui.xml.layout.loader.LayoutLoader;
 import org.dom4j.Element;
 
 import java.util.List;
+import java.util.Objects;
 
 public class SplitLayoutLoader extends AbstractContainerLoader<JmixSplitLayout> {
 
@@ -48,12 +50,26 @@ public class SplitLayoutLoader extends AbstractContainerLoader<JmixSplitLayout> 
         componentLoader().loadSizeAttributes(resultComponent, element);
         componentLoader().loadClickNotifierAttributes(resultComponent, element);
 
+        loadI18n();
         loadSubComponents();
+    }
+
+    protected void loadI18n() {
+        Element i18nElement = element.element("i18n");
+        if (i18nElement == null) {
+            return;
+        }
+
+        SplitLayoutI18n i18n = Objects.requireNonNullElseGet(resultComponent.getI18n(), SplitLayoutI18n::new);
+        loadResourceString(i18nElement, "separator", context.getMessageGroup(), i18n::setSeparator);
+        resultComponent.setI18n(i18n);
     }
 
     protected void createContent(SplitLayout resultComponent, Element element) {
         LayoutLoader loader = getLayoutLoader();
-        List<Element> elements = element.elements();
+        List<Element> elements = element.elements().stream()
+                .filter(subElement -> !isChildElementIgnored(subElement))
+                .toList();
 
         if (elements.size() != 2) {
             throw new GuiDevelopmentException(String.format(
@@ -72,5 +88,10 @@ public class SplitLayoutLoader extends AbstractContainerLoader<JmixSplitLayout> 
 
         resultComponent.addToPrimary(primaryComponentLoader.getResultComponent());
         resultComponent.addToSecondary(secondaryComponentLoader.getResultComponent());
+    }
+
+    @Override
+    protected boolean isChildElementIgnored(Element subElement) {
+        return "i18n".equals(subElement.getName());
     }
 }

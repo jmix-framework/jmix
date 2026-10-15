@@ -53,7 +53,8 @@ public class ResourceRole extends BaseRole {
     }
 
     /**
-     * Returns a list of policies defined directly in the current role, excluding policies from child roles.
+     * Returns a list of policies defined directly in the current role, excluding policies from child roles. For a role
+     * defined by an annotated interface, the list also includes the policies of the role interfaces it extends.
      */
     public Collection<ResourcePolicy> getResourcePolicies() {
         return resourcePolicies;

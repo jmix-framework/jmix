@@ -119,6 +119,10 @@ public abstract class BaseRole implements Serializable {
         this.localizedDescriptions = localizedDescriptions;
     }
 
+    /**
+     * @return the codes of the roles whose policies this role includes; for a role defined by an annotated interface,
+     * these are the role interfaces it extends
+     */
     public Set<String> getChildRoles() {
         return childRoles;
     }

@@ -167,4 +167,46 @@ class AnnotatedRoleBuilderTest extends SecuritySpecification {
         resourcePolicies.find { it.action == EntityPolicyAction.CREATE.id }
         resourcePolicies.find { it.action == EntityPolicyAction.UPDATE.id }
     }
+
+    def "extended resource role is a child role"() {
+        when:
+
+        ResourceRole role = annotatedRoleBuilder.createResourceRole(TestChildRole.class.getCanonicalName())
+
+        then:
+
+        role.childRoles == ['TestParentRole'] as Set
+    }
+
+    def "resource role extended through an interface without the role annotation is a child role"() {
+        when:
+
+        ResourceRole role = annotatedRoleBuilder.createResourceRole(TestIndirectChildRole.class.getCanonicalName())
+
+        then:
+
+        role.childRoles == ['TestParentRole'] as Set
+        role.resourcePolicies.size() == 2
+    }
+
+    def "resource role without a parent role has no child roles"() {
+        when:
+
+        ResourceRole role = annotatedRoleBuilder.createResourceRole(TestParentRole.class.getCanonicalName())
+
+        then:
+
+        role.childRoles.isEmpty()
+    }
+
+    def "extended row-level role is a child role"() {
+        when:
+
+        RowLevelRole role = annotatedRoleBuilder.createRowLevelRole(TestChildRowLevelRole.class.getCanonicalName())
+
+        then:
+
+        role.childRoles == ['TestParentRowLevelRole'] as Set
+        role.rowLevelPolicies.size() == 2
+    }
 }

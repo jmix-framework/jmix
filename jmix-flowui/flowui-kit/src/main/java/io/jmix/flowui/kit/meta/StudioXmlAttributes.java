@@ -804,6 +804,7 @@ public final class StudioXmlAttributes {
     public static final String SELECT_MIN_DISTANCE = "selectMinDistance";
     public static final String SELECT_MIRROR = "selectMirror";
     public static final String SELECT_OVERLAP = "selectOverlap";
+    public static final String SEPARATOR = "separator";
     public static final String SERIES_INDEX = "seriesIndex";
     public static final String SERIES_LAYOUT_BY = "seriesLayoutBy";
     public static final String SERVER_TYPE = "serverType";

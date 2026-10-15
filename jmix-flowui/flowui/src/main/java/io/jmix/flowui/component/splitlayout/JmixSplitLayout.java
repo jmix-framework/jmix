@@ -18,7 +18,13 @@ package io.jmix.flowui.component.splitlayout;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.splitlayout.SplitLayout;
+import com.vaadin.flow.component.splitlayout.SplitLayoutI18n;
+import io.jmix.core.Messages;
 import io.jmix.flowui.component.ComponentContainer;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -28,7 +34,31 @@ import java.util.Optional;
 
 import static io.jmix.flowui.component.UiComponentUtils.sameId;
 
-public class JmixSplitLayout extends SplitLayout implements ComponentContainer {
+public class JmixSplitLayout extends SplitLayout implements ComponentContainer, ApplicationContextAware,
+        InitializingBean {
+
+    protected ApplicationContext applicationContext;
+    protected Messages messages;
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext = applicationContext;
+    }
+
+    @Override
+    public void afterPropertiesSet() {
+        autowireDependencies();
+        initComponent();
+    }
+
+    protected void autowireDependencies() {
+        messages = applicationContext.getBean(Messages.class);
+    }
+
+    protected void initComponent() {
+        setI18n(new SplitLayoutI18n()
+                .setSeparator(messages.getMessage("splitLayout.i18n.separator")));
+    }
 
     @Override
     public Optional<Component> findOwnComponent(String id) {

@@ -19,7 +19,9 @@ package component_xml_load
 import com.vaadin.flow.component.orderedlayout.VerticalLayout
 import com.vaadin.flow.component.splitlayout.SplitLayout
 import component_xml_load.screen.BrokenSplitView
+import component_xml_load.screen.BrokenSplitWithI18nView
 import component_xml_load.screen.ContainerView
+import component_xml_load.screen.SplitI18nView
 import io.jmix.core.DataManager
 import io.jmix.flowui.component.scroller.JmixScroller
 import io.jmix.flowui.exception.GuiDevelopmentException
@@ -27,6 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.jdbc.core.JdbcTemplate
 import test_support.spec.FlowuiTestSpecification
+import tools.jackson.databind.node.ObjectNode
 
 @SpringBootTest
 class SplitLayoutXmlLoadTest extends FlowuiTestSpecification {
@@ -62,7 +65,28 @@ class SplitLayoutXmlLoadTest extends FlowuiTestSpecification {
             width == "100px"
             getOwnComponent("splitPrimaryChild") instanceof JmixScroller
             getOwnComponent("splitSecondaryChild") instanceof VerticalLayout
+            ownComponents.size() == 2
+            i18n.separator == "separatorString"
+            (element.getPropertyRaw("i18n") as ObjectNode).get("separator").asText() == "separatorString"
         }
+    }
+
+    def "Load splitLayout i18n from XML on top of the localized defaults"() {
+        when: "Open the SplitI18nView"
+        def view = navigateToView(SplitI18nView.class)
+
+        then: "A split without i18n keeps the localized default"
+        view.noI18nSplit.i18n.separator == "Resize separator"
+
+        and: "An empty i18n element keeps the localized default"
+        view.emptyI18nSplit.i18n.separator == "Resize separator"
+        (view.emptyI18nSplit.element.getPropertyRaw("i18n") as ObjectNode).get("separator").asText() ==
+                "Resize separator"
+
+        and: "A message key is resolved from the view message group"
+        view.localizedI18nSplit.i18n.separator == "Localized separator"
+        (view.localizedI18nSplit.element.getPropertyRaw("i18n") as ObjectNode).get("separator").asText() ==
+                "Localized separator"
     }
 
     def "Throw broken splitLayout content exception"() {
@@ -72,5 +96,14 @@ class SplitLayoutXmlLoadTest extends FlowuiTestSpecification {
         then: "Throw GuiDevelopmentException"
         def e = thrown GuiDevelopmentException
         e.message == "Split 'Optional[brokenSplit]' must contain only two children"
+    }
+
+    def "Do not count the i18n element as a splitLayout child"() {
+        when: "Open the view with a split that has one component and an i18n element"
+        navigateToView(BrokenSplitWithI18nView.class)
+
+        then: "Throw GuiDevelopmentException"
+        def e = thrown GuiDevelopmentException
+        e.message == "Split 'Optional[brokenSplitWithI18n]' must contain only two children"
     }
 }

@@ -4579,8 +4579,11 @@
     <xs:complexType name="splitContainer">
         <xs:complexContent>
             <xs:extension base="baseComponent">
-                <xs:sequence minOccurs="2" maxOccurs="2">
-                    <xs:group ref="singleLayoutOrComponent"/>
+                <xs:sequence>
+                    <xs:sequence minOccurs="2" maxOccurs="2">
+                        <xs:group ref="singleLayoutOrComponent"/>
+                    </xs:sequence>
+                    <xs:element name="i18n" type="splitI18nElement" minOccurs="0"/>
                 </xs:sequence>
 
                 <xs:attribute name="themeNames" type="splitThemeNames"/>
@@ -4592,6 +4595,10 @@
                 <xs:attributeGroup ref="hasClickNotifierAttributes"/>
             </xs:extension>
         </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="splitI18nElement">
+        <xs:attribute name="separator" type="resourceString"/>
     </xs:complexType>
 
     <!-- Tabs-->

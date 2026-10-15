@@ -238,6 +238,7 @@
                width="100px">
             <scroller id="splitPrimaryChild"/>
             <vbox id="splitSecondaryChild"/>
+            <i18n separator="separatorString"/>
         </split>
 
         <tabs id="tabsId"

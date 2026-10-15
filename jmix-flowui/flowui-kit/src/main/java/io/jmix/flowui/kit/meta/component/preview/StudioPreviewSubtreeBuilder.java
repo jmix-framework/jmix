@@ -41,7 +41,7 @@ final class StudioPreviewSubtreeBuilder {
     /** Non-component children that must not be walked as visual subtree. */
     private static final Set<String> NON_VISUAL_CHILD_NAMES = Set.of(
             "data", "facets", "actions", "tooltip", "prefix", "suffix", "validators", "formatter",
-            StudioXmlElements.COLUMNS, StudioXmlElements.ITEMS, "responsiveSteps");
+            StudioXmlElements.COLUMNS, StudioXmlElements.ITEMS, "responsiveSteps", StudioXmlElements.I18N);
 
     private StudioPreviewSubtreeBuilder() {
     }

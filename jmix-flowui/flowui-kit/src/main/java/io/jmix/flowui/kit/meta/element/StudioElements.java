@@ -1264,4 +1264,21 @@ interface StudioElements {
             target = "com.vaadin.flow.component.Svg"
     )
     void svgContent();
+
+    @StudioElement(
+            name = "I18n",
+            classFqn = "com.vaadin.flow.component.splitlayout.SplitLayoutI18n",
+            icon = "io/jmix/flowui/kit/meta/icon/element/i18n.svg",
+            xmlElement = StudioXmlElements.I18N,
+            documentationLink = "%VERSION%/flow-ui/vc/layouts/split.html",
+            target = "io.jmix.flowui.component.splitlayout.JmixSplitLayout",
+            unlimitedCount = false,
+            properties = {
+                    @StudioProperty(
+                            xmlAttribute = StudioXmlAttributes.SEPARATOR,
+                            type = StudioPropertyType.LOCALIZED_STRING,
+                            category = StudioProperty.Category.GENERAL)
+            }
+    )
+    void splitLayoutI18n();
 }

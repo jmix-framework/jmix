@@ -409,7 +409,8 @@ final class StudioStandardComponentsPreviewLoader implements StudioPreviewCompon
 
     /** Sub-elements that are settings, not children, and so don't disable placeholder items. */
     private static final Set<String> NON_COMPONENT_CHILD_NAMES = Set.of(
-            "tooltip", "prefix", "suffix", "actions", "validators", "formatter", "itemsQuery");
+            "tooltip", "prefix", "suffix", "actions", "validators", "formatter", "itemsQuery",
+            StudioXmlElements.I18N);
 
     private boolean hasComponentChildren(Element element) {
         return element.elements().stream()

@@ -242,6 +242,7 @@ public final class StudioXmlElements {
     public static final String HR = "hr";
     public static final String HTML = "html";
     public static final String HTML_OBJECT = "htmlObject";
+    public static final String I18N = "i18n";
     public static final String ICON = "icon";
     public static final String ICON_STYLE = "iconStyle";
     public static final String IFRAME = "iframe";

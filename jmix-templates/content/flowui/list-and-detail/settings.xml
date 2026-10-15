@@ -31,6 +31,14 @@
             <![CDATA[${studioUtils.makeScreenNaturalCaption(entity.className.concat('.browse'), null)}]]>
         </message>
     </locMessages>
+    <locMessages key="fullTextFilterTitle" expressionKey="${studioUtils.decapitalize(viewControllerName)}.fullTextFilter">
+        <message lang="default">
+            <![CDATA[Search]]>
+        </message>
+        <condition source="${listFilterType.type.name().equals(&quot;FULL_TEXT&quot;)}">
+            <dependency code="listFilterType"/>
+        </condition>
+    </locMessages>
     <locMessages key="detailTitle" expressionKey="${studioUtils.decapitalize(detailControllerName)}.title">
         <message lang="default">
             <![CDATA[${studioUtils.makeNaturalMessage(entity.className)}]]>

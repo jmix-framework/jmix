@@ -116,6 +116,7 @@ def searchNamespace = filterType == 'FULL_TEXT' ? ' xmlns:search="http://jmix.io
                     <properties include=".*"/>
                 </genericFilter><%}%><%if (filterType == 'FULL_TEXT') {%>
                 <search:fullTextFilter id="fullTextFilter"
+                                       label="${messageKeys['fullTextFilterTitle']}"
                                        dataLoader="${tableDl}"/><%}%>
                 ${propertyFiltersXml}
                 ${tableXml}

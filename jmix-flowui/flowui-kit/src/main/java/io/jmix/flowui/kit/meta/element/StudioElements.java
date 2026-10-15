@@ -1281,4 +1281,33 @@ interface StudioElements {
             }
     )
     void splitLayoutI18n();
+
+    @StudioElement(
+            name = "I18n",
+            classFqn = "com.vaadin.flow.component.grid.GridI18n",
+            icon = "io/jmix/flowui/kit/meta/icon/element/i18n.svg",
+            xmlElement = StudioXmlElements.I18N,
+            documentationLink = "%VERSION%/flow-ui/vc/components/dataGrid.html",
+            target = {"io.jmix.flowui.component.grid.DataGrid", "io.jmix.flowui.component.grid.TreeDataGrid"},
+            unlimitedCount = false,
+            properties = {
+                    @StudioProperty(
+                            xmlAttribute = StudioXmlAttributes.SELECT_ALL,
+                            type = StudioPropertyType.LOCALIZED_STRING,
+                            category = StudioProperty.Category.GENERAL),
+                    @StudioProperty(
+                            xmlAttribute = StudioXmlAttributes.SELECT_ALL_UNAVAILABLE,
+                            type = StudioPropertyType.LOCALIZED_STRING,
+                            category = StudioProperty.Category.GENERAL),
+                    @StudioProperty(
+                            xmlAttribute = StudioXmlAttributes.SELECT_ROW,
+                            type = StudioPropertyType.LOCALIZED_STRING,
+                            category = StudioProperty.Category.GENERAL),
+                    @StudioProperty(
+                            xmlAttribute = StudioXmlAttributes.SORTER,
+                            type = StudioPropertyType.LOCALIZED_STRING,
+                            category = StudioProperty.Category.GENERAL)
+            }
+    )
+    void dataGridI18n();
 }

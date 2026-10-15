@@ -3644,6 +3644,7 @@
                             <xs:group ref="layoutOrComponent"/>
                         </xs:complexType>
                     </xs:element>
+                    <xs:element name="i18n" type="dataGridI18nElement" minOccurs="0"/>
                 </xs:all>
 
                 <xs:attribute name="ariaLabel" type="resourceString"/>
@@ -3684,6 +3685,13 @@
                 <xs:attribute name="showOrphans" type="xs:boolean"/>
             </xs:extension>
         </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="dataGridI18nElement">
+        <xs:attribute name="selectAll" type="resourceString"/>
+        <xs:attribute name="selectAllUnavailable" type="resourceString"/>
+        <xs:attribute name="selectRow" type="resourceString"/>
+        <xs:attribute name="sorter" type="resourceString"/>
     </xs:complexType>
 
     <!-- TextField-->

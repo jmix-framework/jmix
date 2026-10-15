@@ -29,6 +29,7 @@ import com.vaadin.flow.component.icon.VaadinIcon
 import com.vaadin.flow.component.popover.Popover
 import com.vaadin.flow.component.popover.PopoverPosition
 import component.standarddetailview.view.OrderDetailTestView
+import component_xml_load.screen.GridI18nView
 import component_xml_load.screen.GridView
 import io.jmix.core.DataManager
 import io.jmix.flowui.component.grid.DataGridColumn
@@ -44,6 +45,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.jdbc.core.JdbcTemplate
 import test_support.entity.sales.Order
 import test_support.spec.FlowuiTestSpecification
+import tools.jackson.databind.node.ObjectNode
 
 import java.time.LocalDate
 
@@ -551,5 +553,60 @@ class GridXmlLoadTest extends FlowuiTestSpecification {
             resizable
             !filterable
         }
+    }
+
+    def "Load dataGrid i18n from XML on top of the localized defaults"() {
+        when: "Open the GridI18nView"
+        def view = navigateToView(GridI18nView.class)
+
+        then: "A grid without i18n keeps the localized defaults"
+        verifyAll(view.noI18nDataGrid.i18n) {
+            selectAll == "Select All"
+            selectAllUnavailable == "Select All unavailable"
+            selectRow == "Select Row {rowHeader}"
+            sorter == "Sort by {column}"
+        }
+
+        and: "An empty i18n element keeps the localized defaults"
+        verifyAll(view.emptyI18nDataGrid.i18n) {
+            selectAll == "Select All"
+            selectAllUnavailable == "Select All unavailable"
+            selectRow == "Select Row {rowHeader}"
+            sorter == "Sort by {column}"
+        }
+        (view.emptyI18nDataGrid.element.getPropertyRaw("i18n") as ObjectNode).get("sorter").asString() ==
+                "Sort by {column}"
+
+        and: "All declared attributes are loaded and sent to the client"
+        verifyAll(view.fullI18nDataGrid.i18n) {
+            selectAll == "All rows"
+            selectAllUnavailable == "All rows unavailable"
+            selectRow == "Row {rowHeader}"
+            sorter == "Sort {column}"
+        }
+        verifyAll(view.fullI18nDataGrid.element.getPropertyRaw("i18n") as ObjectNode) {
+            get("selectAll").asString() == "All rows"
+            get("selectAllUnavailable").asString() == "All rows unavailable"
+            get("selectRow").asString() == "Row {rowHeader}"
+            get("sorter").asString() == "Sort {column}"
+        }
+
+        and: "A message key is resolved from the view message group, absent attributes keep the defaults"
+        verifyAll(view.partialI18nDataGrid.i18n) {
+            selectAll == "Select All"
+            selectAllUnavailable == "Select All unavailable"
+            selectRow == "Select Row {rowHeader}"
+            sorter == "Order by {column}"
+        }
+        (view.partialI18nDataGrid.element.getPropertyRaw("i18n") as ObjectNode).get("sorter").asString() ==
+                "Order by {column}"
+
+        and: "A treeDataGrid loads i18n too"
+        verifyAll(view.i18nTreeDataGrid.i18n) {
+            selectAll == "Select All"
+            sorter == "treeSorter"
+        }
+        (view.i18nTreeDataGrid.element.getPropertyRaw("i18n") as ObjectNode).get("sorter").asString() ==
+                "treeSorter"
     }
 }

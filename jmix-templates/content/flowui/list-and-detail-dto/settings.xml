@@ -36,6 +36,14 @@
             <![CDATA[${studioUtils.makeNaturalMessage(entity.className)}]]>
         </message>
     </locMessages>
+    <locMessages key="emptyStateText" expressionKey="${studioUtils.decapitalize(viewControllerName)}.emptyStateText">
+        <message lang="default">
+            <![CDATA[No data]]>
+        </message>
+        <condition source="${gridEmptyState}">
+            <dependency code="gridEmptyState"/>
+        </condition>
+    </locMessages>
 
     <steps>
         <step name="Entity list and detail views" order="0"/>
@@ -77,6 +85,12 @@
               code="resizableColumns"
               propertyType="BOOLEAN"
               defaultValue="true"/>
+    <property caption="Empty state component"
+              step="1"
+              code="gridEmptyState"
+              propertyType="BOOLEAN"
+              preferences="true"
+              defaultValue="false"/>
     <property caption="List view fixed footer"
               step="1"
               code="listFixedFooter"

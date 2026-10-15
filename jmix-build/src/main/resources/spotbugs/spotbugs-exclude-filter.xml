@@ -52,6 +52,9 @@
             <Bug pattern="THROWS_METHOD_THROWS_CLAUSE_THROWABLE"/>
         </Or>
     </Match>
+    <Match>
+        <Bug pattern="CT_CONSTRUCTOR_THROW"/> <!-- Finalizer attacks need untrusted in-JVM code. We do not support Java SecurityManager -->
+    </Match>
 
     <!-- False positives (since Java 11) -->
     <Match>

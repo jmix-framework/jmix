@@ -21,7 +21,12 @@ import org.springframework.boot.context.properties.bind.DefaultValue;
 
 /**
  * Manages H2 console properties.
+ *
+ * @deprecated the framework reads {@code spring.h2.console.path} directly in the filter chain that opens the console
+ * ({@code io.jmix.autoconfigure.security.SecurityAutoConfiguration.H2ConsoleSecurityConfiguration}); the properties
+ * themselves belong to Spring Boot's {@code spring-boot-h2console} module.
  */
+@Deprecated(since = "3.1", forRemoval = true)
 @ConfigurationProperties(prefix = "spring.h2.console")
 public class H2ConsoleProperties {
 

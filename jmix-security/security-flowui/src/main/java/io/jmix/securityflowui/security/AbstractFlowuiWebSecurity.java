@@ -32,6 +32,12 @@ public abstract class AbstractFlowuiWebSecurity {
 
     @Autowired
     protected ServletContext servletContext;
+    /**
+     * @deprecated the H2 console is opened by its own filter chain, see
+     * {@code io.jmix.autoconfigure.security.SecurityAutoConfiguration.H2ConsoleSecurityConfiguration}.
+     */
+    @Deprecated(since = "3.1", forRemoval = true)
+    @SuppressWarnings("removal")
     @Autowired(required = false)
     protected H2ConsoleProperties h2ConsoleProperties;
     @Autowired
@@ -60,12 +66,6 @@ public abstract class AbstractFlowuiWebSecurity {
                     PathPatternRequestMatcher.pathPattern(webProperties.getError().getPath())
             ).permitAll();
         });
-
-        if (h2ConsoleProperties != null && h2ConsoleProperties.isEnabled()) {
-            http.authorizeHttpRequests(registry ->
-                    registry.requestMatchers(PathPatternRequestMatcher.pathPattern(h2ConsoleProperties.getPath() + "/**"))
-                            .permitAll());
-        }
     }
 
     protected abstract void configureVaadinSpecifics(HttpSecurity http) throws Exception;

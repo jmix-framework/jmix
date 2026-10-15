@@ -28,6 +28,12 @@ public interface JmixSecurityFilterChainOrder {
      */
     int CUSTOM = JmixOrder.HIGHEST_PRECEDENCE - 1000;
 
+    /**
+     * The chain that opens the H2 database console ({@code spring.h2.console.enabled=true}). It goes before every
+     * other Jmix chain, because the console is served from its own path and must not be subject to CSRF protection.
+     */
+    int H2_CONSOLE = JmixOrder.HIGHEST_PRECEDENCE + 50;
+
     int WEBDAV_REST_BASIC = JmixOrder.HIGHEST_PRECEDENCE + 80;
     int WEBDAV_REST_DIGEST = JmixOrder.HIGHEST_PRECEDENCE + 80;
     int WEBDAV_REST_COOKIE = JmixOrder.HIGHEST_PRECEDENCE + 80;

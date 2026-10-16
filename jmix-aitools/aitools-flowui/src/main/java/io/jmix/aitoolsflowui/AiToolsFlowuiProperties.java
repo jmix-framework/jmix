@@ -33,9 +33,9 @@ public class AiToolsFlowuiProperties {
     int chatHubRecentChatsCount;
 
     /**
-     * Timeout for the background task that runs the LLM call producing the
-     * assistant response. The task is cancelled and the failure handler is
-     * invoked once the timeout elapses.
+     * Maximum time an assistant response may take, counted from sending the
+     * message (time waiting for a free generation thread included). On expiry
+     * the response is cancelled and reported as failed.
      */
     Duration assistantResponseTimeout;
 

@@ -20,6 +20,7 @@ import io.jmix.aitools.tool.AiToolStatusUpdate;
 import io.jmix.aitoolsflowui.generation.AiChatGeneration;
 import io.jmix.aitoolsflowui.generation.AiChatGenerationManager;
 import io.jmix.aitoolsflowui.generation.AiChatGenerationRejectedException;
+import io.jmix.aitoolsflowui.generation.event.AiChatGenerationCancelledEvent;
 import io.jmix.aitoolsflowui.generation.event.AiChatGenerationCompletedEvent;
 import io.jmix.aitoolsflowui.generation.event.AiChatGenerationEvent;
 import io.jmix.aitoolsflowui.generation.event.AiChatGenerationFailedEvent;
@@ -31,6 +32,7 @@ import io.jmix.aitoolsflowui.model.AiConversation;
 import io.jmix.core.security.AccessDeniedException;
 import io.jmix.flowui.UiEventPublisher;
 import io.jmix.flowui.testassist.FlowuiTestAssistConfiguration;
+import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -44,20 +46,27 @@ import test_support.TestAiChatMessageService;
 import test_support.TestAiChatService;
 import test_support.TestAiConversationService;
 import test_support.TestAuthentication;
+import test_support.TestGenerationWorkers;
 import test_support.TestUiUserEventCollector;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.LockSupport;
+import java.util.function.Supplier;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -68,7 +77,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Background generation of assistant answers: persistence order, the one-per-conversation registry, tool status
- * relay, owner-only reads, failures and the execution context of the worker.
+ * relay, owner-only reads, failures, cancellation and the execution context of the worker.
  */
 @SpringBootTest(classes = {AiToolsFlowuiTestConfiguration.class, FlowuiTestAssistConfiguration.class})
 class AiChatGenerationManagerTest {
@@ -81,6 +90,8 @@ class AiChatGenerationManagerTest {
 
     final CountDownLatch release = new CountDownLatch(1);
 
+    @Nullable TestGenerationWorkers ownWorkers;
+
     @BeforeEach
     void setUp() {
         events.clear();
@@ -91,6 +102,9 @@ class AiChatGenerationManagerTest {
         release.countDown();
         // A worker still running would write into the next test.
         events.awaitAllFinished();
+        if (ownWorkers != null) {
+            ownWorkers.restore();
+        }
         chatService.reset();
         conversationService.clear();
         messageService.clear();
@@ -457,6 +471,286 @@ class AiChatGenerationManagerTest {
         events.await(AiChatGenerationCompletedEvent.class);
 
         assertEquals("alice", workerUser.get());
+    }
+
+    @Test
+    void cancel_running_discardsLateAnswer_andPublishesCancelled() throws Exception {
+        assertLateOutcomeDiscarded(() -> "late answer");
+    }
+
+    @Test
+    void cancel_running_lateModelFailure_publishesNothingMore() throws Exception {
+        assertLateOutcomeDiscarded(() -> {
+            throw new IllegalStateException("model down");
+        });
+    }
+
+    @Test
+    void cancel_running_lateBlankAnswer_publishesNothingMore() throws Exception {
+        assertLateOutcomeDiscarded(() -> "  ");
+    }
+
+    @Test
+    void start_afterCancel_conversationAcceptsNextQuestion() {
+        AiConversation conversation = conversationService.addConversation("Chat", "alice");
+        chatService.setResponder(spec -> awaitRelease());
+        TestAuthentication.runAs("alice", () -> manager.start(conversation, "First"));
+        assertTrue(TestAuthentication.callAs("alice", () -> manager.cancel(conversation)));
+
+        chatService.reset();
+        TestAuthentication.runAs("alice", () -> manager.start(conversation, "Second"));
+
+        events.await(AiChatGenerationCompletedEvent.class);
+        assertEquals(List.of(AiChatMessageType.USER, AiChatMessageType.USER, AiChatMessageType.ASSISTANT),
+                messageService.loadMessages(conversation).stream().map(AiChatMessage::getType).toList());
+    }
+
+    @Test
+    void cancel_otherUserWhileRunning_accessDenied_andKeepsResponseRunning() {
+        AiConversation conversation = conversationService.addConversation("Chat", "alice");
+        chatService.setResponder(spec -> awaitRelease());
+        TestAuthentication.runAs("alice", () -> manager.start(conversation, "Hi"));
+
+        assertThrows(AccessDeniedException.class,
+                () -> TestAuthentication.callAs("bob", () -> manager.cancel(conversation)));
+        assertTrue(TestAuthentication.callAs("alice", () -> manager.isGenerating(conversation)));
+    }
+
+    @Test
+    void cancel_otherUserNothingRunning_accessDenied() {
+        AiConversation conversation = conversationService.addConversation("Chat", "alice");
+
+        assertThrows(AccessDeniedException.class,
+                () -> TestAuthentication.callAs("bob", () -> manager.cancel(conversation)));
+    }
+
+    @Test
+    void cancel_nothingRunning_returnsFalse() {
+        AiConversation conversation = conversationService.addConversation("Chat", "alice");
+
+        assertFalse(TestAuthentication.callAs("alice", () -> manager.cancel(conversation)));
+        assertTrue(events.isEmpty());
+    }
+
+    @Test
+    void cancel_answerBeingSaved_refused_andAnswerCompletes() throws Exception {
+        AiConversation conversation = conversationService.addConversation("Chat", "alice");
+        CountDownLatch saving = new CountDownLatch(1);
+        CountDownLatch saveReleased = new CountDownLatch(1);
+        messageService.setBeforeSave(AiChatMessageType.ASSISTANT, () -> {
+            saving.countDown();
+            await(saveReleased);
+        });
+        try {
+            TestAuthentication.runAs("alice", () -> manager.start(conversation, "Hi"));
+            assertTrue(saving.await(5, TimeUnit.SECONDS));
+
+            assertFalse(TestAuthentication.callAs("alice", () -> manager.cancel(conversation)));
+        } finally {
+            saveReleased.countDown();
+        }
+
+        events.await(AiChatGenerationCompletedEvent.class);
+        assertEquals(List.of(AiChatGenerationStartedEvent.class, AiChatGenerationCompletedEvent.class),
+                eventTypes(conversation));
+        assertEquals(2, messageService.loadMessages(conversation).size());
+    }
+
+    @Test
+    void cancel_beforeUserMessageSaved_startsNothing_andPublishesCancelled() throws Exception {
+        AiConversation conversation = conversationService.addConversation("Chat", "alice");
+        CountDownLatch saving = new CountDownLatch(1);
+        CountDownLatch saveReleased = new CountDownLatch(1);
+        messageService.setBeforeSave(AiChatMessageType.USER, () -> {
+            saving.countDown();
+            await(saveReleased);
+        });
+        ExecutorService starter = Executors.newSingleThreadExecutor();
+        try {
+            Future<?> start = starter.submit(
+                    () -> TestAuthentication.runAs("alice", () -> manager.start(conversation, "Hi")));
+            assertTrue(saving.await(5, TimeUnit.SECONDS));
+
+            assertTrue(TestAuthentication.callAs("alice", () -> manager.cancel(conversation)));
+            // The starting thread reports it, once it is past the save.
+            assertTrue(events.isEmpty());
+            saveReleased.countDown();
+            start.get(5, TimeUnit.SECONDS);
+        } finally {
+            saveReleased.countDown();
+            starter.shutdownNow();
+        }
+
+        assertEquals(List.of(AiChatGenerationCancelledEvent.class), eventTypes(conversation));
+        assertFalse(TestAuthentication.callAs("alice", () -> manager.isGenerating(conversation)));
+    }
+
+    @Test
+    void cancel_whileStartedIsPublished_singleCancelledFollowsStarted_andModelIsNotCalled() throws Exception {
+        AiConversation conversation = conversationService.addConversation("Chat", "alice");
+        AtomicBoolean modelCalled = new AtomicBoolean();
+        chatService.setResponder(spec -> {
+            modelCalled.set(true);
+            return "answer";
+        });
+        CountDownLatch publishing = new CountDownLatch(1);
+        CountDownLatch publishReleased = new CountDownLatch(1);
+        events.setOnEvent(event -> {
+            if (event.getEvent() instanceof AiChatGenerationStartedEvent) {
+                publishing.countDown();
+                await(publishReleased);
+            }
+        });
+        ExecutorService starter = Executors.newSingleThreadExecutor();
+        try {
+            Future<?> start = starter.submit(
+                    () -> TestAuthentication.runAs("alice", () -> manager.start(conversation, "Hi")));
+            assertTrue(publishing.await(5, TimeUnit.SECONDS));
+
+            assertTrue(TestAuthentication.callAs("alice", () -> manager.cancel(conversation)));
+            publishReleased.countDown();
+            start.get(5, TimeUnit.SECONDS);
+        } finally {
+            publishReleased.countDown();
+            starter.shutdownNow();
+        }
+
+        assertEquals(List.of(AiChatGenerationStartedEvent.class, AiChatGenerationCancelledEvent.class),
+                eventTypes(conversation));
+        assertFalse(modelCalled.get());
+    }
+
+    @Test
+    void stop_responseFailedMeanwhile_refused_andPublishingWorkerNotInterrupted() throws Exception {
+        AiConversation conversation = conversationService.addConversation("Chat", "alice");
+        CountDownLatch calling = new CountDownLatch(1);
+        CountDownLatch failNow = new CountDownLatch(1);
+        chatService.setResponder(spec -> {
+            calling.countDown();
+            await(failNow);
+            throw new IllegalStateException("model down");
+        });
+        CountDownLatch publishing = new CountDownLatch(1);
+        CountDownLatch publishReleased = new CountDownLatch(1);
+        AtomicBoolean interruptedWhilePublishing = new AtomicBoolean();
+        events.setOnEvent(event -> {
+            if (event.getEvent() instanceof AiChatGenerationFailedEvent) {
+                publishing.countDown();
+                await(publishReleased);
+                interruptedWhilePublishing.set(Thread.currentThread().isInterrupted());
+            }
+        });
+        TestAuthentication.runAs("alice", () -> manager.start(conversation, "Hi"));
+        assertTrue(calling.await(5, TimeUnit.SECONDS));
+        // A cancel that looked the response up just before it failed.
+        Object generation = runningGeneration(conversation);
+        failNow.countDown();
+        try {
+            assertTrue(publishing.await(5, TimeUnit.SECONDS));
+
+            assertEquals(Boolean.FALSE, ReflectionTestUtils.invokeMethod(manager, "stop", generation));
+        } finally {
+            publishReleased.countDown();
+        }
+
+        events.await(AiChatGenerationFailedEvent.class);
+        assertFalse(interruptedWhilePublishing.get());
+    }
+
+    @Test
+    void start_running_schedulesTimeout_andCancelDropsIt() {
+        AiConversation conversation = conversationService.addConversation("Chat", "alice");
+        chatService.setResponder(spec -> awaitRelease());
+        int queued = timeoutQueue().size();
+
+        TestAuthentication.runAs("alice", () -> manager.start(conversation, "Hi"));
+        assertEquals(queued + 1, timeoutQueue().size());
+
+        TestAuthentication.runAs("alice", () -> manager.cancel(conversation));
+        assertEquals(queued, timeoutQueue().size());
+    }
+
+    @Test
+    void start_completed_dropsItsTimeout() {
+        AiConversation conversation = conversationService.addConversation("Chat", "alice");
+        int queued = timeoutQueue().size();
+        AtomicInteger queuedAtEvent = new AtomicInteger(-1);
+        events.setOnEvent(event -> {
+            if (event.getEvent() instanceof AiChatGenerationCompletedEvent) {
+                queuedAtEvent.set(timeoutQueue().size());
+            }
+        });
+
+        TestAuthentication.runAs("alice", () -> manager.start(conversation, "Hi"));
+        events.await(AiChatGenerationCompletedEvent.class);
+
+        assertEquals(queued, queuedAtEvent.get());
+    }
+
+    @Test
+    void start_failed_dropsItsTimeout() {
+        AiConversation conversation = conversationService.addConversation("Chat", "alice");
+        chatService.setResponder(spec -> {
+            throw new IllegalStateException("model down");
+        });
+        int queued = timeoutQueue().size();
+        AtomicInteger queuedAtEvent = new AtomicInteger(-1);
+        events.setOnEvent(event -> {
+            if (event.getEvent() instanceof AiChatGenerationFailedEvent) {
+                queuedAtEvent.set(timeoutQueue().size());
+            }
+        });
+
+        TestAuthentication.runAs("alice", () -> manager.start(conversation, "Hi"));
+        events.await(AiChatGenerationFailedEvent.class);
+
+        assertEquals(queued, queuedAtEvent.get());
+    }
+
+    /**
+     * Cancels a response whose model call ignores the interruption, lets the call end with the given outcome and
+     * checks that nothing of it is saved or published.
+     *
+     * @param lateOutcome how the model call ends after the cancel: returns an answer or throws
+     * @throws Exception if waiting for the worker fails
+     */
+    void assertLateOutcomeDiscarded(Supplier<String> lateOutcome) throws Exception {
+        AiConversation conversation = conversationService.addConversation("Chat", "alice");
+        ownWorkers = TestGenerationWorkers.install(manager);
+        CountDownLatch calling = new CountDownLatch(1);
+        chatService.setResponder(spec -> {
+            calling.countDown();
+            TestAiChatService.awaitIgnoringInterrupt(release);
+            return lateOutcome.get();
+        });
+        TestAuthentication.runAs("alice", () -> manager.start(conversation, "Hi"));
+        assertTrue(calling.await(5, TimeUnit.SECONDS));
+
+        assertTrue(TestAuthentication.callAs("alice", () -> manager.cancel(conversation)));
+        release.countDown();
+        ownWorkers.awaitIdle();
+
+        assertEquals(List.of(AiChatGenerationStartedEvent.class, AiChatGenerationCancelledEvent.class),
+                eventTypes(conversation));
+        assertEquals(List.of(AiChatMessageType.USER),
+                messageService.loadMessages(conversation).stream().map(AiChatMessage::getType).toList());
+        assertFalse(TestAuthentication.callAs("alice", () -> manager.isGenerating(conversation)));
+    }
+
+    Object runningGeneration(AiConversation conversation) {
+        Map<?, ?> generations = (Map<?, ?>) ReflectionTestUtils.getField(manager, "generationsByConversation");
+        return Objects.requireNonNull(Objects.requireNonNull(generations).get(conversation.getId()));
+    }
+
+    BlockingQueue<Runnable> timeoutQueue() {
+        Object scheduler = ReflectionTestUtils.getField(manager, "timeoutScheduler");
+        return ((ScheduledThreadPoolExecutor) Objects.requireNonNull(scheduler)).getQueue();
+    }
+
+    List<Class<?>> eventTypes(AiConversation conversation) {
+        return events.eventsOf(conversation.getId()).stream()
+                .<Class<?>>map(Object::getClass)
+                .toList();
     }
 
     String awaitRelease() {

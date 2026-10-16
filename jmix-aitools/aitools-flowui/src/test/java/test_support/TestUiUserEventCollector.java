@@ -97,8 +97,8 @@ public class TestUiUserEventCollector {
      * @throws AssertionError if some generation does not finish within the timeout
      */
     public void awaitAllFinished() {
-        awaitCondition(() -> unfinishedConversations().isEmpty(),
-                () -> "Generations still running in " + unfinishedConversations());
+        awaitCondition(() -> unfinishedGenerations().isEmpty(),
+                () -> "Generations still running: " + unfinishedGenerations());
     }
 
     /**
@@ -123,19 +123,19 @@ public class TestUiUserEventCollector {
         return null;
     }
 
-    protected Set<UUID> unfinishedConversations() {
-        Set<UUID> started = conversationsWith(AiChatGenerationStartedEvent.class);
-        started.removeAll(conversationsWith(AiChatGenerationCompletedEvent.class));
-        started.removeAll(conversationsWith(AiChatGenerationFailedEvent.class));
-        started.removeAll(conversationsWith(AiChatGenerationCancelledEvent.class));
+    protected Set<UUID> unfinishedGenerations() {
+        Set<UUID> started = generationsWith(AiChatGenerationStartedEvent.class);
+        started.removeAll(generationsWith(AiChatGenerationCompletedEvent.class));
+        started.removeAll(generationsWith(AiChatGenerationFailedEvent.class));
+        started.removeAll(generationsWith(AiChatGenerationCancelledEvent.class));
         return started;
     }
 
-    protected Set<UUID> conversationsWith(Class<? extends AiChatGenerationEvent> type) {
+    protected Set<UUID> generationsWith(Class<? extends AiChatGenerationEvent> type) {
         return events.stream()
                 .map(UiEventPublisher.UiUserEvent::getEvent)
                 .filter(type::isInstance)
-                .map(e -> ((AiChatGenerationEvent) e).getConversationId())
+                .map(e -> ((AiChatGenerationEvent) e).getGenerationId())
                 .collect(Collectors.toSet());
     }
 

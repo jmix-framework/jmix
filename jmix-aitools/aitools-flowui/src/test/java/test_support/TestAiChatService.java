@@ -24,6 +24,8 @@ import io.jmix.aitoolsflowui.service.AiChatService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -60,6 +62,30 @@ public class TestAiChatService implements AiChatService {
 
     public void reset() {
         responder = TestAiChatService::echo;
+    }
+
+    /**
+     * Blocks like an HTTP call that does not react to the interruption: waits for the latch, keeping the interrupt
+     * for the caller to see afterwards.
+     *
+     * @param release latch that ends the call; the wait gives up after 5 seconds
+     */
+    public static void awaitIgnoringInterrupt(CountDownLatch release) {
+        boolean interrupted = false;
+        try {
+            while (true) {
+                try {
+                    release.await(5, TimeUnit.SECONDS);
+                    return;
+                } catch (InterruptedException e) {
+                    interrupted = true;
+                }
+            }
+        } finally {
+            if (interrupted) {
+                Thread.currentThread().interrupt();
+            }
+        }
     }
 
     @Override

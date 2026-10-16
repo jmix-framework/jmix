@@ -24,6 +24,7 @@ import io.jmix.aitools.tool.AiToolStatusUpdate;
 import io.jmix.aitoolsflowui.generation.AiChatGeneration;
 import io.jmix.aitoolsflowui.generation.AiChatGenerationManager;
 import io.jmix.aitoolsflowui.generation.AiChatGenerationRejectedException;
+import io.jmix.aitoolsflowui.generation.event.AiChatGenerationCancelledEvent;
 import io.jmix.aitoolsflowui.generation.event.AiChatGenerationCompletedEvent;
 import io.jmix.aitoolsflowui.generation.event.AiChatGenerationFailedEvent;
 import io.jmix.aitoolsflowui.generation.event.AiChatGenerationProgressEvent;
@@ -81,7 +82,7 @@ import static org.mockito.Mockito.when;
 
 /**
  * The chat fragment sends through {@link AiChatGenerationManager} and renders its events: the thinking
- * indicator, folded tool statuses, the answer and the error. The manager is mocked and events are delivered
+ * indicator, folded tool statuses, the answer, the error and a cancel. The manager is mocked and events are delivered
  * by calling the fragment's listeners.
  */
 @UiTest(viewBasePackages = {"io.jmix.aitoolsflowui.view", "test_support.view"})
@@ -208,6 +209,61 @@ class AiChatFragmentGenerationTest {
         assertFalse(fragment.isAwaitingResponse());
         assertTrue(composer(fragment).isInputEnabled());
         assertEquals(List.of(TimelineItemType.ASSISTANT), timelineTypes(fragment));
+    }
+
+    @Test
+    void onGenerationCancelled_running_dropsThinking_andUnlocks_withoutErrorBubble() {
+        AiConversation conversation = conversationService.addConversation("Chat");
+        AiChatFragment fragment = chatFragment(navigate(conversation.getId()));
+        fragment.onGenerationStarted(new AiChatGenerationStartedEvent(this, conversation.getId(), GENERATION_ID));
+
+        fragment.onGenerationCancelled(new AiChatGenerationCancelledEvent(this, conversation.getId(), GENERATION_ID));
+
+        assertFalse(fragment.isAwaitingResponse());
+        assertTrue(composer(fragment).isInputEnabled());
+        assertTrue(timelineItems(fragment).isEmpty());
+    }
+
+    @Test
+    void onGenerationCancelled_afterSendBeforeStarted_dropsThinking_andUnlocks() {
+        AiConversation conversation = conversationService.addConversation("Chat");
+        when(generationManager.start(any(), any())).thenAnswer(inv ->
+                messageService.createMessage(inv.getArgument(0), AiChatMessageType.USER, inv.getArgument(1)));
+        AiChatFragment fragment = chatFragment(navigate(conversation.getId()));
+        fragment.sendMessage("Hi");
+
+        fragment.onGenerationCancelled(new AiChatGenerationCancelledEvent(this, conversation.getId(), GENERATION_ID));
+
+        assertFalse(fragment.isAwaitingResponse());
+        assertTrue(composer(fragment).isInputEnabled());
+        assertEquals(List.of(TimelineItemType.USER), timelineTypes(fragment));
+    }
+
+    @Test
+    void onGenerationCancelled_nothingShown_leavesComposerAlone() {
+        AiConversation conversation = conversationService.addConversation("Chat");
+        AiChatFragment fragment = chatFragment(navigate(conversation.getId()));
+        // Disabled by the host, not by a response.
+        fragment.setMessageInputEnabled(false);
+
+        fragment.onGenerationCancelled(new AiChatGenerationCancelledEvent(this, conversation.getId(), GENERATION_ID));
+
+        assertFalse(composer(fragment).isInputEnabled());
+        assertTrue(timelineItems(fragment).isEmpty());
+    }
+
+    @Test
+    void onGenerationCancelled_otherGenerationShown_ignored() {
+        AiConversation conversation = conversationService.addConversation("Chat");
+        AiChatFragment fragment = chatFragment(navigate(conversation.getId()));
+        fragment.onGenerationStarted(new AiChatGenerationStartedEvent(this, conversation.getId(), GENERATION_ID));
+
+        fragment.onGenerationCancelled(new AiChatGenerationCancelledEvent(this, conversation.getId(),
+                UUID.randomUUID()));
+
+        assertTrue(fragment.isAwaitingResponse());
+        assertFalse(composer(fragment).isInputEnabled());
+        assertEquals(List.of(TimelineItemType.ASSISTANT_THINKING), timelineTypes(fragment));
     }
 
     @Test

@@ -32,6 +32,7 @@ import io.jmix.aitoolsflowui.generation.AiChatGeneration;
 import io.jmix.aitoolsflowui.generation.AiChatGenerationManager;
 import io.jmix.aitoolsflowui.generation.AiChatGenerationRejectedException;
 import io.jmix.aitoolsflowui.generation.AiToolStatusFolding;
+import io.jmix.aitoolsflowui.generation.event.AiChatGenerationCancelledEvent;
 import io.jmix.aitoolsflowui.generation.event.AiChatGenerationCompletedEvent;
 import io.jmix.aitoolsflowui.generation.event.AiChatGenerationEvent;
 import io.jmix.aitoolsflowui.generation.event.AiChatGenerationFailedEvent;
@@ -408,6 +409,15 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
     public void onGenerationFailed(AiChatGenerationFailedEvent event) {
         if (event.belongsTo(conversation) && isShownOrNone(event)) {
             showAssistantProcessingError();
+        }
+    }
+
+    @EventListener
+    public void onGenerationCancelled(AiChatGenerationCancelledEvent event) {
+        // With no response shown, nothing was locked for one.
+        if (event.belongsTo(conversation) && isAwaitingResponse() && isShownOrNone(event)) {
+            removeThinkingIndicator();
+            forceMessageInputFocus();
         }
     }
 

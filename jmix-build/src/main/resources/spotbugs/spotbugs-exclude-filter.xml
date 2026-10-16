@@ -140,6 +140,18 @@
         </Bug>
     </Match>
 
+    <!-- AI Chat add-on -->
+
+    <Match>
+        <!-- false positive: the volatile cached UI marks the class as multithreaded,
+             but the other fields are only accessed under the Vaadin session lock -->
+        <Class name="io.jmix.aichat.component.messagelist.AiMessageList"/>
+        <Or>
+            <Bug pattern="AT_NONATOMIC_OPERATIONS_ON_SHARED_VARIABLE"/>
+            <Bug pattern="AT_STALE_THREAD_WRITE_OF_PRIMITIVE"/>
+        </Or>
+    </Match>
+
     <!-- Ignored problems in classes -->
 
     <Match>

@@ -19,6 +19,7 @@ package io.jmix.aitoolsflowui;
 import io.jmix.aitools.AiToolsConfiguration;
 import io.jmix.core.annotation.JmixModule;
 import io.jmix.core.impl.scanning.AnnotationScanMetadataReaderFactory;
+import io.jmix.flowui.FlowuiConfiguration;
 import io.jmix.flowui.sys.ViewControllersConfiguration;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.context.ApplicationContext;
@@ -28,7 +29,7 @@ import java.util.Collections;
 
 @Configuration
 @ComponentScan
-@JmixModule(dependsOn = AiToolsConfiguration.class)
+@JmixModule(dependsOn = {AiToolsConfiguration.class, FlowuiConfiguration.class})
 @PropertySource(name = "io.jmix.aitoolsflowui", value = "classpath:/io/jmix/aitoolsflowui/module.properties")
 @ConfigurationPropertiesScan
 public class AiToolsFlowuiConfiguration {

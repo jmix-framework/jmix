@@ -39,6 +39,14 @@
             <dependency code="listFilterType"/>
         </condition>
     </locMessages>
+    <locMessages key="emptyStateText" expressionKey="${studioUtils.decapitalize(viewControllerName)}.emptyStateText">
+        <message lang="default">
+            <![CDATA[No data]]>
+        </message>
+        <condition source="${gridEmptyState}">
+            <dependency code="gridEmptyState"/>
+        </condition>
+    </locMessages>
     <steps>
         <step name="Entity list view" order="0"/>
         <step name="Entity list view fetch plan" order="1"
@@ -133,6 +141,11 @@
               propertyType="BOOLEAN"
               preferences="true"
               defaultValue="true"/>
+    <property caption="Empty state component"
+              code="gridEmptyState"
+              propertyType="BOOLEAN"
+              preferences="true"
+              defaultValue="false"/>
     <property caption="Fixed footer"
               code="listFixedFooter"
               propertyType="BOOLEAN"

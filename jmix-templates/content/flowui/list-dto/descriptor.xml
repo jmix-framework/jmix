@@ -27,7 +27,9 @@ def tableXml = api.processSnippet('dto_table.xml',
         'tableActions': tableActions,
         'columnReorderingAllowed': columnReorderingAllowed,
         'resizableColumns': resizableColumns,
-        'multiselect': multiselect])
+        'multiselect': multiselect,
+        'gridEmptyState': gridEmptyState,
+        'emptyStateText': gridEmptyState ? messageKeys['emptyStateText'] : null])
 %><?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <view xmlns="http://jmix.io/schema/flowui/view"
       ${groupDataGridNamespace}

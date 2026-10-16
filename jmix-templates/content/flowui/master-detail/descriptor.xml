@@ -35,6 +35,8 @@ def tableXml = api.processSnippet('table.xml',
         'multiselect': multiselect,
         'columnReorderingAllowed': columnReorderingAllowed,
         'resizableColumns': resizableColumns,
+        'gridEmptyState': gridEmptyState,
+        'emptyStateText': gridEmptyState ? messageKeys['emptyStateText'] : null,
         'hierarchicalProperty': binding.hasVariable('tableType_hierarchicalProperty') ? binding.getVariable('tableType_hierarchicalProperty') : null])
 
 def formXml = api.processSnippet('form.xml',

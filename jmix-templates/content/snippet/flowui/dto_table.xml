@@ -55,6 +55,8 @@ def actionDescription = actionSearch.getActionDescriptionBy(actionId, jmixProjec
 <%} else {%>
 <${xmlNs}action id="${actionId}Action" type="list_${actionId}"/>
 <%}%>
+<%}%><%if (gridEmptyState && !tableActions*.toString().contains('refresh')) {%>
+<${xmlNs}action id="refreshAction" type="list_refresh"/>
 <%}%>
 </${xmlNs}actions>
 <${xmlNs}columns<%if (resizableColumns) {%> resizable="true"<%}%>>
@@ -62,5 +64,11 @@ def actionDescription = actionSearch.getActionDescriptionBy(actionId, jmixProjec
 <%columns.each {column ->%>
 <${xmlNs}column property="${column}"/>
 <%}%>
-</${xmlNs}columns>
+</${xmlNs}columns><%if (gridEmptyState) {%>
+<${xmlNs}emptyStateComponent>
+<vbox padding="false" height="100%" justifyContent="CENTER" alignItems="CENTER">
+<h3 text="${emptyStateText}"/>
+<button action="${tableId}.refreshAction" themeNames="primary"/>
+</vbox>
+</${xmlNs}emptyStateComponent><%}%>
 </${tableType.xmlName}>

@@ -125,12 +125,28 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
         componentLoader().loadClassNames(resultComponent, element);
         componentLoader().loadSizeAttributes(resultComponent, element);
 
+        loadI18n();
         loadData();
         loadMultiSort();
 
         loadContextMenu();
         loadEmptyStateComponent();
         loadActions();
+    }
+
+    protected void loadI18n() {
+        Element i18nElement = element.element("i18n");
+        if (i18nElement == null) {
+            return;
+        }
+
+        GridI18n i18n = Objects.requireNonNullElseGet(resultComponent.getI18n(), GridI18n::new);
+        loadResourceString(i18nElement, "selectAll", context.getMessageGroup(), i18n::setSelectAll);
+        loadResourceString(i18nElement, "selectAllUnavailable", context.getMessageGroup(),
+                i18n::setSelectAllUnavailable);
+        loadResourceString(i18nElement, "selectRow", context.getMessageGroup(), i18n::setSelectRow);
+        loadResourceString(i18nElement, "sorter", context.getMessageGroup(), i18n::setSorter);
+        resultComponent.setI18n(i18n);
     }
 
     protected void loadData() {

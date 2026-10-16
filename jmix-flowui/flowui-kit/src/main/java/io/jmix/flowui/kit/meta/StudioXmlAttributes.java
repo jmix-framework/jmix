@@ -797,13 +797,16 @@ public final class StudioXmlAttributes {
     public static final String SELECTOR_BUTTON_GAP = "selectorButtonGap";
     public static final String SELECTOR_ITEM_GAP = "selectorItemGap";
     public static final String SELECTOR_POSITION = "selectorPosition";
+    public static final String SELECT_ALL = "selectAll";
     public static final String SELECT_ALL_BUTTONS_VISIBLE = "selectAllButtonsVisible";
+    public static final String SELECT_ALL_UNAVAILABLE = "selectAllUnavailable";
     public static final String SELECT_CONSTRAINT_BUSINESS_HOURS_ENABLED = "selectConstraintBusinessHoursEnabled";
     public static final String SELECT_CONSTRAINT_GROUP_ID = "selectConstraintGroupId";
     public static final String SELECT_LONG_PRESS_DELAY = "selectLongPressDelay";
     public static final String SELECT_MIN_DISTANCE = "selectMinDistance";
     public static final String SELECT_MIRROR = "selectMirror";
     public static final String SELECT_OVERLAP = "selectOverlap";
+    public static final String SELECT_ROW = "selectRow";
     public static final String SEPARATOR = "separator";
     public static final String SERIES_INDEX = "seriesIndex";
     public static final String SERIES_LAYOUT_BY = "seriesLayoutBy";
@@ -870,6 +873,7 @@ public final class StudioXmlAttributes {
     public static final String SNAP_DURATION = "snapDuration";
     public static final String SORT = "sort";
     public static final String SORTABLE = "sortable";
+    public static final String SORTER = "sorter";
     public static final String SORT_BY_GROUP_ENABLED = "sortByGroupEnabled";
     public static final String SORT_FUNCTION = "sortFunction";
     public static final String SPACING = "spacing";

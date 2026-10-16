@@ -19,6 +19,7 @@ package io.jmix.flowui.component.grid;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.GridI18n;
 import com.vaadin.flow.component.grid.GridSelectionModel;
 import com.vaadin.flow.component.grid.ItemDoubleClickEvent;
 import com.vaadin.flow.component.grid.contextmenu.GridContextMenu;
@@ -28,6 +29,7 @@ import com.vaadin.flow.data.renderer.Renderer;
 import com.vaadin.flow.data.selection.SelectionListener;
 import com.vaadin.flow.function.ValueProvider;
 import com.vaadin.flow.shared.Registration;
+import io.jmix.core.Messages;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
@@ -60,6 +62,7 @@ public class DataGrid<E> extends JmixGrid<E> implements ListDataComponent<E>, Mu
         EnhancedDataGrid<E>, SupportsEnterPress<DataGrid<E>>, ApplicationContextAware, InitializingBean {
 
     protected ApplicationContext applicationContext;
+    protected Messages messages;
 
     protected GridDelegate<E, DataGridItems<E>> gridDelegate;
     protected JmixGridContextMenu<E> contextMenu;
@@ -73,7 +76,12 @@ public class DataGrid<E> extends JmixGrid<E> implements ListDataComponent<E>, Mu
 
     @Override
     public void afterPropertiesSet() {
+        autowireDependencies();
         initComponent();
+    }
+
+    protected void autowireDependencies() {
+        messages = applicationContext.getBean(Messages.class);
     }
 
     protected void initComponent() {
@@ -81,6 +89,12 @@ public class DataGrid<E> extends JmixGrid<E> implements ListDataComponent<E>, Mu
         gridDelegate.setAfterColumnSecurityApplyHandler(this::onAfterApplyColumnSecurity);
         gridDelegate.setEmptyStateTextDelegate(super::setEmptyStateText);
         gridDelegate.setEmptyStateComponentDelegate(super::setEmptyStateComponent);
+
+        setI18n(new GridI18n()
+                .setSelectAll(messages.getMessage("dataGrid.i18n.selectAll"))
+                .setSelectAllUnavailable(messages.getMessage("dataGrid.i18n.selectAllUnavailable"))
+                .setSelectRow(messages.getMessage("dataGrid.i18n.selectRow"))
+                .setSorter(messages.getMessage("dataGrid.i18n.sorter")));
     }
 
     @SuppressWarnings("unchecked")

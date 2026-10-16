@@ -46,10 +46,27 @@ public class TestAiChatMessageService implements AiChatMessageService {
 
     protected final Map<UUID, List<AiChatMessage>> messagesByConversation = new ConcurrentHashMap<>();
     protected final Map<AiChatMessageType, RuntimeException> failures = new ConcurrentHashMap<>();
+    protected final Map<AiChatMessageType, Runnable> beforeSaveActions = new ConcurrentHashMap<>();
 
     public void clear() {
         messagesByConversation.clear();
         failures.clear();
+        beforeSaveActions.clear();
+    }
+
+    /**
+     * Runs an action on the saving thread before a message of the given type is saved, e.g. to hold the save on a
+     * latch, until {@link #clear()} or a call with {@code null}.
+     *
+     * @param type   type of messages the action precedes
+     * @param action action to run, or {@code null} to save them without one
+     */
+    public void setBeforeSave(AiChatMessageType type, @Nullable Runnable action) {
+        if (action == null) {
+            beforeSaveActions.remove(type);
+        } else {
+            beforeSaveActions.put(type, action);
+        }
     }
 
     /**
@@ -68,6 +85,10 @@ public class TestAiChatMessageService implements AiChatMessageService {
 
     @Override
     public AiChatMessage createMessage(AiConversation conversation, AiChatMessageType type, String message) {
+        Runnable beforeSave = beforeSaveActions.get(type);
+        if (beforeSave != null) {
+            beforeSave.run();
+        }
         RuntimeException failure = failures.get(type);
         if (failure != null) {
             throw failure;

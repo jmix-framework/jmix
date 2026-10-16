@@ -177,9 +177,22 @@ public class AiChatGenerationManager {
     @EventListener
     public void onToolStatus(AiToolStatusUpdateEvent event) {
         Generation generation = generationsByCorrelationId.get(event.getCorrelationId());
-        if (generation != null && generation.addStatus(event.getUpdate())) {
+        if (generation == null) {
+            return;
+        }
+        // Reporters publish one at a time, so numbers go out in order;
+        // snapshot readers never wait for a publish.
+        synchronized (generation.publishLock) {
+            long sequence;
+            // Pairs with snapshot(): a reader sees the new status and its number together, or neither.
+            synchronized (generation) {
+                if (!generation.addStatus(event.getUpdate())) {
+                    return;
+                }
+                sequence = generation.statusSequence;
+            }
             publish(generation, new AiChatGenerationProgressEvent(this, generation.conversationId, generation.id,
-                    event.getUpdate()));
+                    event.getUpdate(), sequence));
         }
     }
 
@@ -225,6 +238,7 @@ public class AiChatGenerationManager {
             Runnable task = metadataGenerationManager.wrap(
                     () -> context.run(() -> generate(generation, conversation, userMessage)));
             generationsByCorrelationId.put(generation.correlationId(), generation);
+            generation.visible = true;
 
             // Started goes out before the worker runs, so it can never arrive after the outcome.
             publish(generation, new AiChatGenerationStartedEvent(this, generation.conversationId, generation.id));
@@ -298,7 +312,7 @@ public class AiChatGenerationManager {
         Generation generation = conversation.getId() != null
                 ? generationsByConversation.get(conversation.getId())
                 : null;
-        return generation != null && generation.owner.equals(currentUsername())
+        return generation != null && generation.visible && generation.owner.equals(currentUsername())
                 ? Optional.of(generation)
                 : Optional.empty();
     }
@@ -331,6 +345,22 @@ public class AiChatGenerationManager {
         protected final List<String> recipients;
         protected final List<AiToolStatusUpdate> statuses = new ArrayList<>();
 
+        /**
+         * Orders the publication of status updates; taken only by reporting threads, never by readers.
+         */
+        protected final Object publishLock = new Object();
+
+        /**
+         * Number of status updates received so far, including those that changed nothing.
+         */
+        protected long statusSequence;
+
+        /**
+         * Set once the user message is saved: until then the reservation only rejects a concurrent start, and reads
+         * do not report a response whose question a chat could not load yet.
+         */
+        protected volatile boolean visible;
+
         protected Generation(UUID id, UUID conversationId, String owner, List<String> recipients) {
             this.id = id;
             this.conversationId = conversationId;
@@ -348,11 +378,12 @@ public class AiChatGenerationManager {
         }
 
         protected synchronized boolean addStatus(AiToolStatusUpdate update) {
+            statusSequence++;
             return AiToolStatusFolding.fold(statuses, update);
         }
 
         protected synchronized AiChatGeneration snapshot() {
-            return new AiChatGeneration(conversationId, id, statuses);
+            return new AiChatGeneration(conversationId, id, statuses, statusSequence);
         }
     }
 }

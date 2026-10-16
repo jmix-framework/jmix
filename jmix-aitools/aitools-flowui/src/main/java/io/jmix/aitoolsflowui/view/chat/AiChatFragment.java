@@ -16,6 +16,7 @@
 
 package io.jmix.aitoolsflowui.view.chat;
 
+import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentEvent;
@@ -27,7 +28,9 @@ import com.vaadin.flow.component.shared.Tooltip;
 import com.vaadin.flow.function.SerializableSupplier;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.aitoolsflowui.AiToolsFlowuiProperties;
+import io.jmix.aitoolsflowui.generation.AiChatGeneration;
 import io.jmix.aitoolsflowui.generation.AiChatGenerationManager;
+import io.jmix.aitoolsflowui.generation.AiChatGenerationRejectedException;
 import io.jmix.aitoolsflowui.generation.AiToolStatusFolding;
 import io.jmix.aitoolsflowui.generation.event.AiChatGenerationCompletedEvent;
 import io.jmix.aitoolsflowui.generation.event.AiChatGenerationEvent;
@@ -135,11 +138,19 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
     protected AiConversation conversation;
     @Nullable
     protected TimelineItem activeThinkingItem;
+
     /**
      * The response the thinking indicator stands for; {@code null} until its started event arrives.
      */
     @Nullable
     protected UUID shownGenerationId;
+
+    /**
+     * Sequence number of the last status update the indicator shows, so that a progress event already included in a
+     * snapshot is not applied twice.
+     */
+    protected long shownStatusSequence;
+
     protected final List<AiToolStatusUpdate> thinkingStatuses = new ArrayList<>();
 
     protected boolean readOnly;
@@ -161,11 +172,12 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
         this.conversation = conversation;
         this.activeThinkingItem = null;
         this.shownGenerationId = null;
+        this.shownStatusSequence = 0;
         this.thinkingStatuses.clear();
         // A response shown as running in the previous conversation had disabled the composer.
         setMessageInputEnabled(true);
 
-        refreshAll();
+        resync();
     }
 
     /**
@@ -306,8 +318,16 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
         AiChatMessage savedUserMessage;
         try {
             savedUserMessage = generationManager.start(conversation, trimmedMessage);
+        } catch (AiChatGenerationRejectedException e) {
+            log.debug("Not sent: a response is already running in conversation {}", e.getConversationId());
+            resync();
+            notifications.create(messageBundle.getMessage("aiChatFragment.alreadyResponding"))
+                    .withType(Notifications.Type.WARNING)
+                    .show();
+            return;
         } catch (RuntimeException e) {
             log.error("Failed to start an assistant response", e);
+            resync();
             notifications.create(messageBundle.getMessage("aiChatFragment.errorProcessingMessage"))
                     .withType(Notifications.Type.ERROR)
                     .show();
@@ -333,7 +353,7 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
     public void onReady(final ReadyEvent event) {
         composerFragment.setSubmitHandler(this::sendMessage);
 
-        refreshAll();
+        resync();
     }
 
     @Subscribe(id = "editConversationTitleBtn", subject = "clickListener")
@@ -347,12 +367,20 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
             return;
         }
 
-        UUID previousGenerationId = shownGenerationId;
-        shownGenerationId = event.getGenerationId();
+        boolean otherGenerationShown = shownGenerationId != null
+                && !shownGenerationId.equals(event.getGenerationId());
 
-        if (previousGenerationId != null && !previousGenerationId.equals(shownGenerationId)) {
-            // Clear the statuses belong to the previous generation.
-            clearThinkingStatuses();
+        if (activeThinkingItem == null || otherGenerationShown) {
+            // The question was sent elsewhere, e.g. from another tab, or the previous response's outcome was missed,
+            // so the timeline lacks the latest messages.
+            removeThinkingIndicator();
+            reloadConversation();
+            refreshAll();
+        }
+
+        if (!event.getGenerationId().equals(shownGenerationId)) {
+            shownGenerationId = event.getGenerationId();
+            shownStatusSequence = 0;
         }
 
         showThinkingIndicator();
@@ -362,7 +390,9 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
     public void onGenerationProgress(AiChatGenerationProgressEvent event) {
         if (event.belongsTo(conversation)
                 && activeThinkingItem != null
-                && event.getGenerationId().equals(shownGenerationId)) {
+                && event.getGenerationId().equals(shownGenerationId)
+                && event.getSequence() > shownStatusSequence) {
+            shownStatusSequence = event.getSequence();
             appendThinkingStatusUpdate(event.getUpdate());
         }
     }
@@ -378,6 +408,17 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
     public void onGenerationFailed(AiChatGenerationFailedEvent event) {
         if (event.belongsTo(conversation) && isShownOrNone(event)) {
             showAssistantProcessingError();
+        }
+    }
+
+    @Override
+    protected void onAttach(AttachEvent attachEvent) {
+        super.onAttach(attachEvent);
+
+        // A re-attached fragment (e.g. a Tabbed Mode tab switch)
+        // missed the events sent while it was detached.
+        if (!attachEvent.isInitialAttach() && conversation != null) {
+            resync();
         }
     }
 
@@ -459,6 +500,7 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
     protected void handleAssistantResponseDone(UUID assistantMessageId) {
         activeThinkingItem = null;
         shownGenerationId = null;
+        shownStatusSequence = 0;
         thinkingStatuses.clear();
 
         // Re-binding by id reloads the conversation (an automatic title may have landed) and its messages,
@@ -468,7 +510,12 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
         }
 
         markFreshAssistantItem(assistantMessageId);
-        forceMessageInputFocus();
+
+        // Another response may already be running (sent from another tab);
+        // then the composer stays locked.
+        if (!isAwaitingResponse()) {
+            forceMessageInputFocus();
+        }
     }
 
     /**
@@ -519,20 +566,21 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
         timelineItemsDc.getMutableItems().remove(activeThinkingItem);
         activeThinkingItem = null;
         shownGenerationId = null;
+        shownStatusSequence = 0;
         thinkingStatuses.clear();
-    }
-
-    protected void clearThinkingStatuses() {
-        thinkingStatuses.clear();
-
-        if (activeThinkingItem != null) {
-            activeThinkingItem.setStatusUpdates(new ArrayList<>());
-            refreshTimelineItem(activeThinkingItem);
-        }
     }
 
     protected void appendThinkingStatusUpdate(@Nullable AiToolStatusUpdate statusUpdate) {
         if (activeThinkingItem == null || !AiToolStatusFolding.fold(thinkingStatuses, statusUpdate)) {
+            return;
+        }
+
+        renderThinkingStatuses();
+        scrollToBottom(false);
+    }
+
+    protected void renderThinkingStatuses() {
+        if (activeThinkingItem == null) {
             return;
         }
 
@@ -542,8 +590,48 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
 
         activeThinkingItem.setStatusUpdates(statuses);
         refreshTimelineItem(activeThinkingItem);
+    }
 
-        scrollToBottom(false);
+    /**
+     * Brings the fragment in line with the server: reloads the messages and shows the response running in the
+     * bound conversation, with the tool statuses it has reported so far.
+     */
+    protected void resync() {
+        boolean wasAwaitingResponse = isAwaitingResponse();
+        // Snapshot before loading: when no response runs any more, its answer is already saved and gets loaded.
+        Optional<AiChatGeneration> generation = conversation != null
+                ? generationManager.getGeneration(conversation)
+                : Optional.empty();
+
+        removeThinkingIndicator();
+        refreshAll();
+
+        if (generation.isPresent()) {
+            showThinkingIndicator();
+            // The snapshot statuses are already folded.
+            thinkingStatuses.addAll(generation.get().getStatuses());
+            renderThinkingStatuses();
+
+            shownGenerationId = generation.get().getGenerationId();
+            shownStatusSequence = generation.get().getStatusSequence();
+        } else if (wasAwaitingResponse) {
+            // The shown response ended unseen, e.g. while the fragment was detached.
+            setMessageInputEnabled(true);
+        }
+    }
+
+    /**
+     * Re-reads the bound conversation, e.g. to pick up a title set in another tab. Keeps the current instance when
+     * the conversation no longer exists.
+     */
+    protected void reloadConversation() {
+        if (conversation == null || conversation.getId() == null) {
+            return;
+        }
+        AiConversation reloaded = loadConversation(conversation.getId());
+        if (reloaded != null) {
+            conversation = reloaded;
+        }
     }
 
     protected void refreshAll() {

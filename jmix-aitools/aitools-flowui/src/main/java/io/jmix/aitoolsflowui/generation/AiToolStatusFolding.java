@@ -63,7 +63,7 @@ public final class AiToolStatusFolding {
         }
         statuses.add(update);
         if (statuses.size() > MAX_STATUSES) {
-            statuses.remove(0);
+            statuses.removeFirst();
         }
         return true;
     }

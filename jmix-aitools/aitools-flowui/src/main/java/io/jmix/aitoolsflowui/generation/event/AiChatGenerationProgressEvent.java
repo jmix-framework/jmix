@@ -32,11 +32,13 @@ public class AiChatGenerationProgressEvent extends AiChatGenerationEvent {
     private static final long serialVersionUID = 1L;
 
     protected final AiToolStatusUpdate update;
+    protected final long sequence;
 
     public AiChatGenerationProgressEvent(Object source, UUID conversationId, UUID generationId,
-                                         AiToolStatusUpdate update) {
+                                         AiToolStatusUpdate update, long sequence) {
         super(source, conversationId, generationId);
         this.update = update;
+        this.sequence = sequence;
     }
 
     /**
@@ -46,5 +48,16 @@ public class AiChatGenerationProgressEvent extends AiChatGenerationEvent {
      */
     public AiToolStatusUpdate getUpdate() {
         return update;
+    }
+
+    /**
+     * Returns the number of the update within its response, starting at 1 and growing in publication order. A chat
+     * that took a snapshot compares it with {@code AiChatGeneration.getStatusSequence()} to skip an update the
+     * snapshot already includes.
+     *
+     * @return the 1-based sequence number of the update
+     */
+    public long getSequence() {
+        return sequence;
     }
 }

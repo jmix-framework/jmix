@@ -17,6 +17,7 @@
 package io.jmix.aitoolsflowui.generation;
 
 import io.jmix.aitools.tool.AiToolStatusUpdate;
+import io.jmix.aitoolsflowui.generation.event.AiChatGenerationProgressEvent;
 import org.jspecify.annotations.NullMarked;
 
 import java.util.List;
@@ -35,17 +36,23 @@ public class AiChatGeneration {
 
     protected final List<AiToolStatusUpdate> statuses;
 
+    protected final long statusSequence;
+
     /**
      * Creates a snapshot.
      *
      * @param conversationId the conversation the response belongs to
      * @param generationId   the response, as identified in its {@code AiChatGenerationEvent}s
      * @param statuses       tool statuses folded so far, oldest first; copied
+     * @param statusSequence sequence number of the last status update folded into {@code statuses}, {@code 0} if
+     *                       none
      */
-    public AiChatGeneration(UUID conversationId, UUID generationId, List<AiToolStatusUpdate> statuses) {
+    public AiChatGeneration(UUID conversationId, UUID generationId, List<AiToolStatusUpdate> statuses,
+                            long statusSequence) {
         this.conversationId = conversationId;
         this.generationId = generationId;
         this.statuses = List.copyOf(statuses);
+        this.statusSequence = statusSequence;
     }
 
     /**
@@ -74,5 +81,16 @@ public class AiChatGeneration {
      */
     public List<AiToolStatusUpdate> getStatuses() {
         return statuses;
+    }
+
+    /**
+     * Returns the sequence number of the last status update the statuses include, matching
+     * {@link AiChatGenerationProgressEvent#getSequence()}: a progress event with a number not greater than this one
+     * is already reflected in the snapshot.
+     *
+     * @return the sequence number of the last folded update, or {@code 0} if none was received
+     */
+    public long getStatusSequence() {
+        return statusSequence;
     }
 }

@@ -47,10 +47,12 @@ import test_support.TestAuthentication;
 import test_support.TestUiUserEventCollector;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -184,6 +186,93 @@ class AiChatGenerationManagerTest {
                 () -> manager.getGeneration(conversation)).orElseThrow();
         assertEquals(1, snapshot.getStatuses().size());
         assertTrue(snapshot.getStatuses().get(0).isCompleted());
+    }
+
+    @Test
+    void onToolStatus_numbersEveryUpdate_progressInOrder_andSnapshotCarriesLastNumber() {
+        AiConversation conversation = conversationService.addConversation("Chat", "alice");
+        chatService.setResponder(spec -> {
+            String id = spec.getCorrelationId();
+            chatService.publishStatus(id, new AiToolStatusUpdate("Searching"));
+            // A repeated in-flight update changes nothing and is not published, but still takes a number.
+            chatService.publishStatus(id, new AiToolStatusUpdate("Searching"));
+            chatService.publishStatus(id, new AiToolStatusUpdate("Searching", "3 found"));
+            chatService.publishStatus(id, new AiToolStatusUpdate("Sorting"));
+            return awaitRelease();
+        });
+
+        TestAuthentication.runAs("alice", () -> manager.start(conversation, "Hi"));
+        awaitEventCount(conversation, AiChatGenerationProgressEvent.class, 3);
+
+        assertEquals(List.of(1L, 3L, 4L), events.eventsOf(conversation.getId()).stream()
+                .filter(AiChatGenerationProgressEvent.class::isInstance)
+                .map(event -> ((AiChatGenerationProgressEvent) event).getSequence())
+                .toList());
+        AiChatGeneration snapshot = TestAuthentication.callAs("alice",
+                () -> manager.getGeneration(conversation)).orElseThrow();
+        assertEquals(4L, snapshot.getStatusSequence());
+        assertEquals(2, snapshot.getStatuses().size());
+    }
+
+    @Test
+    void onToolStatus_progressPublishBlocked_snapshotStillReadable() throws Exception {
+        AiConversation conversation = conversationService.addConversation("Chat", "alice");
+        chatService.setResponder(spec -> {
+            chatService.publishStatus(spec.getCorrelationId(), new AiToolStatusUpdate("Searching"));
+            return awaitRelease();
+        });
+        CountDownLatch publishing = new CountDownLatch(1);
+        CountDownLatch publishReleased = new CountDownLatch(1);
+        events.setOnEvent(event -> {
+            if (event.getEvent() instanceof AiChatGenerationProgressEvent) {
+                publishing.countDown();
+                await(publishReleased);
+            }
+        });
+        ExecutorService reader = Executors.newSingleThreadExecutor();
+        try {
+            TestAuthentication.runAs("alice", () -> manager.start(conversation, "Hi"));
+            assertTrue(publishing.await(5, TimeUnit.SECONDS));
+
+            Future<Optional<AiChatGeneration>> snapshot = reader.submit(
+                    () -> TestAuthentication.callAs("alice", () -> manager.getGeneration(conversation)));
+
+            assertEquals(1L, snapshot.get(2, TimeUnit.SECONDS).orElseThrow().getStatusSequence());
+        } finally {
+            publishReleased.countDown();
+            reader.shutdownNow();
+        }
+    }
+
+    @Test
+    void start_userMessageNotSavedYet_hiddenFromReads_butRejectsSecondStart() throws Exception {
+        AiConversation conversation = conversationService.addConversation("Chat", "alice");
+        chatService.setResponder(spec -> awaitRelease());
+        CountDownLatch saving = new CountDownLatch(1);
+        CountDownLatch saveReleased = new CountDownLatch(1);
+        messageService.setBeforeSave(AiChatMessageType.USER, () -> {
+            saving.countDown();
+            await(saveReleased);
+        });
+        ExecutorService starter = Executors.newSingleThreadExecutor();
+        try {
+            Future<?> firstStart = starter.submit(
+                    () -> TestAuthentication.runAs("alice", () -> manager.start(conversation, "First")));
+            assertTrue(saving.await(5, TimeUnit.SECONDS));
+
+            assertTrue(TestAuthentication.callAs("alice", () -> manager.getGeneration(conversation)).isEmpty());
+            assertFalse(TestAuthentication.callAs("alice", () -> manager.isGenerating(conversation)));
+            assertThrows(AiChatGenerationRejectedException.class,
+                    () -> TestAuthentication.runAs("alice", () -> manager.start(conversation, "Second")));
+
+            saveReleased.countDown();
+            firstStart.get(5, TimeUnit.SECONDS);
+
+            assertTrue(TestAuthentication.callAs("alice", () -> manager.getGeneration(conversation)).isPresent());
+        } finally {
+            saveReleased.countDown();
+            starter.shutdownNow();
+        }
     }
 
     @Test
@@ -371,12 +460,16 @@ class AiChatGenerationManagerTest {
     }
 
     String awaitRelease() {
+        await(release);
+        return "late answer";
+    }
+
+    void await(CountDownLatch latch) {
         try {
-            release.await(5, TimeUnit.SECONDS);
+            latch.await(5, TimeUnit.SECONDS);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
-        return "late answer";
     }
 
     void awaitEventCount(AiConversation conversation, Class<? extends ApplicationEvent> type, int count) {

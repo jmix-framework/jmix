@@ -76,7 +76,6 @@ public class SearchProperties {
      */
     protected final boolean enqueueIndexAllOnStartupIndexRecreationEnabled;
 
-
     protected final Server server;
 
     /**
@@ -97,7 +96,14 @@ public class SearchProperties {
     /**
      * Prefix for search index name. Index naming template: &lt;prefix&gt;&lt;entity_name&gt;. Default prefix is
      * 'search_index_'.
+     * <p>
+     * Still in effect: it supplies the default value of both index name patterns, so an application that never
+     * set a pattern is named by this prefix. Removing it means moving that default into the patterns first.
+     *
+     * @deprecated use {@link #tenantlessIndexNamePattern} and {@link #tenantIndexNamePattern}, which name the
+     * whole index rather than its first part
      */
+    @Deprecated(since = "3.1", forRemoval = true)
     protected final String searchIndexNamePrefix;
 
     /**
@@ -137,6 +143,38 @@ public class SearchProperties {
      */
     protected final boolean enabled;
 
+    /**
+     * The pattern index names are built from for the entities that are not split by tenants. The
+     * {@code {entityName}} placeholder is replaced with the name of the entity being indexed.
+     * <p>
+     * The declared default is an empty string, which stands for "not set". What is actually in effect then is
+     * {@code <searchIndexNamePrefix>{entityName}}, that is {@code search_index_{entityName}} unless the prefix
+     * was changed. The empty default is what lets the deprecated {@link #searchIndexNamePrefix} keep working, so
+     * that index names of an existing application remain the same after upgrade.
+     */
+    protected final String tenantlessIndexNamePattern;
+
+    /**
+     * The pattern index names are built from for the entities stored in a separate index per tenant. The
+     * {@code {entityName}} and {@code {tenantId}} placeholders are replaced with the entity being indexed and
+     * the tenant whose data the index holds.
+     * <p>
+     * The declared default is an empty string, which stands for "not set"; what is in effect then is
+     * {@code <searchIndexNamePrefix>{entityName}_{tenantId}}. So entity {@code product} of tenant {@code 123} is
+     * indexed as {@code search_index_product_123} unless the prefix or this pattern was changed.
+     */
+    protected final String tenantIndexNamePattern;
+
+    /**
+     * Whether an entity with a {@code @TenantId} attribute is stored in a separate index per tenant.
+     * <p>
+     * Switching it off returns the module to the layout it had before tenant-separated indexes existed: one index
+     * per entity, named after the tenantless pattern, holding the data of every tenant. It is meant for an
+     * application that upgrades and needs its existing indexes to keep working until a full reindex is planned,
+     * not as a way to turn the feature off for good.
+     */
+    protected final boolean splitIndexesByTenants;
+
     public SearchProperties(
             @DefaultValue("100") int searchResultPageSize,
             @DefaultValue("100") int maxSearchPageCount,
@@ -157,7 +195,10 @@ public class SearchProperties {
             @DefaultValue("create-or-recreate") String indexSchemaManagementStrategy,
             @DefaultValue("0/5 * * * * ?") String indexingQueueProcessingCron,
             @DefaultValue("0/5 * * * * ?") String enqueueingSessionProcessingCron,
-            @DefaultValue Server server) {
+            @DefaultValue Server server,
+            @DefaultValue("") String tenantlessIndexNamePattern,
+            @DefaultValue("") String tenantIndexNamePattern,
+            @DefaultValue("true") boolean splitIndexesByTenants) {
         this.searchResultPageSize = searchResultPageSize;
         this.maxSearchPageCount = maxSearchPageCount;
         this.searchReloadEntitiesBatchSize = searchReloadEntitiesBatchSize;
@@ -177,7 +218,10 @@ public class SearchProperties {
         this.minPrefixLength = minPrefixLength;
         this.maxPrefixLength = maxPrefixLength;
         this.wildcardPrefixQueryEnabled = wildcardPrefixQueryEnabled;
+        this.tenantlessIndexNamePattern = tenantlessIndexNamePattern;
+        this.tenantIndexNamePattern = tenantIndexNamePattern;
         this.enabled = enabled;
+        this.splitIndexesByTenants = splitIndexesByTenants;
     }
 
     /**
@@ -269,7 +313,9 @@ public class SearchProperties {
 
     /**
      * @see #searchIndexNamePrefix
+     * @deprecated use {@link #getTenantlessIndexNamePattern()} and {@link #getTenantIndexNamePattern()}
      */
+    @Deprecated(since = "3.1", forRemoval = true)
     public String getSearchIndexNamePrefix() {
         return searchIndexNamePrefix;
     }
@@ -356,6 +402,29 @@ public class SearchProperties {
      */
     public IndexSchemaManagementStrategy getIndexSchemaManagementStrategy() {
         return indexSchemaManagementStrategy;
+    }
+
+    /**
+     * @return the pattern index names are built from for entities that are not split by tenants
+     * @see #tenantlessIndexNamePattern
+     */
+    public String getTenantlessIndexNamePattern() {
+        return tenantlessIndexNamePattern;
+    }
+
+    /**
+     * @return the pattern index names are built from for entities stored in one index per tenant
+     * @see #tenantIndexNamePattern
+     */
+    public String getTenantIndexNamePattern() {
+        return tenantIndexNamePattern;
+    }
+
+    /**
+     * @see #splitIndexesByTenants
+     */
+    public boolean isSplitIndexesByTenants() {
+        return splitIndexesByTenants;
     }
 
     protected List<String> prepareStartupEnqueueingEntities(String enqueueIndexAllOnStartupIndexRecreationEntities) {

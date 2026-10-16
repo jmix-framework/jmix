@@ -47,7 +47,7 @@ public class ContributedIndexDefinitionTest {
 
         JsonNode expectedMapping = TestJsonUtils.readJsonFromFile("index_definition/contributed/test_mapping_contributed_only");
         MatcherAssert.assertThat(configuration, IndexConfigurationMatcher.configureWith(
-                "test_ReferenceEntity", "search_index_test_referenceentity", TestReferenceEntity.class, expectedMapping));
+                "test_ReferenceEntity", TestReferenceEntity.class, expectedMapping, null));
     }
 
     @Test
@@ -56,7 +56,7 @@ public class ContributedIndexDefinitionTest {
 
         JsonNode expectedMapping = TestJsonUtils.readJsonFromFile("index_definition/contributed/test_mapping_contributed_appended");
         MatcherAssert.assertThat(configuration, IndexConfigurationMatcher.configureWith(
-                "test_SimpleRootEntity", "search_index_test_simplerootentity", TestSimpleRootEntity.class, expectedMapping));
+                "test_SimpleRootEntity", TestSimpleRootEntity.class, expectedMapping, null));
     }
 
     @Test
@@ -74,7 +74,7 @@ public class ContributedIndexDefinitionTest {
         Assertions.assertTrue(configuration.getExtendedSearchSettings().isEnabled());
         JsonNode expectedMapping = TestJsonUtils.readJsonFromFile("index_definition/contributed/test_mapping_contributed_extended_search");
         MatcherAssert.assertThat(configuration, IndexConfigurationMatcher.configureWith(
-                "test_SubReferenceEntity", "search_index_test_subreferenceentity", TestSubReferenceEntity.class, expectedMapping));
+                "test_SubReferenceEntity", TestSubReferenceEntity.class, expectedMapping, null));
     }
 
     @Test

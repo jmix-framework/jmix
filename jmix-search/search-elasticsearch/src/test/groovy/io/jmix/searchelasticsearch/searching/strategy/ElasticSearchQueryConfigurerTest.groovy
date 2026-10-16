@@ -58,7 +58,6 @@ class ElasticSearchQueryConfigurerTest extends Specification {
                 createScope("index1", "field1_1", "field1_2", "field1_3"),
         )
 
-
         and:
         def configurator = new ElasticSearchQueryConfigurer(Mock(SearchRequestScopeProvider))
 
@@ -100,7 +99,6 @@ class ElasticSearchQueryConfigurerTest extends Specification {
 
     private IndexSearchRequestScope createScope(String indexName, String... fields) {
         IndexConfiguration indexConfiguration = Mock()
-        indexConfiguration.getIndexName() >> indexName
-        return new IndexSearchRequestScope(indexConfiguration, new LinkedHashSet<>(List.of(fields)))
+        return new IndexSearchRequestScope(indexConfiguration, new LinkedHashSet<>(List.of(fields)), indexName)
     }
 }

@@ -16,45 +16,90 @@
 
 package io.jmix.search.index.impl
 
-import io.jmix.search.index.mapping.IndexConfigurationManager
 import spock.lang.Specification
 
 class IndexStateRegistryTest extends Specification {
 
-    def "an entity indexed after startup is unavailable until it is marked available"() {
+    def "index is unavailable until it is marked as available"() {
         given:
-        def manager = Mock(IndexConfigurationManager)
-        // The constructor sees one entity; a later metadata generation adds a second one.
-        manager.getAllIndexedEntities() >>> [["a"], ["a", "b"], ["a", "b"], ["a", "b"]]
-        manager.isDirectlyIndexed(_ as String) >> true
-        def registry = new IndexStateRegistry(manager)
+        def registry = new IndexStateRegistry()
 
         expect:
-        registry.getAllUnavailableIndexedEntities() == ["a", "b"]
-        !registry.isIndexAvailable("b")
-
-        when:
-        registry.markIndexAsAvailable("b")
-
-        then:
-        registry.getAllUnavailableIndexedEntities() == ["a"]
-        registry.isIndexAvailable("b")
+        !registry.isIndexAvailable("order_index")
     }
 
-    def "marking an entity not indexed in the current metadata generation as available is ignored"() {
+    def "markIndexAsAvailable marks index as available"() {
         given:
-        def manager = Mock(IndexConfigurationManager)
-        manager.getAllIndexedEntities() >> ["a"]
-        manager.isDirectlyIndexed("a") >> true
-        manager.isDirectlyIndexed("retired") >> false
-        def registry = new IndexStateRegistry(manager)
+        def registry = new IndexStateRegistry()
 
         when:
-        registry.markIndexAsAvailable("retired")
+        registry.markIndexAsAvailable("order_index")
+
+        then:
+        registry.isIndexAvailable("order_index")
+    }
+
+    def "markIndexAsUnavailable marks index as unavailable"() {
+        given:
+        def registry = new IndexStateRegistry()
+        registry.markIndexAsAvailable("order_index")
+
+        when:
+        registry.markIndexAsUnavailable("order_index")
+
+        then:
+        !registry.isIndexAvailable("order_index")
+    }
+
+    def "availability of one index doesn't affect the others"() {
+        given:
+        def registry = new IndexStateRegistry()
+
+        when:
+        registry.markIndexAsAvailable("order_index")
+
+        then:
+        registry.isIndexAvailable("order_index")
+        !registry.isIndexAvailable("customer_index")
+    }
+
+    def "clean makes all indexes unavailable"() {
+        given:
+        def registry = new IndexStateRegistry()
+        registry.markIndexAsAvailable("order_index")
+        registry.markIndexAsAvailable("customer_index")
+
+        when:
+        registry.clean()
+
+        then:
+        !registry.isIndexAvailable("order_index")
+        !registry.isIndexAvailable("customer_index")
+    }
+
+    def "clean on empty registry works without errors"() {
+        given:
+        def registry = new IndexStateRegistry()
+
+        when:
+        registry.clean()
 
         then:
         noExceptionThrown()
-        !registry.getIndexAvailabilityStates().containsKey("retired")
-        !registry.isIndexAvailable("retired")
+        !registry.isIndexAvailable("order_index")
+    }
+
+    def "index can be marked as available after clean"() {
+        given:
+        def registry = new IndexStateRegistry()
+        registry.markIndexAsAvailable("order_index")
+
+        when:
+        registry.clean()
+        registry.markIndexAsAvailable("customer_index")
+
+        then:
+        !registry.isIndexAvailable("order_index")
+        registry.isIndexAvailable("customer_index")
     }
 }

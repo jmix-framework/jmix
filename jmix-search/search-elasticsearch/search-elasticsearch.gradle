@@ -41,6 +41,7 @@ dependencies {
     testImplementation project(':framework-test-support')
     testImplementation project(':eclipselink')
     testImplementation project(':dynattr')
+    testImplementation project(':multitenancy')
     testImplementation 'org.apache.commons:commons-dbcp2'
     testImplementation 'org.springframework:spring-test'
     testImplementation 'org.liquibase:liquibase-core'
@@ -52,4 +53,31 @@ dependencies {
     testRuntimeOnly 'org.slf4j:slf4j-simple'
     testRuntimeOnly 'org.hsqldb:hsqldb'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+    testImplementation 'org.testcontainers:elasticsearch:1.20.1'
+}
+
+/**
+ * Tests that talk to a real search engine. They need Docker, so they are not part of the regular test run:
+ * enable them with -PrunSearchEngineTests=true, or point them at an engine you already have running with
+ * -DsearchEngineUrl=http://localhost:9200.
+ */
+boolean runSearchEngineTests = project.rootProject.findProperty('runSearchEngineTests')?.toBoolean() ?: false
+
+tasks.named('test') {
+    useJUnitPlatform {
+        excludeTags 'search-engine'
+    }
+}
+
+tasks.register('searchEngineTest', Test) {
+    description = 'Runs the tests that talk to a real search engine'
+    group = 'verification'
+    onlyIf { runSearchEngineTests }
+    testClassesDirs = sourceSets.test.output.classesDirs
+    classpath = sourceSets.test.runtimeClasspath
+    useJUnitPlatform {
+        includeTags 'search-engine'
+    }
+    systemProperty 'searchEngineUrl', System.getProperty('searchEngineUrl', '')
 }

@@ -16,71 +16,53 @@
 
 package io.jmix.search.index.impl;
 
-import io.jmix.search.index.mapping.IndexConfigurationManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 
 /**
  * Holds markers of search indexes availability.
- * Only entities with available indexes can be used in index-modification operations
+ * Only available indexes can be used in index-modification operations
  * (to prevent storing data into incorrect indexes or automatic creation of them by ES).
  * <p>Doesn't affect searching.
  * <p>Every action that makes or detects index is valid (creation or successful synchronization\validation) marks it as available.
  * <p>Every action that makes or detects index is invalid (drop or unsuccessful synchronization\validation) marks it as unavailable.
+ * <p>Availability is tracked per index, not per entity: a tenant-aware entity is mapped to a separate index per
+ * tenant, and these indexes become available independently of each other.
  */
 @Component("search_IndexStateRegistry")
 public class IndexStateRegistry {
 
-    private static final Logger log = LoggerFactory.getLogger(IndexStateRegistry.class);
+    /**
+     * An index is considered unavailable until it is explicitly marked as available, so the registry starts empty.
+     */
+    protected final Map<String, Boolean> registry = new ConcurrentHashMap<>();
 
-    protected final Map<String, Boolean> registry;
-    protected final IndexConfigurationManager indexConfigurationManager;
-
-    @Autowired
-    public IndexStateRegistry(IndexConfigurationManager indexConfigurationManager) {
-        Map<String, Boolean> tmpRegistry = new ConcurrentHashMap<>();
-        indexConfigurationManager.getAllIndexedEntities().forEach(entity -> tmpRegistry.put(entity, false));
-        this.registry = tmpRegistry;
-        this.indexConfigurationManager = indexConfigurationManager;
+    public boolean isIndexAvailable(String indexName) {
+        return registry.getOrDefault(indexName, false);
     }
 
-    public Map<String, Boolean> getIndexAvailabilityStates() {
-        return Collections.unmodifiableMap(registry);
+    public void markIndexAsAvailable(String indexName) {
+        setRegistryValue(indexName, true);
     }
 
-    public boolean isIndexAvailable(String entityName) {
-        return registry.getOrDefault(entityName, false);
+    public void markIndexAsUnavailable(String indexName) {
+        setRegistryValue(indexName, false);
     }
 
-    public void markIndexAsAvailable(String entityName) {
-        setRegistryValue(entityName, true);
+    protected void setRegistryValue(String indexName, boolean value) {
+        registry.put(indexName, value);
     }
 
-    public void markIndexAsUnavailable(String entityName) {
-        setRegistryValue(entityName, false);
-    }
-
-    public List<String> getAllUnavailableIndexedEntities() {
-        // Entities indexed by a later metadata generation have no entry yet and are unavailable by default.
-        return indexConfigurationManager.getAllIndexedEntities().stream()
-                .filter(entityName -> !isIndexAvailable(entityName))
-                .collect(Collectors.toList());
-    }
-
-    protected void setRegistryValue(String entityName, boolean value) {
-        if (indexConfigurationManager.isDirectlyIndexed(entityName)) {
-            registry.put(entityName, value);
-        } else {
-            // A retired entity from an older metadata generation is ignored instead of failing a background operation.
-            log.debug("Entity '{}' is not indexed, skipping state change", entityName);
-        }
+    /**
+     * Clears the registry, so every index becomes unavailable until it is marked as available again.
+     * <p>
+     * Called from the explicit "refresh the index definitions" operation alone, which synchronizes the schemas
+     * immediately afterwards and so fills the registry back in. It must not be called from a rebuild that nothing
+     * repairs: every index would stay unavailable and indexing would stop until someone noticed.
+     */
+    public void clean() {
+        registry.clear();
     }
 }

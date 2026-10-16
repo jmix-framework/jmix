@@ -21,7 +21,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.search.SearchProperties;
-import io.jmix.search.index.IndexConfiguration;
+import io.jmix.search.index.*;
 import io.jmix.search.index.impl.BaseIndexManager;
 import io.jmix.search.index.impl.IndexStateRegistry;
 import io.jmix.search.index.mapping.IndexConfigurationManager;
@@ -63,17 +63,18 @@ public class OpenSearchIndexManager extends BaseIndexManager<IndexState, IndexSe
                                   OpenSearchIndexConfigurationComparator configurationComparator,
                                   OpenSearchIndexStateResolver metadataResolver,
                                   OpenSearchPutMappingRequestBuilder putMappingRequestBuilder) {
-        super(indexConfigurationManager, indexStateRegistry, searchProperties, configurationComparator, metadataResolver);
+        super(indexConfigurationManager,
+                indexStateRegistry,
+                searchProperties,
+                configurationComparator,
+                metadataResolver);
         this.client = client;
         this.indexSettingsProcessor = indexSettingsProcessor;
         this.putMappingRequestBuilder = putMappingRequestBuilder;
     }
 
     @Override
-    public boolean createIndex(IndexConfiguration indexConfiguration) {
-        Preconditions.checkNotNullArgument(indexConfiguration);
-
-        String indexName = indexConfiguration.getIndexName();
+    protected IndexManipulationResult createIndex(IndexConfiguration indexConfiguration, String indexName) {
         TypeMapping mapping = buildMapping(indexConfiguration);
         IndexSettings settings = buildSettings(indexConfiguration);
 
@@ -81,7 +82,7 @@ public class OpenSearchIndexManager extends BaseIndexManager<IndexState, IndexSe
                 builder -> builder.index(indexName).mappings(mapping).settings(settings)
         );
 
-        log.info("Create index '{}' with mapping {}", indexConfiguration.getIndexName(), mapping);
+        log.info("Create index '{}' with mapping {}", indexName, mapping);
 
         CreateIndexResponse response;
         try {
@@ -91,22 +92,22 @@ public class OpenSearchIndexManager extends BaseIndexManager<IndexState, IndexSe
         }
 
         boolean acknowledged = Boolean.TRUE.equals(response.acknowledged());
-        //TODO consider the possibility of this marking removing
         if (acknowledged) {
-            indexStateRegistry.markIndexAsAvailable(indexConfiguration.getEntityName());
+            // The index was put there by this call, which is a fact only this method holds. A failure means the
+            // opposite of nothing: the index may be there anyway, put by another node, so what a failure means is
+            // left to the caller and nothing is marked here.
+            indexStateRegistry.markIndexAsAvailable(indexName);
         }
-        return acknowledged;
+        return IndexManipulationResult.of(acknowledged);
     }
 
     @Override
     public boolean dropIndex(String indexName) {
         Preconditions.checkNotNullArgument(indexName);
 
-        IndexConfiguration indexConfiguration = indexConfigurationManager.getIndexConfigurationByIndexName(indexName);
-
         DeleteIndexResponse response;
         try {
-            indexStateRegistry.markIndexAsUnavailable(indexConfiguration.getEntityName());
+            indexStateRegistry.markIndexAsUnavailable(indexName);
             response = client.indices().delete(builder -> builder.index(indexName));
         } catch (IOException e) {
             throw new RuntimeException("Failed to delete index '" + indexName + "'", e);
@@ -156,7 +157,7 @@ public class OpenSearchIndexManager extends BaseIndexManager<IndexState, IndexSe
                 return TypeMapping._DESERIALIZER.deserialize(parser, mapper);
             }
         } catch (JsonProcessingException e) {
-            throw new RuntimeException("Unable to parse mapping of index '" + indexConfiguration.getIndexName() + "'", e);
+            throw new RuntimeException("Unable to parse mapping of entity '" + indexConfiguration.getEntityName() + "'", e);
         }
     }
 

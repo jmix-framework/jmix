@@ -36,19 +36,10 @@ public class IndexingLocker {
     protected final IndexConfigurationManager indexConfigurationManager;
 
     @Autowired
+    /** Asks the index configurations nothing: building the index definitions here would read the database too early. */
     public IndexingLocker(IndexConfigurationManager indexConfigurationManager) {
-        Map<String, ReentrantLock> tmpEnqueueAllLocks = new ConcurrentHashMap<>();
-        indexConfigurationManager.getAllIndexedEntities().forEach(
-                entity -> tmpEnqueueAllLocks.put(entity, new ReentrantLock())
-        );
-        this.enqueueAllLocks = tmpEnqueueAllLocks;
-
-        Map<String, ReentrantLock> tmpEnqueueingSessionOperationLocks = new ConcurrentHashMap<>();
-        indexConfigurationManager.getAllIndexedEntities().forEach(
-                entity -> tmpEnqueueingSessionOperationLocks.put(entity, new ReentrantLock())
-        );
-        this.enqueueingSessionOperationLocks = tmpEnqueueingSessionOperationLocks;
-
+        this.enqueueAllLocks = new ConcurrentHashMap<>();
+        this.enqueueingSessionOperationLocks = new ConcurrentHashMap<>();
         this.indexConfigurationManager = indexConfigurationManager;
     }
 

@@ -1,8 +1,8 @@
 name: Label new issues for triage
 
 # Issue templates add the 'triage' label, but issues created via the API (e.g. by AI agents) bypass them.
-# Labels passed on creation are also silently dropped for users without write access,
-# so such issues arrive unlabeled. Mark every issue opened without labels for triage.
+# Labels passed on creation are also silently dropped for users without write access.
+# An issue opened with a 'size: *' label is already triaged by its author; mark any other issue for triage.
 on:
   issues:
     types: [opened]
@@ -12,7 +12,9 @@ permissions:
 
 jobs:
   label:
-    if: ${{ join(github.event.issue.labels.*.name) == '' }}
+    if: >-
+      !contains(github.event.issue.labels.*.name, 'triage') &&
+      !contains(join(github.event.issue.labels.*.name, ','), 'size:')
     runs-on: ubuntu-latest
     steps:
       - run: gh issue edit "$NUMBER" --repo "$REPO" --add-label triage

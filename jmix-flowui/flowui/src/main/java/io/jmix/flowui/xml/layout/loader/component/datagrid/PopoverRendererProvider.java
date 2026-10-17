@@ -69,6 +69,8 @@ public class PopoverRendererProvider implements RendererProvider<PopoverRenderer
                 .ifPresent(renderer::withClassNames);
         loaderSupport.loadString(element, "css")
                 .ifPresent(renderer::withCss);
+        loaderSupport.loadBoolean(element, "markdown")
+                .ifPresent(renderer::withMarkdown);
 
         return renderer;
     }

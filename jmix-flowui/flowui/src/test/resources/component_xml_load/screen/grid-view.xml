@@ -172,6 +172,9 @@
                 <column property="date">
                     <popoverRenderer/>
                 </column>
+                <column property="amount">
+                    <popoverRenderer markdown="true"/>
+                </column>
             </columns>
         </dataGrid>
 

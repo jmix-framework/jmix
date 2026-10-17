@@ -26,6 +26,7 @@ import com.vaadin.flow.component.html.AnchorTarget
 import com.vaadin.flow.component.html.Div
 import com.vaadin.flow.component.html.Hr
 import com.vaadin.flow.component.icon.VaadinIcon
+import com.vaadin.flow.component.markdown.Markdown
 import com.vaadin.flow.component.popover.Popover
 import com.vaadin.flow.component.popover.PopoverPosition
 import component.standarddetailview.view.OrderDetailTestView
@@ -314,6 +315,7 @@ class GridXmlLoadTest extends FlowuiTestSpecification {
             position == PopoverPosition.BOTTOM_START
             classNames == null
             css == null
+            !markdown
         }
 
         when: "cell component is created"
@@ -349,6 +351,39 @@ class GridXmlLoadTest extends FlowuiTestSpecification {
 
         then: "the popover turns out not to support styles at all, hence css is applied to the cell only"
         thrown UnsupportedOperationException
+    }
+
+    def "Load dataGrid popoverRenderer with Markdown content from XML"() {
+        given: "Screen with a dataGrid"
+        def gridView = navigateToView(GridView.class)
+        gridView.loadData()
+
+        when: "popoverRenderer with markdown is loaded"
+        def order = gridView.popoverRendererDataGrid.items.items[0] as Order
+        def renderer = gridView.popoverRendererDataGrid.getColumnByKey("amount").renderer as PopoverRenderer
+
+        then: "markdown attribute is loaded"
+        renderer.markdown
+
+        when: "cell component is created and attached"
+        def cell = renderer.createComponent(order) as Div
+        UI.getCurrent().add(cell)
+
+        then: "cell component shows plain text"
+        cell.text
+
+        and: "popover content is a Markdown component with the same text"
+        def popover = UI.getCurrent().children
+                .filter { it instanceof Popover }
+                .map { it as Popover }
+                .filter { it.target.is(cell) }
+                .findFirst()
+                .orElse(null)
+
+        popover != null
+        def content = popover.children.findFirst().get() as Markdown
+        content.content == cell.text
+        content.hasClassName("jmix-popover-renderer-content")
     }
 
     def "Load dataGrid popoverRenderer with an empty value"() {

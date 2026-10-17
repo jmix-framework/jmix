@@ -20,6 +20,7 @@ import com.google.common.base.Strings;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasStyle;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.markdown.Markdown;
 import com.vaadin.flow.component.popover.Popover;
 import com.vaadin.flow.component.popover.PopoverPosition;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
@@ -43,6 +44,7 @@ public class PopoverRenderer<ITEM> extends ComponentRenderer<Component, ITEM> {
     protected PopoverPosition position = PopoverPosition.BOTTOM_START;
     protected String classNames;
     protected String css;
+    protected boolean markdown;
 
     public PopoverRenderer(Function<ITEM, String> popoverTextProvider) {
         this(popoverTextProvider, item -> {
@@ -92,8 +94,8 @@ public class PopoverRenderer<ITEM> extends ComponentRenderer<Component, ITEM> {
     }
 
     private void createPopover(String text, Component target) {
-        Div popoverContent = new Div(text);
-        popoverContent.setClassName("jmix-popover-renderer-content");
+        Component popoverContent = createPopoverContent(text);
+        popoverContent.addClassName("jmix-popover-renderer-content");
 
         Popover popover = new Popover(popoverContent);
         popover.setPosition(position);
@@ -102,6 +104,16 @@ public class PopoverRenderer<ITEM> extends ComponentRenderer<Component, ITEM> {
         // they are the only way to reach it from CSS.
         applyClassNames(popover);
         popover.setTarget(target);
+    }
+
+    /**
+     * Creates the content component of the popover.
+     *
+     * @param text popover text
+     * @return a {@link Markdown} component if the text is rendered as Markdown, a {@link Div} otherwise
+     */
+    protected Component createPopoverContent(String text) {
+        return markdown ? new Markdown(text) : new Div(text);
     }
 
     /**
@@ -134,6 +146,17 @@ public class PopoverRenderer<ITEM> extends ComponentRenderer<Component, ITEM> {
      */
     public PopoverRenderer<ITEM> withCss(@Nullable String css) {
         this.css = css;
+        return this;
+    }
+
+    /**
+     * Sets whether the popover text is rendered as Markdown. The rendered component always shows plain text.
+     *
+     * @param markdown {@code true} to render the popover text as Markdown
+     * @return this renderer
+     */
+    public PopoverRenderer<ITEM> withMarkdown(boolean markdown) {
+        this.markdown = markdown;
         return this;
     }
 }

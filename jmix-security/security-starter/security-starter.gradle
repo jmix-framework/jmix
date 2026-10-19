@@ -24,6 +24,7 @@ dependencies {
     api project(':security')
 
     api 'org.springframework.boot:spring-boot-autoconfigure'
+    api 'org.springframework.boot:spring-boot-security'
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation project(':core-starter')

@@ -24,4 +24,5 @@ dependencies {
     api project(':security-flowui')
 
     api 'org.springframework.boot:spring-boot-autoconfigure'
+    api 'org.springframework.boot:spring-boot-security'
 }

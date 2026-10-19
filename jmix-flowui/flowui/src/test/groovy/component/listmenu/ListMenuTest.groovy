@@ -36,6 +36,7 @@ import io.jmix.flowui.component.main.JmixListMenu
 import io.jmix.flowui.kit.component.main.ListMenu
 import io.jmix.flowui.menu.ListMenuBuilder
 import io.jmix.flowui.menu.MenuItem.MenuItemParameter
+import io.jmix.flowui.menu.provider.MenuConfigListMenuItemProvider
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import test_support.ComponentTestUtils
@@ -43,6 +44,19 @@ import test_support.spec.FlowuiTestSpecification
 
 @SpringBootTest(classes = [ListMenuTestConfiguration])
 class ListMenuTest extends FlowuiTestSpecification {
+
+    static final String ADMIN_MENU_WITH_HIDDEN_ITEMS = '''
+            <menu-config xmlns="http://jmix.io/schema/flowui/menu">
+                <menu id="admin" title="Admin">
+                    <item id="users" view="ListMenuTestView" visible="false"/>
+                    <separator/>
+                    <item id="roles" view="ListMenuTestView" visible="false"/>
+                    <item id="sessions" view="ListMenuTestView" visible="false"/>
+                    <separator/>
+                    <item id="audit" view="ListMenuTestView"/>
+                </menu>
+           </menu-config>
+        '''.trim()
 
     @Autowired
     UiComponents uiComponents
@@ -331,6 +345,389 @@ class ListMenuTest extends FlowuiTestSpecification {
         secondMenuBar.opened
         getRenderedMenuItemComponent(listMenu, "firstView").element.hasAttribute("highlight")
         getRenderedMenuItemComponent(listMenu, "secondView").element.hasAttribute("highlight")
+    }
+
+    def "Apply visibility of a menu item changed after it is added"() {
+        given:
+        def listMenu = uiComponents.create(JmixListMenu)
+        listMenu.addMenuItem(ListMenu.MenuItem.create("first"))
+
+        when:
+        listMenu.getMenuItem("first").setVisible(false)
+
+        then:
+        !getRenderedMenuItemComponent(listMenu, "first").visible
+
+        when:
+        listMenu.getMenuItem("first").setVisible(true)
+
+        then:
+        getRenderedMenuItemComponent(listMenu, "first").visible
+    }
+
+    def "Apply visibility of a menu bar changed after it is added"() {
+        given:
+        def listMenu = uiComponents.create(JmixListMenu)
+
+        def menuBar = ListMenu.MenuItem.createMenuBar("bar")
+        menuBar.addChildItem(ListMenu.MenuItem.create("child"))
+        listMenu.addMenuItem(menuBar)
+
+        when:
+        listMenu.getMenuItem("bar").setVisible(false)
+
+        then:
+        !getRenderedMenuItemComponent(listMenu, "bar").visible
+
+        when:
+        listMenu.getMenuItem("bar").setVisible(true)
+
+        then:
+        getRenderedMenuItemComponent(listMenu, "bar").visible
+    }
+
+    def "Render an item hidden before it is added as hidden"() {
+        given:
+        def listMenu = uiComponents.create(JmixListMenu)
+
+        when:
+        listMenu.addMenuItem(ListMenu.MenuItem.create("first").withVisible(false))
+
+        then:
+        !getRenderedMenuItemComponent(listMenu, "first").visible
+    }
+
+    def "Hide separators left after hidden items: the ticket's example via ListMenuBuilder"() {
+        given:
+        menuConfig.loadTestMenu(ADMIN_MENU_WITH_HIDDEN_ITEMS)
+        def listMenu = uiComponents.create(JmixListMenu)
+
+        when:
+        listMenuBuilder.build(listMenu)
+
+        then:
+        def adminBar = (ListMenu.MenuBarItem) listMenu.getMenuItem("admin")
+        adminBar.childItems.count { it.separator } == 2
+        shownSeparators(listMenu, adminBar.childItems) == []
+    }
+
+    def "Hide separators left after hidden items: the ticket's example via MenuConfigListMenuItemProvider"() {
+        given:
+        menuConfig.loadTestMenu(ADMIN_MENU_WITH_HIDDEN_ITEMS)
+        def listMenu = uiComponents.create(JmixListMenu)
+        def provider = applicationContext.getBean(MenuConfigListMenuItemProvider)
+        listMenu.setMenuItemProvider(provider)
+
+        when:
+        provider.load()
+
+        then:
+        def adminBar = (ListMenu.MenuBarItem) listMenu.getMenuItem("admin")
+        adminBar.childItems.count { it.separator } == 2
+        shownSeparators(listMenu, adminBar.childItems) == []
+    }
+
+    def "Skip a submenu whose regular items are all hidden even if it has separators"() {
+        given:
+        menuConfig.loadTestMenu('''
+            <menu-config xmlns="http://jmix.io/schema/flowui/menu">
+                <menu id="admin" title="Admin">
+                    <item id="users" view="ListMenuTestView" visible="false"/>
+                    <separator/>
+                    <item id="roles" view="ListMenuTestView" visible="false"/>
+                </menu>
+           </menu-config>
+        '''.trim())
+        def listMenu = uiComponents.create(JmixListMenu)
+
+        when:
+        listMenuBuilder.build(listMenu)
+
+        then:
+        listMenu.getMenuItem("admin") == null
+    }
+
+    def "Hide leading, trailing and consecutive separators at the root"() {
+        given:
+        def listMenu = uiComponents.create(JmixListMenu)
+
+        when:
+        [separator("s1"), item("a"), separator("s2"), separator("s3"), item("b"), separator("s4")]
+                .each { listMenu.addMenuItem(it) }
+
+        then:
+        shownSeparators(listMenu, listMenu.menuItems) == ["s2"]
+    }
+
+    def "Hide leading, trailing and consecutive separators in a submenu"() {
+        given:
+        def listMenu = uiComponents.create(JmixListMenu)
+        def bar = menuBar("bar", separator("s1"), item("a"), separator("s2"), separator("s3"), item("b"),
+                separator("s4"))
+
+        when:
+        listMenu.addMenuItem(bar)
+
+        then:
+        shownSeparators(listMenu, bar.childItems) == ["s2"]
+    }
+
+    def "Keep separators between visible items"() {
+        given:
+        def listMenu = uiComponents.create(JmixListMenu)
+        def bar = menuBar("bar", item("a"), separator("s1"), item("b"), separator("s2"), item("c"))
+
+        when:
+        listMenu.addMenuItem(bar)
+
+        then:
+        shownSeparators(listMenu, bar.childItems) == ["s1", "s2"]
+    }
+
+    def "Recompute separators when an item visibility changes"() {
+        given:
+        def listMenu = uiComponents.create(JmixListMenu)
+        def b = item("b")
+        def bar = menuBar("bar", item("a"), separator("s1"), b, separator("s2"), item("c"))
+        listMenu.addMenuItem(bar)
+
+        when:
+        b.setVisible(false)
+
+        then:
+        shownSeparators(listMenu, bar.childItems) == ["s1"]
+
+        when:
+        b.setVisible(true)
+
+        then:
+        shownSeparators(listMenu, bar.childItems) == ["s1", "s2"]
+    }
+
+    def "Level without visible items hides all separators"() {
+        given:
+        def listMenu = uiComponents.create(JmixListMenu)
+
+        when:
+        [item("a").withVisible(false), separator("s1"), item("b").withVisible(false)]
+                .each { listMenu.addMenuItem(it) }
+
+        then:
+        shownSeparators(listMenu, listMenu.menuItems) == []
+    }
+
+    def "Keep a separator hidden by the developer hidden"() {
+        given:
+        def listMenu = uiComponents.create(JmixListMenu)
+        def s1 = separator("s1")
+        def bar = menuBar("bar", item("a"), s1, item("b"))
+        listMenu.addMenuItem(bar)
+
+        when:
+        s1.setVisible(false)
+
+        then:
+        shownSeparators(listMenu, bar.childItems) == []
+        !s1.visible
+
+        when:
+        s1.setVisible(true)
+
+        then:
+        shownSeparators(listMenu, bar.childItems) == ["s1"]
+    }
+
+    def "Hidden first separator of a run is replaced by the next one"() {
+        given:
+        def listMenu = uiComponents.create(JmixListMenu)
+        def bar = menuBar("bar", item("a"), separator("s1").withVisible(false), separator("s2"), item("b"))
+
+        when:
+        listMenu.addMenuItem(bar)
+
+        then:
+        shownSeparators(listMenu, bar.childItems) == ["s2"]
+    }
+
+    def "A separator the menu hid still reports the developer's value"() {
+        given:
+        def listMenu = uiComponents.create(JmixListMenu)
+        def s1 = separator("s1")
+
+        when:
+        listMenu.addMenuItem(s1)
+        listMenu.addMenuItem(item("a"))
+
+        then:
+        !findElementById(listMenu.element, "s1").visible
+        s1.visible
+    }
+
+    def "Recompute separators when root items are added and removed"() {
+        given:
+        def listMenu = uiComponents.create(JmixListMenu)
+        listMenu.addMenuItem(item("a"))
+        listMenu.addMenuItem(separator("s1"))
+
+        expect:
+        shownSeparators(listMenu, listMenu.menuItems) == []
+
+        when:
+        def b = item("b")
+        listMenu.addMenuItem(b)
+
+        then:
+        shownSeparators(listMenu, listMenu.menuItems) == ["s1"]
+
+        when:
+        listMenu.removeMenuItem(b)
+
+        then:
+        shownSeparators(listMenu, listMenu.menuItems) == []
+
+        when:
+        listMenu.addMenuItem(item("c"), 2)
+
+        then:
+        shownSeparators(listMenu, listMenu.menuItems) == ["s1"]
+
+        when:
+        listMenu.removeMenuItem(0)
+
+        then:
+        shownSeparators(listMenu, listMenu.menuItems) == []
+    }
+
+    def "Recompute separators when submenu children are added and removed"() {
+        given:
+        def listMenu = uiComponents.create(JmixListMenu)
+        def bar = menuBar("bar", item("a"), separator("s1"))
+        listMenu.addMenuItem(bar)
+
+        expect:
+        shownSeparators(listMenu, bar.childItems) == []
+
+        when:
+        def b = item("b")
+        bar.addChildItem(b)
+
+        then:
+        shownSeparators(listMenu, bar.childItems) == ["s1"]
+
+        when:
+        bar.removeChildItem(b)
+
+        then:
+        shownSeparators(listMenu, bar.childItems) == []
+
+        when:
+        bar.addChildItem(b, 2)
+
+        then:
+        shownSeparators(listMenu, bar.childItems) == ["s1"]
+
+        when:
+        bar.removeChildItem(2)
+
+        then:
+        shownSeparators(listMenu, bar.childItems) == []
+    }
+
+    def "Recompute separators when a nested item is removed from the menu directly"() {
+        given:
+        def listMenu = uiComponents.create(JmixListMenu)
+        def b = item("b")
+        def bar = menuBar("bar", item("a"), separator("s1"), b)
+        listMenu.addMenuItem(bar)
+
+        expect:
+        shownSeparators(listMenu, bar.childItems) == ["s1"]
+
+        when:
+        listMenu.removeMenuItem(b)
+
+        then:
+        noExceptionThrown()
+        shownSeparators(listMenu, bar.childItems) == []
+    }
+
+    def "Moving an item recomputes separators"() {
+        given:
+        def listMenu = uiComponents.create(JmixListMenu)
+        def barA = item("barA")
+        def bar = menuBar("bar", barA, separator("barS1"), item("barB"))
+        def rootA = item("rootA")
+        listMenu.addMenuItem(rootA)
+        listMenu.addMenuItem(separator("rootS1"))
+        listMenu.addMenuItem(item("rootB"))
+        listMenu.addMenuItem(bar)
+
+        expect:
+        shownSeparators(listMenu, bar.childItems) == ["barS1"]
+        shownSeparators(listMenu, listMenu.menuItems) == ["rootS1"]
+
+        when:
+        bar.addChildItem(barA, 3)
+
+        then:
+        bar.childItems*.id == ["barS1", "barB", "barA"]
+        shownSeparators(listMenu, bar.childItems) == []
+
+        when:
+        listMenu.addMenuItem(rootA, 3)
+
+        then:
+        listMenu.menuItems*.id == ["rootS1", "rootB", "rootA", "bar"]
+        shownSeparators(listMenu, listMenu.menuItems) == []
+    }
+
+    def "Item hidden before add is rendered hidden and separators follow it"() {
+        given:
+        def listMenu = uiComponents.create(JmixListMenu)
+        def bar = menuBar("bar", item("a"), separator("s1"), item("b").withVisible(false))
+
+        when:
+        listMenu.addMenuItem(bar)
+
+        then:
+        !getRenderedMenuItemComponent(listMenu, "b").visible
+        shownSeparators(listMenu, bar.childItems) == []
+    }
+
+    def "Nested submenu level is recomputed"() {
+        given:
+        def listMenu = uiComponents.create(JmixListMenu)
+        def b = item("b")
+        def inner = menuBar("inner", item("a"), separator("s1"), b)
+        listMenu.addMenuItem(menuBar("outer", item("x"), inner))
+
+        expect:
+        shownSeparators(listMenu, inner.childItems) == ["s1"]
+
+        when:
+        b.setVisible(false)
+
+        then:
+        shownSeparators(listMenu, inner.childItems) == []
+    }
+
+    protected static ListMenu.MenuItem item(String id) {
+        return ListMenu.MenuItem.create(id)
+    }
+
+    protected static ListMenu.MenuItem separator(String id) {
+        return new ListMenu.MenuSeparatorItem(id)
+    }
+
+    protected static ListMenu.MenuBarItem menuBar(String id, ListMenu.MenuItem... children) {
+        def menuBar = ListMenu.MenuItem.createMenuBar(id)
+        children.each { menuBar.addChildItem(it) }
+        return menuBar
+    }
+
+    protected static List<String> shownSeparators(JmixListMenu listMenu, List<ListMenu.MenuItem> level) {
+        return level.findAll { it.separator && findElementById(listMenu.element, it.id)?.visible }
+                .collect { it.id }
     }
 
     protected void fireAfterNavigation(JmixListMenu listMenu, String path) {

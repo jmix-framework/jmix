@@ -100,6 +100,8 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
         getContent().add(item);
 
         attachMenuItemRecursively(menuItem);
+
+        updateSeparatorsVisibility(rootMenuItems);
     }
 
     /**
@@ -135,6 +137,8 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
         getContent().addComponentAtIndex(index, menuItemComponent);
 
         attachMenuItemRecursively(itemToAdd);
+
+        updateSeparatorsVisibility(rootMenuItems);
     }
 
     /**
@@ -154,6 +158,8 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
         }
         menuItem = menuItemEntry.getKey();
 
+        MenuBarItem parentMenuBarItem = findParentMenuBarItem(menuItem);
+
         // if is root
         rootMenuItems.remove(menuItem);
 
@@ -164,6 +170,8 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
 
         detachMenuItemRecursively(menuItem);
         unregisterMenuItemRecursively(menuItem);
+
+        updateSeparatorsVisibility(parentMenuBarItem != null ? parentMenuBarItem.getChildItems() : rootMenuItems);
     }
 
     /**
@@ -218,6 +226,7 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
                 ListItem component = createMenuRecursively(childItem);
                 content.add(component);
             }
+            updateSeparatorsVisibility(menuBarItem.getChildItems());
 
             ListItem menuBarComponent = new ListItem(menuBar);
 
@@ -239,6 +248,62 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
 
             return menuItemComponent;
         }
+    }
+
+    /**
+     * Shows a separator of the passed menu level only when it is placed between visible non-separator
+     * items, and only the first separator of several consecutive ones. A separator hidden by
+     * {@link MenuItem#setVisible(boolean)} is never shown. Items that are not registered in the menu are
+     * skipped.
+     *
+     * @param items menu items of one level: root menu items or child items of a menu bar
+     */
+    protected void updateSeparatorsVisibility(List<MenuItem> items) {
+        MenuItem pendingSeparator = null;
+        boolean visibleItemBefore = false;
+        Set<MenuItem> shownSeparators = new HashSet<>();
+
+        for (MenuItem item : items) {
+            if (!registrations.containsKey(item.getId())) {
+                continue;
+            }
+
+            if (item.isSeparator()) {
+                if (item.isVisible() && visibleItemBefore && pendingSeparator == null) {
+                    pendingSeparator = item;
+                }
+            } else if (item.isVisible()) {
+                if (pendingSeparator != null) {
+                    shownSeparators.add(pendingSeparator);
+                    pendingSeparator = null;
+                }
+                visibleItemBefore = true;
+            }
+        }
+
+        for (MenuItem item : items) {
+            Pair<MenuItem, ListItem> registration = registrations.get(item.getId());
+            if (item.isSeparator() && registration != null) {
+                registration.getValue().setVisible(shownSeparators.contains(item));
+            }
+        }
+    }
+
+    /**
+     * Finds the menu bar item that contains the passed menu item as a child item.
+     *
+     * @param menuItem menu item to find the parent of
+     * @return parent menu bar item or {@code null} if the passed menu item is a root item
+     */
+    @Nullable
+    protected MenuBarItem findParentMenuBarItem(MenuItem menuItem) {
+        for (Pair<MenuItem, ListItem> registration : registrations.values()) {
+            if (registration.getKey() instanceof MenuBarItem menuBarItem
+                    && menuBarItem.getChildItems().contains(menuItem)) {
+                return menuBarItem;
+            }
+        }
+        return null;
     }
 
     protected void attachMenuItemRecursively(MenuItem menuItem) {
@@ -536,6 +601,15 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
                 setPrefixComponent(menuItemComponent, prefixComponent, oldPrefixComponent);
             }
         }
+        if (MenuItem.MENU_ITEM_VISIBLE.equals(event.getPropertyName())) {
+            MenuItem menuItem = (MenuItem) event.getSource();
+            if (!menuItem.isSeparator()) {
+                getMenuItemComponent(menuItem).setVisible(menuItem.isVisible());
+            }
+
+            MenuBarItem parentMenuBarItem = findParentMenuBarItem(menuItem);
+            updateSeparatorsVisibility(parentMenuBarItem != null ? parentMenuBarItem.getChildItems() : rootMenuItems);
+        }
     }
 
     /**
@@ -546,6 +620,7 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
         protected static final String MENU_ITEM_CLASS_NAME = "className";
         protected static final String MENU_ITEM_PREFIX_COMPONENT = "prefixComponent";
         protected static final String MENU_ITEM_SUFFIX_COMPONENT = "suffixComponent";
+        protected static final String MENU_ITEM_VISIBLE = "visible";
 
         protected String id;
         protected String title;
@@ -786,7 +861,7 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
          * @return current menu item instance
          */
         public MenuItem withVisible(boolean visible) {
-            this.visible = visible;
+            setVisible(visible);
             return this;
         }
 
@@ -796,7 +871,10 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
          * @param visible {@code true} if menu item should be visible, {@code false} otherwise
          */
         public void setVisible(boolean visible) {
+            boolean oldVisible = this.visible;
             this.visible = visible;
+
+            propertyChangeSupport.firePropertyChange(MENU_ITEM_VISIBLE, oldVisible, this.visible);
         }
 
         /**
@@ -955,6 +1033,10 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
             }
 
             children.add(menuItem);
+
+            if (isAttachedToMenu()) {
+                menuComponent.updateSeparatorsVisibility(getChildItems());
+            }
         }
 
         /**
@@ -987,6 +1069,7 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
             children.add(index, menuItem);
             if (isAttachedToMenu()) {
                 menuComponent.addChildren(this, menuItem, index);
+                menuComponent.updateSeparatorsVisibility(getChildItems());
             }
         }
 

@@ -131,6 +131,7 @@ public class ListMenuBuilder {
             }
 
             if (menuBarItem.getChildItems().stream()
+                    .filter(item -> !item.isSeparator())
                     .noneMatch(ListMenu.MenuItem::isVisible)) {
                 log.debug("Menu bar item '{}' is skipped as it does not have visible children", menuItem.getId());
 

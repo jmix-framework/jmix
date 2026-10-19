@@ -166,6 +166,7 @@ public class HorizontalMenu extends Composite<JmixMenuBar>
             for (AbstractMenuItem<?> item : childParentMenuItem.getChildItems()) {
                 addMenuItemRecursive(item, childParentMenuItem, ADD_TO_END_INDEX);
             }
+            updateSeparatorsVisibility(childParentMenuItem);
         } else if (childMenuItem.isSeparator()) {
             if (parentSubMenu != null) {
                 addComponentToSubMenu(childMenuItem, parentSubMenu, index);
@@ -212,6 +213,7 @@ public class HorizontalMenu extends Composite<JmixMenuBar>
                 : hasMenuItems.addItemAtIndex(index, menuItem);
         wrapper.setId(getMenuItemId(menuItem));
         wrapper.addClassName(ITEM_WRAPPER_CLASS_NAME);
+        wrapper.setVisible(menuItem.isVisible());
         menuItem.setMenuItemWrapper(wrapper);
 
         if (subMenu == null) {
@@ -300,11 +302,49 @@ public class HorizontalMenu extends Composite<JmixMenuBar>
     protected void removeChildItem(AbstractMenuItem<?> menuItem, ParentMenuItem parentMenuItem) {
         JmixMenuItem parentItemWrapper = parentMenuItem.getMenuItemWrapper();
         JmixMenuItem itemWrapper = menuItem.getMenuItemWrapper();
-        if (itemWrapper != null && parentItemWrapper != null) {
-            parentItemWrapper.getSubMenu().remove(itemWrapper);
+        if (parentItemWrapper != null) {
+            if (itemWrapper != null) {
+                parentItemWrapper.getSubMenu().remove(itemWrapper);
+            } else if (menuItem.isSeparator()) {
+                // Separators are added to the sub menu directly, without a wrapper.
+                parentItemWrapper.getSubMenu().remove(menuItem);
+            }
         }
 
         detachMenuItemRecursive(menuItem);
+    }
+
+    /**
+     * Shows a separator of the passed parent menu item only when it is placed between visible
+     * non-separator items, and only the first separator of several consecutive ones. A separator hidden by
+     * {@link SeparatorMenuItem#setVisible(boolean)} is never shown.
+     *
+     * @param parentMenuItem parent menu item whose child separators should be updated
+     */
+    protected void updateSeparatorsVisibility(ParentMenuItem parentMenuItem) {
+        AbstractMenuItem<?> pendingSeparator = null;
+        boolean visibleItemBefore = false;
+        Set<AbstractMenuItem<?>> shownSeparators = new HashSet<>();
+
+        for (AbstractMenuItem<?> item : parentMenuItem.getChildItems()) {
+            if (item.isSeparator()) {
+                if (item.isVisible() && visibleItemBefore && pendingSeparator == null) {
+                    pendingSeparator = item;
+                }
+            } else if (item.isVisible()) {
+                if (pendingSeparator != null) {
+                    shownSeparators.add(pendingSeparator);
+                    pendingSeparator = null;
+                }
+                visibleItemBefore = true;
+            }
+        }
+
+        for (AbstractMenuItem<?> item : parentMenuItem.getChildItems()) {
+            if (item.isSeparator()) {
+                item.getElement().setVisible(shownSeparators.contains(item));
+            }
+        }
     }
 
     /**
@@ -376,6 +416,26 @@ public class HorizontalMenu extends Composite<JmixMenuBar>
 
         protected void setParentMenuItem(@Nullable ParentMenuItem parentMenuItem) {
             this.parentMenuItem = parentMenuItem;
+        }
+
+        /**
+         * Sets the visibility of the item together with its menu item wrapper, so a hidden item
+         * leaves no empty row or button in the menu. Separators of the parent menu item are updated
+         * accordingly.
+         *
+         * @param visible {@code true} to show the item, {@code false} to hide it
+         */
+        @Override
+        public void setVisible(boolean visible) {
+            super.setVisible(visible);
+
+            if (menuItemWrapper != null) {
+                menuItemWrapper.setVisible(visible);
+            }
+
+            if (isAttachedToMenu() && parentMenuItem != null) {
+                menu.updateSeparatorsVisibility(parentMenuItem);
+            }
         }
 
         /**
@@ -691,6 +751,10 @@ public class HorizontalMenu extends Composite<JmixMenuBar>
 
             children.add(menuItem);
             menuItem.setParentMenuItem(this);
+
+            if (isAttachedToMenu()) {
+                menu.updateSeparatorsVisibility(this);
+            }
         }
 
         @Override
@@ -707,6 +771,10 @@ public class HorizontalMenu extends Composite<JmixMenuBar>
 
             children.add(index, menuItem);
             menuItem.setParentMenuItem(this);
+
+            if (isAttachedToMenu()) {
+                menu.updateSeparatorsVisibility(this);
+            }
         }
 
         @Override
@@ -729,6 +797,11 @@ public class HorizontalMenu extends Composite<JmixMenuBar>
                             menu.removeChildItem(menuItem, this);
                         }
                         children.remove(menuItem);
+                        menuItem.setParentMenuItem(null);
+
+                        if (isAttachedToMenu()) {
+                            menu.updateSeparatorsVisibility(this);
+                        }
                     });
         }
 
@@ -785,11 +858,42 @@ public class HorizontalMenu extends Composite<JmixMenuBar>
      */
     public static class SeparatorMenuItem extends AbstractMenuItem<Hr> {
 
+        protected boolean visible = true;
+
         public SeparatorMenuItem() {
         }
 
         public SeparatorMenuItem(String id) {
             super(id);
+        }
+
+        /**
+         * Sets the requested visibility of the separator. A separator that is requested to be visible is
+         * shown only when it separates visible items of its parent menu item.
+         *
+         * @param visible {@code true} to request the separator to be visible, {@code false} to hide it
+         */
+        @Override
+        public void setVisible(boolean visible) {
+            this.visible = visible;
+
+            if (isAttachedToMenu() && parentMenuItem != null) {
+                menu.updateSeparatorsVisibility(parentMenuItem);
+            } else {
+                getElement().setVisible(visible);
+            }
+        }
+
+        /**
+         * Returns the requested visibility of the separator. Whether the separator is actually rendered is
+         * defined by {@code getElement().isVisible()}: the menu hides a separator that does not separate
+         * visible items.
+         *
+         * @return {@code true} if the separator is requested to be visible, {@code false} otherwise
+         */
+        @Override
+        public boolean isVisible() {
+            return visible;
         }
 
         @Override

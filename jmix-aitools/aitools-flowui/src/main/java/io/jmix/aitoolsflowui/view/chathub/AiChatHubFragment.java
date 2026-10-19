@@ -25,6 +25,7 @@ import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.function.SerializableSupplier;
 import com.vaadin.flow.router.RouteConfiguration;
 import io.jmix.aitoolsflowui.AiToolsFlowuiProperties;
+import io.jmix.aitoolsflowui.generation.AiChatGenerationManager;
 import io.jmix.aitoolsflowui.icon.AiIconProvider;
 import io.jmix.aitoolsflowui.model.AiChatMessage;
 import io.jmix.aitoolsflowui.model.AiConversation;
@@ -39,6 +40,7 @@ import io.jmix.aitoolsflowui.view.input.AiChatInputFragment;
 import io.jmix.aitoolsflowui.view.chathub.component.HistoryBucket;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.annotation.Experimental;
+import io.jmix.core.security.AccessDeniedException;
 import io.jmix.flowui.Dialogs;
 import io.jmix.flowui.Notifications;
 import io.jmix.flowui.ViewNavigators;
@@ -124,6 +126,8 @@ public class AiChatHubFragment extends Fragment<VerticalLayout> {
     protected AiChatMessageService messageService;
     @Autowired
     protected AiChatService chatService;
+    @Autowired
+    protected AiChatGenerationManager generationManager;
     @Autowired
     protected AiToolsFlowuiProperties properties;
     @Autowired
@@ -316,6 +320,7 @@ public class AiChatHubFragment extends Fragment<VerticalLayout> {
 
     protected void deleteConversation(AiConversation conversation) {
         try {
+            cancelResponse(conversation);
             conversationService.remove(conversation);
         } catch (Exception e) {
             log.error("Failed to delete conversation", e);
@@ -327,6 +332,21 @@ public class AiChatHubFragment extends Fragment<VerticalLayout> {
         loadConversations();
         refreshRecentConversationsVisibility();
         renderHistoryList();
+    }
+
+    /**
+     * Cancels the response running in the conversation, which would otherwise save its answer into the removed
+     * conversation.
+     *
+     * @param conversation conversation that is about to be removed
+     */
+    protected void cancelResponse(AiConversation conversation) {
+        try {
+            generationManager.cancel(conversation);
+        } catch (AccessDeniedException e) {
+            // Already deleted, e.g. in another tab, so there is nothing to cancel.
+            log.debug("Not cancelling a response of conversation {}, it is not available", conversation.getId());
+        }
     }
 
     protected void renderHistoryList() {

@@ -29,6 +29,13 @@ dependencies {
     implementation 'org.springframework.ai:spring-ai-model'
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api'
+    testImplementation 'org.springframework:spring-test'
+    testImplementation 'org.mockito:mockito-junit-jupiter'
+    testImplementation project(':framework-test-support')
+    testImplementation project(':flowui-test-assist')
+
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    testRuntimeOnly 'org.hsqldb:hsqldb'
+    testRuntimeOnly 'org.slf4j:slf4j-simple'
 }

@@ -19,26 +19,16 @@ package io.jmix.aitoolsflowui.view.chat;
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.BeforeEnterEvent;
-import com.vaadin.flow.router.BeforeLeaveEvent.ContinueNavigationAction;
 import com.vaadin.flow.router.Route;
 import io.jmix.aitoolsflowui.model.AiConversation;
 import io.jmix.aitoolsflowui.service.AiConversationService;
 import io.jmix.aitoolsflowui.view.chathub.AiChatHubView;
 import io.jmix.core.annotation.Internal;
 import io.jmix.flowui.DialogWindows;
-import io.jmix.flowui.Dialogs;
 import io.jmix.flowui.ViewNavigators;
-import io.jmix.flowui.action.DialogAction;
 import io.jmix.flowui.component.UiComponentUtils;
-import io.jmix.flowui.kit.action.ActionVariant;
 import io.jmix.flowui.kit.component.button.JmixButton;
-import io.jmix.flowui.util.OperationResult;
-import io.jmix.flowui.util.UnknownOperationResult;
-import io.jmix.flowui.view.CloseAction;
 import io.jmix.flowui.view.DefaultMainViewParent;
-import io.jmix.flowui.view.MessageBundle;
-import io.jmix.flowui.view.NavigateCloseAction;
-import io.jmix.flowui.view.StandardOutcome;
 import io.jmix.flowui.view.StandardView;
 import io.jmix.flowui.view.Subscribe;
 import io.jmix.flowui.view.ViewComponent;
@@ -79,11 +69,7 @@ public class AiChatView extends StandardView {
     protected RouteSupport routeSupport;
     @Autowired
     protected ViewNavigators viewNavigators;
-    @Autowired
-    protected Dialogs dialogs;
 
-    @ViewComponent
-    protected MessageBundle messageBundle;
     @ViewComponent
     protected AiChatFragment chatFragment;
     @ViewComponent
@@ -96,7 +82,6 @@ public class AiChatView extends StandardView {
     protected boolean conversationNotFound;
     protected boolean contentInitialized;
     protected boolean initialPromptSent;
-    protected boolean leaveConfirmed;
 
     @Override
     public void beforeEnter(BeforeEnterEvent event) {
@@ -185,64 +170,6 @@ public class AiChatView extends StandardView {
             this.conversationNotFound = true;
             log.warn("AI conversation with id {} not found", id);
         }
-    }
-
-    @Subscribe
-    public void onBeforeClose(final BeforeCloseEvent event) {
-        // Warns before leaving while the assistant response is still being
-        // generated.
-        // leaveConfirmed guards re-entry: confirming "Leave" calls close()
-        // again, which re-fires this event while the response is still in
-        // flight - without the flag that would loop the dialog.
-        if (leaveConfirmed || !chatFragment.isAwaitingResponse()) {
-            return;
-        }
-        CloseAction action = event.getCloseAction();
-        UnknownOperationResult result = new UnknownOperationResult();
-
-        if (action instanceof NavigateCloseAction navigateCloseAction) {
-            ContinueNavigationAction navigationAction = navigateCloseAction.getBeforeLeaveEvent().postpone();
-            showLeaveWhileRespondingDialog(
-                    () -> {
-                        leaveConfirmed = true;
-                        result.resume(proceedWithNavigation(navigationAction));
-                    },
-                    () -> {
-                        result.otherwise(navigationAction::cancel);
-                        result.fail();
-                    });
-        } else {
-            showLeaveWhileRespondingDialog(
-                    () -> {
-                        leaveConfirmed = true;
-                        result.resume(close(StandardOutcome.CLOSE));
-                    },
-                    result::fail);
-        }
-
-        event.preventClose(result);
-    }
-
-    protected void showLeaveWhileRespondingDialog(Runnable onLeave, Runnable onStay) {
-        dialogs.createOptionDialog()
-                .withHeader(messageBundle.getMessage("aiChatView.leaveWhileResponding.header"))
-                .withText(messageBundle.getMessage("aiChatView.leaveWhileResponding.text"))
-                .withActions(
-                        new DialogAction(DialogAction.Type.YES)
-                                .withText(messageBundle.getMessage("aiChatView.leaveWhileResponding.leave"))
-                                .withVariant(ActionVariant.DANGER)
-                                .withHandler(e -> onLeave.run()),
-                        new DialogAction(DialogAction.Type.NO)
-                                .withText(messageBundle.getMessage("aiChatView.leaveWhileResponding.stay"))
-                                .withHandler(e -> onStay.run()))
-                .open();
-    }
-
-    protected OperationResult proceedWithNavigation(ContinueNavigationAction navigationAction) {
-        navigationAction.proceed();
-        CloseAction closeAction = StandardOutcome.CLOSE.getCloseAction();
-        fireEvent(new AfterCloseEvent(this, closeAction));
-        return OperationResult.success();
     }
 
     @Subscribe(id = "newChatBtn", subject = "clickListener")

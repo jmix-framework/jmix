@@ -19,18 +19,19 @@ package conversation_title;
 import com.vaadin.flow.component.html.H3;
 import io.jmix.aitoolsflowui.view.chat.AiConversationTitleMode;
 import io.jmix.aitoolsflowui.AiToolsFlowuiProperties;
+import io.jmix.aitoolsflowui.generation.AiChatGenerationManager;
 import io.jmix.aitoolsflowui.model.AiChatMessageType;
 import io.jmix.aitoolsflowui.model.AiConversation;
 import io.jmix.aitoolsflowui.service.AiConversationAutoTitleService;
 import io.jmix.aitoolsflowui.view.chat.AiChatFragment;
 import io.jmix.aitoolsflowui.view.chat.AiChatView;
-import io.jmix.aitoolsflowui.view.chat.support.AssistantResponseTaskCoordinator;
 import io.jmix.flowui.testassist.FlowuiTestAssistConfiguration;
 import io.jmix.flowui.testassist.UiTest;
 import io.jmix.flowui.testassist.UiTestUtils;
 import io.jmix.flowui.view.navigation.RouteSupport;
 import io.jmix.flowui.view.navigation.ViewNavigationSupport;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -46,6 +47,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.when;
 
 /**
  * Automatic titling through {@link AiChatFragment#sendMessage(String)} in the default mode and with per-chat
@@ -61,8 +63,14 @@ class AiChatFragmentAutoTitleTest {
     @Autowired TestAiConversationService conversationService;
     @Autowired TestAiChatMessageService messageService;
 
-    @MockitoBean AssistantResponseTaskCoordinator assistantResponseTaskCoordinator;
+    @MockitoBean AiChatGenerationManager generationManager;
     @MockitoBean AiConversationAutoTitleService autoTitleService;
+
+    @BeforeEach
+    void setUpGeneration() {
+        when(generationManager.start(any(), any())).thenAnswer(inv ->
+                messageService.createMessage(inv.getArgument(0), AiChatMessageType.USER, inv.getArgument(1)));
+    }
 
     @AfterEach
     void tearDown() {

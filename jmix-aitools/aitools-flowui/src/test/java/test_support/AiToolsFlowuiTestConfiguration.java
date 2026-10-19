@@ -79,4 +79,9 @@ public class AiToolsFlowuiTestConfiguration {
     TestAiConversationTitleGenerator conversationTitleGenerator() {
         return new TestAiConversationTitleGenerator();
     }
+
+    @Bean
+    TestUiUserEventCollector uiUserEventCollector() {
+        return new TestUiUserEventCollector();
+    }
 }

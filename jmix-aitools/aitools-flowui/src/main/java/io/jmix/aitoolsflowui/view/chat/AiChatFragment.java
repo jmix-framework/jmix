@@ -31,7 +31,7 @@ import io.jmix.aitoolsflowui.AiToolsFlowuiProperties;
 import io.jmix.aitoolsflowui.generation.AiChatGeneration;
 import io.jmix.aitoolsflowui.generation.AiChatGenerationManager;
 import io.jmix.aitoolsflowui.generation.AiChatGenerationRejectedException;
-import io.jmix.aitoolsflowui.generation.AiToolStatusFolding;
+import io.jmix.aitoolsflowui.generation.AiToolStatusUtils;
 import io.jmix.aitoolsflowui.generation.event.AiChatGenerationCancelledEvent;
 import io.jmix.aitoolsflowui.generation.event.AiChatGenerationCompletedEvent;
 import io.jmix.aitoolsflowui.generation.event.AiChatGenerationEvent;
@@ -152,6 +152,11 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
      */
     protected long shownStatusSequence;
 
+    /**
+     * Folded statuses of the shown response, the source of truth: they fold by the same rule as the server's
+     * snapshot. The statuses of the "thinking" item are a copy for the renderer, rebuilt by
+     * {@link #renderThinkingStatuses()}.
+     */
     protected final List<AiToolStatusUpdate> thinkingStatuses = new ArrayList<>();
 
     protected boolean readOnly;
@@ -579,7 +584,7 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
     }
 
     protected void appendThinkingStatusUpdate(@Nullable AiToolStatusUpdate statusUpdate) {
-        if (activeThinkingItem == null || !AiToolStatusFolding.fold(thinkingStatuses, statusUpdate)) {
+        if (activeThinkingItem == null || !AiToolStatusUtils.fold(thinkingStatuses, statusUpdate)) {
             return;
         }
 

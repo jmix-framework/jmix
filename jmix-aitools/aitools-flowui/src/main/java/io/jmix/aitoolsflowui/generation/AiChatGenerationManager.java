@@ -553,7 +553,7 @@ public class AiChatGenerationManager {
          */
         protected synchronized long addStatus(AiToolStatusUpdate update) {
             statusSequence++;
-            return AiToolStatusFolding.fold(statuses, update) ? statusSequence : 0;
+            return AiToolStatusUtils.fold(statuses, update) ? statusSequence : 0;
         }
 
         /**

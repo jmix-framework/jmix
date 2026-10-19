@@ -17,7 +17,7 @@
 package generation;
 
 import io.jmix.aitools.tool.AiToolStatusUpdate;
-import io.jmix.aitoolsflowui.generation.AiToolStatusFolding;
+import io.jmix.aitoolsflowui.generation.AiToolStatusUtils;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -27,13 +27,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class AiToolStatusFoldingTest {
+class AiToolStatusUtilsTest {
 
     @Test
     void fold_newMessage_appends() {
         List<AiToolStatusUpdate> statuses = new ArrayList<>();
 
-        assertTrue(AiToolStatusFolding.fold(statuses, new AiToolStatusUpdate("Searching")));
+        assertTrue(AiToolStatusUtils.fold(statuses, new AiToolStatusUpdate("Searching")));
 
         assertEquals(1, statuses.size());
     }
@@ -42,7 +42,7 @@ class AiToolStatusFoldingTest {
     void fold_completionOfInFlightStep_replacesLast() {
         List<AiToolStatusUpdate> statuses = new ArrayList<>(List.of(new AiToolStatusUpdate("Searching")));
 
-        assertTrue(AiToolStatusFolding.fold(statuses, new AiToolStatusUpdate("Searching", "3 found")));
+        assertTrue(AiToolStatusUtils.fold(statuses, new AiToolStatusUpdate("Searching", "3 found")));
 
         assertEquals(1, statuses.size());
         assertTrue(statuses.get(0).isCompleted());
@@ -52,7 +52,7 @@ class AiToolStatusFoldingTest {
     void fold_repeatedInFlightStep_ignored() {
         List<AiToolStatusUpdate> statuses = new ArrayList<>(List.of(new AiToolStatusUpdate("Searching")));
 
-        assertFalse(AiToolStatusFolding.fold(statuses, new AiToolStatusUpdate("Searching")));
+        assertFalse(AiToolStatusUtils.fold(statuses, new AiToolStatusUpdate("Searching")));
 
         assertEquals(1, statuses.size());
     }
@@ -61,7 +61,7 @@ class AiToolStatusFoldingTest {
     void fold_sameMessageAfterCompletedStep_appendsNewCall() {
         List<AiToolStatusUpdate> statuses = new ArrayList<>(List.of(new AiToolStatusUpdate("Searching", "3 found")));
 
-        assertTrue(AiToolStatusFolding.fold(statuses, new AiToolStatusUpdate("Searching")));
+        assertTrue(AiToolStatusUtils.fold(statuses, new AiToolStatusUpdate("Searching")));
 
         assertEquals(2, statuses.size());
     }
@@ -69,11 +69,11 @@ class AiToolStatusFoldingTest {
     @Test
     void fold_overCap_dropsOldest() {
         List<AiToolStatusUpdate> statuses = new ArrayList<>();
-        for (int i = 0; i < AiToolStatusFolding.MAX_STATUSES + 1; i++) {
-            AiToolStatusFolding.fold(statuses, new AiToolStatusUpdate("Step " + i));
+        for (int i = 0; i < AiToolStatusUtils.MAX_STATUSES + 1; i++) {
+            AiToolStatusUtils.fold(statuses, new AiToolStatusUpdate("Step " + i));
         }
 
-        assertEquals(AiToolStatusFolding.MAX_STATUSES, statuses.size());
+        assertEquals(AiToolStatusUtils.MAX_STATUSES, statuses.size());
         assertEquals("Step 1", statuses.get(0).getMessage());
     }
 
@@ -81,7 +81,7 @@ class AiToolStatusFoldingTest {
     void fold_nullOrBlank_ignored() {
         List<AiToolStatusUpdate> statuses = new ArrayList<>();
 
-        assertFalse(AiToolStatusFolding.fold(statuses, null));
-        assertFalse(AiToolStatusFolding.fold(statuses, new AiToolStatusUpdate(" ")));
+        assertFalse(AiToolStatusUtils.fold(statuses, null));
+        assertFalse(AiToolStatusUtils.fold(statuses, new AiToolStatusUpdate(" ")));
     }
 }

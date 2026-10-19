@@ -23,23 +23,22 @@ import org.jspecify.annotations.Nullable;
 import java.util.List;
 
 /**
- * The rule that folds a stream of tool status updates into the short list a chat shows: a step that is still in
- * flight is replaced by its completion, a repeated in-flight update is ignored, and only the newest
- * {@link #MAX_STATUSES} entries are kept.
+ * Utility methods for the tool status updates a chat shows while a response runs.
  */
 @NullMarked
-public final class AiToolStatusFolding {
+public final class AiToolStatusUtils {
 
     /**
      * Maximum number of statuses kept.
      */
     public static final int MAX_STATUSES = 6;
 
-    private AiToolStatusFolding() {
+    private AiToolStatusUtils() {
     }
 
     /**
-     * Folds an update into the list.
+     * Folds an update into the short list a chat shows: a step that is still in flight is replaced by its
+     * completion, a repeated in-flight update is ignored, and only the newest {@link #MAX_STATUSES} entries are kept.
      *
      * @param statuses statuses folded so far, oldest first; modified in place
      * @param update   the next update; {@code null} or one with a blank message is ignored

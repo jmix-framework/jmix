@@ -32,7 +32,7 @@ import java.util.Date;
 @NullMarked
 public class ObjectToStringConverterImpl extends AbstractObjectToStringConverter {
 
-    protected SimpleDateFormat dateTimeFormat = new SimpleDateFormat("dd/MM/yyyy hh:mm");
+    protected SimpleDateFormat dateTimeFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
     protected SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 
     protected DateTimeFormatter localDateTimeFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");

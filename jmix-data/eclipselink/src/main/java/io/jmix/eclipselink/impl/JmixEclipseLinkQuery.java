@@ -647,7 +647,7 @@ public class JmixEclipseLinkQuery<E> implements JmixQuery<E> {
                 if (nestedMetaClass != null) {
                     addIdConditions(nestedMetaClass, nestedEntityPath, transformer);
                 } else {
-                    log.info("MetaClass {} that is necessary for building JPQL query is not found", nestedMetaClass);
+                    log.info("MetaClass {} that is necessary for building JPQL query is not found", nestedEntityName);
                 }
                 transformer.addEntityInGroupBy("tempEntityAlias");
                 result = transformer.getResult();

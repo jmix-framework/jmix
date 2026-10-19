@@ -32,8 +32,10 @@ import org.w3c.dom.NodeList;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.BufferedReader;
+import java.io.Console;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.FileVisitResult;
 import java.nio.file.FileVisitOption;
@@ -1931,7 +1933,7 @@ final class StudioMetaDescriptionGenerator {
     static final class CLI {
 
         static void run(String[] args) throws IOException {
-            BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+            BufferedReader reader = new BufferedReader(new InputStreamReader(System.in, inputCharset()));
             CLI.CliArguments cliArguments = CLI.CliArguments.parse(args);
             Path workspaceRoot = resolveWorkspaceRoot(cliArguments, reader);
             StudioMetaDescriptionGenerator generator = new StudioMetaDescriptionGenerator(workspaceRoot);
@@ -2113,6 +2115,16 @@ final class StudioMetaDescriptionGenerator {
                 return normalizedBase.relativize(normalizedPath).toString().replace('\\', '/');
             }
             return normalizedPath.toString();
+        }
+
+        /**
+         * Returns the charset of the console the CLI talks to. {@code System.out} already uses it for the prompts,
+         * so the answers must be decoded with the same one. Falls back to the default charset when the standard
+         * streams are redirected, for example in an IDE run configuration.
+         */
+        private static Charset inputCharset() {
+            Console console = System.console();
+            return console != null ? console.charset() : Charset.defaultCharset();
         }
 
         private record CliArguments(@Nullable String xsd,

@@ -77,8 +77,6 @@ public class JmixHtmlFormatter extends HtmlFormatter {
     protected FileStorageLocator fileStorageLocator;
     @Autowired
     protected Resources resources;
-    @Autowired
-    protected ReportsGroovyFeatureSupport groovyFeatureSupport;
 
     public JmixHtmlFormatter(FormatterFactoryInput formatterFactoryInput) {
         super(formatterFactoryInput);

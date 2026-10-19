@@ -38,7 +38,6 @@ import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.kit.icon.JmixFontIcon;
 
 import java.util.*;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -89,13 +88,13 @@ public class JmixTwinColumn<V> extends AbstractField<JmixTwinColumn<V>, Collecti
     // In this case the component saves and restores the scrollTop position to maintain the correct value.
     protected boolean saveAndRestoreColumnsScrollTopPosition = true;
 
-    private final AtomicReference<DataProvider<V, ?>> dataProvider;
+    private DataProvider<V, ?> dataProvider;
     private Registration dataProviderListenerRegistration;
 
     public JmixTwinColumn() {
         super(null);
 
-        this.dataProvider = new AtomicReference(DataProvider.ofItems(new Object[0]));
+        this.dataProvider = DataProvider.ofCollection(new ArrayList<>());
 
         initComponent();
     }
@@ -268,7 +267,7 @@ public class JmixTwinColumn<V> extends AbstractField<JmixTwinColumn<V>, Collecti
     }
 
     public DataProvider<V, ?> getDataProvider() {
-        return this.dataProvider.get();
+        return this.dataProvider;
     }
 
     @Override
@@ -314,7 +313,7 @@ public class JmixTwinColumn<V> extends AbstractField<JmixTwinColumn<V>, Collecti
     }
 
     protected void setDataProvider(DataProvider<V, ?> dataProvider) {
-        this.dataProvider.set(dataProvider);
+        this.dataProvider = dataProvider;
         recreateItems(List.of());
         if (this.dataProviderListenerRegistration != null) {
             this.dataProviderListenerRegistration.remove();

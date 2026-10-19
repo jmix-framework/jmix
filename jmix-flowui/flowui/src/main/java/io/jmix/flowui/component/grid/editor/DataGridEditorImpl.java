@@ -523,8 +523,7 @@ public class DataGridEditorImpl<T> extends AbstractGridExtension<T>
 
     protected <L> Registration addListener(Class<L> listenerType, L listener) {
         @SuppressWarnings("unchecked")
-        List<L> list = (List<L>) listeners.computeIfAbsent(listenerType,
-                key -> Collections.synchronizedList(new ArrayList<>(1)));
+        List<L> list = (List<L>) listeners.computeIfAbsent(listenerType, key -> new ArrayList<>(1));
         list.add(listener);
 
         return () -> list.remove(listener);

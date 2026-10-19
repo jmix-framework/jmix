@@ -86,10 +86,11 @@ public class AwsFileStorage implements FileStorage {
     protected String accessKey;
     protected String secretAccessKey;
     protected String region;
-    protected String bucket;
-    protected int chunkSize;
+    // Read by file operations in request threads while a JMX refresh may rewrite them in another thread.
+    protected volatile String bucket;
+    protected volatile int chunkSize;
     protected String endpointUrl;
-    protected boolean usePathStyleBucketAddressing;
+    protected volatile boolean usePathStyleBucketAddressing;
 
     @Autowired
     protected TimeSource timeSource;

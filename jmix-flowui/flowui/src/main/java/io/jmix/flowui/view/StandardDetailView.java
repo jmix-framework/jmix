@@ -50,13 +50,13 @@ import io.jmix.flowui.util.UnknownOperationResult;
 import io.jmix.flowui.view.navigation.RouteSupport;
 import io.jmix.flowui.view.navigation.UrlParamSerializer;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.mutable.MutableObject;
 import org.jspecify.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicReference;
 
 import static java.util.Objects.requireNonNull;
 
@@ -706,9 +706,9 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
      * changes, while the attributes that only the reloaded instance has keep the values from the data store.
      */
     private void mergeEntityToEditAfterLoad(InstanceLoader<T> loader, T entityToEdit) {
-        AtomicReference<Subscription> subscription = new AtomicReference<>();
-        subscription.set(loader.addPostLoadListener(event -> {
-            subscription.get().remove();
+        MutableObject<Subscription> subscription = new MutableObject<>();
+        subscription.setValue(loader.addPostLoadListener(event -> {
+            subscription.getValue().remove();
             getViewData().getDataContext().merge(entityToEdit);
         }));
     }

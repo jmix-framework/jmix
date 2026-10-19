@@ -76,9 +76,9 @@ public class SubstitutedUserAuthenticationProvider implements AuthenticationProv
                                                                              UserDetails substitutedUser) {
         Collection<GrantedAuthority> mergedAuthorities = new ArrayList<>(substitutedUser.getAuthorities());
         Collection<GrantedAuthority> originalAuthorities = substitutedAuthentication.getAuthorities();
-        substitutedAuthentication.getAuthorities().stream()
-                .filter(authority -> authority instanceof FactorGrantedAuthority)
-                .forEach(autority -> mergedAuthorities.add(autority));
+        originalAuthorities.stream()
+                .filter(FactorGrantedAuthority.class::isInstance)
+                .forEach(mergedAuthorities::add);
 
         mergedAuthorities.add(FactorGrantedAuthority.fromAuthority(SUBSTITUTION_AUTHORITY));
         return mergedAuthorities;

@@ -227,6 +227,9 @@ public class JpaLazyLoadingListener implements DataStoreEventListener {
                     case YES -> {
                         wrapExcessivelyLoadedPropertyValueHolders(entity, property, loadOptions, processedEntities);
                     }
+                    case UNKNOWN -> {
+                        // The loaded state cannot be determined, so the value holder is left as is.
+                    }
                 }
             }
         }

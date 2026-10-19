@@ -52,7 +52,7 @@ public class TaskHandlerImpl<T, V> implements BackgroundTaskHandler<V> {
     private volatile boolean started = false;
     private volatile boolean timeoutHappens = false;
 
-    private long startTimeStamp;
+    private volatile long startTimeStamp;
 
     private Registration viewDetachRegistration;
     private final UserDetails user;

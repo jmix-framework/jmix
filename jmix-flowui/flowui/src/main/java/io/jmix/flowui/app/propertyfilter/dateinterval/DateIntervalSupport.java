@@ -38,7 +38,7 @@ import java.util.List;
 @Component("flowui_DateIntervalSupport")
 public class DateIntervalSupport {
 
-    public List<DateIntervalConverter> dateIntervalConverters;
+    protected List<DateIntervalConverter> dateIntervalConverters;
 
     @Autowired
     public void setDateIntervalConverters(List<DateIntervalConverter> dateIntervalConverters) {

@@ -106,6 +106,8 @@
         <Or>
             <Class name="io.jmix.flowui.model.impl.ObservableList"/>
             <Class name="io.jmix.flowui.model.impl.ObservableSet"/>
+            <!-- copied from Vaadin, the instance is never serialized -->
+            <Class name="io.jmix.flowui.component.upload.handler.FileUploadContent"/>
         </Or>
     </Match>
 
@@ -114,6 +116,13 @@
         <Class name="io.jmix.flowui.view.StandardDetailView"/>
         <!-- false positive, null value is checked by preconditions -->
         <Method name="doNotReloadEditedEntity"/>
+    </Match>
+
+    <Match>
+        <Bug pattern="RV_RETURN_VALUE_IGNORED"/>
+        <Class name="io.jmix.flowui.view.StandardDetailView"/>
+        <!-- merge() is called for its side effect, the managed instance is already in the container -->
+        <Method name="~lambda\$mergeEntityToEditAfterLoad\$\d+"/>
     </Match>
 
     <Match>
@@ -138,6 +147,20 @@
             <Class name="io.jmix.groupgridflowui.kit.vaadin.grid.Grid"/>
             <Method name="applyValueProvider"/>
         </Bug>
+    </Match>
+
+    <Match>
+        <Bug pattern="NP_NULL_ON_SOME_PATH"/>
+        <Class name="io.jmix.groupgridflowui.kit.vaadin.grid.Grid$Column"/>
+        <!-- false positive in the code copied from Vaadin, rendererRegistrations is never null -->
+        <Method name="setupRenderer"/>
+    </Match>
+
+    <Match>
+        <Bug pattern="AT_STALE_THREAD_WRITE_OF_PRIMITIVE"/>
+        <Class name="io.jmix.groupgridflowui.kit.vaadin.grid.editor.EditorImpl"/>
+        <!-- false positive in the code copied from Vaadin: Collections.synchronizedList marks the class as multithreaded,
+             but the editor is only accessed under the Vaadin session lock -->
     </Match>
 
     <!-- AI Chat add-on -->
@@ -197,13 +220,37 @@
     </Match>
 
     <Match>
-        <Bug pattern="URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD"/>
+        <Or>
+            <Bug pattern="URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD"/>
+            <Bug pattern="PA_PUBLIC_PRIMITIVE_ATTRIBUTE"/>
+        </Or>
         <Class name="io.jmix.data.impl.jpql.EntityPath"/>
     </Match>
 
     <Match>
         <Bug pattern="MS_EXPOSE_REP"/>
         <Class name="io.jmix.reports.ReportPrintHelper"/>
+    </Match>
+
+    <Match>
+        <Bug pattern="FS_BAD_DATE_FORMAT_FLAG_COMBO"/>
+        <Class name="io.jmix.reports.libintegration.CustomFormatter$FormattedDate"/>
+        <!-- redundant but unambiguous format, the value is substituted into user-defined report URLs -->
+    </Match>
+
+    <Match>
+        <Bug pattern="URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD"/>
+        <Class name="io.jmix.fullcalendarflowui.component.serialization.CalendarEventSerializer"/>
+        <!-- public API, the time zone supplier is set via setTimeZoneSupplier() but is not needed for serialization -->
+    </Match>
+
+    <Match>
+        <Bug pattern="AT_STALE_THREAD_WRITE_OF_PRIMITIVE"/>
+        <!-- false positive, the configuration setters are called only while the bean is being set up -->
+        <Or>
+            <Class name="io.jmix.localfs.LocalFileStorage"/>
+            <Class name="io.jmix.reports.yarg.formatters.impl.doc.connector.OfficeIntegration"/>
+        </Or>
     </Match>
 
     <Match>
@@ -293,8 +340,24 @@
 
     <Match>
         <Bug pattern="NP_BOOLEAN_RETURN_NULL"/>
-        <Class name="io.jmix.core.metamodel.datatype.impl.BooleanDatatype"/>
-        <Method name="parse"/>
+        <!-- nullable Boolean is a three-state value here -->
+        <Or>
+            <And>
+                <Class name="io.jmix.core.metamodel.datatype.impl.BooleanDatatype"/>
+                <Method name="parse"/>
+            </And>
+            <And>
+                <Class name="io.jmix.dataimport.property.populator.impl.SimplePropertyValueProvider"/>
+                <Method name="getBooleanValue"/>
+            </And>
+        </Or>
+    </Match>
+
+    <Match>
+        <Bug pattern="AT_NONATOMIC_64BIT_PRIMITIVE"/>
+        <!-- false positive: the static id generator marks the class as multithreaded,
+             but entity instances are not thread-safe by contract -->
+        <Class name="~io\.jmix\.core\.entity\.(NoIdEntityEntry|NullableIdEntityEntry)"/>
     </Match>
 
     <Match>
@@ -328,6 +391,15 @@
     </Match>
 
     <Match>
+        <Or>
+            <Bug pattern="SING_SINGLETON_HAS_NONPRIVATE_CONSTRUCTOR"/>
+            <Bug pattern="SING_SINGLETON_IMPLEMENTS_SERIALIZABLE"/>
+        </Or>
+        <!-- stateless converters with a shared instance, Serializable comes from the EclipseLink Converter interface -->
+        <Class name="~io\.jmix\.eclipselink\.impl\.(dbms\.)?\w*UuidConverter"/>
+    </Match>
+
+    <Match>
         <Bug pattern="URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD"/>
         <Class name="~io\.jmix\.reportsrest\.controller\.ReportRestControllerManager\$.*"/>
     </Match>
@@ -352,8 +424,9 @@
     </Match>
 
     <Match>
-        <Bug pattern="UWF_UNWRITTEN_FIELD"/>
-        <Package name="io.jmix.bpm.delegate"/>
+        <Bug pattern="NP_UNWRITTEN_FIELD"/>
+        <Package name="io.jmix.bpm.engine.behavior"/>
+        <!-- Expression fields are injected by Flowable via reflection, see BpmDefaultActivityBehaviorFactory -->
     </Match>
 
     <Match>
@@ -370,6 +443,36 @@
     <Match>
         <Bug pattern="EQ_DOESNT_OVERRIDE_EQUALS"/>
         <Class name="io.jmix.sessions.impl.JmixExpiringSessionMap"/>
+    </Match>
+
+    <Match>
+        <Bug pattern="HSM_HIDING_METHOD"/>
+        <Class name="io.jmix.core.Sort$ExpressionOrder"/>
+        <!-- intentional static factory methods -->
+        <Or>
+            <Method name="asc"/>
+            <Method name="desc"/>
+        </Or>
+    </Match>
+
+    <Match>
+        <Bug pattern="HSM_HIDING_METHOD"/>
+        <Class name="io.jmix.mapsflowui.kit.component.model.style.MarkerStyle"/>
+        <!-- intentional static factory methods -->
+        <Or>
+            <Method name="createDefaultSelectStyle"/>
+            <Method name="createDefaultModifyStyle"/>
+        </Or>
+    </Match>
+
+    <Match>
+        <Bug pattern="HSM_HIDING_METHOD"/>
+        <Class name="io.jmix.authserver.service.OracleJdbcOAuth2AuthorizationService"/>
+        <!-- false positive, the methods are private static in JdbcOAuth2AuthorizationService, nothing is hidden -->
+        <Or>
+            <Method name="initColumnMetadata"/>
+            <Method name="mapToSqlParameter"/>
+        </Or>
     </Match>
 
 </FindBugsFilter>

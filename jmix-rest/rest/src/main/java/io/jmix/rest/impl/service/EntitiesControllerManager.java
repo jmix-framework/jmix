@@ -964,7 +964,7 @@ public class EntitiesControllerManager {
         }
     }
 
-    protected class SearchEntitiesRequestDTO {
+    protected static class SearchEntitiesRequestDTO {
         protected JsonObject filter;
         protected JsonElement fetchPlan;
         protected Integer limit;

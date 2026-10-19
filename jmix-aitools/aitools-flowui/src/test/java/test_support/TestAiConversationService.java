@@ -19,6 +19,7 @@ package test_support;
 import io.jmix.aitoolsflowui.model.AiConversation;
 import io.jmix.aitoolsflowui.service.AiConversationService;
 import io.jmix.core.Metadata;
+import io.jmix.core.usersubstitution.CurrentUserSubstitution;
 import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -36,6 +37,8 @@ public class TestAiConversationService implements AiConversationService {
 
     @Autowired
     protected Metadata metadata;
+    @Autowired
+    protected CurrentUserSubstitution currentUserSubstitution;
 
     protected final Map<UUID, AiConversation> conversations = new LinkedHashMap<>();
 
@@ -82,10 +85,18 @@ public class TestAiConversationService implements AiConversationService {
         conversations.clear();
     }
 
+    /**
+     * Follows the interface contract: a conversation with an owner is not returned to another user.
+     */
     @Nullable
     @Override
     public AiConversation loadConversation(UUID conversationId) {
-        return conversations.get(conversationId);
+        AiConversation conversation = conversations.get(conversationId);
+        if (conversation == null || conversation.getUsername() == null) {
+            return conversation;
+        }
+        String currentUsername = currentUserSubstitution.getEffectiveUser().getUsername();
+        return conversation.getUsername().equals(currentUsername) ? conversation : null;
     }
 
     @Override

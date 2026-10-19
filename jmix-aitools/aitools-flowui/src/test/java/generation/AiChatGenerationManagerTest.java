@@ -172,6 +172,17 @@ class AiChatGenerationManagerTest {
     }
 
     @Test
+    void start_conversationWithoutUsername_accessDecidedByConversationService() {
+        // A custom AiConversationService may keep the owner elsewhere; returning the conversation grants access.
+        AiConversation conversation = conversationService.addConversation("Chat");
+
+        TestAuthentication.runAs("alice", () -> manager.start(conversation, "Hi"));
+
+        events.await(AiChatGenerationCompletedEvent.class);
+        assertEquals(2, messageService.loadMessages(conversation).size());
+    }
+
+    @Test
     void start_conversationNotFound_deniedAndPersistsNothing() {
         AiConversation conversation = conversationService.addConversation("Chat", "alice");
         conversationService.remove(conversation);

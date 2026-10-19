@@ -71,6 +71,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Answers.RETURNS_SELF;
 import static org.mockito.ArgumentMatchers.any;
@@ -194,8 +195,8 @@ class AiChatFragmentGenerationTest {
         assertEquals(List.of(TimelineItemType.USER, TimelineItemType.ASSISTANT), timelineTypes(fragment));
         TimelineItem answerItem = timelineItems(fragment).get(1);
         assertEquals(answer.getId(), answerItem.getMessage().getId());
-        // The renderer consumes the marker when it draws the row, so FALSE (not null) shows the row was marked.
-        assertEquals(Boolean.FALSE, answerItem.getFresh());
+        // TRUE until the renderer draws the row, FALSE after it consumed the marker; null means never marked.
+        assertNotNull(answerItem.getFresh());
     }
 
     @Test
@@ -348,6 +349,58 @@ class AiChatFragmentGenerationTest {
         assertFalse(fragment.isAwaitingResponse());
         assertTrue(composer(fragment).isInputEnabled());
         assertTrue(timelineItems(fragment).isEmpty());
+    }
+
+    @Test
+    void setConversation_hostDisabledComposer_staysDisabled() {
+        AiConversation first = conversationService.addConversation("First");
+        AiConversation second = conversationService.addConversation("Second");
+        AiChatFragment fragment = chatFragment(navigate(first.getId()));
+        fragment.setMessageInputEnabled(false);
+
+        fragment.setConversation(second);
+
+        assertFalse(composer(fragment).isInputEnabled());
+    }
+
+    @Test
+    void onGenerationCompleted_hostDisabledComposer_staysDisabled() {
+        AiConversation conversation = conversationService.addConversation("Chat");
+        AiChatFragment fragment = chatFragment(navigate(conversation.getId()));
+        fragment.onGenerationStarted(new AiChatGenerationStartedEvent(this, conversation.getId(), GENERATION_ID));
+        fragment.setMessageInputEnabled(false);
+        AiChatMessage answer = messageService.createMessage(conversation, AiChatMessageType.ASSISTANT, "Hello!");
+
+        fragment.onGenerationCompleted(new AiChatGenerationCompletedEvent(this, conversation.getId(), GENERATION_ID,
+                answer.getId()));
+
+        assertFalse(fragment.isAwaitingResponse());
+        assertFalse(composer(fragment).isInputEnabled());
+    }
+
+    @Test
+    void onGenerationFailed_hostDisabledComposer_staysDisabled() {
+        AiConversation conversation = conversationService.addConversation("Chat");
+        AiChatFragment fragment = chatFragment(navigate(conversation.getId()));
+        fragment.setMessageInputEnabled(false);
+        fragment.onGenerationStarted(new AiChatGenerationStartedEvent(this, conversation.getId(), GENERATION_ID));
+
+        fragment.onGenerationFailed(new AiChatGenerationFailedEvent(this, conversation.getId(), GENERATION_ID));
+
+        assertFalse(composer(fragment).isInputEnabled());
+    }
+
+    @Test
+    void setMessageInputEnabled_whileRunning_composerStaysLockedUntilResponseEnds() {
+        AiConversation conversation = conversationService.addConversation("Chat");
+        AiChatFragment fragment = chatFragment(navigate(conversation.getId()));
+        fragment.onGenerationStarted(new AiChatGenerationStartedEvent(this, conversation.getId(), GENERATION_ID));
+
+        fragment.setMessageInputEnabled(true);
+        assertFalse(composer(fragment).isInputEnabled());
+
+        fragment.onGenerationCancelled(new AiChatGenerationCancelledEvent(this, conversation.getId(), GENERATION_ID));
+        assertTrue(composer(fragment).isInputEnabled());
     }
 
     @Test

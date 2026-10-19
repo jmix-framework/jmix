@@ -27,7 +27,7 @@ import java.util.UUID;
 
 /**
  * Base of the UI events that report the lifecycle of an assistant response in a conversation. Delivered to all
- * open UIs of the conversation's owner (and of a user substituting them), so a listener filters by
+ * open UIs of the user who started the response (and of a user substituting them), so a listener filters by
  * {@link #getConversationId()} and tells successive responses of the conversation apart by
  * {@link #getGenerationId()}.
  */

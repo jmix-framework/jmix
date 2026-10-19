@@ -16,8 +16,8 @@
 
 package test_support;
 
-import io.jmix.aitools.tool.AiToolStatusUpdateEvent;
 import io.jmix.aitools.tool.AiToolStatusUpdate;
+import io.jmix.aitools.tool.AiToolStatusUpdateEvent;
 import io.jmix.aitoolsflowui.model.AiChatMessage;
 import io.jmix.aitoolsflowui.service.AiChatResponseSpec;
 import io.jmix.aitoolsflowui.service.AiChatService;

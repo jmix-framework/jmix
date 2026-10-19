@@ -156,6 +156,11 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
 
     protected boolean readOnly;
 
+    /**
+     * Whether the host lets the user type. A response shown as running disables the composer regardless.
+     */
+    protected boolean messageInputEnabled = true;
+
     protected boolean chatUnavailableWarned;
 
     @Nullable
@@ -171,12 +176,6 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
      */
     public void setConversation(@Nullable AiConversation conversation) {
         this.conversation = conversation;
-        this.activeThinkingItem = null;
-        this.shownGenerationId = null;
-        this.shownStatusSequence = 0;
-        this.thinkingStatuses.clear();
-        // A response shown as running in the previous conversation had disabled the composer.
-        setMessageInputEnabled(true);
 
         resync();
     }
@@ -267,14 +266,15 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
     }
 
     /**
-     * Enables or disables the message composer. The fragment disables it
-     * while it shows an assistant response as running and re-enables it when
-     * the response ends; hosts can call this for additional read-only states.
+     * Enables or disables the message composer for the host's own reasons. Independently of this, the fragment
+     * keeps the composer disabled while it shows an assistant response as running, so the end of a response never
+     * enables a composer the host disabled.
      *
-     * @param enabled {@code true} to enable the composer, {@code false} to disable it
+     * @param enabled {@code false} to disable the composer; {@code true} to enable it unless a response is running
      */
     public void setMessageInputEnabled(boolean enabled) {
-        composerFragment.setInputEnabled(enabled);
+        this.messageInputEnabled = enabled;
+        updateMessageInputEnabled();
     }
 
     /**
@@ -417,7 +417,7 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
         // With no response shown, nothing was locked for one.
         if (event.belongsTo(conversation) && isAwaitingResponse() && isShownOrNone(event)) {
             removeThinkingIndicator();
-            forceMessageInputFocus();
+            focusMessageInput();
         }
     }
 
@@ -508,10 +508,7 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
     }
 
     protected void handleAssistantResponseDone(UUID assistantMessageId) {
-        activeThinkingItem = null;
-        shownGenerationId = null;
-        shownStatusSequence = 0;
-        thinkingStatuses.clear();
+        removeThinkingIndicator();
 
         // Re-binding by id reloads the conversation (an automatic title may have landed) and its messages,
         // after which the new assistant row can be stamped.
@@ -524,7 +521,7 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
         // Another response may already be running (sent from another tab);
         // then the composer stays locked.
         if (!isAwaitingResponse()) {
-            forceMessageInputFocus();
+            focusMessageInput();
         }
     }
 
@@ -552,7 +549,7 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
         appendTimelineItem(timelineItemFactory.createAssistantItem(createTransientAssistantMessage(
                 messageBundle.getMessage("aiChatFragment.errorProcessingMessage"))));
 
-        forceMessageInputFocus();
+        focusMessageInput();
     }
 
     protected void showThinkingIndicator() {
@@ -566,18 +563,19 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
         activeThinkingItem = timelineItemFactory.createThinkingItem(placeholder);
         appendTimelineItem(activeThinkingItem);
 
-        setMessageInputEnabled(false);
+        updateMessageInputEnabled();
     }
 
     protected void removeThinkingIndicator() {
-        if (activeThinkingItem == null) {
-            return;
+        if (activeThinkingItem != null) {
+            timelineItemsDc.getMutableItems().remove(activeThinkingItem);
+            activeThinkingItem = null;
         }
-        timelineItemsDc.getMutableItems().remove(activeThinkingItem);
-        activeThinkingItem = null;
         shownGenerationId = null;
         shownStatusSequence = 0;
         thinkingStatuses.clear();
+
+        updateMessageInputEnabled();
     }
 
     protected void appendThinkingStatusUpdate(@Nullable AiToolStatusUpdate statusUpdate) {
@@ -607,7 +605,6 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
      * bound conversation, with the tool statuses it has reported so far.
      */
     protected void resync() {
-        boolean wasAwaitingResponse = isAwaitingResponse();
         // Snapshot before loading: when no response runs any more, its answer is already saved and gets loaded.
         Optional<AiChatGeneration> generation = conversation != null
                 ? generationManager.getGeneration(conversation)
@@ -624,9 +621,6 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
 
             shownGenerationId = generation.get().getGenerationId();
             shownStatusSequence = generation.get().getStatusSequence();
-        } else if (wasAwaitingResponse) {
-            // The shown response ended unseen, e.g. while the fragment was detached.
-            setMessageInputEnabled(true);
         }
     }
 
@@ -689,9 +683,8 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
         return messageService.loadMessages(conversation);
     }
 
-    protected void forceMessageInputFocus() {
-        setMessageInputEnabled(true);
-        focusMessageInput();
+    protected void updateMessageInputEnabled() {
+        composerFragment.setInputEnabled(messageInputEnabled && !isAwaitingResponse());
     }
 
     protected void refreshComposerVisibility() {

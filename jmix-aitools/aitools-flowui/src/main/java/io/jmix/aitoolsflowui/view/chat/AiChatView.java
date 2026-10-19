@@ -29,7 +29,6 @@ import io.jmix.flowui.ViewNavigators;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.view.DefaultMainViewParent;
-import io.jmix.flowui.view.MessageBundle;
 import io.jmix.flowui.view.StandardView;
 import io.jmix.flowui.view.Subscribe;
 import io.jmix.flowui.view.ViewComponent;
@@ -71,8 +70,6 @@ public class AiChatView extends StandardView {
     @Autowired
     protected ViewNavigators viewNavigators;
 
-    @ViewComponent
-    protected MessageBundle messageBundle;
     @ViewComponent
     protected AiChatFragment chatFragment;
     @ViewComponent

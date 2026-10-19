@@ -16,8 +16,8 @@
 
 package io.jmix.aitoolsflowui.generation;
 
-import io.jmix.aitools.tool.AiToolStatusUpdateEvent;
 import io.jmix.aitools.tool.AiToolStatusUpdate;
+import io.jmix.aitools.tool.AiToolStatusUpdateEvent;
 import io.jmix.aitoolsflowui.AiToolsFlowuiProperties;
 import io.jmix.aitoolsflowui.generation.event.AiChatGenerationCancelledEvent;
 import io.jmix.aitoolsflowui.generation.event.AiChatGenerationCompletedEvent;
@@ -72,8 +72,8 @@ import java.util.function.Supplier;
  * is ready. At most one response runs per conversation. A response can be {@linkplain #cancel cancelled}, and one
  * that exceeds {@code jmix.aitools.ui.assistant-response-timeout} is stopped and reported as failed.
  * <p>
- * Progress and the outcome are delivered as {@link AiChatGenerationEvent}s to all open UIs of the conversation's
- * owner and of the user substituting them; a chat opened while a response runs reads the current state with
+ * Progress and the outcome are delivered as {@link AiChatGenerationEvent}s to all open UIs of the user who started
+ * the response and of the user substituting them; a chat opened while a response runs reads the current state with
  * {@link #getGeneration(AiConversation)}. The state lives in memory of the node that runs the response.
  */
 @NullMarked
@@ -150,12 +150,12 @@ public class AiChatGenerationManager {
      * If the call fails, the conversation is not left locked: a failure to save the message leaves nothing behind,
      * and a failure after the message is saved publishes {@link AiChatGenerationFailedEvent} before rethrowing.
      *
-     * @param conversation conversation to answer in, owned by the current user
+     * @param conversation conversation to answer in, accessible to the current user
      * @param text         text of the user's message
      * @return the saved user message
      * @throws IllegalStateException             if AI chat is not configured
-     * @throws AccessDeniedException             if the conversation does not exist or the current user does not own
-     *                                           it; nothing is saved
+     * @throws AccessDeniedException             if the conversation does not exist or is not accessible to the
+     *                                           current user; nothing is saved
      * @throws AiChatGenerationRejectedException if a response is already running in the conversation
      * @throws RejectedExecutionException        if the manager is shutting down; the user message is already saved
      */
@@ -167,7 +167,7 @@ public class AiChatGenerationManager {
             throw new IllegalStateException("AI chat is not available");
         }
 
-        checkOwner(conversation);
+        checkAccess(conversation);
 
         Generation generation = reserve(conversation);
         AiChatMessage userMessage = saveUserMessage(generation, conversation, text);
@@ -178,21 +178,21 @@ public class AiChatGenerationManager {
     }
 
     /**
-     * Returns whether a response is running in the conversation. Answers only the conversation's owner.
+     * Returns whether a response is running in the conversation. Answers only the user who started the response.
      *
      * @param conversation conversation to check
-     * @return {@code true} if a response runs and the current user owns the conversation
+     * @return {@code true} if a response started by the current user runs
      */
     public boolean isGenerating(AiConversation conversation) {
         return findOwned(conversation).isPresent();
     }
 
     /**
-     * Returns the current state of the response running in the conversation. Answers only the conversation's
-     * owner: tool statuses may contain the user's data.
+     * Returns the current state of the response running in the conversation. Answers only the user who started the
+     * response: tool statuses may contain that user's data.
      *
      * @param conversation conversation to check
-     * @return the running response, or empty if none runs or the current user does not own the conversation
+     * @return the running response, or empty if none runs or the current user did not start it
      */
     public Optional<AiChatGeneration> getGeneration(AiConversation conversation) {
         return findOwned(conversation).map(Generation::snapshot);
@@ -205,12 +205,12 @@ public class AiChatGenerationManager {
      * @param conversation conversation whose response to cancel
      * @return {@code true} if a response was cancelled; {@code false} if none runs or its answer is already being
      * saved
-     * @throws AccessDeniedException if the conversation does not exist or the current user does not own it
+     * @throws AccessDeniedException if the conversation does not exist or is not accessible to the current user
      */
     public boolean cancel(AiConversation conversation) {
         Preconditions.checkNotNullArgument(conversation);
 
-        checkOwner(conversation);
+        checkAccess(conversation);
 
         // Not findOwned(): a response whose user message is still being saved must be cancellable too.
         Generation generation = generationsByConversation.get(Objects.requireNonNull(conversation.getId()));
@@ -249,15 +249,16 @@ public class AiChatGenerationManager {
     }
 
     /**
-     * Checks the stored conversation rather than the passed instance, whose owner the caller could have set.
+     * Checks the stored conversation rather than the passed instance, which the caller could have built. Whether the
+     * current user may access it is decided by {@link AiConversationService#loadConversation(UUID)}.
      *
      * @param conversation conversation to check
-     * @throws AccessDeniedException if the conversation does not exist or the current user does not own it
+     * @throws AccessDeniedException if the conversation does not exist or is not accessible to the current user
      */
-    protected void checkOwner(AiConversation conversation) {
+    protected void checkAccess(AiConversation conversation) {
         UUID conversationId = conversation.getId();
         AiConversation stored = conversationId != null ? conversationService.loadConversation(conversationId) : null;
-        if (stored == null || !currentUsername().equals(stored.getUsername())) {
+        if (stored == null) {
             throw new AccessDeniedException("entity", "aitls_AiConversation");
         }
     }

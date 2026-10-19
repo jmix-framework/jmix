@@ -16,8 +16,8 @@
 
 package io.jmix.aitoolsflowui.service;
 
-import io.jmix.aitools.tool.AiToolStatusUpdateEvent;
 import io.jmix.aitools.tool.AiToolStatusUpdate;
+import io.jmix.aitools.tool.AiToolStatusUpdateEvent;
 import io.jmix.aitoolsflowui.model.AiChatMessage;
 
 import java.util.function.Consumer;

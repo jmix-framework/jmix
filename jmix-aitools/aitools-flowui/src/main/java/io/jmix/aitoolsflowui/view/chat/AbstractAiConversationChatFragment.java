@@ -80,7 +80,7 @@ public abstract class AbstractAiConversationChatFragment extends Fragment<Vertic
     /**
      * Message group of the chat's own messages, so that a subclass in another package resolves them too.
      */
-    protected static final String CHAT_MESSAGES_GROUP = "io.jmix.aitoolsflowui.view.chat";
+    protected static final String CHAT_MESSAGES_GROUP = AbstractAiConversationChatFragment.class.getPackageName();
 
     @Autowired
     protected Messages messages;
@@ -302,7 +302,6 @@ public abstract class AbstractAiConversationChatFragment extends Fragment<Vertic
         if (!responseShown || otherGenerationShown) {
             // The question was sent elsewhere, e.g. from another tab, or the previous response's outcome was missed,
             // so the chat lacks the latest messages.
-            removeThinkingIndicator();
             reloadConversation();
             refreshAll();
         }
@@ -382,7 +381,8 @@ public abstract class AbstractAiConversationChatFragment extends Fragment<Vertic
     protected abstract void initComposer(Consumer<String> submitHandler);
 
     /**
-     * Shows the given messages in place of everything shown so far, the thinking indicator included.
+     * Shows the given messages in place of everything shown so far. Called only after the running response, if any,
+     * stopped being shown ({@link #hideResponseRunning()}).
      *
      * @param messages messages of the bound conversation, oldest first
      */
@@ -581,7 +581,6 @@ public abstract class AbstractAiConversationChatFragment extends Fragment<Vertic
                 ? generationManager.getGeneration(conversation)
                 : Optional.empty();
 
-        removeThinkingIndicator();
         refreshAll();
 
         if (generation.isPresent()) {
@@ -609,7 +608,13 @@ public abstract class AbstractAiConversationChatFragment extends Fragment<Vertic
         }
     }
 
+    /**
+     * Reloads the title, the messages and the composer state. The running response, if shown, is dropped first:
+     * the reloaded messages replace everything shown, the thinking indicator included.
+     */
     protected void refreshAll() {
+        removeThinkingIndicator();
+
         applyConversationTitleText(conversation != null ? conversation.getTitle() : null);
 
         Collection<AiChatMessage> loadedMessages = loadMessages();

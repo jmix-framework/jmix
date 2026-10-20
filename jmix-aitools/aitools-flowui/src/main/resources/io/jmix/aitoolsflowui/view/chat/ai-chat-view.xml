@@ -48,8 +48,5 @@
                     icon="PLUS"
                     themeNames="primary"/>
         </vbox>
-        <fragment id="chatFragment"
-                  visible="false"
-                  class="io.jmix.aitoolsflowui.view.chat.AiChatFragment"/>
     </layout>
 </view>

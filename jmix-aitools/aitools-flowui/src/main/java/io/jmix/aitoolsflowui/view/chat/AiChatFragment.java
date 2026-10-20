@@ -136,8 +136,6 @@ public class AiChatFragment extends AbstractAiConversationChatFragment {
 
     @Override
     protected void renderMessages(Collection<AiChatMessage> messages) {
-        // The new items replace the thinking item too.
-        activeThinkingItem = null;
         timelineItemsDc.setItems(timelineItemFactory.buildTimelineItems(messages));
         scrollToBottom();
     }

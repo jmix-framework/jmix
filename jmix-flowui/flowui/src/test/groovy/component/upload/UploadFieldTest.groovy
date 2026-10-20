@@ -21,6 +21,9 @@ import com.vaadin.flow.component.UI
 import com.vaadin.flow.component.icon.VaadinIcon
 import com.vaadin.flow.component.upload.UploadButton
 import com.vaadin.flow.component.upload.UploadManager
+import com.vaadin.flow.dom.Element
+import com.vaadin.flow.internal.nodefeature.VirtualChildrenList
+import com.vaadin.flow.server.streams.UploadHandler
 import component.upload.view.UploadFieldTestView
 import io.jmix.flowui.UiComponents
 import io.jmix.flowui.component.upload.FileStorageUploadField
@@ -315,6 +318,54 @@ class UploadFieldTest extends FlowuiTestSpecification {
         field.uploadManager.acceptedMimeTypes == ["image/png"]
     }
 
+    def "Field is created without a current UI and gets its upload target when attached"() {
+        given: "No current UI while the field is created, as in the Studio designer preview"
+        def ui = UI.current
+        UI.setCurrent(null)
+        FileUploadField field
+        try {
+            field = new FileUploadField()
+            field.applicationContext = applicationContext
+            field.afterPropertiesSet()
+        } finally {
+            UI.setCurrent(ui)
+        }
+
+        expect: "The upload target is not set yet"
+        !uploadTarget(field)
+
+        when: "The field is attached"
+        UI.current.add(field)
+        pendingExpressions()
+
+        then: "The upload target is set"
+        uploadTarget(field)?.contains("/upload")
+    }
+
+    def "Upload target follows the last upload handler set before attach"() {
+        given: "A field created without a current UI"
+        def ui = UI.current
+        UI.setCurrent(null)
+        FileUploadField field
+        try {
+            field = new FileUploadField()
+            field.applicationContext = applicationContext
+            field.afterPropertiesSet()
+        } finally {
+            UI.setCurrent(ui)
+        }
+
+        and: "Its handler replaced before it is attached"
+        field.uploadManager.setUploadHandler(UploadHandler.inMemory { metadata, data -> }, "custom")
+
+        when: "The field is attached"
+        UI.current.add(field)
+        pendingExpressions()
+
+        then: "The target is the last handler's resource"
+        uploadTarget(field).endsWith("/custom")
+    }
+
     def "Field sync is queued after Vaadin's manager link"() {
         when: "A view with an upload field is opened"
         def view = navigateToView(UploadFieldTestView)
@@ -356,6 +407,16 @@ class UploadFieldTest extends FlowuiTestSpecification {
         then: "The link and the sync are sent again, the link first"
         indexOfLink(expressions) >= 0
         indexOfSync(expressions) > indexOfLink(expressions)
+    }
+
+    protected static Element uploadConnector(AbstractSingleUploadField field) {
+        def children = field.element.node.getFeature(VirtualChildrenList)
+        return (0..<children.size()).collect { Element.get(children.get(it)) }
+                .find { it.tag == "vaadin-upload-manager-connector" }
+    }
+
+    protected static String uploadTarget(AbstractSingleUploadField field) {
+        return uploadConnector(field).getAttribute("target")
     }
 
     protected static int indexOfLink(List<String> expressions) {

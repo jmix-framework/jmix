@@ -127,8 +127,15 @@ public abstract class AbstractSingleUploadField<C extends AbstractSingleUploadFi
         attachContent(content);
     }
 
+    /**
+     * Creates the upload manager of the field. The returned manager sets its upload target only when the field
+     * is attached, so the field can be created without a current UI, e.g. in the Studio designer preview.
+     * A stock {@link UploadManager} requires a current UI when it is created.
+     *
+     * @return the upload manager that takes one file at a time
+     */
     protected UploadManager createUploadManager() {
-        UploadManager manager = new UploadManager(this);
+        UploadManager manager = new DeferredTargetUploadManager(this);
         manager.setMaxFiles(1);
         return manager;
     }
@@ -835,6 +842,48 @@ public abstract class AbstractSingleUploadField<C extends AbstractSingleUploadFi
 
         public String getFileName() {
             return fileName;
+        }
+    }
+
+    /**
+     * Sets the upload target when the owner is attached, as {@code Upload} does. The stock manager sets it at once,
+     * and the target URL is built from the current UI, so the manager could not be created without one.
+     */
+    private static class DeferredTargetUploadManager extends UploadManager {
+
+        private Component owner;
+
+        // Assigned while the super constructor sets its default handler, before the field initializers of this
+        // class run: these fields must have no initializers, or the assigned values would be reset.
+        private UploadHandler constructorHandler;
+        private String constructorTargetName;
+
+        DeferredTargetUploadManager(Component owner) {
+            super(owner);
+
+            this.owner = owner;
+            scheduleUploadHandler(constructorHandler, constructorTargetName);
+            constructorHandler = null;
+            constructorTargetName = null;
+        }
+
+        @Override
+        public void setUploadHandler(UploadHandler handler, String targetName) {
+            Objects.requireNonNull(handler, "UploadHandler cannot be null");
+            Objects.requireNonNull(targetName, "The target name cannot be null");
+
+            if (owner == null) {
+                // Called from the super constructor
+                constructorHandler = handler;
+                constructorTargetName = targetName;
+            } else {
+                scheduleUploadHandler(handler, targetName);
+            }
+        }
+
+        private void scheduleUploadHandler(UploadHandler handler, String targetName) {
+            owner.getElement().getNode().runWhenAttached(ui -> ui.beforeClientResponse(owner, context ->
+                    super.setUploadHandler(handler, targetName)));
         }
     }
 }

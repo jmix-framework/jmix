@@ -183,6 +183,22 @@ class UploadFieldTest extends FlowuiTestSpecification {
         field.uploadHandler instanceof FileTemporaryStorageUploadHandler
     }
 
+    def "Clear button aria-label is set on the clear button"() {
+        given: "A field"
+        def field = uiComponents.create(FileUploadField)
+
+        expect: "The default label is on the clear button"
+        field.clearComponent.element.getAttribute("aria-label") == "Remove file"
+
+        when: "The clear button aria-label is set"
+        field.clearButtonAriaLabel = "Delete"
+
+        then: "It lands on the clear button, not on the upload button"
+        field.clearButtonAriaLabel == "Delete"
+        field.clearComponent.element.getAttribute("aria-label") == "Delete"
+        !field.uploadButton.element.hasAttribute("aria-label")
+    }
+
     def "Deprecated accepted types are a client hint and accept legacy values"() {
         given: "A field"
         def field = uiComponents.create(FileUploadField)

@@ -639,7 +639,7 @@ public abstract class AbstractSingleUploadField<C extends AbstractSingleUploadFi
      */
     @Nullable
     public String getClearButtonAriaLabel() {
-        Element element = uploadButton.getElement();
+        Element element = clearComponent.getElement();
         return element.getAttribute(ElementConstants.ARIA_LABEL_ATTRIBUTE_NAME);
     }
 
@@ -649,7 +649,7 @@ public abstract class AbstractSingleUploadField<C extends AbstractSingleUploadFi
      * @param ariaLabel aria-label to set
      */
     public void setClearButtonAriaLabel(@Nullable String ariaLabel) {
-        setComponentAriaLabel(uploadButton, ariaLabel);
+        setComponentAriaLabel(clearComponent, ariaLabel);
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})

@@ -187,6 +187,13 @@ public abstract class AbstractSingleUploadField<C extends AbstractSingleUploadFi
         upload.setUploadManager(uploadManager);
         upload.addClassName(UPLOAD_BUTTON_CLASS_NAME);
         upload.setText(UPLOAD);
+
+        // The client field takes the manager the button is linked to. Vaadin links the button from an outer
+        // 'beforeClientResponse' callback that calls 'executeJs', so the link is sent on the second pass
+        // of the callbacks. The same two levels here put the sync after the link on every attach; a plain
+        // 'executeJs' would be sent on the first pass, before the button has a manager.
+        upload.addAttachListener(event -> event.getUI().beforeClientResponse(upload, context ->
+                upload.getElement().executeJs("this.closest('jmix-upload-field')?._syncUploadManager(this)")));
     }
 
     protected abstract UploadHandler createUploadHandler();

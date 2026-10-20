@@ -28,40 +28,17 @@ import {SlotStylesMixin} from '@vaadin/component-base/src/slot-styles-mixin.js';
 import {ThemableMixin} from '@vaadin/vaadin-themable-mixin/vaadin-themable-mixin.js';
 import {PolylitMixin} from '@vaadin/component-base/src/polylit-mixin.js';
 import {LumoInjectionMixin} from '@vaadin/vaadin-themable-mixin/lumo-injection-mixin.js';
-import {UploadManager} from '@vaadin/upload/src/vaadin-upload-manager.js';
 import {jmixUploadFieldStyles} from "./styles/jmix-upload-field-base-styles";
 
 /**
- * Bridges the field's `vaadin-upload-drop-zone` to the `jmix-upload-button`.
+ * `<jmix-upload-field>` is the client part of the single file upload fields.
  *
- * The drop zone hands dropped files to an `UploadManager` and treats itself as
- * disabled unless it is linked to one, while the upload button is a
- * `vaadin-upload` that keeps its own file list and request handling. This
- * adapter satisfies the link and forwards the files to the button, so a dropped
- * file goes through the same accepted types, size and rejection handling as a
- * file picked through the button. It never uploads anything itself.
+ * The server-side component owns a Vaadin upload manager and slots a `vaadin-upload-button`
+ * linked to it. The field takes the client manager from that button (see `_syncUploadManager`)
+ * and links its input area, a `vaadin-upload-drop-zone`, to the same manager.
  *
- * @private
+ * @fires {CustomEvent} jmix-upload-internal-error - Fired when an upload fails, with the file in `detail.file`.
  */
-class JmixUploadFieldDropManager extends UploadManager {
-
-    constructor(field) {
-        super();
-
-        this.field = field;
-    }
-
-    /** @override */
-    addFiles(files) {
-        // The button is a light DOM descendant added by the server-side component,
-        // so it is resolved on drop rather than when the manager is created.
-        const uploadButton = this.field.querySelector('jmix-upload-button');
-        if (uploadButton) {
-            uploadButton._addFiles(files);
-        }
-    }
-}
-
 export class JmixUploadField extends SlotStylesMixin(DelegateFocusMixin(InputConstraintsMixin(FieldMixin(ThemableMixin(
     ElementMixin(PolylitMixin(LumoInjectionMixin(LitElement)))))))) {
 
@@ -113,6 +90,16 @@ export class JmixUploadField extends SlotStylesMixin(DelegateFocusMixin(InputCon
             },
 
             /**
+             * The deprecated accepted file types joined with commas. A client-side hint only:
+             * it is applied to the upload manager's `accept`, which filters the picker and
+             * rejects other files, any token matching.
+             */
+            acceptedFileTypes: {
+                type: String,
+                observer: '_onAcceptedFileTypesChanged',
+            },
+
+            /**
              * Set while files are dragged over the input area. Drives the highlight.
              *
              * @private
@@ -127,6 +114,23 @@ export class JmixUploadField extends SlotStylesMixin(DelegateFocusMixin(InputCon
         };
     }
 
+    /**
+     * Fired when an upload fails. A failure before the request reaches the upload handler,
+     * e.g. on the container's request size limit, never reaches the server-side listeners,
+     * so the server-side component listens to this event instead.
+     *
+     * @event jmix-upload-internal-error
+     */
+
+    constructor() {
+        super();
+
+        this.__managerListeners = {
+            'upload-success': this._onUploadSuccess.bind(this),
+            'upload-error': this._onUploadError.bind(this),
+        };
+    }
+
     /** @protected */
     get slotStyles() {
         return [];
@@ -137,7 +141,8 @@ export class JmixUploadField extends SlotStylesMixin(DelegateFocusMixin(InputCon
         super.ready();
 
         this._dropZone = this.shadowRoot.querySelector('vaadin-upload-drop-zone');
-        this._dropZone.manager = new JmixUploadFieldDropManager(this);
+        // The server may have linked the manager before the first render.
+        this._dropZone.manager = this._manager || null;
         this._updateDropZoneDisabled();
 
         this._dropZone.addEventListener('dragenter', this._onDragEnter.bind(this));
@@ -152,11 +157,95 @@ export class JmixUploadField extends SlotStylesMixin(DelegateFocusMixin(InputCon
     }
 
     /** @protected */
+    connectedCallback() {
+        super.connectedCallback();
+
+        // A move on the client only, e.g. into a dialog, gets no new link from the server,
+        // and the button keeps its manager.
+        if (this._button) {
+            this._syncUploadManager(this._button);
+        }
+    }
+
+    /** @protected */
     disconnectedCallback() {
         super.disconnectedCallback();
 
         // A detach in the middle of a drag would otherwise leave the highlight painted.
         this._onDragDone();
+
+        // A re-attach on the server creates a new manager and links it again.
+        this._setManager(null);
+    }
+
+    /**
+     * Takes the upload manager of the given upload button. The server-side component calls it
+     * after Vaadin links the button to the manager, on every attach of the button.
+     *
+     * @param {HTMLElement} button the `vaadin-upload-button` of the field
+     * @protected
+     */
+    _syncUploadManager(button) {
+        this._button = button;
+        this._setManager(button.manager || null);
+    }
+
+    /** @private */
+    _setManager(manager) {
+        if (manager === this._manager) {
+            return;
+        }
+
+        if (this._manager) {
+            Object.entries(this.__managerListeners)
+                .forEach(([type, listener]) => this._manager.removeEventListener(type, listener));
+        }
+
+        this._manager = manager;
+
+        if (manager) {
+            Object.entries(this.__managerListeners)
+                .forEach(([type, listener]) => manager.addEventListener(type, listener));
+
+            // An empty hint is never written here: it would wipe the accept value
+            // pushed by the server for the accepted MIME types and file extensions.
+            if (this.acceptedFileTypes) {
+                manager.accept = this.acceptedFileTypes;
+            }
+        }
+
+        if (this._dropZone) {
+            this._dropZone.manager = manager;
+        }
+    }
+
+    /** @private */
+    _onAcceptedFileTypesChanged(acceptedFileTypes, oldAcceptedFileTypes) {
+        if (!this._manager) {
+            return;
+        }
+
+        if (acceptedFileTypes) {
+            this._manager.accept = acceptedFileTypes;
+        } else if (oldAcceptedFileTypes) {
+            this._manager.accept = '';
+        }
+    }
+
+    /** @private */
+    _onUploadSuccess() {
+        // The field takes one file at a time: the uploaded file would otherwise keep
+        // the button and the drop zone disabled.
+        this._manager.files = [];
+    }
+
+    /** @private */
+    _onUploadError(event) {
+        this._manager.files = [];
+
+        this.dispatchEvent(new CustomEvent('jmix-upload-internal-error', {
+            detail: {file: event.detail.file},
+        }));
     }
 
     /** @private */
@@ -186,6 +275,12 @@ export class JmixUploadField extends SlotStylesMixin(DelegateFocusMixin(InputCon
      * @private
      */
     _onDragEnter() {
+        // A safety net in case the link from the server came before the button had a manager:
+        // the drop zone ignores drops while it has none.
+        if (this._button && this._button.manager !== this._manager) {
+            this._syncUploadManager(this._button);
+        }
+
         if (!this.dropAllowed) {
             return;
         }

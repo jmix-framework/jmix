@@ -21,6 +21,7 @@ import com.vaadin.flow.component.UI
 import com.vaadin.flow.component.icon.VaadinIcon
 import com.vaadin.flow.component.upload.UploadButton
 import com.vaadin.flow.component.upload.UploadManager
+import component.upload.view.UploadFieldTestView
 import io.jmix.flowui.UiComponents
 import io.jmix.flowui.component.upload.FileStorageUploadField
 import io.jmix.flowui.component.upload.FileUploadField
@@ -39,6 +40,10 @@ class UploadFieldTest extends FlowuiTestSpecification {
 
     @Autowired
     UiComponents uiComponents
+
+    void setup() {
+        registerViewBasePackages("component.upload.view")
+    }
 
     def "Upload button is a stock UploadButton linked to the field's manager"() {
         when: "A field is created"
@@ -308,6 +313,64 @@ class UploadFieldTest extends FlowuiTestSpecification {
         then: "They reach the manager"
         field.acceptedMimeTypes == ["image/png"]
         field.uploadManager.acceptedMimeTypes == ["image/png"]
+    }
+
+    def "Field sync is queued after Vaadin's manager link"() {
+        when: "A view with an upload field is opened"
+        def view = navigateToView(UploadFieldTestView)
+        def expressions = uploadButtonExpressions(view.editableField)
+
+        then: "The field's sync is sent after Vaadin links the button to the manager"
+        indexOfLink(expressions) >= 0
+        indexOfSync(expressions) > indexOfLink(expressions)
+    }
+
+    def "Field sync is withheld with the link while read-only and sent when editable"() {
+        given: "A view with a read-only upload field"
+        def view = navigateToView(UploadFieldTestView)
+        def field = view.readOnlyField
+
+        expect: "Nothing is sent for the hidden upload button"
+        uploadButtonExpressions(field).empty
+
+        when: "The field becomes editable"
+        field.readOnly = false
+        def expressions = uploadButtonExpressions(field)
+
+        then: "The link and the sync are sent, the link first"
+        indexOfLink(expressions) >= 0
+        indexOfSync(expressions) > indexOfLink(expressions)
+    }
+
+    def "Re-attaching the field queues the link and the sync again"() {
+        given: "An attached field"
+        def field = uiComponents.create(FileUploadField)
+        UI.current.add(field)
+        pendingExpressions()
+
+        when: "The field is detached and attached again"
+        UI.current.remove(field)
+        UI.current.add(field)
+        def expressions = uploadButtonExpressions(field)
+
+        then: "The link and the sync are sent again, the link first"
+        indexOfLink(expressions) >= 0
+        indexOfSync(expressions) > indexOfLink(expressions)
+    }
+
+    protected static int indexOfLink(List<String> expressions) {
+        expressions.findIndexOf { it.contains('this.manager = $0 ? $0.manager : null') }
+    }
+
+    protected static int indexOfSync(List<String> expressions) {
+        expressions.findIndexOf { it.contains('_syncUploadManager') }
+    }
+
+    protected List<String> uploadButtonExpressions(FileUploadField field) {
+        def internals = UI.current.internals
+        internals.stateTree.runExecutionsBeforeClientResponse()
+        return internals.dumpPendingJavaScriptInvocations()
+                .findAll { it.owner.is(field.uploadButton.element.node) }*.invocation*.expression
     }
 
     protected List<String> pendingExpressions() {

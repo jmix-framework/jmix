@@ -21,7 +21,35 @@ base {
     archivesName = 'jmix-flowui-themes'
 }
 
+sourceSets {
+    themeBundler
+}
+
 dependencies {
     api 'com.vaadin:vaadin-bom'
     api 'com.vaadin:flow-server'
+
+    testImplementation sourceSets.themeBundler.output
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+def themesDir = file('src/main/resources/META-INF/resources/themes')
+def themeEntries = ['jmix-lumo/jmix-lumo.css', 'jmix-aura/jmix-aura.css']
+def bundledThemesDir = layout.buildDirectory.dir('bundled-themes')
+
+def bundleThemes = tasks.register('bundleThemes', JavaExec) {
+    description = 'Inlines the @import tree of each Jmix theme entry stylesheet into a single file.'
+    classpath = sourceSets.themeBundler.runtimeClasspath
+    mainClass = 'io.jmix.flowui.theme.bundler.ThemeCssBundler'
+    inputs.dir(themesDir).withPathSensitivity(PathSensitivity.RELATIVE)
+    inputs.property('themeEntries', themeEntries)
+    outputs.dir(bundledThemesDir)
+    args(themesDir.absolutePath, bundledThemesDir.get().asFile.absolutePath, *themeEntries)
+}
+
+processResources {
+    def sourceEntries = themeEntries.collect { new File(themesDir, it) }
+    exclude { FileTreeElement element -> element.file in sourceEntries }
+    from(bundleThemes) { into 'META-INF/resources/themes' }
 }

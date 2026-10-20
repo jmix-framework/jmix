@@ -74,7 +74,7 @@ const jmixUploadField = css`
 addGlobalStyles(
     'jmix-upload-field',
     css`
-        jmix-upload-field[theme~="no-file-name"] .jmix-upload-button {
+        jmix-upload-field[theme~="no-file-name"] .jmix-upload-field-button {
             flex-grow: 1;
         }
 

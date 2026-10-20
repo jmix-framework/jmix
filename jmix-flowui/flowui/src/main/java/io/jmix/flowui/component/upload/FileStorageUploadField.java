@@ -19,8 +19,7 @@ package io.jmix.flowui.component.upload;
 import com.google.common.base.Strings;
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.ComponentEventListener;
-import com.vaadin.flow.component.upload.FileRejectedEvent;
-import com.vaadin.flow.component.upload.Upload;
+import com.vaadin.flow.component.upload.UploadManager;
 import com.vaadin.flow.server.streams.TransferContext;
 import com.vaadin.flow.server.streams.UploadHandler;
 import com.vaadin.flow.shared.Registration;
@@ -102,7 +101,7 @@ public class FileStorageUploadField extends JmixFileStorageUploadField<FileStora
 
         setComponentClickListener(fileNameComponent, this::onFileNameClick);
         setComponentText(fileNameComponent, generateFileName());
-        setComponentText(uploadButton.getUploadButton(), getDefaultUploadText());
+        setComponentText(uploadButton, getDefaultUploadText());
 
         multipartPropertiesProvider.ifAvailable(properties ->
                 setMaxFileSize((int) properties.getMaxFileSize().toBytes()));
@@ -111,8 +110,8 @@ public class FileStorageUploadField extends JmixFileStorageUploadField<FileStora
 
         attachValueChangeListener(this::onValueChange);
 
-        uploadButton.setUploadHandler(createUploadHandler());
-        attachUploadEvents(uploadButton);
+        initUploadHandler();
+        attachUploadEvents(uploadManager);
     }
 
     @Override
@@ -222,7 +221,7 @@ public class FileStorageUploadField extends JmixFileStorageUploadField<FileStora
      * fields in the application use {@link MultipartProperties#getMaxFileSize()} property.
      *
      * @param maxFileSize the maximum file size in bytes
-     * @see Upload#setMaxFileSize(int)
+     * @see UploadManager#setMaxFileSize(long)
      * @see MultipartProperties#getMaxFileSize()
      * @see MultipartProperties#getMaxRequestSize()
      */
@@ -369,9 +368,9 @@ public class FileStorageUploadField extends JmixFileStorageUploadField<FileStora
     }
 
     @Override
-    protected void onFileRejectedEvent(FileRejectedEvent event) {
+    protected void onFileRejectedEvent(UploadManager.FileRejectedEvent event) {
         if (!getEventBus().hasListener(FileUploadFileRejectedEvent.class)) {
-            notifications.create(event.getErrorMessage())
+            notifications.create(getFileRejectedMessage(event.getReason()))
                     .withType(Notifications.Type.WARNING)
                     .show();
         }
@@ -387,7 +386,6 @@ public class FileStorageUploadField extends JmixFileStorageUploadField<FileStora
     }
 
     protected void deleteTempFile() {
-        UploadHandler uploadHandler = uploadButton.getUploadHandler();
         if (uploadHandler instanceof FileTemporaryStorageUploadHandler fileTemporaryStorageUploadHandler) {
             FileInfo fileInfo = fileTemporaryStorageUploadHandler.getFileInfo();
             if (fileInfo == null) {
@@ -408,7 +406,8 @@ public class FileStorageUploadField extends JmixFileStorageUploadField<FileStora
                 log.warn(String.format("Error while delete temp file %s", tempFileId));
             }
         } else {
-            throw new IllegalStateException("Unsupported upload handler: " + uploadHandler.getClass().getName());
+            throw new IllegalStateException("Unsupported upload handler: "
+                    + (uploadHandler != null ? uploadHandler.getClass().getName() : null));
         }
     }
 

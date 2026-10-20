@@ -19,7 +19,9 @@ package io.jmix.flowui.kit.component.upload;
 import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.component.upload.Upload;
+import com.vaadin.flow.component.upload.UploadButton;
 import com.vaadin.flow.component.upload.UploadI18N;
+import com.vaadin.flow.component.upload.UploadManager;
 import com.vaadin.flow.internal.JacksonUtils;
 import com.vaadin.flow.server.streams.UploadHandler;
 import com.vaadin.flow.shared.Registration;
@@ -28,7 +30,10 @@ import com.vaadin.flow.shared.Registration;
  * A custom upload button component that extends the Vaadin {@link Upload}.
  * This component provides additional functionality, including integration
  * with {@link JmixUploadI18N} and support for internal error handling.
+ *
+ * @deprecated use {@link UploadButton} with {@link UploadManager} instead
  */
+@Deprecated(since = "3.2", forRemoval = true)
 @Tag("jmix-upload-button")
 @JsModule("./src/upload-button/jmix-upload-button.js")
 public class JmixUploadButton extends Upload {

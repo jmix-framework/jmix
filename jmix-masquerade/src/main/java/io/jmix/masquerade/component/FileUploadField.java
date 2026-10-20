@@ -63,7 +63,7 @@ public class FileUploadField extends AbstractUpload<FileUploadField> {
 
     @Override
     protected String getUploadButtonCssSelector() {
-        return "jmix-upload-field[%s='%s'] .jmix-upload-button".formatted(
+        return "jmix-upload-field[%s='%s'] .jmix-upload-field-button".formatted(
                 UI_TEST_ID,
                 getDelegate().getDomAttribute(UI_TEST_ID));
     }

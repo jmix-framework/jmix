@@ -20,10 +20,10 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.shared.Registration;
+import io.jmix.aitoolsflowui.fragment.chat.AiConversationChat;
+import io.jmix.aitoolsflowui.fragment.chat.AiConversationTitleChangeEvent;
+import io.jmix.aitoolsflowui.fragment.chat.AiConversationTitleMode;
 import io.jmix.aitoolsflowui.model.AiConversation;
-import io.jmix.aitoolsflowui.view.chat.AiConversationChat;
-import io.jmix.aitoolsflowui.view.chat.AiConversationTitleChangeEvent;
-import io.jmix.aitoolsflowui.view.chat.AiConversationTitleMode;
 import org.jspecify.annotations.Nullable;
 
 import java.util.UUID;

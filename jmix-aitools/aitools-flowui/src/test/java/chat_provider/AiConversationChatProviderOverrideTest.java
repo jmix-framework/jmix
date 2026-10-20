@@ -17,11 +17,11 @@
 package chat_provider;
 
 import com.vaadin.flow.component.Component;
+import io.jmix.aitoolsflowui.fragment.chat.AiConversationChat;
+import io.jmix.aitoolsflowui.fragment.chat.AiConversationChatFactory;
+import io.jmix.aitoolsflowui.fragment.chat.AiConversationChatProvider;
 import io.jmix.aitoolsflowui.model.AiConversation;
 import io.jmix.aitoolsflowui.view.chat.AiChatView;
-import io.jmix.aitoolsflowui.view.chat.AiConversationChat;
-import io.jmix.aitoolsflowui.view.chat.AiConversationChatFactory;
-import io.jmix.aitoolsflowui.view.chat.AiConversationChatProvider;
 import io.jmix.core.JmixOrder;
 import io.jmix.flowui.fragment.FragmentOwner;
 import io.jmix.flowui.testassist.FlowuiTestAssistConfiguration;

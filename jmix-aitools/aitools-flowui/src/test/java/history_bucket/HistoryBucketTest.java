@@ -16,7 +16,7 @@
 
 package history_bucket;
 
-import io.jmix.aitoolsflowui.view.chathub.component.HistoryBucket;
+import io.jmix.aitoolsflowui.fragment.chathub.component.HistoryBucket;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;

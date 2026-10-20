@@ -21,6 +21,11 @@ import com.vaadin.flow.data.provider.DataProvider;
 import com.vaadin.flow.data.provider.Query;
 import com.vaadin.flow.dom.Element;
 import io.jmix.aitools.tool.AiToolStatusUpdate;
+import io.jmix.aitoolsflowui.fragment.chat.AiChatFragment;
+import io.jmix.aitoolsflowui.fragment.chat.timeline.TimelineItem;
+import io.jmix.aitoolsflowui.fragment.chat.timeline.TimelineItemStatus;
+import io.jmix.aitoolsflowui.fragment.chat.timeline.TimelineItemType;
+import io.jmix.aitoolsflowui.fragment.input.AiChatInputFragment;
 import io.jmix.aitoolsflowui.generation.AiChatGeneration;
 import io.jmix.aitoolsflowui.generation.AiChatGenerationManager;
 import io.jmix.aitoolsflowui.generation.AiChatGenerationRejectedException;
@@ -33,12 +38,7 @@ import io.jmix.aitoolsflowui.model.AiChatMessage;
 import io.jmix.aitoolsflowui.model.AiChatMessageType;
 import io.jmix.aitoolsflowui.model.AiConversation;
 import io.jmix.aitoolsflowui.service.AiConversationAutoTitleService;
-import io.jmix.aitoolsflowui.view.chat.AiChatFragment;
 import io.jmix.aitoolsflowui.view.chat.AiChatView;
-import io.jmix.aitoolsflowui.view.chat.timeline.TimelineItem;
-import io.jmix.aitoolsflowui.view.chat.timeline.TimelineItemStatus;
-import io.jmix.aitoolsflowui.view.chat.timeline.TimelineItemType;
-import io.jmix.aitoolsflowui.view.input.AiChatInputFragment;
 import io.jmix.core.Messages;
 import io.jmix.core.Metadata;
 import io.jmix.flowui.Notifications;
@@ -91,7 +91,7 @@ import static org.mockito.Mockito.when;
 class AiChatFragmentGenerationTest {
 
     static final UUID GENERATION_ID = UUID.randomUUID();
-    static final String CHAT_MESSAGES_GROUP = "io.jmix.aitoolsflowui.view.chat";
+    static final String CHAT_MESSAGES_GROUP = AiChatFragment.class.getPackageName();
 
     @Autowired ViewNavigationSupport navigationSupport;
     @Autowired RouteSupport routeSupport;

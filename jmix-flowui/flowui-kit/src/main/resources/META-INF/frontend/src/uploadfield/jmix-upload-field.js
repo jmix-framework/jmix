@@ -14,8 +14,11 @@
  * limitations under the License.
  */
 
+import '@vaadin/button/src/vaadin-button.js';
+import '@vaadin/dialog/src/vaadin-dialog.js';
 import '@vaadin/input-container/src/vaadin-input-container.js';
 import '@vaadin/upload/src/vaadin-upload-drop-zone.js';
+import '@vaadin/upload/src/vaadin-upload-file-list.js';
 import {html, LitElement} from 'lit';
 import {defineCustomElement} from '@vaadin/component-base/src/define.js';
 import {ifDefined} from 'lit/directives/if-defined.js';
@@ -35,7 +38,8 @@ import {jmixUploadFieldStyles} from "./styles/jmix-upload-field-base-styles";
  *
  * The server-side component owns a Vaadin upload manager and slots a `vaadin-upload-button`
  * linked to it. The field takes the client manager from that button (see `_syncUploadManager`)
- * and links its input area, a `vaadin-upload-drop-zone`, to the same manager.
+ * and links its input area, a `vaadin-upload-drop-zone`, to the same manager. While a file is
+ * uploading, the field shows its progress in a dialog with a Cancel button.
  *
  * @fires {CustomEvent} jmix-upload-internal-error - Fired when an upload fails, with the file in `detail.file`.
  */
@@ -72,6 +76,8 @@ export class JmixUploadField extends SlotStylesMixin(DelegateFocusMixin(InputCon
                 </div>
 
                 <slot name="tooltip"></slot>
+
+                <slot name="dialog"></slot>
             </div>
         `;
     }
@@ -97,6 +103,15 @@ export class JmixUploadField extends SlotStylesMixin(DelegateFocusMixin(InputCon
             acceptedFileTypes: {
                 type: String,
                 observer: '_onAcceptedFileTypesChanged',
+            },
+
+            /**
+             * The localized texts of the field: the upload dialog's title and Cancel button,
+             * and the file status and error texts shown in the dialog.
+             */
+            jmixI18n: {
+                type: Object,
+                observer: '_onJmixI18nChanged',
             },
 
             /**
@@ -126,8 +141,11 @@ export class JmixUploadField extends SlotStylesMixin(DelegateFocusMixin(InputCon
         super();
 
         this.__managerListeners = {
+            'upload-start': this._onUploadStart.bind(this),
             'upload-success': this._onUploadSuccess.bind(this),
             'upload-error': this._onUploadError.bind(this),
+            'upload-abort': this._onUploadAbort.bind(this),
+            'file-remove': this._onFileRemove.bind(this),
         };
     }
 
@@ -176,6 +194,7 @@ export class JmixUploadField extends SlotStylesMixin(DelegateFocusMixin(InputCon
 
         // A re-attach on the server creates a new manager and links it again.
         this._setManager(null);
+        this._setUploadDialogOpened(false);
     }
 
     /**
@@ -217,6 +236,10 @@ export class JmixUploadField extends SlotStylesMixin(DelegateFocusMixin(InputCon
         if (this._dropZone) {
             this._dropZone.manager = manager;
         }
+
+        if (this._uploadFileList) {
+            this._uploadFileList.manager = manager;
+        }
     }
 
     /** @private */
@@ -233,7 +256,29 @@ export class JmixUploadField extends SlotStylesMixin(DelegateFocusMixin(InputCon
     }
 
     /** @private */
+    _onJmixI18nChanged() {
+        if (this._uploadDialog) {
+            this._uploadDialog.headerTitle = this._getUploadDialogTitle();
+        }
+
+        if (this._uploadCancelButton) {
+            this._uploadCancelButton.textContent = this._getUploadDialogCancelText();
+        }
+
+        if (this._uploadFileList && this.jmixI18n) {
+            this._uploadFileList.i18n = this.jmixI18n;
+        }
+    }
+
+    /** @private */
+    _onUploadStart() {
+        this._setUploadDialogOpened(true);
+    }
+
+    /** @private */
     _onUploadSuccess() {
+        this._setUploadDialogOpened(false);
+
         // The field takes one file at a time: the uploaded file would otherwise keep
         // the button and the drop zone disabled.
         this._manager.files = [];
@@ -241,11 +286,103 @@ export class JmixUploadField extends SlotStylesMixin(DelegateFocusMixin(InputCon
 
     /** @private */
     _onUploadError(event) {
+        this._setUploadDialogOpened(false);
+
         this._manager.files = [];
 
         this.dispatchEvent(new CustomEvent('jmix-upload-internal-error', {
             detail: {file: event.detail.file},
         }));
+    }
+
+    /** @private */
+    _onUploadAbort() {
+        this._setUploadDialogOpened(false);
+    }
+
+    /** @private */
+    _onFileRemove() {
+        this._setUploadDialogOpened(false);
+    }
+
+    /** @private */
+    _setUploadDialogOpened(opened) {
+        if (opened) {
+            this._getUploadDialog().opened = true;
+        } else if (this._uploadDialog) {
+            this._uploadDialog.opened = false;
+        }
+    }
+
+    /**
+     * The dialog is created on the first upload. It is a light DOM child in the `dialog` slot,
+     * so it is rendered, moves with the field, and the global `.jmix-upload-dialog*` styles apply.
+     *
+     * @private
+     */
+    _getUploadDialog() {
+        if (!this._uploadDialog) {
+            const dialog = document.createElement('vaadin-dialog');
+            dialog.slot = 'dialog';
+            dialog.className = 'jmix-upload-dialog';
+            dialog.noCloseOnOutsideClick = true;
+            dialog.noCloseOnEsc = true;
+            dialog.headerTitle = this._getUploadDialogTitle();
+            dialog.renderer = this._renderUploadDialog.bind(this);
+
+            this.appendChild(dialog);
+            this._uploadDialog = dialog;
+        }
+
+        return this._uploadDialog;
+    }
+
+    /** @private */
+    _renderUploadDialog(root) {
+        if (root.firstElementChild) {
+            return;
+        }
+
+        const content = document.createElement('div');
+        content.className = 'jmix-upload-dialog-content';
+
+        // The list formats the progress and status texts of the uploading file from its i18n.
+        const fileList = document.createElement('vaadin-upload-file-list');
+        if (this.jmixI18n) {
+            fileList.i18n = this.jmixI18n;
+        }
+        fileList.manager = this._manager || null;
+
+        const cancelButton = document.createElement('vaadin-button');
+        cancelButton.className = 'jmix-upload-dialog-cancel-button';
+        cancelButton.textContent = this._getUploadDialogCancelText();
+        cancelButton.addEventListener('click', this._onUploadDialogCancelClick.bind(this));
+
+        content.append(fileList, cancelButton);
+        root.appendChild(content);
+
+        this._uploadFileList = fileList;
+        this._uploadCancelButton = cancelButton;
+    }
+
+    /** @private */
+    _onUploadDialogCancelClick() {
+        const file = this._manager && this._manager.files.find((f) => f.uploading);
+        if (file) {
+            this._manager.abortUpload(file);
+        } else {
+            this._setUploadDialogOpened(false);
+        }
+    }
+
+    /** @private */
+    _getUploadDialogTitle() {
+        return this.jmixI18n?.uploadDialog?.title ?? 'Uploading';
+    }
+
+    /** @private */
+    _getUploadDialogCancelText() {
+        return this.jmixI18n?.uploadDialog?.cancel ?? 'Cancel';
     }
 
     /** @private */

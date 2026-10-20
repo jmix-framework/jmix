@@ -40,7 +40,7 @@
                       justifyContent="END"
                       classNames="chat-title-layout">
                     <h3 id="conversationTitle" classNames="chat-title"/>
-                    <button id="editConversationTitleBtn"
+                    <button id="renameConversationBtn"
                             icon="PENCIL"
                             text="msg://aiChatFragment.editConversationTitleAction"
                             themeNames="tertiary small"/>

@@ -121,6 +121,7 @@ class FileStorageUploadFieldXmlLoadTest extends FlowuiTestSpecification {
         field.i18n.error != null
         field.i18n.error.fileIsTooBig != null
         field.i18n.error.incorrectFileType != null
+        field.i18n.error.tooManyFiles == "Only one file can be uploaded"
         field.i18n.uploading != null
         field.i18n.uploading.status != null
         field.i18n.uploading.status.connecting != null

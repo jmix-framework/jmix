@@ -58,6 +58,7 @@ public class UploadFieldI18NSupport {
         UploadI18N.Error error = new UploadI18N.Error();
         error.setFileIsTooBig(messages.getMessage(componentName + ".error.fileTooBig"));
         error.setIncorrectFileType(messages.getMessage(componentName + ".error.incorrectFileType"));
+        error.setTooManyFiles(messages.getMessage(componentName + ".error.tooManyFiles"));
         jmixUploadI18N.setError(error);
 
         UploadI18N.Uploading uploading = new UploadI18N.Uploading();

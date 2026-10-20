@@ -136,6 +136,13 @@ class UploadFieldTest extends FlowuiTestSpecification {
         field.getFileRejectedMessage(INCORRECT_FILE_TYPE) == "Incorrect File Type."
     }
 
+    def "Too many files message is localized"() {
+        expect: "Both fields have the localized text"
+        uiComponents.create(FileUploadField).getFileRejectedMessage(TOO_MANY_FILES) == "Only one file can be uploaded"
+        uiComponents.create(FileStorageUploadField).getFileRejectedMessage(TOO_MANY_FILES) ==
+                "Only one file can be uploaded"
+    }
+
     def "Rejected file fires FileUploadFileRejectedEvent with the mapped text"() {
         given: "A field with a file-rejected listener"
         def field = uiComponents.create(FileUploadField)

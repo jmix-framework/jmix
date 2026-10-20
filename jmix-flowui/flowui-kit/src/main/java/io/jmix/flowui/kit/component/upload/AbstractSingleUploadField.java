@@ -70,6 +70,7 @@ public abstract class AbstractSingleUploadField<C extends AbstractSingleUploadFi
 
     protected static final String DROP_ALLOWED_PROPERTY = "dropAllowed";
     protected static final String I18N_PROPERTY = "jmixI18n";
+    protected static final String ACCEPTED_FILE_TYPES_PROPERTY = "acceptedFileTypes";
 
     protected static final String FILE_NOT_SELECTED = "File is not selected";
     protected static final String UPLOAD = "Upload";
@@ -382,6 +383,13 @@ public abstract class AbstractSingleUploadField<C extends AbstractSingleUploadFi
      */
     @Deprecated(since = "3.1", forRemoval = true)
     public List<String> getAcceptedFileTypes() {
+        if (isAcceptedMimeTypesOrExtensionsConfigured()) {
+            throw new IllegalStateException("Cannot use getAcceptedFileTypes when "
+                    + "setAcceptedMimeTypes or "
+                    + "setAcceptedFileExtensions are configured. "
+                    + "Use getAcceptedMimeTypes() and "
+                    + "getAcceptedFileExtensions() instead.");
+        }
         return acceptedFileTypes;
     }
 
@@ -397,15 +405,29 @@ public abstract class AbstractSingleUploadField<C extends AbstractSingleUploadFi
      */
     @Deprecated(since = "3.1", forRemoval = true)
     public void setAcceptedFileTypes(String... acceptedFileTypes) {
+        if (isAcceptedMimeTypesOrExtensionsConfigured()) {
+            throw new IllegalStateException("Cannot use setAcceptedFileTypes when "
+                    + "setAcceptedMimeTypes or "
+                    + "setAcceptedFileExtensions are configured. "
+                    + "Mixing the deprecated and new APIs is not "
+                    + "supported.");
+        }
+
+        // A client-side hint only: the values are neither validated nor checked on the server,
+        // so legacy values such as "pdf" without a dot keep working as before.
         this.acceptedFileTypes = acceptedFileTypes == null
                 ? List.of()
-                : Arrays.asList(acceptedFileTypes.clone());
+                : Arrays.stream(acceptedFileTypes)
+                .filter(Objects::nonNull)
+                .toList();
+        getElement().setProperty(ACCEPTED_FILE_TYPES_PROPERTY, String.join(",", this.acceptedFileTypes));
     }
 
     /**
      * @return the list of accepted MIME types for upload
      */
     public List<String> getAcceptedMimeTypes() {
+        checkNoDeprecatedFileTypes("getAcceptedMimeTypes");
         return uploadManager.getAcceptedMimeTypes();
     }
 
@@ -418,6 +440,13 @@ public abstract class AbstractSingleUploadField<C extends AbstractSingleUploadFi
      * @see UploadManager#setAcceptedMimeTypes(String...)
      */
     public void setAcceptedMimeTypes(String... acceptedMimeTypes) {
+        if (isDeprecatedFileTypesConfigured()) {
+            if (acceptedMimeTypes == null || acceptedMimeTypes.length == 0) {
+                // The manager would push an empty accept value and wipe the deprecated hint.
+                return;
+            }
+            checkNoDeprecatedFileTypes("setAcceptedMimeTypes");
+        }
         uploadManager.setAcceptedMimeTypes(acceptedMimeTypes);
     }
 
@@ -425,6 +454,7 @@ public abstract class AbstractSingleUploadField<C extends AbstractSingleUploadFi
      * @return the list of accepted file extensions for upload
      */
     public List<String> getAcceptedFileExtensions() {
+        checkNoDeprecatedFileTypes("getAcceptedFileExtensions");
         return uploadManager.getAcceptedFileExtensions();
     }
 
@@ -437,7 +467,32 @@ public abstract class AbstractSingleUploadField<C extends AbstractSingleUploadFi
      * @see UploadManager#setAcceptedFileExtensions(String...)
      */
     public void setAcceptedFileExtensions(String... acceptedFileExtensions) {
+        if (isDeprecatedFileTypesConfigured()) {
+            if (acceptedFileExtensions == null || acceptedFileExtensions.length == 0) {
+                // The manager would push an empty accept value and wipe the deprecated hint.
+                return;
+            }
+            checkNoDeprecatedFileTypes("setAcceptedFileExtensions");
+        }
         uploadManager.setAcceptedFileExtensions(acceptedFileExtensions);
+    }
+
+    protected boolean isDeprecatedFileTypesConfigured() {
+        return !getElement().getProperty(ACCEPTED_FILE_TYPES_PROPERTY, "").isEmpty();
+    }
+
+    protected boolean isAcceptedMimeTypesOrExtensionsConfigured() {
+        return !uploadManager.getAcceptedMimeTypes().isEmpty()
+                || !uploadManager.getAcceptedFileExtensions().isEmpty();
+    }
+
+    protected void checkNoDeprecatedFileTypes(String methodName) {
+        if (isDeprecatedFileTypesConfigured()) {
+            throw new IllegalStateException("Cannot use " + methodName
+                    + " when setAcceptedFileTypes is configured. "
+                    + "Mixing the deprecated and new APIs is not "
+                    + "supported.");
+        }
     }
 
     /**

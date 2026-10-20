@@ -176,6 +176,117 @@ class UploadFieldTest extends FlowuiTestSpecification {
         field.uploadHandler instanceof FileTemporaryStorageUploadHandler
     }
 
+    def "Deprecated accepted types are a client hint and accept legacy values"() {
+        given: "A field"
+        def field = uiComponents.create(FileUploadField)
+
+        when: "Deprecated accepted types are set, one of them without a dot"
+        field.acceptedFileTypes = ["pdf", ".doc", "image/*"] as String[]
+
+        then: "They are stored, pushed to the client as is and not validated on the server"
+        field.acceptedFileTypes == ["pdf", ".doc", "image/*"]
+        field.element.getProperty("acceptedFileTypes") == "pdf,.doc,image/*"
+        field.uploadManager.acceptedMimeTypes.empty
+        field.uploadManager.acceptedFileExtensions.empty
+    }
+
+    def "Mixing deprecated and new accepted types throws like Upload"() {
+        given: "A field with deprecated accepted types"
+        def field = uiComponents.create(FileUploadField)
+        field.acceptedFileTypes = [".pdf"] as String[]
+
+        when: "MIME types are set"
+        field.acceptedMimeTypes = ["image/png"] as String[]
+
+        then: "Mixing is refused"
+        def e1 = thrown(IllegalStateException)
+        e1.message == "Cannot use setAcceptedMimeTypes when setAcceptedFileTypes is configured. " +
+                "Mixing the deprecated and new APIs is not supported."
+
+        when: "File extensions are set"
+        field.acceptedFileExtensions = [".png"] as String[]
+
+        then: "Mixing is refused"
+        def e2 = thrown(IllegalStateException)
+        e2.message == "Cannot use setAcceptedFileExtensions when setAcceptedFileTypes is configured. " +
+                "Mixing the deprecated and new APIs is not supported."
+
+        when: "MIME types are read"
+        field.acceptedMimeTypes
+
+        then: "Reading the new API is refused"
+        def e3 = thrown(IllegalStateException)
+        e3.message == "Cannot use getAcceptedMimeTypes when setAcceptedFileTypes is configured. " +
+                "Mixing the deprecated and new APIs is not supported."
+
+        when: "File extensions are read"
+        field.acceptedFileExtensions
+
+        then: "Reading the new API is refused"
+        def e4 = thrown(IllegalStateException)
+        e4.message == "Cannot use getAcceptedFileExtensions when setAcceptedFileTypes is configured. " +
+                "Mixing the deprecated and new APIs is not supported."
+
+        when: "Another field has MIME types and deprecated types are set"
+        def other = uiComponents.create(FileUploadField)
+        other.acceptedMimeTypes = ["image/png"] as String[]
+        other.acceptedFileTypes = [".pdf"] as String[]
+
+        then: "Mixing is refused"
+        def e5 = thrown(IllegalStateException)
+        e5.message == "Cannot use setAcceptedFileTypes when setAcceptedMimeTypes or setAcceptedFileExtensions " +
+                "are configured. Mixing the deprecated and new APIs is not supported."
+
+        when: "Deprecated types are read"
+        other.acceptedFileTypes
+
+        then: "Reading the deprecated API is refused"
+        def e6 = thrown(IllegalStateException)
+        e6.message == "Cannot use getAcceptedFileTypes when setAcceptedMimeTypes or setAcceptedFileExtensions " +
+                "are configured. Use getAcceptedMimeTypes() and getAcceptedFileExtensions() instead."
+    }
+
+    def "Empty new-API call keeps the deprecated hint"() {
+        given: "A field with deprecated accepted types"
+        def field = uiComponents.create(FileUploadField)
+        field.acceptedFileTypes = [".pdf"] as String[]
+
+        when: "Empty MIME types and file extensions are set"
+        field.acceptedMimeTypes = [] as String[]
+        field.acceptedFileExtensions = [] as String[]
+
+        then: "Nothing is thrown and the hint stays"
+        noExceptionThrown()
+        field.element.getProperty("acceptedFileTypes") == ".pdf"
+        field.acceptedFileTypes == [".pdf"]
+        field.uploadManager.acceptedMimeTypes.empty
+        field.uploadManager.acceptedFileExtensions.empty
+    }
+
+    def "Clearing the deprecated types removes the hint"() {
+        given: "A field with deprecated accepted types"
+        def field = uiComponents.create(FileUploadField)
+        field.acceptedFileTypes = [".pdf", null] as String[]
+
+        expect: "Null entries are skipped"
+        field.acceptedFileTypes == [".pdf"]
+        field.element.getProperty("acceptedFileTypes") == ".pdf"
+
+        when: "Deprecated types are cleared"
+        field.acceptedFileTypes = [] as String[]
+
+        then: "The hint is removed and the new API can be used"
+        field.acceptedFileTypes.empty
+        field.element.getProperty("acceptedFileTypes") == ""
+
+        when: "MIME types are set"
+        field.acceptedMimeTypes = ["image/png"] as String[]
+
+        then: "They reach the manager"
+        field.acceptedMimeTypes == ["image/png"]
+        field.uploadManager.acceptedMimeTypes == ["image/png"]
+    }
+
     protected List<String> pendingExpressions() {
         def internals = UI.current.internals
         internals.stateTree.runExecutionsBeforeClientResponse()

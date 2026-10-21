@@ -72,7 +72,7 @@ public class StandardListView<E> extends StandardView implements LookupView<E>, 
             getSelectAction().ifPresentOrElse(
                     selectAction -> {
                         if (selectAction.isEnabled()) {
-                            selectAction.actionPerform(enterPressEvent.getSource());
+                            selectAction.perform(new Action.Context(enterPressEvent.getSource()));
                         }
                     },
                     this::handleSelection

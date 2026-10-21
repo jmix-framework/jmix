@@ -49,6 +49,10 @@ public class InputDialogAction extends ViewAction<InputDialogAction, InputDialog
         return inputDialog;
     }
 
+    /**
+     * @deprecated use {@link #perform} instead
+     */
+    @Deprecated(since = "3.2", forRemoval = true)
     @Override
     public void actionPerform(Component component) {
         this.component = component;

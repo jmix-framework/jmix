@@ -62,6 +62,10 @@ public abstract class ViewAction<A extends ViewAction<A, V>, V extends View<?>> 
         return self();
     }
 
+    /**
+     * @deprecated use {@link #perform} instead
+     */
+    @Deprecated(since = "3.2", forRemoval = true)
     @Override
     public void actionPerform(Component component) {
         // if standard behaviour

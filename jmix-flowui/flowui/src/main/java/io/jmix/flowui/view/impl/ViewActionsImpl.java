@@ -137,7 +137,7 @@ public class ViewActionsImpl implements ViewActions {
         com.vaadin.flow.component.Component viewLayout = getView().getContent();
         if (keyCombination != null) {
             ShortcutRegistration shortcutRegistration = Shortcuts.addShortcutListener(viewLayout,
-                    () -> action.actionPerform(view),
+                    () -> action.perform(new Action.Context(view)),
                     keyCombination.getKey(),
                     keyCombination.getKeyModifiers());
 

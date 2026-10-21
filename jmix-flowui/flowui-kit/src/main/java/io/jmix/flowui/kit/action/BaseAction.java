@@ -60,6 +60,10 @@ public class BaseAction<A extends BaseAction<A>> extends AbstractAction {
         setEnabledInternal(enabledExplicitly && isApplicable());
     }
 
+    /**
+     * @deprecated use {@link #perform} instead
+     */
+    @Deprecated(since = "3.2", forRemoval = true)
     @Override
     public void actionPerform(Component component) {
         if (eventBus != null) {

@@ -971,7 +971,7 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
         }
 
         if (action != null && action.isEnabled()) {
-            action.actionPerform(component);
+            action.perform(new Action.Context(component));
         }
     }
 

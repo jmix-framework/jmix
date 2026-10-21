@@ -74,6 +74,10 @@ public abstract class GenericFilterAction<A extends GenericFilterAction<A>> exte
         }
     }
 
+    /**
+     * @deprecated use {@link #perform} instead
+     */
+    @Deprecated(since = "3.2", forRemoval = true)
     @Override
     public void actionPerform(Component component) {
         // if standard behaviour

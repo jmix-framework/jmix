@@ -64,6 +64,10 @@ public abstract class PickerAction<A extends PickerAction<A, C, V>, C extends Pi
                 && target != null;
     }
 
+    /**
+     * @deprecated use {@link #perform} instead
+     */
+    @Deprecated(since = "3.2", forRemoval = true)
     @Override
     public void actionPerform(Component component) {
         // if standard behaviour

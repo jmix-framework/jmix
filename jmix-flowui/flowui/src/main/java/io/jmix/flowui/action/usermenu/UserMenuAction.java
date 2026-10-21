@@ -96,6 +96,10 @@ public abstract class UserMenuAction<A extends UserMenuAction<A, C>, C extends J
         this.target = target;
     }
 
+    /**
+     * @deprecated use {@link #perform} instead
+     */
+    @Deprecated(since = "3.2", forRemoval = true)
     @Override
     public void actionPerform(Component component) {
         // if standard behaviour

@@ -65,7 +65,7 @@ public class ValuePickerButtonActionSupport {
             button.setVisible(action.isVisible());
             button.setIcon(action.getIconComponent());
 
-            registration = button.addClickListener(event -> action.actionPerform(event.getSource()));
+            registration = button.addClickListener(event -> action.perform(new Action.Context(event.getSource())));
             actionPropertyChangeRegistration = addPropertyChangeListener();
         }
     }

@@ -578,7 +578,7 @@ public abstract class AbstractDropdownButton extends Composite<JmixMenuBar>
         }
 
         protected void onItemClick(com.vaadin.flow.component.ClickEvent<MenuItem> event) {
-            this.action.actionPerform(event.getSource());
+            this.action.perform(new Action.Context(event.getSource()));
         }
 
         protected void onActionPropertyChange(PropertyChangeEvent event) {

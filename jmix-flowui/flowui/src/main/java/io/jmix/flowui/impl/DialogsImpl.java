@@ -141,7 +141,7 @@ public class DialogsImpl implements Dialogs {
         }
 
         button.addClickListener(event -> {
-            action.actionPerform(dialog);
+            action.perform(new Action.Context(dialog));
             dialog.close();
         });
 

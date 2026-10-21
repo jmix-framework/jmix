@@ -67,6 +67,10 @@ public abstract class FragmentAction<A extends FragmentAction<A, C>, C extends F
         return self();
     }
 
+    /**
+     * @deprecated use {@link #perform} instead
+     */
+    @Deprecated(since = "3.2", forRemoval = true)
     @Override
     public void actionPerform(Component component) {
         // if standard behaviour

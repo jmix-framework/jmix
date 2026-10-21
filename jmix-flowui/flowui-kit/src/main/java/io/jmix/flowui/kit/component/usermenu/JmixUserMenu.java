@@ -535,7 +535,7 @@ public class JmixUserMenu<USER> extends Composite<JmixMenuBar>
         }
 
         protected void onItemClick(ClickEvent<MenuItem> event) {
-            action.actionPerform(event.getSource());
+            action.perform(new Action.Context(event.getSource()));
         }
 
         protected void onActionPropertyChange(PropertyChangeEvent event) {

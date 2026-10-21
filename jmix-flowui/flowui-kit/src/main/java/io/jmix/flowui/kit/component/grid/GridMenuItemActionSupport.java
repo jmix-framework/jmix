@@ -94,7 +94,7 @@ public class GridMenuItemActionSupport {
                 actionPropertyChangeRegistration = action.addPropertyChangeListener(this::propertyChangeEventListener);
             }
             registration = contextMenuItem.addMenuItemClickListener(event ->
-                    action.actionPerform(event.getSource()));
+                    action.perform(new Action.Context(event.getSource())));
         }
 
         updateVisible();

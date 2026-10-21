@@ -44,6 +44,10 @@ public class ObservableBaseAction<A extends ObservableBaseAction<A>> extends Bas
         super(id);
     }
 
+    /**
+     * @deprecated use {@link #perform} instead
+     */
+    @Deprecated(since = "3.2", forRemoval = true)
     @Override
     public void actionPerform(Component component) {
         if (eventBus != null) {

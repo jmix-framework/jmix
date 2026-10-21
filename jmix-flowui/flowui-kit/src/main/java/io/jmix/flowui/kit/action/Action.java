@@ -27,7 +27,7 @@ import java.util.function.Consumer;
 /**
  * The {@code Action} interface abstracts away a function from a visual component.
  * <p>
- * The action is executed by invoking its {@link #actionPerform(Component)} method.
+ * The action is executed by invoking its {@link #perform(Context)} method.
  * <p>
  * The action itself has no visual representations, but visual components may use its
  * properties to initialize their appearance.
@@ -180,8 +180,19 @@ public interface Action extends HasShortcutCombination {
     /**
      * Executes action logic.
      *
-     * @param component {@link Component} that triggered this action
+     * @param context {@link Context} of the action execution
      */
+    default void perform(Context context) {
+        actionPerform(context.getComponent());
+    }
+
+    /**
+     * Executes action logic.
+     *
+     * @param component {@link Component} that triggered this action
+     * @deprecated use {@link #perform(Context)} instead
+     */
+    @Deprecated(since = "3.2", forRemoval = true)
     void actionPerform(Component component);
 
     /**
@@ -191,4 +202,31 @@ public interface Action extends HasShortcutCombination {
      * @return a registration object for removing an event listener
      */
     Registration addPropertyChangeListener(Consumer<PropertyChangeEvent> listener);
+
+    /**
+     * Context of an action execution, passed to {@link Action#perform(Context)}.
+     */
+    class Context {
+
+        protected final Component component;
+
+        /**
+         * Constructs a context.
+         *
+         * @param component {@link Component} that triggered the action
+         */
+        public Context(Component component) {
+            this.component = component;
+        }
+
+        /**
+         * Returns the component that triggered the action: a button, a menu item, the actions holder for a
+         * shortcut, the view or dialog.
+         *
+         * @return the component that triggered the action
+         */
+        public Component getComponent() {
+            return component;
+        }
+    }
 }

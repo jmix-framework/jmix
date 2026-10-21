@@ -250,7 +250,9 @@ export class JmixUploadField extends SlotStylesMixin(DelegateFocusMixin(InputCon
 
         if (acceptedFileTypes) {
             this._manager.accept = acceptedFileTypes;
-        } else if (oldAcceptedFileTypes) {
+        } else if (oldAcceptedFileTypes && this._manager.accept === oldAcceptedFileTypes) {
+            // The observer runs after the whole server response was applied: the accepted MIME types or
+            // extensions set in the same response have already replaced the hint and must stay.
             this._manager.accept = '';
         }
     }

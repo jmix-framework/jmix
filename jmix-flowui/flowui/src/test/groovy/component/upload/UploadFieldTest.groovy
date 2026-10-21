@@ -99,6 +99,21 @@ class UploadFieldTest extends FlowuiTestSpecification {
         field.uploadIcon.is(icon)
     }
 
+    def "I18n is pushed to the client"() {
+        given: "A field and an i18n with upload dialog texts"
+        def field = uiComponents.create(FileUploadField)
+        def i18n = new JmixUploadI18N()
+        i18n.uploadDialog = new JmixUploadI18N.UploadDialog().setTitle("Title").setCancel("Stop")
+
+        when: "The i18n is set"
+        field.i18n = i18n
+
+        then: "The client gets it as the jmixI18n property"
+        def json = field.element.getPropertyRaw("jmixI18n")
+        json.get("uploadDialog").get("title").asText() == "Title"
+        json.get("uploadDialog").get("cancel").asText() == "Stop"
+    }
+
     def "Max file size goes to the manager"() {
         given: "A field"
         def field = uiComponents.create(FileUploadField)
@@ -404,9 +419,10 @@ class UploadFieldTest extends FlowuiTestSpecification {
         UI.current.add(field)
         def expressions = uploadButtonExpressions(field)
 
-        then: "The link and the sync are sent again, the link first"
+        then: "The link and the sync are sent again"
+        // Outside navigation TestUI runs the callbacks at once, so only the navigated tests check the order
         indexOfLink(expressions) >= 0
-        indexOfSync(expressions) > indexOfLink(expressions)
+        indexOfSync(expressions) >= 0
     }
 
     protected static Element uploadConnector(AbstractSingleUploadField field) {

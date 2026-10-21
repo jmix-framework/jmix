@@ -408,9 +408,10 @@ public abstract class AbstractSingleUploadField<C extends AbstractSingleUploadFi
     }
 
     /**
-     * Specify the types of files that the server accepts. Syntax: a MIME type pattern (wildcards are allowed)
-     * or file extensions. Notice that MIME types are widely supported, while file extensions are only implemented
-     * in certain browsers, so it should be avoided.
+     * Specify the types of files the field offers and accepts on the client. Syntax: a MIME type pattern
+     * (wildcards are allowed) or file extensions; a file is accepted when any of them matches. The values are a
+     * client-side hint only and are not checked on the server: use {@link #setAcceptedMimeTypes(String...)} and
+     * {@link #setAcceptedFileExtensions(String...)} for validation on the server.
      * <p>
      * Example: "video/*","image/tiff" or ".pdf","audio/mp3"
      *
@@ -826,8 +827,9 @@ public abstract class AbstractSingleUploadField<C extends AbstractSingleUploadFi
     }
 
     /**
-     * Fired by the field's client element when an upload fails before the request reaches the upload
-     * handler, e.g. when the container rejects the request, so the server-side listeners are not notified.
+     * Fired by the field's client element whenever an upload fails on the client: the request failed, was aborted
+     * or got an error response. It also covers failures before the request reaches the upload handler, e.g. when
+     * the container rejects the request, which the server-side listeners never see.
      */
     @DomEvent("jmix-upload-internal-error")
     protected static class JmixUploadInternalErrorEvent extends ComponentEvent<AbstractSingleUploadField<?, ?, ?>> {
@@ -873,7 +875,7 @@ public abstract class AbstractSingleUploadField<C extends AbstractSingleUploadFi
             Objects.requireNonNull(targetName, "The target name cannot be null");
 
             if (owner == null) {
-                // Called from the super constructor
+                // Called from the super constructor.
                 constructorHandler = handler;
                 constructorTargetName = targetName;
             } else {

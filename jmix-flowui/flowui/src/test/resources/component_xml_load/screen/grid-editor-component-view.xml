@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  ~ Copyright 2026 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<view xmlns="http://jmix.io/schema/flowui/view">
+    <data>
+        <collection id="customersDc"
+                    class="test_support.entity.sales.Customer">
+            <fetchPlan extends="_base"/>
+        </collection>
+        <collection id="ordersDc"
+                    class="test_support.entity.sales.Order">
+            <fetchPlan extends="_base">
+                <property name="customer" fetchPlan="_base"/>
+            </fetchPlan>
+        </collection>
+        <collection id="groupsDc"
+                    class="test_support.entity.sec.Group">
+            <fetchPlan extends="_base"/>
+        </collection>
+        <collection id="citiesDc"
+                    class="test_support.entity.City">
+            <fetchPlan extends="_base"/>
+        </collection>
+    </data>
+    <layout>
+        <dataGrid id="customersDataGrid" dataContainer="customersDc">
+            <columns>
+                <column property="status">
+                    <editorComponent>
+                        <comboBox itemsEnum="test_support.entity.sales.Status" required="true"/>
+                    </editorComponent>
+                </column>
+                <column property="name">
+                    <editorComponent>
+                        <textField id="nameEditor" maxLength="5" readOnly="true"/>
+                    </editorComponent>
+                </column>
+                <column property="email" editable="true"/>
+            </columns>
+        </dataGrid>
+
+        <dataGrid id="bufferedCustomersDataGrid" dataContainer="customersDc" editorBuffered="true">
+            <columns>
+                <column property="status">
+                    <editorComponent>
+                        <comboBox itemsEnum="test_support.entity.sales.Status" required="true"/>
+                    </editorComponent>
+                </column>
+                <column property="name">
+                    <editorComponent>
+                        <textField id="bufferedNameEditor" maxLength="5" readOnly="true"/>
+                    </editorComponent>
+                </column>
+                <column property="email" editable="true"/>
+            </columns>
+        </dataGrid>
+
+        <dataGrid id="customersSelectDataGrid" dataContainer="customersDc">
+            <columns>
+                <column property="status">
+                    <editorComponent>
+                        <select itemsEnum="test_support.entity.sales.Status"/>
+                    </editorComponent>
+                </column>
+            </columns>
+        </dataGrid>
+
+        <dataGrid id="editableCustomersDataGrid" dataContainer="customersDc">
+            <columns>
+                <column property="name" editable="true">
+                    <editorComponent>
+                        <textField id="editableNameEditor"/>
+                    </editorComponent>
+                </column>
+            </columns>
+        </dataGrid>
+
+        <dataGrid id="includeAllCustomersDataGrid" dataContainer="customersDc">
+            <columns includeAll="true">
+                <column property="status">
+                    <editorComponent>
+                        <comboBox/>
+                    </editorComponent>
+                </column>
+            </columns>
+        </dataGrid>
+
+        <dataGrid id="ordersDataGrid" dataContainer="ordersDc">
+            <columns>
+                <column property="customer">
+                    <editorComponent>
+                        <entityComboBox itemsContainer="customersDc"/>
+                    </editorComponent>
+                </column>
+                <column property="number">
+                    <editorComponent>
+                        <textField width="10em"/>
+                    </editorComponent>
+                </column>
+            </columns>
+        </dataGrid>
+
+        <treeDataGrid id="groupsTreeDataGrid" dataContainer="groupsDc" hierarchyProperty="parent">
+            <columns>
+                <column property="name">
+                    <editorComponent>
+                        <textField/>
+                    </editorComponent>
+                </column>
+            </columns>
+        </treeDataGrid>
+
+        <dataGrid id="citiesDataGrid" dataContainer="citiesDc">
+            <columns>
+                <column property="name">
+                    <editorComponent>
+                        <textField required="false"/>
+                    </editorComponent>
+                </column>
+            </columns>
+        </dataGrid>
+    </layout>
+</view>

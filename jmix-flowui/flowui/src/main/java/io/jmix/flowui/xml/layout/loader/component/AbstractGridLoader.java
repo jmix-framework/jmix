@@ -19,6 +19,8 @@ package io.jmix.flowui.xml.layout.loader.component;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.HasSize;
+import com.vaadin.flow.component.HasValueAndElement;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.*;
 import com.vaadin.flow.component.grid.Grid.NestedNullBehavior;
@@ -42,11 +44,17 @@ import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.metamodel.model.MetadataObject;
 import io.jmix.flowui.accesscontext.UiEntityContext;
 import io.jmix.flowui.component.AggregationInfo;
+import io.jmix.flowui.component.HasLengthLimited;
+import io.jmix.flowui.component.HasRequired;
+import io.jmix.flowui.component.SupportsMetaClass;
+import io.jmix.flowui.component.SupportsStatusChangeHandler;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.grid.DataGridColumn;
 import io.jmix.flowui.component.grid.EnhancedDataGrid;
 import io.jmix.flowui.component.grid.GridContextMenuItemComponent;
 import io.jmix.flowui.component.grid.editor.DataGridEditor;
+import io.jmix.flowui.component.grid.editor.EditComponentGenerationContext;
+import io.jmix.flowui.data.SupportsValueSource;
 import io.jmix.flowui.data.aggregation.AggregationStrategy;
 import io.jmix.flowui.data.provider.EmptyValueProvider;
 import io.jmix.flowui.exception.GuiDevelopmentException;
@@ -88,6 +96,7 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
 
     public static final String COLUMN_ELEMENT_NAME = "column";
     public static final String EDITOR_ACTIONS_COLUMN_ELEMENT_NAME = "editorActionsColumn";
+    public static final String EDITOR_COMPONENT_ELEMENT_NAME = "editorComponent";
 
     protected ActionLoaderSupport actionLoaderSupport;
     protected MetadataTools metaDataTools;
@@ -553,6 +562,12 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
     }
 
     protected void loadColumnEditable(Element element, DataGridColumn<?> column, @Nullable String property) {
+        Element editorComponentElement = element.element(EDITOR_COMPONENT_ELEMENT_NAME);
+        if (editorComponentElement != null) {
+            loadColumnEditorComponent(element, editorComponentElement, column, property);
+            return;
+        }
+
         loadBoolean(element, "editable", editable -> {
             if (Boolean.TRUE.equals(editable)) {
                 if (property == null) {
@@ -564,6 +579,111 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
                 setDefaultEditComponent(column, property);
             }
         });
+    }
+
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    protected void loadColumnEditorComponent(Element columnElement, Element editorComponentElement,
+                                             DataGridColumn<?> column, @Nullable String property) {
+        if (!loadBoolean(columnElement, "editable").orElse(true)) {
+            throw new GuiDevelopmentException(
+                    "'editable=\"false\"' cannot be combined with 'editorComponent' in the '%s' column"
+                            .formatted(column.getKey()), context);
+        }
+
+        if (property == null) {
+            throw new GuiDevelopmentException(
+                    "'property' attribute is required for the '%s' column with 'editorComponent'"
+                            .formatted(column.getKey()), context);
+        }
+
+        List<Element> componentElements = editorComponentElement.elements();
+        if (componentElements.size() != 1) {
+            throw new GuiDevelopmentException(
+                    "'editorComponent' of the '%s' column must contain exactly one component element"
+                            .formatted(column.getKey()), context);
+        }
+
+        Element componentElement = componentElements.get(0);
+        for (String attribute : List.of("property", "dataContainer")) {
+            if (loadString(componentElement, attribute, false).isPresent()) {
+                throw new GuiDevelopmentException(("Component in 'editorComponent' of the '%s' column " +
+                        "cannot define '%s': it is bound to the column property")
+                        .formatted(column.getKey(), attribute), context);
+            }
+        }
+
+        // The component is created once to fail on view load rather than on the first edit.
+        ComponentLoader<?> typeCheckLoader = getLayoutLoader().createComponentLoader(componentElement);
+        typeCheckLoader.initComponent();
+        Component typeCheckComponent = typeCheckLoader.getResultComponent();
+        if (!(typeCheckComponent instanceof SupportsValueSource)) {
+            throw new GuiDevelopmentException(
+                    "Component in 'editorComponent' of the '%s' column must implement %s, but %s does not"
+                            .formatted(column.getKey(), SupportsValueSource.class.getSimpleName(),
+                                    typeCheckComponent.getClass().getSimpleName()), context);
+        }
+
+        MetaPropertyPath metaPropertyPath = resultComponent.getColumnMetaPropertyPath(column);
+
+        Editor<?> editor = resultComponent.getEditor();
+        if (editor instanceof DataGridEditor) {
+            ((DataGridEditor) editor).setColumnEditorComponent(column, property,
+                    (Function<EditComponentGenerationContext<?>, Component>) generationContext ->
+                            createColumnEditorComponent(componentElement, property, metaPropertyPath,
+                                    generationContext));
+        }
+    }
+
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    protected Component createColumnEditorComponent(Element componentElement, String property,
+                                                    @Nullable MetaPropertyPath metaPropertyPath,
+                                                    EditComponentGenerationContext<?> generationContext) {
+        ComponentLoader<?> componentLoader = getLayoutLoader().createComponentLoader(componentElement);
+        componentLoader.initComponent();
+
+        Component component = componentLoader.getResultComponent();
+        if (component instanceof SupportsMetaClass supportsMetaClass
+                && metaPropertyPath != null
+                && metaPropertyPath.getRange().isClass()) {
+            supportsMetaClass.setMetaClass(metaPropertyPath.getRange().asClass());
+        }
+
+        // Items must be set before binding, otherwise resetting them writes null into the edited item.
+        componentLoader.loadComponent();
+
+        ((SupportsValueSource) component).setValueSource(
+                generationContext.getValueSourceProvider().getValueSource(property));
+
+        // Binding overrides these attributes, so XML values are applied again.
+        if (component instanceof HasValueAndElement<?, ?> hasValueAndElement) {
+            componentLoader().loadValueAndElementAttributes(hasValueAndElement, componentElement);
+        }
+        if (component instanceof HasRequired hasRequired) {
+            componentLoader().loadRequired(hasRequired, componentElement, context);
+        }
+        if (component instanceof HasLengthLimited hasLengthLimited) {
+            loadInteger(componentElement, "maxLength", hasLengthLimited::setMaxLength);
+            loadInteger(componentElement, "minLength", hasLengthLimited::setMinLength);
+        }
+
+        if (component instanceof SupportsStatusChangeHandler supportsStatusChangeHandler) {
+            supportsStatusChangeHandler.setStatusChangeHandler(generationContext.getStatusHandler());
+        }
+        if (component instanceof HasSize hasSize && loadString(componentElement, "width").isEmpty()) {
+            hasSize.setWidthFull();
+        }
+
+        // Nested fragments register their initialization as autowire tasks of the root context.
+        ComponentLoader.Context rootContext = context;
+        while (rootContext.getParentContext() != null) {
+            rootContext = rootContext.getParentContext();
+        }
+        if (rootContext instanceof ComponentLoader.ComponentContext componentContext) {
+            componentContext.executeAutowireTasks();
+        }
+        context.executeInitTasks();
+
+        return component;
     }
 
     protected void setSelectionMode(SelectionMode selectionMode) {

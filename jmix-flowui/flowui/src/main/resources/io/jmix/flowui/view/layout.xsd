@@ -3585,11 +3585,16 @@
 
     <!-- Grid.Column-->
     <xs:complexType name="dataGridColumnComponent">
-        <xs:sequence minOccurs="0">
+        <xs:choice minOccurs="0" maxOccurs="unbounded">
             <xs:element name="aggregation" type="gridAggregationType"/>
             <xs:group ref="renderers"/>
             <xs:element name="fragmentRenderer" type="fragmentRendererElement"/>
-        </xs:sequence>
+            <xs:element name="editorComponent">
+                <xs:complexType>
+                    <xs:group ref="layoutOrComponent"/>
+                </xs:complexType>
+            </xs:element>
+        </xs:choice>
 
         <xs:attribute name="key" type="xs:string"/>
         <xs:attribute name="visible" type="xs:boolean"/>

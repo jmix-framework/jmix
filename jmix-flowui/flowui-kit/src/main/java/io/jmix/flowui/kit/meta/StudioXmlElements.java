@@ -162,6 +162,7 @@ public final class StudioXmlElements {
     public static final String DYNAMIC_ATTRIBUTES = "dynamicAttributes";
     public static final String DYNAMIC_ATTRIBUTES_PANEL = "dynamicAttributesPanel";
     public static final String EDITOR_ACTIONS_COLUMN = "editorActionsColumn";
+    public static final String EDITOR_COMPONENT = "editorComponent";
     public static final String EDIT_BUTTON = "editButton";
     public static final String EFFECT_SCATTER = "effectScatter";
     public static final String EMAIL = "email";

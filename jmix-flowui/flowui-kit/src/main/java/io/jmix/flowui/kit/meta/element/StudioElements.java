@@ -320,6 +320,22 @@ interface StudioElements {
     void popoverRenderer();
 
     @StudioElement(
+            name = "EditorComponent",
+            xmlElement = StudioXmlElements.EDITOR_COMPONENT,
+            target = {"com.vaadin.flow.component.grid.Grid.Column"},
+            unsupportedTarget = {"io.jmix.flowui.kit.component.grid.EditorActionsColumn"},
+            unlimitedCount = false,
+            documentationLink = "%VERSION%/flow-ui/vc/components/dataGrid.html#DataGridEditor",
+            availableChildren = @StudioAvailableChildrenInfo(
+                    availableClasses = @StudioAvailableChildrenInfo.ClassInfo(
+                            qualifiedName = "io.jmix.flowui.data.SupportsValueSource",
+                            maxCount = 1
+                    )
+            )
+    )
+    void columnEditorComponent();
+
+    @StudioElement(
             name = "ComponentItem",
             classFqn = "io.jmix.flowui.kit.component.dropdownbutton.ComponentItem",
             xmlElement = StudioXmlElements.COMPONENT_ITEM,

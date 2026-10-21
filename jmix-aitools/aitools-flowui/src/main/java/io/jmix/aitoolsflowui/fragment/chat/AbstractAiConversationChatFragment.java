@@ -253,12 +253,14 @@ public abstract class AbstractAiConversationChatFragment extends Fragment<Vertic
         } catch (AiChatGenerationRejectedException e) {
             log.debug("Not sent: a response is already running in conversation {}", e.getConversationId());
             resync();
+            restoreComposerText(userMessage);
             notifications.create(getMessage("aiChatFragment.alreadyResponding"))
                     .withType(Notifications.Type.WARNING)
                     .show();
             return;
         } catch (RuntimeException e) {
             handleStartFailure(e);
+            restoreComposerText(userMessage);
             return;
         }
 
@@ -453,6 +455,15 @@ public abstract class AbstractAiConversationChatFragment extends Fragment<Vertic
     protected abstract void onResponseCompleted(UUID assistantMessageId);
 
     protected abstract void clearComposer();
+
+    /**
+     * Puts the text of a message that could not be sent back into the composer. Does nothing by default, for a
+     * composer that keeps its text until a message is accepted.
+     *
+     * @param text the text of the message
+     */
+    protected void restoreComposerText(String text) {
+    }
 
     protected abstract void applyComposerEnabled(boolean enabled);
 

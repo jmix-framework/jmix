@@ -258,11 +258,7 @@ public abstract class AbstractAiConversationChatFragment extends Fragment<Vertic
                     .show();
             return;
         } catch (RuntimeException e) {
-            log.error("Failed to start an assistant response", e);
-            resync();
-            notifications.create(getMessage("aiChatFragment.errorProcessingMessage"))
-                    .withType(Notifications.Type.ERROR)
-                    .show();
+            handleStartFailure(e);
             return;
         }
 
@@ -279,6 +275,38 @@ public abstract class AbstractAiConversationChatFragment extends Fragment<Vertic
         clearComposer();
         appendUserMessage(savedUserMessage);
         messagesShown = true;
+        showThinkingIndicator();
+    }
+
+    /**
+     * Starts the assistant's answer again to the last question of the bound conversation, e.g. after the previous
+     * response failed. Ignored while a response is shown as running, without a bound conversation and when the AI
+     * is not available. When there is nothing to answer any more (the question got its answer meanwhile, e.g. in
+     * another tab) or another response already runs, the chat is brought in line with the server instead.
+     */
+    public void retryResponse() {
+        if (isAwaitingResponse() || conversation == null || !chatService.isAvailable()) {
+            return;
+        }
+
+        AiChatMessage question;
+        try {
+            question = generationManager.retry(conversation);
+        } catch (AiChatGenerationRejectedException e) {
+            log.debug("Not retried: a response is already running in conversation {}", e.getConversationId());
+            resync();
+            return;
+        } catch (RuntimeException e) {
+            handleStartFailure(e);
+            return;
+        }
+
+        if (question == null) {
+            resync();
+            return;
+        }
+        // Reloading drops what the failed response left, e.g. a transient error message.
+        refreshAll();
         showThinkingIndicator();
     }
 
@@ -529,6 +557,20 @@ public abstract class AbstractAiConversationChatFragment extends Fragment<Vertic
         if (!isAwaitingResponse()) {
             focusMessageInput();
         }
+    }
+
+    /**
+     * Reports a response that could not be started, e.g. because the question could not be saved, after bringing
+     * the chat in line with the server.
+     *
+     * @param e the failure
+     */
+    protected void handleStartFailure(RuntimeException e) {
+        log.error("Failed to start an assistant response", e);
+        resync();
+        notifications.create(getMessage("aiChatFragment.errorProcessingMessage"))
+                .withType(Notifications.Type.ERROR)
+                .show();
     }
 
     protected void showAssistantProcessingError() {

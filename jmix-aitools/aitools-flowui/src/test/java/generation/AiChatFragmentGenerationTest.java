@@ -78,6 +78,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -614,6 +615,84 @@ class AiChatFragmentGenerationTest {
         assertFalse(composer(fragment).isInputEnabled());
         assertEquals(List.of(TimelineItemType.USER, TimelineItemType.ASSISTANT, TimelineItemType.USER,
                 TimelineItemType.ASSISTANT_THINKING), timelineTypes(fragment));
+    }
+
+    @Test
+    void retryResponse_afterFailure_retriesThroughManager_replacesErrorWithThinking_andDisablesComposer() {
+        AiConversation conversation = conversationService.addConversation("Chat");
+        AiChatMessage question = messageService.createMessage(conversation, AiChatMessageType.USER, "Hi");
+        AiChatFragment fragment = chatFragment(navigate(conversation.getId()));
+        fragment.onGenerationStarted(new AiChatGenerationStartedEvent(this, conversation.getId(), GENERATION_ID));
+        fragment.onGenerationFailed(new AiChatGenerationFailedEvent(this, conversation.getId(), GENERATION_ID));
+        when(generationManager.retry(any())).thenReturn(question);
+
+        fragment.retryResponse();
+
+        verify(generationManager).retry(any());
+        assertTrue(fragment.isAwaitingResponse());
+        assertFalse(composer(fragment).isInputEnabled());
+        assertEquals(List.of(TimelineItemType.USER, TimelineItemType.ASSISTANT_THINKING), timelineTypes(fragment));
+    }
+
+    @Test
+    void retryResponse_questionAnsweredMeanwhile_showsTheAnswer() {
+        AiConversation conversation = conversationService.addConversation("Chat");
+        messageService.createMessage(conversation, AiChatMessageType.USER, "Hi");
+        AiChatFragment fragment = chatFragment(navigate(conversation.getId()));
+        // Answered in another tab meanwhile.
+        messageService.createMessage(conversation, AiChatMessageType.ASSISTANT, "Hello!");
+        when(generationManager.retry(any())).thenReturn(null);
+
+        fragment.retryResponse();
+
+        assertFalse(fragment.isAwaitingResponse());
+        assertTrue(composer(fragment).isInputEnabled());
+        assertEquals(List.of(TimelineItemType.USER, TimelineItemType.ASSISTANT), timelineTypes(fragment));
+    }
+
+    @Test
+    void retryResponse_rejected_showsTheRunningResponse_withoutNotification() {
+        AiConversation conversation = conversationService.addConversation("Chat");
+        messageService.createMessage(conversation, AiChatMessageType.USER, "Hi");
+        AiChatFragment fragment = chatFragment(navigate(conversation.getId()));
+        // Another tab retried first.
+        when(generationManager.getGeneration(any())).thenReturn(
+                Optional.of(new AiChatGeneration(conversation.getId(), GENERATION_ID, List.of(), 0)));
+        when(generationManager.retry(any())).thenThrow(new AiChatGenerationRejectedException(conversation.getId()));
+
+        fragment.retryResponse();
+
+        assertTrue(fragment.isAwaitingResponse());
+        assertEquals(List.of(TimelineItemType.USER, TimelineItemType.ASSISTANT_THINKING), timelineTypes(fragment));
+        verify(notifications, never()).create(anyString());
+    }
+
+    @Test
+    void retryResponse_fails_showsErrorNotification() {
+        AiConversation conversation = conversationService.addConversation("Chat");
+        messageService.createMessage(conversation, AiChatMessageType.USER, "Hi");
+        AiChatFragment fragment = chatFragment(navigate(conversation.getId()));
+        when(generationManager.retry(any())).thenThrow(new RejectedExecutionException("Shutting down"));
+        Notifications.NotificationBuilder notification = notificationBuilder();
+
+        fragment.retryResponse();
+
+        assertFalse(fragment.isAwaitingResponse());
+        verify(notifications).create(
+                messages.getMessage(CHAT_MESSAGES_GROUP, "aiChatFragment.errorProcessingMessage"));
+        verify(notification).withType(Notifications.Type.ERROR);
+    }
+
+    @Test
+    void retryResponse_whileResponseShown_ignored() {
+        AiConversation conversation = conversationService.addConversation("Chat");
+        AiChatFragment fragment = chatFragment(navigate(conversation.getId()));
+        fragment.onGenerationStarted(new AiChatGenerationStartedEvent(this, conversation.getId(), GENERATION_ID));
+
+        fragment.retryResponse();
+
+        verify(generationManager, never()).retry(any());
+        assertTrue(fragment.isAwaitingResponse());
     }
 
     @Test

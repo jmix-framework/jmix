@@ -74,7 +74,12 @@ const jmixUploadField = css`
 addGlobalStyles(
     'jmix-upload-field',
     css`
-        jmix-upload-field[theme~="no-file-name"] .jmix-upload-button {
+        /* Lumo gives buttons a vertical margin, which would make the field taller than other fields. */
+        .jmix-upload-field-button {
+            margin: 0;
+        }
+
+        jmix-upload-field[theme~="no-file-name"] .jmix-upload-field-button {
             flex-grow: 1;
         }
 
@@ -151,6 +156,13 @@ addGlobalStyles(
 
         .jmix-upload-dialog-cancel-button {
             align-self: end;
+        }
+
+        /* The dialog shows the uploading file only: the file's own commands are not offered. */
+        .jmix-upload-dialog-content vaadin-upload-file::part(start-button),
+        .jmix-upload-dialog-content vaadin-upload-file::part(retry-button),
+        .jmix-upload-dialog-content vaadin-upload-file::part(remove-button) {
+            display: none;
         }
     `,
 );

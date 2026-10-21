@@ -17,6 +17,7 @@
 package component_xml_load
 
 import com.vaadin.flow.component.shared.Tooltip
+import com.vaadin.flow.component.upload.UploadButton
 import component_xml_load.screen.FileUploadFieldView
 import io.jmix.core.DataManager
 import io.jmix.core.FileRef
@@ -127,8 +128,8 @@ class FileUploadFieldXmlLoadTest extends FlowuiTestSpecification {
         view.disabledFileUploadField.dropAllowed
         !view.disabledFileUploadField.element.getProperty("dropAllowed", true)
 
-        and: "The upload button does not handle drops on its own"
-        !field.uploadButton.dropAllowed
+        and: "The upload button is Vaadin's UploadButton"
+        field.uploadButton instanceof UploadButton
     }
 
     def "Load default I18N"() {
@@ -142,6 +143,7 @@ class FileUploadFieldXmlLoadTest extends FlowuiTestSpecification {
         field.i18n.error != null
         field.i18n.error.fileIsTooBig != null
         field.i18n.error.incorrectFileType != null
+        field.i18n.error.tooManyFiles == "Only one file can be uploaded"
         field.i18n.uploading != null
         field.i18n.uploading.status != null
         field.i18n.uploading.status.connecting != null

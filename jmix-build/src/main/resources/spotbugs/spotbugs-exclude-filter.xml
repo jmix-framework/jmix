@@ -239,6 +239,13 @@
     </Match>
 
     <Match>
+        <Bug pattern="UC_USELESS_OBJECT"/>
+        <Class name="io.jmix.reports.yarg.reporting.extraction.controller.DefaultExtractionController"/>
+        <!-- todo the loop that copies input params into rows has never had any effect. Validate and remove it separately -->
+        <Method name="extractData"/>
+    </Match>
+
+    <Match>
         <Bug pattern="URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD"/>
         <Class name="io.jmix.fullcalendarflowui.component.serialization.CalendarEventSerializer"/>
         <!-- public API, the time zone supplier is set via setTimeZoneSupplier() but is not needed for serialization -->

@@ -192,19 +192,7 @@ public abstract class AbstractAiConversationChatFragment extends Fragment<Vertic
         return this;
     }
 
-    /**
-     * Moves keyboard focus to the message composer. No-op if the composer is currently disabled (e.g. while the
-     * assistant is still generating a response).
-     */
-    public abstract void focusMessageInput();
-
-    /**
-     * Enables or disables the message composer for the host's own reasons. Independently of this, the fragment
-     * keeps the composer disabled while it shows an assistant response as running, so the end of a response never
-     * enables a composer the host disabled.
-     *
-     * @param enabled {@code false} to disable the composer; {@code true} to enable it unless a response is running
-     */
+    @Override
     public void setMessageInputEnabled(boolean enabled) {
         this.messageInputEnabled = enabled;
         updateMessageInputEnabled();

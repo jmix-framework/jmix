@@ -59,6 +59,20 @@ public interface AiConversationChat {
     void sendMessage(@Nullable String userMessage);
 
     /**
+     * Moves keyboard focus to the message input. No-op while the input cannot take a message, e.g. while a response
+     * is shown as running.
+     */
+    void focusMessageInput();
+
+    /**
+     * Enables or disables the message input for the host's own reasons. The chat keeps sending blocked while it shows
+     * a response as running regardless, and the end of a response never enables an input the host disabled.
+     *
+     * @param enabled {@code false} to disable the input; {@code true} to enable it unless a response is running
+     */
+    void setMessageInputEnabled(boolean enabled);
+
+    /**
      * Hides the message input and the conversation rename control.
      *
      * @param readOnly {@code true} to hide them

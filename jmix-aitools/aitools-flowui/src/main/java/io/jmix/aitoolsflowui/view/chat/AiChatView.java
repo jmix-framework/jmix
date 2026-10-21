@@ -21,7 +21,6 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.Route;
-import io.jmix.aitoolsflowui.fragment.chat.AbstractAiConversationChatFragment;
 import io.jmix.aitoolsflowui.fragment.chat.AiConversationChat;
 import io.jmix.aitoolsflowui.fragment.chat.AiConversationChatFactory;
 import io.jmix.aitoolsflowui.model.AiConversation;
@@ -122,7 +121,7 @@ public class AiChatView extends StandardView {
         contentInitialized = true;
         applyConversation();
         if (conversation != null) {
-            focusMessageInput();
+            chat.focusMessageInput();
         }
     }
 
@@ -174,13 +173,6 @@ public class AiChatView extends StandardView {
         chatComponent.setVisible(false);
         getContent().add(chatComponent);
         return createdChat;
-    }
-
-    protected void focusMessageInput() {
-        // Focusing is not part of the chat contract yet.
-        if (chat instanceof AbstractAiConversationChatFragment chatFragment) {
-            chatFragment.focusMessageInput();
-        }
     }
 
     protected void loadConversationFromRouteParameters(BeforeEnterEvent event) {

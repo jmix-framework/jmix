@@ -50,6 +50,14 @@ public class TestAiConversationChat extends Div implements AiConversationChat {
     }
 
     @Override
+    public void focusMessageInput() {
+    }
+
+    @Override
+    public void setMessageInputEnabled(boolean enabled) {
+    }
+
+    @Override
     public void setReadOnly(boolean readOnly) {
     }
 

@@ -143,6 +143,13 @@ public class ValuePickerActionSupport extends AbstractActionsHolderSupport<Compo
         }
     }
 
+    @Override
+    protected void performActionByShortcut(Action action) {
+        if (!isReadOnly() || isActionVisibleWhenReadOnly(action)) {
+            super.performActionByShortcut(action);
+        }
+    }
+
     protected boolean isReadOnly() {
         return component instanceof HasValue<?, ?> hasValue && hasValue.isReadOnly();
     }

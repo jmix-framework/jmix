@@ -303,12 +303,12 @@ class GenericFilterUrlConditionsTest extends FlowuiTestSpecification {
         return category
     }
 
-    void applyConditions(GenericFilterUrlConditionsTestView view, String... conditions) {
+    static void applyConditions(GenericFilterUrlConditionsTestView view, String... conditions) {
         def binder = getBinder(view)
         binder.updateState(new QueryParameters([(binder.conditionParam): conditions.toList()]))
     }
 
-    void applyConfiguration(GenericFilterUrlConditionsTestView view, String configurationId,
+    static void applyConfiguration(GenericFilterUrlConditionsTestView view, String configurationId,
                             String... conditions) {
         def binder = getBinder(view)
         binder.updateState(new QueryParameters([
@@ -317,7 +317,7 @@ class GenericFilterUrlConditionsTest extends FlowuiTestSpecification {
         ]))
     }
 
-    List<FilterComponent> rowsOf(Configuration configuration) {
+    static List<FilterComponent> rowsOf(Configuration configuration) {
         return configuration.rootLogicalFilterComponent.filterComponents
     }
 }

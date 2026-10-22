@@ -23,7 +23,6 @@ import io.jmix.flowui.facet.UrlQueryParametersFacet;
 import io.jmix.flowui.model.CollectionLoader;
 import io.jmix.flowui.view.StandardView;
 import io.jmix.flowui.view.Subscribe;
-import io.jmix.flowui.view.View.InitEvent;
 import io.jmix.flowui.view.ViewComponent;
 import io.jmix.flowui.view.ViewController;
 import io.jmix.flowui.view.ViewDescriptor;

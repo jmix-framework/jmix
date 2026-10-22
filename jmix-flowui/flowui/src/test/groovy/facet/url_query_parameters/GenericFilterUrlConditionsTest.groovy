@@ -280,36 +280,36 @@ class GenericFilterUrlConditionsTest extends FlowuiTestSpecification {
     }
 
     // Spock 2.4 needs a no-arg constructor to spy on an existing instance, so the spy is a new instance.
-    private FilterUrlQueryParametersSupport spyUrlParamsSupport(GenericFilterUrlConditionsTestView view) {
+    FilterUrlQueryParametersSupport spyUrlParamsSupport(GenericFilterUrlConditionsTestView view) {
         def support = Spy(FilterUrlQueryParametersSupport,
-                constructorArgs: [dataManager, metadataTools, urlParamSerializer]) as FilterUrlQueryParametersSupport
+                constructorArgs: [dataManager, metadataTools, urlParamSerializer])
         getBinder(view).filterUrlQueryParametersSupport = support
         return support
     }
 
     // Navigating to the view that is already open reuses its instance, so another view is opened first.
-    private GenericFilterUrlConditionsTestView openFreshView() {
+    GenericFilterUrlConditionsTestView openFreshView() {
         navigateToView(GenericFilterUrlQueryParamsTestView)
         return navigateToView(GenericFilterUrlConditionsTestView)
     }
 
-    private String inListCondition() {
+    String inListCondition() {
         return "property:category_in-list_${urlParamSerializer.serialize([cat1.id, cat2.id])}"
     }
 
-    private OwnerCategory newCategory(String name) {
+    OwnerCategory newCategory(String name) {
         OwnerCategory category = dataManager.create(OwnerCategory)
         category.name = name
         return category
     }
 
-    private void applyConditions(GenericFilterUrlConditionsTestView view, String... conditions) {
+    void applyConditions(GenericFilterUrlConditionsTestView view, String... conditions) {
         def binder = getBinder(view)
         binder.updateState(new QueryParameters([(binder.conditionParam): conditions.toList()]))
     }
 
-    private void applyConfiguration(GenericFilterUrlConditionsTestView view, String configurationId,
-                                    String... conditions) {
+    void applyConfiguration(GenericFilterUrlConditionsTestView view, String configurationId,
+                            String... conditions) {
         def binder = getBinder(view)
         binder.updateState(new QueryParameters([
                 (binder.configurationParam): [configurationId],
@@ -317,7 +317,7 @@ class GenericFilterUrlConditionsTest extends FlowuiTestSpecification {
         ]))
     }
 
-    private List<FilterComponent> rowsOf(Configuration configuration) {
+    List<FilterComponent> rowsOf(Configuration configuration) {
         return configuration.rootLogicalFilterComponent.filterComponents
     }
 }

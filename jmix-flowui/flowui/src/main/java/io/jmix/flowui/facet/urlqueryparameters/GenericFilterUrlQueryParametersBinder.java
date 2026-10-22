@@ -395,7 +395,7 @@ public class GenericFilterUrlQueryParametersBinder extends AbstractUrlQueryParam
 
     /**
      * Parses the condition strings from the URL and keeps the conditions that the filter permits.
-     * Neither the values are parsed nor the filter components are created at this point.
+     * No value is parsed and no filter component is created at this point.
      *
      * @param conditionParams the condition strings from the URL
      * @param entityMetaClass the meta class of the entity the filter loads
@@ -417,6 +417,7 @@ public class GenericFilterUrlQueryParametersBinder extends AbstractUrlQueryParam
     /**
      * Checks whether the filter permits a condition on the attribute of the URL condition: the attribute
      * passes the filter's property predicate, can be viewed by the current user and is not system-level.
+     * Returns {@code false} if the entity has no such attribute.
      *
      * @param entityMetaClass the meta class of the entity the filter loads
      * @param condition       the condition parsed from the URL
@@ -445,8 +446,9 @@ public class GenericFilterUrlQueryParametersBinder extends AbstractUrlQueryParam
 
     /**
      * Applies the conditions from the URL to the given configuration. Each condition is matched onto
-     * a property condition of the configuration, which it can match only once; an unmatched condition
-     * is added as a new condition to a runtime configuration and is ignored for a design-time one.
+     * a property condition of the configuration, and each property condition of the configuration is matched
+     * by at most one URL condition; an unmatched condition is added as a new condition to a runtime
+     * configuration and is ignored for a design-time one.
      *
      * @param currentConfiguration the configuration to apply the conditions to
      * @param conditionParams      the condition strings from the URL
@@ -481,8 +483,8 @@ public class GenericFilterUrlQueryParametersBinder extends AbstractUrlQueryParam
 
     /**
      * Applies the URL condition to the given property condition of a configuration if it has the same
-     * attribute. The operation is changed only if it is editable, and the value is set only if the
-     * operations then match.
+     * attribute. The operation of the property condition is changed only if it is editable, and the value
+     * is set only if the operations then match.
      *
      * @param configurationComponent the property condition of a configuration
      * @param condition              the condition parsed from the URL
@@ -535,7 +537,7 @@ public class GenericFilterUrlQueryParametersBinder extends AbstractUrlQueryParam
      * @param entityMetaClass the meta class of the entity the filter loads
      * @return the parsed condition, or {@code null} if the entity has no such attribute or the operation
      * is not available for it
-     * @throws IllegalStateException if the condition string cannot be parsed
+     * @throws IllegalStateException if the condition string has no separator between its parts
      */
     @Nullable
     protected UrlPropertyCondition parsePropertyCondition(String conditionString, MetaClass entityMetaClass) {

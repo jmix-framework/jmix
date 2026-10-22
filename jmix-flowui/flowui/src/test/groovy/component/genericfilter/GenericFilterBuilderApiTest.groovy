@@ -16,8 +16,10 @@
 
 package component.genericfilter
 
+import com.vaadin.flow.component.HasStyle
 import component.genericfilter.view.GenericFilterApiTestView
 import io.jmix.flowui.UiComponents
+import io.jmix.flowui.component.factory.PropertyFilterComponentGenerationStrategy
 import io.jmix.flowui.component.genericfilter.GenericFilter
 import io.jmix.flowui.component.genericfilter.configuration.DesignTimeConfiguration
 import io.jmix.flowui.component.jpqlfilter.JpqlFilter
@@ -228,6 +230,22 @@ class GenericFilterBuilderApiTest extends FlowuiTestSpecification {
 
         then: "it builds successfully"
         pf.property == "number"
+    }
+
+    def "PropertyFilterBuilder keeps the unary-field class on the value component of an IS_SET filter"() {
+        given:
+        GenericFilter filter = filterWithLoader()
+
+        when:
+        def isSetFilter = filter.filterComponentBuilder()
+                .propertyFilter()
+                .property("number")
+                .operation(PropertyFilter.Operation.IS_SET)
+                .build() as PropertyFilter
+
+        then:
+        (isSetFilter.valueComponent as HasStyle).classNames
+                .contains(PropertyFilterComponentGenerationStrategy.UNARY_FIELD_CLASS_NAME)
     }
 
     // FilterComponentBuilder — JpqlFilter

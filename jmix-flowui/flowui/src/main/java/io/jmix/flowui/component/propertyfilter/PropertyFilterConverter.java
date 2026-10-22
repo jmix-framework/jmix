@@ -161,7 +161,7 @@ public class PropertyFilterConverter
             }
 
             ((Component) valueComponent).setId(Strings.nullToEmpty(filterValueComponent.getComponentId()));
-            if (valueComponent instanceof HasStyle) {
+            if (valueComponent instanceof HasStyle && filterValueComponent.getStyleName() != null) {
                 ((HasStyle) valueComponent).setClassName(filterValueComponent.getStyleName());
             }
         }

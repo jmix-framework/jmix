@@ -159,6 +159,15 @@ public abstract class ValuePickerBase<C extends ValuePickerBase<C, V>, V>
     }
 
     @Override
+    public void setReadOnly(boolean readOnly) {
+        super.setReadOnly(readOnly);
+
+        if (actionsSupport != null) {
+            actionsSupport.updateReadOnlyState();
+        }
+    }
+
+    @Override
     public void addAction(Action action, int index) {
         getActionsSupport().addAction(action, index);
     }

@@ -17,9 +17,11 @@
 package io.jmix.flowui.kit.component.valuepicker;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.shared.SlotUtils;
 import com.vaadin.flow.dom.Element;
+import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.component.delegate.AbstractActionsHolderSupport;
 
@@ -35,6 +37,7 @@ public class ValuePickerActionSupport extends AbstractActionsHolderSupport<Compo
 
     protected static final String SLOT_ACTIONS = "actions";
     protected static final String ATTRIBUTE_HAS_ACTIONS = "has-actions";
+    protected static final String ATTRIBUTE_HAS_READONLY_ACTIONS = "has-readonly-actions";
 
     protected final String actionsSlot;
     protected final String hasActionsAttribute;
@@ -42,6 +45,7 @@ public class ValuePickerActionSupport extends AbstractActionsHolderSupport<Compo
     protected Div actionsLayout;
 
     protected Map<Action, ValuePickerButton> actionBinding = new HashMap<>();
+    protected Map<Action, Registration> actionVisibilityRegistrations = new HashMap<>();
 
     public ValuePickerActionSupport(Component component) {
         this(component, SLOT_ACTIONS, ATTRIBUTE_HAS_ACTIONS);
@@ -82,9 +86,22 @@ public class ValuePickerActionSupport extends AbstractActionsHolderSupport<Compo
         getActionsLayout().addComponentAtIndex(index, button);
 
         actionBinding.put(action, button);
+
+        updateButtonVisibility(action);
+        // Registered after the button's own listener, so the read-only rule has the last word.
+        actionVisibilityRegistrations.put(action, action.addPropertyChangeListener(event -> {
+            if (Action.PROP_VISIBLE.equals(event.getPropertyName())) {
+                updateButtonVisibility(action);
+            }
+        }));
     }
 
     protected void removeButton(Action action) {
+        Registration registration = actionVisibilityRegistrations.remove(action);
+        if (registration != null) {
+            registration.remove();
+        }
+
         ValuePickerButton button = actionBinding.remove(action);
         button.setAction(null);
         getActionsLayout().remove(button);
@@ -98,6 +115,40 @@ public class ValuePickerActionSupport extends AbstractActionsHolderSupport<Compo
             SlotUtils.addToSlot(component, actionsSlot, getActionsLayout());
             getElement().setAttribute(hasActionsAttribute, true);
         }
+
+        if (getActions().stream().anyMatch(this::isActionVisibleWhenReadOnly)) {
+            getElement().setAttribute(ATTRIBUTE_HAS_READONLY_ACTIONS, true);
+        } else {
+            getElement().removeAttribute(ATTRIBUTE_HAS_READONLY_ACTIONS);
+        }
+    }
+
+    /**
+     * Updates the visibility of action buttons according to the read-only state of the component.
+     * Must be called when the read-only state of the component changes.
+     */
+    public void updateReadOnlyState() {
+        for (Action action : actions) {
+            updateButtonVisibility(action);
+        }
+
+        updateActionsSlot();
+    }
+
+    protected void updateButtonVisibility(Action action) {
+        ValuePickerButton button = actionBinding.get(action);
+        if (button != null) {
+            button.setVisible(action.isVisible()
+                    && (!isReadOnly() || isActionVisibleWhenReadOnly(action)));
+        }
+    }
+
+    protected boolean isReadOnly() {
+        return component instanceof HasValue<?, ?> hasValue && hasValue.isReadOnly();
+    }
+
+    protected boolean isActionVisibleWhenReadOnly(Action action) {
+        return false;
     }
 
     protected Div getActionsLayout() {

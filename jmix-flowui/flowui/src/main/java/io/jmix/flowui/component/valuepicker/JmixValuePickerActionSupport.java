@@ -18,6 +18,7 @@ package io.jmix.flowui.component.valuepicker;
 
 import com.vaadin.flow.component.Component;
 import io.jmix.flowui.UiComponents;
+import io.jmix.flowui.action.AdjustWhenFieldReadOnly;
 import io.jmix.flowui.action.valuepicker.PickerAction;
 import io.jmix.flowui.component.PickerComponent;
 import io.jmix.flowui.kit.action.Action;
@@ -70,6 +71,12 @@ public class JmixValuePickerActionSupport extends ValuePickerActionSupport imple
             ((PickerAction<?, PickerComponent<?>, ?>) action)
                     .setTarget(null);
         }
+    }
+
+    @Override
+    protected boolean isActionVisibleWhenReadOnly(Action action) {
+        return action instanceof AdjustWhenFieldReadOnly adjustable
+                && adjustable.isVisibleWhenFieldReadOnly();
     }
 
     @Override

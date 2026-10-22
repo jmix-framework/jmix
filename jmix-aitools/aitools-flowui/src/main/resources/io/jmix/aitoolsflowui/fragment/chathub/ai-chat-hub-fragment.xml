@@ -69,14 +69,11 @@
                                   classNames="chat-hub-subtitle"/>
                         </vbox>
 
-                        <vbox id="composerCard"
+                        <vbox id="chatInputContainer"
                               width="100%"
                               spacing="false"
                               padding="false"
-                              classNames="chat-hub-input">
-                            <fragment id="composerFragment"
-                                      class="io.jmix.aitoolsflowui.fragment.input.AiChatInputFragment"/>
-                        </vbox>
+                              classNames="chat-hub-input"/>
 
                         <hbox id="recentConversationsHeader"
                               width="100%"

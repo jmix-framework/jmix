@@ -16,6 +16,7 @@
 
 package io.jmix.aitoolsflowui.fragment.input;
 
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.messages.MessageInput;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import io.jmix.aitoolsflowui.fragment.chat.AiChatFragment;
@@ -30,7 +31,7 @@ import org.jspecify.annotations.Nullable;
 import java.util.function.Consumer;
 
 /**
- * Reusable chat input ("composer"). Replaces the stock Vaadin {@link MessageInput} with a
+ * The add-on's {@link AiChatInput}. Replaces the stock Vaadin {@link MessageInput} with a
  * {@link JmixTextArea} + send {@link JmixButton}, so it can be embedded both in
  * the timeline ({@link AiChatFragment}) and on the chat hub screen.
  * <p>
@@ -40,7 +41,7 @@ import java.util.function.Consumer;
  */
 @Experimental
 @FragmentDescriptor("ai-chat-input-fragment.xml")
-public class AiChatInputFragment extends Fragment<VerticalLayout> {
+public class AiChatInputFragment extends Fragment<VerticalLayout> implements AiChatInput {
 
     @ViewComponent
     protected JmixTextArea messageField;
@@ -60,6 +61,7 @@ public class AiChatInputFragment extends Fragment<VerticalLayout> {
      *
      * @param submitHandler handler invoked with the submitted text, or {@code null} for a no-op
      */
+    @Override
     public void setSubmitHandler(@Nullable Consumer<String> submitHandler) {
         this.submitHandler = submitHandler;
     }
@@ -78,6 +80,7 @@ public class AiChatInputFragment extends Fragment<VerticalLayout> {
      *
      * @param enabled {@code true} to enable the input and the send button
      */
+    @Override
     public void setInputEnabled(boolean enabled) {
         messageField.setEnabled(enabled);
         sendButton.setEnabled(enabled);
@@ -95,6 +98,7 @@ public class AiChatInputFragment extends Fragment<VerticalLayout> {
     /**
      * Moves keyboard focus to the input. No-op if the input is disabled.
      */
+    @Override
     public void focus() {
         if (messageField.isEnabled()) {
             messageField.focus();
@@ -104,8 +108,19 @@ public class AiChatInputFragment extends Fragment<VerticalLayout> {
     /**
      * Clears the input text.
      */
+    @Override
     public void clear() {
         messageField.clear();
+    }
+
+    @Override
+    public void restoreText(String text) {
+        messageField.setValue(text);
+    }
+
+    @Override
+    public Component asComponent() {
+        return this;
     }
 
     /**

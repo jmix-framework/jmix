@@ -50,7 +50,7 @@ import java.util.stream.Collectors;
 
 /**
  * Encapsulates the "AI chat panel" UI — title row, message timeline, thinking
- * indicator and the {@link AiChatInputFragment} composer — for an {@link AiConversation}.
+ * indicator and the {@link AiChatInputFragment} message input — for an {@link AiConversation}.
  * Designed to be embedded into any host view (the standard detail view, a
  * side dialog, a chat hub view, custom layouts).
  * <p>
@@ -78,7 +78,7 @@ public class AiChatFragment extends AbstractAiConversationChatFragment {
     @ViewComponent
     protected JmixButton renameConversationBtn;
     @ViewComponent
-    protected VerticalLayout composerContainer;
+    protected VerticalLayout chatInputContainer;
     @ViewComponent
     protected JmixVirtualList<TimelineItem> timelineList;
 
@@ -86,7 +86,7 @@ public class AiChatFragment extends AbstractAiConversationChatFragment {
     protected CollectionContainer<TimelineItem> timelineItemsDc;
 
     @ViewComponent
-    protected AiChatInputFragment composerFragment;
+    protected AiChatInputFragment chatInput;
 
     @Nullable
     protected TimelineItem activeThinkingItem;
@@ -126,12 +126,12 @@ public class AiChatFragment extends AbstractAiConversationChatFragment {
 
     @Override
     public void focusMessageInput() {
-        composerFragment.focus();
+        chatInput.focus();
     }
 
     @Override
-    protected void initComposer(Consumer<String> submitHandler) {
-        composerFragment.setSubmitHandler(submitHandler);
+    protected void initInput(Consumer<String> submitHandler) {
+        chatInput.setSubmitHandler(submitHandler);
     }
 
     @Override
@@ -187,18 +187,18 @@ public class AiChatFragment extends AbstractAiConversationChatFragment {
     }
 
     @Override
-    protected void clearComposer() {
-        composerFragment.clear();
+    protected void clearInput() {
+        chatInput.clear();
     }
 
     @Override
-    protected void applyComposerEnabled(boolean enabled) {
-        composerFragment.setInputEnabled(enabled);
+    protected void applyInputEnabled(boolean enabled) {
+        chatInput.setInputEnabled(enabled);
     }
 
     @Override
-    protected void applyComposerVisible(boolean visible) {
-        composerContainer.setVisible(visible);
+    protected void applyInputVisible(boolean visible) {
+        chatInputContainer.setVisible(visible);
     }
 
     /**

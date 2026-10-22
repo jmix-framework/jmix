@@ -17,7 +17,7 @@
 
 <fragment xmlns="http://jmix.io/schema/flowui/fragment">
     <content>
-        <vbox id="composerRoot"
+        <vbox id="inputRoot"
               width="100%"
               padding="false"
               spacing="false"

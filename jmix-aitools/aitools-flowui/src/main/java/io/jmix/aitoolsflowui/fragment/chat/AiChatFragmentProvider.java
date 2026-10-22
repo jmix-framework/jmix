@@ -16,6 +16,8 @@
 
 package io.jmix.aitoolsflowui.fragment.chat;
 
+import io.jmix.aitoolsflowui.fragment.input.AiChatInput;
+import io.jmix.aitoolsflowui.fragment.input.AiChatInputFragment;
 import io.jmix.core.annotation.Experimental;
 import io.jmix.flowui.Fragments;
 import io.jmix.flowui.fragment.FragmentOwner;
@@ -25,8 +27,8 @@ import org.springframework.core.Ordered;
 import org.springframework.stereotype.Component;
 
 /**
- * The add-on's default {@link AiConversationChatProvider}: the timeline chat {@link AiChatFragment}. Used only when
- * no other provider is registered.
+ * The add-on's default {@link AiConversationChatProvider}: the timeline chat {@link AiChatFragment} and the
+ * {@link AiChatInputFragment} message input. Used only when no other provider is registered.
  */
 @Experimental
 @Component("aitls_AiChatFragmentProvider")
@@ -39,6 +41,12 @@ public class AiChatFragmentProvider implements AiConversationChatProvider {
     @Override
     public AiConversationChat create(FragmentOwner owner) {
         return fragments.create(owner, AiChatFragment.class);
+    }
+
+    @NullMarked
+    @Override
+    public AiChatInput createInput(FragmentOwner owner) {
+        return fragments.create(owner, AiChatInputFragment.class);
     }
 
     @Override

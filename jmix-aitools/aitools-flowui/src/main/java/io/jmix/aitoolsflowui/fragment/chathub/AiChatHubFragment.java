@@ -29,7 +29,8 @@ import io.jmix.aitoolsflowui.fragment.chat.support.ChatDateTimeSupport;
 import io.jmix.aitoolsflowui.fragment.chathub.component.AiConversationCard;
 import io.jmix.aitoolsflowui.fragment.chathub.component.AiConversationHistoryGroup;
 import io.jmix.aitoolsflowui.fragment.chathub.component.HistoryBucket;
-import io.jmix.aitoolsflowui.fragment.input.AiChatInputFragment;
+import io.jmix.aitoolsflowui.fragment.chat.AiConversationChatFactory;
+import io.jmix.aitoolsflowui.fragment.input.AiChatInput;
 import io.jmix.aitoolsflowui.generation.AiChatGenerationManager;
 import io.jmix.aitoolsflowui.icon.AiIconProvider;
 import io.jmix.aitoolsflowui.model.AiChatMessage;
@@ -52,6 +53,7 @@ import io.jmix.flowui.component.sidepanellayout.SidePanelLayout;
 import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.fragment.Fragment;
 import io.jmix.flowui.fragment.FragmentDescriptor;
+import io.jmix.flowui.fragment.FragmentUtils;
 import io.jmix.flowui.kit.action.ActionVariant;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.model.CollectionContainer;
@@ -87,12 +89,17 @@ public class AiChatHubFragment extends Fragment<VerticalLayout> {
 
     protected static final String HERO_ICON_CN = "chat-hub-hero-icon-glyph";
 
+    /**
+     * Id of the message input inside the hub.
+     */
+    public static final String CHAT_INPUT_ID = "chatInput";
+
     @ViewComponent
     protected MessageBundle messageBundle;
     @ViewComponent
     protected Div hubHeroIcon;
     @ViewComponent
-    protected AiChatInputFragment composerFragment;
+    protected VerticalLayout chatInputContainer;
     @ViewComponent
     protected CollectionContainer<AiConversation> recentConversationsDc;
     @ViewComponent
@@ -132,6 +139,8 @@ public class AiChatHubFragment extends Fragment<VerticalLayout> {
     protected AiToolsFlowuiProperties properties;
     @Autowired
     protected AiIconProvider iconProvider;
+    @Autowired
+    protected AiConversationChatFactory chatFactory;
 
     /**
      * Latest message of each listed conversation; refreshed together with the conversations.
@@ -144,6 +153,9 @@ public class AiChatHubFragment extends Fragment<VerticalLayout> {
 
     @Nullable
     protected SerializableSupplier<Component> markIconSupplier;
+
+    @Nullable
+    protected AiChatInput chatInput;
 
     /**
      * Sets a supplier of the brand mark icon shown on the hub hero and conversation cards, letting
@@ -173,13 +185,13 @@ public class AiChatHubFragment extends Fragment<VerticalLayout> {
         hubHeroIcon.removeAll();
         hubHeroIcon.add(heroIcon);
 
-        composerFragment.setSubmitHandler(this::startConversation);
+        getChatInput().setSubmitHandler(this::startConversation);
 
         loadConversations();
         refreshRecentConversationsVisibility();
         renderHistoryList();
-        refreshComposerAvailability();
-        composerFragment.focus();
+        refreshChatInputAvailability();
+        getChatInput().focus();
     }
 
     @Supply(to = "recentConversationsGridLayout", subject = "renderer")
@@ -201,7 +213,7 @@ public class AiChatHubFragment extends Fragment<VerticalLayout> {
     @Subscribe("historyNewBtn")
     public void onHistoryNewBtnClick(final ClickEvent<JmixButton> event) {
         historySidePanel.closeSidePanel();
-        composerFragment.focus();
+        getChatInput().focus();
     }
 
     @Subscribe("historySearchField")
@@ -210,19 +222,35 @@ public class AiChatHubFragment extends Fragment<VerticalLayout> {
         renderHistoryList();
     }
 
+    /**
+     * Returns the message input the hub starts a conversation with, creating it on first use.
+     *
+     * @return the message input
+     */
+    protected AiChatInput getChatInput() {
+        if (chatInput == null) {
+            chatInput = chatFactory.createInput(this);
+            Component inputComponent = chatInput.asComponent();
+            FragmentUtils.setComponentId(inputComponent, CHAT_INPUT_ID);
+            chatInputContainer.add(inputComponent);
+        }
+        return chatInput;
+    }
+
     protected void startConversation(String prompt) {
         AiConversation conversation;
         try {
             conversation = conversationService.create();
         } catch (Exception e) {
             log.error("Failed to create conversation from chat hub", e);
+            getChatInput().restoreText(prompt);
             notifications.create(messageBundle.getMessage("aiChatHubFragment.errorProcessingMessage"))
                     .withType(Notifications.Type.ERROR)
                     .show();
             return;
         }
 
-        composerFragment.clear();
+        getChatInput().clear();
 
         viewNavigators.view(UiComponentUtils.getView(this), AiChatView.class)
                 .withRouteParameters(routeSupport.createRouteParameters(
@@ -238,14 +266,14 @@ public class AiChatHubFragment extends Fragment<VerticalLayout> {
     }
 
     /**
-     * Disables the composer and warns the user when the chat model is not configured —
+     * Disables the message input and warns the user when the chat model is not configured —
      * starting a new chat would fail.
      */
-    protected void refreshComposerAvailability() {
+    protected void refreshChatInputAvailability() {
         if (chatService.isAvailable()) {
             return;
         }
-        composerFragment.setInputEnabled(false);
+        getChatInput().setInputEnabled(false);
         notifications.create(messageBundle.getMessage("aiChatHubFragment.chatUnavailable"))
                 .withType(Notifications.Type.WARNING)
                 .show();

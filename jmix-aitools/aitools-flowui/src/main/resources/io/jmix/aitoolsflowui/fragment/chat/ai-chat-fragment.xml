@@ -59,12 +59,12 @@
                                  classNames="chat-timeline-list">
                         <fragmentRenderer class="io.jmix.aitoolsflowui.fragment.chat.renderer.TimelineItemRenderer"/>
                     </virtualList>
-                    <vbox id="composerContainer"
+                    <vbox id="chatInputContainer"
                           width="100%"
                           spacing="true"
                           padding="false"
                           classNames="chat-input-container">
-                        <fragment id="composerFragment"
+                        <fragment id="chatInput"
                                   class="io.jmix.aitoolsflowui.fragment.input.AiChatInputFragment"/>
                     </vbox>
                 </vbox>

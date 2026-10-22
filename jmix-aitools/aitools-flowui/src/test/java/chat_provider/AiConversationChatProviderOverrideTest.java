@@ -20,8 +20,11 @@ import com.vaadin.flow.component.Component;
 import io.jmix.aitoolsflowui.fragment.chat.AiConversationChat;
 import io.jmix.aitoolsflowui.fragment.chat.AiConversationChatFactory;
 import io.jmix.aitoolsflowui.fragment.chat.AiConversationChatProvider;
+import io.jmix.aitoolsflowui.fragment.chathub.AiChatHubFragment;
+import io.jmix.aitoolsflowui.fragment.input.AiChatInput;
 import io.jmix.aitoolsflowui.model.AiConversation;
 import io.jmix.aitoolsflowui.view.chat.AiChatView;
+import io.jmix.aitoolsflowui.view.chathub.AiChatHubView;
 import io.jmix.core.JmixOrder;
 import io.jmix.flowui.fragment.FragmentOwner;
 import io.jmix.flowui.testassist.FlowuiTestAssistConfiguration;
@@ -36,6 +39,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import test_support.AiToolsFlowuiTestConfiguration;
+import test_support.TestAiChatInput;
 import test_support.TestAiConversationChat;
 import test_support.TestAiConversationService;
 
@@ -44,7 +48,7 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
- * A provider ordered before the add-on's own one replaces the chat the chat view shows.
+ * A provider ordered before the add-on's own one replaces the chat the chat view shows and the hub's input.
  */
 @UiTest(viewBasePackages = {"io.jmix.aitoolsflowui.view", "test_support.view"})
 @SpringBootTest(classes = {AiToolsFlowuiTestConfiguration.class, FlowuiTestAssistConfiguration.class,
@@ -84,6 +88,17 @@ class AiConversationChatProviderOverrideTest {
         assertEquals(conversation.getId(), testChat.getConversation().getId());
     }
 
+    @Test
+    void aiChatHubView_higherPriorityProvider_showsItsInput_andStartsAConversationFromIt() {
+        navigationSupport.navigate(AiChatHubView.class);
+        AiChatHubView hub = UiTestUtils.getCurrentView();
+
+        Component input = UiTestUtils.getComponent(hub, "hubFragment." + AiChatHubFragment.CHAT_INPUT_ID);
+        assertInstanceOf(TestAiChatInput.class, input).submit("Revenue by region");
+
+        assertInstanceOf(AiChatView.class, UiTestUtils.getCurrentView());
+    }
+
     private AiChatView navigateToConversation(AiConversation conversation) {
         navigationSupport.navigate(AiChatView.class,
                 routeSupport.createRouteParameters(AiChatView.ROUTE_PARAM_ID, conversation.getId()));
@@ -104,6 +119,11 @@ class AiConversationChatProviderOverrideTest {
         @Override
         public AiConversationChat create(FragmentOwner owner) {
             return new TestAiConversationChat();
+        }
+
+        @Override
+        public AiChatInput createInput(FragmentOwner owner) {
+            return new TestAiChatInput();
         }
 
         @Override

@@ -68,7 +68,7 @@ import java.util.function.Consumer;
 /**
  * Base of an {@link AiConversationChat} fragment. Owns everything that does not depend on how the chat is drawn:
  * binding a conversation, sending a message through {@link AiChatGenerationManager}, following the response that runs
- * on the server (its events and, after a refresh or reopen, its snapshot), the composer rule, the automatic title and
+ * on the server (its events and, after a refresh or reopen, its snapshot), the message input rule, the automatic title and
  * the rename dialog. A subclass only renders, through the protected hooks, and supplies the title components.
  */
 @Experimental
@@ -140,7 +140,7 @@ public abstract class AbstractAiConversationChatFragment extends Fragment<Vertic
     protected boolean readOnly;
 
     /**
-     * Whether the host lets the user type. A response shown as running disables the composer regardless.
+     * Whether the host lets the user type. A response shown as running disables the message input regardless.
      */
     protected boolean messageInputEnabled = true;
 
@@ -164,7 +164,7 @@ public abstract class AbstractAiConversationChatFragment extends Fragment<Vertic
     @Override
     public void setReadOnly(boolean readOnly) {
         this.readOnly = readOnly;
-        refreshComposerVisibility();
+        refreshInputVisibility();
     }
 
     /**
@@ -212,7 +212,7 @@ public abstract class AbstractAiConversationChatFragment extends Fragment<Vertic
      * {@inheritDoc}
      * <p>
      * Persists the message, starts the assistant's response on the server, shows the message and the thinking
-     * indicator and disables the composer. Used by the composer's submit handler and by hosts that start a
+     * indicator and disables the message input. Used by the input's submit handler and by hosts that start a
      * conversation with an initial prompt (the chat-hub flow).
      */
     @Override
@@ -241,14 +241,14 @@ public abstract class AbstractAiConversationChatFragment extends Fragment<Vertic
         } catch (AiChatGenerationRejectedException e) {
             log.debug("Not sent: a response is already running in conversation {}", e.getConversationId());
             resync();
-            restoreComposerText(userMessage);
+            restoreInputText(userMessage);
             notifications.create(getMessage("aiChatFragment.alreadyResponding"))
                     .withType(Notifications.Type.WARNING)
                     .show();
             return;
         } catch (RuntimeException e) {
             handleStartFailure(e);
-            restoreComposerText(userMessage);
+            restoreInputText(userMessage);
             return;
         }
 
@@ -262,7 +262,7 @@ public abstract class AbstractAiConversationChatFragment extends Fragment<Vertic
             }
         }
 
-        clearComposer();
+        clearInput();
         appendUserMessage(savedUserMessage);
         messagesShown = true;
         showThinkingIndicator();
@@ -302,7 +302,7 @@ public abstract class AbstractAiConversationChatFragment extends Fragment<Vertic
 
     @Subscribe
     public void onReady(final ReadyEvent event) {
-        initComposer(this::sendMessage);
+        initInput(this::sendMessage);
         getRenameConversationButton().addClickListener(clickEvent -> openTitleEditDialog());
 
         resync();
@@ -392,11 +392,11 @@ public abstract class AbstractAiConversationChatFragment extends Fragment<Vertic
     protected abstract JmixButton getRenameConversationButton();
 
     /**
-     * Wires the composer's submit to the given handler.
+     * Wires the message input's submit to the given handler.
      *
      * @param submitHandler handler receiving the submitted text
      */
-    protected abstract void initComposer(Consumer<String> submitHandler);
+    protected abstract void initInput(Consumer<String> submitHandler);
 
     /**
      * Shows the given messages in place of everything shown so far. Called only after the running response, if any,
@@ -442,20 +442,20 @@ public abstract class AbstractAiConversationChatFragment extends Fragment<Vertic
      */
     protected abstract void onResponseCompleted(UUID assistantMessageId);
 
-    protected abstract void clearComposer();
+    protected abstract void clearInput();
 
     /**
-     * Puts the text of a message that could not be sent back into the composer. Does nothing by default, for a
-     * composer that keeps its text until a message is accepted.
+     * Puts the text of a message that could not be sent back into the message input. Does nothing by default, for an
+     * input that keeps its text until a message is accepted.
      *
      * @param text the text of the message
      */
-    protected void restoreComposerText(String text) {
+    protected void restoreInputText(String text) {
     }
 
-    protected abstract void applyComposerEnabled(boolean enabled);
+    protected abstract void applyInputEnabled(boolean enabled);
 
-    protected abstract void applyComposerVisible(boolean visible);
+    protected abstract void applyInputVisible(boolean visible);
 
     protected String getMessage(String key) {
         return messages.getMessage(CHAT_MESSAGES_GROUP, key);
@@ -552,7 +552,7 @@ public abstract class AbstractAiConversationChatFragment extends Fragment<Vertic
         onResponseCompleted(assistantMessageId);
 
         // Another response may already be running (sent from another tab);
-        // then the composer stays locked.
+        // then the message input stays locked.
         if (!isAwaitingResponse()) {
             focusMessageInput();
         }
@@ -650,7 +650,7 @@ public abstract class AbstractAiConversationChatFragment extends Fragment<Vertic
     }
 
     /**
-     * Reloads the title, the messages and the composer state. The running response, if shown, is dropped first:
+     * Reloads the title, the messages and the message input state. The running response, if shown, is dropped first:
      * the reloaded messages replace everything shown, the thinking indicator included.
      */
     protected void refreshAll() {
@@ -662,7 +662,7 @@ public abstract class AbstractAiConversationChatFragment extends Fragment<Vertic
         messagesShown = !loadedMessages.isEmpty();
         renderMessages(loadedMessages);
 
-        refreshComposerVisibility();
+        refreshInputVisibility();
         warnIfAiUnavailable();
     }
 
@@ -703,12 +703,12 @@ public abstract class AbstractAiConversationChatFragment extends Fragment<Vertic
     }
 
     protected void updateMessageInputEnabled() {
-        applyComposerEnabled(messageInputEnabled && !isAwaitingResponse());
+        applyInputEnabled(messageInputEnabled && !isAwaitingResponse());
     }
 
-    protected void refreshComposerVisibility() {
+    protected void refreshInputVisibility() {
         boolean show = conversation != null && !readOnly && chatService.isAvailable();
-        applyComposerVisible(show);
+        applyInputVisible(show);
         getRenameConversationButton().setVisible(show);
     }
 

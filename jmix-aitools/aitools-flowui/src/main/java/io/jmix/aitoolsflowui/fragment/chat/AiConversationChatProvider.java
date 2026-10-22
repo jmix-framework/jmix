@@ -16,6 +16,7 @@
 
 package io.jmix.aitoolsflowui.fragment.chat;
 
+import io.jmix.aitoolsflowui.fragment.input.AiChatInput;
 import io.jmix.core.JmixOrder;
 import io.jmix.core.annotation.Experimental;
 import io.jmix.flowui.fragment.FragmentOwner;
@@ -23,7 +24,8 @@ import org.jspecify.annotations.NullMarked;
 import org.springframework.core.Ordered;
 
 /**
- * Creates the {@link AiConversationChat} that hosts such as the chat view show. Implementations are Spring beans;
+ * Creates the {@link AiConversationChat} that hosts such as the chat view show, and the matching {@link AiChatInput}
+ * that hosts such as the chat hub show, so that both are rendered alike. Implementations are Spring beans;
  * {@link AiConversationChatFactory} uses the one with the lowest {@link #getOrder() order} value, that is the highest
  * precedence.
  * <p>
@@ -42,4 +44,12 @@ public interface AiConversationChatProvider extends Ordered {
      * @return a new chat, not bound to a conversation
      */
     AiConversationChat create(FragmentOwner owner);
+
+    /**
+     * Creates a new message input for the given owner, rendered like the chats this provider creates.
+     *
+     * @param owner the view or fragment the input is created for
+     * @return a new message input
+     */
+    AiChatInput createInput(FragmentOwner owner);
 }

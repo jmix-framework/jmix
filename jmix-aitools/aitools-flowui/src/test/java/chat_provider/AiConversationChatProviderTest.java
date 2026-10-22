@@ -19,8 +19,11 @@ package chat_provider;
 import com.vaadin.flow.component.Component;
 import io.jmix.aitoolsflowui.fragment.chat.AiChatFragment;
 import io.jmix.aitoolsflowui.fragment.chat.AiConversationChatFactory;
+import io.jmix.aitoolsflowui.fragment.chathub.AiChatHubFragment;
+import io.jmix.aitoolsflowui.fragment.input.AiChatInputFragment;
 import io.jmix.aitoolsflowui.model.AiConversation;
 import io.jmix.aitoolsflowui.view.chat.AiChatView;
+import io.jmix.aitoolsflowui.view.chathub.AiChatHubView;
 import io.jmix.flowui.testassist.FlowuiTestAssistConfiguration;
 import io.jmix.flowui.testassist.UiTest;
 import io.jmix.flowui.testassist.UiTestUtils;
@@ -69,6 +72,16 @@ class AiConversationChatProviderTest {
 
         Component chat = UiTestUtils.getComponent(view, AiChatView.CHAT_COMPONENT_ID);
         assertInstanceOf(AiChatFragment.class, chat);
+    }
+
+    @Test
+    void aiChatHubView_onlyDefaultProvider_showsTimelineChatInput() {
+        navigationSupport.navigate(AiChatHubView.class);
+        AiChatHubView hub = UiTestUtils.getCurrentView();
+
+        assertInstanceOf(AiChatInputFragment.class, chatFactory.createInput(hub));
+        assertInstanceOf(AiChatInputFragment.class,
+                UiTestUtils.getComponent(hub, "hubFragment." + AiChatHubFragment.CHAT_INPUT_ID));
     }
 
     private AiChatView navigateToConversation() {

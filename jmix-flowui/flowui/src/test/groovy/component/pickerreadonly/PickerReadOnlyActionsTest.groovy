@@ -17,7 +17,9 @@
 package component.pickerreadonly
 
 import com.vaadin.flow.component.Component
+import com.vaadin.flow.component.html.Div
 import com.vaadin.flow.component.icon.VaadinIcon
+import com.vaadin.flow.component.shared.SlotUtils
 import component.pickerreadonly.view.OrderPickerReadTestView
 import component.pickerreadonly.view.PickerReadOnlyTestView
 import io.jmix.core.DataManager
@@ -192,6 +194,24 @@ class PickerReadOnlyActionsTest extends FlowuiTestSpecification {
         !picker.element.hasAttribute('has-readonly-actions')
         hasActionsSlot(picker)
         picker.element.hasAttribute('has-actions')
+    }
+
+    def "switching read-only keeps application content in the actions slot of a picker without actions"() {
+        given: "a picker without actions whose actions slot holds application content"
+        def picker = createEntityPicker()
+        def content = new Div()
+        SlotUtils.addToSlot(picker, 'actions', content)
+
+        and: "the picker's actions are queried, as a view does when it is ready"
+        picker.getActions()
+
+        when: "the picker is made read-only and editable again"
+        picker.setReadOnly(true)
+        picker.setReadOnly(false)
+
+        then: "the content stays in the actions slot"
+        content.parent.orElse(null) == picker
+        content.element.getAttribute('slot') == 'actions'
     }
 
     def "entity_read stays visible on a read-only EntityComboBox"() {

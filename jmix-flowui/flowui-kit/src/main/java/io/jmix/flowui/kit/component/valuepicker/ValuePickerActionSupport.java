@@ -116,6 +116,10 @@ public class ValuePickerActionSupport extends AbstractActionsHolderSupport<Compo
             getElement().setAttribute(hasActionsAttribute, true);
         }
 
+        updateHasReadOnlyActionsAttribute();
+    }
+
+    protected void updateHasReadOnlyActionsAttribute() {
         if (getActions().stream().anyMatch(this::isActionVisibleWhenReadOnly)) {
             getElement().setAttribute(ATTRIBUTE_HAS_READONLY_ACTIONS, true);
         } else {
@@ -132,7 +136,7 @@ public class ValuePickerActionSupport extends AbstractActionsHolderSupport<Compo
             updateButtonVisibility(action);
         }
 
-        updateActionsSlot();
+        updateHasReadOnlyActionsAttribute();
     }
 
     protected void updateButtonVisibility(Action action) {

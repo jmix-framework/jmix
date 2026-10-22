@@ -1,0 +1,222 @@
+/*
+ * Copyright 2026 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package facet.url_query_parameters
+
+import com.vaadin.flow.router.QueryParameters
+import facet.url_query_parameters.view.GenericFilterUrlConditionsTestView
+import facet.url_query_parameters.view.GenericFilterUrlQueryParamsTestView
+import io.jmix.core.DataManager
+import io.jmix.flowui.component.filter.FilterComponent
+import io.jmix.flowui.component.genericfilter.Configuration
+import io.jmix.flowui.component.propertyfilter.PropertyFilter
+import io.jmix.flowui.facet.urlqueryparameters.GenericFilterUrlQueryParametersBinder
+import io.jmix.flowui.view.navigation.UrlParamSerializer
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.context.SpringBootTest
+import test_support.entity.petclinic.OwnerCategory
+import test_support.spec.FlowuiTestSpecification
+
+import static facet.url_query_parameters.TestGenericFilterUrlBinders.getBinder
+import static facet.url_query_parameters.TestGenericFilterUrlBinders.propertyFilterOn
+
+/**
+ * Pins the values {@link GenericFilterUrlQueryParametersBinder} gives to the conditions from the URL and
+ * the rows it matches them onto: the value of a reference and a date-time attribute on a new row and on
+ * a row of a configuration, and what happens to a condition whose operation differs from the one of a
+ * row that does not allow changing it.
+ */
+@SpringBootTest
+class GenericFilterUrlConditionsTest extends FlowuiTestSpecification {
+
+    @Autowired
+    DataManager dataManager
+
+    @Autowired
+    UrlParamSerializer urlParamSerializer
+
+    OwnerCategory cat1
+    OwnerCategory cat2
+
+    @Override
+    void setup() {
+        registerViewBasePackages("facet.url_query_parameters", "io.jmix.flowui.app")
+
+        cat1 = dataManager.save(newCategory("cat1"))
+        cat2 = dataManager.save(newCategory("cat2"))
+    }
+
+    // The base fixture methods run on their own, so there is no super.cleanup() here.
+    @Override
+    void cleanup() {
+        dataManager.remove(cat1, cat2)
+    }
+
+    def "reference EQUAL value from the URL is set on a new row"() {
+        given:
+        def view = navigateToView(GenericFilterUrlConditionsTestView)
+
+        when:
+        applyConditions(view, "property:category_equal_${urlParamSerializer.serialize(cat1.id)}")
+
+        then:
+        def rows = rowsOf(view.ownersFilter.emptyConfiguration)
+        rows.size() == 1
+        (rows.first() as PropertyFilter).value == cat1
+    }
+
+    def "reference EQUAL value from the URL is set on the matched row"() {
+        given:
+        def view = navigateToView(GenericFilterUrlConditionsTestView)
+        Configuration byCategory = view.ownersFilter.getConfiguration("byCategory")
+
+        when:
+        applyConfiguration(view, "byCategory", "property:category_equal_${urlParamSerializer.serialize(cat1.id)}")
+
+        then:
+        def rows = rowsOf(byCategory)
+        rows.size() == 1
+        (rows.first() as PropertyFilter).value == cat1
+
+        and:
+        view.ownersFilter.currentConfiguration.is(byCategory)
+    }
+
+    def "reference IN_LIST value from the URL is set on a new row"() {
+        given:
+        def view = navigateToView(GenericFilterUrlConditionsTestView)
+
+        when:
+        applyConditions(view, inListCondition())
+
+        then:
+        def rows = rowsOf(view.ownersFilter.emptyConfiguration)
+        rows.size() == 1
+        ((rows.first() as PropertyFilter).value as List) == [cat1, cat2]
+    }
+
+    def "reference IN_LIST value from the URL is set on the matched row"() {
+        given:
+        def view = navigateToView(GenericFilterUrlConditionsTestView)
+        Configuration byCategories = view.ownersFilter.getConfiguration("byCategories")
+
+        when:
+        applyConfiguration(view, "byCategories", inListCondition())
+
+        then:
+        def rows = rowsOf(byCategories)
+        rows.size() == 1
+        ((rows.first() as PropertyFilter).value as List) == [cat1, cat2]
+    }
+
+    def "DATE_EQUALS value from the URL is the same on a new row and on the matched row"() {
+        given: "a date with a time of day, so the value cannot be told from a start of the day by accident"
+        Date date = new GregorianCalendar(2026, Calendar.OCTOBER, 22, 13, 45, 10).time
+        String condition = "property:createTs_date-equals_${urlParamSerializer.serialize(date)}"
+
+        when: "the condition is applied on a new row of the empty configuration"
+        def newRowView = openFreshView()
+        applyConditions(newRowView, condition)
+        def newRowValue = (rowsOf(newRowView.ownersFilter.emptyConfiguration).first() as PropertyFilter).value
+
+        and: "the same condition is applied on the matched row of a configuration in a fresh view"
+        def matchedRowView = openFreshView()
+        applyConfiguration(matchedRowView, "byCreateTs", condition)
+        def matchedRowValue = propertyFilterOn(matchedRowView.ownersFilter.getConfiguration("byCreateTs"), "createTs")
+                .value
+
+        then:
+        !newRowView.is(matchedRowView)
+        newRowValue != null
+        matchedRowValue != null
+        newRowValue == matchedRowValue
+    }
+
+    def "URL operation differing from a non-editable runtime row adds a new row"() {
+        given:
+        def view = navigateToView(GenericFilterUrlConditionsTestView)
+        Configuration runtimeByName = view.ownersFilter.getConfiguration("runtimeByName")
+        def originalValue = propertyFilterOn(runtimeByName, "name").value
+
+        when:
+        applyConfiguration(view, "runtimeByName", "property:name_not-equal_x")
+
+        then:
+        def rows = rowsOf(runtimeByName)
+        rows.size() == 2
+
+        and: "the original row is left as it was"
+        def original = rows.find { (it as PropertyFilter).operation == PropertyFilter.Operation.EQUAL } as PropertyFilter
+        original.value == originalValue
+
+        and: "the URL condition is a new row"
+        def added = rows.find { (it as PropertyFilter).operation == PropertyFilter.Operation.NOT_EQUAL } as PropertyFilter
+        added.value == "x"
+    }
+
+    def "URL operation differing from a non-editable design-time row is dropped"() {
+        given:
+        def view = navigateToView(GenericFilterUrlConditionsTestView)
+        Configuration byName = view.ownersFilter.getConfiguration("byName")
+        def originalValue = propertyFilterOn(byName, "name").value
+
+        when:
+        applyConfiguration(view, "byName", "property:name_not-equal_x")
+
+        then:
+        def rows = rowsOf(byName)
+        rows.size() == 1
+
+        and:
+        def row = rows.first() as PropertyFilter
+        row.operation == PropertyFilter.Operation.EQUAL
+        row.value == originalValue
+    }
+
+    // Navigating to the view that is already open reuses its instance, so another view is opened first.
+    private GenericFilterUrlConditionsTestView openFreshView() {
+        navigateToView(GenericFilterUrlQueryParamsTestView)
+        return navigateToView(GenericFilterUrlConditionsTestView)
+    }
+
+    private String inListCondition() {
+        return "property:category_in-list_${urlParamSerializer.serialize([cat1.id, cat2.id])}"
+    }
+
+    private OwnerCategory newCategory(String name) {
+        OwnerCategory category = dataManager.create(OwnerCategory)
+        category.name = name
+        return category
+    }
+
+    private void applyConditions(GenericFilterUrlConditionsTestView view, String... conditions) {
+        def binder = getBinder(view)
+        binder.updateState(new QueryParameters([(binder.conditionParam): conditions.toList()]))
+    }
+
+    private void applyConfiguration(GenericFilterUrlConditionsTestView view, String configurationId,
+                                    String... conditions) {
+        def binder = getBinder(view)
+        binder.updateState(new QueryParameters([
+                (binder.configurationParam): [configurationId],
+                (binder.conditionParam)    : conditions.toList()
+        ]))
+    }
+
+    private List<FilterComponent> rowsOf(Configuration configuration) {
+        return configuration.rootLogicalFilterComponent.filterComponents
+    }
+}

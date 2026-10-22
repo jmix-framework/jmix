@@ -24,7 +24,7 @@ export const jmixValuePickerActionsShared = css`
         gap: var(--vaadin-gap-xs);
     }
 
-    :host([readonly]) [part="action-part"] {
+    :host([readonly]:not([has-readonly-actions])) [part="action-part"] {
         display: none;
     }
 `;

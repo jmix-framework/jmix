@@ -22,7 +22,7 @@
         margin-left: var(--lumo-space-xs);
     }
 
-    :host([readonly]) [part="action-part"] {
+    :host([readonly]:not([has-readonly-actions])) [part="action-part"] {
         display: none;
     }
 

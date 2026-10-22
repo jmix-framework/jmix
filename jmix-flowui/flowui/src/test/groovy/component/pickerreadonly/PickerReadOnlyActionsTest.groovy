@@ -18,6 +18,9 @@ package component.pickerreadonly
 
 import com.vaadin.flow.component.Component
 import com.vaadin.flow.component.icon.VaadinIcon
+import component.pickerreadonly.view.OrderPickerReadTestView
+import component.pickerreadonly.view.PickerReadOnlyTestView
+import io.jmix.core.DataManager
 import io.jmix.core.Metadata
 import io.jmix.flowui.Actions
 import io.jmix.flowui.UiComponents
@@ -33,8 +36,12 @@ import io.jmix.flowui.component.valuepicker.JmixMultiValuePicker
 import io.jmix.flowui.kit.action.Action
 import io.jmix.flowui.kit.action.BaseAction
 import io.jmix.flowui.kit.component.valuepicker.ValuePickerButton
+import io.jmix.flowui.testassist.UiTestUtils
+import io.jmix.flowui.view.navigation.RouteSupport
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.jdbc.core.JdbcTemplate
+import test_support.entity.sales.Customer
 import test_support.entity.sales.Order
 import test_support.spec.FlowuiTestSpecification
 
@@ -47,6 +54,17 @@ class PickerReadOnlyActionsTest extends FlowuiTestSpecification {
     Actions actions
     @Autowired
     Metadata metadata
+    @Autowired
+    DataManager dataManager
+    @Autowired
+    JdbcTemplate jdbcTemplate
+    @Autowired
+    RouteSupport routeSupport
+
+    @Override
+    void setup() {
+        registerViewBasePackages("component.pickerreadonly.view")
+    }
 
     def "only entity_read stays visible on a read-only picker"() {
         given: "a picker with the lookup, clear and read actions"
@@ -217,6 +235,44 @@ class PickerReadOnlyActionsTest extends FlowuiTestSpecification {
         then: "the select button is hidden and the picker is not marked"
         !findButton(picker, MultiValueSelectAction.ID).visible
         !picker.element.hasAttribute('has-readonly-actions')
+    }
+
+    def "a picker declared read-only in XML shows only its read action"() {
+        when: "navigating to a view with a picker declared read-only"
+        def view = navigateToView(PickerReadOnlyTestView)
+
+        then: "only the read button is visible"
+        findButton(view.readOnlyPicker, 'read').visible
+        !findButton(view.readOnlyPicker, 'lookup').visible
+        !findButton(view.readOnlyPicker, 'clear').visible
+    }
+
+    def "a read view keeps the read action of a reference picker"() {
+        given: "an order with a customer"
+        def customer = dataManager.create(Customer)
+        customer.name = 'customer-1'
+        dataManager.save(customer)
+
+        def order = dataManager.create(Order)
+        order.number = 'order-1'
+        order.customer = customer
+        dataManager.save(order)
+
+        when: "navigating to a read view of the order"
+        def origin = navigateToView(PickerReadOnlyTestView)
+        viewNavigators.view(origin, OrderPickerReadTestView)
+                .withRouteParameters(routeSupport.createRouteParameters('id', order.id))
+                .navigate()
+        def view = UiTestUtils.getCurrentView() as OrderPickerReadTestView
+
+        then: "the customer picker is read-only and shows only its read button"
+        view.customerPicker.readOnly
+        findButton(view.customerPicker, 'read').visible
+        !findButton(view.customerPicker, 'lookup').visible
+
+        cleanup:
+        jdbcTemplate.execute("delete from TEST_ORDER")
+        jdbcTemplate.execute("delete from TEST_CUSTOMER")
     }
 
     EntityPicker<Order> createEntityPicker() {

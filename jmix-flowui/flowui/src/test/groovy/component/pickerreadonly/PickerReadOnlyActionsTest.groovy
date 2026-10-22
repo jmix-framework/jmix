@@ -25,7 +25,11 @@ import io.jmix.flowui.action.AdjustWhenFieldReadOnly
 import io.jmix.flowui.action.entitypicker.EntityClearAction
 import io.jmix.flowui.action.entitypicker.EntityLookupAction
 import io.jmix.flowui.action.entitypicker.EntityReadAction
+import io.jmix.flowui.action.multivaluepicker.MultiValueSelectAction
+import io.jmix.flowui.component.combobox.EntityComboBox
+import io.jmix.flowui.component.multiselectcomboboxpicker.JmixMultiSelectComboBoxPicker
 import io.jmix.flowui.component.valuepicker.EntityPicker
+import io.jmix.flowui.component.valuepicker.JmixMultiValuePicker
 import io.jmix.flowui.kit.action.Action
 import io.jmix.flowui.kit.action.BaseAction
 import io.jmix.flowui.kit.component.valuepicker.ValuePickerButton
@@ -170,6 +174,49 @@ class PickerReadOnlyActionsTest extends FlowuiTestSpecification {
         !picker.element.hasAttribute('has-readonly-actions')
         hasActionsSlot(picker)
         picker.element.hasAttribute('has-actions')
+    }
+
+    def "entity_read stays visible on a read-only EntityComboBox"() {
+        given: "an entity combo box with the clear and read actions"
+        EntityComboBox<Order> comboBox = uiComponents.create(EntityComboBox)
+        comboBox.setMetaClass(metadata.getClass(Order))
+        comboBox.addAction(actions.create(EntityClearAction.ID))
+        comboBox.addAction(actions.create(EntityReadAction.ID))
+
+        when: "the combo box is made read-only"
+        comboBox.setReadOnly(true)
+
+        then: "only the read button is visible"
+        findButton(comboBox, EntityReadAction.ID).visible
+        !findButton(comboBox, EntityClearAction.ID).visible
+    }
+
+    def "an opted-in action stays visible on a read-only JmixMultiSelectComboBoxPicker"() {
+        given: "a multi-select combo box picker with the clear action and an opted-in application action"
+        JmixMultiSelectComboBoxPicker<Order> picker = uiComponents.create(JmixMultiSelectComboBoxPicker)
+        picker.setMetaClass(metadata.getClass(Order))
+        picker.addAction(actions.create(EntityClearAction.ID))
+        picker.addAction(new TestVisibleWhenReadOnlyAction('optIn'))
+
+        when: "the picker is made read-only"
+        picker.setReadOnly(true)
+
+        then: "only the opted-in button is visible"
+        findButton(picker, 'optIn').visible
+        !findButton(picker, EntityClearAction.ID).visible
+    }
+
+    def "multi_value_select is hidden on a read-only JmixMultiValuePicker"() {
+        given: "a multi-value picker with the select action"
+        JmixMultiValuePicker picker = uiComponents.create(JmixMultiValuePicker)
+        picker.addAction(actions.create(MultiValueSelectAction.ID))
+
+        when: "the picker is made read-only"
+        picker.setReadOnly(true)
+
+        then: "the select button is hidden and the picker is not marked"
+        !findButton(picker, MultiValueSelectAction.ID).visible
+        !picker.element.hasAttribute('has-readonly-actions')
     }
 
     EntityPicker<Order> createEntityPicker() {

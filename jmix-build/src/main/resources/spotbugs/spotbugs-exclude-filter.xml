@@ -102,6 +102,13 @@
     </Match>
 
     <Match>
+        <Bug pattern="UR_UNINIT_READ"/>
+        <Class name="io.jmix.flowui.kit.component.upload.AbstractSingleUploadField$DeferredTargetUploadManager"/>
+        <!-- false positive, the fields are assigned by setUploadHandler, which the UploadManager constructor calls -->
+        <Method name="&lt;init&gt;"/>
+    </Match>
+
+    <Match>
         <Bug pattern="SE_TRANSIENT_FIELD_NOT_RESTORED"/>
         <Or>
             <Class name="io.jmix.flowui.model.impl.ObservableList"/>

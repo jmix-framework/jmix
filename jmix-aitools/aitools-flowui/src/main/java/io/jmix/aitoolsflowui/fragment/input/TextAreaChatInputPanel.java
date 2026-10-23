@@ -30,7 +30,7 @@ import org.jspecify.annotations.Nullable;
 import java.util.function.Consumer;
 
 /**
- * The add-on's {@link AiChatInputPanel}: a text area with a send button.
+ * The add-on's {@link AiChatInputPanel}: a text area with a send button. The text area clears itself on submit.
  * <p>
  * <b>Submit gesture.</b> Enter submits; Shift+Enter inserts a newline. The
  * server-side submit fires only for a bare Enter (DOM keydown filter) and the
@@ -55,7 +55,7 @@ public class TextAreaChatInputPanel extends Fragment<VerticalLayout> implements 
 
     /**
      * Sets the handler invoked with the trimmed, non-blank message text when the
-     * user submits. Passing {@code null} restores a no-op handler.
+     * user submits; the input is already cleared by then. Passing {@code null} restores a no-op handler.
      *
      * @param submitHandler handler invoked with the submitted text, or {@code null} for a no-op
      */
@@ -105,14 +105,6 @@ public class TextAreaChatInputPanel extends Fragment<VerticalLayout> implements 
         }
     }
 
-    /**
-     * Clears the input text.
-     */
-    @Override
-    public void clear() {
-        messageField.clear();
-    }
-
     @Override
     public void restoreText(String text) {
         messageField.setValue(text);
@@ -121,16 +113,6 @@ public class TextAreaChatInputPanel extends Fragment<VerticalLayout> implements 
     @Override
     public Component asComponent() {
         return this;
-    }
-
-    /**
-     * Returns the current input text.
-     *
-     * @return current text (empty string if nothing was entered)
-     */
-    @Override
-    public String getValue() {
-        return messageField.getValue();
     }
 
     protected void onReady(ReadyEvent event) {
@@ -153,6 +135,9 @@ public class TextAreaChatInputPanel extends Fragment<VerticalLayout> implements 
         if (text == null || text.isBlank()) {
             return;
         }
+        // Cleared before the handler: a host that cannot take the message puts the text back from inside the
+        // handler (restoreText), so clearing afterwards would wipe it.
+        messageField.clear();
         if (submitHandler != null) {
             submitHandler.accept(text.trim());
         }

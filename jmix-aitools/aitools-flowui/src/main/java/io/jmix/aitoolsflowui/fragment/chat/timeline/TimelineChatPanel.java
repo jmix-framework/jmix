@@ -119,11 +119,6 @@ public class TimelineChatPanel extends Fragment<VerticalLayout> implements AiCha
     }
 
     @Override
-    public void clearInput() {
-        chatInput.clear();
-    }
-
-    @Override
     public void restoreInputText(String text) {
         chatInput.restoreText(text);
     }

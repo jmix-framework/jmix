@@ -87,12 +87,14 @@ class AiChatInputFragmentTest {
     }
 
     @Test
-    void restoreText_andGetValue_goThroughThePanel() {
+    void restoreText_goesThroughThePanel() {
         AiChatInputFragment input = hubInput(navigateToHub());
 
         input.restoreText("Mine");
 
-        assertEquals("Mine", input.getValue());
+        JmixTextArea messageField = (JmixTextArea) UiComponentUtils.getComponent((Composite<?>) panelOf(input),
+                "messageField");
+        assertEquals("Mine", messageField.getValue());
     }
 
     AiChatHubView navigateToHub() {

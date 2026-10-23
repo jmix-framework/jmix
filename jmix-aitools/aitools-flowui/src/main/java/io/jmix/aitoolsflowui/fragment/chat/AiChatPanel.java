@@ -69,10 +69,9 @@ public interface AiChatPanel {
      */
     void focusInput();
 
-    void clearInput();
-
     /**
-     * Puts back the text of a message that could not be sent.
+     * Puts back the text of a message that could not be sent. The input clears itself when the user submits, so the
+     * host never clears it.
      *
      * @param text the text of the message
      */

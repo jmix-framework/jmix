@@ -73,17 +73,7 @@ public class TestAiChatInputPanel extends Div implements AiChatInputPanel {
     }
 
     @Override
-    public void clear() {
-        value = "";
-    }
-
-    @Override
     public void restoreText(String text) {
         value = text;
-    }
-
-    @Override
-    public String getValue() {
-        return value;
     }
 }

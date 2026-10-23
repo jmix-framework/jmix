@@ -35,6 +35,8 @@ import java.util.function.Consumer;
 /**
  * The message input of the AI chat: embed it in a view or fragment. What it draws comes from the first
  * {@link AiChatPanelProvider} by order — the add-on's text area, or the input of another add-on.
+ * <p>
+ * The input clears itself when the user submits, before the submit handler runs.
  */
 @Experimental
 @NullMarked
@@ -105,28 +107,13 @@ public class AiChatInputFragment extends Fragment<VerticalLayout> {
     }
 
     /**
-     * Clears the input text.
-     */
-    public void clear() {
-        getInputPanel().clear();
-    }
-
-    /**
-     * Puts back the text of a submit the host could not take.
+     * Puts back the text of a submit the host could not take. The input clears itself when the user submits, so the
+     * host never clears it.
      *
      * @param text the text to show
      */
     public void restoreText(String text) {
         getInputPanel().restoreText(text);
-    }
-
-    /**
-     * Returns the current input text.
-     *
-     * @return current text (empty string if nothing was entered)
-     */
-    public String getValue() {
-        return getInputPanel().getValue();
     }
 
     /**

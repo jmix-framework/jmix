@@ -89,10 +89,6 @@ public class TestAiChatPanel extends Div implements AiChatPanel, HasAiAvatarIcon
     }
 
     @Override
-    public void clearInput() {
-    }
-
-    @Override
     public void restoreInputText(String text) {
     }
 

@@ -86,6 +86,41 @@ class DefaultPanelsTest {
     }
 
     @Test
+    void textAreaPanel_submitClearsTheField() {
+        AiChatHubView hub = navigateToHub();
+        AiChatInputPanel panel = chatPanelFactory.createInputPanel(hub);
+        hub.getContent().add(panel.asComponent());
+        List<String> submitted = new ArrayList<>();
+        panel.setSubmitHandler(submitted::add);
+        Composite<?> panelComponent = (Composite<?>) panel.asComponent();
+        JmixTextArea messageField = (JmixTextArea) UiComponentUtils.getComponent(panelComponent, "messageField");
+        JmixButton sendButton = (JmixButton) UiComponentUtils.getComponent(panelComponent, "sendButton");
+
+        messageField.setValue("Hi");
+        sendButton.click();
+
+        assertEquals(List.of("Hi"), submitted);
+        assertEquals("", messageField.getValue());
+    }
+
+    @Test
+    void textAreaPanel_handlerRestoringTheText_leavesItInTheField() {
+        AiChatHubView hub = navigateToHub();
+        AiChatInputPanel panel = chatPanelFactory.createInputPanel(hub);
+        hub.getContent().add(panel.asComponent());
+        // A host that cannot take the message puts the text back from inside the handler.
+        panel.setSubmitHandler(panel::restoreText);
+        Composite<?> panelComponent = (Composite<?>) panel.asComponent();
+        JmixTextArea messageField = (JmixTextArea) UiComponentUtils.getComponent(panelComponent, "messageField");
+        JmixButton sendButton = (JmixButton) UiComponentUtils.getComponent(panelComponent, "sendButton");
+
+        messageField.setValue("Mine");
+        sendButton.click();
+
+        assertEquals("Mine", messageField.getValue());
+    }
+
+    @Test
     void timelinePanel_showResponseFailed_appendsErrorRow() {
         AiChatHubView hub = navigateToHub();
         AiChatPanel panel = chatPanelFactory.createChatPanel(hub);

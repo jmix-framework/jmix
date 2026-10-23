@@ -223,8 +223,6 @@ public class AiChatHubFragment extends Fragment<VerticalLayout> {
             return;
         }
 
-        chatInput.clear();
-
         viewNavigators.view(UiComponentUtils.getView(this), AiChatView.class)
                 .withRouteParameters(routeSupport.createRouteParameters(
                         AiChatView.ROUTE_PARAM_ID, conversation.getId()))

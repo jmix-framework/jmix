@@ -546,7 +546,7 @@ class AiChatFragmentGenerationTest {
         assertFalse(messageInput(fragment).isInputEnabled());
         assertEquals(List.of(TimelineItemType.USER, TimelineItemType.ASSISTANT_THINKING), timelineTypes(fragment));
         assertEquals("From the other tab", timelineItems(fragment).get(0).getMessage().getContent());
-        assertEquals("Mine", messageInput(fragment).getValue());
+        assertEquals("Mine", messageField(fragment).getValue());
     }
 
     @Test
@@ -555,11 +555,11 @@ class AiChatFragmentGenerationTest {
         AiChatFragment fragment = chatFragment(navigate(conversation.getId()));
         when(generationManager.start(any(), any())).thenThrow(
                 new AiChatGenerationRejectedException(conversation.getId()));
-        assertEquals("", messageInput(fragment).getValue());
+        assertEquals("", messageField(fragment).getValue());
 
         fragment.sendMessage("Mine");
 
-        assertEquals("Mine", messageInput(fragment).getValue());
+        assertEquals("Mine", messageField(fragment).getValue());
     }
 
     @Test
@@ -577,7 +577,7 @@ class AiChatFragmentGenerationTest {
         assertFalse(fragment.isAwaitingResponse());
         assertTrue(messageInput(fragment).isInputEnabled());
         assertEquals(List.of(TimelineItemType.USER), timelineTypes(fragment));
-        assertEquals("Mine", messageInput(fragment).getValue());
+        assertEquals("Mine", messageField(fragment).getValue());
     }
 
     @Test
@@ -757,7 +757,7 @@ class AiChatFragmentGenerationTest {
         assertFalse(fragment.isAwaitingResponse());
         assertTrue(messageInput(fragment).isInputEnabled());
         assertEquals(List.of(TimelineItemType.USER, TimelineItemType.ASSISTANT), timelineTypes(fragment));
-        assertEquals("Mine", messageInput(fragment).getValue());
+        assertEquals("Mine", messageField(fragment).getValue());
     }
 
     @Test

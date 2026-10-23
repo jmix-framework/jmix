@@ -26,6 +26,9 @@ import java.util.function.Consumer;
 /**
  * What {@link AiChatInputFragment} draws its message input with. Hosts use the fragment; it obtains the panel from
  * {@link io.jmix.aitoolsflowui.fragment.chat.AiChatPanelFactory}.
+ * <p>
+ * The input clears itself at the moment the user submits, before the submit handler runs. A host that cannot take the
+ * message puts the text back with {@link #restoreText(String)}.
  */
 @Experimental
 @NullMarked
@@ -71,19 +74,11 @@ public interface AiChatInputPanel {
      */
     void focus();
 
-    void clear();
-
     /**
-     * Puts back the text of a submit the host could not take.
+     * Puts back the text of a submit the host could not take. The input clears itself when the user submits, so the
+     * host never clears it.
      *
      * @param text the text to show
      */
     void restoreText(String text);
-
-    /**
-     * Returns the current text.
-     *
-     * @return the text, empty if none
-     */
-    String getValue();
 }

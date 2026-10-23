@@ -308,7 +308,6 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
             }
         }
 
-        getChatPanel().clearInput();
         getChatPanel().appendUserMessage(savedUserMessage);
         messagesShown = true;
         showThinkingIndicator();

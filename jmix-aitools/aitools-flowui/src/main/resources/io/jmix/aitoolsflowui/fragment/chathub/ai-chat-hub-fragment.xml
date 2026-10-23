@@ -73,7 +73,10 @@
                               width="100%"
                               spacing="false"
                               padding="false"
-                              classNames="chat-hub-input"/>
+                              classNames="chat-hub-input">
+                            <fragment id="chatInput"
+                                      class="io.jmix.aitoolsflowui.fragment.input.AiChatInputFragment"/>
+                        </vbox>
 
                         <hbox id="recentConversationsHeader"
                               width="100%"

@@ -16,24 +16,23 @@
 
 package io.jmix.aitoolsflowui.fragment.chat;
 
-import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentEvent;
 import io.jmix.core.annotation.Experimental;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 /**
- * Fired by an {@link AiConversationChat} whenever it shows a conversation title: when a conversation is bound or
+ * Fired by an {@link AiChatFragment} whenever it shows a conversation title: when a conversation is bound or
  * reloaded, when it gets its automatic title, and when it is renamed. The title may be the same as before.
  */
 @Experimental
 @NullMarked
-public class AiConversationTitleChangeEvent extends ComponentEvent<Component> {
+public class AiConversationTitleChangeEvent extends ComponentEvent<AiChatFragment> {
 
     @Nullable
     protected final String title;
 
-    public AiConversationTitleChangeEvent(Component source, @Nullable String title) {
+    public AiConversationTitleChangeEvent(AiChatFragment source, @Nullable String title) {
         super(source, false);
 
         this.title = title;

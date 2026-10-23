@@ -17,12 +17,10 @@
 package io.jmix.aitoolsflowui.view.chat;
 
 import com.vaadin.flow.component.ClickEvent;
-import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.Route;
-import io.jmix.aitoolsflowui.fragment.chat.AiConversationChat;
-import io.jmix.aitoolsflowui.fragment.chat.AiConversationChatFactory;
+import io.jmix.aitoolsflowui.fragment.chat.AiChatFragment;
 import io.jmix.aitoolsflowui.model.AiConversation;
 import io.jmix.aitoolsflowui.service.AiConversationService;
 import io.jmix.aitoolsflowui.view.chathub.AiChatHubView;
@@ -48,7 +46,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 /**
- * Standalone host view around an {@link AiConversationChat}, created by {@link AiConversationChatFactory}.
+ * Standalone host view around an {@link AiChatFragment}.
  * <p>
  * Opens either by URL — the {@code :id} route segment is the id of an
  * {@link AiConversation} that gets loaded and bound to the chat — or
@@ -64,11 +62,6 @@ public class AiChatView extends StandardView {
 
     public static final String ROUTE_PARAM_ID = "id";
 
-    /**
-     * Id of the chat component inside the view.
-     */
-    public static final String CHAT_COMPONENT_ID = "chatFragment";
-
     @Autowired
     protected AiConversationService conversationService;
     @Autowired
@@ -77,15 +70,13 @@ public class AiChatView extends StandardView {
     protected RouteSupport routeSupport;
     @Autowired
     protected ViewNavigators viewNavigators;
-    @Autowired
-    protected AiConversationChatFactory chatFactory;
 
     @ViewComponent
     protected VerticalLayout notFoundLayout;
     @ViewComponent
     protected VerticalLayout emptyLayout;
-
-    protected AiConversationChat chat;
+    @ViewComponent
+    protected AiChatFragment chatFragment;
 
     @Nullable
     protected AiConversation conversation;
@@ -108,12 +99,10 @@ public class AiChatView extends StandardView {
 
     @Subscribe
     public void onInit(final InitEvent event) {
-        chat = createChat();
-
         // This view titles itself after the conversation, and the host chrome (view title, tab,
         // dialog header) renders that title - so the chat must not repeat it.
-        chat.setTitleVisible(false);
-        chat.addTitleChangeListener(titleChangeEvent -> applyPageTitle(titleChangeEvent.getTitle()));
+        chatFragment.setTitleVisible(false);
+        chatFragment.addTitleChangeListener(titleChangeEvent -> applyPageTitle(titleChangeEvent.getTitle()));
     }
 
     @Subscribe
@@ -121,7 +110,7 @@ public class AiChatView extends StandardView {
         contentInitialized = true;
         applyConversation();
         if (conversation != null) {
-            chat.focusMessageInput();
+            chatFragment.focusMessageInput();
         }
     }
 
@@ -155,24 +144,7 @@ public class AiChatView extends StandardView {
             return;
         }
         initialPromptSent = true;
-        chat.sendMessage(prompt);
-    }
-
-    /**
-     * Creates the chat and places it into the view's layout, hidden until a conversation is bound.
-     *
-     * @return the created chat
-     */
-    protected AiConversationChat createChat() {
-        AiConversationChat createdChat = chatFactory.create(this);
-
-        // Placed directly into the layout, so that the chat's inner components keep their
-        // "chatFragment.<id>" paths.
-        Component chatComponent = createdChat.asComponent();
-        chatComponent.setId(CHAT_COMPONENT_ID);
-        chatComponent.setVisible(false);
-        getContent().add(chatComponent);
-        return createdChat;
+        chatFragment.sendMessage(prompt);
     }
 
     protected void loadConversationFromRouteParameters(BeforeEnterEvent event) {
@@ -216,11 +188,11 @@ public class AiChatView extends StandardView {
 
     protected void applyConversation() {
         boolean hasConversation = conversation != null;
-        chat.asComponent().setVisible(hasConversation);
+        chatFragment.setVisible(hasConversation);
         notFoundLayout.setVisible(conversationNotFound);
         emptyLayout.setVisible(!hasConversation && !conversationNotFound);
         if (hasConversation) {
-            chat.setConversation(conversation);
+            chatFragment.setConversation(conversation);
             syncUrl();
         } else {
             // The fragment is not re-bound here, so no title change event

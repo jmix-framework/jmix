@@ -17,30 +17,9 @@
 
 <fragment xmlns="http://jmix.io/schema/flowui/fragment">
     <content>
-        <vbox id="inputRoot"
+        <vbox id="inputPanelContainer"
               width="100%"
               padding="false"
-              spacing="false"
-              classNames="ai-chat-input">
-            <hbox id="inputBar"
-                  width="100%"
-                  spacing="true"
-                  alignItems="END"
-                  expand="messageField"
-                  classNames="ai-chat-input-bar">
-                <textArea id="messageField"
-                          trimEnabled="false"
-                          minRows="1"
-                          maxRows="6"
-                          width="100%"
-                          valueChangeMode="EAGER"
-                          placeholder="msg://aiChatInput.placeholder"
-                          classNames="ai-chat-input-textarea"/>
-                <button id="sendButton"
-                        icon="PAPERPLANE"
-                        themeNames="primary icon"
-                        ariaLabel="msg://aiChatInput.send"/>
-            </hbox>
-        </vbox>
+              spacing="false"/>
     </content>
 </fragment>

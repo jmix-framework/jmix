@@ -17,53 +17,57 @@
 package io.jmix.aitoolsflowui.fragment.input;
 
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.messages.MessageInput;
+import com.vaadin.flow.component.HasSize;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import io.jmix.aitoolsflowui.fragment.chat.AiChatFragment;
+import io.jmix.aitoolsflowui.fragment.chat.AiChatPanelFactory;
+import io.jmix.aitoolsflowui.fragment.chat.AiChatPanelProvider;
 import io.jmix.core.annotation.Experimental;
-import io.jmix.flowui.component.textarea.JmixTextArea;
 import io.jmix.flowui.fragment.Fragment;
 import io.jmix.flowui.fragment.FragmentDescriptor;
-import io.jmix.flowui.kit.component.button.JmixButton;
+import io.jmix.flowui.view.Subscribe;
 import io.jmix.flowui.view.ViewComponent;
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.function.Consumer;
 
 /**
- * The add-on's {@link AiChatInput}. Replaces the stock Vaadin {@link MessageInput} with a
- * {@link JmixTextArea} + send {@link JmixButton}, so it can be embedded both in
- * the timeline ({@link AiChatFragment}) and on the chat hub screen.
- * <p>
- * <b>Submit gesture.</b> Enter submits; Shift+Enter inserts a newline. The
- * server-side submit fires only for a bare Enter (DOM keydown filter) and the
- * newline insertion is suppressed client-side via {@code preventDefault}.
+ * The message input of the AI chat: embed it in a view or fragment. What it draws comes from the first
+ * {@link AiChatPanelProvider} by order — the add-on's text area, or the input of another add-on.
  */
 @Experimental
+@NullMarked
 @FragmentDescriptor("ai-chat-input-fragment.xml")
-public class AiChatInputFragment extends Fragment<VerticalLayout> implements AiChatInput {
+public class AiChatInputFragment extends Fragment<VerticalLayout> {
+
+    @Autowired
+    protected AiChatPanelFactory chatPanelFactory;
 
     @ViewComponent
-    protected JmixTextArea messageField;
-    @ViewComponent
-    protected JmixButton sendButton;
+    protected VerticalLayout inputPanelContainer;
 
     @Nullable
-    protected Consumer<String> submitHandler;
+    protected AiChatInputPanel inputPanel;
 
-    public AiChatInputFragment() {
-        addReadyListener(this::onReady);
+    /**
+     * Draws the panel as soon as the fragment is ready, so a fragment declared in XML shows its input even if the
+     * host never calls it.
+     *
+     * @param event the ready event
+     */
+    @Subscribe
+    public void onReady(ReadyEvent event) {
+        getInputPanel();
     }
 
     /**
-     * Sets the handler invoked with the trimmed, non-blank message text when the
-     * user submits. Passing {@code null} restores a no-op handler.
+     * Sets the handler invoked with the trimmed, non-blank message text when the user submits.
      *
      * @param submitHandler handler invoked with the submitted text, or {@code null} for a no-op
      */
-    @Override
     public void setSubmitHandler(@Nullable Consumer<String> submitHandler) {
-        this.submitHandler = submitHandler;
+        getInputPanel().setSubmitHandler(submitHandler);
     }
 
     /**
@@ -72,18 +76,16 @@ public class AiChatInputFragment extends Fragment<VerticalLayout> implements AiC
      * @param placeholder placeholder text, or {@code null} for none
      */
     public void setPlaceholder(@Nullable String placeholder) {
-        messageField.setPlaceholder(placeholder);
+        getInputPanel().setPlaceholder(placeholder);
     }
 
     /**
-     * Enables/disables the input and the send button together.
+     * Enables or disables typing and submitting.
      *
-     * @param enabled {@code true} to enable the input and the send button
+     * @param enabled {@code false} to disable the input
      */
-    @Override
     public void setInputEnabled(boolean enabled) {
-        messageField.setEnabled(enabled);
-        sendButton.setEnabled(enabled);
+        getInputPanel().setInputEnabled(enabled);
     }
 
     /**
@@ -92,35 +94,30 @@ public class AiChatInputFragment extends Fragment<VerticalLayout> implements AiC
      * @return {@code true} if the input is enabled
      */
     public boolean isInputEnabled() {
-        return messageField.isEnabled();
+        return getInputPanel().isInputEnabled();
     }
 
     /**
-     * Moves keyboard focus to the input. No-op if the input is disabled.
+     * Moves keyboard focus to the input; no-op while the input is disabled.
      */
-    @Override
     public void focus() {
-        if (messageField.isEnabled()) {
-            messageField.focus();
-        }
+        getInputPanel().focus();
     }
 
     /**
      * Clears the input text.
      */
-    @Override
     public void clear() {
-        messageField.clear();
+        getInputPanel().clear();
     }
 
-    @Override
+    /**
+     * Puts back the text of a submit the host could not take.
+     *
+     * @param text the text to show
+     */
     public void restoreText(String text) {
-        messageField.setValue(text);
-    }
-
-    @Override
-    public Component asComponent() {
-        return this;
+        getInputPanel().restoreText(text);
     }
 
     /**
@@ -129,31 +126,23 @@ public class AiChatInputFragment extends Fragment<VerticalLayout> implements AiC
      * @return current text (empty string if nothing was entered)
      */
     public String getValue() {
-        return messageField.getValue();
+        return getInputPanel().getValue();
     }
 
-    protected void onReady(ReadyEvent event) {
-        // Enter submits, Shift+Enter newline. The filter limits the server event
-        // to a bare Enter; addEventData evaluates event.preventDefault() on the
-        // client (only when the filter matched), suppressing the inserted newline.
-        messageField.getElement()
-                .addEventListener("keydown", e -> submit())
-                .setFilter("event.key === 'Enter' && !event.shiftKey && !event.isComposing")
-                .addEventData("event.preventDefault()");
-
-        sendButton.addClickListener(e -> submit());
-    }
-
-    protected void submit() {
-        if (!messageField.isEnabled()) {
-            return;
+    /**
+     * Returns the panel the input is drawn with, creating it on first use.
+     *
+     * @return the panel
+     */
+    protected AiChatInputPanel getInputPanel() {
+        if (inputPanel == null) {
+            inputPanel = chatPanelFactory.createInputPanel(this);
+            Component inputPanelComponent = inputPanel.asComponent();
+            if (inputPanelComponent instanceof HasSize sized) {
+                sized.setWidthFull();
+            }
+            inputPanelContainer.add(inputPanelComponent);
         }
-        String text = messageField.getValue();
-        if (text == null || text.isBlank()) {
-            return;
-        }
-        if (submitHandler != null) {
-            submitHandler.accept(text.trim());
-        }
+        return inputPanel;
     }
 }

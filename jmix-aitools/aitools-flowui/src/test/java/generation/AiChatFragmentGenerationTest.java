@@ -16,12 +16,14 @@
 
 package generation;
 
+import com.vaadin.flow.component.Composite;
 import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.data.provider.DataProvider;
 import com.vaadin.flow.data.provider.Query;
 import com.vaadin.flow.dom.Element;
 import io.jmix.aitools.tool.AiToolStatusUpdate;
 import io.jmix.aitoolsflowui.fragment.chat.AiChatFragment;
+import io.jmix.aitoolsflowui.fragment.chat.timeline.TimelineChatPanel;
 import io.jmix.aitoolsflowui.fragment.chat.timeline.TimelineItem;
 import io.jmix.aitoolsflowui.fragment.chat.timeline.TimelineItemStatus;
 import io.jmix.aitoolsflowui.fragment.chat.timeline.TimelineItemType;
@@ -548,6 +550,19 @@ class AiChatFragmentGenerationTest {
     }
 
     @Test
+    void sendMessage_rejectedFromHostWithEmptyInput_restoresTheText() {
+        AiConversation conversation = conversationService.addConversation("Chat");
+        AiChatFragment fragment = chatFragment(navigate(conversation.getId()));
+        when(generationManager.start(any(), any())).thenThrow(
+                new AiChatGenerationRejectedException(conversation.getId()));
+        assertEquals("", messageInput(fragment).getValue());
+
+        fragment.sendMessage("Mine");
+
+        assertEquals("Mine", messageInput(fragment).getValue());
+    }
+
+    @Test
     void sendMessage_startFailsAfterSavingMessage_resyncsAndKeepsText() {
         AiConversation conversation = conversationService.addConversation("Chat");
         AiChatFragment fragment = chatFragment(navigate(conversation.getId()));
@@ -828,7 +843,7 @@ class AiChatFragmentGenerationTest {
                 conversation.getId(), GENERATION_ID, List.of(new AiToolStatusUpdate("Searching", "3 found"),
                 new AiToolStatusUpdate("Sorting", "done"), new AiToolStatusUpdate("Counting")), 3)));
         CollectionContainer<TimelineItem> timelineItemsDc =
-                FragmentUtils.getFragmentData(fragment).getContainer("timelineItemsDc");
+                FragmentUtils.getFragmentData(timelinePanel(fragment)).getContainer("timelineItemsDc");
         AtomicInteger rowRenders = new AtomicInteger();
         timelineItemsDc.addCollectionChangeListener(event -> {
             if (event.getChangeType() == CollectionChangeType.SET_ITEM) {
@@ -855,8 +870,13 @@ class AiChatFragmentGenerationTest {
         return UiTestUtils.getComponent(view, "chatFragment");
     }
 
+    TimelineChatPanel timelinePanel(AiChatFragment fragment) {
+        return (TimelineChatPanel) UiComponentUtils.getComponent(fragment, "chatPanelContainer")
+                .getChildren().findFirst().orElseThrow();
+    }
+
     AiChatInputFragment messageInput(AiChatFragment fragment) {
-        return (AiChatInputFragment) UiComponentUtils.getComponent(fragment, "chatInput");
+        return (AiChatInputFragment) UiComponentUtils.getComponent(timelinePanel(fragment), "chatInput");
     }
 
     Notifications.NotificationBuilder notificationBuilder() {
@@ -873,13 +893,16 @@ class AiChatFragmentGenerationTest {
     }
 
     JmixTextArea messageField(AiChatFragment fragment) {
-        return (JmixTextArea) UiComponentUtils.getComponent(messageInput(fragment), "messageField");
+        Composite<?> inputPanel = (Composite<?>) UiComponentUtils.getComponent(messageInput(fragment),
+                        "inputPanelContainer")
+                .getChildren().findFirst().orElseThrow();
+        return (JmixTextArea) UiComponentUtils.getComponent(inputPanel, "messageField");
     }
 
     List<TimelineItem> timelineItems(AiChatFragment fragment) {
         @SuppressWarnings("unchecked")
         JmixVirtualList<TimelineItem> list = (JmixVirtualList<TimelineItem>) UiComponentUtils.getComponent(
-                fragment, "timelineList");
+                timelinePanel(fragment), "timelineList");
         @SuppressWarnings("unchecked")
         DataProvider<TimelineItem, Object> dataProvider =
                 (DataProvider<TimelineItem, Object>) (DataProvider<?, ?>) list.getDataProvider();

@@ -16,8 +16,9 @@
 
 package io.jmix.aitoolsflowui.fragment.chat;
 
-import io.jmix.aitoolsflowui.fragment.input.AiChatInput;
-import io.jmix.aitoolsflowui.fragment.input.AiChatInputFragment;
+import io.jmix.aitoolsflowui.fragment.chat.timeline.TimelineChatPanel;
+import io.jmix.aitoolsflowui.fragment.input.AiChatInputPanel;
+import io.jmix.aitoolsflowui.fragment.input.TextAreaChatInputPanel;
 import io.jmix.core.annotation.Experimental;
 import io.jmix.flowui.Fragments;
 import io.jmix.flowui.fragment.FragmentOwner;
@@ -27,26 +28,25 @@ import org.springframework.core.Ordered;
 import org.springframework.stereotype.Component;
 
 /**
- * The add-on's default {@link AiConversationChatProvider}: the timeline chat {@link AiChatFragment} and the
- * {@link AiChatInputFragment} message input. Used only when no other provider is registered.
+ * The add-on's own panels: {@link TimelineChatPanel} and {@link TextAreaChatInputPanel}. Ordered last, so an
+ * {@link AiChatPanelProvider} with a lower order value takes over.
  */
 @Experimental
-@Component("aitls_AiChatFragmentProvider")
-public class AiChatFragmentProvider implements AiConversationChatProvider {
+@NullMarked
+@Component("aitls_AiChatPanelProvider")
+public class DefaultAiChatPanelProvider implements AiChatPanelProvider {
 
     @Autowired
     protected Fragments fragments;
 
-    @NullMarked
     @Override
-    public AiConversationChat create(FragmentOwner owner) {
-        return fragments.create(owner, AiChatFragment.class);
+    public AiChatPanel createChatPanel(FragmentOwner owner) {
+        return fragments.create(owner, TimelineChatPanel.class);
     }
 
-    @NullMarked
     @Override
-    public AiChatInput createInput(FragmentOwner owner) {
-        return fragments.create(owner, AiChatInputFragment.class);
+    public AiChatInputPanel createInputPanel(FragmentOwner owner) {
+        return fragments.create(owner, TextAreaChatInputPanel.class);
     }
 
     @Override

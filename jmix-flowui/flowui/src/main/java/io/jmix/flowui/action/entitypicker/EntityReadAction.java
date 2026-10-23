@@ -25,6 +25,7 @@ import io.jmix.flowui.DialogWindows;
 import io.jmix.flowui.Notifications;
 import io.jmix.flowui.UiComponentProperties;
 import io.jmix.flowui.action.ActionType;
+import io.jmix.flowui.action.AdjustWhenFieldReadOnly;
 import io.jmix.flowui.action.ViewOpeningAction;
 import io.jmix.flowui.action.valuepicker.PickerAction;
 import io.jmix.flowui.component.EntityPickerComponent;
@@ -51,13 +52,14 @@ import static com.google.common.base.Preconditions.checkState;
  * The view is resolved as {@link io.jmix.flowui.action.list.ReadAction} resolves it: the view annotated with
  * {@link io.jmix.flowui.view.PrimaryReadView}, otherwise the view with the {@code <entity>.read} id, otherwise
  * the entity's detail view opened in the read-only mode. In contrast to {@link EntityOpenAction} the action
- * never saves: it requires no UPDATE permission and stays enabled on a read-only view.
+ * never saves: it requires no UPDATE permission, stays enabled on a read-only view and stays visible on
+ * a read-only picker.
  *
  * @param <E> entity type
  */
 @ActionType(EntityReadAction.ID)
 public class EntityReadAction<E> extends PickerAction<EntityReadAction<E>, EntityPickerComponent<E>, E>
-        implements ViewOpeningAction {
+        implements ViewOpeningAction, AdjustWhenFieldReadOnly {
 
     private static final Logger log = LoggerFactory.getLogger(EntityReadAction.class);
 
@@ -113,6 +115,11 @@ public class EntityReadAction<E> extends PickerAction<EntityReadAction<E>, Entit
                 "A component must implement " + HasValue.class.getSimpleName());
 
         super.setTarget(target);
+    }
+
+    @Override
+    public boolean isVisibleWhenFieldReadOnly() {
+        return true;
     }
 
     @Nullable

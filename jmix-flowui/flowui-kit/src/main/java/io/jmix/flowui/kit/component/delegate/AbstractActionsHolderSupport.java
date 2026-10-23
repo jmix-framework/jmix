@@ -97,7 +97,7 @@ public abstract class AbstractActionsHolderSupport<C extends Component> {
         KeyCombination keyCombination = action.getShortcutCombination();
         if (keyCombination != null) {
             ShortcutRegistration shortcutRegistration = Shortcuts.addShortcutListener(getShortcutLifecycleOwner(),
-                    () -> action.perform(new Action.Context(component)),
+                    () -> performActionByShortcut(action),
                     keyCombination.getKey(),
                     keyCombination.getKeyModifiers());
 
@@ -111,6 +111,10 @@ public abstract class AbstractActionsHolderSupport<C extends Component> {
 
             getActionShortcutBinding().put(action, shortcutRegistration);
         }
+    }
+
+    protected void performActionByShortcut(Action action) {
+        action.perform(new Action.Context(component));
     }
 
     protected Component getShortcutLifecycleOwner() {

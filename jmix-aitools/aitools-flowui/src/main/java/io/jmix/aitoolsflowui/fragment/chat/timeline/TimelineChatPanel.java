@@ -34,7 +34,6 @@ import io.jmix.flowui.fragment.Fragment;
 import io.jmix.flowui.fragment.FragmentDescriptor;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.view.ViewComponent;
-import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -49,7 +48,6 @@ import java.util.stream.Collectors;
  * The add-on's {@link AiChatPanel}: the conversation as a timeline of message rows with a thinking row for the
  * running response, and an {@link AiChatInputFragment} below.
  */
-@NullMarked
 @FragmentDescriptor("timeline-chat-panel.xml")
 @JsModule("./aitools/ai-chat-timeline-scroll.js")
 public class TimelineChatPanel extends Fragment<VerticalLayout> implements AiChatPanel, HasAiAvatarIcon {

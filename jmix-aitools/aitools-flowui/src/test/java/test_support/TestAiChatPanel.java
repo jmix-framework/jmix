@@ -51,6 +51,8 @@ public class TestAiChatPanel extends Div implements AiChatPanel, HasAiAvatarIcon
     public boolean inputEnabled = true;
     public boolean inputVisible = true;
     @Nullable
+    public String restoredText;
+    @Nullable
     public SerializableSupplier<Component> avatarIconSupplier;
 
     /**
@@ -90,6 +92,7 @@ public class TestAiChatPanel extends Div implements AiChatPanel, HasAiAvatarIcon
 
     @Override
     public void restoreInputText(String text) {
+        this.restoredText = text;
     }
 
     @Override

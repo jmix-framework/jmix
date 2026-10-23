@@ -58,6 +58,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import test_support.AiToolsFlowuiTestConfiguration;
 import test_support.TestAiChatInputPanel;
 import test_support.TestAiChatMessageService;
+import test_support.TestAiChatService;
 import test_support.TestAiChatPanel;
 import test_support.TestAiConversationService;
 
@@ -73,6 +74,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -96,6 +98,8 @@ class AiChatPanelOverrideTest {
     @Autowired
     TestAiChatMessageService messageService;
     @Autowired
+    TestAiChatService chatService;
+    @Autowired
     Messages messages;
 
     @MockitoBean
@@ -116,6 +120,7 @@ class AiChatPanelOverrideTest {
     void tearDown() {
         conversationService.clear();
         messageService.clear();
+        chatService.reset();
         TestPanelProvider.lastChatPanel = null;
         TestPanelProvider.lastInputPanel = null;
     }
@@ -228,6 +233,48 @@ class AiChatPanelOverrideTest {
         fragment.setMessageInputEnabled(false);
 
         assertFalse(panel.inputEnabled);
+    }
+
+    @Test
+    void submit_whileResponseRuns_putsTheTextBackIntoTheInput() {
+        AiConversation conversation = conversationService.addConversation("Chat");
+        navigate(conversation);
+        TestAiChatPanel panel = lastChatPanel();
+        panel.lockedWhileResponding = false;
+        panel.submit("Hi");
+        assertTrue(panel.responseRunning);
+
+        panel.submit("Again");
+
+        assertEquals("Again", panel.restoredText);
+        verify(generationManager).start(any(), eq("Hi"));
+        verify(generationManager, never()).start(any(), eq("Again"));
+    }
+
+    @Test
+    void submit_aiNotAvailable_putsTheTextBackIntoTheInput() {
+        AiConversation conversation = conversationService.addConversation("Chat");
+        navigate(conversation);
+        TestAiChatPanel panel = lastChatPanel();
+        chatService.setAvailable(false);
+
+        panel.submit("Hi");
+
+        assertEquals("Hi", panel.restoredText);
+        verify(generationManager, never()).start(any(), any());
+    }
+
+    @Test
+    void submit_noConversation_putsTheTextBackIntoTheInput() {
+        AiConversation conversation = conversationService.addConversation("Chat");
+        AiChatFragment fragment = chatFragment(navigate(conversation));
+        TestAiChatPanel panel = lastChatPanel();
+        fragment.setConversation(null);
+
+        panel.submit("Hi");
+
+        assertEquals("Hi", panel.restoredText);
+        verify(generationManager, never()).start(any(), any());
     }
 
     @Test

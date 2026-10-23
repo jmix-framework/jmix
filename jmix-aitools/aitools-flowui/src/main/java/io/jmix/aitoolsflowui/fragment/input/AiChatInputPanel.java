@@ -44,9 +44,9 @@ public interface AiChatInputPanel {
     /**
      * Sets the handler of a submitted message.
      *
-     * @param submitHandler receives the trimmed, non-blank text, or {@code null} for none
+     * @param submitHandler receives the trimmed, non-blank text
      */
-    void setSubmitHandler(@Nullable Consumer<String> submitHandler);
+    void setSubmitHandler(Consumer<String> submitHandler);
 
     /**
      * Sets the placeholder text of the input.

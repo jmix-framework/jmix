@@ -61,7 +61,6 @@ import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.view.Subscribe;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewComponent;
-import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -77,7 +76,6 @@ import java.util.*;
  * the first {@link AiChatPanelProvider} by order — the add-on's timeline, or the chat of another add-on.
  */
 @Experimental
-@NullMarked
 @FragmentDescriptor("ai-chat-fragment.xml")
 public class AiChatFragment extends Fragment<VerticalLayout> {
 
@@ -252,9 +250,9 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
     }
 
     /**
-     * Sends a user message to the bound conversation and starts the assistant's response. Ignored when the message
-     * cannot be sent: no conversation is bound, the text is blank, a response is already shown as running, or the AI
-     * is not available.
+     * Sends a user message to the bound conversation and starts the assistant's response. Nothing is sent when no
+     * conversation is bound, the text is blank, a response is already shown as running, or the AI is not available.
+     * A text that is not taken goes back into the message input, which clears itself when the user submits.
      * <p>
      * Persists the message, starts the assistant's response on the server, shows the message and the thinking
      * indicator and disables the message input. Used by the input's submit handler and by hosts that start a
@@ -263,19 +261,22 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
      * @param userMessage message text to send; a {@code null} or blank value is ignored
      */
     public void sendMessage(@Nullable String userMessage) {
+        if (userMessage == null || userMessage.isBlank()) {
+            return;
+        }
         if (isAwaitingResponse()) {
             log.debug("Ignoring sendMessage call while awaiting an assistant response");
+            getChatPanel().restoreInputText(userMessage);
             return;
         }
         if (conversation == null) {
             log.warn("Cannot submit message — no conversation bound to the fragment");
-            return;
-        }
-        if (userMessage == null || userMessage.isBlank()) {
+            getChatPanel().restoreInputText(userMessage);
             return;
         }
         if (!chatService.isAvailable()) {
             log.warn("Cannot submit message — AI is not configured");
+            getChatPanel().restoreInputText(userMessage);
             return;
         }
 

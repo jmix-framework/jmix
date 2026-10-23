@@ -24,7 +24,6 @@ import io.jmix.flowui.fragment.Fragment;
 import io.jmix.flowui.fragment.FragmentDescriptor;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.view.ViewComponent;
-import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 import java.util.function.Consumer;
@@ -37,7 +36,6 @@ import java.util.function.Consumer;
  * newline insertion is suppressed client-side via {@code preventDefault}.
  */
 @Experimental
-@NullMarked
 @FragmentDescriptor("text-area-chat-input-panel.xml")
 public class TextAreaChatInputPanel extends Fragment<VerticalLayout> implements AiChatInputPanel {
 
@@ -46,8 +44,8 @@ public class TextAreaChatInputPanel extends Fragment<VerticalLayout> implements 
     @ViewComponent
     protected JmixButton sendButton;
 
-    @Nullable
-    protected Consumer<String> submitHandler;
+    protected Consumer<String> submitHandler = text -> {
+    };
 
     public TextAreaChatInputPanel() {
         addReadyListener(this::onReady);
@@ -55,12 +53,12 @@ public class TextAreaChatInputPanel extends Fragment<VerticalLayout> implements 
 
     /**
      * Sets the handler invoked with the trimmed, non-blank message text when the
-     * user submits; the input is already cleared by then. Passing {@code null} restores a no-op handler.
+     * user submits; the input is already cleared by then.
      *
-     * @param submitHandler handler invoked with the submitted text, or {@code null} for a no-op
+     * @param submitHandler handler invoked with the submitted text
      */
     @Override
-    public void setSubmitHandler(@Nullable Consumer<String> submitHandler) {
+    public void setSubmitHandler(Consumer<String> submitHandler) {
         this.submitHandler = submitHandler;
     }
 
@@ -138,8 +136,6 @@ public class TextAreaChatInputPanel extends Fragment<VerticalLayout> implements 
         // Cleared before the handler: a host that cannot take the message puts the text back from inside the
         // handler (restoreText), so clearing afterwards would wipe it.
         messageField.clear();
-        if (submitHandler != null) {
-            submitHandler.accept(text.trim());
-        }
+        submitHandler.accept(text.trim());
     }
 }

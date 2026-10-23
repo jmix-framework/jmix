@@ -33,7 +33,7 @@ import org.springframework.stereotype.Component;
  */
 @Experimental
 @NullMarked
-@Component("aitls_AiChatPanelProvider")
+@Component("aitls_DefaultAiChatPanelProvider")
 public class DefaultAiChatPanelProvider implements AiChatPanelProvider {
 
     @Autowired

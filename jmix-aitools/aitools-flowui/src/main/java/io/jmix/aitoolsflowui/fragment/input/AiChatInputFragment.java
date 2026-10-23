@@ -26,7 +26,6 @@ import io.jmix.flowui.fragment.Fragment;
 import io.jmix.flowui.fragment.FragmentDescriptor;
 import io.jmix.flowui.view.Subscribe;
 import io.jmix.flowui.view.ViewComponent;
-import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -39,7 +38,6 @@ import java.util.function.Consumer;
  * The input clears itself when the user submits, before the submit handler runs.
  */
 @Experimental
-@NullMarked
 @FragmentDescriptor("ai-chat-input-fragment.xml")
 public class AiChatInputFragment extends Fragment<VerticalLayout> {
 
@@ -69,7 +67,8 @@ public class AiChatInputFragment extends Fragment<VerticalLayout> {
      * @param submitHandler handler invoked with the submitted text, or {@code null} for a no-op
      */
     public void setSubmitHandler(@Nullable Consumer<String> submitHandler) {
-        getInputPanel().setSubmitHandler(submitHandler);
+        getInputPanel().setSubmitHandler(submitHandler != null ? submitHandler : text -> {
+        });
     }
 
     /**

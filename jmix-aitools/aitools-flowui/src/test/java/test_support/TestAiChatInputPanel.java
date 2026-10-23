@@ -28,8 +28,8 @@ import java.util.function.Consumer;
  */
 public class TestAiChatInputPanel extends Div implements AiChatInputPanel {
 
-    @Nullable
-    public Consumer<String> submitHandler;
+    public Consumer<String> submitHandler = text -> {
+    };
     public String value = "";
     public boolean enabled = true;
 
@@ -39,9 +39,7 @@ public class TestAiChatInputPanel extends Div implements AiChatInputPanel {
      * @param text the submitted text
      */
     public void submit(String text) {
-        if (submitHandler != null) {
-            submitHandler.accept(text);
-        }
+        submitHandler.accept(text);
     }
 
     @Override
@@ -50,7 +48,7 @@ public class TestAiChatInputPanel extends Div implements AiChatInputPanel {
     }
 
     @Override
-    public void setSubmitHandler(@Nullable Consumer<String> submitHandler) {
+    public void setSubmitHandler(Consumer<String> submitHandler) {
         this.submitHandler = submitHandler;
     }
 

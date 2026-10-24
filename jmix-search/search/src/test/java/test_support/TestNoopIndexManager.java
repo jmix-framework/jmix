@@ -16,28 +16,34 @@
 
 package test_support;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import io.jmix.search.SearchProperties;
 import io.jmix.search.index.IndexConfiguration;
-import io.jmix.search.index.impl.BaseIndexManager;
-import io.jmix.search.index.impl.IndexStateRegistry;
-import io.jmix.search.index.mapping.IndexConfigurationManager;
-import io.jmix.search.index.mapping.IndexMappingConfiguration;
-import org.jspecify.annotations.NonNull;
+import io.jmix.search.index.IndexManipulationResult;
+import io.jmix.search.index.IndexOperationResult;
+import io.jmix.search.index.impl.NoopIndexManager;
 import org.jspecify.annotations.NullMarked;
 
-@NullMarked
-public class TestNoopIndexManager extends BaseIndexManager {
+import org.jspecify.annotations.Nullable;
 
-    protected TestNoopIndexManager(IndexConfigurationManager indexConfigurationManager,
-                                   IndexStateRegistry indexStateRegistry,
-                                   SearchProperties searchProperties) {
-        super(indexConfigurationManager, null, null, null, null);
+import java.util.Collection;
+import java.util.List;
+
+/**
+ * Index manager that performs no actual operations but reports them as successful.
+ * <p>
+ * Unlike platform-specific managers it doesn't depend on index state and configuration comparing,
+ * so it can be used in tests of the platform-independent module.
+ */
+@NullMarked
+public class TestNoopIndexManager extends NoopIndexManager {
+
+    public TestNoopIndexManager() {
+        super();
     }
 
     @Override
-    public boolean createIndex(IndexConfiguration indexConfiguration) {
-        return true;
+    public List<IndexOperationResult<IndexManipulationResult>> createIndexes(
+            Collection<IndexConfiguration> indexConfigurations, @Nullable String tenantId) {
+        return createResult(indexConfigurations, IndexManipulationResult.SUCCESS);
     }
 
     @Override
@@ -50,13 +56,4 @@ public class TestNoopIndexManager extends BaseIndexManager {
         return true;
     }
 
-    @Override
-    public ObjectNode getIndexMetadata(String indexName) {
-        return objectMapper.createObjectNode();
-    }
-
-    @Override
-    public boolean putMapping(String indexName, IndexMappingConfiguration mapping) {
-        return false;
-    }
 }

@@ -23,6 +23,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Optional;
 
+import static io.jmix.search.index.IndexConfigurationFormatter.format;
 
 /**
  * Class encapsulates logic of both the settings from the application's index configuration
@@ -44,16 +45,18 @@ public abstract class IndexSettingsComparator<TState, TSettings, TJsonp> {
         this.jsonNodesComparator = jsonNodesComparator;
     }
 
-    public SettingsComparingResult compareSettings(IndexConfiguration indexConfiguration, TState currentIndexState) {
+    public SettingsComparingResult compareSettings(IndexConfiguration indexConfiguration,
+                                                   String indexName,
+                                                   TState currentIndexState) {
 
         ObjectNode expectedSettingsNode = jsonpSerializer.toObjectNode(getExpectedIndexSettings(indexConfiguration));
-        ObjectNode appliedSettingsNode
-                = jsonpSerializer.toObjectNode(getAppliedIndexSettings(
-                        currentIndexState,
-                        indexConfiguration.getIndexName()));
+        ObjectNode appliedSettingsNode = jsonpSerializer.toObjectNode(getAppliedIndexSettings(
+                indexConfiguration,
+                currentIndexState,
+                indexName));
 
-        log.debug("Settings of index '{}':\nExpected: {}\nApplied: {}",
-                indexConfiguration.getIndexName(), expectedSettingsNode, appliedSettingsNode);
+        log.debug("Settings of index '{}' and configuration {}:\nExpected: {}\nApplied: {}",
+                indexName, format(indexConfiguration), expectedSettingsNode, appliedSettingsNode);
 
         return jsonNodesComparator.nodeContains(
                 appliedSettingsNode,
@@ -61,11 +64,12 @@ public abstract class IndexSettingsComparator<TState, TSettings, TJsonp> {
     }
 
     @SuppressWarnings("unchecked")
-    protected TJsonp getAppliedIndexSettings(TState indexState, String indexName) {
+    protected TJsonp getAppliedIndexSettings(IndexConfiguration indexConfiguration, TState indexState, String indexName) {
         Optional<TSettings> appliedIndexSettings = extractAppliedIndexSettings(indexState);
         if (appliedIndexSettings.isEmpty()) {
             throw new IllegalArgumentException(
-                    "No info about applied index settings for index '" + indexName + "'"
+                    "No info about applied index settings for index '" + indexName + "' and configuration {" +
+                            format(indexConfiguration) + "}"
             );
         }
         return (TJsonp) appliedIndexSettings.get();

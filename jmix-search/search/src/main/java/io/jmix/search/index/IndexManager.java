@@ -18,23 +18,45 @@ package io.jmix.search.index;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Collection;
-import java.util.Map;
+import java.util.List;
 
 /**
- * Provides functionality for index management.
+ * Manages the search indexes of the application.
+ * <p>
+ * The scope of an operation is a set of index configurations and, optionally, a tenant, where {@code null} stands
+ * for every tenant. An entity that is not split by tenants has no index of a single tenant - its index is shared by
+ * everyone - so an operation asked for one tenant leaves such an entity alone.
+ * <p>
+ * Every operation reports a row per index it reached, because one configuration corresponds to as many indexes as
+ * the application has tenants. An operation that reached no index at all reports nothing.
  */
 @NullMarked
 public interface IndexManager {
 
     /**
-     * Creates index if not exists using provided {@link IndexConfiguration}.
+     * Creates the indexes of the given scope that do not exist yet.
      *
-     * @param indexConfiguration index configuration
-     * @return true if index was successfully created, false otherwise
+     * @param indexConfigurations entities whose indexes to create
+     * @param tenantId            tenant to create the indexes of, or null for every tenant
+     * @return a row per index the creation reached
      */
-    boolean createIndex(IndexConfiguration indexConfiguration);
+    List<IndexOperationResult<IndexManipulationResult>> createIndexes(
+            Collection<IndexConfiguration> indexConfigurations, @Nullable String tenantId);
+
+    /**
+     * Deletes the indexes of the given scope. All data they hold is lost, and the items the indexing queue was
+     * holding for them are discarded with them: there is nowhere left to write those items, and a dropped index is
+     * marked unavailable, which would keep them out of every batch while they sat in the queue table for good.
+     *
+     * @param indexConfigurations entities whose indexes to delete
+     * @param tenantId            tenant to delete the indexes of, or null for every tenant
+     * @return a row per index the deletion reached
+     */
+    List<IndexOperationResult<IndexManipulationResult>> deleteIndexes(
+            Collection<IndexConfiguration> indexConfigurations, @Nullable String tenantId);
 
     /**
      * Drops index by name.
@@ -47,25 +69,19 @@ public interface IndexManager {
     /**
      * Drops and creates all search indexes.
      *
-     * @return Map with operation result per every index configuration
+     * @return operation result per every index
      */
-    Map<IndexConfiguration, Boolean> recreateIndexes();
+    List<IndexOperationResult<IndexRecreationStatus>> recreateIndexes();
 
     /**
      * Drops and creates search indexes using provided collection of {@link IndexConfiguration}.
      *
      * @param indexConfigurations index configurations
-     * @return Map with operation result per every index configuration
+     * @param tenantId            tenant to recreate the indexes of, or null for every tenant
+     * @return operation result per every index
      */
-    Map<IndexConfiguration, Boolean> recreateIndexes(Collection<IndexConfiguration> indexConfigurations);
-
-    /**
-     * Drops and creates search index using provided {@link IndexConfiguration}.
-     *
-     * @param indexConfiguration index configuration
-     * @return true if index was successfully recreated, false otherwise
-     */
-    boolean recreateIndex(IndexConfiguration indexConfiguration);
+    List<IndexOperationResult<IndexRecreationStatus>> recreateIndexes(
+            Collection<IndexConfiguration> indexConfigurations, @Nullable String tenantId);
 
     /**
      * Checks if index exists.
@@ -78,25 +94,19 @@ public interface IndexManager {
     /**
      * Validates current state of schema of all search indexes defined in application.
      *
-     * @return {@link IndexValidationStatus} per each {@link IndexConfiguration}
+     * @return {@link IndexValidationStatus} per every index
      */
-    Map<IndexConfiguration, IndexValidationStatus> validateIndexes();
+    List<IndexOperationResult<IndexValidationStatus>> validateIndexes();
 
     /**
      * Validates current state of index schema related to provided collection of {@link IndexConfiguration}.
      *
      * @param indexConfigurations actual configurations
-     * @return {@link IndexValidationStatus} per each {@link IndexConfiguration}
+     * @param tenantId            tenant to validate the indexes of, or null for every tenant
+     * @return {@link IndexValidationStatus} per every index
      */
-    Map<IndexConfiguration, IndexValidationStatus> validateIndexes(Collection<IndexConfiguration> indexConfigurations);
-
-    /**
-     * Validates current state of index schema.
-     *
-     * @param indexConfiguration actual configuration
-     * @return {@link IndexValidationStatus}
-     */
-    IndexValidationStatus validateIndex(IndexConfiguration indexConfiguration);
+    List<IndexOperationResult<IndexValidationStatus>> validateIndexes(
+            Collection<IndexConfiguration> indexConfigurations, @Nullable String tenantId);
 
     /**
      * Requests info about index from server.
@@ -108,31 +118,24 @@ public interface IndexManager {
 
     /**
      * Synchronizes schemas of all search indexes defined in application.
-     * <p>See {@link IndexManager#synchronizeIndexSchemas(Collection)}
-     * <p>See {@link IndexManager#synchronizeIndexSchema(IndexConfiguration)}
+     * <p>
+     * See {@link #synchronizeIndexSchemas(Collection, String)}.
      *
-     * @return {@link IndexSynchronizationStatus} per each {@link IndexConfiguration}
+     * @return {@link IndexSynchronizationStatus} per every index
      */
-    Map<IndexConfiguration, IndexSynchronizationStatus> synchronizeIndexSchemas();
+    List<IndexOperationResult<IndexSynchronizationStatus>> synchronizeIndexSchemas();
 
     /**
      * Synchronizes schemas of search indexes for provided collection of {@link IndexConfiguration}.
      * <p>
-     * See {@link IndexManager#synchronizeIndexSchema(IndexConfiguration)}
+     * The schema is brought to the actual state according to the {@link IndexSchemaManagementStrategy} defined by
+     * the 'jmix.search.index-schema-management-strategy' application property.
      *
      * @param indexConfigurations actual index configurations
-     * @return {@link IndexSynchronizationStatus} per each {@link IndexConfiguration}
+     * @param tenantId            tenant to synchronize the indexes of, or null for every tenant
+     * @return {@link IndexSynchronizationStatus} per every index
      */
-    Map<IndexConfiguration, IndexSynchronizationStatus> synchronizeIndexSchemas(Collection<IndexConfiguration> indexConfigurations);
+    List<IndexOperationResult<IndexSynchronizationStatus>> synchronizeIndexSchemas(
+            Collection<IndexConfiguration> indexConfigurations, @Nullable String tenantId);
 
-    /**
-     * Synchronizes schema of search index for provided {@link IndexConfiguration}.
-     * <p>
-     * It tries to update schema to the actual state according to {@link IndexSchemaManagementStrategy}
-     * defined by 'jmix.search.indexSchemaManagementStrategy' application property.
-     *
-     * @param indexConfiguration actual index configuration
-     * @return {@link IndexSynchronizationStatus}
-     */
-    IndexSynchronizationStatus synchronizeIndexSchema(IndexConfiguration indexConfiguration);
 }

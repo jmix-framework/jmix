@@ -21,7 +21,18 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.jspecify.annotations.NullMarked;
 
 /**
- * Provides the tenant id for user.
+ * Determines which tenant a user belongs to.
+ * <p>
+ * This is an extension point: an application implements it to derive the tenant from something other than the
+ * user's own attribute - a subdomain, a request header, a directory. Only {@link #getCurrentUserTenantId()} has
+ * to be implemented; the rest have defaults.
+ * <p>
+ * To <em>ask</em> which tenant a user or a record belongs to, use {@link io.jmix.multitenancy.Multitenancy}
+ * instead. It covers everything available here and answers with {@code null} rather than {@link #NO_TENANT},
+ * and it also answers for a record, which this interface deliberately does not: the tenant of a record is held
+ * by its {@link io.jmix.core.annotation.TenantId} attribute, and the row-level filter of the add-on reads it
+ * from there. An implementation answering otherwise would make a record visible to one tenant and indexed for
+ * another.
  */
 @NullMarked
 public interface TenantProvider {

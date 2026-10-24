@@ -100,7 +100,6 @@ class OpenSearchQueryConfigurerTest extends Specification {
 
     private IndexSearchRequestScope createScope(String indexName, String... fields) {
         IndexConfiguration indexConfiguration = Mock()
-        indexConfiguration.getIndexName() >> indexName
-        return new IndexSearchRequestScope(indexConfiguration, new LinkedHashSet<>(List.of(fields)))
+        return new IndexSearchRequestScope(indexConfiguration, new LinkedHashSet<>(List.of(fields)), indexName)
     }
 }

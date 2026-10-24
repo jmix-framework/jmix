@@ -19,7 +19,6 @@ package io.jmix.searchelasticsearch.index.impl;
 import co.elastic.clients.elasticsearch.indices.IndexSettings;
 import co.elastic.clients.elasticsearch.indices.IndexState;
 import co.elastic.clients.json.JsonpSerializable;
-import io.jmix.search.index.IndexConfiguration;
 import io.jmix.search.index.impl.IndexConfigurationComparator;
 import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Component;
@@ -36,8 +35,8 @@ public class ElasticsearchIndexConfigurationComparator
 
     @Override
     @Nullable
-    protected IndexState getIndexState(IndexConfiguration indexConfiguration) {
-        return indexStateResolver.getState(indexConfiguration.getIndexName());
+    protected IndexState getIndexState(String indexName) {
+        return indexStateResolver.getState(indexName);
     }
 
 }

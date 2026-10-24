@@ -103,11 +103,12 @@ class OpenSearchIndexSettingsGenerationTest {
         return new IndexConfiguration(
                 "test_DynamicEntity",
                 entityClass,
-                "search_index_test_dynamicentity",
                 Mockito.mock(IndexMappingConfiguration.class),
                 Set.of(entityClass),
                 instance -> true,
-                ExtendedSearchSettings.builder().setEnabled(extendedSearchEnabled).build());
+                ExtendedSearchSettings.builder().setEnabled(extendedSearchEnabled).build(),
+                false,
+                null);
     }
 
     boolean hasPrefixAnalyzer(IndexSettings settings) {

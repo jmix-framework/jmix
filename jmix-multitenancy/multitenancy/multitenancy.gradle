@@ -28,4 +28,10 @@ dependencies {
     api project(':eclipselink')
     api project(':security')
     api project(':security-data')
+
+    testImplementation "org.spockframework:spock-core"
+    //TODO move version to BOM
+    testImplementation "org.objenesis:objenesis:3.3"
+    testRuntimeOnly  'net.bytebuddy:byte-buddy'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }

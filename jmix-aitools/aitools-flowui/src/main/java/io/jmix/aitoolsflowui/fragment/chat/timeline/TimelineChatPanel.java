@@ -19,20 +19,24 @@ package io.jmix.aitoolsflowui.fragment.chat.timeline;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.function.SerializableSupplier;
 import io.jmix.aitools.tool.AiToolStatusUpdate;
 import io.jmix.aitoolsflowui.fragment.chat.AiChatPanel;
 import io.jmix.aitoolsflowui.fragment.chat.HasAiAvatarIcon;
+import io.jmix.aitoolsflowui.fragment.chat.renderer.TimelineItemRenderer;
 import io.jmix.aitoolsflowui.fragment.chat.support.TimelineItemFactory;
 import io.jmix.aitoolsflowui.fragment.input.AiChatInputFragment;
 import io.jmix.aitoolsflowui.model.AiChatMessage;
 import io.jmix.aitoolsflowui.model.AiChatMessageType;
 import io.jmix.core.DataManager;
 import io.jmix.core.TimeSource;
+import io.jmix.flowui.Fragments;
 import io.jmix.flowui.component.virtuallist.JmixVirtualList;
 import io.jmix.flowui.fragment.Fragment;
 import io.jmix.flowui.fragment.FragmentDescriptor;
 import io.jmix.flowui.model.CollectionContainer;
+import io.jmix.flowui.view.Subscribe;
 import io.jmix.flowui.view.ViewComponent;
 import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,6 +62,8 @@ public class TimelineChatPanel extends Fragment<VerticalLayout> implements AiCha
     protected TimeSource timeSource;
     @Autowired
     protected TimelineItemFactory timelineItemFactory;
+    @Autowired
+    protected Fragments fragments;
 
     @ViewComponent
     protected VerticalLayout chatInputContainer;
@@ -75,6 +81,11 @@ public class TimelineChatPanel extends Fragment<VerticalLayout> implements AiCha
 
     @Nullable
     protected SerializableSupplier<Component> aiAvatarIconSupplier;
+
+    @Subscribe
+    public void onReady(final ReadyEvent event) {
+        timelineList.setRenderer(new ComponentRenderer<>(this::createTimelineRow, TimelineItemRenderer::setItem));
+    }
 
     @Override
     public void setAiAvatarIconSupplier(@Nullable SerializableSupplier<Component> avatarIconSupplier) {
@@ -258,6 +269,18 @@ public class TimelineChatPanel extends Fragment<VerticalLayout> implements AiCha
         message.setType(AiChatMessageType.ASSISTANT);
         message.setCreatedDate(timeSource.now().toOffsetDateTime());
         return message;
+    }
+
+    /**
+     * Creates a row of the timeline, owned by this panel, the way a {@code fragmentRenderer} declared in a descriptor
+     * does, and gives it the avatar of this panel.
+     *
+     * @return the new row
+     */
+    protected TimelineItemRenderer createTimelineRow() {
+        TimelineItemRenderer row = fragments.create(this, TimelineItemRenderer.class);
+        row.setAiAvatarIconSupplier(aiAvatarIconSupplier);
+        return row;
     }
 
     protected TimelineItemStatus createTimelineStatus(AiToolStatusUpdate statusUpdate) {

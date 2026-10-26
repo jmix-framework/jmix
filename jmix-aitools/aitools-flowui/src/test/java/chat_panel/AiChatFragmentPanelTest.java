@@ -17,6 +17,7 @@
 package chat_panel;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.data.provider.DataProvider;
@@ -30,12 +31,12 @@ import io.jmix.aitoolsflowui.fragment.chat.timeline.TimelineItemType;
 import io.jmix.aitoolsflowui.model.AiChatMessageType;
 import io.jmix.aitoolsflowui.model.AiConversation;
 import io.jmix.aitoolsflowui.view.chat.AiChatView;
-import io.jmix.flowui.Fragments;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.virtuallist.JmixVirtualList;
 import io.jmix.flowui.testassist.FlowuiTestAssistConfiguration;
 import io.jmix.flowui.testassist.UiTest;
 import io.jmix.flowui.testassist.UiTestUtils;
+import io.jmix.flowui.testassist.vaadin.TestUI;
 import io.jmix.flowui.view.navigation.RouteSupport;
 import io.jmix.flowui.view.navigation.ViewNavigationSupport;
 import org.junit.jupiter.api.AfterEach;
@@ -47,6 +48,8 @@ import test_support.TestAiChatMessageService;
 import test_support.TestAiConversationService;
 import test_support.view.ChatEmbedTestView;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -72,8 +75,6 @@ class AiChatFragmentPanelTest {
     TestAiConversationService conversationService;
     @Autowired
     TestAiChatMessageService messageService;
-    @Autowired
-    Fragments fragments;
 
     @AfterEach
     void tearDown() {
@@ -106,7 +107,12 @@ class AiChatFragmentPanelTest {
         AiConversation conversation = conversationService.addConversation("Chat");
         messageService.createMessage(conversation, AiChatMessageType.ASSISTANT, "Hello!");
         AiChatFragment fragment = chatFragment(navigateToEmbedView());
-        SerializableSupplier<Component> avatarSupplier = () -> new Span(CUSTOM_AVATAR_TEXT);
+        List<Span> suppliedIcons = new ArrayList<>();
+        SerializableSupplier<Component> avatarSupplier = () -> {
+            Span icon = new Span(CUSTOM_AVATAR_TEXT);
+            suppliedIcons.add(icon);
+            return icon;
+        };
 
         fragment.setAiAvatarIconSupplier(avatarSupplier);
         fragment.setConversation(conversation);
@@ -114,7 +120,7 @@ class AiChatFragmentPanelTest {
         TimelineChatPanel panel = (TimelineChatPanel) panelOf(fragment);
         assertSame(avatarSupplier, panel.getAiAvatarIconSupplier());
         // The assistant row drawn for the stored answer carries the supplied icon.
-        Component assistantRow = renderOnlyItem(panel, TimelineItemType.ASSISTANT);
+        Component assistantRow = renderOnlyItem(panel, TimelineItemType.ASSISTANT, suppliedIcons);
         assertTrue(descendants(assistantRow).anyMatch(component ->
                 component instanceof Span span && CUSTOM_AVATAR_TEXT.equals(span.getText())));
     }
@@ -133,17 +139,28 @@ class AiChatFragmentPanelTest {
                 .getChildren().findFirst().orElseThrow();
     }
 
+    /**
+     * Lets the panel's list draw its only item, as it does when the client asks for the visible rows, and returns the
+     * drawn row, found from the icon it took from the supplier.
+     */
     @SuppressWarnings("unchecked")
-    Component renderOnlyItem(TimelineChatPanel panel, TimelineItemType expectedType) {
+    Component renderOnlyItem(TimelineChatPanel panel, TimelineItemType expectedType, List<Span> suppliedIcons) {
         JmixVirtualList<TimelineItem> list =
                 (JmixVirtualList<TimelineItem>) UiComponentUtils.getComponent(panel, "timelineList");
         DataProvider<TimelineItem, Object> dataProvider =
                 (DataProvider<TimelineItem, Object>) (DataProvider<?, ?>) list.getDataProvider();
         TimelineItem item = dataProvider.fetch(new Query<>()).findFirst().orElseThrow();
         assertEquals(expectedType, item.getType());
-        // Created the way the list's fragmentRenderer creates a row: owned by the panel.
-        TimelineItemRenderer row = fragments.create(panel, TimelineItemRenderer.class);
-        row.setItem(item);
+
+        list.getDataCommunicator().setViewportRange(0, 1);
+        ((TestUI) UI.getCurrent()).runExecutionsBeforeClientResponse();
+
+        assertEquals(1, suppliedIcons.size());
+        Component row = suppliedIcons.get(0);
+        while (!(row instanceof TimelineItemRenderer)) {
+            row = row.getParent().orElseThrow();
+        }
+        assertSame(list, row.getParent().orElseThrow());
         return row;
     }
 

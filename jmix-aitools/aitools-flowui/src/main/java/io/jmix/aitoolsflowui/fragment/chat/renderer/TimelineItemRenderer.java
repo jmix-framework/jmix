@@ -26,15 +26,12 @@ import io.jmix.aitoolsflowui.fragment.chat.renderer.component.TimelineAssistantT
 import io.jmix.aitoolsflowui.fragment.chat.renderer.component.TimelineUserMessageItem;
 import io.jmix.aitoolsflowui.fragment.chat.support.ActorNameResolver;
 import io.jmix.aitoolsflowui.fragment.chat.support.ChatDateTimeSupport;
-import io.jmix.aitoolsflowui.fragment.chat.timeline.TimelineChatPanel;
 import io.jmix.aitoolsflowui.fragment.chat.timeline.TimelineItem;
 import io.jmix.aitoolsflowui.fragment.chat.timeline.TimelineItemType;
 import io.jmix.aitoolsflowui.icon.AiIconProvider;
 import io.jmix.aitoolsflowui.model.AiChatMessage;
 import io.jmix.core.Messages;
 import io.jmix.flowui.fragment.FragmentDescriptor;
-import io.jmix.flowui.fragment.FragmentOwner;
-import io.jmix.flowui.fragment.FragmentUtils;
 import io.jmix.flowui.fragmentrenderer.FragmentRenderer;
 import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,6 +62,19 @@ public class TimelineItemRenderer extends FragmentRenderer<VerticalLayout, Timel
     private TimelineAssistantThinkingMessageItem thinkingItem;
     @Nullable
     private TimelineItemType itemType;
+
+    @Nullable
+    protected SerializableSupplier<Component> aiAvatarIconSupplier;
+
+    /**
+     * Sets the supplier of the assistant avatar icon for the rows this renderer draws. It must be set before the
+     * first assistant row is drawn: the icon is taken once, when that row is created.
+     *
+     * @param avatarIconSupplier supplier of the icon, or {@code null} to use the default
+     */
+    public void setAiAvatarIconSupplier(@Nullable SerializableSupplier<Component> avatarIconSupplier) {
+        this.aiAvatarIconSupplier = avatarIconSupplier;
+    }
 
     @Override
     public void setItem(@Nullable TimelineItem item) {
@@ -145,11 +155,7 @@ public class TimelineItemRenderer extends FragmentRenderer<VerticalLayout, Timel
     }
 
     protected SerializableSupplier<Component> resolveAiAvatarIconSupplier() {
-        FragmentOwner owner = FragmentUtils.getParentController(this);
-        if (owner instanceof TimelineChatPanel panel && panel.getAiAvatarIconSupplier() != null) {
-            return panel.getAiAvatarIconSupplier();
-        }
-        return iconProvider::createAvatarIcon;
+        return aiAvatarIconSupplier != null ? aiAvatarIconSupplier : iconProvider::createAvatarIcon;
     }
 
     protected String getMessageGroup() {

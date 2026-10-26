@@ -792,6 +792,41 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
         this.componentEmptyStateComponentDelegate = emptyStateComponentDelegate;
     }
 
+    /**
+     * Finds a component placed into a header or footer cell, or nested in such a component.
+     *
+     * @param id               the component id
+     * @param sameIdComparator a function that checks whether a component has the given id
+     * @return the found component or {@code null} if not found
+     */
+    @Nullable
+    public Component findHeaderFooterComponent(String id, BiFunction<Component, String, Boolean> sameIdComparator) {
+        List<Component> cellComponents = new ArrayList<>();
+        for (HeaderRow headerRow : component.getHeaderRows()) {
+            headerRow.getCells().forEach(cell -> cellComponents.add(cell.getComponent()));
+        }
+        for (FooterRow footerRow : component.getFooterRows()) {
+            footerRow.getCells().forEach(cell -> cellComponents.add(cell.getComponent()));
+        }
+
+        for (Component cellComponent : cellComponents) {
+            if (cellComponent == null) {
+                continue;
+            }
+
+            if (sameIdComparator.apply(cellComponent, id)) {
+                return cellComponent;
+            }
+
+            Optional<Component> nestedComponent = UiComponentUtils.findComponent(cellComponent, id);
+            if (nestedComponent.isPresent()) {
+                return nestedComponent.get();
+            }
+        }
+
+        return null;
+    }
+
     protected void updateEmptyState() {
         if (emptyStateByPermissionRegistration != null) {
             emptyStateByPermissionRegistration.remove();

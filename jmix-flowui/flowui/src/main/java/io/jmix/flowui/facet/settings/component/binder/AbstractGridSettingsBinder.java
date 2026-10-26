@@ -100,7 +100,14 @@ public abstract class AbstractGridSettingsBinder<V extends Grid<?>, S extends Da
             }
         }
 
-        component.setColumnOrder((List) newColumnsOrder);
+        try {
+            component.setColumnOrder((List) newColumnsOrder);
+        } catch (IllegalArgumentException e) {
+            // The saved order may split a column group created by joined header or footer cells,
+            // e.g. when the cells were declared after the settings had been saved
+            log.warn("Unable to apply the saved column order to {} '{}', the current order is kept: {}",
+                    component.getClass().getSimpleName(), component.getId().orElse(null), e.getMessage());
+        }
 
         // Collection property container sorting cannot be applied in '#applyDataLoadingSettings()',
         // because the items are not loaded at that moment and Grid will attempt to sort an empty container.

@@ -530,6 +530,11 @@ public class TreeDataGrid<E> extends JmixTreeGrid<E> implements ListDataComponen
             }
         }
 
+        Component headerFooterComponent = gridDelegate.findHeaderFooterComponent(name, sameIdComparator);
+        if (headerFooterComponent != null) {
+            return headerFooterComponent;
+        }
+
         if (contextMenu != null) {
             if (sameIdComparator.apply(contextMenu, name)) {
                 return contextMenu;

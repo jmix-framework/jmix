@@ -3651,6 +3651,8 @@
                         </xs:complexType>
                     </xs:element>
                     <xs:element name="i18n" type="dataGridI18nElement" minOccurs="0"/>
+                    <xs:element name="headerRows" type="dataGridHeaderRowsType" minOccurs="0"/>
+                    <xs:element name="footerRows" type="dataGridFooterRowsType" minOccurs="0"/>
                 </xs:all>
 
                 <xs:attribute name="ariaLabel" type="resourceString"/>
@@ -3698,6 +3700,35 @@
         <xs:attribute name="selectAllUnavailable" type="resourceString"/>
         <xs:attribute name="selectRow" type="resourceString"/>
         <xs:attribute name="sorter" type="resourceString"/>
+    </xs:complexType>
+
+    <!-- Header rows above the default header row, top to bottom -->
+    <xs:complexType name="dataGridHeaderRowsType">
+        <xs:sequence>
+            <xs:element name="headerRow" type="dataGridRowType" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <!-- Footer rows below the column footer row, top to bottom -->
+    <xs:complexType name="dataGridFooterRowsType">
+        <xs:sequence>
+            <xs:element name="footerRow" type="dataGridRowType" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="dataGridRowType">
+        <xs:sequence>
+            <xs:element name="cell" type="dataGridRowCellType" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <!-- A cell listing several columns joins them; its content is either the text or a single component -->
+    <xs:complexType name="dataGridRowCellType">
+        <xs:group ref="singleLayoutOrComponent"/>
+
+        <xs:attribute name="columns" type="xs:string" use="required"/>
+        <xs:attribute name="text" type="resourceString"/>
+        <xs:attribute name="partName" type="xs:string"/>
     </xs:complexType>
 
     <!-- TextField-->

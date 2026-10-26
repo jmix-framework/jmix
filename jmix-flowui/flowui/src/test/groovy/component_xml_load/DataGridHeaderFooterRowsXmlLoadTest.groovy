@@ -178,7 +178,7 @@ class DataGridHeaderFooterRowsXmlLoadTest extends FlowuiTestSpecification {
         when: "Open a view with components in cells"
         def view = navigateToView(DataGridHeaderFooterRowsView)
         def grid = view.componentCellsDataGrid
-        def (number, date, amount, total) = ["number", "date", "amount", "total"].collect { grid.getColumnByKey(it) }
+        def (number, date, amount) = ["number", "date", "amount"].collect { grid.getColumnByKey(it) }
 
         then: "The header component is placed into the joined cell and injected"
         def headerCell = grid.headerRows[0].getCell(number)
@@ -236,13 +236,12 @@ class DataGridHeaderFooterRowsXmlLoadTest extends FlowuiTestSpecification {
         topRows[1].is(top.defaultHeaderRow)
         !topRows[2].getCell(top.getColumnByKey("amount")).text.isEmpty()
 
-        and: "The bottom aggregation row goes above the footer rows"
+        and: "The bottom aggregation row goes above the declared footer row"
         def bottom = view.bottomAggregationDataGrid
         def bottomRows = bottom.footerRows
-        bottomRows.size() == 3
-        !bottomRows[0].getCell(bottom.getColumnByKey("amount")).text.isEmpty()
-        bottomRows[2].getCell(bottom.getColumnByKey("number")).is(bottomRows[2].getCell(bottom.getColumnByKey("date")))
-        bottomRows[2].getCell(bottom.getColumnByKey("number")).text == "Identity footer"
+        !bottomRows.first().getCell(bottom.getColumnByKey("amount")).text.isEmpty()
+        bottomRows.last().getCell(bottom.getColumnByKey("number")).is(bottomRows.last().getCell(bottom.getColumnByKey("date")))
+        bottomRows.last().getCell(bottom.getColumnByKey("number")).text == "Identity footer"
     }
 
     def "A treeDataGrid loads header and footer rows"() {

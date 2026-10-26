@@ -86,6 +86,7 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Constructor;
 import java.util.*;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -147,6 +148,8 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
 
         loadI18n();
         loadData();
+        loadHeaderRows();
+        loadFooterRows();
         loadMultiSort();
 
         loadContextMenu();
@@ -204,10 +207,6 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
                         .ifPresent(__ -> column.setFilterable(true))
         );
         pendingToFilterableColumns.clear();
-
-        // header and footer rows join columns into groups, so they are built after the filters too
-        loadHeaderRows();
-        loadFooterRows();
 
         // aggregation must be initialized after filters
         // since Vaadin Framework groups columns when appending a header row, it is necessary to
@@ -276,21 +275,8 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
         // Cells can be joined only in the top-most header row, so the rows are prepended bottom-up
         for (Element rowElement : Lists.reverse(headerRowsElement.elements("headerRow"))) {
             HeaderRow headerRow = resultComponent.prependHeaderRow();
-            validateRowCells(rowElement);
-
-            for (Element cellElement : rowElement.elements("cell")) {
-                List<Grid.Column<?>> columns = getCellColumns(rowElement, cellElement);
-                if (columns.isEmpty()) {
-                    continue;
-                }
-
-                // getCell is declared in the package-private AbstractRow, so it is not used as a method reference
-                HeaderRow.HeaderCell cell = joinCells(rowElement, cellElement, columns,
-                        column -> headerRow.getCell(column), headerRow::join);
-                loadResourceString(cellElement, "text", context.getMessageGroup(), cell::setText);
-                loadString(cellElement, "partName", cell::setPartName);
-                loadCellComponent(cellElement, cell::setComponent);
-            }
+            loadRowCells(rowElement, headerRow::getCell, headerRow::join, (cellElement, cell) ->
+                    loadCellContent(cellElement, cell::setText, cell::setPartName, cell::setComponent));
         }
     }
 
@@ -310,20 +296,35 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
         // Cells can be joined only in the bottom-most footer row, so the rows are appended top-down
         for (Element rowElement : footerRowsElement.elements("footerRow")) {
             FooterRow footerRow = resultComponent.appendFooterRow();
-            validateRowCells(rowElement);
+            loadRowCells(rowElement, footerRow::getCell, footerRow::join, (cellElement, cell) ->
+                    loadCellContent(cellElement, cell::setText, cell::setPartName, cell::setComponent));
+        }
+    }
 
-            for (Element cellElement : rowElement.elements("cell")) {
-                List<Grid.Column<?>> columns = getCellColumns(rowElement, cellElement);
-                if (columns.isEmpty()) {
-                    continue;
-                }
+    protected <C> void loadRowCells(Element rowElement, Function<Grid.Column<?>, C> cellProvider,
+                                    Function<List<C>, C> joiner, BiConsumer<Element, C> contentLoader) {
+        validateRowCells(rowElement);
 
-                FooterRow.FooterCell cell = joinCells(rowElement, cellElement, columns,
-                        column -> footerRow.getCell(column), footerRow::join);
-                loadResourceString(cellElement, "text", context.getMessageGroup(), cell::setText);
-                loadString(cellElement, "partName", cell::setPartName);
-                loadCellComponent(cellElement, cell::setComponent);
+        for (Element cellElement : rowElement.elements("cell")) {
+            List<Grid.Column<?>> columns = getCellColumns(rowElement, cellElement);
+            if (columns.isEmpty()) {
+                continue;
             }
+
+            C cell = joinCells(rowElement, cellElement, columns, cellProvider, joiner);
+            contentLoader.accept(cellElement, cell);
+        }
+    }
+
+    protected void loadCellContent(Element cellElement, Consumer<String> textSetter,
+                                   Consumer<String> partNameSetter, Consumer<Component> componentSetter) {
+        loadResourceString(cellElement, "text", context.getMessageGroup(), textSetter);
+        loadString(cellElement, "partName", partNameSetter);
+
+        ComponentLoader<?> componentLoader = rowCellComponentLoaders.get(cellElement);
+        if (componentLoader != null) {
+            componentSetter.accept(componentLoader.getResultComponent());
+            componentLoader.loadComponent();
         }
     }
 
@@ -406,14 +407,6 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
         } catch (IllegalArgumentException | UnsupportedOperationException e) {
             throw new GuiDevelopmentException("'%s' cell '%s' cannot join its columns: %s"
                     .formatted(rowElement.getName(), cellColumns, e.getMessage()), context);
-        }
-    }
-
-    protected void loadCellComponent(Element cellElement, Consumer<Component> setter) {
-        ComponentLoader<?> componentLoader = rowCellComponentLoaders.get(cellElement);
-        if (componentLoader != null) {
-            setter.accept(componentLoader.getResultComponent());
-            componentLoader.loadComponent();
         }
     }
 

@@ -690,6 +690,7 @@ public final class StudioXmlAttributes {
     public static final String PARAMETER_NAME = "parameterName";
     public static final String PARTIAL_DATA = "partialData";
     public static final String PARTIAL_MATCH_MODE = "partialMatchMode";
+    public static final String PART_NAME = "partName";
     public static final String PASSWORD = "password";
     public static final String PATTERN = "pattern";
     public static final String PERCENT_PRECISION = "percentPrecision";

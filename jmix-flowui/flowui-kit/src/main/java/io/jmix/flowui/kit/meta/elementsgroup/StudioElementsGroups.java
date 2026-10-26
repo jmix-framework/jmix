@@ -37,6 +37,22 @@ interface StudioElementsGroups {
     void columns();
 
     @StudioElementsGroup(
+            name = "HeaderRows",
+            elementClassFqn = "com.vaadin.flow.component.grid.HeaderRow",
+            xmlElement = StudioXmlElements.HEADER_ROWS,
+            target = {"io.jmix.flowui.component.grid.DataGrid", "io.jmix.flowui.component.grid.TreeDataGrid"},
+            documentationLink = "%VERSION%/flow-ui/vc/components/dataGrid.html")
+    void gridHeaderRows();
+
+    @StudioElementsGroup(
+            name = "FooterRows",
+            elementClassFqn = "com.vaadin.flow.component.grid.FooterRow",
+            xmlElement = StudioXmlElements.FOOTER_ROWS,
+            target = {"io.jmix.flowui.component.grid.DataGrid", "io.jmix.flowui.component.grid.TreeDataGrid"},
+            documentationLink = "%VERSION%/flow-ui/vc/components/dataGrid.html")
+    void gridFooterRows();
+
+    @StudioElementsGroup(
             name = "Formatter",
             elementClassFqn = "io.jmix.flowui.kit.component.formatter.Formatter",
             xmlElement = StudioXmlElements.FORMATTER,

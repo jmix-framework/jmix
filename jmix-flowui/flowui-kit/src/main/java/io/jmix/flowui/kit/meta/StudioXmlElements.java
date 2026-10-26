@@ -75,6 +75,7 @@ public final class StudioXmlElements {
     public static final String CANDLESTICK = "candlestick";
     public static final String CAPABILITIES = "capabilities";
     public static final String CARD = "card";
+    public static final String CELL = "cell";
     public static final String CHART = "chart";
     public static final String CHECKBOX = "checkbox";
     public static final String CHECKBOX_GROUP = "checkboxGroup";
@@ -190,6 +191,8 @@ public final class StudioXmlElements {
     public static final String FLEX_LAYOUT = "flexLayout";
     public static final String FONT_ICON = "fontIcon";
     public static final String FOOTER = "footer";
+    public static final String FOOTER_ROW = "footerRow";
+    public static final String FOOTER_ROWS = "footerRows";
     public static final String FORM = "form";
     public static final String FORMATTER = "formatter";
     public static final String FORMATTER_FUNCTION = "formatterFunction";
@@ -231,6 +234,8 @@ public final class StudioXmlElements {
     public static final String HEADER = "header";
     public static final String HEADER_CONTENT = "headerContent";
     public static final String HEADER_PREFIX = "headerPrefix";
+    public static final String HEADER_ROW = "headerRow";
+    public static final String HEADER_ROWS = "headerRows";
     public static final String HEADER_SUFFIX = "headerSuffix";
     public static final String HEATMAP = "heatmap";
     public static final String HEATMAP_DATA_VECTOR_SOURCE = "heatmapDataVectorSource";

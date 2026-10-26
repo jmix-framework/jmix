@@ -1024,6 +1024,52 @@ interface StudioElements {
     void gridEmptyStateComponent();
 
     @StudioElement(
+            name = "HeaderRow",
+            classFqn = "com.vaadin.flow.component.grid.HeaderRow",
+            xmlElement = StudioXmlElements.HEADER_ROW,
+            documentationLink = "%VERSION%/flow-ui/vc/components/dataGrid.html",
+            isInjectable = false)
+    void gridHeaderRow();
+
+    @StudioElement(
+            name = "FooterRow",
+            classFqn = "com.vaadin.flow.component.grid.FooterRow",
+            xmlElement = StudioXmlElements.FOOTER_ROW,
+            documentationLink = "%VERSION%/flow-ui/vc/components/dataGrid.html",
+            isInjectable = false)
+    void gridFooterRow();
+
+    @StudioElement(
+            name = "Cell",
+            xmlElement = StudioXmlElements.CELL,
+            documentationLink = "%VERSION%/flow-ui/vc/components/dataGrid.html",
+            target = {"com.vaadin.flow.component.grid.HeaderRow", "com.vaadin.flow.component.grid.FooterRow"},
+            isInjectable = false,
+            availableChildren = @StudioAvailableChildrenInfo(
+                    availableClasses = @StudioAvailableChildrenInfo.ClassInfo(
+                            qualifiedName = StudioAvailableChildrenInfo.FLOW_COMPONENT_FQN,
+                            maxCount = 1
+                    )
+            ),
+            properties = {
+                    @StudioProperty(
+                            xmlAttribute = StudioXmlAttributes.COLUMNS,
+                            type = StudioPropertyType.STRING,
+                            category = StudioProperty.Category.GENERAL,
+                            required = true),
+                    @StudioProperty(
+                            xmlAttribute = StudioXmlAttributes.TEXT,
+                            type = StudioPropertyType.LOCALIZED_STRING,
+                            category = StudioProperty.Category.GENERAL),
+                    @StudioProperty(
+                            xmlAttribute = StudioXmlAttributes.PART_NAME,
+                            type = StudioPropertyType.STRING,
+                            category = StudioProperty.Category.LOOK_AND_FEEL)
+            }
+    )
+    void gridRowCell();
+
+    @StudioElement(
             name = "Item",
             icon = "io/jmix/flowui/kit/meta/icon/element/contextMenuItem.svg",
             xmlElement = StudioXmlElements.ITEM,

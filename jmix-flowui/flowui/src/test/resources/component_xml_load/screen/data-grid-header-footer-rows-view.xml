@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  ~ Copyright 2026 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<view xmlns="http://jmix.io/schema/flowui/view">
+    <data>
+        <collection id="ordersDc"
+                    class="test_support.entity.sales.Order">
+            <fetchPlan extends="_base"/>
+            <loader id="ordersDl">
+                <query>
+                    <![CDATA[select e from test_Order e]]>
+                </query>
+            </loader>
+        </collection>
+    </data>
+    <layout>
+        <dataGrid id="headerRowsDataGrid" metaClass="test_Order">
+            <columns>
+                <column property="number"/>
+                <column property="date"/>
+                <column property="amount"/>
+                <column property="total"/>
+            </columns>
+            <headerRows>
+                <headerRow>
+                    <cell columns="number, date, amount, total" text="msg://headerRowsDataGrid.orderGroup"
+                          partName="order-group"/>
+                </headerRow>
+                <headerRow>
+                    <cell columns="number date" text="Identity"/>
+                    <cell columns="amount" text="Money"/>
+                </headerRow>
+            </headerRows>
+        </dataGrid>
+
+        <dataGrid id="keyColumnsDataGrid" metaClass="test_Order">
+            <columns>
+                <column key="first"/>
+                <column key="second"/>
+            </columns>
+            <headerRows>
+                <headerRow>
+                    <cell columns="first second" text="Both"/>
+                </headerRow>
+            </headerRows>
+        </dataGrid>
+
+        <dataGrid id="footerRowsDataGrid" metaClass="test_Order">
+            <columns>
+                <column property="number"/>
+                <column property="date"/>
+                <column property="amount"/>
+                <column property="total"/>
+            </columns>
+            <footerRows>
+                <footerRow>
+                    <cell columns="number date" text="Identity footer"/>
+                    <cell columns="amount" text="Money footer"/>
+                </footerRow>
+                <footerRow>
+                    <cell columns="number date amount total" text="Order footer" partName="order-footer"/>
+                </footerRow>
+            </footerRows>
+        </dataGrid>
+
+        <dataGrid id="columnFootersDataGrid" metaClass="test_Order">
+            <columns>
+                <column property="number" footer="Number footer"/>
+                <column property="date" footer="Date footer"/>
+            </columns>
+            <footerRows>
+                <footerRow>
+                    <cell columns="number date" text="Joined footer"/>
+                </footerRow>
+            </footerRows>
+        </dataGrid>
+
+        <dataGrid id="nestedGroupsDataGrid" metaClass="test_Order">
+            <columns>
+                <column property="number"/>
+                <column property="date"/>
+                <column property="amount"/>
+                <column property="total"/>
+            </columns>
+            <headerRows>
+                <headerRow>
+                    <cell columns="number date" text="Identity"/>
+                    <cell columns="amount total" text="Money"/>
+                </headerRow>
+            </headerRows>
+            <footerRows>
+                <footerRow>
+                    <cell columns="amount total" text="Money footer"/>
+                </footerRow>
+                <footerRow>
+                    <cell columns="number date amount total" text="Order footer"/>
+                </footerRow>
+            </footerRows>
+        </dataGrid>
+
+        <dataGrid id="componentCellsDataGrid" metaClass="test_Order">
+            <columns>
+                <column property="number"/>
+                <column property="date"/>
+                <column property="amount"/>
+                <column property="total"/>
+            </columns>
+            <headerRows>
+                <headerRow>
+                    <cell columns="number date">
+                        <textField id="numberFilterField"/>
+                    </cell>
+                </headerRow>
+            </headerRows>
+            <footerRows>
+                <footerRow>
+                    <cell columns="number date">
+                        <hbox id="footerBox">
+                            <button id="footerButton" text="Footer button"/>
+                        </hbox>
+                    </cell>
+                </footerRow>
+            </footerRows>
+        </dataGrid>
+
+        <dataGrid id="filterableDataGrid" dataContainer="ordersDc">
+            <columns filterable="true">
+                <column property="number"/>
+                <column property="date"/>
+            </columns>
+            <headerRows>
+                <headerRow>
+                    <cell columns="number date" text="Identity"/>
+                </headerRow>
+            </headerRows>
+        </dataGrid>
+
+        <dataGrid id="topAggregationDataGrid" dataContainer="ordersDc"
+                  aggregatable="true" aggregationPosition="TOP">
+            <columns>
+                <column property="number"/>
+                <column property="date"/>
+                <column property="amount">
+                    <aggregation type="SUM"/>
+                </column>
+            </columns>
+            <headerRows>
+                <headerRow>
+                    <cell columns="number date" text="Identity"/>
+                </headerRow>
+            </headerRows>
+        </dataGrid>
+
+        <dataGrid id="bottomAggregationDataGrid" dataContainer="ordersDc"
+                  aggregatable="true" aggregationPosition="BOTTOM">
+            <columns>
+                <column property="number"/>
+                <column property="date"/>
+                <column property="amount">
+                    <aggregation type="SUM"/>
+                </column>
+            </columns>
+            <footerRows>
+                <footerRow>
+                    <cell columns="number date" text="Identity footer"/>
+                </footerRow>
+            </footerRows>
+        </dataGrid>
+
+        <treeDataGrid id="headerRowsTreeDataGrid" metaClass="test_Order" hierarchyProperty="number">
+            <columns>
+                <column property="number"/>
+                <column property="date"/>
+            </columns>
+            <headerRows>
+                <headerRow>
+                    <cell columns="number date" text="Tree identity"/>
+                </headerRow>
+            </headerRows>
+            <footerRows>
+                <footerRow>
+                    <cell columns="number date" text="Tree footer"/>
+                </footerRow>
+            </footerRows>
+        </treeDataGrid>
+    </layout>
+</view>

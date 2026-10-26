@@ -494,6 +494,11 @@ public class DataGrid<E> extends JmixGrid<E> implements ListDataComponent<E>, Mu
             }
         }
 
+        Component headerFooterComponent = gridDelegate.findHeaderFooterComponent(name, sameIdComparator);
+        if (headerFooterComponent != null) {
+            return headerFooterComponent;
+        }
+
         if (contextMenu != null) {
             if (sameIdComparator.apply(contextMenu, name)) {
                 return contextMenu;

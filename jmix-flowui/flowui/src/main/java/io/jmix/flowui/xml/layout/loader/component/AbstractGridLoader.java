@@ -18,6 +18,7 @@ package io.jmix.flowui.xml.layout.loader.component;
 
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasSize;
 import com.vaadin.flow.component.HasValueAndElement;
@@ -61,6 +62,7 @@ import io.jmix.flowui.exception.GuiDevelopmentException;
 import io.jmix.flowui.kit.component.HasActions;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.kit.component.grid.JmixGridContextMenu;
+import io.jmix.flowui.kit.xml.layout.support.LoaderUtils;
 import io.jmix.flowui.model.*;
 import io.jmix.flowui.model.impl.DataLoadersHelper;
 import io.jmix.flowui.view.ReadOnlyTracker;
@@ -84,6 +86,7 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Constructor;
 import java.util.*;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -108,6 +111,15 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
     protected IconLoaderSupport iconLoaderSupport;
 
     protected List<DataGridColumn<?>> pendingToFilterableColumns = new ArrayList<>();
+    protected Map<Element, ComponentLoader<?>> rowCellComponentLoaders = new HashMap<>();
+
+    @Override
+    public void initComponent() {
+        super.initComponent();
+
+        createRowCellComponents("headerRows", "headerRow");
+        createRowCellComponents("footerRows", "footerRow");
+    }
 
     @Override
     public void loadComponent() {
@@ -136,6 +148,8 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
 
         loadI18n();
         loadData();
+        loadHeaderRows();
+        loadFooterRows();
         loadMultiSort();
 
         loadContextMenu();
@@ -210,6 +224,190 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
                 .orElse(false);
 
         resultComponent.setMultiSort(multiSort, multiSortPriority, multiSortOnShiftClickOnly);
+    }
+
+    protected void createRowCellComponents(String rowsElementName, String rowElementName) {
+        Element rowsElement = element.element(rowsElementName);
+        if (rowsElement == null) {
+            return;
+        }
+
+        for (Element rowElement : rowsElement.elements(rowElementName)) {
+            for (Element cellElement : rowElement.elements("cell")) {
+                List<Element> componentElements = cellElement.elements();
+                if (componentElements.isEmpty()) {
+                    continue;
+                }
+
+                String cellColumns = getCellColumnsValue(rowElement, cellElement);
+                if (componentElements.size() > 1) {
+                    throw new GuiDevelopmentException("'%s' cell '%s' must contain at most one component element"
+                            .formatted(rowElementName, cellColumns), context);
+                }
+
+                if (loadString(cellElement, "text").isPresent()) {
+                    throw new GuiDevelopmentException(
+                            "'%s' cell '%s' cannot have both the 'text' attribute and a component"
+                                    .formatted(rowElementName, cellColumns), context);
+                }
+
+                ComponentLoader<?> componentLoader =
+                        getLayoutLoader().createComponentLoader(componentElements.get(0));
+                componentLoader.initComponent();
+                rowCellComponentLoaders.put(cellElement, componentLoader);
+            }
+        }
+    }
+
+    protected void loadHeaderRows() {
+        Element headerRowsElement = element.element("headerRows");
+        if (headerRowsElement == null) {
+            return;
+        }
+
+        if (resultComponent.getHeaderRows().isEmpty()) {
+            // The first created header row becomes the default one that holds the column headers
+            // and cannot have joined cells. Without content, it is hidden on the client side.
+            resultComponent.appendHeaderRow().getCells()
+                    .forEach(cell -> cell.setText(null));
+        }
+
+        // Cells can be joined only in the top-most header row, so the rows are prepended bottom-up
+        for (Element rowElement : Lists.reverse(headerRowsElement.elements("headerRow"))) {
+            HeaderRow headerRow = resultComponent.prependHeaderRow();
+            loadRowCells(rowElement, headerRow::getCell, headerRow::join, (cellElement, cell) ->
+                    loadCellContent(cellElement, cell::setText, cell::setPartName, cell::setComponent));
+        }
+    }
+
+    protected void loadFooterRows() {
+        Element footerRowsElement = element.element("footerRows");
+        if (footerRowsElement == null) {
+            return;
+        }
+
+        if (resultComponent.getFooterRows().isEmpty()) {
+            // The top-most footer row holds the column footers and cannot have joined cells,
+            // so it is created first. Without content, it is hidden on the client side.
+            resultComponent.appendFooterRow().getCells()
+                    .forEach(cell -> cell.setText(null));
+        }
+
+        // Cells can be joined only in the bottom-most footer row, so the rows are appended top-down
+        for (Element rowElement : footerRowsElement.elements("footerRow")) {
+            FooterRow footerRow = resultComponent.appendFooterRow();
+            loadRowCells(rowElement, footerRow::getCell, footerRow::join, (cellElement, cell) ->
+                    loadCellContent(cellElement, cell::setText, cell::setPartName, cell::setComponent));
+        }
+    }
+
+    protected <C> void loadRowCells(Element rowElement, Function<Grid.Column<?>, C> cellProvider,
+                                    Function<List<C>, C> joiner, BiConsumer<Element, C> contentLoader) {
+        validateRowCells(rowElement);
+
+        for (Element cellElement : rowElement.elements("cell")) {
+            List<Grid.Column<?>> columns = getCellColumns(rowElement, cellElement);
+            if (columns.isEmpty()) {
+                continue;
+            }
+
+            C cell = joinCells(rowElement, cellElement, columns, cellProvider, joiner);
+            contentLoader.accept(cellElement, cell);
+        }
+    }
+
+    protected void loadCellContent(Element cellElement, Consumer<String> textSetter,
+                                   Consumer<String> partNameSetter, Consumer<Component> componentSetter) {
+        loadResourceString(cellElement, "text", context.getMessageGroup(), textSetter);
+        loadString(cellElement, "partName", partNameSetter);
+
+        ComponentLoader<?> componentLoader = rowCellComponentLoaders.get(cellElement);
+        if (componentLoader != null) {
+            componentSetter.accept(componentLoader.getResultComponent());
+            componentLoader.loadComponent();
+        }
+    }
+
+    protected void validateRowCells(Element rowElement) {
+        Set<String> rowColumnKeys = new HashSet<>();
+        for (Element cellElement : rowElement.elements("cell")) {
+            Set<String> cellColumnKeys = new LinkedHashSet<>(
+                    LoaderUtils.split(getCellColumnsValue(rowElement, cellElement)));
+
+            for (String key : cellColumnKeys) {
+                if (!rowColumnKeys.add(key)) {
+                    throw new GuiDevelopmentException("Column '%s' is listed in more than one cell of a '%s'"
+                            .formatted(key, rowElement.getName()), context);
+                }
+            }
+        }
+    }
+
+    protected String getCellColumnsValue(Element rowElement, Element cellElement) {
+        return loadString(cellElement, "columns")
+                .orElseThrow(() -> new GuiDevelopmentException("'%s' cell must define the 'columns' attribute"
+                        .formatted(rowElement.getName()), context));
+    }
+
+    protected List<Grid.Column<?>> getCellColumns(Element rowElement, Element cellElement) {
+        String cellColumns = getCellColumnsValue(rowElement, cellElement);
+
+        List<Grid.Column<?>> columns = new ArrayList<>();
+        for (String key : new LinkedHashSet<>(LoaderUtils.split(cellColumns))) {
+            Grid.Column<?> column = resultComponent.getColumnByKey(key);
+            if (column == null) {
+                throw new GuiDevelopmentException("'%s' cell '%s' refers to unknown column '%s'"
+                        .formatted(rowElement.getName(), cellColumns, key), context);
+            }
+
+            // A column hidden by security is still known to the grid but is detached from it
+            if (column.getParent().isPresent()) {
+                columns.add(column);
+            }
+        }
+
+        if (columns.isEmpty()) {
+            log.debug("'{}' cell '{}' of {} is skipped: all its columns are hidden by security",
+                    rowElement.getName(), cellColumns, resultComponent.getId().orElse(null));
+        }
+
+        return columns;
+    }
+
+    @SuppressWarnings("unchecked")
+    protected <C> C joinCells(Element rowElement, Element cellElement, List<Grid.Column<?>> columns,
+                              Function<Grid.Column<?>, C> cellProvider, Function<List<C>, C> joiner) {
+        List<C> cells = columns.stream()
+                .map(cellProvider)
+                .distinct()
+                .toList();
+
+        // A column joined in another row resolves to the cell of its whole group,
+        // so the cells may cover more columns than the declared ones
+        List<Grid.Column<?>> gridColumns = resultComponent.getColumns();
+        String coveredColumns = gridColumns.stream()
+                .filter(column -> !columns.contains(column)
+                        && cells.contains(cellProvider.apply(column)))
+                .map(column -> "'" + column.getKey() + "'")
+                .collect(Collectors.joining(", "));
+
+        String cellColumns = getCellColumnsValue(rowElement, cellElement);
+        if (!coveredColumns.isEmpty()) {
+            throw new GuiDevelopmentException(
+                    "'%s' cell '%s' would also cover columns %s joined with its columns in another row"
+                            .formatted(rowElement.getName(), cellColumns, coveredColumns), context);
+        }
+
+        if (cells.size() == 1) {
+            return cells.get(0);
+        }
+
+        try {
+            return joiner.apply(cells);
+        } catch (IllegalArgumentException | UnsupportedOperationException e) {
+            throw new GuiDevelopmentException("'%s' cell '%s' cannot join its columns: %s"
+                    .formatted(rowElement.getName(), cellColumns, e.getMessage()), context);
+        }
     }
 
     protected void loadColumns(T resultComponent, Element columnsElement, MetaClass metaClass, FetchPlan fetchPlan) {

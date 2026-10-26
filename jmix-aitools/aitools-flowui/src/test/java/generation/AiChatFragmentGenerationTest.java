@@ -48,6 +48,7 @@ import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.textarea.JmixTextArea;
 import io.jmix.flowui.component.virtuallist.JmixVirtualList;
 import io.jmix.flowui.fragment.FragmentUtils;
+import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.model.CollectionChangeType;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.testassist.FlowuiTestAssistConfiguration;
@@ -61,6 +62,7 @@ import org.mockito.Answers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.util.ReflectionTestUtils;
 import test_support.AiToolsFlowuiTestConfiguration;
 import test_support.TestAiChatMessageService;
 import test_support.TestAiConversationService;
@@ -528,7 +530,7 @@ class AiChatFragmentGenerationTest {
     }
 
     @Test
-    void sendMessage_rejected_resyncsAndKeepsText() {
+    void submit_rejected_resyncsAndPutsTheTextBack() {
         AiConversation conversation = conversationService.addConversation("Chat");
         AiChatView view = navigate(conversation.getId());
         AiChatFragment fragment = chatFragment(view);
@@ -538,9 +540,7 @@ class AiChatFragmentGenerationTest {
                 Optional.of(new AiChatGeneration(conversation.getId(), GENERATION_ID, List.of(), 0)));
         when(generationManager.start(any(), any())).thenThrow(
                 new AiChatGenerationRejectedException(conversation.getId()));
-        messageField(fragment).setValue("Mine");
-
-        fragment.sendMessage("Mine");
+        submit(fragment, "Mine");
 
         assertTrue(fragment.isAwaitingResponse());
         assertFalse(messageInput(fragment).isInputEnabled());
@@ -550,29 +550,26 @@ class AiChatFragmentGenerationTest {
     }
 
     @Test
-    void sendMessage_rejectedFromHostWithEmptyInput_restoresTheText() {
+    void sendMessage_rejectedFromHost_leavesTheInputEmpty() {
         AiConversation conversation = conversationService.addConversation("Chat");
         AiChatFragment fragment = chatFragment(navigate(conversation.getId()));
         when(generationManager.start(any(), any())).thenThrow(
                 new AiChatGenerationRejectedException(conversation.getId()));
-        assertEquals("", messageField(fragment).getValue());
 
         fragment.sendMessage("Mine");
 
-        assertEquals("Mine", messageField(fragment).getValue());
+        assertEquals("", messageField(fragment).getValue());
     }
 
     @Test
-    void sendMessage_startFailsAfterSavingMessage_resyncsAndKeepsText() {
+    void submit_startFailsAfterSavingMessage_resyncsAndPutsTheTextBack() {
         AiConversation conversation = conversationService.addConversation("Chat");
         AiChatFragment fragment = chatFragment(navigate(conversation.getId()));
         when(generationManager.start(any(), any())).thenAnswer(inv -> {
             messageService.createMessage(inv.getArgument(0), AiChatMessageType.USER, inv.getArgument(1));
             throw new RejectedExecutionException("Shutting down");
         });
-        messageField(fragment).setValue("Mine");
-
-        fragment.sendMessage("Mine");
+        submit(fragment, "Mine");
 
         assertFalse(fragment.isAwaitingResponse());
         assertTrue(messageInput(fragment).isInputEnabled());
@@ -641,7 +638,7 @@ class AiChatFragmentGenerationTest {
         fragment.onGenerationFailed(new AiChatGenerationFailedEvent(this, conversation.getId(), GENERATION_ID));
         when(generationManager.retry(any())).thenReturn(question);
 
-        fragment.retryResponse();
+        retry(fragment);
 
         verify(generationManager).retry(any());
         assertTrue(fragment.isAwaitingResponse());
@@ -658,7 +655,7 @@ class AiChatFragmentGenerationTest {
         messageService.createMessage(conversation, AiChatMessageType.ASSISTANT, "Hello!");
         when(generationManager.retry(any())).thenReturn(null);
 
-        fragment.retryResponse();
+        retry(fragment);
 
         assertFalse(fragment.isAwaitingResponse());
         assertTrue(messageInput(fragment).isInputEnabled());
@@ -675,7 +672,7 @@ class AiChatFragmentGenerationTest {
                 Optional.of(new AiChatGeneration(conversation.getId(), GENERATION_ID, List.of(), 0)));
         when(generationManager.retry(any())).thenThrow(new AiChatGenerationRejectedException(conversation.getId()));
 
-        fragment.retryResponse();
+        retry(fragment);
 
         assertTrue(fragment.isAwaitingResponse());
         assertEquals(List.of(TimelineItemType.USER, TimelineItemType.ASSISTANT_THINKING), timelineTypes(fragment));
@@ -690,7 +687,7 @@ class AiChatFragmentGenerationTest {
         when(generationManager.retry(any())).thenThrow(new RejectedExecutionException("Shutting down"));
         Notifications.NotificationBuilder notification = notificationBuilder();
 
-        fragment.retryResponse();
+        retry(fragment);
 
         assertFalse(fragment.isAwaitingResponse());
         verify(notifications).create(
@@ -704,7 +701,7 @@ class AiChatFragmentGenerationTest {
         AiChatFragment fragment = chatFragment(navigate(conversation.getId()));
         fragment.onGenerationStarted(new AiChatGenerationStartedEvent(this, conversation.getId(), GENERATION_ID));
 
-        fragment.retryResponse();
+        retry(fragment);
 
         verify(generationManager, never()).retry(any());
         assertTrue(fragment.isAwaitingResponse());
@@ -741,7 +738,7 @@ class AiChatFragmentGenerationTest {
     }
 
     @Test
-    void sendMessage_rejectedButGenerationAlreadyEnded_keepsTextAndMessageInputEnabled() {
+    void submit_rejectedButGenerationAlreadyEnded_putsTheTextBackAndKeepsMessageInputEnabled() {
         AiConversation conversation = conversationService.addConversation("Chat");
         AiChatFragment fragment = chatFragment(navigate(conversation.getId()));
         // The response of the other tab ended before the resync read the snapshot.
@@ -750,9 +747,7 @@ class AiChatFragmentGenerationTest {
         when(generationManager.getGeneration(any())).thenReturn(Optional.empty());
         when(generationManager.start(any(), any())).thenThrow(
                 new AiChatGenerationRejectedException(conversation.getId()));
-        messageField(fragment).setValue("Mine");
-
-        fragment.sendMessage("Mine");
+        submit(fragment, "Mine");
 
         assertFalse(fragment.isAwaitingResponse());
         assertTrue(messageInput(fragment).isInputEnabled());
@@ -866,6 +861,11 @@ class AiChatFragmentGenerationTest {
         return UiTestUtils.getCurrentView();
     }
 
+    void retry(AiChatFragment fragment) {
+        // Protected: the timeline has no Retry control, the AI Chat add-on's panel calls it through its handler.
+        ReflectionTestUtils.invokeMethod(fragment, "retryResponse");
+    }
+
     AiChatFragment chatFragment(AiChatView view) {
         return UiTestUtils.getComponent(view, "chatFragment");
     }
@@ -892,11 +892,18 @@ class AiChatFragmentGenerationTest {
         parent.insertChild(index, fragment.getElement());
     }
 
-    JmixTextArea messageField(AiChatFragment fragment) {
-        Composite<?> inputPanel = (Composite<?>) UiComponentUtils.getComponent(messageInput(fragment),
-                        "inputPanelContainer")
+    Composite<?> inputPanel(AiChatFragment fragment) {
+        return (Composite<?>) UiComponentUtils.getComponent(messageInput(fragment), "inputPanelContainer")
                 .getChildren().findFirst().orElseThrow();
-        return (JmixTextArea) UiComponentUtils.getComponent(inputPanel, "messageField");
+    }
+
+    JmixTextArea messageField(AiChatFragment fragment) {
+        return (JmixTextArea) UiComponentUtils.getComponent(inputPanel(fragment), "messageField");
+    }
+
+    void submit(AiChatFragment fragment, String text) {
+        messageField(fragment).setValue(text);
+        ((JmixButton) UiComponentUtils.getComponent(inputPanel(fragment), "sendButton")).click();
     }
 
     List<TimelineItem> timelineItems(AiChatFragment fragment) {

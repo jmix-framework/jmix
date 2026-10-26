@@ -70,21 +70,18 @@ import org.springframework.context.event.EventListener;
 import java.util.*;
 
 /**
- * The AI chat of one {@link AiConversation}: embed it in a view or fragment and bind a conversation. It sends
- * messages, follows the response that runs on the server (its events and, after a refresh or reopen, its snapshot),
- * titles the conversation and shows the title row; the conversation itself is drawn by an {@link AiChatPanel} from
- * the first {@link AiChatPanelProvider} by order — the add-on's timeline, or the chat of another add-on.
+ * The AI chat of one {@link AiConversation}. Embed it in a view or fragment and bind a conversation to it.
+ * <p>
+ * The fragment sends messages and follows the response that runs on the server, including after a refresh or reopen.
+ * It also titles the conversation and shows the title row. The conversation itself is drawn by an
+ * {@link AiChatPanel} from the first {@link AiChatPanelProvider} by order. By default, this is the add-on's timeline,
+ * and another add-on can replace it with its own chat.
  */
 @Experimental
 @FragmentDescriptor("ai-chat-fragment.xml")
 public class AiChatFragment extends Fragment<VerticalLayout> {
 
     private static final Logger log = LoggerFactory.getLogger(AiChatFragment.class);
-
-    /**
-     * Message group of the chat's own messages, so that a subclass in another package resolves them too.
-     */
-    protected static final String CHAT_MESSAGES_GROUP = AiChatFragment.class.getPackageName();
 
     @Autowired
     protected Messages messages;
@@ -252,11 +249,10 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
     /**
      * Sends a user message to the bound conversation and starts the assistant's response. Nothing is sent when no
      * conversation is bound, the text is blank, a response is already shown as running, or the AI is not available.
-     * A text that is not taken goes back into the message input, which clears itself when the user submits.
      * <p>
      * Persists the message, starts the assistant's response on the server, shows the message and the thinking
-     * indicator and disables the message input. Used by the input's submit handler and by hosts that start a
-     * conversation with an initial prompt (the chat-hub flow).
+     * indicator and disables the message input. Used by hosts that start a conversation with an initial prompt (the
+     * chat-hub flow). The message input is not touched, so a message that is not sent is not put into it.
      *
      * @param userMessage message text to send; a {@code null} or blank value is ignored
      */
@@ -264,90 +260,11 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
         if (userMessage == null || userMessage.isBlank()) {
             return;
         }
-        if (isAwaitingResponse()) {
-            log.debug("Ignoring sendMessage call while awaiting an assistant response");
-            getChatPanel().restoreInputText(userMessage);
-            return;
-        }
-        if (conversation == null) {
-            log.warn("Cannot submit message — no conversation bound to the fragment");
-            getChatPanel().restoreInputText(userMessage);
-            return;
-        }
-        if (!chatService.isAvailable()) {
-            log.warn("Cannot submit message — AI is not configured");
-            getChatPanel().restoreInputText(userMessage);
-            return;
-        }
-
-        String trimmedMessage = userMessage.trim();
-        boolean firstMessage = !messagesShown;
-        AiChatMessage savedUserMessage;
-        try {
-            savedUserMessage = generationManager.start(conversation, trimmedMessage);
-        } catch (AiChatGenerationRejectedException e) {
-            log.debug("Not sent: a response is already running in conversation {}", e.getConversationId());
-            resync();
-            getChatPanel().restoreInputText(userMessage);
-            notifications.create(getMessage("aiChatFragment.alreadyResponding"))
-                    .withType(Notifications.Type.WARNING)
-                    .show();
-            return;
-        } catch (RuntimeException e) {
-            handleStartFailure(e);
-            getChatPanel().restoreInputText(userMessage);
-            return;
-        }
-
-        // Auto-titling happens on the first message only.
-        // It is optional and must never break sending.
-        if (firstMessage) {
-            try {
-                applyAutoTitle(trimmedMessage);
-            } catch (RuntimeException e) {
-                log.warn("Automatic conversation titling failed; continuing with the message", e);
-            }
-        }
-
-        getChatPanel().appendUserMessage(savedUserMessage);
-        messagesShown = true;
-        showThinkingIndicator();
+        startMessage(userMessage);
     }
 
     /**
-     * Starts the assistant's answer again to the last question of the bound conversation, e.g. after the previous
-     * response failed. Ignored while a response is shown as running, without a bound conversation and when the AI
-     * is not available. When there is nothing to answer any more (the question got its answer meanwhile, e.g. in
-     * another tab) or another response already runs, the chat is brought in line with the server instead.
-     */
-    public void retryResponse() {
-        if (isAwaitingResponse() || conversation == null || !chatService.isAvailable()) {
-            return;
-        }
-
-        AiChatMessage question;
-        try {
-            question = generationManager.retry(conversation);
-        } catch (AiChatGenerationRejectedException e) {
-            log.debug("Not retried: a response is already running in conversation {}", e.getConversationId());
-            resync();
-            return;
-        } catch (RuntimeException e) {
-            handleStartFailure(e);
-            return;
-        }
-
-        if (question == null) {
-            resync();
-            return;
-        }
-        // Reloading drops what the failed response left, e.g. a transient error message.
-        refreshAll();
-        showThinkingIndicator();
-    }
-
-    /**
-     * Moves keyboard focus to the message input; no-op while the input is disabled.
+     * Moves keyboard focus to the message input. Does nothing while the input is disabled.
      */
     public void focusMessageInput() {
         getChatPanel().focusInput();
@@ -472,7 +389,7 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
      */
     protected AiChatPanel createChatPanel() {
         AiChatPanel createdChatPanel = chatPanelFactory.createChatPanel(this);
-        createdChatPanel.setSubmitHandler(this::sendMessage);
+        createdChatPanel.setSubmitHandler(this::submitMessage);
         createdChatPanel.setStopHandler(this::stopResponse);
         createdChatPanel.setRetryHandler(this::retryResponse);
         if (aiAvatarIconSupplier != null && createdChatPanel instanceof HasAiAvatarIcon avatarPanel) {
@@ -484,6 +401,104 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
         }
         chatPanelContainer.add(chatPanelComponent);
         return createdChatPanel;
+    }
+
+    /**
+     * Sends a message the user submitted in the panel.
+     *
+     * @param context the submitted message
+     * @return whether the message was sent, so that the panel can give a rejected text back to the user
+     */
+    protected AiChatPanel.SubmitResult submitMessage(AiChatPanel.SubmitContext context) {
+        return startMessage(context.getText())
+                ? AiChatPanel.SubmitResult.accepted()
+                : AiChatPanel.SubmitResult.rejected();
+    }
+
+    /**
+     * Sends a non-blank user message and starts the assistant's response.
+     *
+     * @param userMessage the non-blank message text
+     * @return {@code true} if the message was sent
+     */
+    protected boolean startMessage(String userMessage) {
+        if (isAwaitingResponse()) {
+            log.debug("Ignoring a message while awaiting an assistant response");
+            return false;
+        }
+        if (conversation == null) {
+            log.warn("Cannot submit message — no conversation bound to the fragment");
+            return false;
+        }
+        if (!chatService.isAvailable()) {
+            log.warn("Cannot submit message — AI is not configured");
+            return false;
+        }
+
+        String trimmedMessage = userMessage.trim();
+        boolean firstMessage = !messagesShown;
+        AiChatMessage savedUserMessage;
+        try {
+            savedUserMessage = generationManager.start(conversation, trimmedMessage);
+        } catch (AiChatGenerationRejectedException e) {
+            log.debug("Not sent: a response is already running in conversation {}", e.getConversationId());
+            resync();
+            notifications.create(getMessage("aiChatFragment.alreadyResponding"))
+                    .withType(Notifications.Type.WARNING)
+                    .show();
+            return false;
+        } catch (RuntimeException e) {
+            handleStartFailure(e);
+            return false;
+        }
+
+        // Auto-titling happens on the first message only.
+        // It is optional and must never break sending.
+        if (firstMessage) {
+            try {
+                applyAutoTitle(trimmedMessage);
+            } catch (RuntimeException e) {
+                log.warn("Automatic conversation titling failed; continuing with the message", e);
+            }
+        }
+
+        getChatPanel().appendUserMessage(savedUserMessage);
+        messagesShown = true;
+        showThinkingIndicator();
+        return true;
+    }
+
+    /**
+     * Starts the assistant's answer again to the last question of the bound conversation, e.g. after the previous
+     * response failed. Ignored while a response is shown as running, without a bound conversation and when the AI
+     * is not available. When there is nothing to answer any more (the question got its answer meanwhile, e.g. in
+     * another tab) or another response already runs, the chat is brought in line with the server instead. Called by
+     * the panel's Retry control.
+     */
+    protected void retryResponse() {
+        if (isAwaitingResponse() || conversation == null || !chatService.isAvailable()) {
+            return;
+        }
+
+        AiChatMessage question;
+        try {
+            question = generationManager.retry(conversation);
+        } catch (AiChatGenerationRejectedException e) {
+            log.debug("Not retried: a response is already running in conversation {}", e.getConversationId());
+            resync();
+            return;
+        } catch (RuntimeException e) {
+            handleStartFailure(e);
+            return;
+        }
+
+        if (question == null) {
+            resync();
+            return;
+        }
+        // Reloading drops what the failed response left, e.g. a transient error message.
+        refreshAll();
+        showThinkingIndicator();
     }
 
     protected void stopResponse() {
@@ -500,11 +515,12 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
     }
 
     protected String getMessage(String key) {
-        return messages.getMessage(CHAT_MESSAGES_GROUP, key);
+        // By this class rather than getClass(), so that a subclass in another package resolves them too.
+        return messages.getMessage(AiChatFragment.class, key);
     }
 
     protected String formatMessage(String key, Object... params) {
-        return messages.formatMessage(CHAT_MESSAGES_GROUP, key, params);
+        return messages.formatMessage(AiChatFragment.class, key, params);
     }
 
     /**

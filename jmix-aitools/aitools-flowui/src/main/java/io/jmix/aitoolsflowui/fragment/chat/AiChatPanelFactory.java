@@ -57,7 +57,6 @@ public class AiChatPanelFactory {
     }
 
     protected AiChatPanelProvider getProvider() {
-        // Spring sorts an injected list by Ordered; never empty: the add-on registers its own provider.
-        return providers.get(0);
+        return providers.getFirst();
     }
 }

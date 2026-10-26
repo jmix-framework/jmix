@@ -45,7 +45,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
-import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -108,8 +108,13 @@ public class TimelineChatPanel extends Fragment<VerticalLayout> implements AiCha
     }
 
     @Override
-    public void setSubmitHandler(Consumer<String> handler) {
-        chatInput.setSubmitHandler(handler);
+    public void setSubmitHandler(Function<SubmitContext, SubmitResult> handler) {
+        chatInput.setSubmitHandler(text -> {
+            // The input clears itself before calling back, so a rejected text is put back.
+            if (!handler.apply(SubmitContext.of(text)).isAccepted()) {
+                chatInput.restoreText(text);
+            }
+        });
     }
 
     @Override
@@ -125,11 +130,6 @@ public class TimelineChatPanel extends Fragment<VerticalLayout> implements AiCha
     @Override
     public void focusInput() {
         chatInput.focus();
-    }
-
-    @Override
-    public void restoreInputText(String text) {
-        chatInput.restoreText(text);
     }
 
     @Override

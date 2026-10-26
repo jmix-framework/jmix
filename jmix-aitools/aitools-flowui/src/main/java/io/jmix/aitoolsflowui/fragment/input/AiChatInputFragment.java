@@ -99,7 +99,7 @@ public class AiChatInputFragment extends Fragment<VerticalLayout> {
     }
 
     /**
-     * Moves keyboard focus to the input; no-op while the input is disabled.
+     * Moves keyboard focus to the input. Does nothing while the input is disabled.
      */
     public void focus() {
         getInputPanel().focus();

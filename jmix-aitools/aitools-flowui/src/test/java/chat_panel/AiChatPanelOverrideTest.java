@@ -236,44 +236,38 @@ class AiChatPanelOverrideTest {
     }
 
     @Test
-    void submit_whileResponseRuns_putsTheTextBackIntoTheInput() {
+    void submit_whileResponseRuns_rejected() {
         AiConversation conversation = conversationService.addConversation("Chat");
         navigate(conversation);
         TestAiChatPanel panel = lastChatPanel();
         panel.lockedWhileResponding = false;
-        panel.submit("Hi");
+        assertTrue(panel.submit("Hi").isAccepted());
         assertTrue(panel.responseRunning);
 
-        panel.submit("Again");
-
-        assertEquals("Again", panel.restoredText);
+        assertFalse(panel.submit("Again").isAccepted());
         verify(generationManager).start(any(), eq("Hi"));
         verify(generationManager, never()).start(any(), eq("Again"));
     }
 
     @Test
-    void submit_aiNotAvailable_putsTheTextBackIntoTheInput() {
+    void submit_aiNotAvailable_rejected() {
         AiConversation conversation = conversationService.addConversation("Chat");
         navigate(conversation);
         TestAiChatPanel panel = lastChatPanel();
         chatService.setAvailable(false);
 
-        panel.submit("Hi");
-
-        assertEquals("Hi", panel.restoredText);
+        assertFalse(panel.submit("Hi").isAccepted());
         verify(generationManager, never()).start(any(), any());
     }
 
     @Test
-    void submit_noConversation_putsTheTextBackIntoTheInput() {
+    void submit_noConversation_rejected() {
         AiConversation conversation = conversationService.addConversation("Chat");
         AiChatFragment fragment = chatFragment(navigate(conversation));
         TestAiChatPanel panel = lastChatPanel();
         fragment.setConversation(null);
 
-        panel.submit("Hi");
-
-        assertEquals("Hi", panel.restoredText);
+        assertFalse(panel.submit("Hi").isAccepted());
         verify(generationManager, never()).start(any(), any());
     }
 

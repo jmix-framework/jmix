@@ -29,7 +29,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
-import java.util.function.Consumer;
+import java.util.function.Function;
 
 /**
  * A chat panel that only records what the chat fragment told it.
@@ -37,7 +37,7 @@ import java.util.function.Consumer;
 public class TestAiChatPanel extends Div implements AiChatPanel, HasAiAvatarIcon {
 
     @Nullable
-    public Consumer<String> submitHandler;
+    public Function<SubmitContext, SubmitResult> submitHandler;
     @Nullable
     public Runnable stopHandler;
     @Nullable
@@ -51,19 +51,19 @@ public class TestAiChatPanel extends Div implements AiChatPanel, HasAiAvatarIcon
     public boolean inputEnabled = true;
     public boolean inputVisible = true;
     @Nullable
-    public String restoredText;
-    @Nullable
     public SerializableSupplier<Component> avatarIconSupplier;
 
     /**
      * Submits the text as the user would from the panel's input.
      *
      * @param text the submitted text
+     * @return what the chat fragment answered
      */
-    public void submit(String text) {
-        if (submitHandler != null) {
-            submitHandler.accept(text);
+    public SubmitResult submit(String text) {
+        if (submitHandler == null) {
+            throw new IllegalStateException("No submit handler set");
         }
+        return submitHandler.apply(SubmitContext.of(text));
     }
 
     @Override
@@ -72,7 +72,7 @@ public class TestAiChatPanel extends Div implements AiChatPanel, HasAiAvatarIcon
     }
 
     @Override
-    public void setSubmitHandler(Consumer<String> handler) {
+    public void setSubmitHandler(Function<SubmitContext, SubmitResult> handler) {
         this.submitHandler = handler;
     }
 
@@ -88,11 +88,6 @@ public class TestAiChatPanel extends Div implements AiChatPanel, HasAiAvatarIcon
 
     @Override
     public void focusInput() {
-    }
-
-    @Override
-    public void restoreInputText(String text) {
-        this.restoredText = text;
     }
 
     @Override

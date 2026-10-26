@@ -70,7 +70,7 @@ public interface AiChatInputPanel {
     boolean isInputEnabled();
 
     /**
-     * Moves keyboard focus to the input; no-op while the input is disabled.
+     * Moves keyboard focus to the input. Does nothing while the input is disabled.
      */
     void focus();
 

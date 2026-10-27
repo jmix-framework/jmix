@@ -19,6 +19,7 @@ package io.jmix.reports.yarg.formatters.impl;
 import io.jmix.reports.yarg.exception.ReportFormattingException;
 import io.jmix.reports.yarg.formatters.impl.jasper.CubaJRFunction;
 import io.jmix.reports.yarg.formatters.impl.jasper.JRBandDataDataSource;
+import io.jmix.reports.yarg.formatters.impl.jasper.JmixRtfExporter;
 import io.jmix.reports.yarg.formatters.factory.FormatterFactoryInput;
 import io.jmix.reports.yarg.structure.ReportOutputType;
 import io.jmix.reports.yarg.structure.ReportTemplate;
@@ -101,7 +102,7 @@ public class JasperFormatter extends AbstractFormatter {
             config.setFieldDelimiter(CSV_DELIMETER);
             exporter.setConfiguration(config);
         } else if (ReportOutputType.doc == outputType ){
-            exporter = new JRRtfExporter();
+            exporter = new JmixRtfExporter();
             exporter.setExporterOutput(new SimpleWriterExporterOutput(outputStream));
             exporter.setConfiguration(new SimpleRtfExporterConfiguration());
         } else if (ReportOutputType.docx == outputType){

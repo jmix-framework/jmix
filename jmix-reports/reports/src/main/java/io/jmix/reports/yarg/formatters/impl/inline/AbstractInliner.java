@@ -221,10 +221,11 @@ public abstract class AbstractInliner implements ContentInliner {
 
                 CreationHelper helper = workbook.getCreationHelper();
                 ClientAnchor anchor = helper.createClientAnchor();
+                // The picture is resized relative to its anchor, so the anchor covers the cell instead of being empty.
                 anchor.setCol1(resultCell.getColumnIndex());
                 anchor.setRow1(resultCell.getRowIndex());
-                anchor.setCol2(resultCell.getColumnIndex());
-                anchor.setRow2(resultCell.getRowIndex());
+                anchor.setCol2(resultCell.getColumnIndex() + 1);
+                anchor.setRow2(resultCell.getRowIndex() + 1);
                 if (patriarch == null) {
                     throw new IllegalArgumentException(String.format("No HSSFPatriarch object provided. Charts on this sheet could cause this effect. Please check sheet %s", resultCell.getSheet().getSheetName()));
                 }

@@ -317,6 +317,7 @@ public class XlsxFormatter extends AbstractFormatter {
     protected void init() {
         try {
             template = Document.create(SpreadsheetMLPackage.load(reportTemplate.getDocumentContent()));
+            expandSharedFormulas();
             byte[] templateData = extractTemplateImages(reportTemplate);
             try (InputStream is = new ByteArrayInputStream(templateData)) {
                 result = Document.create(SpreadsheetMLPackage.load(is));
@@ -327,6 +328,61 @@ public class XlsxFormatter extends AbstractFormatter {
             unmarshaller = XmlCopyUtils.createUnmarshaller(Context.jcSML);
         } catch (Exception e) {
             throw wrapWithReportingException(String.format("An error occurred while loading template [%s]", reportTemplate.getDocumentName()), e);
+        }
+    }
+
+    /**
+     * Excel stores a formula filled over several cells as a shared formula: only the first cell of the group keeps
+     * the text, the other cells take it from that cell by the group index. Template cells are copied one by one, so
+     * the copies would lose their formulas or break the group. Gives every cell of a group its own formula, which
+     * is then post-processed like any other formula.
+     */
+    protected void expandSharedFormulas() throws IOException {
+        Map<Cell, String> sharedFormulaCells = new LinkedHashMap<>();
+        for (Document.SheetWrapper sheetWrapper : template.getWorksheets()) {
+            for (Row row : template.getWorksheetContents(sheetWrapper).getSheetData().getRow()) {
+                for (Cell cell : row.getC()) {
+                    if (cell.getF() != null && cell.getF().getT() == STCellFormulaType.SHARED) {
+                        sharedFormulaCells.put(cell, sheetWrapper.getName());
+                    }
+                }
+            }
+        }
+
+        if (sharedFormulaCells.isEmpty()) {
+            return;
+        }
+
+        Set<String> failedGroups = new HashSet<>();
+        try (XSSFWorkbook workbook = new XSSFWorkbook(reportTemplate.getDocumentContent())) {
+            for (Map.Entry<Cell, String> entry : sharedFormulaCells.entrySet()) {
+                Cell cell = entry.getKey();
+                String sheetName = entry.getValue();
+                CTCellFormula cellFormula = cell.getF();
+                CellAddress address = new CellAddress(cell.getR());
+                String formula;
+                try {
+                    // POI resolves the cell's formula from the group's first cell
+                    formula = workbook.getSheet(sheetName)
+                            .getRow(address.getRow())
+                            .getCell(address.getColumn())
+                            .getCellFormula();
+                } catch (RuntimeException e) {
+                    // All cells of a group fail on the formula of its first cell, so a group is reported once
+                    if (failedGroups.add(sheetName + "!" + cellFormula.getSi())) {
+                        log.warn("Unable to expand the shared formula in cell {} of sheet '{}', "
+                                + "the cells sharing it are kept as authored", cell.getR(), sheetName, e);
+                    }
+                    continue;
+                }
+
+                if (StringUtils.isEmpty(cellFormula.getValue())) {
+                    cellFormula.setValue(formula);
+                }
+                cellFormula.setT(null);
+                cellFormula.setRef(null);
+                cellFormula.setSi(null);
+            }
         }
     }
 

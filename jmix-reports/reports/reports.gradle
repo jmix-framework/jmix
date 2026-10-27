@@ -139,6 +139,10 @@ dependencies {
     testImplementation project(':security-data')
     testImplementation project(':framework-test-support')
     testImplementation project(':aitools')
+    testImplementation('net.sf.jasperreports:jasperreports') {
+        // Brings Woodstox, which would replace the JDK StAX provider for all tests of the module.
+        exclude group: 'com.fasterxml.jackson.dataformat', module: 'jackson-dataformat-xml'
+    }
 
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'

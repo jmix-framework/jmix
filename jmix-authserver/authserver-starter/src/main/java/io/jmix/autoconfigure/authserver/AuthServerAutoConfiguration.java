@@ -19,6 +19,7 @@ package io.jmix.autoconfigure.authserver;
 
 import io.jmix.authserver.AuthServerConfiguration;
 import io.jmix.authserver.AuthServerProperties;
+import io.jmix.authserver.authentication.JmixOAuth2TokenEndpointConfigurer;
 import io.jmix.authserver.authentication.OAuth2ResourceOwnerPasswordTokenEndpointConfigurer;
 import io.jmix.authserver.authentication.TokenRevocationLogoutHandler;
 import io.jmix.authserver.filter.AsResourceServerEventSecurityFilter;
@@ -178,6 +179,7 @@ public class AuthServerAutoConfiguration {
                     .cors(Customizer.withDefaults());
 
             http.with(new OAuth2ResourceOwnerPasswordTokenEndpointConfigurer(), Customizer.withDefaults());
+            http.with(new JmixOAuth2TokenEndpointConfigurer(), Customizer.withDefaults());
             SecurityConfigurers.applySecurityConfigurersWithQualifier(http, SECURITY_CONFIGURER_QUALIFIER);
             return http.build();
         }

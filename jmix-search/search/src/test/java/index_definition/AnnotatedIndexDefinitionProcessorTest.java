@@ -79,9 +79,9 @@ public class AnnotatedIndexDefinitionProcessorTest {
         JsonNode expectedMapping = TestJsonUtils.readJsonFromFile(testCase.getPathToFileWithExpectedMapping());
         return IndexConfigurationMatcher.configureWith(
                 testCase.getExpectedEntityName(),
-                testCase.getExpectedIndexName(),
                 testCase.getExpectedEntityClass(),
-                expectedMapping
+                expectedMapping,
+                testCase.getExpectedIndexNamePattern()
         );
     }
 

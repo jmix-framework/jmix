@@ -28,6 +28,7 @@ import io.jmix.search.SearchProperties;
 import io.jmix.search.index.EntityIndexer;
 import io.jmix.search.index.IndexManager;
 import io.jmix.search.index.impl.IndexStateRegistry;
+import io.jmix.search.index.impl.MultitenancyAdapter;
 import io.jmix.search.index.impl.dynattr.DynamicAttributesSupport;
 import io.jmix.search.index.mapping.IndexConfigurationManager;
 import io.jmix.search.searching.EntitySearcher;
@@ -145,7 +146,8 @@ public class SearchElasticsearchAutoConfiguration {
                                                        MetadataTools metadataTools,
                                                        SearchProperties searchProperties,
                                                        ElasticsearchClient client,
-                                                       DynamicAttributesSupport dynamicAttributesSupport) {
+                                                       DynamicAttributesSupport dynamicAttributesSupport,
+                                                       MultitenancyAdapter multitenancyAdapter) {
         return new ElasticsearchEntityIndexer(dataManager,
                 fetchPlans,
                 indexConfigurationManager,
@@ -155,7 +157,8 @@ public class SearchElasticsearchAutoConfiguration {
                 metadataTools,
                 searchProperties,
                 client,
-                dynamicAttributesSupport);
+                dynamicAttributesSupport,
+                multitenancyAdapter);
     }
 
     @Bean("search_ElasticsearchEntitySearcher")

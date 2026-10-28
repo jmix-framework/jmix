@@ -81,7 +81,7 @@ public class TestIndexingQueueItemsTracker implements Consumer<Collection<Indexi
         registry = new ConcurrentHashMap<>();
     }
 
-    protected Collection<IndexingQueueItem> getItemsForEntityAndOperation(Object entity, IndexingOperation operation) {
+    public Collection<IndexingQueueItem> getItemsForEntityAndOperation(Object entity, IndexingOperation operation) {
         String entityId = idSerialization.idToString(Id.of(entity));
         Multimap<String, IndexingQueueItem> itemsForOperation = registry.get(operation);
         Collection<IndexingQueueItem> result;

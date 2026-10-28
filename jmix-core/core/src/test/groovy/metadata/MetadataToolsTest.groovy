@@ -30,6 +30,7 @@ import test_support.app.entity.Address
 import test_support.app.entity.Owner
 import test_support.app.entity.Pet
 import test_support.app.entity.PetType
+import test_support.app.entity.TenantAwareEntity
 import test_support.app.entity.sales.Status
 import test_support.base.entity.BaseEntity
 
@@ -141,5 +142,29 @@ class MetadataToolsTest extends Specification {
         then:
         enums.contains(Status)
         enums.contains(PetType)
+    }
+
+    def "findTenantIdProperty returns the attribute annotated with @TenantId"() {
+        when:
+        def property = metadataTools.findTenantIdProperty(metadata.getClass(TenantAwareEntity))
+
+        then:
+        property != null
+        property.name == 'tenantId'
+    }
+
+    def "findTenantIdProperty returns null if the entity has no tenant attribute"() {
+        expect:
+        metadataTools.findTenantIdProperty(metadata.getClass(Owner)) == null
+    }
+
+    def "isTenantAware is true for an entity with a tenant attribute"() {
+        expect:
+        metadataTools.isTenantAware(metadata.getClass(TenantAwareEntity))
+    }
+
+    def "isTenantAware is false for an entity without a tenant attribute"() {
+        expect:
+        !metadataTools.isTenantAware(metadata.getClass(Owner))
     }
 }

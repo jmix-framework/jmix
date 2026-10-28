@@ -18,25 +18,36 @@ package test_support.index_definition;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.util.Objects;
 import io.jmix.search.index.IndexConfiguration;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
 
+/**
+ * Custom matcher for verifying properties of {@link IndexConfiguration} instances.
+ * This matcher ensures that the provided {@link IndexConfiguration} instance matches
+ * the expected configuration, including entity name, index name, entity class, and mapping.
+ *
+ * <p>This class extends {@link TypeSafeMatcher} to perform type-safe comparisons
+ * of {@link IndexConfiguration} objects.</p>
+ */
 public class IndexConfigurationMatcher extends TypeSafeMatcher<IndexConfiguration> {
 
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
     private final String entityName;
-    private final String indexName;
     private final Class<?> entityClass;
     private final JsonNode mapping;
+    private final String indexNamePattern;
 
-    private IndexConfigurationMatcher(String entityName, String indexName, Class<?> entityClass, JsonNode mapping) {
+    private IndexConfigurationMatcher(String entityName, Class<?> entityClass, JsonNode mapping,
+                                      String indexNamePattern) {
         this.entityName = entityName;
-        this.indexName = indexName;
         this.entityClass = entityClass;
         this.mapping = mapping;
+        this.indexNamePattern = indexNamePattern;
     }
 
     @Override
@@ -44,27 +55,28 @@ public class IndexConfigurationMatcher extends TypeSafeMatcher<IndexConfiguratio
         JsonNode actualMapping = objectMapper.convertValue(indexConfiguration.getMapping(), JsonNode.class);
 
         return this.entityName.equals(indexConfiguration.getEntityName())
-                && this.indexName.equals(indexConfiguration.getIndexName())
                 && this.entityClass.equals(indexConfiguration.getEntityClass())
-                && mapping.equals(actualMapping);
+                && mapping.equals(actualMapping)
+                && Objects.equals(this.indexNamePattern, indexConfiguration.getIndexNamePattern());
     }
 
     @Override
     public void describeTo(Description description) {
-        String message = String.format("EntityName=%s, EntityClass=%s, IndexName=%s, Mapping=%s",
-                entityName, entityClass.getName(), indexName, mapping);
+        String message = String.format("EntityName=%s, EntityClass=%s, IndexNamePattern=%s, Mapping=%s",
+                entityName, entityClass.getName(), indexNamePattern, mapping);
         description.appendText(message);
     }
 
     @Override
     protected void describeMismatchSafely(IndexConfiguration item, Description mismatchDescription) {
         JsonNode actualMapping = objectMapper.convertValue(item.getMapping(), JsonNode.class);
-        String message = String.format("EntityName=%s, EntityClass=%s, IndexName=%s, Mapping=%s",
-                item.getEntityName(), item.getEntityClass().getName(), item.getIndexName(), actualMapping);
+        String message = String.format("EntityName=%s, EntityClass=%s, IndexNamePattern=%s, Mapping=%s",
+                item.getEntityName(), item.getEntityClass().getName(), item.getIndexNamePattern(), actualMapping);
         mismatchDescription.appendText(message);
     }
 
-    public static Matcher<IndexConfiguration> configureWith(String entityName, String indexName, Class<?> entityClass, JsonNode mapping) {
-        return new IndexConfigurationMatcher(entityName, indexName, entityClass, mapping);
+    public static Matcher<IndexConfiguration> configureWith(String entityName, Class<?> entityClass,
+                                                           JsonNode mapping, String indexNamePattern) {
+        return new IndexConfigurationMatcher(entityName, entityClass, mapping, indexNamePattern);
     }
 }

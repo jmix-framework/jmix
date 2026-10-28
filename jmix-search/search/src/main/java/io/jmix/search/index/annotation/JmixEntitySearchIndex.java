@@ -112,10 +112,21 @@ public @interface JmixEntitySearchIndex {
     Class<?> entity();
 
     /**
-     * Provides explicitly defined name of the search index.
-     * <p>If it's not set index name will be based on 'searchIndexNamePrefix' property and entity name.
+     * Names the index of this entity, overriding the application-wide pattern.
+     * <p>
+     * The value is a pattern: the placeholders {@code {entityName}} and {@code {tenantId}} are replaced, and
+     * everything else is taken as written. A value without placeholders is therefore the index name itself:
+     * {@code indexName = "orders"} puts the entity into the index {@code orders}.
+     * <p>
+     * A placeholder is required exactly where one pattern has to produce several names. The data of a tenant-aware
+     * entity is stored in a separate index per tenant, so its pattern must contain {@code {tenantId}}, e.g.
+     * {@code "orders_{tenantId}"}; the pattern of any other entity must not contain it. {@code {entityName}} is
+     * never required here — the pattern already belongs to one entity — but it is allowed.
+     * <p>
+     * If not set, the index name is built from the {@code jmix.search.tenantless-index-name-pattern} or
+     * {@code jmix.search.tenant-index-name-pattern} application property.
      *
-     * @return custom index name
+     * @return pattern of the index name of this entity
      */
     String indexName() default "";
 }

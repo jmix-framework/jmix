@@ -24,12 +24,14 @@ import io.jmix.search.SearchProperties;
 import io.jmix.search.index.EntityIndexer;
 import io.jmix.search.index.impl.IndexStateRegistry;
 import io.jmix.search.index.impl.IndexingLocker;
+import io.jmix.search.index.impl.MultitenancyAdapter;
 import io.jmix.search.index.mapping.IndexConfigurationManager;
 import io.jmix.search.index.queue.entity.IndexingQueueItem;
 import io.jmix.search.index.queue.impl.EnqueueingSessionManager;
 import io.jmix.search.index.queue.impl.EntityIdsLoaderProvider;
 import io.jmix.search.index.queue.impl.JpaIndexingQueueManager;
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.List;
@@ -56,10 +58,11 @@ public class TestJpaIndexingQueueManager extends JpaIndexingQueueManager {
                                        IndexingLocker locker,
                                        IndexStateRegistry indexStateRegistry,
                                        EnqueueingSessionManager enqueueingSessionManager,
-                                       EntityIdsLoaderProvider entityIdsLoaderProvider) {
+                                       EntityIdsLoaderProvider entityIdsLoaderProvider,
+                                       MultitenancyAdapter multitenancyAdapter) {
         super(searchProperties, dataManager, metadata, metadataTools, entityIndexer, storeAwareLocator,
                 indexConfigurationManager, idSerialization, authenticator, locker, indexStateRegistry,
-                enqueueingSessionManager, entityIdsLoaderProvider);
+                enqueueingSessionManager, entityIdsLoaderProvider, multitenancyAdapter);
         this.indexingQueueItemsTracker = indexingQueueItemsTracker;
     }
 
@@ -78,12 +81,13 @@ public class TestJpaIndexingQueueManager extends JpaIndexingQueueManager {
     }
 
     @Override
-    protected int processRawIds(@NonNull List<?> rawIds, @NonNull MetaClass metaClass, int batchSize) {
+    protected int processRawIds(@NonNull List<?> rawIds, @NonNull MetaClass metaClass,
+                                @Nullable String tenantId, int batchSize) {
         try {
             Thread.sleep(idsProcessingDelay);
         } catch (InterruptedException e) {
             throw new RuntimeException("Interrupted during processing delay", e);
         }
-        return super.processRawIds(rawIds, metaClass, batchSize);
+        return super.processRawIds(rawIds, metaClass, tenantId, batchSize);
     }
 }

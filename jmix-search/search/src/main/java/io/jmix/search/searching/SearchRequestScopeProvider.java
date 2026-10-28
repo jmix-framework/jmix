@@ -17,11 +17,18 @@
 package io.jmix.search.searching;
 
 import io.jmix.search.index.IndexConfiguration;
+import io.jmix.search.index.impl.IndexLayout;
+import io.jmix.search.index.impl.MultitenancyAdapter;
 import io.jmix.search.index.mapping.IndexConfigurationManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 import static java.util.Collections.emptyList;
 
@@ -36,9 +43,17 @@ import static java.util.Collections.emptyList;
 @Component("search_SearchRequestScopeProvider")
 public class SearchRequestScopeProvider {
 
+    private static final Logger log = LoggerFactory.getLogger(SearchRequestScopeProvider.class);
+
     protected final SearchSecurityDecorator securityDecorator;
     protected final IndexConfigurationManager indexConfigurationManager;
     protected final SearchFieldsProvider searchFieldsProvider;
+
+    @Autowired
+    protected IndexLayout indexLayout;
+
+    @Autowired
+    protected MultitenancyAdapter multitenancyAdapter;
 
     public SearchRequestScopeProvider(SearchSecurityDecorator securityDecorator,
                                       IndexConfigurationManager indexConfigurationManager,
@@ -54,7 +69,7 @@ public class SearchRequestScopeProvider {
      * for the current user based on security constraints and resolves the fields required
      * for search using the provided {@link VirtualSubfieldsProvider}.
      *
-     * @param entities list of entity names to evaluate for search scope. If empty, all indexed entities are considered.
+     * @param entities                 list of entity names to evaluate for search scope. If empty, all indexed entities are considered.
      * @param virtualSubfieldsProvider provider used to resolve additional subfields for indexed fields.
      * @return list of {@link IndexSearchRequestScope} objects representing the search scope for the specified entities,
      * or an empty list if no valid scopes are resolved.
@@ -69,23 +84,25 @@ public class SearchRequestScopeProvider {
             return emptyList();
         }
 
-        List<IndexSearchRequestScope> notFilteredScopes = allowedEntityNames
-                .stream()
-                .map(entityName->{
-                    IndexConfiguration configuration = indexConfigurationManager.getIndexConfigurationByEntityName(entityName);
-                    return new IndexSearchRequestScope(
-                            configuration,
-                            searchFieldsProvider.resolveFields(configuration, virtualSubfieldsProvider));
-                })
-                .toList();
+        String currentTenantId = multitenancyAdapter.getCurrentUserTenantId();
 
-        List<IndexSearchRequestScope> result = notFilteredScopes
-                .stream()
-                .filter(info -> !info.fields().isEmpty())
-                .toList();
+        List<IndexSearchRequestScope> result = new ArrayList<>(allowedEntityNames.size());
+        for (String entityName : allowedEntityNames) {
+            IndexConfiguration configuration = indexConfigurationManager.getIndexConfigurationByEntityName(entityName);
 
-        if (result.isEmpty()) {
-            return emptyList();
+            String indexName = indexLayout.indexName(configuration, currentTenantId);
+            if (indexName == null) {
+                log.debug("Entity '{}' is excluded from the search scope: there is no index for tenant '{}'",
+                        entityName, currentTenantId);
+                continue;
+            }
+
+            Set<String> fields = searchFieldsProvider.resolveFields(configuration, virtualSubfieldsProvider);
+            if (fields.isEmpty()) {
+                continue;
+            }
+
+            result.add(new IndexSearchRequestScope(configuration, fields, indexName));
         }
         return result;
     }

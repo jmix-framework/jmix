@@ -18,10 +18,10 @@ package chat_hub;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
+import io.jmix.aitoolsflowui.fragment.chathub.component.AiConversationCard;
 import io.jmix.aitoolsflowui.generation.AiChatGenerationManager;
 import io.jmix.aitoolsflowui.model.AiConversation;
 import io.jmix.aitoolsflowui.view.chathub.AiChatHubView;
-import io.jmix.aitoolsflowui.view.chathub.component.AiConversationCard;
 import io.jmix.core.security.AccessDeniedException;
 import io.jmix.flowui.testassist.FlowuiTestAssistConfiguration;
 import io.jmix.flowui.testassist.UiTest;

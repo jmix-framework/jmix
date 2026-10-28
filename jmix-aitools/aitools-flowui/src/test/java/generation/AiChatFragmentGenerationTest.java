@@ -16,11 +16,18 @@
 
 package generation;
 
+import com.vaadin.flow.component.Composite;
 import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.data.provider.DataProvider;
 import com.vaadin.flow.data.provider.Query;
 import com.vaadin.flow.dom.Element;
 import io.jmix.aitools.tool.AiToolStatusUpdate;
+import io.jmix.aitoolsflowui.fragment.chat.AiChatFragment;
+import io.jmix.aitoolsflowui.fragment.chat.timeline.TimelineChatPanel;
+import io.jmix.aitoolsflowui.fragment.chat.timeline.TimelineItem;
+import io.jmix.aitoolsflowui.fragment.chat.timeline.TimelineItemStatus;
+import io.jmix.aitoolsflowui.fragment.chat.timeline.TimelineItemType;
+import io.jmix.aitoolsflowui.fragment.input.AiChatInputFragment;
 import io.jmix.aitoolsflowui.generation.AiChatGeneration;
 import io.jmix.aitoolsflowui.generation.AiChatGenerationManager;
 import io.jmix.aitoolsflowui.generation.AiChatGenerationRejectedException;
@@ -33,12 +40,7 @@ import io.jmix.aitoolsflowui.model.AiChatMessage;
 import io.jmix.aitoolsflowui.model.AiChatMessageType;
 import io.jmix.aitoolsflowui.model.AiConversation;
 import io.jmix.aitoolsflowui.service.AiConversationAutoTitleService;
-import io.jmix.aitoolsflowui.view.chat.AiChatFragment;
 import io.jmix.aitoolsflowui.view.chat.AiChatView;
-import io.jmix.aitoolsflowui.view.chat.timeline.TimelineItem;
-import io.jmix.aitoolsflowui.view.chat.timeline.TimelineItemStatus;
-import io.jmix.aitoolsflowui.view.chat.timeline.TimelineItemType;
-import io.jmix.aitoolsflowui.view.input.AiChatInputFragment;
 import io.jmix.core.Messages;
 import io.jmix.core.Metadata;
 import io.jmix.flowui.Notifications;
@@ -46,6 +48,7 @@ import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.textarea.JmixTextArea;
 import io.jmix.flowui.component.virtuallist.JmixVirtualList;
 import io.jmix.flowui.fragment.FragmentUtils;
+import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.model.CollectionChangeType;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.testassist.FlowuiTestAssistConfiguration;
@@ -59,6 +62,7 @@ import org.mockito.Answers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.util.ReflectionTestUtils;
 import test_support.AiToolsFlowuiTestConfiguration;
 import test_support.TestAiChatMessageService;
 import test_support.TestAiConversationService;
@@ -78,6 +82,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -91,7 +96,7 @@ import static org.mockito.Mockito.when;
 class AiChatFragmentGenerationTest {
 
     static final UUID GENERATION_ID = UUID.randomUUID();
-    static final String CHAT_MESSAGES_GROUP = "io.jmix.aitoolsflowui.view.chat";
+    static final String CHAT_MESSAGES_GROUP = AiChatFragment.class.getPackageName();
 
     @Autowired ViewNavigationSupport navigationSupport;
     @Autowired RouteSupport routeSupport;
@@ -112,7 +117,7 @@ class AiChatFragmentGenerationTest {
     }
 
     @Test
-    void sendMessage_idle_startsThroughManager_showsThinking_andDisablesComposer() {
+    void sendMessage_idle_startsThroughManager_showsThinking_andDisablesMessageInput() {
         AiConversation conversation = conversationService.addConversation("Chat");
         when(generationManager.start(any(), any())).thenAnswer(inv ->
                 messageService.createMessage(inv.getArgument(0), AiChatMessageType.USER, inv.getArgument(1)));
@@ -122,19 +127,19 @@ class AiChatFragmentGenerationTest {
 
         verify(generationManager).start(any(), eq("Hi"));
         assertTrue(fragment.isAwaitingResponse());
-        assertFalse(composer(fragment).isInputEnabled());
+        assertFalse(messageInput(fragment).isInputEnabled());
         assertEquals(List.of(TimelineItemType.USER, TimelineItemType.ASSISTANT_THINKING), timelineTypes(fragment));
     }
 
     @Test
-    void onGenerationStarted_boundConversation_showsThinking_andDisablesComposer() {
+    void onGenerationStarted_boundConversation_showsThinking_andDisablesMessageInput() {
         AiConversation conversation = conversationService.addConversation("Chat");
         AiChatFragment fragment = chatFragment(navigate(conversation.getId()));
 
         fragment.onGenerationStarted(new AiChatGenerationStartedEvent(this, conversation.getId(), GENERATION_ID));
 
         assertTrue(fragment.isAwaitingResponse());
-        assertFalse(composer(fragment).isInputEnabled());
+        assertFalse(messageInput(fragment).isInputEnabled());
         assertEquals(List.of(TimelineItemType.ASSISTANT_THINKING), timelineTypes(fragment));
     }
 
@@ -175,7 +180,7 @@ class AiChatFragmentGenerationTest {
         fragment.onGenerationStarted(new AiChatGenerationStartedEvent(this, UUID.randomUUID(), GENERATION_ID));
 
         assertFalse(fragment.isAwaitingResponse());
-        assertTrue(composer(fragment).isInputEnabled());
+        assertTrue(messageInput(fragment).isInputEnabled());
         assertTrue(timelineItems(fragment).isEmpty());
     }
 
@@ -191,7 +196,7 @@ class AiChatFragmentGenerationTest {
                 answer.getId()));
 
         assertFalse(fragment.isAwaitingResponse());
-        assertTrue(composer(fragment).isInputEnabled());
+        assertTrue(messageInput(fragment).isInputEnabled());
         assertEquals(List.of(TimelineItemType.USER, TimelineItemType.ASSISTANT), timelineTypes(fragment));
         TimelineItem answerItem = timelineItems(fragment).get(1);
         assertEquals(answer.getId(), answerItem.getMessage().getId());
@@ -208,7 +213,7 @@ class AiChatFragmentGenerationTest {
         fragment.onGenerationFailed(new AiChatGenerationFailedEvent(this, conversation.getId(), GENERATION_ID));
 
         assertFalse(fragment.isAwaitingResponse());
-        assertTrue(composer(fragment).isInputEnabled());
+        assertTrue(messageInput(fragment).isInputEnabled());
         assertEquals(List.of(TimelineItemType.ASSISTANT), timelineTypes(fragment));
     }
 
@@ -221,7 +226,7 @@ class AiChatFragmentGenerationTest {
         fragment.onGenerationCancelled(new AiChatGenerationCancelledEvent(this, conversation.getId(), GENERATION_ID));
 
         assertFalse(fragment.isAwaitingResponse());
-        assertTrue(composer(fragment).isInputEnabled());
+        assertTrue(messageInput(fragment).isInputEnabled());
         assertTrue(timelineItems(fragment).isEmpty());
     }
 
@@ -236,12 +241,12 @@ class AiChatFragmentGenerationTest {
         fragment.onGenerationCancelled(new AiChatGenerationCancelledEvent(this, conversation.getId(), GENERATION_ID));
 
         assertFalse(fragment.isAwaitingResponse());
-        assertTrue(composer(fragment).isInputEnabled());
+        assertTrue(messageInput(fragment).isInputEnabled());
         assertEquals(List.of(TimelineItemType.USER), timelineTypes(fragment));
     }
 
     @Test
-    void onGenerationCancelled_nothingShown_leavesComposerAlone() {
+    void onGenerationCancelled_nothingShown_leavesMessageInputAlone() {
         AiConversation conversation = conversationService.addConversation("Chat");
         AiChatFragment fragment = chatFragment(navigate(conversation.getId()));
         // Disabled by the host, not by a response.
@@ -249,7 +254,7 @@ class AiChatFragmentGenerationTest {
 
         fragment.onGenerationCancelled(new AiChatGenerationCancelledEvent(this, conversation.getId(), GENERATION_ID));
 
-        assertFalse(composer(fragment).isInputEnabled());
+        assertFalse(messageInput(fragment).isInputEnabled());
         assertTrue(timelineItems(fragment).isEmpty());
     }
 
@@ -263,7 +268,7 @@ class AiChatFragmentGenerationTest {
                 UUID.randomUUID()));
 
         assertTrue(fragment.isAwaitingResponse());
-        assertFalse(composer(fragment).isInputEnabled());
+        assertFalse(messageInput(fragment).isInputEnabled());
         assertEquals(List.of(TimelineItemType.ASSISTANT_THINKING), timelineTypes(fragment));
     }
 
@@ -275,7 +280,7 @@ class AiChatFragmentGenerationTest {
         fragment.onGenerationFailed(new AiChatGenerationFailedEvent(this, conversation.getId(), GENERATION_ID));
 
         assertFalse(fragment.isAwaitingResponse());
-        assertTrue(composer(fragment).isInputEnabled());
+        assertTrue(messageInput(fragment).isInputEnabled());
         assertEquals(List.of(TimelineItemType.ASSISTANT), timelineTypes(fragment));
     }
 
@@ -313,7 +318,7 @@ class AiChatFragmentGenerationTest {
         fragment.onGenerationFailed(new AiChatGenerationFailedEvent(this, conversation.getId(), previous));
 
         assertTrue(fragment.isAwaitingResponse());
-        assertFalse(composer(fragment).isInputEnabled());
+        assertFalse(messageInput(fragment).isInputEnabled());
         assertEquals(List.of(TimelineItemType.ASSISTANT_THINKING), timelineTypes(fragment));
         assertTrue(timelineItems(fragment).get(0).getStatusUpdates().isEmpty());
 
@@ -338,7 +343,7 @@ class AiChatFragmentGenerationTest {
     }
 
     @Test
-    void setConversation_rebindWhileRunning_clearsThinking_andEnablesComposer() {
+    void setConversation_rebindWhileRunning_clearsThinking_andEnablesMessageInput() {
         AiConversation first = conversationService.addConversation("First");
         AiConversation second = conversationService.addConversation("Second");
         AiChatFragment fragment = chatFragment(navigate(first.getId()));
@@ -347,12 +352,12 @@ class AiChatFragmentGenerationTest {
         fragment.setConversation(second);
 
         assertFalse(fragment.isAwaitingResponse());
-        assertTrue(composer(fragment).isInputEnabled());
+        assertTrue(messageInput(fragment).isInputEnabled());
         assertTrue(timelineItems(fragment).isEmpty());
     }
 
     @Test
-    void setConversation_hostDisabledComposer_staysDisabled() {
+    void setConversation_hostDisabledMessageInput_staysDisabled() {
         AiConversation first = conversationService.addConversation("First");
         AiConversation second = conversationService.addConversation("Second");
         AiChatFragment fragment = chatFragment(navigate(first.getId()));
@@ -360,11 +365,11 @@ class AiChatFragmentGenerationTest {
 
         fragment.setConversation(second);
 
-        assertFalse(composer(fragment).isInputEnabled());
+        assertFalse(messageInput(fragment).isInputEnabled());
     }
 
     @Test
-    void onGenerationCompleted_hostDisabledComposer_staysDisabled() {
+    void onGenerationCompleted_hostDisabledMessageInput_staysDisabled() {
         AiConversation conversation = conversationService.addConversation("Chat");
         AiChatFragment fragment = chatFragment(navigate(conversation.getId()));
         fragment.onGenerationStarted(new AiChatGenerationStartedEvent(this, conversation.getId(), GENERATION_ID));
@@ -375,11 +380,11 @@ class AiChatFragmentGenerationTest {
                 answer.getId()));
 
         assertFalse(fragment.isAwaitingResponse());
-        assertFalse(composer(fragment).isInputEnabled());
+        assertFalse(messageInput(fragment).isInputEnabled());
     }
 
     @Test
-    void onGenerationFailed_hostDisabledComposer_staysDisabled() {
+    void onGenerationFailed_hostDisabledMessageInput_staysDisabled() {
         AiConversation conversation = conversationService.addConversation("Chat");
         AiChatFragment fragment = chatFragment(navigate(conversation.getId()));
         fragment.setMessageInputEnabled(false);
@@ -387,24 +392,24 @@ class AiChatFragmentGenerationTest {
 
         fragment.onGenerationFailed(new AiChatGenerationFailedEvent(this, conversation.getId(), GENERATION_ID));
 
-        assertFalse(composer(fragment).isInputEnabled());
+        assertFalse(messageInput(fragment).isInputEnabled());
     }
 
     @Test
-    void setMessageInputEnabled_whileRunning_composerStaysLockedUntilResponseEnds() {
+    void setMessageInputEnabled_whileRunning_messageInputStaysLockedUntilResponseEnds() {
         AiConversation conversation = conversationService.addConversation("Chat");
         AiChatFragment fragment = chatFragment(navigate(conversation.getId()));
         fragment.onGenerationStarted(new AiChatGenerationStartedEvent(this, conversation.getId(), GENERATION_ID));
 
         fragment.setMessageInputEnabled(true);
-        assertFalse(composer(fragment).isInputEnabled());
+        assertFalse(messageInput(fragment).isInputEnabled());
 
         fragment.onGenerationCancelled(new AiChatGenerationCancelledEvent(this, conversation.getId(), GENERATION_ID));
-        assertTrue(composer(fragment).isInputEnabled());
+        assertTrue(messageInput(fragment).isInputEnabled());
     }
 
     @Test
-    void open_whileGenerating_showsThinkingWithSnapshotStatuses_andDisablesComposer() {
+    void open_whileGenerating_showsThinkingWithSnapshotStatuses_andDisablesMessageInput() {
         AiConversation conversation = conversationService.addConversation("Chat");
         messageService.createMessage(conversation, AiChatMessageType.USER, "Hi");
         when(generationManager.getGeneration(any())).thenReturn(Optional.of(new AiChatGeneration(
@@ -413,7 +418,7 @@ class AiChatFragmentGenerationTest {
         AiChatFragment fragment = chatFragment(navigate(conversation.getId()));
 
         assertTrue(fragment.isAwaitingResponse());
-        assertFalse(composer(fragment).isInputEnabled());
+        assertFalse(messageInput(fragment).isInputEnabled());
         assertEquals(List.of(TimelineItemType.USER, TimelineItemType.ASSISTANT_THINKING), timelineTypes(fragment));
         List<TimelineItemStatus> statuses = timelineItems(fragment).get(1).getStatusUpdates();
         assertEquals(1, statuses.size());
@@ -441,7 +446,7 @@ class AiChatFragmentGenerationTest {
                 answer.getId()));
 
         assertFalse(fragment.isAwaitingResponse());
-        assertTrue(composer(fragment).isInputEnabled());
+        assertTrue(messageInput(fragment).isInputEnabled());
         assertEquals(List.of(TimelineItemType.USER, TimelineItemType.ASSISTANT), timelineTypes(fragment));
     }
 
@@ -454,7 +459,7 @@ class AiChatFragmentGenerationTest {
         AiChatFragment fragment = chatFragment(navigate(conversation.getId()));
 
         assertFalse(fragment.isAwaitingResponse());
-        assertTrue(composer(fragment).isInputEnabled());
+        assertTrue(messageInput(fragment).isInputEnabled());
         assertEquals(List.of(TimelineItemType.USER), timelineTypes(fragment));
     }
 
@@ -469,7 +474,7 @@ class AiChatFragmentGenerationTest {
         fragment.setConversation(second);
 
         assertTrue(fragment.isAwaitingResponse());
-        assertFalse(composer(fragment).isInputEnabled());
+        assertFalse(messageInput(fragment).isInputEnabled());
         assertEquals(List.of(TimelineItemType.ASSISTANT_THINKING), timelineTypes(fragment));
     }
 
@@ -487,12 +492,12 @@ class AiChatFragmentGenerationTest {
         parent.insertChild(index, fragment.getElement());
 
         assertTrue(fragment.isAwaitingResponse());
-        assertFalse(composer(fragment).isInputEnabled());
+        assertFalse(messageInput(fragment).isInputEnabled());
         assertEquals(List.of(TimelineItemType.USER, TimelineItemType.ASSISTANT_THINKING), timelineTypes(fragment));
     }
 
     @Test
-    void reattach_generationCompletedWhileDetached_showsAnswer_andEnablesComposer() {
+    void reattach_generationCompletedWhileDetached_showsAnswer_andEnablesMessageInput() {
         AiConversation conversation = conversationService.addConversation("Chat");
         AiChatFragment fragment = chatFragment(navigate(conversation.getId()));
         fragment.onGenerationStarted(new AiChatGenerationStartedEvent(this, conversation.getId(), GENERATION_ID));
@@ -505,7 +510,7 @@ class AiChatFragmentGenerationTest {
         parent.insertChild(index, fragment.getElement());
 
         assertFalse(fragment.isAwaitingResponse());
-        assertTrue(composer(fragment).isInputEnabled());
+        assertTrue(messageInput(fragment).isInputEnabled());
         assertEquals(List.of(TimelineItemType.USER, TimelineItemType.ASSISTANT), timelineTypes(fragment));
     }
 
@@ -525,7 +530,7 @@ class AiChatFragmentGenerationTest {
     }
 
     @Test
-    void sendMessage_rejected_resyncsAndKeepsText() {
+    void submit_rejected_resyncsAndPutsTheTextBack() {
         AiConversation conversation = conversationService.addConversation("Chat");
         AiChatView view = navigate(conversation.getId());
         AiChatFragment fragment = chatFragment(view);
@@ -535,33 +540,41 @@ class AiChatFragmentGenerationTest {
                 Optional.of(new AiChatGeneration(conversation.getId(), GENERATION_ID, List.of(), 0)));
         when(generationManager.start(any(), any())).thenThrow(
                 new AiChatGenerationRejectedException(conversation.getId()));
-        messageField(fragment).setValue("Mine");
-
-        fragment.sendMessage("Mine");
+        submit(fragment, "Mine");
 
         assertTrue(fragment.isAwaitingResponse());
-        assertFalse(composer(fragment).isInputEnabled());
+        assertFalse(messageInput(fragment).isInputEnabled());
         assertEquals(List.of(TimelineItemType.USER, TimelineItemType.ASSISTANT_THINKING), timelineTypes(fragment));
         assertEquals("From the other tab", timelineItems(fragment).get(0).getMessage().getContent());
-        assertEquals("Mine", composer(fragment).getValue());
+        assertEquals("Mine", messageField(fragment).getValue());
     }
 
     @Test
-    void sendMessage_startFailsAfterSavingMessage_resyncsAndKeepsText() {
+    void sendMessage_rejectedFromHost_leavesTheInputEmpty() {
+        AiConversation conversation = conversationService.addConversation("Chat");
+        AiChatFragment fragment = chatFragment(navigate(conversation.getId()));
+        when(generationManager.start(any(), any())).thenThrow(
+                new AiChatGenerationRejectedException(conversation.getId()));
+
+        fragment.sendMessage("Mine");
+
+        assertEquals("", messageField(fragment).getValue());
+    }
+
+    @Test
+    void submit_startFailsAfterSavingMessage_resyncsAndPutsTheTextBack() {
         AiConversation conversation = conversationService.addConversation("Chat");
         AiChatFragment fragment = chatFragment(navigate(conversation.getId()));
         when(generationManager.start(any(), any())).thenAnswer(inv -> {
             messageService.createMessage(inv.getArgument(0), AiChatMessageType.USER, inv.getArgument(1));
             throw new RejectedExecutionException("Shutting down");
         });
-        messageField(fragment).setValue("Mine");
-
-        fragment.sendMessage("Mine");
+        submit(fragment, "Mine");
 
         assertFalse(fragment.isAwaitingResponse());
-        assertTrue(composer(fragment).isInputEnabled());
+        assertTrue(messageInput(fragment).isInputEnabled());
         assertEquals(List.of(TimelineItemType.USER), timelineTypes(fragment));
-        assertEquals("Mine", composer(fragment).getValue());
+        assertEquals("Mine", messageField(fragment).getValue());
     }
 
     @Test
@@ -596,7 +609,7 @@ class AiChatFragmentGenerationTest {
     }
 
     @Test
-    void onGenerationCompleted_previousGenerationWhileNextRuns_showsNext_andKeepsComposerLocked() {
+    void onGenerationCompleted_previousGenerationWhileNextRuns_showsNext_andKeepsMessageInputLocked() {
         AiConversation conversation = conversationService.addConversation("Chat");
         AiChatFragment fragment = chatFragment(navigate(conversation.getId()));
         fragment.onGenerationStarted(new AiChatGenerationStartedEvent(this, conversation.getId(), GENERATION_ID));
@@ -611,9 +624,87 @@ class AiChatFragmentGenerationTest {
                 answer.getId()));
 
         assertTrue(fragment.isAwaitingResponse());
-        assertFalse(composer(fragment).isInputEnabled());
+        assertFalse(messageInput(fragment).isInputEnabled());
         assertEquals(List.of(TimelineItemType.USER, TimelineItemType.ASSISTANT, TimelineItemType.USER,
                 TimelineItemType.ASSISTANT_THINKING), timelineTypes(fragment));
+    }
+
+    @Test
+    void retryResponse_afterFailure_retriesThroughManager_replacesErrorWithThinking_andDisablesMessageInput() {
+        AiConversation conversation = conversationService.addConversation("Chat");
+        AiChatMessage question = messageService.createMessage(conversation, AiChatMessageType.USER, "Hi");
+        AiChatFragment fragment = chatFragment(navigate(conversation.getId()));
+        fragment.onGenerationStarted(new AiChatGenerationStartedEvent(this, conversation.getId(), GENERATION_ID));
+        fragment.onGenerationFailed(new AiChatGenerationFailedEvent(this, conversation.getId(), GENERATION_ID));
+        when(generationManager.retry(any())).thenReturn(question);
+
+        retry(fragment);
+
+        verify(generationManager).retry(any());
+        assertTrue(fragment.isAwaitingResponse());
+        assertFalse(messageInput(fragment).isInputEnabled());
+        assertEquals(List.of(TimelineItemType.USER, TimelineItemType.ASSISTANT_THINKING), timelineTypes(fragment));
+    }
+
+    @Test
+    void retryResponse_questionAnsweredMeanwhile_showsTheAnswer() {
+        AiConversation conversation = conversationService.addConversation("Chat");
+        messageService.createMessage(conversation, AiChatMessageType.USER, "Hi");
+        AiChatFragment fragment = chatFragment(navigate(conversation.getId()));
+        // Answered in another tab meanwhile.
+        messageService.createMessage(conversation, AiChatMessageType.ASSISTANT, "Hello!");
+        when(generationManager.retry(any())).thenReturn(null);
+
+        retry(fragment);
+
+        assertFalse(fragment.isAwaitingResponse());
+        assertTrue(messageInput(fragment).isInputEnabled());
+        assertEquals(List.of(TimelineItemType.USER, TimelineItemType.ASSISTANT), timelineTypes(fragment));
+    }
+
+    @Test
+    void retryResponse_rejected_showsTheRunningResponse_withoutNotification() {
+        AiConversation conversation = conversationService.addConversation("Chat");
+        messageService.createMessage(conversation, AiChatMessageType.USER, "Hi");
+        AiChatFragment fragment = chatFragment(navigate(conversation.getId()));
+        // Another tab retried first.
+        when(generationManager.getGeneration(any())).thenReturn(
+                Optional.of(new AiChatGeneration(conversation.getId(), GENERATION_ID, List.of(), 0)));
+        when(generationManager.retry(any())).thenThrow(new AiChatGenerationRejectedException(conversation.getId()));
+
+        retry(fragment);
+
+        assertTrue(fragment.isAwaitingResponse());
+        assertEquals(List.of(TimelineItemType.USER, TimelineItemType.ASSISTANT_THINKING), timelineTypes(fragment));
+        verify(notifications, never()).create(anyString());
+    }
+
+    @Test
+    void retryResponse_fails_showsErrorNotification() {
+        AiConversation conversation = conversationService.addConversation("Chat");
+        messageService.createMessage(conversation, AiChatMessageType.USER, "Hi");
+        AiChatFragment fragment = chatFragment(navigate(conversation.getId()));
+        when(generationManager.retry(any())).thenThrow(new RejectedExecutionException("Shutting down"));
+        Notifications.NotificationBuilder notification = notificationBuilder();
+
+        retry(fragment);
+
+        assertFalse(fragment.isAwaitingResponse());
+        verify(notifications).create(
+                messages.getMessage(CHAT_MESSAGES_GROUP, "aiChatFragment.errorProcessingMessage"));
+        verify(notification).withType(Notifications.Type.ERROR);
+    }
+
+    @Test
+    void retryResponse_whileResponseShown_ignored() {
+        AiConversation conversation = conversationService.addConversation("Chat");
+        AiChatFragment fragment = chatFragment(navigate(conversation.getId()));
+        fragment.onGenerationStarted(new AiChatGenerationStartedEvent(this, conversation.getId(), GENERATION_ID));
+
+        retry(fragment);
+
+        verify(generationManager, never()).retry(any());
+        assertTrue(fragment.isAwaitingResponse());
     }
 
     @Test
@@ -647,7 +738,7 @@ class AiChatFragmentGenerationTest {
     }
 
     @Test
-    void sendMessage_rejectedButGenerationAlreadyEnded_keepsTextAndComposerEnabled() {
+    void submit_rejectedButGenerationAlreadyEnded_putsTheTextBackAndKeepsMessageInputEnabled() {
         AiConversation conversation = conversationService.addConversation("Chat");
         AiChatFragment fragment = chatFragment(navigate(conversation.getId()));
         // The response of the other tab ended before the resync read the snapshot.
@@ -656,14 +747,12 @@ class AiChatFragmentGenerationTest {
         when(generationManager.getGeneration(any())).thenReturn(Optional.empty());
         when(generationManager.start(any(), any())).thenThrow(
                 new AiChatGenerationRejectedException(conversation.getId()));
-        messageField(fragment).setValue("Mine");
-
-        fragment.sendMessage("Mine");
+        submit(fragment, "Mine");
 
         assertFalse(fragment.isAwaitingResponse());
-        assertTrue(composer(fragment).isInputEnabled());
+        assertTrue(messageInput(fragment).isInputEnabled());
         assertEquals(List.of(TimelineItemType.USER, TimelineItemType.ASSISTANT), timelineTypes(fragment));
-        assertEquals("Mine", composer(fragment).getValue());
+        assertEquals("Mine", messageField(fragment).getValue());
     }
 
     @Test
@@ -682,7 +771,7 @@ class AiChatFragmentGenerationTest {
         fragment.onGenerationStarted(new AiChatGenerationStartedEvent(this, conversation.getId(), GENERATION_ID));
 
         assertTrue(fragment.isAwaitingResponse());
-        assertFalse(composer(fragment).isInputEnabled());
+        assertFalse(messageInput(fragment).isInputEnabled());
         assertEquals(List.of(TimelineItemType.USER, TimelineItemType.ASSISTANT, TimelineItemType.USER,
                 TimelineItemType.ASSISTANT_THINKING), timelineTypes(fragment));
         assertTrue(timelineItems(fragment).get(3).getStatusUpdates().isEmpty());
@@ -749,7 +838,7 @@ class AiChatFragmentGenerationTest {
                 conversation.getId(), GENERATION_ID, List.of(new AiToolStatusUpdate("Searching", "3 found"),
                 new AiToolStatusUpdate("Sorting", "done"), new AiToolStatusUpdate("Counting")), 3)));
         CollectionContainer<TimelineItem> timelineItemsDc =
-                FragmentUtils.getFragmentData(fragment).getContainer("timelineItemsDc");
+                FragmentUtils.getFragmentData(timelinePanel(fragment)).getContainer("timelineItemsDc");
         AtomicInteger rowRenders = new AtomicInteger();
         timelineItemsDc.addCollectionChangeListener(event -> {
             if (event.getChangeType() == CollectionChangeType.SET_ITEM) {
@@ -772,12 +861,22 @@ class AiChatFragmentGenerationTest {
         return UiTestUtils.getCurrentView();
     }
 
+    void retry(AiChatFragment fragment) {
+        // Protected: the timeline has no Retry control, the AI Chat add-on's panel calls it through its handler.
+        ReflectionTestUtils.invokeMethod(fragment, "retryResponse");
+    }
+
     AiChatFragment chatFragment(AiChatView view) {
         return UiTestUtils.getComponent(view, "chatFragment");
     }
 
-    AiChatInputFragment composer(AiChatFragment fragment) {
-        return (AiChatInputFragment) UiComponentUtils.getComponent(fragment, "composerFragment");
+    TimelineChatPanel timelinePanel(AiChatFragment fragment) {
+        return (TimelineChatPanel) UiComponentUtils.getComponent(fragment, "chatPanelContainer")
+                .getChildren().findFirst().orElseThrow();
+    }
+
+    AiChatInputFragment messageInput(AiChatFragment fragment) {
+        return (AiChatInputFragment) UiComponentUtils.getComponent(timelinePanel(fragment), "chatInput");
     }
 
     Notifications.NotificationBuilder notificationBuilder() {
@@ -793,14 +892,24 @@ class AiChatFragmentGenerationTest {
         parent.insertChild(index, fragment.getElement());
     }
 
+    Composite<?> inputPanel(AiChatFragment fragment) {
+        return (Composite<?>) UiComponentUtils.getComponent(messageInput(fragment), "inputPanelContainer")
+                .getChildren().findFirst().orElseThrow();
+    }
+
     JmixTextArea messageField(AiChatFragment fragment) {
-        return (JmixTextArea) UiComponentUtils.getComponent(composer(fragment), "messageField");
+        return (JmixTextArea) UiComponentUtils.getComponent(inputPanel(fragment), "messageField");
+    }
+
+    void submit(AiChatFragment fragment, String text) {
+        messageField(fragment).setValue(text);
+        ((JmixButton) UiComponentUtils.getComponent(inputPanel(fragment), "sendButton")).click();
     }
 
     List<TimelineItem> timelineItems(AiChatFragment fragment) {
         @SuppressWarnings("unchecked")
         JmixVirtualList<TimelineItem> list = (JmixVirtualList<TimelineItem>) UiComponentUtils.getComponent(
-                fragment, "timelineList");
+                timelinePanel(fragment), "timelineList");
         @SuppressWarnings("unchecked")
         DataProvider<TimelineItem, Object> dataProvider =
                 (DataProvider<TimelineItem, Object>) (DataProvider<?, ?>) list.getDataProvider();

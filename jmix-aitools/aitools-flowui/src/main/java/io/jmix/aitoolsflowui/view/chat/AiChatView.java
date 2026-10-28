@@ -20,6 +20,7 @@ import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.Route;
+import io.jmix.aitoolsflowui.fragment.chat.AiChatFragment;
 import io.jmix.aitoolsflowui.model.AiConversation;
 import io.jmix.aitoolsflowui.service.AiConversationService;
 import io.jmix.aitoolsflowui.view.chathub.AiChatHubView;
@@ -45,10 +46,10 @@ import java.util.Optional;
 import java.util.UUID;
 
 /**
- * Standalone host view around {@link AiChatFragment}.
+ * Standalone host view around an {@link AiChatFragment}.
  * <p>
  * Opens either by URL — the {@code :id} route segment is the id of an
- * {@link AiConversation} that gets loaded and bound to the fragment — or
+ * {@link AiConversation} that gets loaded and bound to the chat — or
  * programmatically via {@link #setConversation(AiConversation)} (used by
  * {@link DialogWindows} and after-navigation handlers).
  */
@@ -71,11 +72,11 @@ public class AiChatView extends StandardView {
     protected ViewNavigators viewNavigators;
 
     @ViewComponent
-    protected AiChatFragment chatFragment;
-    @ViewComponent
     protected VerticalLayout notFoundLayout;
     @ViewComponent
     protected VerticalLayout emptyLayout;
+    @ViewComponent
+    protected AiChatFragment chatFragment;
 
     @Nullable
     protected AiConversation conversation;
@@ -99,10 +100,9 @@ public class AiChatView extends StandardView {
     @Subscribe
     public void onInit(final InitEvent event) {
         // This view titles itself after the conversation, and the host chrome (view title, tab,
-        // dialog header) renders that title - so the fragment must not repeat it.
+        // dialog header) renders that title - so the chat must not repeat it.
         chatFragment.setTitleVisible(false);
-        chatFragment.addTitleChangeListener(
-                titleChangeEvent -> applyPageTitle(titleChangeEvent.getTitle()));
+        chatFragment.addTitleChangeListener(titleChangeEvent -> applyPageTitle(titleChangeEvent.getTitle()));
     }
 
     @Subscribe

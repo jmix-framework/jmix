@@ -83,7 +83,7 @@ public class TimelineChatPanel extends Fragment<VerticalLayout> implements AiCha
     protected SerializableSupplier<Component> aiAvatarIconSupplier;
 
     @Subscribe
-    public void onReady(final ReadyEvent event) {
+    protected void onReady(final ReadyEvent event) {
         timelineList.setRenderer(new ComponentRenderer<>(this::createTimelineRow, TimelineItemRenderer::setItem));
     }
 

@@ -57,7 +57,7 @@ public class AiChatInputFragment extends Fragment<VerticalLayout> {
      * @param event the ready event
      */
     @Subscribe
-    public void onReady(ReadyEvent event) {
+    protected void onReady(ReadyEvent event) {
         getInputPanel();
     }
 

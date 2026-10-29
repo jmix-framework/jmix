@@ -33,6 +33,7 @@ import io.jmix.core.FetchPlan;
 import io.jmix.core.Sort;
 import io.jmix.core.UnconstrainedDataManager;
 import io.jmix.core.common.util.Preconditions;
+import io.jmix.core.querycondition.LogicalCondition;
 import io.jmix.core.querycondition.PropertyCondition;
 import io.jmix.core.security.AccessDeniedException;
 import io.jmix.core.usersubstitution.CurrentUserSubstitution;
@@ -45,15 +46,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
 import java.util.function.Consumer;
 
 /**
  * Default {@link AiChatService}. Generates the reply to an already-persisted user message from the conversation
- * history, windowed by {@code jmix.aitools.ui.data.chat-memory-max-messages}, and persists nothing. Only the
+ * history, windowed by {@code jmix.aitools.ui.data.chat-memory-max-messages}, and persists nothing. Messages the
+ * user asked to keep in context are added even when they are older than the window. Only the
  * deprecated {@code processMessage} path saves the reply, as a single assistant message, when it is not blank.
  */
 public class AiChatDataService implements AiChatService, InitializingBean {
@@ -191,9 +195,72 @@ public class AiChatDataService implements AiChatService, InitializingBean {
             // Never send an empty history: the request must always include the current user message.
             recent = List.of(currentUserMessage);
         }
-        return recent.stream()
+        List<Message> history = new ArrayList<>(recent.stream()
                 .map(this::mapEntityToMessage)
+                .toList());
+
+        Set<UUID> windowIds = new HashSet<>();
+        for (AiChatMessageEntity message : recent) {
+            windowIds.add(message.getId());
+        }
+        List<AiChatMessageEntity> keptOutsideWindow = loadKeptMessages(conversationId).stream()
+                .filter(message -> !windowIds.contains(message.getId()))
                 .toList();
+        if (!keptOutsideWindow.isEmpty()) {
+            prependKeptInContextBlock(history, buildKeptInContextBlock(keptOutsideWindow));
+        }
+
+        return history;
+    }
+
+    /**
+     * Loads the messages of the conversation that the user asked to keep in context.
+     *
+     * @param conversationId conversation id
+     * @return kept messages, oldest first
+     */
+    protected List<AiChatMessageEntity> loadKeptMessages(UUID conversationId) {
+        return dataManager.load(AiChatMessageEntity.class)
+                .condition(LogicalCondition.and(
+                        PropertyCondition.equal("conversation.id", conversationId),
+                        PropertyCondition.equal("keepInContext", true)))
+                .sort(Sort.by(Sort.Order.asc("createdDate"), Sort.Order.asc("id")))
+                .list();
+    }
+
+    /**
+     * Builds the model-facing text that presents kept messages older than the history window. The text is not
+     * localized; override to change the wording.
+     *
+     * @param keptMessages kept messages that are not in the window, oldest first
+     * @return the text to put in front of the history
+     */
+    protected String buildKeptInContextBlock(List<AiChatMessageEntity> keptMessages) {
+        StringBuilder block = new StringBuilder(
+                "Messages from earlier in this conversation the user asked you to keep in mind:");
+        for (AiChatMessageEntity message : keptMessages) {
+            String label = message.getType() == AiChatMessageEntityType.USER ? "User" : "Assistant";
+            block.append("\n\n")
+                    .append(label)
+                    .append(": ")
+                    .append(message.getContent() != null ? message.getContent() : "");
+        }
+        return block.toString();
+    }
+
+    /**
+     * Puts the block at the start of the history: into the first message when it is a user message, otherwise as a
+     * separate user message, so that the roles keep alternating.
+     *
+     * @param history the history to change in place
+     * @param block   the text built by {@link #buildKeptInContextBlock(List)}
+     */
+    protected void prependKeptInContextBlock(List<Message> history, String block) {
+        if (!history.isEmpty() && history.get(0) instanceof UserMessage first) {
+            history.set(0, first.mutate().text(block + "\n\n" + first.getText()).build());
+        } else {
+            history.add(0, new UserMessage(block));
+        }
     }
 
     protected List<AiChatMessageEntity> loadRecentMessages(UUID conversationId, int limit) {

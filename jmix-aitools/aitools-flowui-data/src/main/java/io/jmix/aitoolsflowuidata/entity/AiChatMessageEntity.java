@@ -63,6 +63,10 @@ public class AiChatMessageEntity {
     @Column(name = "CREATED_DATE")
     private OffsetDateTime createdDate;
 
+    @NotNull
+    @Column(name = "KEEP_IN_CONTEXT", nullable = false)
+    private Boolean keepInContext = false;
+
     public UUID getId() {
         return id;
     }
@@ -107,6 +111,14 @@ public class AiChatMessageEntity {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public Boolean getKeepInContext() {
+        return keepInContext;
+    }
+
+    public void setKeepInContext(Boolean keepInContext) {
+        this.keepInContext = keepInContext;
     }
 
     public AiConversationEntity getConversation() {

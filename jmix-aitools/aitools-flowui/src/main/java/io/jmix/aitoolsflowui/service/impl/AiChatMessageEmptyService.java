@@ -20,6 +20,7 @@ import io.jmix.aitoolsflowui.model.AiConversation;
 import io.jmix.aitoolsflowui.model.AiChatMessage;
 import io.jmix.aitoolsflowui.model.AiChatMessageType;
 import io.jmix.aitoolsflowui.service.AiChatMessageService;
+import io.jmix.aitoolsflowui.service.KeepInContextResult;
 import io.jmix.core.Metadata;
 import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,8 +44,39 @@ public class AiChatMessageEmptyService implements AiChatMessageService {
         aiMessage.setType(type);
         aiMessage.setConversation(conversation);
         aiMessage.setContent(message);
+        aiMessage.setKeepInContext(false);
         aiMessage.setCreatedDate(OffsetDateTime.now());
         return aiMessage;
+    }
+
+    @Override
+    public AiChatMessage createMessage(AiConversation conversation, AiChatMessageType type, String message,
+                                       boolean keepInContext) {
+        if (keepInContext) {
+            checkKeepable(type);
+        }
+        // Nothing is stored, so there is no room for kept messages.
+        return createMessage(conversation, type, message);
+    }
+
+    @Override
+    public KeepInContextResult setKeepInContext(AiChatMessage message, boolean keep) {
+        checkKeepable(message.getType());
+        if (keep) {
+            return KeepInContextResult.LIMIT_REACHED;
+        }
+        message.setKeepInContext(false);
+        return KeepInContextResult.DONE;
+    }
+
+    @Override
+    public Collection<AiChatMessage> loadKeptInContextMessages(AiConversation conversation) {
+        return List.of();
+    }
+
+    @Override
+    public boolean isKeepInContextLimitReached(AiConversation conversation) {
+        return true;
     }
 
     @Nullable
@@ -62,5 +94,12 @@ public class AiChatMessageEmptyService implements AiChatMessageService {
     public Map<AiConversation, AiChatMessage> loadLatestMessages(Collection<AiConversation> conversations,
                                                                  @Nullable AiChatMessageType type) {
         return Map.of();
+    }
+
+    protected void checkKeepable(@Nullable AiChatMessageType type) {
+        if (type != AiChatMessageType.USER
+                && type != AiChatMessageType.ASSISTANT) {
+            throw new IllegalArgumentException("Only user and assistant messages can be kept in context: " + type);
+        }
     }
 }

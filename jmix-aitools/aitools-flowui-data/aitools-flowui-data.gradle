@@ -31,6 +31,7 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-api'
     testImplementation 'org.springframework:spring-test'
     testImplementation 'org.mockito:mockito-junit-jupiter'
+    testImplementation 'org.liquibase:liquibase-core'
     testImplementation project(':framework-test-support')
     testImplementation project(':flowui-test-assist')
 

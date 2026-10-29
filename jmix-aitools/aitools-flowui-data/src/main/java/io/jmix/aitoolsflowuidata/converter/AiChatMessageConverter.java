@@ -43,6 +43,7 @@ public class AiChatMessageConverter {
         model.setType(convertToModelType(entity.getType()));
         model.setCreatedBy(entity.getCreatedBy());
         model.setCreatedDate(entity.getCreatedDate());
+        model.setKeepInContext(entity.getKeepInContext());
         model.setConversation(conversation);
         return model;
     }

@@ -21,6 +21,8 @@ import io.jmix.aitoolsflowui.model.AiConversation;
 import io.jmix.aitoolsflowui.model.AiChatMessage;
 import io.jmix.aitoolsflowui.model.AiChatMessageType;
 import io.jmix.aitoolsflowui.service.AiChatMessageService;
+import io.jmix.aitoolsflowui.service.KeepInContextResult;
+import io.jmix.aitoolsflowuidata.AiToolsFlowuiDataProperties;
 import io.jmix.aitoolsflowuidata.converter.AiChatMessageConverter;
 import io.jmix.aitoolsflowuidata.entity.AiChatMessageEntity;
 import io.jmix.aitoolsflowuidata.entity.AiConversationEntity;
@@ -57,6 +59,8 @@ public class AiChatMessageDataService implements AiChatMessageService {
     protected AiChatMessageConverter messageConverter;
     @Autowired
     protected CurrentUserSubstitution currentUserSubstitution;
+    @Autowired
+    protected AiToolsFlowuiDataProperties dataProperties;
 
     @Override
     public AiChatMessage createMessage(AiConversation conversation, AiChatMessageType type, String message) {
@@ -64,18 +68,72 @@ public class AiChatMessageDataService implements AiChatMessageService {
         Preconditions.checkNotNullArgument(type);
         Preconditions.checkNotEmptyString(message);
 
-        AiConversationEntity aiConversation = loadAiConversation(conversation.getId());
-        if (aiConversation == null) {
-            throw new IllegalArgumentException("Conversation not found: " + conversation.getId());
+        return createMessageInternal(conversation, loadOwnedConversation(conversation), type, message, false);
+    }
+
+    @Override
+    public AiChatMessage createMessage(AiConversation conversation, AiChatMessageType type, String message,
+                                       boolean keepInContext) {
+        Preconditions.checkNotNullArgument(conversation);
+        Preconditions.checkNotNullArgument(type);
+        Preconditions.checkNotEmptyString(message);
+        if (keepInContext) {
+            checkKeepable(type);
         }
-        checkOwner(aiConversation);
 
-        AiChatMessageEntity chatMessage = dataManager.create(AiChatMessageEntity.class);
-        chatMessage.setConversation(aiConversation);
-        chatMessage.setType(messageConverter.convertToEntityType(type));
-        chatMessage.setContent(message);
+        AiConversationEntity aiConversation = loadOwnedConversation(conversation);
+        boolean keep = keepInContext && !isKeepInContextLimitReachedInternal(aiConversation);
+        return createMessageInternal(conversation, aiConversation, type, message, keep);
+    }
 
-        return messageConverter.convertToModel(dataManager.save(chatMessage), conversation);
+    @Override
+    public KeepInContextResult setKeepInContext(AiChatMessage message, boolean keep) {
+        Preconditions.checkNotNullArgument(message);
+
+        AiChatMessageEntity chatMessage = loadAiChatMessage(message.getId());
+        if (chatMessage == null) {
+            throw new IllegalArgumentException("Message not found: " + message.getId());
+        }
+        checkOwner(chatMessage.getConversation());
+        checkKeepable(messageConverter.convertToModelType(chatMessage.getType()));
+
+        if (Boolean.TRUE.equals(chatMessage.getKeepInContext()) != keep) {
+            if (keep && isKeepInContextLimitReachedInternal(chatMessage.getConversation())) {
+                return KeepInContextResult.LIMIT_REACHED;
+            }
+            chatMessage.setKeepInContext(keep);
+            dataManager.saveWithoutReload(chatMessage);
+        }
+        message.setKeepInContext(keep);
+        return KeepInContextResult.DONE;
+    }
+
+    @Override
+    public Collection<AiChatMessage> loadKeptInContextMessages(AiConversation conversation) {
+        Preconditions.checkNotNullArgument(conversation);
+
+        List<AiChatMessageEntity> messages = dataManager.load(AiChatMessageEntity.class)
+                .condition(LogicalCondition.and(
+                        PropertyCondition.equal("conversation.id", conversation.getId()),
+                        PropertyCondition.equal("conversation.username", currentUsername()),
+                        PropertyCondition.equal("keepInContext", true)))
+                .sort(Sort.by(Sort.Order.asc("createdDate"), Sort.Order.asc("id")))
+                .fetchPlan(FetchPlan.BASE)
+                .list();
+
+        return messageConverter.convertToModel(messages, conversation);
+    }
+
+    @Override
+    public boolean isKeepInContextLimitReached(AiConversation conversation) {
+        Preconditions.checkNotNullArgument(conversation);
+
+        AiConversationEntity aiConversation = loadAiConversation(conversation.getId());
+
+        // A conversation that is gone or belongs to another user cannot take a kept message either.
+        return aiConversation == null
+                || !isOwner(aiConversation)
+                || isKeepInContextLimitReachedInternal(aiConversation);
     }
 
     @Nullable
@@ -86,6 +144,7 @@ public class AiChatMessageDataService implements AiChatMessageService {
         LogicalCondition condition = LogicalCondition.and(
                 PropertyCondition.equal("conversation.id", conversation.getId()),
                 PropertyCondition.equal("conversation.username", currentUsername()));
+
         if (type != null) {
             condition.add(PropertyCondition.equal("type", messageConverter.convertToEntityType(type)));
         }
@@ -104,6 +163,7 @@ public class AiChatMessageDataService implements AiChatMessageService {
     @Override
     public Collection<AiChatMessage> loadMessages(AiConversation conversation) {
         Preconditions.checkNotNullArgument(conversation);
+
         List<AiChatMessageEntity> messages = dataManager.load(AiChatMessageEntity.class)
                 .condition(LogicalCondition.and(
                         PropertyCondition.equal("conversation.id", conversation.getId()),
@@ -111,6 +171,7 @@ public class AiChatMessageDataService implements AiChatMessageService {
                 .sort(Sort.by(Sort.Order.asc("createdDate"), Sort.Order.asc("id")))
                 .fetchPlan(FetchPlan.BASE)
                 .list();
+
         return messageConverter.convertToModel(messages, conversation);
     }
 
@@ -163,14 +224,69 @@ public class AiChatMessageDataService implements AiChatMessageService {
         return result;
     }
 
+    protected AiChatMessage createMessageInternal(AiConversation conversation, AiConversationEntity aiConversation,
+                                                  AiChatMessageType type, String message, boolean keepInContext) {
+        AiChatMessageEntity chatMessage = dataManager.create(AiChatMessageEntity.class);
+        chatMessage.setConversation(aiConversation);
+        chatMessage.setType(messageConverter.convertToEntityType(type));
+        chatMessage.setContent(message);
+        chatMessage.setKeepInContext(keepInContext);
+
+        return messageConverter.convertToModel(dataManager.save(chatMessage), conversation);
+    }
+
+    protected boolean isKeepInContextLimitReachedInternal(AiConversationEntity conversation) {
+        long kept = dataManager.loadValue("select count(e) from aitls_AiChatMessageEntity e "
+                        + "where e.conversation.id = :conversationId and e.keepInContext = true", Long.class)
+                .parameter("conversationId", conversation.getId())
+                .one();
+
+        return kept >= dataProperties.getKeepInContextMaxMessages();
+    }
+
+    protected void checkKeepable(@Nullable AiChatMessageType type) {
+        if (type != AiChatMessageType.USER
+                && type != AiChatMessageType.ASSISTANT) {
+            throw new IllegalArgumentException("Only user and assistant messages can be kept in context: " + type);
+        }
+    }
+
+    protected boolean isOwner(AiConversationEntity conversation) {
+        return Objects.equals(conversation.getUsername(), currentUsername());
+    }
+
     protected void checkOwner(AiConversationEntity conversation) {
-        if (!Objects.equals(conversation.getUsername(), currentUsername())) {
+        if (!isOwner(conversation)) {
             throw new AccessDeniedException("entity", "aitls_AiConversationEntity");
         }
     }
 
     protected String currentUsername() {
         return currentUserSubstitution.getEffectiveUser().getUsername();
+    }
+
+    protected AiConversationEntity loadOwnedConversation(AiConversation conversation) {
+        AiConversationEntity aiConversation = loadAiConversation(conversation.getId());
+        if (aiConversation == null) {
+            throw new IllegalArgumentException("Conversation not found: " + conversation.getId());
+        }
+        checkOwner(aiConversation);
+        return aiConversation;
+    }
+
+    @Nullable
+    protected AiChatMessageEntity loadAiChatMessage(@Nullable UUID messageId) {
+        if (messageId == null) {
+            return null;
+        }
+
+        return dataManager.load(AiChatMessageEntity.class)
+                .id(messageId)
+                .fetchPlan(fetchPlanBuilder -> fetchPlanBuilder
+                        .addFetchPlan(FetchPlan.BASE)
+                        .add("conversation", FetchPlan.BASE))
+                .optional()
+                .orElse(null);
     }
 
     @Nullable

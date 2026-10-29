@@ -38,10 +38,20 @@ public class AiToolsFlowuiDataProperties {
      */
     Integer chatMemoryMaxMessages;
 
+    /**
+     * Maximum number of messages per conversation that can be kept in context, so that they are sent with every
+     * request regardless of the {@link #chatMemoryMaxMessages} window. A non-positive value disables keeping:
+     * every request to keep a message reports that the limit is reached. Lowering the value does not release
+     * messages already kept, and all of them are still sent.
+     */
+    Integer keepInContextMaxMessages;
+
     public AiToolsFlowuiDataProperties(@DefaultValue("true") Boolean enabled,
-                                       @DefaultValue("20") Integer chatMemoryMaxMessages) {
+                                       @DefaultValue("20") Integer chatMemoryMaxMessages,
+                                       @DefaultValue("5") Integer keepInContextMaxMessages) {
         this.enabled = enabled;
         this.chatMemoryMaxMessages = chatMemoryMaxMessages;
+        this.keepInContextMaxMessages = keepInContextMaxMessages;
     }
 
     /**
@@ -56,5 +66,12 @@ public class AiToolsFlowuiDataProperties {
      */
     public Integer getChatMemoryMaxMessages() {
         return chatMemoryMaxMessages;
+    }
+
+    /**
+     * @see #keepInContextMaxMessages
+     */
+    public Integer getKeepInContextMaxMessages() {
+        return keepInContextMaxMessages;
     }
 }

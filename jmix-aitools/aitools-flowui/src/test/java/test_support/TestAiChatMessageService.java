@@ -20,6 +20,7 @@ import io.jmix.aitoolsflowui.model.AiChatMessage;
 import io.jmix.aitoolsflowui.model.AiChatMessageType;
 import io.jmix.aitoolsflowui.model.AiConversation;
 import io.jmix.aitoolsflowui.service.AiChatMessageService;
+import io.jmix.aitoolsflowui.service.KeepInContextResult;
 import io.jmix.core.Metadata;
 import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +42,8 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class TestAiChatMessageService implements AiChatMessageService {
 
+    protected static final int DEFAULT_KEEP_IN_CONTEXT_LIMIT = 5;
+
     @Autowired
     protected Metadata metadata;
 
@@ -48,7 +51,10 @@ public class TestAiChatMessageService implements AiChatMessageService {
     protected final Map<AiChatMessageType, RuntimeException> failures = new ConcurrentHashMap<>();
     protected final Map<AiChatMessageType, Runnable> beforeSaveActions = new ConcurrentHashMap<>();
 
+    protected volatile int keepInContextLimit = DEFAULT_KEEP_IN_CONTEXT_LIMIT;
+
     public void clear() {
+        keepInContextLimit = DEFAULT_KEEP_IN_CONTEXT_LIMIT;
         messagesByConversation.clear();
         failures.clear();
         beforeSaveActions.clear();
@@ -105,6 +111,52 @@ public class TestAiChatMessageService implements AiChatMessageService {
         return chatMessage;
     }
 
+    @Override
+    public AiChatMessage createMessage(AiConversation conversation, AiChatMessageType type, String message,
+                                       boolean keepInContext) {
+        if (keepInContext) {
+            checkKeepable(type);
+        }
+        AiChatMessage chatMessage = createMessage(conversation, type, message);
+        if (keepInContext) {
+            setKeepInContext(chatMessage, true);
+        }
+        return chatMessage;
+    }
+
+    @Override
+    public KeepInContextResult setKeepInContext(AiChatMessage message, boolean keep) {
+        checkKeepable(message.getType());
+        if (keep && !Boolean.TRUE.equals(message.getKeepInContext())) {
+            if (isKeepInContextLimitReached(message.getConversation())) {
+                return KeepInContextResult.LIMIT_REACHED;
+            }
+        }
+        message.setKeepInContext(keep);
+        return KeepInContextResult.DONE;
+    }
+
+    @Override
+    public Collection<AiChatMessage> loadKeptInContextMessages(AiConversation conversation) {
+        return messagesOf(conversation).stream()
+                .filter(message -> Boolean.TRUE.equals(message.getKeepInContext()))
+                .toList();
+    }
+
+    @Override
+    public boolean isKeepInContextLimitReached(AiConversation conversation) {
+        return loadKeptInContextMessages(conversation).size() >= keepInContextLimit;
+    }
+
+    /**
+     * Sets how many messages a conversation can keep in context, until {@link #clear()}.
+     *
+     * @param keepInContextLimit maximum number of kept messages per conversation
+     */
+    public void setKeepInContextLimit(int keepInContextLimit) {
+        this.keepInContextLimit = keepInContextLimit;
+    }
+
     @Nullable
     @Override
     public AiChatMessage loadLatestMessage(AiConversation conversation, @Nullable AiChatMessageType type) {
@@ -143,6 +195,12 @@ public class TestAiChatMessageService implements AiChatMessageService {
         AiChatMessage chatMessage = createMessage(conversation, AiChatMessageType.USER, "message");
         chatMessage.setCreatedDate(createdDate);
         return chatMessage;
+    }
+
+    protected void checkKeepable(@Nullable AiChatMessageType type) {
+        if (type != AiChatMessageType.USER && type != AiChatMessageType.ASSISTANT) {
+            throw new IllegalArgumentException("Only user and assistant messages can be kept in context: " + type);
+        }
     }
 
     protected List<AiChatMessage> messagesOf(AiConversation conversation) {

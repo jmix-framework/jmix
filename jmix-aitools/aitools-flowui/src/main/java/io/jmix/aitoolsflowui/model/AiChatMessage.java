@@ -44,6 +44,8 @@ public class AiChatMessage {
 
     private OffsetDateTime createdDate;
 
+    private Boolean keepInContext = false;
+
     public OffsetDateTime getCreatedDate() {
         return createdDate;
     }
@@ -90,6 +92,19 @@ public class AiChatMessage {
 
     public void setId(UUID id) {
         this.id = id;
+    }
+
+    /**
+     * Tells whether the message is sent to the model with every request, regardless of the history window.
+     *
+     * @return {@code true} if the message is kept in context
+     */
+    public Boolean getKeepInContext() {
+        return keepInContext;
+    }
+
+    public void setKeepInContext(Boolean keepInContext) {
+        this.keepInContext = keepInContext;
     }
 
 }

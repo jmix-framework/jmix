@@ -16,6 +16,7 @@
 
 package dataload_beans;
 
+import io.jmix.aitools.AiExclusionSupport;
 import io.jmix.aitools.ChatClientFactory;
 import io.jmix.aitools.dataload.AiDataLoadService;
 import io.jmix.aitools.dataload.introspection.AvailableEntityFilter;
@@ -73,6 +74,15 @@ public class AiToolsDataLoadAutoConfigurationTest {
                     assertThat(context).doesNotHaveBean(AvailableEntityFilter.class);
                     assertThat(context).hasSingleBean(AiToolRegistry.class);
                     assertThat(context).hasSingleBean(ChatClientFactory.class);
+                });
+    }
+
+    @Test
+    void testExclusionSupportPresentWhenDataLoadDisabled() {
+        contextRunner.withPropertyValues("jmix.aitools.dataload.enabled=false")
+                .run(context -> {
+                    assertThat(context).hasNotFailed();
+                    assertThat(context).hasSingleBean(AiExclusionSupport.class);
                 });
     }
 

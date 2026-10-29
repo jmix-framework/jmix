@@ -16,6 +16,7 @@
 
 package io.jmix.aitools.dataload.introspection;
 
+import io.jmix.aitools.AiExclusionSupport;
 import io.jmix.aitools.AiToolsDataLoadProperties;
 import io.jmix.aitools.dataload.introspection.model.EntityDescriptor;
 import io.jmix.aitools.dataload.introspection.model.EntityPropertyDescriptor;
@@ -47,6 +48,8 @@ public class AvailableEntityService {
     protected JpaDomainModelIntrospector modelIntrospector;
     @Autowired
     protected AvailableEntityFilter availableEntityFilter;
+    @Autowired
+    protected AiExclusionSupport aiExclusionSupport;
     @Autowired
     protected MetadataTools metadataTools;
     @Autowired
@@ -100,18 +103,15 @@ public class AvailableEntityService {
     }
 
     /**
-     * Drops {@link io.jmix.core.entity.annotation.SystemLevel}-annotated attributes from the exposed
-     * descriptors when {@code jmix.aitools.dataload.exclude-system-level-attributes} is enabled. The
+     * Drops the {@link io.jmix.core.entity.annotation.SystemLevel}-annotated attributes that
+     * {@link AiExclusionSupport#isHiddenSystemLevel(MetaProperty)} hides from the exposed descriptors. The
      * attributes are only hidden from discovery: they remain in the introspected index, so a generated
      * query may still reference them.
      *
      * @param entityDescriptors descriptors to narrow
-     * @return descriptors without their system-level attributes, or the same list when hiding is disabled
+     * @return descriptors without their hidden system-level attributes
      */
     protected List<EntityDescriptor> hideSystemLevelAttributes(List<EntityDescriptor> entityDescriptors) {
-        if (!Boolean.TRUE.equals(dataLoadProperties.getExcludeSystemLevelAttributes())) {
-            return entityDescriptors;
-        }
         return entityDescriptors.stream()
                 .map(this::hideSystemLevelAttributes)
                 .toList();
@@ -126,7 +126,8 @@ public class AvailableEntityService {
         List<EntityPropertyDescriptor> properties = entityDescriptor.getProperties();
         List<EntityPropertyDescriptor> exposed = new ArrayList<>(properties.size());
         for (EntityPropertyDescriptor property : properties) {
-            if (!isSystemLevel(metaClass, property.getName())) {
+            MetaProperty metaProperty = metaClass.findProperty(property.getName());
+            if (metaProperty == null || !aiExclusionSupport.isHiddenSystemLevel(metaProperty)) {
                 exposed.add(property);
             }
         }
@@ -136,11 +137,6 @@ public class AvailableEntityService {
         }
         return new EntityDescriptor(entityDescriptor.getName(), entityDescriptor.getLocalizedNames(),
                 List.copyOf(exposed), entityDescriptor.getComment());
-    }
-
-    protected boolean isSystemLevel(MetaClass metaClass, String propertyName) {
-        MetaProperty metaProperty = metaClass.findProperty(propertyName);
-        return metaProperty != null && metadataTools.isSystemLevel(metaProperty);
     }
 
     protected EntitySummary toEntitySummary(EntityDescriptor entityDescriptor) {

@@ -26,9 +26,11 @@ dependencies {
     api project(":flowui")
 
     compileOnly project(":security-flowui")
+    compileOnly project(":gridexport-flowui")
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api'
     testImplementation project(':flowui-test-assist')
+    testImplementation project(":gridexport-flowui")
     testImplementation project(':framework-test-support')
 
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'

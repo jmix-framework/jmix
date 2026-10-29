@@ -23,4 +23,8 @@ dependencies {
     api project(":aitools-flowui")
 
     api 'org.springframework.boot:spring-boot-autoconfigure'
+
+    testImplementation project(':gridexport-flowui-starter')
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }

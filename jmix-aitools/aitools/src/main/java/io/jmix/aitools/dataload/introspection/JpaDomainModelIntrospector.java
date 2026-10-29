@@ -16,6 +16,7 @@
 
 package io.jmix.aitools.dataload.introspection;
 
+import io.jmix.aitools.AiExclusionSupport;
 import io.jmix.aitools.AiToolsDataLoadProperties;
 import io.jmix.aitools.ExcludeFromAi;
 import io.jmix.core.MessageTools;
@@ -50,6 +51,8 @@ public class JpaDomainModelIntrospector {
     protected MetadataTools metadataTools;
     @Autowired
     protected AiToolsDataLoadProperties dataLoadProperties;
+    @Autowired
+    protected AiExclusionSupport aiExclusionSupport;
     @Autowired
     protected List<MetaPropertyIntrospector> propertyIntrospectors;
 
@@ -277,14 +280,9 @@ public class JpaDomainModelIntrospector {
     protected List<EntityPropertyDescriptor> introspectProperties(MetaClass metaClass) {
         List<EntityPropertyDescriptor> propertyDescriptors = new ArrayList<>();
         for (MetaProperty property : metaClass.getProperties()) {
-            // A @ExcludeFromAi attribute is a code-level trust boundary: like @Secret it is never
-            // indexed, so it is hidden from discovery and rejected by JPQL validation.
-            if (isExcludedFromAi(property)) {
-                continue;
-            }
-            // A @Secret attribute is never indexed: it is hidden from discovery and, because the index
-            // also backs JPQL validation, rejected if a generated query references it anyway.
-            if (metadataTools.isSecret(property)) {
+            // A @ExcludeFromAi or @Secret attribute is never indexed: it is hidden from discovery and, because
+            // the index also backs JPQL validation, rejected if a generated query references it anyway.
+            if (aiExclusionSupport.isHidden(property)) {
                 continue;
             }
             // A non-persistent attribute (a @Transient or getter @JmixProperty) has no column or
@@ -333,70 +331,18 @@ public class JpaDomainModelIntrospector {
     }
 
     protected boolean shouldInclude(MetaClass metaClass) {
-        // A @ExcludeFromAi entity is a code-level trust boundary: excluded unconditionally, above every
-        // rule below (including force-include), so a deployment-time property override cannot expose it.
-        if (isExcludedFromAi(metaClass)) {
+        // Not excluded means that no exclusion rule matched or that the entity is explicitly included,
+        // which overrides the system-level and excludePackages rules.
+        if (aiExclusionSupport.isExcluded(metaClass)) {
             return false;
         }
 
-        // Explicit exclude takes precedence over every include rule.
-        if (isExplicitlyExcluded(metaClass)) {
-            return false;
-        }
-
-        // Explicit include is additive: it force-includes the entity, overriding the default
-        // exclusions below (system-level, DTO, excluded packages).
-        if (isExplicitlyIncluded(metaClass)) {
-            return true;
-        }
-
-        if (Boolean.TRUE.equals(dataLoadProperties.getExcludeSystemLevelEntities())
-                && metadataTools.isSystemLevel(metaClass)) {
-            return false;
-        }
-
+        // The JPQL index holds JPA entities only: a DTO entity gets in only when explicitly included.
         if (isDtoEntity(metaClass)) {
-            return false;
-        }
-
-        if (matchesAnyPackagePrefix(metaClass.getJavaClass().getPackageName(), dataLoadProperties.getExcludePackages())) {
-            return false;
+            return aiExclusionSupport.isExplicitlyIncluded(metaClass);
         }
 
         return true;
-    }
-
-    protected boolean isExcludedFromAi(MetaClass metaClass) {
-        return metaClass.getAnnotations().containsKey(ExcludeFromAi.class.getName());
-    }
-
-    protected boolean isExcludedFromAi(MetaProperty metaProperty) {
-        return metaProperty.getAnnotations().containsKey(ExcludeFromAi.class.getName());
-    }
-
-    protected boolean isExplicitlyIncluded(MetaClass metaClass) {
-        return matchesEntityName(metaClass, dataLoadProperties.getIncludeEntities())
-                || matchesAnyPackagePrefix(metaClass.getJavaClass().getPackageName(), dataLoadProperties.getIncludePackages());
-    }
-
-    protected boolean isExplicitlyExcluded(MetaClass metaClass) {
-        return matchesEntityName(metaClass, dataLoadProperties.getExcludeEntities());
-    }
-
-    protected boolean matchesEntityName(MetaClass metaClass, List<String> entityNames) {
-        return entityNames.stream()
-                .filter(Objects::nonNull)
-                .map(String::trim)
-                .filter(name -> !name.isEmpty())
-                .anyMatch(metaClass.getName()::equals);
-    }
-
-    protected boolean matchesAnyPackagePrefix(String packageName, List<String> packagePrefixes) {
-        return packagePrefixes.stream()
-                .filter(Objects::nonNull)
-                .map(String::trim)
-                .filter(prefix -> !prefix.isEmpty())
-                .anyMatch(prefix -> packageName.equals(prefix) || packageName.startsWith(prefix + "."));
     }
 
     protected boolean isDtoEntity(MetaClass metaClass) {

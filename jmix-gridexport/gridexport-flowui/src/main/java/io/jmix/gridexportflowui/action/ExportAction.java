@@ -40,6 +40,7 @@ import io.jmix.gridexportflowui.exporter.DataGridExporter;
 import io.jmix.gridexportflowui.exporter.ExportMode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -72,6 +73,7 @@ public class ExportAction extends ListDataComponentAction<ExportAction, Object> 
     protected Downloader downloader;
     protected Dialogs dialogs;
     protected GroupDataGridAdapterFactory groupDataGridFactory;
+    protected ObjectProvider<ExportDialogActionContributor> exportDialogActionContributors;
 
     protected DataGridExporter dataGridExporter;
     protected List<ExportMode> availableExportModes;
@@ -122,6 +124,12 @@ public class ExportAction extends ListDataComponentAction<ExportAction, Object> 
     public void setGridExportProperties(GridExportProperties gridExportProperties) {
         this.availableExportModes = gridExportProperties.getDefaultExportModes();
         this.columnsToExport = gridExportProperties.getDefaultColumnsToExport();
+    }
+
+    @Autowired
+    public void setExportDialogActionContributors(
+            ObjectProvider<ExportDialogActionContributor> exportDialogActionContributors) {
+        this.exportDialogActionContributors = exportDialogActionContributors;
     }
 
     /**
@@ -310,8 +318,12 @@ public class ExportAction extends ListDataComponentAction<ExportAction, Object> 
             }
         }
 
-        actions.add(new DialogAction(DialogAction.Type.CANCEL));
-        actions.get(0).setVariant(ActionVariant.PRIMARY);
+        // The primary button is the first export mode, or Cancel when there is none; never a contributed action.
+        Action cancelAction = new DialogAction(DialogAction.Type.CANCEL);
+        (actions.isEmpty() ? cancelAction : actions.get(0)).setVariant(ActionVariant.PRIMARY);
+
+        actions.addAll(createContributedActions(primaryFilterPredicate));
+        actions.add(cancelAction);
 
         dialogs.createOptionDialog()
                 .withHeader(getMessage("exportConfirmationDialog.header"))
@@ -329,6 +341,14 @@ public class ExportAction extends ListDataComponentAction<ExportAction, Object> 
             return Objects.requireNonNullElse(columnsExportFilter,
                     columnsToExport.getFilterPredicate());
         }
+    }
+
+    protected List<Action> createContributedActions(Predicate<Grid.Column<Object>> primaryFilterPredicate) {
+        ExportDialogContext context = new ExportDialogContext(target, this, dataGridExporter, primaryFilterPredicate);
+        return exportDialogActionContributors.orderedStream()
+                .flatMap(contributor -> contributor.getActions(context).stream())
+                .filter(Action::isVisible)
+                .toList();
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})

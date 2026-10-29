@@ -23,8 +23,6 @@ import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.flowui.component.ListDataComponent;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.component.grid.EnhancedDataGrid;
-import io.jmix.flowui.component.grid.TreeDataGrid;
-import io.jmix.flowui.data.grid.ContainerTreeDataGridItems;
 import io.jmix.flowui.download.ByteArrayDownloadDataProvider;
 import io.jmix.flowui.download.DownloadFormat;
 import io.jmix.flowui.download.Downloader;
@@ -37,12 +35,10 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 /**
  * Use this class to export {@link DataGrid} into JSON format.
@@ -141,18 +137,6 @@ public class JsonExporter extends AbstractDataGridExporter<JsonExporter> {
         return ExportMode.CURRENT_PAGE == exportMode
                 ? getDataGridItems(dataGrid)
                 : dataGrid.getSelectedItems();
-    }
-
-    @SuppressWarnings("unchecked")
-    protected Collection<Object> getDataGridItems(Grid<Object> dataGrid) {
-        if (dataGrid instanceof TreeDataGrid) {
-            TreeDataGrid<Object> treeDataGrid = (TreeDataGrid<Object>) dataGrid;
-
-            return new ArrayList<>(
-                    ((ContainerTreeDataGridItems<Object>) treeDataGrid.getItems()).getContainer().getItems());
-        }
-
-        return dataGrid.getGenericDataView().getItems().collect(Collectors.toList());
     }
 
     @Override

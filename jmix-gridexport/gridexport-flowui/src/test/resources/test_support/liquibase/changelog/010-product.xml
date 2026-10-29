@@ -35,4 +35,10 @@
         </createTable>
     </changeSet>
 
+    <changeSet id="2" author="gridexport">
+        <addColumn tableName="TEST_PRODUCT">
+            <column name="DESCRIPTION" type="VARCHAR(255)"/>
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>

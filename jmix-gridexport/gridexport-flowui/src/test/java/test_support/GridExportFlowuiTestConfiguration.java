@@ -53,4 +53,14 @@ public class GridExportFlowuiTestConfiguration {
     TestAllEntitiesLoader testAllEntitiesLoader(DataManager dataManager) {
         return new TestAllEntitiesLoader(dataManager);
     }
+
+    @Bean
+    TestExportDialogActionContributor secondExportDialogActionContributor() {
+        return new TestExportDialogActionContributor(20, "Second");
+    }
+
+    @Bean
+    TestExportDialogActionContributor firstExportDialogActionContributor() {
+        return new TestExportDialogActionContributor(10, "First");
+    }
 }

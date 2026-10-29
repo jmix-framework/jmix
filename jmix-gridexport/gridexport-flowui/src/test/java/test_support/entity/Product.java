@@ -46,6 +46,9 @@ public class Product {
     @Column(name = "POSITION_", nullable = false)
     private Integer position;
 
+    @Column(name = "DESCRIPTION")
+    private String description;
+
     public UUID getId() {
         return id;
     }
@@ -68,5 +71,13 @@ public class Product {
 
     public void setPosition(Integer position) {
         this.position = position;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

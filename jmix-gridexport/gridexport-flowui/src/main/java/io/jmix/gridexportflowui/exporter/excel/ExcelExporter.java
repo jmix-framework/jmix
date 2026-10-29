@@ -17,10 +17,7 @@
 package io.jmix.gridexportflowui.exporter.excel;
 
 import com.google.common.base.Strings;
-import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.HasText;
 import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.grid.HeaderRow;
 import com.vaadin.flow.component.treegrid.TreeGrid;
 import com.vaadin.flow.data.provider.hierarchy.HierarchicalDataProvider;
 import io.jmix.core.DateTimeTransformations;
@@ -37,7 +34,6 @@ import io.jmix.flowui.component.ListDataComponent;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.component.grid.EnhancedDataGrid;
 import io.jmix.flowui.component.grid.TreeDataGrid;
-import io.jmix.flowui.component.grid.headerfilter.DataGridHeaderFilter;
 import io.jmix.flowui.component.groupgrid.*;
 import io.jmix.flowui.component.groupgrid.adapter.AbstractGroupDataGridAdapter;
 import io.jmix.flowui.component.groupgrid.adapter.AbstractGroupDataGridColumnAdapter;
@@ -46,8 +42,6 @@ import io.jmix.flowui.data.grid.ContainerDataGridItems;
 import io.jmix.flowui.data.grid.ContainerTreeDataGridItems;
 import io.jmix.flowui.download.ByteArrayDownloadDataProvider;
 import io.jmix.flowui.download.Downloader;
-import io.jmix.flowui.kit.component.grid.JmixGrid;
-import io.jmix.flowui.kit.component.grid.JmixTreeGrid;
 import io.jmix.flowui.model.InstanceContainer;
 import io.jmix.gridexportflowui.GridExportProperties;
 import io.jmix.gridexportflowui.action.ExportAction;
@@ -302,85 +296,6 @@ public class ExcelExporter extends AbstractDataGridExporter<ExcelExporter> {
         } finally {
             disposeWorkBook();
         }
-    }
-
-    protected String getColumnHeaderText(Grid<Object> dataGrid, DataGrid.Column<?> column) {
-        if (dataGrid instanceof AbstractGroupDataGridAdapter<Object> gridAdapter) {
-            // Grouping column is not attached to the Grid,
-            // so we should retrieve the last specified header.
-            if (gridAdapter.getGroupingColumns().contains(column)
-                    && column instanceof AbstractGroupDataGridColumnAdapter<?> columnAdapter) {
-                String headerText = columnAdapter.getStoredHeaderText();
-                if (!Strings.isNullOrEmpty(headerText)) {
-                    return headerText;
-                }
-
-                com.vaadin.flow.component.Component headerComponent = columnAdapter.getStoredHeaderComponent();
-
-                if (headerComponent instanceof HasText hasText) {
-                    headerText = hasText.getText();
-                } else if (headerComponent instanceof DataGridHeaderFilter dataGridHeaderFilter
-                        && dataGridHeaderFilter.getHeader() instanceof HasText hasText) {
-                    headerText = hasText.getText();
-                }
-                return Strings.nullToEmpty(headerText);
-            }
-        }
-        return getColumnHeaderText(column);
-    }
-
-    protected String getColumnHeaderText(DataGrid.Column<?> column) {
-        String headerText = !isHeaderRowAppended(column)
-                ? column.getHeaderText()
-                : getDefaultHeaderText(column);
-
-        if (!Strings.isNullOrEmpty(headerText)) {
-            return headerText;
-        }
-
-        com.vaadin.flow.component.Component headerComponent = getDefaultHeaderComponent(column);
-
-        if (headerComponent instanceof HasText hasText) {
-            headerText = hasText.getText();
-        } else if (headerComponent instanceof DataGridHeaderFilter dataGridHeaderFilter
-                && dataGridHeaderFilter.getHeader() instanceof HasText hasText) {
-            headerText = hasText.getText();
-        }
-        return Strings.nullToEmpty(headerText);
-    }
-
-    protected boolean isHeaderRowAppended(DataGrid.Column<?> column) {
-        return column.getParent().isPresent() && !(column.getParent().get() instanceof DataGrid<?>);
-    }
-
-    @Nullable
-    protected String getDefaultHeaderText(Grid.Column<?> column) {
-        HeaderRow defaultHeaderRow = null;
-
-        if (column.getGrid() instanceof JmixGrid<?> jmixGrid) {
-            defaultHeaderRow = jmixGrid.getDefaultHeaderRow();
-        } else if (column.getGrid() instanceof JmixTreeGrid<?> jmixTreeGrid) {
-            defaultHeaderRow = jmixTreeGrid.getDefaultHeaderRow();
-        }
-
-        return defaultHeaderRow == null
-                ? null
-                : defaultHeaderRow.getCell(column).getText();
-    }
-
-    @Nullable
-    protected Component getDefaultHeaderComponent(DataGrid.Column<?> column) {
-        HeaderRow defaultHeaderRow = null;
-
-        if (column.getGrid() instanceof JmixGrid<?> jmixGrid) {
-            defaultHeaderRow = jmixGrid.getDefaultHeaderRow();
-        } else if (column.getGrid() instanceof JmixTreeGrid<?> jmixTreeGrid) {
-            defaultHeaderRow = jmixTreeGrid.getDefaultHeaderRow();
-        }
-
-        return defaultHeaderRow == null
-                ? null
-                : defaultHeaderRow.getCell(column).getComponent();
     }
 
     protected int createDataGridHierarchicalRow(TreeGrid<?> dataGrid, ContainerTreeDataGridItems<Object> treeDataGridItems,
@@ -908,45 +823,5 @@ public class ExcelExporter extends AbstractDataGridExporter<ExcelExporter> {
         return allColumns.stream()
                 .filter(columns::contains)
                 .toList();
-    }
-
-    protected List<Grid.Column<Object>> getColumnsIncludingGrouping(AbstractGroupDataGridAdapter<Object> groupDataGrid,
-                                                                    List<Grid.Column<Object>> allColumns,
-                                                                    List<Grid.Column<Object>> columns) {
-        List<Grid.Column<Object>> columnsToExport = allColumns.stream()
-                .filter(columns::contains)
-                .collect(Collectors.toCollection(ArrayList::new));
-
-        // Include grouping columns instead of group column
-        int groupIndex = 0;
-        Grid.Column<?> groupColumn = null;
-        for (int i = 0; i < columnsToExport.size(); i++) {
-            Grid.Column<Object> column = columnsToExport.get(i);
-            if (groupDataGrid.isGroupColumn(column)) {
-                groupIndex = i;
-                groupColumn = column;
-                break;
-            }
-        }
-        Collection<Grid.Column<Object>> groupingColumns = groupDataGrid.getGroupingColumns();
-        columnsToExport.addAll(groupIndex, groupingColumns);
-        columnsToExport.remove(groupColumn);
-        return Collections.unmodifiableList(columnsToExport);
-    }
-
-    /**
-     * Returns a list of all columns (including those hidden by security) in the correct order for Jmix extensions
-     * of {@link Grid}. Otherwise, it returns {@link Grid#getColumns()}.
-     *
-     * @param grid grid from which to get all columns
-     * @return all (with hidden by security) columns list that has correct order
-     */
-    protected List<Grid.Column<Object>> getOrderedColumns(Grid<Object> grid) {
-        if (grid instanceof DataGrid<Object> dataGrid) {
-            return dataGrid.getAllColumns();
-        } else if (grid instanceof TreeDataGrid<Object> treeDataGrid) {
-            return treeDataGrid.getAllColumns();
-        }
-        return grid.getColumns();
     }
 }

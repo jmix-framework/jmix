@@ -48,4 +48,9 @@ public class JmixRestTestConfiguration {
     public UserRepository userRepository() {
         return new InMemoryUserRepository();
     }
+
+    @Bean
+    public TestAsUserAuthenticationSuccessEventListener testAsUserAuthenticationSuccessEventListener() {
+        return new TestAsUserAuthenticationSuccessEventListener();
+    }
 }

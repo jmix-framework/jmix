@@ -46,6 +46,45 @@
         color: var(--vaadin-text-color-secondary);
     }
 
+    /*
+     * Actions under the message, as in most AI chats. The row keeps its height while its controls are hidden,
+     * so revealing them on hover does not move the messages below.
+     */
+
+    .timeline-message-actions {
+        font-size: var(--aura-font-size-xs);
+        margin-block-start: var(--vaadin-padding-xs);
+    }
+
+    /*
+     * Keep in assistant memory.
+     * The control appears on row hover or keyboard focus. On a kept message it stays visible and highlighted,
+     * so it is both the mark and the way to release it. Touch screens have no hover: always visible there.
+     */
+
+    .timeline-keep-button {
+        /* As tall as the actions line, with the icon slightly smaller than the line */
+        --vaadin-icon-size: 0.8lh;
+        font-size: inherit;
+        line-height: inherit;
+        height: 1lh;
+        min-height: 0;
+        padding-block: 0;
+        color: var(--vaadin-text-color-secondary);
+        opacity: 0;
+        transition: opacity 0.12s ease-in-out;
+    }
+
+    .timeline-message-row:hover .timeline-keep-button,
+    .timeline-message-row:focus-within .timeline-keep-button,
+    .timeline-keep-button-kept {
+        opacity: 1;
+    }
+
+    .timeline-keep-button-kept {
+        color: var(--aura-accent-text-color);
+    }
+
     .timeline-user-text {
         display: block;
         white-space: pre-wrap;
@@ -259,11 +298,27 @@
     }
 }
 
+/* Touch screens have no hover, so the pin control is always visible there. */
+@media (hover: none) {
+    .timeline-row-host .timeline-keep-button {
+        opacity: 1;
+    }
+}
+
+/* The pin control is offered only while the timeline accepts keep requests. */
+.chat-timeline-list:not(.timeline-keep-in-context-enabled) .timeline-keep-button {
+    display: none;
+}
+
 /* Respect the user's reduced-motion preference: stop the thinking-indicator
    animations. The shimmer text stays as a static gradient, and the moving bar
    settles into a steady full-width glow instead of a frozen highlight segment. */
 @media (prefers-reduced-motion: reduce) {
     .timeline-row-host {
+        .timeline-keep-button {
+            transition: none;
+        }
+
         .timeline-thinking-text {
             animation: none;
         }

@@ -81,6 +81,11 @@ public class TimelineAssistantThinkingMessageItem extends AbstractTimelineItem i
         initComponent();
     }
 
+    @Override
+    protected Messages getMessages() {
+        return messages;
+    }
+
     protected void initComponent() {
         addClassNames(BASE_CN, THINKING_CN);
     }

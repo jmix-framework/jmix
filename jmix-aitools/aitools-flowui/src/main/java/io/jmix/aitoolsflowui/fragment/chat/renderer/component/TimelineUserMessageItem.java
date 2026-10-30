@@ -21,17 +21,42 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.avatar.Avatar;
 import com.vaadin.flow.component.html.Span;
 import io.jmix.aitoolsflowui.model.AiChatMessage;
+import io.jmix.core.Messages;
+import org.jspecify.annotations.NullMarked;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 
 import java.util.Locale;
 
 /**
  * Timeline row for a persisted user {@link AiChatMessage}, rendering its content as plain text.
  */
-public class TimelineUserMessageItem extends AbstractTimelineItem {
+public class TimelineUserMessageItem extends AbstractTimelineItem implements InitializingBean,
+        ApplicationContextAware {
 
     protected static final String USER_MESSAGE_CN = "timeline-message-row-user";
     protected static final String USER_MESSAGE_CONTENT_CN = "timeline-user-text";
     protected static final String AVATAR_CN = "timeline-avatar";
+
+    protected ApplicationContext applicationContext;
+    protected Messages messages;
+
+    @NullMarked
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
+    }
+
+    @Override
+    public void afterPropertiesSet() {
+        messages = applicationContext.getBean(Messages.class);
+    }
+
+    @Override
+    protected Messages getMessages() {
+        return messages;
+    }
 
     /**
      * Renders the row for the given message.
@@ -46,7 +71,7 @@ public class TimelineUserMessageItem extends AbstractTimelineItem {
 
         initRow(actorName);
 
-        body.add(createMessageContent(message));
+        body.add(createMessageContent(message), actions);
     }
 
     @Override

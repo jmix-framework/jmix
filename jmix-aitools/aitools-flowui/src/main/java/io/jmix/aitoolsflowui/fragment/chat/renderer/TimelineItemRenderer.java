@@ -20,6 +20,7 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.function.SerializableSupplier;
 import io.jmix.aitoolsflowui.fragment.chat.AiChatFragment;
+import io.jmix.aitoolsflowui.fragment.chat.HasKeepInContext.KeepInContextHandler;
 import io.jmix.aitoolsflowui.fragment.chat.renderer.component.AbstractTimelineItem;
 import io.jmix.aitoolsflowui.fragment.chat.renderer.component.TimelineAssistantMessageItem;
 import io.jmix.aitoolsflowui.fragment.chat.renderer.component.TimelineAssistantThinkingMessageItem;
@@ -30,6 +31,7 @@ import io.jmix.aitoolsflowui.fragment.chat.timeline.TimelineItem;
 import io.jmix.aitoolsflowui.fragment.chat.timeline.TimelineItemType;
 import io.jmix.aitoolsflowui.icon.AiIconProvider;
 import io.jmix.aitoolsflowui.model.AiChatMessage;
+import io.jmix.aitoolsflowui.model.AiChatMessageType;
 import io.jmix.core.Messages;
 import io.jmix.flowui.fragment.FragmentDescriptor;
 import io.jmix.flowui.fragmentrenderer.FragmentRenderer;
@@ -65,6 +67,19 @@ public class TimelineItemRenderer extends FragmentRenderer<VerticalLayout, Timel
 
     @Nullable
     protected SerializableSupplier<Component> aiAvatarIconSupplier;
+
+    @Nullable
+    protected KeepInContextHandler keepInContextHandler;
+
+    /**
+     * Sets the handler of keep requests raised by the pin control of the rows this renderer draws. Without a handler
+     * the rows get no control.
+     *
+     * @param keepInContextHandler handler of keep requests, or {@code null} for rows without the control
+     */
+    public void setKeepInContextHandler(@Nullable KeepInContextHandler keepInContextHandler) {
+        this.keepInContextHandler = keepInContextHandler;
+    }
 
     /**
      * Sets the supplier of the assistant avatar icon for the rows this renderer draws. It must be set before the
@@ -152,6 +167,44 @@ public class TimelineItemRenderer extends FragmentRenderer<VerticalLayout, Timel
         messageItem.setTime(
                 chatDateTimeSupport.formatInUserZone(
                         message != null ? message.getCreatedDate() : null));
+
+        if (item.getType() == TimelineItemType.ASSISTANT_THINKING) {
+            hideKeepControl(messageItem);
+        } else {
+            applyKeepControl(messageItem, message);
+        }
+    }
+
+    protected void applyKeepControl(AbstractTimelineItem messageItem, @Nullable AiChatMessage message) {
+        KeepInContextHandler handler = keepInContextHandler;
+        if (message == null || !isKeepable(message) || handler == null) {
+            hideKeepControl(messageItem);
+            return;
+        }
+
+        messageItem.setKept(Boolean.TRUE.equals(message.getKeepInContext()));
+        messageItem.setKeepClickHandler(keep -> handler.onKeepInContextRequested(message, keep));
+        messageItem.setKeepVisible(true);
+    }
+
+    protected void hideKeepControl(AbstractTimelineItem messageItem) {
+        messageItem.setKeepVisible(false);
+        messageItem.setKept(false);
+        messageItem.setKeepClickHandler(null);
+    }
+
+    /**
+     * Tells whether the control applies to the message: only user and assistant messages that belong to a stored
+     * conversation can be kept, not tool results or transient rows such as a failed response.
+     *
+     * @param message message of the row
+     * @return {@code true} if the row gets the keep control
+     */
+    protected boolean isKeepable(AiChatMessage message) {
+        AiChatMessageType type = message.getType();
+
+        return (type == AiChatMessageType.USER || type == AiChatMessageType.ASSISTANT)
+                && message.getConversation() != null;
     }
 
     protected SerializableSupplier<Component> resolveAiAvatarIconSupplier() {

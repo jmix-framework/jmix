@@ -104,5 +104,19 @@ export function stickToBottom(context, force) {
   requestAnimationFrame(tick);
 }
 
+/*
+ * Stops the pinning to the newest message, so that a deliberate move to another
+ * row (e.g. to a pinned message) is not undone by a re-pin still in flight.
+ *
+ * @param {HTMLElement} context the timeline list element (the scroller)
+ */
+export function releaseBottom(context) {
+  context.__stick = false;
+  if (context.__scrollPinStop) {
+    context.__scrollPinStop();
+  }
+}
+
 window.jmixAiTools = window.jmixAiTools || {};
 window.jmixAiTools.stickToBottom = stickToBottom;
+window.jmixAiTools.releaseBottom = releaseBottom;

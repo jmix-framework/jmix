@@ -24,6 +24,7 @@ import com.vaadin.flow.function.SerializableSupplier;
 import io.jmix.aitools.tool.AiToolStatusUpdate;
 import io.jmix.aitoolsflowui.fragment.chat.AiChatPanel;
 import io.jmix.aitoolsflowui.fragment.chat.HasAiAvatarIcon;
+import io.jmix.aitoolsflowui.fragment.chat.HasKeepInContext;
 import io.jmix.aitoolsflowui.fragment.chat.renderer.TimelineItemRenderer;
 import io.jmix.aitoolsflowui.fragment.chat.support.TimelineItemFactory;
 import io.jmix.aitoolsflowui.fragment.input.AiChatInputFragment;
@@ -44,6 +45,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -54,7 +56,10 @@ import java.util.stream.Collectors;
  */
 @FragmentDescriptor("timeline-chat-panel.xml")
 @JsModule("./aitools/ai-chat-timeline-scroll.js")
-public class TimelineChatPanel extends Fragment<VerticalLayout> implements AiChatPanel, HasAiAvatarIcon {
+public class TimelineChatPanel extends Fragment<VerticalLayout> implements AiChatPanel, HasAiAvatarIcon,
+        HasKeepInContext {
+
+    protected static final String KEEP_IN_CONTEXT_ENABLED_CN = "timeline-keep-in-context-enabled";
 
     @Autowired
     protected DataManager dataManager;
@@ -81,6 +86,9 @@ public class TimelineChatPanel extends Fragment<VerticalLayout> implements AiCha
 
     @Nullable
     protected SerializableSupplier<Component> aiAvatarIconSupplier;
+
+    @Nullable
+    protected KeepInContextHandler keepInContextHandler;
 
     @Subscribe
     public void onReady(final ReadyEvent event) {
@@ -140,6 +148,52 @@ public class TimelineChatPanel extends Fragment<VerticalLayout> implements AiCha
     @Override
     public void setInputVisible(boolean visible) {
         chatInputContainer.setVisible(visible);
+    }
+
+    @Override
+    public void setKeepInContextHandler(@Nullable KeepInContextHandler handler) {
+        this.keepInContextHandler = handler;
+
+        // Rows always render the control; the class shows it, so no row has to be redrawn.
+        timelineList.setClassName(KEEP_IN_CONTEXT_ENABLED_CN, handler != null);
+    }
+
+    protected void requestKeepInContext(AiChatMessage message, boolean keep) {
+        if (keepInContextHandler != null) {
+            keepInContextHandler.onKeepInContextRequested(message, keep);
+        }
+    }
+
+    @Override
+    public void refreshKeepInContext(AiChatMessage message) {
+        timelineItemsDc.getItems().stream()
+                .filter(item -> isItemOf(item, message))
+                .findFirst()
+                .ifPresent(item -> {
+                    item.setMessage(message);
+                    refreshTimelineItem(item);
+                });
+    }
+
+    @Override
+    public void scrollToMessage(AiChatMessage message) {
+        List<TimelineItem> items = timelineItemsDc.getItems();
+
+        for (int i = 0; i < items.size(); i++) {
+            if (isItemOf(items.get(i), message)) {
+                timelineList.getElement().executeJs("window.jmixAiTools.releaseBottom(this)");
+                timelineList.scrollToIndex(i);
+                return;
+            }
+        }
+    }
+
+    protected boolean isItemOf(TimelineItem item, AiChatMessage message) {
+        AiChatMessage itemMessage = item.getMessage();
+
+        return item.getType() != TimelineItemType.ASSISTANT_THINKING
+                && itemMessage != null
+                && Objects.equals(itemMessage.getId(), message.getId());
     }
 
     @Override
@@ -280,6 +334,7 @@ public class TimelineChatPanel extends Fragment<VerticalLayout> implements AiCha
     protected TimelineItemRenderer createTimelineRow() {
         TimelineItemRenderer row = fragments.create(this, TimelineItemRenderer.class);
         row.setAiAvatarIconSupplier(aiAvatarIconSupplier);
+        row.setKeepInContextHandler(this::requestKeepInContext);
         return row;
     }
 

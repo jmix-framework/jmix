@@ -20,21 +20,46 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.markdown.Markdown;
 import com.vaadin.flow.function.SerializableSupplier;
 import io.jmix.aitoolsflowui.model.AiChatMessage;
+import io.jmix.core.Messages;
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 
 import java.util.Optional;
 
 /**
  * Timeline row for a persisted assistant {@link AiChatMessage}, rendering its content as Markdown.
  */
-public class TimelineAssistantMessageItem extends AbstractTimelineItem {
+public class TimelineAssistantMessageItem extends AbstractTimelineItem implements InitializingBean,
+        ApplicationContextAware {
 
     protected static final String ASSISTANT_MESSAGE_CN = "timeline-message-row-assistant";
     protected static final String ASSISTANT_MESSAGE_REFRESH_CN = "timeline-message-row-fresh";
     protected static final String ASSISTANT_MESSAGE_MARKDOWN_CN = "timeline-markdown";
 
+    protected ApplicationContext applicationContext;
+    protected Messages messages;
+
     @Nullable
     protected SerializableSupplier<Component> avatarIconSupplier;
+
+    @NullMarked
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
+    }
+
+    @Override
+    public void afterPropertiesSet() {
+        messages = applicationContext.getBean(Messages.class);
+    }
+
+    @Override
+    protected Messages getMessages() {
+        return messages;
+    }
 
     /**
      * Renders the row for the given assistant message.
@@ -54,7 +79,7 @@ public class TimelineAssistantMessageItem extends AbstractTimelineItem {
 
         initRow(actorName);
 
-        body.add(createMessageContent(message));
+        body.add(createMessageContent(message), actions);
     }
 
     private Component createMessageContent(AiChatMessage message) {

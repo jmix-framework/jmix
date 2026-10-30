@@ -18,11 +18,17 @@ package io.jmix.aitoolsflowui.fragment.chat.renderer.component;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Composite;
+import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.function.SerializableConsumer;
+import io.jmix.core.Messages;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Base layout for a single timeline message row.
@@ -35,12 +41,22 @@ public abstract class AbstractTimelineItem extends Composite<HorizontalLayout> {
     protected static final String ACTOR_CN = "timeline-message-actor";
     protected static final String TIME_CN = "timeline-message-time";
     protected static final String AVATAR_CONTAINER_CN = "timeline-avatar-container";
+    protected static final String ACTIONS_CN = "timeline-message-actions";
+    protected static final String KEEP_BUTTON_CN = "timeline-keep-button";
+    protected static final String KEEP_BUTTON_KEPT_CN = "timeline-keep-button-kept";
 
     protected Div avatarContainer;
     protected VerticalLayout body;
     protected HorizontalLayout header;
     protected Span actor;
     protected Span time;
+    protected HorizontalLayout actions;
+
+    protected Button keepButton;
+    @Nullable
+    protected SerializableConsumer<Boolean> keepClickHandler;
+
+    protected boolean kept;
 
     /**
      * Sets the timestamp text shown in the row header.
@@ -51,6 +67,54 @@ public abstract class AbstractTimelineItem extends Composite<HorizontalLayout> {
         if (this.time != null) {
             this.time.setText(time);
         }
+    }
+
+    /**
+     * Sets whether the message of the row is kept in the assistant memory, which the pin control shows.
+     *
+     * @param kept {@code true} if the message is kept
+     */
+    public void setKept(boolean kept) {
+        this.kept = kept;
+
+        keepButton.setClassName(KEEP_BUTTON_KEPT_CN, kept);
+
+        String description = getMessages().getMessage(kept
+                ? "assistantMemory.unpinDescription"
+                : "assistantMemory.pinDescription");
+        keepButton.setAriaLabel(description);
+        keepButton.setTooltipText(description);
+    }
+
+    /**
+     * Sets the handler of a click on the pin control. A reused row shows another message, so the handler replaces
+     * the previous one instead of adding to it.
+     *
+     * @param keepClickHandler receives the requested new state of the message, or {@code null} to remove the handler
+     */
+    public void setKeepClickHandler(@Nullable SerializableConsumer<Boolean> keepClickHandler) {
+        this.keepClickHandler = keepClickHandler;
+    }
+
+    /**
+     * Sets whether the pin control is shown under the message.
+     *
+     * @param visible {@code true} to show the control
+     */
+    public void setKeepVisible(boolean visible) {
+        keepButton.setVisible(visible);
+    }
+
+    protected Button createKeepButton() {
+        Button button = new Button(VaadinIcon.LIGHTBULB.create());
+        button.addClassName(KEEP_BUTTON_CN);
+        button.addThemeVariants(ButtonVariant.SMALL, ButtonVariant.TERTIARY);
+        button.addClickListener(e -> {
+            if (keepClickHandler != null) {
+                keepClickHandler.accept(!kept);
+            }
+        });
+        return button;
     }
 
     protected void initRow(String actorName) {
@@ -77,6 +141,10 @@ public abstract class AbstractTimelineItem extends Composite<HorizontalLayout> {
         time = createTime();
         header.add(actor, time);
 
+        keepButton = createKeepButton();
+        actions = createActions();
+        actions.add(keepButton);
+
         avatarContainer = createAvatarContainer();
 
         return root;
@@ -99,6 +167,14 @@ public abstract class AbstractTimelineItem extends Composite<HorizontalLayout> {
         header.setAlignItems(FlexComponent.Alignment.BASELINE);
         header.addClassName(HEADER_CN);
         return header;
+    }
+
+    protected HorizontalLayout createActions() {
+        HorizontalLayout actions = new HorizontalLayout();
+        actions.setPadding(false);
+        actions.setSpacing(false);
+        actions.addClassName(ACTIONS_CN);
+        return actions;
     }
 
     protected VerticalLayout createBody() {
@@ -129,4 +205,6 @@ public abstract class AbstractTimelineItem extends Composite<HorizontalLayout> {
     }
 
     protected abstract Component createAvatar(String actorName);
+
+    protected abstract Messages getMessages();
 }

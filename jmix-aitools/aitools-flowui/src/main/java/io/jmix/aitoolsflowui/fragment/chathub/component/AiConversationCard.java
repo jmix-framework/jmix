@@ -19,6 +19,7 @@ package io.jmix.aitoolsflowui.fragment.chathub.component;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Composite;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.card.Card;
 import com.vaadin.flow.component.card.CardVariant;
 import com.vaadin.flow.component.html.Anchor;
@@ -292,7 +293,7 @@ public class AiConversationCard extends Composite<Card> {
         deleteButton.addClassName(StyleUtility.Button.LINK_BUTTON);
         deleteButton.addClassName(DELETE_CN);
         deleteButton.addThemeName("icon");
-        deleteButton.addThemeName("error");
+        deleteButton.addThemeVariants(ButtonVariant.ERROR);
         if (deleteAriaLabel != null) {
             deleteButton.setAriaLabel(deleteAriaLabel);
         }

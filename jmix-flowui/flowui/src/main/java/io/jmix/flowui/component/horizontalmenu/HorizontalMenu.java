@@ -212,6 +212,7 @@ public class HorizontalMenu extends Composite<JmixMenuBar>
                 : hasMenuItems.addItemAtIndex(index, menuItem);
         wrapper.setId(getMenuItemId(menuItem));
         wrapper.addClassName(ITEM_WRAPPER_CLASS_NAME);
+        wrapper.setVisible(menuItem.isVisible());
         menuItem.setMenuItemWrapper(wrapper);
 
         if (subMenu == null) {

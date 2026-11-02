@@ -133,11 +133,13 @@
         outline-offset: calc((var(--vaadin-focus-ring-width) + var(--vaadin-avatar-border-width, 1px)) * -1);
     }
 
-    /* Markdown output
-       ---------------
-       Assistant messages can include tables, links, and headings. The rules here
-       constrain generated markdown so wide report tables scroll horizontally and
-       document-style headings do not overpower the chat timeline. */
+    /*
+     * Markdown output
+     * ---------------
+     * Assistant messages can include tables, links, and headings. The rules here
+     * constrain generated markdown so wide report tables scroll horizontally and
+     * document-style headings do not overpower the chat timeline.
+     */
 
     .timeline-markdown {
         box-sizing: border-box;
@@ -202,9 +204,11 @@
         margin-bottom: 0;
     }
 
-    /* Dial down the default heading sizes - the LLM uses h2/h3 generously and the
-       Lumo defaults are tuned for stand-alone document headings, which looks
-       oversized inside the chat bubble. */
+    /*
+     * Dial down the default heading sizes - the LLM uses h2/h3 generously and the
+     * Lumo defaults are tuned for stand-alone document headings, which looks
+     * oversized inside the chat bubble.
+     */
     .timeline-markdown h1 {
         font-size: var(--aura-font-size-l);
     }
@@ -221,10 +225,12 @@
         font-size: var(--aura-font-size-s);
     }
 
-    /* Thinking indicator
-       ------------------
-       Replaces the old ProgressBar with text shimmer plus a thin moving bar. Tool
-       status lines are appended under the shimmer as deterministic work completes. */
+    /*
+     * Thinking indicator
+     * ------------------
+     * Replaces the old ProgressBar with text shimmer plus a thin moving bar. Tool
+     * status lines are appended under the shimmer as deterministic work completes.
+     */
     .timeline-thinking-text {
         background: linear-gradient(90deg,
         oklch(from var(--aura-accent-color) 0.7 0.08 h) 0%,
@@ -298,21 +304,27 @@
     }
 }
 
-/* Touch screens have no hover, so the pin control is always visible there. */
+/*
+ * Touch screens have no hover, so the assistant memory control is always visible there.
+ */
 @media (hover: none) {
     .timeline-row-host .timeline-keep-button {
         opacity: 1;
     }
 }
 
-/* The pin control is offered only while the timeline accepts keep requests. */
+/*
+ * The assistant memory control is offered only while the timeline accepts keep requests.
+ */
 .chat-timeline-list:not(.timeline-keep-in-context-enabled) .timeline-keep-button {
     display: none;
 }
 
-/* Respect the user's reduced-motion preference: stop the thinking-indicator
-   animations. The shimmer text stays as a static gradient, and the moving bar
-   settles into a steady full-width glow instead of a frozen highlight segment. */
+/*
+ * Respect the user's reduced-motion preference: stop the thinking-indicator
+ * animations. The shimmer text stays as a static gradient, and the moving bar
+ * settles into a steady full-width glow instead of a frozen highlight segment.
+ */
 @media (prefers-reduced-motion: reduce) {
     .timeline-row-host {
         .timeline-keep-button {

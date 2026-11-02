@@ -24,8 +24,10 @@
     min-height: 0;
     overflow: hidden;
 
-    /* Single centered canvas that imposes the 68rem max-width.
-       Every child inside just uses width: 100% - no per-component max-width needed. */
+    /*
+     * Single centered canvas that imposes the 68rem max-width.
+     * Every child inside just uses width: 100% - no per-component max-width needed.
+     */
     .chat-layout {
         box-sizing: border-box;
         align-self: center;
@@ -43,6 +45,20 @@
         gap: var(--lumo-space-s);
         /* Let the title shrink and ellipsize instead of pushing the row wider. */
         min-width: 0;
+    }
+
+    .chat-side-panel,
+    .chat-area {
+        box-sizing: border-box;
+        min-height: 0;
+        overflow: hidden;
+    }
+
+    /*
+     * The menu of the title row keeps its size next to a long title.
+     */
+    .chat-actions {
+        flex: none;
     }
 
     .chat-title {

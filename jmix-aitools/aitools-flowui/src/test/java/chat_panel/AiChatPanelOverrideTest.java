@@ -23,6 +23,8 @@ import com.vaadin.flow.function.SerializableSupplier;
 import io.jmix.aitoolsflowui.fragment.chat.AiChatFragment;
 import io.jmix.aitoolsflowui.fragment.chat.AiChatPanel;
 import io.jmix.aitoolsflowui.fragment.chat.AiChatPanelProvider;
+import io.jmix.aitoolsflowui.fragment.chat.action.RenameConversationAction;
+import io.jmix.aitoolsflowui.fragment.chat.action.ShowAssistantMemoryAction;
 import io.jmix.aitoolsflowui.fragment.input.AiChatInputFragment;
 import io.jmix.aitoolsflowui.fragment.input.AiChatInputPanel;
 import io.jmix.aitoolsflowui.generation.AiChatGenerationManager;
@@ -40,6 +42,7 @@ import io.jmix.core.security.AccessDeniedException;
 import io.jmix.flowui.Notifications;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.fragment.FragmentOwner;
+import io.jmix.flowui.kit.component.dropdownbutton.DropdownButton;
 import io.jmix.flowui.testassist.FlowuiTestAssistConfiguration;
 import io.jmix.flowui.testassist.UiTest;
 import io.jmix.flowui.testassist.UiTestUtils;
@@ -69,6 +72,8 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -145,7 +150,20 @@ class AiChatPanelOverrideTest {
         assertInstanceOf(TestAiChatPanel.class, panelOf(fragment));
         H3 title = assertInstanceOf(H3.class, UiComponentUtils.getComponent(fragment, "conversationTitle"));
         assertEquals("Revenue by region", title.getText());
-        assertTrue(UiComponentUtils.getComponent(fragment, "renameConversationBtn").isVisible());
+        DropdownButton menu = assertInstanceOf(DropdownButton.class,
+                UiComponentUtils.getComponent(fragment, "chatActionsBtn"));
+        assertTrue(menu.isVisible());
+        assertNotNull(menu.getItem(RenameConversationAction.ID));
+    }
+
+    @Test
+    void menu_panelWithoutAssistantMemory_hasNoMemoryItem() {
+        AiConversation conversation = conversationService.addConversation("Chat");
+
+        AiChatFragment fragment = chatFragment(navigate(conversation));
+
+        DropdownButton menu = (DropdownButton) UiComponentUtils.getComponent(fragment, "chatActionsBtn");
+        assertNull(menu.getItem(ShowAssistantMemoryAction.ID));
     }
 
     @Test

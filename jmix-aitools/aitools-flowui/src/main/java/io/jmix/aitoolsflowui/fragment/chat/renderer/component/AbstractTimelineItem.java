@@ -70,7 +70,7 @@ public abstract class AbstractTimelineItem extends Composite<HorizontalLayout> {
     }
 
     /**
-     * Sets whether the message of the row is kept in the assistant memory, which the pin control shows.
+     * Sets whether the message of the row is kept in the assistant memory, which the memory control shows.
      *
      * @param kept {@code true} if the message is kept
      */
@@ -80,14 +80,14 @@ public abstract class AbstractTimelineItem extends Composite<HorizontalLayout> {
         keepButton.setClassName(KEEP_BUTTON_KEPT_CN, kept);
 
         String description = getMessages().getMessage(kept
-                ? "assistantMemory.unpinDescription"
-                : "assistantMemory.pinDescription");
+                ? "assistantMemory.forgetDescription"
+                : "assistantMemory.rememberDescription");
         keepButton.setAriaLabel(description);
         keepButton.setTooltipText(description);
     }
 
     /**
-     * Sets the handler of a click on the pin control. A reused row shows another message, so the handler replaces
+     * Sets the handler of a click on the memory control. A reused row shows another message, so the handler replaces
      * the previous one instead of adding to it.
      *
      * @param keepClickHandler receives the requested new state of the message, or {@code null} to remove the handler
@@ -97,7 +97,7 @@ public abstract class AbstractTimelineItem extends Composite<HorizontalLayout> {
     }
 
     /**
-     * Sets whether the pin control is shown under the message.
+     * Sets whether the memory control is shown under the message.
      *
      * @param visible {@code true} to show the control
      */

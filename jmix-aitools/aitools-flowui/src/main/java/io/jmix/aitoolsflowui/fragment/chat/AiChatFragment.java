@@ -27,6 +27,9 @@ import com.vaadin.flow.function.SerializableSupplier;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.aitools.tool.AiToolStatusUpdate;
 import io.jmix.aitoolsflowui.AiToolsFlowuiProperties;
+import io.jmix.aitoolsflowui.fragment.chat.action.RenameConversationAction;
+import io.jmix.aitoolsflowui.fragment.chat.action.ShowAssistantMemoryAction;
+import io.jmix.aitoolsflowui.fragment.chat.memory.AssistantMemoryFragment;
 import io.jmix.aitoolsflowui.fragment.chat.support.ConversationTitleSupport;
 import io.jmix.aitoolsflowui.generation.AiChatGeneration;
 import io.jmix.aitoolsflowui.generation.AiChatGenerationManager;
@@ -44,22 +47,22 @@ import io.jmix.aitoolsflowui.service.AiChatMessageService;
 import io.jmix.aitoolsflowui.service.AiChatService;
 import io.jmix.aitoolsflowui.service.AiConversationAutoTitleService;
 import io.jmix.aitoolsflowui.service.AiConversationService;
+import io.jmix.aitoolsflowui.service.KeepInContextResult;
 import io.jmix.core.Messages;
 import io.jmix.core.annotation.Experimental;
 import io.jmix.core.security.AccessDeniedException;
-import io.jmix.flowui.Dialogs;
+import io.jmix.flowui.Actions;
+import io.jmix.flowui.Fragments;
 import io.jmix.flowui.Notifications;
-import io.jmix.flowui.app.inputdialog.DialogActions;
-import io.jmix.flowui.app.inputdialog.DialogOutcome;
-import io.jmix.flowui.app.inputdialog.InputDialog;
-import io.jmix.flowui.app.inputdialog.InputParameter;
-import io.jmix.flowui.component.UiComponentUtils;
-import io.jmix.flowui.component.validation.ValidationErrors;
+import io.jmix.flowui.component.sidepanellayout.SidePanelLayout;
+import io.jmix.flowui.kit.component.sidepanellayout.SidePanelCloseEvent;
 import io.jmix.flowui.fragment.Fragment;
 import io.jmix.flowui.fragment.FragmentDescriptor;
-import io.jmix.flowui.kit.component.button.JmixButton;
+import io.jmix.flowui.icon.Icons;
+import io.jmix.flowui.kit.component.dropdownbutton.DropdownButton;
+import io.jmix.flowui.kit.component.dropdownbutton.DropdownButtonItem;
+import io.jmix.flowui.kit.icon.JmixFontIcon;
 import io.jmix.flowui.view.Subscribe;
-import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewComponent;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
@@ -76,6 +79,9 @@ import java.util.*;
  * It also titles the conversation and shows the title row. The conversation itself is drawn by an
  * {@link AiChatPanel} from the first {@link AiChatPanelProvider} by order. By default, this is the add-on's timeline,
  * and another add-on can replace it with its own chat.
+ * <p>
+ * The title row has a menu with the conversation's actions: renaming it and, when the panel can show it
+ * ({@link HasKeepInContext}), the assistant memory, i.e. the messages the assistant keeps in every reply.
  */
 @Experimental
 @FragmentDescriptor("ai-chat-fragment.xml")
@@ -85,8 +91,6 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
 
     @Autowired
     protected Messages messages;
-    @Autowired
-    protected Dialogs dialogs;
     @Autowired
     protected Notifications notifications;
     @Autowired
@@ -105,13 +109,26 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
     protected AiConversationAutoTitleService autoTitleService;
     @Autowired
     protected AiChatPanelFactory chatPanelFactory;
+    @Autowired
+    protected Icons icons;
+    @Autowired
+    protected Fragments fragments;
+    @Autowired
+    protected Actions actions;
 
     @ViewComponent
     protected H3 conversationTitle;
     @ViewComponent
-    protected JmixButton renameConversationBtn;
+    protected DropdownButton chatActionsBtn;
     @ViewComponent
     protected VerticalLayout chatPanelContainer;
+    @ViewComponent
+    protected SidePanelLayout sidePanel;
+    @ViewComponent
+    protected VerticalLayout sidePanelContent;
+
+    @Nullable
+    protected AssistantMemoryFragment assistantMemory;
 
     @Nullable
     protected AiChatPanel chatPanel;
@@ -124,6 +141,11 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
 
     @Nullable
     protected AiConversation conversation;
+
+    @Nullable
+    protected RenameConversationAction renameAction;
+    @Nullable
+    protected ShowAssistantMemoryAction assistantMemoryAction;
 
     /**
      * Whether the chat shows a response as running ("thinking").
@@ -171,7 +193,21 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
      * @param conversation conversation to show, or {@code null} to clear the chat
      */
     public void setConversation(@Nullable AiConversation conversation) {
+        // Entities are equal by id, so a reloaded instance of
+        // the same conversation is not a change.
+        boolean conversationChanged = !Objects.equals(this.conversation, conversation);
+
         this.conversation = conversation;
+        if (renameAction != null) {
+            renameAction.setConversation(conversation);
+        }
+
+        // The memory of the previous conversation must not
+        // stay open over the new one. Re-binding the same
+        // conversation (after each response) keeps it open.
+        if (conversationChanged) {
+            sidePanel.closeSidePanel();
+        }
 
         resync();
     }
@@ -186,7 +222,8 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
     }
 
     /**
-     * Hides the message input and the conversation rename control.
+     * Hides the message input and the controls that change the conversation: renaming it and changing what the
+     * assistant keeps in memory. The assistant memory stays viewable.
      *
      * @param readOnly {@code true} to hide them
      */
@@ -196,8 +233,8 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
     }
 
     /**
-     * Shows or hides the conversation title, for a host that names the conversation in its own chrome. The rename
-     * control stays, and {@link AiConversationTitleChangeEvent} fires either way. The fragment stores no flag of its
+     * Shows or hides the conversation title, for a host that names the conversation in its own chrome. The menu
+     * stays, and {@link AiConversationTitleChangeEvent} fires either way. The fragment stores no flag of its
      * own, so the choice survives conversation reloads.
      *
      * @param titleVisible {@code false} to hide the title; visible by default
@@ -296,9 +333,14 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
 
     @Subscribe
     public void onReady(final ReadyEvent event) {
-        renameConversationBtn.addClickListener(clickEvent -> openTitleEditDialog());
+        initChatActions();
 
         resync();
+    }
+
+    @Subscribe("sidePanel")
+    protected void onSidePanelClose(final SidePanelCloseEvent event) {
+        assistantMemory = null;
     }
 
     @EventListener
@@ -401,6 +443,123 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
         }
         chatPanelContainer.add(chatPanelComponent);
         return createdChatPanel;
+    }
+
+    protected void initChatActions() {
+        renameAction = createRenameAction();
+        chatActionsBtn.addItem(renameAction.getId(), renameAction);
+
+        if (getChatPanel() instanceof HasKeepInContext) {
+            assistantMemoryAction = createAssistantMemoryAction();
+            chatActionsBtn.addItem(assistantMemoryAction.getId(), assistantMemoryAction);
+        }
+    }
+
+    protected RenameConversationAction createRenameAction() {
+        RenameConversationAction action = actions.create(RenameConversationAction.ID);
+        action.setConversation(conversation);
+        action.setAfterSaveHandler(saved -> {
+            // Refresh just the header. Reloading the conversation
+            // while a response is running may break the UI.
+            conversation = saved;
+            applyConversationTitleText(saved.getTitle());
+        });
+        return action;
+    }
+
+    protected ShowAssistantMemoryAction createAssistantMemoryAction() {
+        return new ShowAssistantMemoryAction(ShowAssistantMemoryAction.ID,
+                keptCount -> messages.formatMessage("", "assistantMemory.menuItem", keptCount),
+                this::openAssistantMemory)
+                .withIcon(icons.get(JmixFontIcon.LIGHTBULB));
+    }
+
+    protected AssistantMemoryFragment createAssistantMemory() {
+        AssistantMemoryFragment memory = fragments.create(this, AssistantMemoryFragment.class);
+        memory.setMessageClickHandler(this::showKeptMessage);
+        memory.setRemoveHandler(message -> changeKeepInContext(message, false));
+        memory.setCloseHandler(sidePanel::closeSidePanel);
+        memory.setReadOnly(!isEditable());
+        return memory;
+    }
+
+    protected void openAssistantMemory() {
+        assistantMemory = createAssistantMemory();
+
+        // The side panel is shared: it shows one
+        // content at a time and is named after it.
+        sidePanelContent.removeAll();
+        sidePanelContent.add(assistantMemory);
+        sidePanel.setOverlayAriaLabel(messages.getMessage("assistantMemory.title"));
+
+        // Reloaded on opening: another tab may have
+        // changed the memory meanwhile.
+        refreshAssistantMemory();
+        sidePanel.openSidePanel();
+    }
+
+    protected void showKeptMessage(AiChatMessage message) {
+        if (getChatPanel() instanceof HasKeepInContext keepPanel) {
+            keepPanel.scrollToMessage(message);
+        }
+    }
+
+    protected void changeKeepInContext(AiChatMessage message, boolean keep) {
+        if (conversation == null) {
+            return;
+        }
+
+        KeepInContextResult result;
+        try {
+            result = messageService.setKeepInContext(message, keep);
+        } catch (AccessDeniedException e) {
+            log.debug("Assistant memory not changed: conversation {} is no longer accessible", conversation.getId());
+            resync();
+            return;
+        } catch (IllegalArgumentException e) {
+            log.debug("Assistant memory not changed: message {} no longer exists", message.getId());
+            resync();
+            return;
+        }
+
+        if (result == KeepInContextResult.LIMIT_REACHED) {
+            Collection<AiChatMessage> keptMessages = loadKeptMessages();
+            applyKeptMessages(keptMessages);
+
+            notifications.create(messages.formatMessage("", "assistantMemory.limitReached", keptMessages.size()))
+                    .withType(Notifications.Type.WARNING)
+                    .show();
+            return;
+        }
+
+        if (getChatPanel() instanceof HasKeepInContext keepPanel) {
+            keepPanel.refreshKeepInContext(message);
+        }
+
+        refreshAssistantMemory();
+    }
+
+    protected void refreshAssistantMemory() {
+        Collection<AiChatMessage> keptMessages = loadKeptMessages();
+        applyKeptMessages(keptMessages);
+    }
+
+    protected void applyKeptMessages(Collection<AiChatMessage> keptMessages) {
+        if (assistantMemoryAction != null) {
+            assistantMemoryAction.setKeptCount(keptMessages.size());
+        }
+        if (assistantMemory != null) {
+            assistantMemory.setMessages(keptMessages);
+        }
+    }
+
+    protected Collection<AiChatMessage> loadKeptMessages() {
+        if (conversation == null
+                || conversation.getId() == null
+                || !(getChatPanel() instanceof HasKeepInContext)) {
+            return List.of();
+        }
+        return messageService.loadKeptInContextMessages(conversation);
     }
 
     /**
@@ -719,6 +878,7 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
         Collection<AiChatMessage> loadedMessages = loadMessages();
         messagesShown = !loadedMessages.isEmpty();
         getChatPanel().showMessages(loadedMessages);
+        refreshAssistantMemory();
 
         refreshInputVisibility();
         warnIfAiUnavailable();
@@ -765,65 +925,33 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
     }
 
     protected void refreshInputVisibility() {
-        boolean show = conversation != null && !readOnly && chatService.isAvailable();
+        boolean show = isEditable();
         getChatPanel().setInputVisible(show);
-        renameConversationBtn.setVisible(show);
+        if (getChatPanel() instanceof HasKeepInContext keepPanel) {
+            keepPanel.setKeepInContextHandler(show ? this::changeKeepInContext : null);
+        }
+        if (assistantMemory != null) {
+            assistantMemory.setReadOnly(!show);
+        }
+        refreshChatActions(show);
+    }
+
+    protected boolean isEditable() {
+        return conversation != null && !readOnly && chatService.isAvailable();
+    }
+
+    protected void refreshChatActions(boolean editable) {
+        if (renameAction != null) {
+            renameAction.setVisible(editable);
+        }
+        if (assistantMemoryAction != null) {
+            assistantMemoryAction.setVisible(conversation != null);
+        }
+        chatActionsBtn.setVisible(chatActionsBtn.getItems().stream().anyMatch(DropdownButtonItem::isVisible));
     }
 
     @Nullable
     protected AiConversation loadConversation(UUID conversationId) {
         return conversationService.loadConversation(conversationId);
-    }
-
-    protected void openTitleEditDialog() {
-        if (conversation == null) {
-            return;
-        }
-        String currentTitle = conversation.getTitle() == null ? "" : conversation.getTitle();
-
-        View<?> view = UiComponentUtils.findView(this);
-        if (view == null) {
-            throw new IllegalStateException("Fragment is not attached to a view");
-        }
-
-        dialogs.createInputDialog(view)
-                .withHeader(getMessage("aiChatFragment.editConversationTitleDialog.header"))
-                .withLabelsPosition(Dialogs.InputDialogBuilder.LabelsPosition.TOP)
-                .withParameters(
-                        InputParameter.stringParameter("title")
-                                .withLabel(getMessage("aiChatFragment.editConversationTitleDialog.titleField"))
-                                .withRequired(true)
-                                .withDefaultValue(currentTitle)
-                )
-                .withValidator(this::validateTitle)
-                .withActions(DialogActions.OK_CANCEL)
-                .withCloseListener(closeEvent -> {
-                    if (!closeEvent.closedWith(DialogOutcome.OK)) {
-                        return;
-                    }
-                    String updatedTitle = closeEvent.getValue("title");
-                    if (updatedTitle == null || updatedTitle.isBlank()) {
-                        return;
-                    }
-                    if (conversation == null) {
-                        return;
-                    }
-                    conversation.setTitle(updatedTitle.trim());
-                    // Persist only the title and refresh just the header.
-                    // Reloading conversation while awaiting LLM answer
-                    // may break UI.
-                    conversation = conversationService.save(conversation);
-                    applyConversationTitleText(Objects.requireNonNull(conversation).getTitle());
-                })
-                .open();
-    }
-
-    protected ValidationErrors validateTitle(InputDialog.ValidationContext context) {
-        String title = context.getValue("title");
-        if (title != null && title.trim().length() > AiConversation.TITLE_MAX_LENGTH) {
-            return ValidationErrors.of(formatMessage(
-                    "aiChatFragment.editConversationTitleDialog.titleTooLong", AiConversation.TITLE_MAX_LENGTH));
-        }
-        return ValidationErrors.none();
     }
 }

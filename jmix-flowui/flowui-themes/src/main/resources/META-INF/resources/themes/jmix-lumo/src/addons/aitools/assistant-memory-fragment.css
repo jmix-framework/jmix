@@ -1,0 +1,211 @@
+/*
+ * Copyright 2026 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/*
+ * Assistant memory side panel of the chat. The side panel may render in an
+ * overlay, so these are top-level selectors rather than nested under the chat.
+ */
+.assistant-memory {
+    box-sizing: border-box;
+    padding: var(--lumo-space-s);
+    gap: var(--lumo-space-s);
+}
+
+.assistant-memory-header {
+    gap: var(--lumo-space-s);
+}
+
+.assistant-memory-title {
+    flex: 1 1 auto;
+    margin: 0;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.assistant-memory-hint,
+.assistant-memory-empty {
+    color: var(--lumo-secondary-text-color);
+    font-size: var(--lumo-font-size-s);
+}
+
+.assistant-memory-list {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    gap: var(--lumo-space-s);
+}
+
+.assistant-memory-card {
+    /* vaadin-card requires a single length here (used by inner calc(... * -1)). */
+    --vaadin-card-padding: var(--lumo-space-s);
+    --vaadin-card-gap: var(--lumo-space-xs);
+    cursor: pointer;
+    flex: none;
+}
+
+.assistant-memory-card-row {
+    gap: var(--lumo-space-xs);
+    min-width: 0;
+}
+
+/*
+ * The keyboard target of a card: a click anywhere on the card, or Enter or Space here, brings the
+ * message into view in the chat.
+ */
+.assistant-memory-card-body {
+    border-radius: var(--lumo-border-radius-m);
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    gap: var(--lumo-space-xs);
+    min-width: 0;
+}
+
+/*
+ * The same highlight as a selected grid row.
+ */
+.assistant-memory-card:hover {
+    background: var(--lumo-primary-color-10pct);
+}
+
+.assistant-memory-card-body:focus-visible {
+    outline: var(--vaadin-focus-ring-width, 2px) solid
+        var(--vaadin-focus-ring-color, var(--lumo-primary-color-50pct));
+    outline-offset: var(--vaadin-focus-ring-width, 2px);
+}
+
+.assistant-memory-card-header {
+    align-items: baseline;
+    display: flex;
+    gap: var(--lumo-space-s);
+    min-width: 0;
+}
+
+.assistant-memory-card-actor {
+    font-size: var(--lumo-font-size-s);
+    font-weight: 600;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.assistant-memory-card-time {
+    color: var(--lumo-secondary-text-color);
+    flex: none;
+    font-size: var(--lumo-font-size-xs);
+}
+
+/*
+ * The first lines of the message; the rest is in the chat.
+ */
+.assistant-memory-card-text {
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    display: -webkit-box;
+    font-size: var(--lumo-font-size-s);
+    line-clamp: 3;
+    overflow: hidden;
+    overflow-wrap: anywhere;
+    white-space: pre-line;
+}
+
+/*
+ * An assistant message is a Markdown preview: its first lines, cut at the card height and faded out,
+ * so that a table shows its head rather than its source.
+ */
+.assistant-memory-card-markdown {
+    display: block;
+    line-clamp: none;
+    -webkit-line-clamp: none;
+    max-height: 4.5lh;
+    mask-image: linear-gradient(to bottom, black 60%, transparent);
+    white-space: normal;
+}
+
+.assistant-memory-card-markdown :is(p, ul, ol, pre, table, h1, h2, h3, h4, h5, h6) {
+    font-size: inherit;
+    margin: 0 0 var(--lumo-space-xs);
+}
+
+/*
+ * A click on a link in the preview goes to the card, which shows the message in the chat.
+ */
+.assistant-memory-card-markdown a {
+    pointer-events: none;
+}
+
+.assistant-memory-card-markdown table {
+    border-collapse: collapse;
+    display: block;
+}
+
+/*
+ * A table or code wider than the card is cut and fades out at the right edge, like the preview at the bottom:
+ * a scroll bar would sit below the cut, and the whole of it is in the chat.
+ */
+.assistant-memory-card-markdown :is(table, pre) {
+    mask-image: linear-gradient(to right, black calc(100% - 2em), transparent);
+    overflow: hidden;
+}
+
+/*
+ * A long value ends with an ellipsis, so that more columns fit into the card.
+ */
+.assistant-memory-card-markdown :is(th, td) {
+    border-bottom: 1px solid var(--lumo-contrast-10pct);
+    max-width: 12ch;
+    overflow: hidden;
+    padding: 0 var(--lumo-space-xs);
+    text-align: start;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.assistant-memory-card-markdown thead {
+    background: var(--lumo-contrast-5pct);
+}
+
+.assistant-memory-card-remove {
+    color: var(--lumo-secondary-text-color);
+    flex: none;
+}
+
+@media (forced-colors: active) {
+    .assistant-memory-card-body:hover {
+        outline: 1px solid CanvasText;
+    }
+}
+
+/*
+ * Where the browser supports scroll timelines, only content that does not fit fades out: the timeline of an
+ * element without overflow is inactive, so the animation does not apply.
+ */
+@supports (animation-timeline: scroll()) {
+    .assistant-memory-card-markdown :is(table, pre) {
+        animation: assistant-memory-overflow-fade linear both;
+        animation-timeline: scroll(self inline);
+        mask-image: none;
+    }
+}
+
+@keyframes assistant-memory-overflow-fade {
+    from, to {
+        mask-image: linear-gradient(to right, black calc(100% - 2em), transparent);
+    }
+}

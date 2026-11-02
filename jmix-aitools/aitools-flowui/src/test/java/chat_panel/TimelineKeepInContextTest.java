@@ -19,6 +19,7 @@ package chat_panel;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.internal.PendingJavaScriptInvocation;
 import com.vaadin.flow.data.provider.DataProvider;
 import com.vaadin.flow.data.provider.Query;
 import com.vaadin.flow.dom.Element;
@@ -205,7 +206,7 @@ class TimelineKeepInContextTest {
         Button button = renderedKeepButtons(panel).get(0);
 
         assertFalse(button.hasClassName(KEPT_CN));
-        assertEquals(messages.getMessage("assistantMemory.pinDescription"),
+        assertEquals(messages.getMessage("assistantMemory.rememberDescription"),
                 button.getElement().getAttribute("aria-label"));
     }
 
@@ -218,7 +219,7 @@ class TimelineKeepInContextTest {
         Button button = renderedKeepButtons(panel).get(0);
 
         assertTrue(button.hasClassName(KEPT_CN));
-        assertEquals(messages.getMessage("assistantMemory.unpinDescription"),
+        assertEquals(messages.getMessage("assistantMemory.forgetDescription"),
                 button.getElement().getAttribute("aria-label"));
     }
 
@@ -290,6 +291,22 @@ class TimelineKeepInContextTest {
         panel.showMessages(List.of(message, messageService.createMessage(conversation, AiChatMessageType.ASSISTANT, "A")));
 
         assertDoesNotThrow(() -> panel.scrollToMessage(message));
+    }
+
+    @Test
+    void scrollToMessage_thenMessageSent_forcesTimelineToBottomAgain() {
+        TimelineChatPanel panel = createPanel();
+        AiChatMessage message = userMessage("Hi");
+        panel.showMessages(List.of(message, messageService.createMessage(conversation, AiChatMessageType.ASSISTANT, "A")));
+        sentScrollCalls();
+
+        panel.scrollToMessage(message);
+        // What the chat fragment does when the user sends a message.
+        panel.appendUserMessage(userMessage("Next"));
+        panel.showResponseRunning();
+
+        List<String> calls = sentScrollCalls();
+        assertEquals(List.of("releaseBottom", "stickToBottom(force)", "stickToBottom(force)"), calls);
     }
 
     @Test
@@ -406,6 +423,27 @@ class TimelineKeepInContextTest {
     @SuppressWarnings("unchecked")
     JmixVirtualList<TimelineItem> timelineList(TimelineChatPanel panel) {
         return (JmixVirtualList<TimelineItem>) UiComponentUtils.getComponent(panel, "timelineList");
+    }
+
+    /**
+     * Sends the pending changes and returns the timeline scroll calls among the JavaScript sent to the browser, in
+     * order: {@code releaseBottom} or {@code stickToBottom} with {@code (force)} when the bottom is forced.
+     */
+    List<String> sentScrollCalls() {
+        UI ui = UI.getCurrent();
+        ((TestUI) ui).runExecutionsBeforeClientResponse();
+
+        List<String> calls = new ArrayList<>();
+        for (PendingJavaScriptInvocation invocation : ui.getInternals().dumpPendingJavaScriptInvocations()) {
+            String expression = invocation.getInvocation().getExpression();
+            if (expression.contains("jmixAiTools.releaseBottom")) {
+                calls.add("releaseBottom");
+            } else if (expression.contains("jmixAiTools.stickToBottom")) {
+                boolean force = invocation.getInvocation().getParameters().contains(Boolean.TRUE);
+                calls.add(force ? "stickToBottom(force)" : "stickToBottom");
+            }
+        }
+        return calls;
     }
 
     Stream<Component> descendants(Component component) {

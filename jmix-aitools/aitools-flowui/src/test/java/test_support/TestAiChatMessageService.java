@@ -52,9 +52,12 @@ public class TestAiChatMessageService implements AiChatMessageService {
     protected final Map<AiChatMessageType, Runnable> beforeSaveActions = new ConcurrentHashMap<>();
 
     protected volatile int keepInContextLimit = DEFAULT_KEEP_IN_CONTEXT_LIMIT;
+    @Nullable
+    protected volatile RuntimeException keepInContextFailure;
 
     public void clear() {
         keepInContextLimit = DEFAULT_KEEP_IN_CONTEXT_LIMIT;
+        keepInContextFailure = null;
         messagesByConversation.clear();
         failures.clear();
         beforeSaveActions.clear();
@@ -124,8 +127,22 @@ public class TestAiChatMessageService implements AiChatMessageService {
         return chatMessage;
     }
 
+    /**
+     * Makes {@link #setKeepInContext(AiChatMessage, boolean)} throw, until {@link #clear()} or a call with
+     * {@code null}.
+     *
+     * @param exception exception to throw, or {@code null} to change the memory normally again
+     */
+    public void setKeepInContextFailure(@Nullable RuntimeException exception) {
+        this.keepInContextFailure = exception;
+    }
+
     @Override
     public KeepInContextResult setKeepInContext(AiChatMessage message, boolean keep) {
+        RuntimeException failure = keepInContextFailure;
+        if (failure != null) {
+            throw failure;
+        }
         checkKeepable(message.getType());
         if (keep && !Boolean.TRUE.equals(message.getKeepInContext())) {
             if (isKeepInContextLimitReached(message.getConversation())) {

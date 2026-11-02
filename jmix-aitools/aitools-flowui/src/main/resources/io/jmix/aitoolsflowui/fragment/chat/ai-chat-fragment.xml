@@ -23,31 +23,55 @@
               spacing="false"
               padding="false"
               classNames="ai-chat-fragment">
-            <vbox id="conversationLayout"
-                  width="100%"
-                  height="100%"
-                  spacing="true"
-                  padding="false"
-                  classNames="chat-layout">
-                <hbox id="conversationTitleLayout"
-                      width="100%"
-                      spacing="false"
-                      alignItems="CENTER"
-                      justifyContent="END"
-                      classNames="chat-title-layout">
-                    <h3 id="conversationTitle" classNames="chat-title"/>
-                    <button id="renameConversationBtn"
-                            icon="PENCIL"
-                            text="msg://aiChatFragment.editConversationTitleAction"
-                            themeNames="tertiary small"/>
-                </hbox>
-                <vbox id="chatPanelContainer"
+            <sidePanelLayout id="sidePanel"
+                             width="100%"
+                             height="100%"
+                             sidePanelPosition="INLINE_END"
+                             sidePanelOverlay="true"
+                             sidePanelHorizontalSize="26rem"
+                             modal="false"
+                             classNames="chat-side-panel">
+                <vbox id="chatArea"
                       width="100%"
                       height="100%"
                       spacing="false"
                       padding="false"
-                      classNames="chat-content-layout"/>
-            </vbox>
+                      classNames="chat-area">
+                    <vbox id="conversationLayout"
+                          width="100%"
+                          height="100%"
+                          spacing="true"
+                          padding="false"
+                          classNames="chat-layout">
+                        <hbox id="conversationTitleLayout"
+                              width="100%"
+                              spacing="false"
+                              alignItems="CENTER"
+                              justifyContent="END"
+                              classNames="chat-title-layout">
+                            <h3 id="conversationTitle" classNames="chat-title"/>
+                            <dropdownButton id="chatActionsBtn"
+                                            icon="ELLIPSIS_V"
+                                            dropdownIndicatorVisible="false"
+                                            title="msg://aiChatFragment.chatActions"
+                                            themeNames="tertiary small icon"
+                                            classNames="chat-actions"/>
+                        </hbox>
+                        <vbox id="chatPanelContainer"
+                              width="100%"
+                              height="100%"
+                              spacing="false"
+                              padding="false"
+                              classNames="chat-content-layout"/>
+                    </vbox>
+                </vbox>
+                <vbox id="sidePanelContent"
+                      width="100%"
+                      height="100%"
+                      spacing="false"
+                      padding="false"
+                      classNames="chat-side-panel-content"/>
+            </sidePanelLayout>
         </vbox>
     </content>
 </fragment>

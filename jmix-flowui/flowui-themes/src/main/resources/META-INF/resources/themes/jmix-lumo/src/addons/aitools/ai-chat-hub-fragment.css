@@ -26,10 +26,12 @@
         overflow-y: auto;
     }
 
-    /* One centered reading column for the whole starter. Narrower than the
-       conversation timeline canvas — starter has composer + 2-col cards, the
-       reading line stays comfortable around 54rem. Override with the
-       --jmix-ai-chat-hub-canvas-max-width custom property. */
+    /*
+     * One centered reading column for the whole starter. Narrower than the
+     * conversation timeline canvas — starter has composer + 2-col cards, the
+     * reading line stays comfortable around 54rem. Override with the
+     * --jmix-ai-chat-hub-canvas-max-width custom property.
+     */
     .chat-hub-canvas {
         box-sizing: border-box;
         align-self: center;
@@ -70,17 +72,21 @@
     }
 }
 
-/* Conversation cards — recent grid and the history panel (which may render in an
-   overlay), so these are top-level selectors rather than nested under the root. */
+/*
+ * Conversation cards — recent grid and the history panel (which may render in an
+ * overlay), so these are top-level selectors rather than nested under the root.
+ */
 .chat-hub-card {
     /* vaadin-card requires a single length here (used by inner calc(... * -1)). */
     --vaadin-card-padding: var(--lumo-space-s);
     --vaadin-card-gap: var(--lumo-space-xs);
 }
 
-/* The card body is a link now: drop the link look, keep the stacked layout the
-   layout component used to give it, and show a focus ring - the body became
-   keyboard-reachable. */
+/*
+ * The card body is a link now: drop the link look, keep the stacked layout the
+ * layout component used to give it, and show a focus ring - the body became
+ * keyboard-reachable.
+ */
 .chat-hub-card-body {
     color: inherit;
     display: flex;
@@ -90,9 +96,11 @@
     text-decoration: none;
 }
 
-/* Lumo re-underlines links on hover through `a:where(:any-link):hover`. Its `:where()` adds no
-   specificity, but the remaining `a:hover` still outweighs the single class above, so the reset has to
-   be restated for the hover state. Aura needs no counterpart - it underlines links nowhere. */
+/*
+ * Lumo re-underlines links on hover through `a:where(:any-link):hover`. Its `:where()` adds no
+ * specificity, but the remaining `a:hover` still outweighs the single class above, so the reset has to
+ * be restated for the hover state. Aura needs no counterpart - it underlines links nowhere.
+ */
 .chat-hub-card-body:hover {
     text-decoration: none;
 }
@@ -108,9 +116,11 @@
     min-width: 0;
 }
 
-/* Own the title weight and the date colour/size rather than relying on Lumo
-   utility classes (font-bold / text-secondary / text-xs), which the consuming
-   app's theme may not bundle. */
+/*
+ * Own the title weight and the date colour/size rather than relying on Lumo
+ * utility classes (font-bold / text-secondary / text-xs), which the consuming
+ * app's theme may not bundle.
+ */
 .chat-hub-card-title {
     font-size: var(--lumo-font-size-m);
     font-weight: 600;
@@ -136,11 +146,13 @@
     flex: none;
 }
 
-/* Recent chats: force exactly two columns (overrides the grid's responsive
-   auto-fit template via the exposed shadow part), collapsing to one column on
-   narrow screens. Outer ::part rules win over the component's own shadow part
-   styles for normal declarations, so no !important is needed — and an add-on
-   shouldn't impose it, leaving apps free to override. */
+/*
+ * Recent chats: force exactly two columns (overrides the grid's responsive
+ * auto-fit template via the exposed shadow part), collapsing to one column on
+ * narrow screens. Outer ::part rules win over the component's own shadow part
+ * styles for normal declarations, so no !important is needed — and an add-on
+ * shouldn't impose it, leaving apps free to override.
+ */
 .chat-hub-recent-grid::part(items) {
     grid-gap: var(--lumo-space-s);
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -152,7 +164,9 @@
     }
 }
 
-/* History side panel content. */
+/*
+ * History side panel content.
+ */
 .chat-hub-history-content {
     box-sizing: border-box;
     padding: var(--lumo-space-s);
@@ -206,10 +220,12 @@
     }
 }
 
-/* Shared pill-badge look for the panel-header count and per-bucket count.
-   Rectangular: horizontal padding gives single and multi-digit counts equal
-   breathing room; vertical padding + a slightly relaxed line-height keep the
-   text comfortably inside the box (no clipping on tall digits). */
+/*
+ * Shared pill-badge look for the panel-header count and per-bucket count.
+ * Rectangular: horizontal padding gives single and multi-digit counts equal
+ * breathing room; vertical padding + a slightly relaxed line-height keep the
+ * text comfortably inside the box (no clipping on tall digits).
+ */
 .chat-hub-history-count,
 .chat-hub-history-group-count {
     align-items: center;

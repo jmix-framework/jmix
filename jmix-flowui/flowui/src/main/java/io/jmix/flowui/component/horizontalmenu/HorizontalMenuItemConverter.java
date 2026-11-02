@@ -98,6 +98,14 @@ public class HorizontalMenuItemConverter {
                 return Optional.empty();
             }
 
+            if (parentMenuItem.getChildItems().stream()
+                    .filter(item -> !item.isSeparator())
+                    .noneMatch(HorizontalMenu.AbstractMenuItem::isVisible)) {
+                log.debug("Parent menu item '{}' is skipped as it does not have visible children",
+                        menuItemDescriptor.getId());
+                return Optional.empty();
+            }
+
             return Optional.of(parentMenuItem);
         } else if (menuItemDescriptor.isSeparator()) {
             HorizontalMenu.SeparatorMenuItem separatorItem = createSeparatorItem();
@@ -134,6 +142,7 @@ public class HorizontalMenuItemConverter {
         parentMenuItem.setPrefixComponent(getIcon(menuItemDescriptor));
         parentMenuItem.setTitle(menuConfig.getItemTitle(menuItemDescriptor));
         parentMenuItem.addClassNames(getClassNames(menuItemDescriptor));
+        parentMenuItem.setVisible(menuItemDescriptor.isVisible());
         //noinspection DataFlowIssue
         parentMenuItem.setTooltipText(getDescription(menuItemDescriptor));
 
@@ -202,6 +211,7 @@ public class HorizontalMenuItemConverter {
         //noinspection DataFlowIssue
         viewMenuItem.setTooltipText(getDescription(menuItemDescriptor));
         viewMenuItem.addClassNames(getClassNames(menuItemDescriptor));
+        viewMenuItem.setVisible(menuItemDescriptor.isVisible());
         viewMenuItem.setUrlQueryParameters(menuItemDescriptor.getUrlQueryParameters());
         viewMenuItem.setShortcutCombination(menuItemDescriptor.getShortcutCombination());
 
@@ -267,6 +277,7 @@ public class HorizontalMenuItemConverter {
         //noinspection DataFlowIssue
         beanMenuItem.setTooltipText(getDescription(menuItemDescriptor));
         beanMenuItem.addClassNames(getClassNames(menuItemDescriptor));
+        beanMenuItem.setVisible(menuItemDescriptor.isVisible());
         beanMenuItem.setShortcutCombination(menuItemDescriptor.getShortcutCombination());
         beanMenuItem.setClickHandler(new MenuCommandExecutor(menuItemDescriptor, menuItemCommands));
 

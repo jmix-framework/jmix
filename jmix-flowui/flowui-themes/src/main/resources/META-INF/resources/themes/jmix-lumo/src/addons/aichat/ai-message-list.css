@@ -136,11 +136,11 @@
     max-height: var(--jmix-ai-thinking-status-max-height, 7.5rem);
     overflow-y: auto;
     overflow-anchor: none;
-    padding-block-start: 1.5rem;
     mask-image: linear-gradient(to bottom, transparent 0, black 1.5rem);
   }
 
-  [part='thinking-status-list']:not(:empty) {
+  [part='thinking-status-list']:has([part='thinking-status']) {
+    padding-block-start: 1.5rem;
     margin-block-end: var(--lumo-space-s);
   }
 

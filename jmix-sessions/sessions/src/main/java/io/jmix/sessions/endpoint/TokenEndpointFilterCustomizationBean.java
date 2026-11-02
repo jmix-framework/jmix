@@ -16,14 +16,11 @@
 
 package io.jmix.sessions.endpoint;
 
-import io.jmix.core.session.SessionData;
 import io.jmix.security.util.RequestLocaleProvider;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.Filter;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationService;
 import org.springframework.security.oauth2.server.authorization.web.OAuth2TokenEndpointFilter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.stereotype.Component;
@@ -41,12 +38,6 @@ public class TokenEndpointFilterCustomizationBean {
 
     @Autowired
     private RequestLocaleProvider requestLocaleProvider;
-
-    @Autowired
-    private OAuth2AuthorizationService authorizationService;
-
-    @Autowired
-    private ObjectProvider<SessionData> sessionDataProvider;
 
     @PostConstruct
     public void modifyFilterChain() {
@@ -70,6 +61,6 @@ public class TokenEndpointFilterCustomizationBean {
     }
 
     protected OncePerRequestFilter createWrapper(OAuth2TokenEndpointFilter delegate){
-        return new OAuth2TokenEndpointFilterWrapper(delegate, requestLocaleProvider, sessionDataProvider, authorizationService);
+        return new OAuth2TokenEndpointFilterWrapper(delegate, requestLocaleProvider);
     }
 }

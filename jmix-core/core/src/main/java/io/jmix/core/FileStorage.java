@@ -18,9 +18,13 @@ package io.jmix.core;
 
 import org.jspecify.annotations.NullMarked;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Collections;
 import java.util.Map;
+
+import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
 /**
  * Interface of a component to store and load files defined by file references.
@@ -87,4 +91,26 @@ public interface FileStorage {
      * @throws IllegalArgumentException if file reference is invalid
      */
     boolean fileExists(FileRef reference);
+
+    /**
+     * Calculates the actual digest of a file, that is of the bytes {@link #openStream(FileRef)} returns.
+     * <p>
+     * The default implementation reads the whole file. A storage may override the method if it has a cheaper way.
+     *
+     * @param reference file reference
+     * @param algorithm algorithm name from the IANA registry, only {@link FileDigest#SHA_256} is supported
+     * @return digest of the file
+     * @throws IllegalArgumentException if arguments are incorrect or the algorithm is not supported
+     * @throws FileStorageException     if something goes wrong
+     */
+    default FileDigest calculateDigest(FileRef reference, String algorithm) {
+        checkNotNullArgument(reference);
+        try (InputStream inputStream = openStream(reference)) {
+            FileDigestInputStream digestInputStream = new FileDigestInputStream(inputStream, algorithm);
+            digestInputStream.transferTo(OutputStream.nullOutputStream());
+            return digestInputStream.getDigest();
+        } catch (IOException e) {
+            throw new FileStorageException(FileStorageException.Type.IO_EXCEPTION, reference.toString(), e);
+        }
+    }
 }

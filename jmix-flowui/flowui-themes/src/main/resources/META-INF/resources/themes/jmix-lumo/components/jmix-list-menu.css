@@ -108,28 +108,43 @@
   height: auto;
 
   color: inherit;
+  cursor: pointer;
 
-  font-size: var(--jmix-list-menu-item-font-size);
-  font-weight: var(--jmix-list-menu-item-font-weight);
-  line-height: var(--jmix-list-menu-item-line-height);
+  /* As in a view item, the icon and a suffix component get the menu font, the caption the item font. */
+  font-size: inherit;
+  font-weight: inherit;
+  /* Lumo sizes a hidden em space in the button by the host line height, which would make the row taller. */
+  line-height: 0;
+  text-align: start;
 
   padding: var(--vaadin-padding-s);
   margin: 0;
 }
 
-.jmix-list-menu vaadin-button.jmix-menu-item::part(label) {
-  display: inline-flex;
+/* A bean item looks like a view item, which has no hover or press feedback. */
+.jmix-list-menu vaadin-button.jmix-menu-item::before,
+.jmix-list-menu vaadin-button.jmix-menu-item::after {
+  display: none;
+}
 
-  line-height: inherit;
-  overflow: visible;
+.jmix-list-menu vaadin-button.jmix-menu-item::part(label) {
   padding: 0;
 
   flex-grow: 1;
+
+  font-size: var(--jmix-list-menu-item-font-size);
+  font-weight: var(--jmix-list-menu-item-font-weight);
+  line-height: var(--jmix-list-menu-item-line-height);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
+/* As in a view item, prefix and suffix components are flex items of the row with the page line height. */
 .jmix-list-menu vaadin-button.jmix-menu-item::part(prefix),
 .jmix-list-menu vaadin-button.jmix-menu-item::part(suffix) {
-  margin: 0;
+  display: contents;
+  line-height: var(--lumo-line-height-m);
 }
 
 .jmix-list-menu vaadin-button.jmix-menu-item .prefix-component {
@@ -138,6 +153,7 @@
 
 .jmix-list-menu vaadin-button.jmix-menu-item .suffix-component {
   margin-inline-start: var(--lumo-space-s);
+  flex-shrink: 0;
 }
 
 .jmix-list-menu a.jmix-menu-item .link-text {

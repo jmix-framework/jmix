@@ -44,6 +44,7 @@ public class JmixTextArea extends TextArea implements SupportsValueSource<String
     protected TextAreaFieldDelegate<JmixTextArea, String> fieldDelegate;
 
     protected boolean trimEnabled;
+    protected boolean trimmedPresentationUpdate;
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
@@ -164,10 +165,21 @@ public class JmixTextArea extends TextArea implements SupportsValueSource<String
 
     @Override
     protected void setModelValue(String newModelValue, boolean fromClient) {
-        if (isTrimEnabled() && fromClient) {
-            newModelValue = StringUtils.trimToNull(newModelValue);
+        if (trimmedPresentationUpdate) {
+            // Writing the trimmed value to the client calls this method again as a non-client change.
+            // The model value is set by the outer call, which keeps the client origin.
+            return;
+        }
 
-            setPresentationValue(Strings.nullToEmpty(newModelValue));
+        if (isTrimEnabled() && fromClient) {
+            newModelValue = StringUtils.trimToEmpty(newModelValue);
+
+            trimmedPresentationUpdate = true;
+            try {
+                setPresentationValue(newModelValue);
+            } finally {
+                trimmedPresentationUpdate = false;
+            }
         }
 
         super.setModelValue(newModelValue, fromClient);

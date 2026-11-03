@@ -90,6 +90,7 @@ public class AwsFileStorage implements FileStorage {
 
     private static final Logger log = LoggerFactory.getLogger(AwsFileStorage.class);
     private static final String DEFAULT_STORAGE_NAME = "s3";
+    private static final int SHA_256_LENGTH_BYTES = 32;
 
     protected String storageName;
 
@@ -303,9 +304,10 @@ public class AwsFileStorage implements FileStorage {
     }
 
     /**
-     * Returns {@code true} if the SHA-256 checksum is sent to S3 on upload. Unless set explicitly, the checksum
-     * is sent when {@code endpointUrl} is empty (Amazon S3), as an S3-compatible storage may reject the checksum
-     * headers.
+     * Returns {@code true} if the SHA-256 checksum is sent to S3 on upload and the checksum S3 reports
+     * ({@code HeadObject}) is trusted by the integrity check. Unless set explicitly, it is on when
+     * {@code endpointUrl} is empty (Amazon S3), as an S3-compatible storage may reject the checksum headers or not
+     * validate the checksum.
      */
     protected boolean isChecksumEnabled() {
         Boolean enabled = this.checksumEnabled;
@@ -371,23 +373,27 @@ public class AwsFileStorage implements FileStorage {
 
     @Override
     public boolean fileExists(FileRef reference) {
-        S3Client s3Client = s3ClientReference.get();
-        ListObjectsV2Request listObjectsReqManual = ListObjectsV2Request.builder()
-                .bucket(bucket)
-                .prefix(reference.getPath())
-                .maxKeys(1)
-                .build();
-        ListObjectsV2Response listObjResponse = s3Client.listObjectsV2(listObjectsReqManual);
-        return listObjResponse.contents().stream()
-                .map(S3Object::key)
-                .collect(Collectors.toList())
-                .contains(reference.getPath());
+        try {
+            S3Client s3Client = s3ClientReference.get();
+            ListObjectsV2Request listObjectsReqManual = ListObjectsV2Request.builder()
+                    .bucket(bucket)
+                    .prefix(reference.getPath())
+                    .maxKeys(1)
+                    .build();
+            ListObjectsV2Response listObjResponse = s3Client.listObjectsV2(listObjectsReqManual);
+            return listObjResponse.contents().stream()
+                    .map(S3Object::key)
+                    .collect(Collectors.toList())
+                    .contains(reference.getPath());
+        } catch (SdkException e) {
+            throw new FileStorageException(FileStorageException.Type.IO_EXCEPTION, reference.toString(), e);
+        }
     }
 
     /**
      * Takes the SHA-256 digest of an object stored by a single upload from {@code HeadObject} without downloading
-     * the object. Reads the object in full if checksums are off, S3 reports no checksum or a composite one (that of
-     * a multipart upload), or another algorithm is requested.
+     * the object. Reads the object in full if checksums are off, S3 reports no checksum, a composite one (that of
+     * a multipart upload) or a malformed one, or another algorithm is requested.
      */
     @Override
     public FileDigest calculateDigest(FileRef reference, String algorithm) {
@@ -404,7 +410,7 @@ public class AwsFileStorage implements FileStorage {
                         .build());
             } catch (SdkException e) {
                 boolean notFound = e instanceof NoSuchKeyException
-                        || e instanceof S3Exception s3Exception && s3Exception.statusCode() == 404;
+                        || (e instanceof S3Exception s3Exception && s3Exception.statusCode() == 404);
                 FileStorageException.Type type = notFound
                         ? FileStorageException.Type.FILE_NOT_FOUND
                         : FileStorageException.Type.IO_EXCEPTION;
@@ -413,11 +419,28 @@ public class AwsFileStorage implements FileStorage {
 
             String checksum = response.checksumSHA256();
             if (checksum != null && !checksum.contains("-")) {
-                byte[] digest = Base64.getDecoder().decode(checksum);
-                return FileDigest.of(FileDigest.SHA_256, HexFormat.of().formatHex(digest));
+                FileDigest digest = toSha256Digest(checksum);
+                if (digest != null) {
+                    return digest;
+                }
             }
         }
         return FileStorage.super.calculateDigest(reference, algorithm);
+    }
+
+    /**
+     * Converts the Base64 SHA-256 checksum reported by S3 to a digest. Returns {@code null} if the value is not
+     * Base64 or is not 32 bytes long, so it cannot be trusted.
+     */
+    private @Nullable FileDigest toSha256Digest(String checksum) {
+        try {
+            byte[] bytes = Base64.getDecoder().decode(checksum);
+            return bytes.length == SHA_256_LENGTH_BYTES
+                    ? FileDigest.of(FileDigest.SHA_256, HexFormat.of().formatHex(bytes))
+                    : null;
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
     }
 
     public void setAccessKey(String accessKey) {

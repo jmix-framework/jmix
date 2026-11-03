@@ -24,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.ApplicationContext
 import org.springframework.test.context.ContextConfiguration
 import software.amazon.awssdk.core.ResponseInputStream
+import software.amazon.awssdk.core.exception.SdkClientException
 import software.amazon.awssdk.http.AbortableInputStream
 import software.amazon.awssdk.services.s3.S3Client
 import software.amazon.awssdk.services.s3.model.ChecksumAlgorithm
@@ -32,6 +33,7 @@ import software.amazon.awssdk.services.s3.model.CreateMultipartUploadResponse
 import software.amazon.awssdk.services.s3.model.GetObjectResponse
 import software.amazon.awssdk.services.s3.model.HeadObjectRequest
 import software.amazon.awssdk.services.s3.model.HeadObjectResponse
+import software.amazon.awssdk.services.s3.model.ListObjectsV2Request
 import software.amazon.awssdk.services.s3.model.NoSuchKeyException
 import software.amazon.awssdk.services.s3.model.S3Exception
 import software.amazon.awssdk.services.s3.model.UploadPartResponse
@@ -225,8 +227,61 @@ class AwsFileStorageIntegrityTest extends Specification {
         digest.value == ABC_SHA_256
     }
 
+    def "a checksum that is not Base64 is ignored and the object is read in full"() {
+        def storage = storage(null)
+
+        when:
+        def digest = storage.calculateDigest(fileRef(), FileDigest.SHA_256)
+
+        then:
+        1 * s3Client.headObject(_ as HeadObjectRequest) >>
+                HeadObjectResponse.builder().checksumSHA256('not a Base64 value!').build()
+        1 * s3Client.getObject(_, _) >> object('abc')
+        digest.value == ABC_SHA_256
+    }
+
+    def "a checksum of a wrong length is ignored and the object is read in full"() {
+        def storage = storage(null)
+
+        when:
+        def digest = storage.calculateDigest(fileRef(), FileDigest.SHA_256)
+
+        then:
+        1 * s3Client.headObject(_ as HeadObjectRequest) >>
+                HeadObjectResponse.builder().checksumSHA256(Base64.encoder.encodeToString(new byte[16])).build()
+        1 * s3Client.getObject(_, _) >> object('abc')
+        digest.value == ABC_SHA_256
+    }
+
     def "with checksums off no HeadObject is sent"() {
         def storage = storage('http://localhost:9000')
+
+        when:
+        def digest = storage.calculateDigest(fileRef(), FileDigest.SHA_256)
+
+        then:
+        0 * s3Client.headObject(_)
+        1 * s3Client.getObject(_, _) >> object('abc')
+        digest.value == ABC_SHA_256
+    }
+
+    def "the switch turns on trusting HeadObject for a custom endpoint"() {
+        def storage = storage('http://localhost:9000')
+        storage.setChecksumEnabled(true)
+
+        when:
+        def digest = storage.calculateDigest(fileRef(), FileDigest.SHA_256)
+
+        then:
+        1 * s3Client.headObject({ it.checksumMode() == ChecksumMode.ENABLED }) >>
+                HeadObjectResponse.builder().checksumSHA256(ABC_SHA_256_BASE64).build()
+        0 * s3Client.getObject(*_)
+        digest.value == ABC_SHA_256
+    }
+
+    def "the switch turns off trusting HeadObject for Amazon S3"() {
+        def storage = storage(null)
+        storage.setChecksumEnabled(false)
 
         when:
         def digest = storage.calculateDigest(fileRef(), FileDigest.SHA_256)
@@ -286,8 +341,27 @@ class AwsFileStorageIntegrityTest extends Specification {
 
         then:
         0 * s3Client.headObject(_)
-        1 * s3Client.getObject(_, _) >> object('abc')
+        0 * s3Client.getObject(*_)
         thrown(IllegalArgumentException)
+    }
+
+    def "fileExists wraps an SDK failure into IO_EXCEPTION"() {
+        def storage = storage(null)
+
+        when:
+        storage.fileExists(fileRef())
+
+        then:
+        1 * s3Client.listObjectsV2(_ as ListObjectsV2Request) >> { throw exception }
+        def e = thrown(FileStorageException)
+        e.type == FileStorageException.Type.IO_EXCEPTION
+        e.cause.is(exception)
+
+        where:
+        exception << [
+                S3Exception.builder().statusCode(500).build(),
+                SdkClientException.create('connection reset')
+        ]
     }
 
     AwsFileStorage storage(String endpointUrl) {

@@ -268,6 +268,7 @@ public class LocalFileStorage implements FileStorage {
 
             try {
                 inputStream = Files.newInputStream(path);
+                break;
             } catch (IOException e) {
                 log.error("Error opening input stream for {}", path, e);
             }

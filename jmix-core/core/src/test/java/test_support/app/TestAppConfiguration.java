@@ -51,6 +51,11 @@ public class TestAppConfiguration {
     }
 
     @Bean
+    TestFailingFileStorage testFailingFileStorage() {
+        return new TestFailingFileStorage();
+    }
+
+    @Bean
     TestBean testAppBean() {
         return new TestAppBean();
     }

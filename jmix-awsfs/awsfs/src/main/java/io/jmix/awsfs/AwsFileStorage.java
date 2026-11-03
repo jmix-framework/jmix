@@ -18,6 +18,9 @@ package io.jmix.awsfs;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
+import io.jmix.core.CoreProperties;
+import io.jmix.core.FileDigest;
+import io.jmix.core.FileDigestInputStream;
 import io.jmix.core.FileRef;
 import io.jmix.core.FileStorage;
 import io.jmix.core.FileStorageException;
@@ -46,12 +49,17 @@ import software.amazon.awssdk.core.sync.ResponseTransformer;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.S3ClientBuilder;
+import software.amazon.awssdk.services.s3.model.ChecksumAlgorithm;
+import software.amazon.awssdk.services.s3.model.CompleteMultipartUploadRequest;
+import software.amazon.awssdk.services.s3.model.CompletedMultipartUpload;
 import software.amazon.awssdk.services.s3.model.CompletedPart;
+import software.amazon.awssdk.services.s3.model.CreateMultipartUploadRequest;
 import software.amazon.awssdk.services.s3.model.CreateMultipartUploadResponse;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
 import software.amazon.awssdk.services.s3.model.ListObjectsV2Response;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.S3Object;
 import software.amazon.awssdk.services.s3.model.UploadPartRequest;
 import software.amazon.awssdk.services.s3.model.UploadPartResponse;
@@ -91,6 +99,10 @@ public class AwsFileStorage implements FileStorage {
     protected volatile int chunkSize;
     protected String endpointUrl;
     protected volatile boolean usePathStyleBucketAddressing;
+    protected volatile @Nullable Boolean checksumEnabled;
+
+    @Autowired
+    protected CoreProperties coreProperties;
 
     @Autowired
     protected TimeSource timeSource;
@@ -134,6 +146,7 @@ public class AwsFileStorage implements FileStorage {
             this.chunkSize = properties.getChunkSize();
             this.endpointUrl = properties.getEndpointUrl();
             this.usePathStyleBucketAddressing = properties.getUsePathStyleBucketAddressing();
+            this.checksumEnabled = properties.getChecksumEnabled();
         }
     }
 
@@ -194,58 +207,102 @@ public class AwsFileStorage implements FileStorage {
 
     @Override
     public FileRef saveStream(String fileName, InputStream inputStream, Map<String, Object> parameters) {
+        FileDigest.checkNoReservedParameters(parameters.keySet());
+
         String fileKey = createFileKey(fileName);
         String bucket = this.bucket;
         int s3ChunkSizeBytes = this.chunkSize * 1024;
+        boolean checksumEnabled = isChecksumEnabled();
 
         Map<String, String> fileRefParameters = Maps.toMap(parameters.keySet(), key -> parameters.get(key).toString());
         FileRef fileRef = new FileRef(getStorageName(), fileKey, fileName, fileRefParameters);
 
-        try (BufferedInputStream bis = new BufferedInputStream(inputStream, s3ChunkSizeBytes)) {
+        InputStream source = inputStream;
+        FileDigestInputStream digestInputStream = null;
+        if (coreProperties.isFileDigestOnSaveEnabled()) {
+            digestInputStream = new FileDigestInputStream(inputStream);
+            source = digestInputStream;
+        }
+
+        try (BufferedInputStream bis = new BufferedInputStream(source, s3ChunkSizeBytes)) {
             S3Client s3Client = s3ClientReference.get();
 
             byte[] chunkBytes = new byte[s3ChunkSizeBytes];
             int nBytes = fillBuffer(bis, chunkBytes);
             if (nBytes < s3ChunkSizeBytes) {
-                s3Client.putObject(objectBuilder -> objectBuilder
+                PutObjectRequest.Builder putBuilder = PutObjectRequest.builder()
                         .bucket(bucket)
-                        .key(fileKey)
-                        .build(), fromBytes(chunkBytes, nBytes));
+                        .key(fileKey);
+                if (checksumEnabled) {
+                    putBuilder.checksumAlgorithm(ChecksumAlgorithm.SHA256);
+                }
+                s3Client.putObject(putBuilder.build(), fromBytes(chunkBytes, nBytes));
+                addDigest(fileRef, digestInputStream);
                 return fileRef;
             }
 
-            CreateMultipartUploadResponse response = s3Client.createMultipartUpload(uploadBuilder -> uploadBuilder
+            CreateMultipartUploadRequest.Builder createBuilder = CreateMultipartUploadRequest.builder()
                     .bucket(bucket)
-                    .key(fileKey));
+                    .key(fileKey);
+            if (checksumEnabled) {
+                createBuilder.checksumAlgorithm(ChecksumAlgorithm.SHA256);
+            }
+            CreateMultipartUploadResponse response = s3Client.createMultipartUpload(createBuilder.build());
 
             List<CompletedPart> completedParts = new ArrayList<>();
             UploadPartRequest.Builder partBuilder = UploadPartRequest.builder()
                     .bucket(bucket)
                     .key(fileKey)
                     .uploadId(response.uploadId());
+            if (checksumEnabled) {
+                partBuilder.checksumAlgorithm(ChecksumAlgorithm.SHA256);
+            }
             for (int partNumber = 1; 0 < nBytes; partNumber++) {
                 UploadPartResponse partResponse = s3Client.uploadPart(partBuilder
                         .partNumber(partNumber)
                         .build(), fromBytes(chunkBytes, nBytes));
-                CompletedPart completedPart = CompletedPart.builder()
+                CompletedPart.Builder completedPartBuilder = CompletedPart.builder()
                         .partNumber(partNumber)
-                        .eTag(partResponse.eTag())
-                        .build();
-                completedParts.add(completedPart);
+                        .eTag(partResponse.eTag());
+                if (checksumEnabled) {
+                    completedPartBuilder.checksumSHA256(partResponse.checksumSHA256());
+                }
+                completedParts.add(completedPartBuilder.build());
                 nBytes = fillBuffer(bis, chunkBytes);
             }
 
-            s3Client.completeMultipartUpload(completeBuilder -> completeBuilder
+            s3Client.completeMultipartUpload(CompleteMultipartUploadRequest.builder()
                     .bucket(bucket)
                     .key(fileKey)
                     .uploadId(response.uploadId())
-                    .multipartUpload(multipartBuilder -> multipartBuilder.parts(completedParts)));
+                    .multipartUpload(CompletedMultipartUpload.builder().parts(completedParts).build())
+                    .build());
+            addDigest(fileRef, digestInputStream);
             return fileRef;
         } catch (IOException | SdkException e) {
             log.error("Error saving file to S3 storage", e);
             String message = String.format("Could not save file %s.", fileName);
             throw new FileStorageException(FileStorageException.Type.IO_EXCEPTION, message);
         }
+    }
+
+    /**
+     * Adds the digest of the bytes read so far to the reference, if the digest is being calculated.
+     */
+    private void addDigest(FileRef fileRef, @Nullable FileDigestInputStream digestInputStream) {
+        if (digestInputStream != null) {
+            digestInputStream.getDigest().addTo(fileRef);
+        }
+    }
+
+    /**
+     * Returns {@code true} if the SHA-256 checksum is sent to S3 on upload. Unless set explicitly, the checksum
+     * is sent when {@code endpointUrl} is empty (Amazon S3), as an S3-compatible storage may reject the checksum
+     * headers.
+     */
+    protected boolean isChecksumEnabled() {
+        Boolean enabled = this.checksumEnabled;
+        return enabled != null ? enabled : Strings.isNullOrEmpty(endpointUrl);
     }
 
     /**
@@ -346,5 +403,13 @@ public class AwsFileStorage implements FileStorage {
 
     public void setUsePathStyleBucketAddressing(boolean usePathStyleBucketAddressing) {
         this.usePathStyleBucketAddressing = usePathStyleBucketAddressing;
+    }
+
+    /**
+     * Sets whether to send the SHA-256 checksum of the uploaded files to S3. If {@code null}, the checksum is sent
+     * when {@code endpointUrl} is empty (Amazon S3) and is not sent otherwise.
+     */
+    public void setChecksumEnabled(@Nullable Boolean checksumEnabled) {
+        this.checksumEnabled = checksumEnabled;
     }
 }

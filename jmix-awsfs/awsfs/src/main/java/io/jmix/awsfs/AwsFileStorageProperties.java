@@ -16,6 +16,7 @@
 
 package io.jmix.awsfs;
 
+import org.jspecify.annotations.Nullable;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 
@@ -57,6 +58,13 @@ public class AwsFileStorageProperties {
      */
     boolean usePathStyleBucketAddressing;
 
+    /**
+     * Whether to send the SHA-256 checksum of the uploaded files to S3. If not set, the checksum is sent when the
+     * custom endpoint URL is not set (Amazon S3) and is not sent otherwise, as an S3-compatible storage may reject
+     * the checksum headers.
+     */
+    @Nullable Boolean checksumEnabled;
+
     public AwsFileStorageProperties(
             String accessKey,
             String secretAccessKey,
@@ -64,7 +72,8 @@ public class AwsFileStorageProperties {
             String bucket,
             @DefaultValue("8192") int chunkSize,
             @DefaultValue("") String endpointUrl,
-            @DefaultValue("false") boolean usePathStyleBucketAddressing) {
+            @DefaultValue("false") boolean usePathStyleBucketAddressing,
+            @Nullable Boolean checksumEnabled) {
         this.accessKey = accessKey;
         this.secretAccessKey = secretAccessKey;
         this.region = region;
@@ -72,6 +81,7 @@ public class AwsFileStorageProperties {
         this.chunkSize = chunkSize;
         this.endpointUrl = endpointUrl;
         this.usePathStyleBucketAddressing = usePathStyleBucketAddressing;
+        this.checksumEnabled = checksumEnabled;
     }
 
     /**
@@ -121,5 +131,12 @@ public class AwsFileStorageProperties {
      */
     public boolean getUsePathStyleBucketAddressing() {
         return usePathStyleBucketAddressing;
+    }
+
+    /**
+     * @see #checksumEnabled
+     */
+    public @Nullable Boolean getChecksumEnabled() {
+        return checksumEnabled;
     }
 }

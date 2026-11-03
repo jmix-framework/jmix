@@ -49,7 +49,8 @@ public class TestCoreProperties extends CoreProperties {
                               boolean dataObservationEnabled,
                               boolean useUserInfoForObservation,
                               boolean applicationInfoFileEnabled,
-                              boolean invokePostConstructOnEntityDeserialization) {
+                              boolean invokePostConstructOnEntityDeserialization,
+                              boolean fileDigestOnSaveEnabled) {
         super(webHostName, webPort, confDir, workDir, tempDir, dbDir, availableLocales,
                 crossDataStoreReferenceLoadingBatchSize, idGenerationForEntitiesInAdditionalDataStoresEnabled,
                 dom4jMaxPoolSize, dom4jMaxBorrowWaitMillis, anonymousAuthenticationTokenKey, defaultFileStorage,
@@ -58,7 +59,7 @@ public class TestCoreProperties extends CoreProperties {
                 triggerFilesEnabled, triggerFilesProcessInterval,
                 roundDecimalValueByFormat, skipNullOrEmptyConditionsByDefault, instanceNameFallbackEnabled,
                 dataObservationEnabled, useUserInfoForObservation, applicationInfoFileEnabled,
-                invokePostConstructOnEntityDeserialization);
+                invokePostConstructOnEntityDeserialization, fileDigestOnSaveEnabled);
     }
 
     public static Builder builder() {
@@ -93,6 +94,7 @@ public class TestCoreProperties extends CoreProperties {
         boolean useUserInfoForObservation = false;
         boolean applicationInfoFileEnabled = true;
         boolean invokePostConstructOnEntityDeserialization = false;
+        boolean fileDigestOnSaveEnabled = true;
 
         public Builder setWebHostName(String webHostName) {
             this.webHostName = webHostName;
@@ -224,6 +226,11 @@ public class TestCoreProperties extends CoreProperties {
             return this;
         }
 
+        public Builder setFileDigestOnSaveEnabled(boolean fileDigestOnSaveEnabled) {
+            this.fileDigestOnSaveEnabled = fileDigestOnSaveEnabled;
+            return this;
+        }
+
         public TestCoreProperties build() {
             return new TestCoreProperties(
                     this.webHostName,
@@ -252,7 +259,8 @@ public class TestCoreProperties extends CoreProperties {
                     this.dataObservationEnabled,
                     this.useUserInfoForObservation,
                     this.applicationInfoFileEnabled,
-                    this.invokePostConstructOnEntityDeserialization);
+                    this.invokePostConstructOnEntityDeserialization,
+                    this.fileDigestOnSaveEnabled);
         }
     }
 }

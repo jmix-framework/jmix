@@ -139,6 +139,8 @@ public class LocalFileStorage implements FileStorage {
     }
 
     public long saveStream(FileRef fileRef, InputStream inputStream) {
+        FileDigest.checkNoReservedParameters(fileRef.getParameters().keySet());
+
         Path relativePath = getRelativePath(fileRef.getPath());
 
         Path[] roots = getStorageRoots();
@@ -166,13 +168,20 @@ public class LocalFileStorage implements FileStorage {
 
         checkFileExists(path);
 
+        InputStream source = inputStream;
+        FileDigestInputStream digestInputStream = null;
+        if (coreProperties.isFileDigestOnSaveEnabled()) {
+            digestInputStream = new FileDigestInputStream(inputStream);
+            source = digestInputStream;
+        }
+
         long size;
         long maxAllowedSize = properties.getMaxFileSize().toBytes();
         try (OutputStream outputStream = Files.newOutputStream(path, CREATE_NEW)) {
-            size = IOUtils.copyLarge(inputStream, outputStream, 0, maxAllowedSize);
+            size = IOUtils.copyLarge(source, outputStream, 0, maxAllowedSize);
 
             if (size >= maxAllowedSize) {
-                if (inputStream.read() != IOUtils.EOF) {
+                if (source.read() != IOUtils.EOF) {
                     outputStream.close();
                     if (path.toFile().exists()){
                         if(!path.toFile().delete()){
@@ -193,6 +202,10 @@ public class LocalFileStorage implements FileStorage {
         } catch (IOException e) {
             FileUtils.deleteQuietly(path.toFile());
             throw new FileStorageException(FileStorageException.Type.IO_EXCEPTION, path.toAbsolutePath().toString(), e);
+        }
+
+        if (digestInputStream != null) {
+            digestInputStream.getDigest().addTo(fileRef);
         }
 
         // Copy file to secondary storages asynchronously

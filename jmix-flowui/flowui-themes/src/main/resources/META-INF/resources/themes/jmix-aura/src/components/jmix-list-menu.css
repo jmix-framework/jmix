@@ -69,6 +69,7 @@
 }
 
 .jmix-list-menu a.jmix-menu-item .suffix-component,
+.jmix-list-menu vaadin-button.jmix-menu-item .suffix-component,
 .jmix-list-menu .jmix-menubar-item .jmix-menubar-summary-icon-container .suffix-component {
   margin-inline-start: auto;
   flex-shrink: 0;
@@ -95,15 +96,34 @@
 
   color: inherit;
 
-  font-size: var(--jmix-list-menu-item-font-size);
-  font-weight: var(--jmix-list-menu-item-font-weight);
-  line-height: var(--jmix-list-menu-item-line-height);
+  /* As in a view item, the icon and a suffix component get the menu font and line height, the caption the item font. */
+  font-size: inherit;
+  font-weight: inherit;
+  line-height: inherit;
+  text-align: start;
 
   padding: var(--vaadin-padding-s);
+  outline-offset: 1px;
+}
+
+/* A bean item looks like a view item, which has no hover or press feedback. */
+.jmix-list-menu vaadin-button.jmix-menu-item::before {
+  display: none;
+}
+
+.jmix-list-menu vaadin-button.jmix-menu-item[active]:not([disabled]):not([aria-disabled='true']) {
+  scale: none;
 }
 
 .jmix-list-menu vaadin-button.jmix-menu-item::part(label) {
   flex-grow: 1;
+
+  font-size: var(--jmix-list-menu-item-font-size);
+  font-weight: var(--jmix-list-menu-item-font-weight);
+  line-height: var(--jmix-list-menu-item-line-height);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .jmix-list-menu a.jmix-menu-item .link-text {

@@ -64,6 +64,7 @@ public class FileIntegrityCheckerTest {
     @AfterEach
     void tearDown() {
         failingFileStorage.setFileExists(true);
+        failingFileStorage.setFileExistsFails(false);
     }
 
     @Test
@@ -178,6 +179,20 @@ public class FileIntegrityCheckerTest {
         assertEquals(FileIntegrityStatus.MISSING, result.getStatus());
         assertEquals(ABC, result.getExpected().getValue());
         assertNull(result.getActual());
+    }
+
+    @Test
+    void check_readAndFileExistsFail_throwsReadFailureWithSuppressedFileExistsFailure() {
+        FileRef reference = new FileRef("testFsFailing", "x", "x.txt", Map.of(DIGEST_KEY, ABC));
+        failingFileStorage.setFileExistsFails(true);
+
+        FileStorageException exception = assertThrows(FileStorageException.class,
+                () -> fileIntegrityChecker.check(reference));
+
+        assertEquals(FileStorageException.Type.IO_EXCEPTION, exception.getType());
+        assertEquals(1, exception.getSuppressed().length);
+        FileStorageException suppressed = (FileStorageException) exception.getSuppressed()[0];
+        assertEquals(FileStorageException.Type.STORAGE_INACCESSIBLE, suppressed.getType());
     }
 
     @Test

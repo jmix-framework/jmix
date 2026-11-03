@@ -25,6 +25,8 @@ import io.jmix.core.FileStorage;
 import io.jmix.core.FileStorageException;
 import io.jmix.core.FileStorageLocator;
 import org.jspecify.annotations.NullMarked;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -33,6 +35,8 @@ import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 @NullMarked
 @Component("core_FileIntegrityChecker")
 public class FileIntegrityCheckerImpl implements FileIntegrityChecker {
+
+    private static final Logger log = LoggerFactory.getLogger(FileIntegrityCheckerImpl.class);
 
     @Autowired
     protected FileStorageLocator fileStorageLocator;
@@ -56,9 +60,17 @@ public class FileIntegrityCheckerImpl implements FileIntegrityChecker {
             actual = fileStorage.calculateDigest(reference, expected.getAlgorithm());
         } catch (FileStorageException e) {
             // A storage may report a missing file with any exception type, so the file is looked up explicitly.
-            if (fileStorage.fileExists(reference)) {
+            boolean exists;
+            try {
+                exists = fileStorage.fileExists(reference);
+            } catch (RuntimeException ex) {
+                e.addSuppressed(ex);
                 throw e;
             }
+            if (exists) {
+                throw e;
+            }
+            log.debug("Reading file {} failed and the file does not exist, reporting it as missing", reference, e);
             return new FileIntegrityCheckResult(reference, FileIntegrityStatus.MISSING, expected, null);
         }
 

@@ -28,6 +28,7 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -133,6 +134,22 @@ public class FileDigestTest {
         FileDigest digest = fileStorage.calculateDigest(reference, FileDigest.SHA_256);
 
         assertEquals(SOME_CONTENT_HEX, digest.getValue());
+    }
+
+    @Test
+    void calculateDigest_unsupportedAlgorithm_throwsBeforeOpeningStream() {
+        AtomicInteger openStreamCalls = new AtomicInteger();
+        TestFileStorage fileStorage = new TestFileStorage("testFs") {
+            @Override
+            public InputStream openStream(FileRef reference) {
+                openStreamCalls.incrementAndGet();
+                return super.openStream(reference);
+            }
+        };
+        FileRef missing = new FileRef("testFs", "missing.txt", "missing.txt");
+
+        assertThrows(IllegalArgumentException.class, () -> fileStorage.calculateDigest(missing, "md5"));
+        assertEquals(0, openStreamCalls.get());
     }
 
     private static InputStream stream(String s) {

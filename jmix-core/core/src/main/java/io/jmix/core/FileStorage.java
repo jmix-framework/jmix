@@ -58,9 +58,10 @@ public interface FileStorage {
      * @param fileName    file name
      * @param inputStream input stream, must be closed in the calling code
      * @param parameters additional parameters that can be used in specific storage implementation
-     *                   (for example, can be converted to FileRef parameters)
-     * @return file reference
-     * @throws IllegalArgumentException if arguments are incorrect
+     *                   (for example, can be converted to FileRef parameters). Keys starting with
+     *                   {@value FileDigest#RESERVED_PARAMETER_PREFIX} are reserved for the framework
+     * @return file reference, which may carry framework parameters such as the {@code jmix-sha-256} digest
+     * @throws IllegalArgumentException if arguments are incorrect or a parameter key is reserved for the framework
      * @throws FileStorageException     if something goes wrong
      */
     FileRef saveStream(String fileName, InputStream inputStream, Map<String, Object> parameters);
@@ -105,6 +106,8 @@ public interface FileStorage {
      */
     default FileDigest calculateDigest(FileRef reference, String algorithm) {
         checkNotNullArgument(reference);
+        checkNotNullArgument(algorithm);
+        FileDigest.checkSupported(algorithm);
         try (InputStream inputStream = openStream(reference)) {
             FileDigestInputStream digestInputStream = new FileDigestInputStream(inputStream, algorithm);
             digestInputStream.transferTo(OutputStream.nullOutputStream());

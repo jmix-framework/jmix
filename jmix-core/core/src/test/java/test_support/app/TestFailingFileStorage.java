@@ -25,12 +25,14 @@ import java.io.InputStream;
 import java.util.Map;
 
 /**
- * A storage whose reads always fail, while {@link #fileExists(FileRef)} returns the flag set by the test.
+ * A storage whose reads always fail, while {@link #fileExists(FileRef)} returns the flag set by the test
+ * or fails if the test asks for it.
  */
 @NullMarked
 public class TestFailingFileStorage implements FileStorage {
 
     private volatile boolean fileExists = true;
+    private volatile boolean fileExistsFails = false;
 
     @Override
     public String getStorageName() {
@@ -54,10 +56,17 @@ public class TestFailingFileStorage implements FileStorage {
 
     @Override
     public boolean fileExists(FileRef reference) {
+        if (fileExistsFails) {
+            throw new FileStorageException(FileStorageException.Type.STORAGE_INACCESSIBLE, reference.toString());
+        }
         return fileExists;
     }
 
     public void setFileExists(boolean fileExists) {
         this.fileExists = fileExists;
+    }
+
+    public void setFileExistsFails(boolean fileExistsFails) {
+        this.fileExistsFails = fileExistsFails;
     }
 }

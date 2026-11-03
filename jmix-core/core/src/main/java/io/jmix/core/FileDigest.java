@@ -128,8 +128,9 @@ public final class FileDigest implements Serializable {
         checkNotNullArgument(keys);
         for (String key : keys) {
             if (isReservedParameter(key)) {
-                throw new IllegalArgumentException("Parameter '" + key + "' is reserved: keys starting with '"
-                        + RESERVED_PARAMETER_PREFIX + "' are used by the framework");
+                throw new IllegalArgumentException("Parameter '" + key + "' is reserved for the framework: keys "
+                        + "starting with '" + RESERVED_PARAMETER_PREFIX + "' must be removed from the parameters, "
+                        + "the storage adds its own digest to the file reference");
             }
         }
     }
@@ -143,7 +144,7 @@ public final class FileDigest implements Serializable {
         }
     }
 
-    private static void checkSupported(String algorithm) {
+    static void checkSupported(String algorithm) {
         if (!JCA_ALGORITHM_NAMES.containsKey(algorithm)) {
             throw new IllegalArgumentException("Unsupported digest algorithm: " + algorithm);
         }

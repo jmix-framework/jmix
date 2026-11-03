@@ -50,6 +50,7 @@ import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.S3ClientBuilder;
 import software.amazon.awssdk.services.s3.model.ChecksumAlgorithm;
+import software.amazon.awssdk.services.s3.model.ChecksumMode;
 import software.amazon.awssdk.services.s3.model.CompleteMultipartUploadRequest;
 import software.amazon.awssdk.services.s3.model.CompletedMultipartUpload;
 import software.amazon.awssdk.services.s3.model.CompletedPart;
@@ -57,9 +58,13 @@ import software.amazon.awssdk.services.s3.model.CreateMultipartUploadRequest;
 import software.amazon.awssdk.services.s3.model.CreateMultipartUploadResponse;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
+import software.amazon.awssdk.services.s3.model.HeadObjectRequest;
+import software.amazon.awssdk.services.s3.model.HeadObjectResponse;
 import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
 import software.amazon.awssdk.services.s3.model.ListObjectsV2Response;
+import software.amazon.awssdk.services.s3.model.NoSuchKeyException;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import software.amazon.awssdk.services.s3.model.S3Exception;
 import software.amazon.awssdk.services.s3.model.S3Object;
 import software.amazon.awssdk.services.s3.model.UploadPartRequest;
 import software.amazon.awssdk.services.s3.model.UploadPartResponse;
@@ -71,7 +76,9 @@ import java.io.InputStream;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Calendar;
+import java.util.HexFormat;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
@@ -377,6 +384,42 @@ public class AwsFileStorage implements FileStorage {
                 .contains(reference.getPath());
     }
 
+    /**
+     * Takes the SHA-256 digest of an object stored by a single upload from {@code HeadObject} without downloading
+     * the object. Reads the object in full if checksums are off, S3 reports no checksum or a composite one (that of
+     * a multipart upload), or another algorithm is requested.
+     */
+    @Override
+    public FileDigest calculateDigest(FileRef reference, String algorithm) {
+        Preconditions.checkNotNullArgument(reference);
+        Preconditions.checkNotNullArgument(algorithm);
+
+        if (isChecksumEnabled() && FileDigest.SHA_256.equals(algorithm)) {
+            HeadObjectResponse response;
+            try {
+                response = s3ClientReference.get().headObject(HeadObjectRequest.builder()
+                        .bucket(bucket)
+                        .key(reference.getPath())
+                        .checksumMode(ChecksumMode.ENABLED)
+                        .build());
+            } catch (SdkException e) {
+                boolean notFound = e instanceof NoSuchKeyException
+                        || e instanceof S3Exception s3Exception && s3Exception.statusCode() == 404;
+                FileStorageException.Type type = notFound
+                        ? FileStorageException.Type.FILE_NOT_FOUND
+                        : FileStorageException.Type.IO_EXCEPTION;
+                throw new FileStorageException(type, reference.toString(), e);
+            }
+
+            String checksum = response.checksumSHA256();
+            if (checksum != null && !checksum.contains("-")) {
+                byte[] digest = Base64.getDecoder().decode(checksum);
+                return FileDigest.of(FileDigest.SHA_256, HexFormat.of().formatHex(digest));
+            }
+        }
+        return FileStorage.super.calculateDigest(reference, algorithm);
+    }
+
     public void setAccessKey(String accessKey) {
         this.accessKey = accessKey;
     }
@@ -406,8 +449,10 @@ public class AwsFileStorage implements FileStorage {
     }
 
     /**
-     * Sets whether to send the SHA-256 checksum of the uploaded files to S3. If {@code null}, the checksum is sent
-     * when {@code endpointUrl} is empty (Amazon S3) and is not sent otherwise.
+     * Sets whether to send the SHA-256 checksum of the uploaded files to S3 and to trust the checksum S3 reports
+     * for a file stored by a single upload when checking its integrity, instead of reading the file. If {@code null},
+     * it is on when {@code endpointUrl} is empty (Amazon S3) and off otherwise, as an S3-compatible storage may
+     * reject the checksum headers or not validate the checksum.
      */
     public void setChecksumEnabled(@Nullable Boolean checksumEnabled) {
         this.checksumEnabled = checksumEnabled;

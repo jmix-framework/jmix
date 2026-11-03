@@ -17,12 +17,23 @@
 import io.jmix.awsfs.AwsFileStorage
 import io.jmix.awsfs.AwsFileStorageConfiguration
 import io.jmix.core.CoreConfiguration
+import io.jmix.core.FileDigest
+import io.jmix.core.FileRef
+import io.jmix.core.FileStorageException
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.ApplicationContext
 import org.springframework.test.context.ContextConfiguration
+import software.amazon.awssdk.core.ResponseInputStream
+import software.amazon.awssdk.http.AbortableInputStream
 import software.amazon.awssdk.services.s3.S3Client
 import software.amazon.awssdk.services.s3.model.ChecksumAlgorithm
+import software.amazon.awssdk.services.s3.model.ChecksumMode
 import software.amazon.awssdk.services.s3.model.CreateMultipartUploadResponse
+import software.amazon.awssdk.services.s3.model.GetObjectResponse
+import software.amazon.awssdk.services.s3.model.HeadObjectRequest
+import software.amazon.awssdk.services.s3.model.HeadObjectResponse
+import software.amazon.awssdk.services.s3.model.NoSuchKeyException
+import software.amazon.awssdk.services.s3.model.S3Exception
 import software.amazon.awssdk.services.s3.model.UploadPartResponse
 import spock.lang.Specification
 import test_support.AwsFileStorageTestConfiguration
@@ -38,6 +49,7 @@ class AwsFileStorageIntegrityTest extends Specification {
 
     static final String DIGEST_PARAMETER = 'jmix-sha-256'
     static final String ABC_SHA_256 = 'ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad'
+    static final String ABC_SHA_256_BASE64 = 'ungWv48Bz+pBQUDeXa4iI7ADYaOWF3qctBD/YfIAFa0='
     static final String EMPTY_SHA_256 = 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855'
 
     // The storage is created with the chunk size of 8 kB.
@@ -172,11 +184,126 @@ class AwsFileStorageIntegrityTest extends Specification {
         fileRef.parameters[DIGEST_PARAMETER] == ABC_SHA_256
     }
 
+    def "single-part object digest comes from HeadObject"() {
+        def storage = storage(null)
+        def fileRef = fileRef()
+
+        when:
+        def digest = storage.calculateDigest(fileRef, FileDigest.SHA_256)
+
+        then:
+        1 * s3Client.headObject({
+            it.checksumMode() == ChecksumMode.ENABLED && it.bucket() == 'bucket' && it.key() == fileRef.path
+        }) >> HeadObjectResponse.builder().checksumSHA256(ABC_SHA_256_BASE64).build()
+        0 * s3Client.getObject(*_)
+        digest.algorithm == FileDigest.SHA_256
+        digest.value == ABC_SHA_256
+    }
+
+    def "multipart object is read in full"() {
+        def storage = storage(null)
+
+        when:
+        def digest = storage.calculateDigest(fileRef(), FileDigest.SHA_256)
+
+        then:
+        1 * s3Client.headObject(_ as HeadObjectRequest) >>
+                HeadObjectResponse.builder().checksumSHA256(ABC_SHA_256_BASE64 + '-3').build()
+        1 * s3Client.getObject(_, _) >> object('abc')
+        digest.value == ABC_SHA_256
+    }
+
+    def "object without a checksum is read in full"() {
+        def storage = storage(null)
+
+        when:
+        def digest = storage.calculateDigest(fileRef(), FileDigest.SHA_256)
+
+        then:
+        1 * s3Client.headObject(_ as HeadObjectRequest) >> HeadObjectResponse.builder().build()
+        1 * s3Client.getObject(_, _) >> object('abc')
+        digest.value == ABC_SHA_256
+    }
+
+    def "with checksums off no HeadObject is sent"() {
+        def storage = storage('http://localhost:9000')
+
+        when:
+        def digest = storage.calculateDigest(fileRef(), FileDigest.SHA_256)
+
+        then:
+        0 * s3Client.headObject(_)
+        1 * s3Client.getObject(_, _) >> object('abc')
+        digest.value == ABC_SHA_256
+    }
+
+    def "a missing object fails with FILE_NOT_FOUND"() {
+        def storage = storage(null)
+
+        when:
+        storage.calculateDigest(fileRef(), FileDigest.SHA_256)
+
+        then:
+        1 * s3Client.headObject(_ as HeadObjectRequest) >> { throw exception }
+        def e = thrown(FileStorageException)
+        e.type == FileStorageException.Type.FILE_NOT_FOUND
+
+        where:
+        exception << [
+                NoSuchKeyException.builder().build(),
+                S3Exception.builder().statusCode(404).build()
+        ]
+    }
+
+    def "a failed HeadObject fails with IO_EXCEPTION"() {
+        def storage = storage(null)
+
+        when:
+        storage.calculateDigest(fileRef(), FileDigest.SHA_256)
+
+        then:
+        1 * s3Client.headObject(_ as HeadObjectRequest) >> { throw S3Exception.builder().statusCode(500).build() }
+        def e = thrown(FileStorageException)
+        e.type == FileStorageException.Type.IO_EXCEPTION
+    }
+
+    def "a missing object read in full fails"() {
+        def storage = storage('http://localhost:9000')
+
+        when:
+        storage.calculateDigest(fileRef(), FileDigest.SHA_256)
+
+        then:
+        1 * s3Client.getObject(_, _) >> { throw NoSuchKeyException.builder().build() }
+        thrown(FileStorageException)
+    }
+
+    def "an unsupported algorithm is rejected"() {
+        def storage = storage(null)
+
+        when:
+        storage.calculateDigest(fileRef(), 'md5')
+
+        then:
+        0 * s3Client.headObject(_)
+        1 * s3Client.getObject(_, _) >> object('abc')
+        thrown(IllegalArgumentException)
+    }
+
     AwsFileStorage storage(String endpointUrl) {
         def storage = new AwsFileStorage('s3test', 'key', 'secret', 'eu-west-1', 'bucket', 8, endpointUrl)
         applicationContext.autowireCapableBeanFactory.autowireBean(storage)
         storage.s3ClientReference.set(s3Client)
         return storage
+    }
+
+    FileRef fileRef() {
+        return new FileRef('s3test', '2026/01/02/abc.txt', 'abc.txt')
+    }
+
+    static ResponseInputStream<GetObjectResponse> object(String text) {
+        return new ResponseInputStream<>(GetObjectResponse.builder().build(),
+                AbortableInputStream.create(new ByteArrayInputStream(text.bytes)))
     }
 
     static InputStream stream(String text) {

@@ -59,9 +59,10 @@ public class AwsFileStorageProperties {
     boolean usePathStyleBucketAddressing;
 
     /**
-     * Whether to send the SHA-256 checksum of the uploaded files to S3. If not set, the checksum is sent when the
-     * custom endpoint URL is not set (Amazon S3) and is not sent otherwise, as an S3-compatible storage may reject
-     * the checksum headers.
+     * Whether to send the SHA-256 checksum of the uploaded files to S3 and to trust the checksum S3 reports for a
+     * file stored by a single upload when checking its integrity, instead of reading the file. If not set, it is on
+     * when the custom endpoint URL is not set (Amazon S3) and off otherwise, as an S3-compatible storage may reject
+     * the checksum headers or not validate the checksum.
      */
     @Nullable Boolean checksumEnabled;
 

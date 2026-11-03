@@ -138,6 +138,19 @@ public class LocalFileStorage implements FileStorage {
         return storageRoots;
     }
 
+    /**
+     * Saves the stream to the file denoted by the reference.
+     * <p>
+     * The reference must not carry a parameter whose key starts with {@value FileDigest#RESERVED_PARAMETER_PREFIX},
+     * as such keys are reserved for the framework. Unless {@link CoreProperties#isFileDigestOnSaveEnabled()} is
+     * off, the SHA-256 digest of the saved bytes is added to the passed reference.
+     *
+     * @param fileRef     file reference
+     * @param inputStream input stream, must be closed in the calling code
+     * @return size of the saved file in bytes
+     * @throws IllegalArgumentException if the reference carries a parameter reserved for the framework
+     * @throws FileStorageException     if something goes wrong
+     */
     public long saveStream(FileRef fileRef, InputStream inputStream) {
         FileDigest.checkNoReservedParameters(fileRef.getParameters().keySet());
 

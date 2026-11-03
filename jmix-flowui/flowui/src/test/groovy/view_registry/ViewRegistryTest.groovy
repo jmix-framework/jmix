@@ -208,4 +208,39 @@ class ViewRegistryTest extends FlowuiTestSpecification {
         and: "removing it twice reports that there was nothing to remove"
         !viewRegistry.removePrimaryReadView(Customer)
     }
+
+    def "entity view resolution after a reset uses the rebuilt registry"() {
+        given: "a primary read view registered at runtime"
+        viewRegistry.setPrimaryReadView(Customer, viewRegistry.getViewInfo(ProductPrimaryReadView.VIEW_ID))
+
+        when: "the registry is reset"
+        viewRegistry.reset()
+
+        then: "resolution rebuilds the registry first, which drops the runtime registration"
+        viewRegistry.getReadViewInfo(Customer).id == CustomerReadView.VIEW_ID
+        !viewRegistry.hasPrimaryReadView(Customer)
+    }
+
+    /* All views */
+
+    def "view infos can be iterated while the registry is rebuilt"() {
+        given: "an iteration over all views has started"
+        def viewInfos = viewRegistry.getViewInfos()
+        assert viewInfos.size() > 1
+        def iterator = viewInfos.iterator()
+        def iterated = [iterator.next()]
+
+        when: "the registry is reset and rebuilt by the next read"
+        viewRegistry.reset()
+        viewRegistry.hasView(CustomerReadView.VIEW_ID)
+
+        and: "the iteration continues"
+        while (iterator.hasNext()) {
+            iterated << iterator.next()
+        }
+
+        then: "every view of the snapshot is iterated"
+        notThrown(ConcurrentModificationException)
+        iterated.size() == viewInfos.size()
+    }
 }

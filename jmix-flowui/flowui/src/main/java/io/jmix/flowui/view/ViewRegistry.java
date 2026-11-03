@@ -35,9 +35,9 @@ import io.jmix.flowui.exception.NoSuchViewException;
 import io.jmix.flowui.sys.*;
 import io.jmix.flowui.view.template.impl.ViewTemplateDefinition;
 import io.jmix.flowui.view.template.impl.ViewTemplateDefinitions;
-import io.jmix.flowui.view.template.impl.ViewTemplateType;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.ServletContext;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -413,13 +413,14 @@ public class ViewRegistry implements ApplicationContextAware {
     }
 
     /**
-     * @return registration info of all known views
+     * @return an unmodifiable snapshot of the registration info of all known views; it does not reflect views
+     * registered or removed after the call
      */
     public Collection<ViewInfo> getViewInfos() {
         lock.readLock().lock();
         try {
             checkInitialized();
-            return views.values();
+            return List.copyOf(views.values());
         } finally {
             lock.readLock().unlock();
         }
@@ -471,8 +472,7 @@ public class ViewRegistry implements ApplicationContextAware {
      * @throws NoSuchViewException if the detail view with the standard id is not registered for the entity
      */
     public ViewInfo getDetailViewInfo(MetaClass metaClass) {
-        MetaClass originalMetaClass = extendedEntities.getOriginalOrThisMetaClass(metaClass);
-        ViewInfo viewInfo = primaryDetailViews.get(originalMetaClass.getJavaClass());
+        ViewInfo viewInfo = findPrimaryViewInfo(primaryDetailViews, metaClass);
         if (viewInfo != null) {
             return viewInfo;
         }
@@ -550,8 +550,7 @@ public class ViewRegistry implements ApplicationContextAware {
     }
 
     protected String getReadViewIdInternal(MetaClass metaClass) {
-        MetaClass originalMetaClass = extendedEntities.getOriginalOrThisMetaClass(metaClass);
-        ViewInfo viewInfo = primaryReadViews.get(originalMetaClass.getJavaClass());
+        ViewInfo viewInfo = findPrimaryViewInfo(primaryReadViews, metaClass);
         return viewInfo != null ? viewInfo.getId() : getReadViewId(metaClass);
     }
 
@@ -677,21 +676,30 @@ public class ViewRegistry implements ApplicationContextAware {
 
 
     protected String getListViewIdInternal(MetaClass metaClass) {
-        MetaClass originalMetaClass = extendedEntities.getOriginalOrThisMetaClass(metaClass);
-        ViewInfo viewInfo = primaryListViews.get(originalMetaClass.getJavaClass());
+        ViewInfo viewInfo = findPrimaryViewInfo(primaryListViews, metaClass);
         return viewInfo != null ? viewInfo.getId() : getListViewId(metaClass);
     }
 
     protected String getLookupViewIdInternal(MetaClass metaClass) {
-        MetaClass originalMetaClass = extendedEntities.getOriginalOrThisMetaClass(metaClass);
-        ViewInfo viewInfo = primaryLookupViews.get(originalMetaClass.getJavaClass());
+        ViewInfo viewInfo = findPrimaryViewInfo(primaryLookupViews, metaClass);
         return viewInfo != null ? viewInfo.getId() : getLookupViewId(metaClass);
     }
 
     protected String getDetailViewIdInternal(MetaClass metaClass) {
-        MetaClass originalMetaClass = extendedEntities.getOriginalOrThisMetaClass(metaClass);
-        ViewInfo viewInfo = primaryDetailViews.get(originalMetaClass.getJavaClass());
+        ViewInfo viewInfo = findPrimaryViewInfo(primaryDetailViews, metaClass);
         return viewInfo != null ? viewInfo.getId() : getDetailViewId(metaClass);
+    }
+
+    @Nullable
+    protected ViewInfo findPrimaryViewInfo(Map<Class<?>, ViewInfo> primaryViews, MetaClass metaClass) {
+        MetaClass originalMetaClass = extendedEntities.getOriginalOrThisMetaClass(metaClass);
+        lock.readLock().lock();
+        try {
+            checkInitialized();
+            return primaryViews.get(originalMetaClass.getJavaClass());
+        } finally {
+            lock.readLock().unlock();
+        }
     }
 
     /**
@@ -713,11 +721,14 @@ public class ViewRegistry implements ApplicationContextAware {
 
         controllersConfiguration.setExplicitDefinitions(Collections.singletonList(viewControllerDefinition));
 
-        configurations.add(controllersConfiguration);
-
-        registerRoute(viewClass);
-
-        reset();
+        lock.writeLock().lock();
+        try {
+            configurations.add(controllersConfiguration);
+            registerRoute(viewClass);
+            reset();
+        } finally {
+            lock.writeLock().unlock();
+        }
     }
 
     /**

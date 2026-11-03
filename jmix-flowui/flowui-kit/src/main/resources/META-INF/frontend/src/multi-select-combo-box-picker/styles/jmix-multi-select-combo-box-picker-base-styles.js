@@ -28,9 +28,16 @@ const jmixMultiSelectComboBoxPicker = css`
         padding-inline-end: var(--vaadin-padding-xs);
     }
 
-    [part='input-field'] ::slotted(:is(input, textarea)) {
+    /* The input padding sets the field height, so keep it when Vaadin removes it from a read-only or disabled field. */
+    [part='input-field'] ::slotted(:is(input, textarea)),
+    :host(:is([readonly], [disabled])) [part='input-field'] ::slotted(input) {
         padding: var(--vaadin-input-field-padding, var(--vaadin-padding-block-container) var(--vaadin-padding-inline-container));
         padding-inline: 0;
+    }
+
+    /* The input is taller than the chips, so center the overflow chip next to it. */
+    ::slotted([slot='overflow']) {
+        align-self: center;
     }
 `;
 

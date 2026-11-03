@@ -35,16 +35,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Scope;
 import org.jspecify.annotations.Nullable;
+import org.springframework.scheduling.TaskScheduler;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.concurrent.TimeUnit;
+import java.time.Duration;
+import java.time.Instant;
+import java.util.concurrent.ScheduledFuture;
 import java.util.function.Predicate;
 
 import static jakarta.servlet.http.HttpServletResponse.SC_NOT_FOUND;
@@ -58,12 +62,18 @@ public class DownloaderImpl implements Downloader, ApplicationContextAware {
 
     private static final Logger log = LoggerFactory.getLogger(DownloaderImpl.class);
     protected static final String DEFAULT_CHARSET_SUFFIX = ";charset=UTF-8";
+    private static final Duration FILE_DOWNLOADER_REMOVAL_DELAY = Duration.ofSeconds(60);
 
     protected ApplicationContext applicationContext;
     protected UiProperties uiProperties;
     protected CoreProperties coreProperties;
     protected Messages messages;
+    /**
+     * @deprecated not used anymore
+     */
+    @Deprecated(since = "3.1", forRemoval = true)
     protected UiAsyncTasks uiAsyncTasks;
+    protected TaskScheduler taskScheduler;
     protected UiComponents uiComponents;
     protected FileStorageLocator fileStorageLocator;
     protected FileStorage fileStorage;
@@ -118,9 +128,18 @@ public class DownloaderImpl implements Downloader, ApplicationContextAware {
         this.fileStorageLocator = fileStorageLocator;
     }
 
+    /**
+     * @deprecated not used anymore
+     */
+    @Deprecated(since = "3.1", forRemoval = true)
     @Autowired
     public void setUiAsyncTasks(UiAsyncTasks uiAsyncTasks) {
         this.uiAsyncTasks = uiAsyncTasks;
+    }
+
+    @Autowired
+    public void setTaskScheduler(@Qualifier("flowui_ThreadPoolTaskScheduler") TaskScheduler taskScheduler) {
+        this.taskScheduler = taskScheduler;
     }
 
     @Autowired
@@ -299,17 +318,16 @@ public class DownloaderImpl implements Downloader, ApplicationContextAware {
     }
 
     protected void fileDownloaderRemoveHandler(DownloadSuccessContext context) {
-        uiAsyncTasks.runnableConfigurer(() -> {
-                    try {
-                        // timer
-                        TimeUnit.SECONDS.sleep(60);
-                    } catch (InterruptedException e) {
-                        log.debug("{} exception in background task", e.getClass().getName(), e);
-                    }
-                })
-                .withResultHandler(context.owningComponent()::removeFromParent)
-                .withTimeout(62, TimeUnit.SECONDS)
-                .runAsync();
+        context.owningComponent().getUI().ifPresent(ui -> {
+            ScheduledFuture<?> removal = taskScheduler.schedule(
+                    ui.accessLater(context.owningComponent()::removeFromParent,
+                            () -> log.debug("UI is detached, the file downloader is not removed")),
+                    Instant.now().plus(FILE_DOWNLOADER_REMOVAL_DELAY));
+
+            // Cancel the removal when the file downloader is detached earlier, e.g. when the UI is closed,
+            // so that the UI is not held until the delay ends
+            context.owningComponent().addDetachListener(event -> removal.cancel(false));
+        });
     }
 
     protected boolean handleFileNotFoundException(FileNotFoundContext fileNotFoundEvent) {

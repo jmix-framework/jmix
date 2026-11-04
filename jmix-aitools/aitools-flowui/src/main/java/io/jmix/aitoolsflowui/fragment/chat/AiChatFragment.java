@@ -499,9 +499,7 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
     }
 
     protected void showKeptMessage(AiChatMessage message) {
-        if (getChatPanel() instanceof HasKeepInContext keepPanel) {
-            keepPanel.scrollToMessage(message);
-        }
+        getChatPanel().scrollToMessage(message);
     }
 
     protected void changeKeepInContext(AiChatMessage message, boolean keep) {

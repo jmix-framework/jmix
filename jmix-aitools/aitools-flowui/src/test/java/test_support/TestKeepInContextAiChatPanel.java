@@ -31,7 +31,6 @@ public class TestKeepInContextAiChatPanel extends TestAiChatPanel implements Has
     @Nullable
     public KeepInContextHandler keepInContextHandler;
     public final List<AiChatMessage> refreshedMessages = new ArrayList<>();
-    public final List<AiChatMessage> scrolledToMessages = new ArrayList<>();
 
     /**
      * Asks to keep or release a message as the user would from the panel's control.
@@ -54,10 +53,5 @@ public class TestKeepInContextAiChatPanel extends TestAiChatPanel implements Has
     @Override
     public void refreshKeepInContext(AiChatMessage message) {
         refreshedMessages.add(message);
-    }
-
-    @Override
-    public void scrollToMessage(AiChatMessage message) {
-        scrolledToMessages.add(message);
     }
 }

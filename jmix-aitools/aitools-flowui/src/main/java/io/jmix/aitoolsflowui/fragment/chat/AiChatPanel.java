@@ -110,6 +110,13 @@ public interface AiChatPanel {
     void appendUserMessage(AiChatMessage message);
 
     /**
+     * Brings a message into view. Does nothing if the message is not shown.
+     *
+     * @param message message to show
+     */
+    void scrollToMessage(AiChatMessage message);
+
+    /**
      * Shows the response as running after the shown messages, without statuses yet.
      */
     void showResponseRunning();

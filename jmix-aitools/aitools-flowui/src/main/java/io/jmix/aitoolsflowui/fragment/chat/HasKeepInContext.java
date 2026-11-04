@@ -52,13 +52,6 @@ public interface HasKeepInContext {
     void refreshKeepInContext(AiChatMessage message);
 
     /**
-     * Brings a message into view. Does nothing if the message is not shown.
-     *
-     * @param message message to show
-     */
-    void scrollToMessage(AiChatMessage message);
-
-    /**
      * Receives the user's request to keep a message in the assistant's context or to release it.
      */
     @FunctionalInterface

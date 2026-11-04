@@ -43,6 +43,7 @@ public class TestAiChatPanel extends Div implements AiChatPanel, HasAiAvatarIcon
     @Nullable
     public Runnable retryHandler;
     public final List<AiChatMessage> shownMessages = new ArrayList<>();
+    public final List<AiChatMessage> scrolledToMessages = new ArrayList<>();
     public int showMessagesCalls;
     public boolean lockedWhileResponding = true;
     public boolean responseRunning;
@@ -115,6 +116,11 @@ public class TestAiChatPanel extends Div implements AiChatPanel, HasAiAvatarIcon
     @Override
     public void appendUserMessage(AiChatMessage message) {
         shownMessages.add(message);
+    }
+
+    @Override
+    public void scrollToMessage(AiChatMessage message) {
+        scrolledToMessages.add(message);
     }
 
     @Override

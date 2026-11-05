@@ -17,7 +17,7 @@
 import { css } from '@vaadin/vaadin-themable-mixin/vaadin-themable-mixin.js';
 import { buttonStyles } from '@vaadin/button/src/styles/vaadin-button-base-styles.js';
 
-/* Copied from packages/app-layout/src/styles/vaadin-drawer-toggle-base-styles.js */
+/* CAUTION: copied from @vaadin/app-layout/src/styles/vaadin-drawer-toggle-base-styles.js [last update Vaadin 25.3.5] */
 export const jmixSidePanelLayoutCloser = css`
 
     [part='icon'] {

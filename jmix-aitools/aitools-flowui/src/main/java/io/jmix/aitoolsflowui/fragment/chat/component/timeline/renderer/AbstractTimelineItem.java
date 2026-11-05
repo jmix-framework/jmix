@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.aitoolsflowui.fragment.chat.renderer.component;
+package io.jmix.aitoolsflowui.fragment.chat.component.timeline.renderer;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Composite;

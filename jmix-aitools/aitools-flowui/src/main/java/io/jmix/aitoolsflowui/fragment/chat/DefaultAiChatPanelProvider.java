@@ -16,7 +16,7 @@
 
 package io.jmix.aitoolsflowui.fragment.chat;
 
-import io.jmix.aitoolsflowui.fragment.chat.timeline.TimelineChatPanel;
+import io.jmix.aitoolsflowui.fragment.chat.component.timeline.TimelineChatPanel;
 import io.jmix.aitoolsflowui.fragment.input.AiChatInputPanel;
 import io.jmix.aitoolsflowui.fragment.input.TextAreaChatInputPanel;
 import io.jmix.core.annotation.Experimental;

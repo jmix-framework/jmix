@@ -16,13 +16,12 @@
 
 package io.jmix.aitoolsflowui.fragment.chat.support;
 
-import io.jmix.aitoolsflowui.fragment.chat.timeline.TimelineItem;
-import io.jmix.aitoolsflowui.fragment.chat.timeline.TimelineItemType;
+import io.jmix.aitoolsflowui.fragment.chat.component.timeline.TimelineItem;
+import io.jmix.aitoolsflowui.fragment.chat.component.timeline.TimelineItemType;
 import io.jmix.aitoolsflowui.model.AiChatMessage;
 import io.jmix.aitoolsflowui.model.AiChatMessageType;
 import io.jmix.core.Metadata;
 import io.jmix.core.common.util.Preconditions;
-import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

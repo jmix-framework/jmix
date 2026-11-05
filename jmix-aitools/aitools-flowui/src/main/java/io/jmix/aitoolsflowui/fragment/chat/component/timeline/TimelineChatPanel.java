@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.aitoolsflowui.fragment.chat.timeline;
+package io.jmix.aitoolsflowui.fragment.chat.component.timeline;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.dependency.JsModule;
@@ -25,7 +25,7 @@ import io.jmix.aitools.tool.AiToolStatusUpdate;
 import io.jmix.aitoolsflowui.fragment.chat.AiChatPanel;
 import io.jmix.aitoolsflowui.fragment.chat.HasAiAvatarIcon;
 import io.jmix.aitoolsflowui.fragment.chat.HasKeepInContext;
-import io.jmix.aitoolsflowui.fragment.chat.renderer.TimelineItemRenderer;
+import io.jmix.aitoolsflowui.fragment.chat.component.timeline.renderer.TimelineItemRenderer;
 import io.jmix.aitoolsflowui.fragment.chat.support.TimelineItemFactory;
 import io.jmix.aitoolsflowui.fragment.input.AiChatInputFragment;
 import io.jmix.aitoolsflowui.model.AiChatMessage;
@@ -91,7 +91,7 @@ public class TimelineChatPanel extends Fragment<VerticalLayout> implements AiCha
     protected KeepInContextHandler keepInContextHandler;
 
     @Subscribe
-    public void onReady(final ReadyEvent event) {
+    protected void onReady(final ReadyEvent event) {
         timelineList.setRenderer(new ComponentRenderer<>(this::createTimelineRow, TimelineItemRenderer::setItem));
     }
 

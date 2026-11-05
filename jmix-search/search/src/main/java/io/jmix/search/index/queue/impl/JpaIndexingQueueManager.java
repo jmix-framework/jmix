@@ -313,7 +313,10 @@ public class JpaIndexingQueueManager implements IndexingQueueManager {
 
     @Override
     public int processNextBatch(int batchSize) {
-        return processQueue(batchSize, false);
+        long timeBudgetNanos = searchProperties.isProcessQueueMultipleBatchesEnabled()
+                ? searchProperties.getProcessQueueBatchTimeBudget().toNanos()
+                : 0;
+        return processQueue(batchSize, false, timeBudgetNanos);
     }
 
     @Override
@@ -454,6 +457,10 @@ public class JpaIndexingQueueManager implements IndexingQueueManager {
     }
 
     protected int processQueue(int batchSize, boolean processEntireQueue) {
+        return processQueue(batchSize, processEntireQueue, 0);
+    }
+
+    protected int processQueue(int batchSize, boolean processEntireQueue, long timeBudgetNanos) {
         if (batchSize <= 0) {
             throw new IllegalArgumentException("Size of queue processing batch must be positive");
         }
@@ -468,8 +475,10 @@ public class JpaIndexingQueueManager implements IndexingQueueManager {
         log.debug("Start processing queue");
         try {
             authenticator.begin();
+            long processingStartedAtNanos = currentTimeNanos();
 
             List<IndexingQueueItem> queueItems;
+            boolean fullBatchProcessed;
             do {
                 List<String> unavailableEntities = indexStateRegistry.getAllUnavailableIndexedEntities();
                 LoadContext<IndexingQueueItem> loadContext = createDequeueLoadContext(unavailableEntities, batchSize);
@@ -481,13 +490,19 @@ public class JpaIndexingQueueManager implements IndexingQueueManager {
                     break;
                 }
                 List<IndexingQueueItem> successfullyProcessedQueueItems = processQueueItems(queueItems);
+                fullBatchProcessed = successfullyProcessedQueueItems.size() == queueItems.size();
 
                 SaveContext saveContext = new SaveContext();
                 saveContext.removing(successfullyProcessedQueueItems);
                 dataManager.save(saveContext);
 
                 count += successfullyProcessedQueueItems.size();
-            } while (processEntireQueue && queueItems.size() == batchSize);
+            } while (processEntireQueue
+                    ? queueItems.size() == batchSize
+                    : timeBudgetNanos > 0
+                    && queueItems.size() == batchSize
+                    && fullBatchProcessed
+                    && currentTimeNanos() - processingStartedAtNanos < timeBudgetNanos);
         } finally {
             locker.unlockQueueProcessing();
             authenticator.end();
@@ -495,6 +510,10 @@ public class JpaIndexingQueueManager implements IndexingQueueManager {
 
         log.debug("{} queue items have been successfully processed", count);
         return count;
+    }
+
+    protected long currentTimeNanos() {
+        return System.nanoTime();
     }
 
     protected LoadContext<IndexingQueueItem> createDequeueLoadContext(List<String> unavailableEntities, int batchSize) {

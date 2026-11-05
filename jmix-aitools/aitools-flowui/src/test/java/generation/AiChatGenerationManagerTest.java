@@ -131,6 +131,42 @@ class AiChatGenerationManagerTest {
     }
 
     @Test
+    void start_keepInContext_savesQuestionKept() {
+        AiConversation conversation = conversationService.addConversation("Chat", "alice");
+
+        AiChatMessage question = TestAuthentication.callAs("alice", () -> manager.start(conversation, "Hi", true));
+
+        events.await(AiChatGenerationCompletedEvent.class);
+        assertTrue(question.getKeepInContext());
+        assertEquals(List.of(question.getId()), messageService.loadKeptInContextMessages(conversation).stream()
+                .map(AiChatMessage::getId)
+                .toList());
+    }
+
+    @Test
+    void start_keepInContextAtLimit_savesQuestionUnkept_andStillAnswers() {
+        AiConversation conversation = conversationService.addConversation("Chat", "alice");
+        messageService.setKeepInContextLimit(1);
+        messageService.createMessage(conversation, AiChatMessageType.USER, "Kept", true);
+
+        AiChatMessage question = TestAuthentication.callAs("alice", () -> manager.start(conversation, "Hi", true));
+
+        events.await(AiChatGenerationCompletedEvent.class);
+        assertFalse(Boolean.TRUE.equals(question.getKeepInContext()));
+        assertEquals(3, messageService.loadMessages(conversation).size());
+    }
+
+    @Test
+    void start_withoutKeepFlag_savesQuestionUnkept() {
+        AiConversation conversation = conversationService.addConversation("Chat", "alice");
+
+        AiChatMessage question = TestAuthentication.callAs("alice", () -> manager.start(conversation, "Hi"));
+
+        events.await(AiChatGenerationCompletedEvent.class);
+        assertFalse(Boolean.TRUE.equals(question.getKeepInContext()));
+    }
+
+    @Test
     void start_completed_answerPersistedAndEntryRemovedBeforeEvent() {
         AiConversation conversation = conversationService.addConversation("Chat", "alice");
         AtomicReference<Boolean> generatingAtEvent = new AtomicReference<>();

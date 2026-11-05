@@ -1,0 +1,58 @@
+/*
+ * Copyright 2026 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+.jmix-ai-chat-data-block {
+    background: var(--vaadin-background-container);
+    border: 1px solid var(--vaadin-border-color-secondary);
+    border-radius: var(--vaadin-radius-l);
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: var(--vaadin-gap-xs);
+    padding-block: var(--vaadin-padding-xs);
+    padding-inline: var(--vaadin-padding-s) var(--vaadin-padding-xs);
+    width: 100%;
+}
+
+.jmix-ai-chat-data-block-row {
+    align-items: center;
+    display: flex;
+    gap: var(--vaadin-gap-s);
+    min-width: 0;
+}
+
+.jmix-ai-chat-data-block-icon {
+    color: var(--vaadin-text-color-secondary);
+    flex: none;
+}
+
+.jmix-ai-chat-data-block-caption {
+    flex: 1 1 auto;
+    font-size: var(--aura-font-size-s);
+    font-weight: 600;
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.jmix-ai-chat-data-block-remove {
+    color: var(--vaadin-text-color-secondary);
+    flex: none;
+}
+
+.jmix-ai-chat-data-block-warning {
+    color: var(--aura-yellow-text);
+    font-size: var(--aura-font-size-xs);
+}

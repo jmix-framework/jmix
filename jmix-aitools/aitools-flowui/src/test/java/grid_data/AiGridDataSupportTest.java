@@ -231,7 +231,8 @@ class AiGridDataSupportTest {
         String caption = TestAuthentication.callAs("user",
                 () -> support.buildCaption("Orders", ExportMode.CURRENT_PAGE, 50));
 
-        assertEquals("Orders — rows of the current page: 50 (a fragment of the list, not all records)", caption);
+        assertEquals("Orders — rows of the current page the user is looking at: 50 (part of the list, not all records)."
+                + " Answer from this table; look up other data only if the table lacks what the answer needs.", caption);
     }
 
     @Test
@@ -239,7 +240,8 @@ class AiGridDataSupportTest {
         String caption = TestAuthentication.callAs("user",
                 () -> support.buildCaption("Orders", ExportMode.SELECTED_ROWS, 12));
 
-        assertEquals("Orders — selected rows: 12 (a fragment of the list, not all records)", caption);
+        assertEquals("Orders — rows the user selected on screen: 12 (part of the list, not all records)."
+                + " Answer from this table; look up other data only if the table lacks what the answer needs.", caption);
     }
 
     @Test

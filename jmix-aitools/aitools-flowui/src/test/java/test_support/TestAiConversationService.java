@@ -42,6 +42,9 @@ public class TestAiConversationService implements AiConversationService {
 
     protected final Map<UUID, AiConversation> conversations = new LinkedHashMap<>();
 
+    @Nullable
+    protected RuntimeException createFailure;
+
     /**
      * Creates a conversation with the given title and registers it, so that the chat and the hub views can
      * load it afterwards.
@@ -83,6 +86,16 @@ public class TestAiConversationService implements AiConversationService {
 
     public void clear() {
         conversations.clear();
+        createFailure = null;
+    }
+
+    /**
+     * Makes {@link #create()} throw, until {@link #clear()} or a call with {@code null}.
+     *
+     * @param exception exception to throw, or {@code null} to create conversations normally again
+     */
+    public void setCreateFailure(@Nullable RuntimeException exception) {
+        this.createFailure = exception;
     }
 
     /**
@@ -106,6 +119,9 @@ public class TestAiConversationService implements AiConversationService {
 
     @Override
     public AiConversation create() {
+        if (createFailure != null) {
+            throw createFailure;
+        }
         return addConversation("New chat");
     }
 

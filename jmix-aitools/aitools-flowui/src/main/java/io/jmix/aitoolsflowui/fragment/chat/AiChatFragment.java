@@ -41,8 +41,11 @@ import io.jmix.aitoolsflowui.generation.event.AiChatGenerationEvent;
 import io.jmix.aitoolsflowui.generation.event.AiChatGenerationFailedEvent;
 import io.jmix.aitoolsflowui.generation.event.AiChatGenerationProgressEvent;
 import io.jmix.aitoolsflowui.generation.event.AiChatGenerationStartedEvent;
+import io.jmix.aitoolsflowui.model.AiChatDataBlock;
 import io.jmix.aitoolsflowui.model.AiChatMessage;
 import io.jmix.aitoolsflowui.model.AiConversation;
+import io.jmix.aitoolsflowui.prompt.AiSuggestedPromptContext;
+import io.jmix.aitoolsflowui.prompt.AiSuggestedPromptManager;
 import io.jmix.aitoolsflowui.service.AiChatMessageService;
 import io.jmix.aitoolsflowui.service.AiChatService;
 import io.jmix.aitoolsflowui.service.AiConversationAutoTitleService;
@@ -50,6 +53,7 @@ import io.jmix.aitoolsflowui.service.AiConversationService;
 import io.jmix.aitoolsflowui.service.KeepInContextResult;
 import io.jmix.core.Messages;
 import io.jmix.core.annotation.Experimental;
+import io.jmix.core.annotation.Internal;
 import io.jmix.core.security.AccessDeniedException;
 import io.jmix.flowui.Actions;
 import io.jmix.flowui.Fragments;
@@ -115,6 +119,8 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
     protected Fragments fragments;
     @Autowired
     protected Actions actions;
+    @Autowired
+    protected AiSuggestedPromptManager suggestedPromptManager;
 
     @ViewComponent
     protected H3 conversationTitle;
@@ -187,6 +193,17 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
     @Nullable
     protected AiConversationTitleMode titleModeOverride;
 
+    @Nullable
+    private AiChatDataBlock dataBlock;
+    private List<String> dataBlockPrompts = List.of();
+
+    private boolean dataBlockUnsupportedWarned;
+
+    /**
+     * Whether the chat starts a new conversation with the first message, see {@link #isNewConversation()}.
+     */
+    private boolean newConversation;
+
     /**
      * Binds a conversation to the chat.
      *
@@ -198,6 +215,7 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
         boolean conversationChanged = !Objects.equals(this.conversation, conversation);
 
         this.conversation = conversation;
+        this.newConversation = false;
         if (renameAction != null) {
             renameAction.setConversation(conversation);
         }
@@ -219,6 +237,21 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
      */
     public void setConversationId(@Nullable UUID conversationId) {
         setConversation(conversationId != null ? loadConversation(conversationId) : null);
+    }
+
+    /**
+     * INTERNAL.
+     * <p>
+     * Returns whether the chat is a new conversation: no conversation is bound, yet the user can type, and the first
+     * message creates the conversation ({@link AiConversationCreatedEvent}). The chat becomes one when it gets a data
+     * block while no conversation is bound, and stays one when the user removes the block, until a conversation is
+     * bound. Nothing is stored until the first message is sent.
+     *
+     * @return {@code true} if the first message creates the conversation
+     */
+    @Internal
+    public boolean isNewConversation() {
+        return newConversation;
     }
 
     /**
@@ -251,6 +284,20 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
      */
     public Registration addTitleChangeListener(ComponentEventListener<AiConversationTitleChangeEvent> listener) {
         return getEventBus().addListener(AiConversationTitleChangeEvent.class, listener);
+    }
+
+    /**
+     * INTERNAL.
+     * <p>
+     * Adds a listener notified when the chat creates a conversation itself and binds it, which happens on the first
+     * message of a new conversation ({@link #isNewConversation()}).
+     *
+     * @param listener listener to add
+     * @return a registration for removing the listener
+     */
+    @Internal
+    public Registration addConversationCreatedListener(ComponentEventListener<AiConversationCreatedEvent> listener) {
+        return getEventBus().addListener(AiConversationCreatedEvent.class, listener);
     }
 
     /**
@@ -329,6 +376,54 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
     @Nullable
     public SerializableSupplier<Component> getAiAvatarIconSupplier() {
         return aiAvatarIconSupplier;
+    }
+
+    /**
+     * INTERNAL.
+     * <p>
+     * Sets the data to send with the user's next question, e.g. rows the user wants to ask about. The chat shows
+     * the block with suggested questions; picking one sends it with the data at once. The question and the data are
+     * sent as one message, kept in the assistant memory while it has room. After it is sent or the user removes it,
+     * the block is gone.
+     * <p>
+     * A block set while no conversation is bound makes the chat a new conversation ({@link #isNewConversation()}).
+     * While the chat is read-only or the AI is not available, the block is not shown but stays set. A panel that
+     * cannot show the block gets none: the block is ignored.
+     *
+     * @param dataBlock data to send with the next question, or {@code null} to drop the pending one
+     */
+    @Internal
+    public void setDataBlock(@Nullable AiChatDataBlock dataBlock) {
+        if (dataBlock != null && !(getChatPanel() instanceof HasAiChatDataBlock)) {
+            if (!dataBlockUnsupportedWarned) {
+                dataBlockUnsupportedWarned = true;
+                log.warn("Data block ignored: chat panel {} does not implement {}",
+                        getChatPanel().getClass().getName(), HasAiChatDataBlock.class.getSimpleName());
+            }
+            return;
+        }
+
+        this.dataBlock = dataBlock;
+        this.dataBlockPrompts = dataBlock != null ? resolveDataBlockPrompts(dataBlock) : List.of();
+
+        if (dataBlock != null && conversation == null) {
+            newConversation = true;
+        }
+
+        refreshInputVisibility();
+    }
+
+    /**
+     * INTERNAL.
+     * <p>
+     * Returns the data waiting to be sent with the user's next question.
+     *
+     * @return the pending data block, or {@code null} if there is none
+     */
+    @Internal
+    @Nullable
+    public AiChatDataBlock getDataBlock() {
+        return dataBlock;
     }
 
     @Subscribe
@@ -549,6 +644,8 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
         if (assistantMemory != null) {
             assistantMemory.setMessages(keptMessages);
         }
+
+        refreshDataBlockWarning();
     }
 
     protected Collection<AiChatMessage> loadKeptMessages() {
@@ -573,7 +670,8 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
     }
 
     /**
-     * Sends a non-blank user message and starts the assistant's response.
+     * Sends a non-blank user message and starts the assistant's response. A pending data block goes with the
+     * message, and in a new conversation the conversation is created first.
      *
      * @param userMessage the non-blank message text
      * @return {@code true} if the message was sent
@@ -583,7 +681,7 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
             log.debug("Ignoring a message while awaiting an assistant response");
             return false;
         }
-        if (conversation == null) {
+        if (conversation == null && !newConversation) {
             log.warn("Cannot submit message — no conversation bound to the fragment");
             return false;
         }
@@ -592,11 +690,23 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
             return false;
         }
 
+        AiConversation targetConversation = conversation != null ? conversation : createConversation();
+        if (targetConversation == null) {
+            return false;
+        }
+
         String trimmedMessage = userMessage.trim();
+        AiChatDataBlock sentDataBlock = dataBlock;
         boolean firstMessage = !messagesShown;
         AiChatMessage savedUserMessage;
         try {
-            savedUserMessage = generationManager.start(conversation, trimmedMessage);
+            if (sentDataBlock != null) {
+                // Kept in the assistant memory, so that the data is not forgotten as the conversation goes on.
+                String text = composeDataBlockMessage(trimmedMessage, sentDataBlock);
+                savedUserMessage = generationManager.start(targetConversation, text, true);
+            } else {
+                savedUserMessage = generationManager.start(targetConversation, trimmedMessage);
+            }
         } catch (AiChatGenerationRejectedException e) {
             log.debug("Not sent: a response is already running in conversation {}", e.getConversationId());
             resync();
@@ -609,7 +719,11 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
             return false;
         }
 
-        // Auto-titling happens on the first message only.
+        if (sentDataBlock != null) {
+            setDataBlock(null);
+        }
+
+        // Auto-titling happens on the first message only, by the question without the data.
         // It is optional and must never break sending.
         if (firstMessage) {
             try {
@@ -924,7 +1038,7 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
 
     protected void refreshInputVisibility() {
         boolean show = isEditable();
-        getChatPanel().setInputVisible(show);
+        getChatPanel().setInputVisible(isInputAvailable());
         if (getChatPanel() instanceof HasKeepInContext keepPanel) {
             keepPanel.setKeepInContextHandler(show ? this::changeKeepInContext : null);
         }
@@ -932,10 +1046,35 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
             assistantMemory.setReadOnly(!show);
         }
         refreshChatActions(show);
+        refreshDataBlock();
+        refreshSuggestedPrompts();
     }
 
     protected boolean isEditable() {
-        return conversation != null && !readOnly && chatService.isAvailable();
+        return conversation != null && isInputAvailable();
+    }
+
+    protected boolean isInputAvailable() {
+        return (conversation != null || newConversation) && !readOnly && chatService.isAvailable();
+    }
+
+    protected void refreshSuggestedPrompts() {
+        if (!(getChatPanel() instanceof HasAiChatSuggestedPrompts promptsPanel)) {
+            return;
+        }
+
+        List<String> prompts = isInputAvailable() ? getSuggestedPrompts() : List.of();
+        promptsPanel.setSuggestedPromptHandler(prompts.isEmpty() ? null : this::startMessage);
+        promptsPanel.setSuggestedPrompts(prompts);
+    }
+
+    /**
+     * Returns the questions to offer below the message input; picking one sends it as the user's message.
+     *
+     * @return questions to offer, or an empty list to offer none
+     */
+    protected List<String> getSuggestedPrompts() {
+        return dataBlock != null ? dataBlockPrompts : List.of();
     }
 
     protected void refreshChatActions(boolean editable) {
@@ -951,5 +1090,77 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
     @Nullable
     protected AiConversation loadConversation(UUID conversationId) {
         return conversationService.loadConversation(conversationId);
+    }
+
+    private String composeDataBlockMessage(String trimmedQuestion, AiChatDataBlock block) {
+        return trimmedQuestion + "\n\n" + block.getContent();
+    }
+
+    /**
+     * Creates a conversation for the first message and binds it, telling the host through
+     * {@link AiConversationCreatedEvent}. A failure is reported to the user.
+     *
+     * @return the created conversation, or {@code null} if it could not be created
+     */
+    @Nullable
+    private AiConversation createConversation() {
+        AiConversation created;
+        try {
+            created = conversationService.create();
+        } catch (RuntimeException e) {
+            log.error("Failed to create a conversation for the message", e);
+            notifications.create(getMessage("aiChatFragment.errorProcessingMessage"))
+                    .withType(Notifications.Type.ERROR)
+                    .show();
+            return null;
+        }
+
+        setConversation(created);
+
+        fireEvent(new AiConversationCreatedEvent(this, created));
+
+        return created;
+    }
+
+    private List<String> resolveDataBlockPrompts(AiChatDataBlock dataBlock) {
+        // The prompts the host chose for the block win over the suggested ones.
+        if (!dataBlock.getSuggestedPrompts().isEmpty()) {
+            return dataBlock.getSuggestedPrompts();
+        }
+
+        return suggestedPromptManager.getPrompts(new AiSuggestedPromptContext(conversation, dataBlock.getMetaClass()));
+    }
+
+    private void refreshDataBlock() {
+        if (!(getChatPanel() instanceof HasAiChatDataBlock blockPanel)) {
+            return;
+        }
+
+        AiChatDataBlock shownBlock = isInputAvailable() ? dataBlock : null;
+        blockPanel.setDataBlockRemoveHandler(shownBlock != null ? this::removeDataBlock : null);
+        if (shownBlock != null) {
+            blockPanel.showDataBlock(shownBlock.getCaption(), getDataBlockWarning());
+        } else {
+            blockPanel.hideDataBlock();
+        }
+    }
+
+    private void refreshDataBlockWarning() {
+        if (dataBlock != null
+                && isInputAvailable()
+                && getChatPanel() instanceof HasAiChatDataBlock blockPanel) {
+            blockPanel.showDataBlock(dataBlock.getCaption(), getDataBlockWarning());
+        }
+    }
+
+    @Nullable
+    private String getDataBlockWarning() {
+        return conversation != null && messageService.isKeepInContextLimitReached(conversation)
+                ? messages.getMessage("askAiAboutData.memoryFull")
+                : null;
+    }
+
+    private void removeDataBlock() {
+        setDataBlock(null);
     }
 }

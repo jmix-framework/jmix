@@ -21,6 +21,8 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.Route;
 import io.jmix.aitoolsflowui.fragment.chat.AiChatFragment;
+import io.jmix.aitoolsflowui.fragment.chat.AiConversationCreatedEvent;
+import io.jmix.aitoolsflowui.model.AiChatDataBlock;
 import io.jmix.aitoolsflowui.model.AiConversation;
 import io.jmix.aitoolsflowui.service.AiConversationService;
 import io.jmix.aitoolsflowui.view.chathub.AiChatHubView;
@@ -103,13 +105,14 @@ public class AiChatView extends StandardView {
         // dialog header) renders that title - so the chat must not repeat it.
         chatFragment.setTitleVisible(false);
         chatFragment.addTitleChangeListener(titleChangeEvent -> applyPageTitle(titleChangeEvent.getTitle()));
+        chatFragment.addConversationCreatedListener(this::onConversationCreated);
     }
 
     @Subscribe
     public void onReady(final ReadyEvent event) {
         contentInitialized = true;
         applyConversation();
-        if (conversation != null) {
+        if (conversation != null || chatFragment.isNewConversation()) {
             chatFragment.focusMessageInput();
         }
     }
@@ -126,6 +129,28 @@ public class AiChatView extends StandardView {
     public void setConversation(@Nullable AiConversation conversation) {
         this.conversation = conversation;
         this.conversationNotFound = false;
+        if (conversation == null && chatFragment.isNewConversation()) {
+            chatFragment.setConversation(null);
+        }
+        if (contentInitialized) {
+            applyConversation();
+        }
+    }
+
+    /**
+     * INTERNAL.
+     * <p>
+     * Hands the hosted fragment data to send with the user's next question. With no conversation bound, the chat
+     * is shown all the same as a new conversation, also after the user removes the data: the first message creates
+     * the conversation, after which the browser URL follows it (unless the view is opened in a dialog). Nothing is
+     * stored until the user sends a message.
+     *
+     * @param dataBlock data to send with the next question, or {@code null} to drop the pending one
+     * @see AiChatFragment#setDataBlock(AiChatDataBlock)
+     */
+    @Internal
+    public void setDataBlock(@Nullable AiChatDataBlock dataBlock) {
+        chatFragment.setDataBlock(dataBlock);
         if (contentInitialized) {
             applyConversation();
         }
@@ -153,12 +178,22 @@ public class AiChatView extends StandardView {
             return;
         }
         UUID id = parseConversationId(rawId.get());
+        if (id != null && conversation != null && id.equals(conversation.getId())) {
+            return;
+        }
+
+        // The router reuses this view for another conversation; the data
+        // the chat was opened with must not go to that one.
+        if (chatFragment.getDataBlock() != null) {
+            chatFragment.setDataBlock(null);
+        }
+        if (chatFragment.isNewConversation()) {
+            chatFragment.setConversation(null);
+        }
+
         if (id == null) {
             this.conversation = null;
             this.conversationNotFound = true;
-            return;
-        }
-        if (conversation != null && id.equals(conversation.getId())) {
             return;
         }
         AiConversation loaded = conversationService.loadConversation(id);
@@ -188,9 +223,11 @@ public class AiChatView extends StandardView {
 
     protected void applyConversation() {
         boolean hasConversation = conversation != null;
-        chatFragment.setVisible(hasConversation);
-        notFoundLayout.setVisible(conversationNotFound);
-        emptyLayout.setVisible(!hasConversation && !conversationNotFound);
+        // Opened with data to ask about, the chat starts a conversation itself.
+        boolean chatShown = hasConversation || chatFragment.isNewConversation();
+        chatFragment.setVisible(chatShown);
+        notFoundLayout.setVisible(!chatShown && conversationNotFound);
+        emptyLayout.setVisible(!chatShown && !conversationNotFound);
         if (hasConversation) {
             chatFragment.setConversation(conversation);
             syncUrl();
@@ -232,5 +269,11 @@ public class AiChatView extends StandardView {
             log.warn("Malformed AI conversation id '{}' in the chat route", rawId);
             return null;
         }
+    }
+
+    private void onConversationCreated(AiConversationCreatedEvent event) {
+        conversation = event.getConversation();
+        conversationNotFound = false;
+        syncUrl();
     }
 }

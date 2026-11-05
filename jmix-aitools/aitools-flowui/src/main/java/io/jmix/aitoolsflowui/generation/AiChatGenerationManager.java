@@ -161,6 +161,27 @@ public class AiChatGenerationManager {
      * @throws RejectedExecutionException        if the manager is shutting down; the user message is already saved
      */
     public AiChatMessage start(AiConversation conversation, String text) {
+        return start(conversation, text, false);
+    }
+
+    /**
+     * Saves the user's message, kept in the assistant's context if asked, and starts generating the assistant's
+     * answer to it in the background. The same rules as for {@link #start(AiConversation, String)} apply.
+     * <p>
+     * When the conversation already keeps as many messages as it can, the message is saved without being kept and
+     * the answer is still started; the returned message tells whether it is kept.
+     *
+     * @param conversation  conversation to answer in, accessible to the current user
+     * @param text          text of the user's message
+     * @param keepInContext {@code true} to keep the message in the assistant's context
+     * @return the saved user message
+     * @throws IllegalStateException             if AI chat is not configured
+     * @throws AccessDeniedException             if the conversation does not exist or is not accessible to the
+     *                                           current user; nothing is saved
+     * @throws AiChatGenerationRejectedException if a response is already running in the conversation
+     * @throws RejectedExecutionException        if the manager is shutting down; the user message is already saved
+     */
+    public AiChatMessage start(AiConversation conversation, String text, boolean keepInContext) {
         Preconditions.checkNotNullArgument(conversation);
         Preconditions.checkNotEmptyString(text);
 
@@ -171,7 +192,7 @@ public class AiChatGenerationManager {
         checkAccess(conversation);
 
         Generation generation = reserve(conversation);
-        AiChatMessage userMessage = saveUserMessage(generation, conversation, text);
+        AiChatMessage userMessage = saveUserMessage(generation, conversation, text, keepInContext);
 
         submit(generation, conversation, userMessage);
 
@@ -314,9 +335,10 @@ public class AiChatGenerationManager {
         return generation;
     }
 
-    protected AiChatMessage saveUserMessage(Generation generation, AiConversation conversation, String text) {
+    protected AiChatMessage saveUserMessage(Generation generation, AiConversation conversation, String text,
+                                            boolean keepInContext) {
         try {
-            return messageService.createMessage(conversation, AiChatMessageType.USER, text);
+            return messageService.createMessage(conversation, AiChatMessageType.USER, text, keepInContext);
         } catch (RuntimeException e) {
             generationsByConversation.remove(generation.conversationId, generation);
             throw e;

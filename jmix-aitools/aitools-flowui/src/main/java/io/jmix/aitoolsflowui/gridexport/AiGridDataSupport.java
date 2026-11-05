@@ -102,7 +102,7 @@ public class AiGridDataSupport {
     }
 
     /**
-     * Builds the caption that tells the model how much of the list it is looking at.
+     * Builds the caption that tells the model which part of the list the user is looking at and to answer from it.
      *
      * @param title    title of the list, e.g. the entity name or the view title
      * @param mode     how the rows were taken, {@link ExportMode#CURRENT_PAGE} or {@link ExportMode#SELECTED_ROWS}

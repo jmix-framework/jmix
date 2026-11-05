@@ -20,11 +20,17 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
+import com.vaadin.flow.function.SerializableConsumer;
+import com.vaadin.flow.function.SerializableRunnable;
 import com.vaadin.flow.function.SerializableSupplier;
 import io.jmix.aitools.tool.AiToolStatusUpdate;
 import io.jmix.aitoolsflowui.fragment.chat.AiChatPanel;
 import io.jmix.aitoolsflowui.fragment.chat.HasAiAvatarIcon;
+import io.jmix.aitoolsflowui.fragment.chat.HasAiChatDataBlock;
+import io.jmix.aitoolsflowui.fragment.chat.HasAiChatSuggestedPrompts;
 import io.jmix.aitoolsflowui.fragment.chat.HasKeepInContext;
+import io.jmix.aitoolsflowui.fragment.chat.component.AiChatDataBlockChip;
+import io.jmix.aitoolsflowui.fragment.chat.component.AiChatSuggestions;
 import io.jmix.aitoolsflowui.fragment.chat.component.timeline.renderer.TimelineItemRenderer;
 import io.jmix.aitoolsflowui.fragment.chat.support.TimelineItemFactory;
 import io.jmix.aitoolsflowui.fragment.input.AiChatInputFragment;
@@ -32,7 +38,9 @@ import io.jmix.aitoolsflowui.model.AiChatMessage;
 import io.jmix.aitoolsflowui.model.AiChatMessageType;
 import io.jmix.core.DataManager;
 import io.jmix.core.TimeSource;
+import io.jmix.core.annotation.Internal;
 import io.jmix.flowui.Fragments;
+import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.component.virtuallist.JmixVirtualList;
 import io.jmix.flowui.fragment.Fragment;
 import io.jmix.flowui.fragment.FragmentDescriptor;
@@ -57,10 +65,12 @@ import java.util.stream.Collectors;
 @FragmentDescriptor("timeline-chat-panel.xml")
 @JsModule("./aitools/ai-chat-timeline-scroll.js")
 public class TimelineChatPanel extends Fragment<VerticalLayout> implements AiChatPanel, HasAiAvatarIcon,
-        HasKeepInContext {
+        HasKeepInContext, HasAiChatDataBlock, HasAiChatSuggestedPrompts {
 
     protected static final String KEEP_IN_CONTEXT_ENABLED_CN = "timeline-keep-in-context-enabled";
 
+    @Autowired
+    protected UiComponents uiComponents;
     @Autowired
     protected DataManager dataManager;
     @Autowired
@@ -89,6 +99,16 @@ public class TimelineChatPanel extends Fragment<VerticalLayout> implements AiCha
 
     @Nullable
     protected KeepInContextHandler keepInContextHandler;
+
+    @Nullable
+    private AiChatDataBlockChip dataBlockChip;
+    @Nullable
+    private SerializableRunnable dataBlockRemoveHandler;
+
+    @Nullable
+    private AiChatSuggestions suggestions;
+    @Nullable
+    private SerializableConsumer<String> suggestedPromptHandler;
 
     @Subscribe
     protected void onReady(final ReadyEvent event) {
@@ -156,6 +176,77 @@ public class TimelineChatPanel extends Fragment<VerticalLayout> implements AiCha
 
         // Rows always render the control; the class shows it, so no row has to be redrawn.
         timelineList.setClassName(KEEP_IN_CONTEXT_ENABLED_CN, handler != null);
+    }
+
+    /**
+     * INTERNAL.
+     * <p>
+     * {@inheritDoc}
+     */
+    @Internal
+    @Override
+    public void showDataBlock(String caption, @Nullable String warning) {
+        if (dataBlockChip == null) {
+            dataBlockChip = uiComponents.create(AiChatDataBlockChip.class);
+            dataBlockChip.setRemoveHandler(this::onDataBlockRemove);
+        }
+        dataBlockChip.setCaption(caption);
+        dataBlockChip.setWarning(warning);
+
+        // The chip sits right above the input.
+        if (dataBlockChip.getParent().isEmpty()) {
+            chatInputContainer.addComponentAtIndex(chatInputContainer.indexOf(chatInput), dataBlockChip);
+        }
+    }
+
+    /**
+     * INTERNAL.
+     * <p>
+     * {@inheritDoc}
+     */
+    @Internal
+    @Override
+    public void hideDataBlock() {
+        if (dataBlockChip != null) {
+            chatInputContainer.remove(dataBlockChip);
+        }
+    }
+
+    /**
+     * INTERNAL.
+     * <p>
+     * {@inheritDoc}
+     */
+    @Internal
+    @Override
+    public void setDataBlockRemoveHandler(@Nullable SerializableRunnable handler) {
+        this.dataBlockRemoveHandler = handler;
+    }
+
+    @Override
+    public void setSuggestedPrompts(List<String> prompts) {
+        if (prompts.isEmpty()) {
+            if (suggestions != null) {
+                chatInputContainer.remove(suggestions);
+            }
+            return;
+        }
+
+        if (suggestions == null) {
+            suggestions = uiComponents.create(AiChatSuggestions.class);
+            suggestions.addItemClickListener(this::onSuggestionClick);
+        }
+        suggestions.setItems(prompts);
+
+        // The suggestions sit right below the input.
+        if (suggestions.getParent().isEmpty()) {
+            chatInputContainer.addComponentAtIndex(chatInputContainer.indexOf(chatInput) + 1, suggestions);
+        }
+    }
+
+    @Override
+    public void setSuggestedPromptHandler(@Nullable SerializableConsumer<String> handler) {
+        this.suggestedPromptHandler = handler;
     }
 
     protected void requestKeepInContext(AiChatMessage message, boolean keep) {
@@ -343,5 +434,17 @@ public class TimelineChatPanel extends Fragment<VerticalLayout> implements AiCha
         timelineStatus.setMessage(statusUpdate.getMessage());
         timelineStatus.setResultSnippet(statusUpdate.getResultSnippet());
         return timelineStatus;
+    }
+
+    private void onDataBlockRemove() {
+        if (dataBlockRemoveHandler != null) {
+            dataBlockRemoveHandler.run();
+        }
+    }
+
+    private void onSuggestionClick(AiChatSuggestions.ItemClickEvent event) {
+        if (suggestedPromptHandler != null) {
+            suggestedPromptHandler.accept(event.getItem());
+        }
     }
 }

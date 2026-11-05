@@ -51,11 +51,9 @@ public class TestSpringVaadinServletService extends SpringVaadinServletService {
         return false;
     }
 
-    /*
-     * CAUTION! Copied from com.vaadin.flow.spring.SpringVaadinServletService#createDefaultExecutor() Last update 25.1.0.
-     */
     @Override
     protected Executor createDefaultExecutor() {
+        // CAUTION: copied from com.vaadin.flow.spring.SpringVaadinServletService.createDefaultExecutor [last update Vaadin 25.1.0]
         Set<String> candidates = Arrays
                 .stream(context.getBeanNamesForType(TaskExecutor.class))
                 .collect(Collectors.toCollection(HashSet::new));

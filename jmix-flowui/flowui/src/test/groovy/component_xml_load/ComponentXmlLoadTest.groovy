@@ -83,7 +83,7 @@ class ComponentXmlLoadTest extends FlowuiTestSpecification {
         verifyAll(componentView.iconId) {
             id.get() == "iconId"
             classNames.containsAll(["cssClassName1", "cssClassName2"])
-            style.get("color") == "red"
+            style.get("background-color") == "red"
             color == "purple"
             getElement().getAttribute("icon") == "vaadin:check"
             getStyle().get(ElementConstants.STYLE_WIDTH) == "2em"
@@ -100,7 +100,7 @@ class ComponentXmlLoadTest extends FlowuiTestSpecification {
         verifyAll(componentView.svgIconId) {
             id.get() == "svgIconId"
             classNames.containsAll(["cssClassName1", "cssClassName2"])
-            style.get("color") == "red"
+            style.get("background-color") == "red"
             color == "purple"
             src == "resourceString"
             symbol == "code-branch"

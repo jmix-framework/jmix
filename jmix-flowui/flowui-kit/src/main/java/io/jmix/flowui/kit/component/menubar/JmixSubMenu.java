@@ -26,7 +26,7 @@ import com.vaadin.flow.component.contextmenu.SubMenu;
 import com.vaadin.flow.function.SerializableRunnable;
 import io.jmix.flowui.kit.component.contextmenu.JmixMenuManager;
 
-// CAUTION: copied from com.vaadin.flow.component.contextmenu.SubMenu [last update Vaadin 25.3.0]
+// CAUTION: copied from com.vaadin.flow.component.contextmenu.SubMenu [last update Vaadin 25.3.5]
 public class JmixSubMenu extends SubMenu implements HasMenuItemsEnhanced {
 
     protected final SerializableRunnable contentReset;

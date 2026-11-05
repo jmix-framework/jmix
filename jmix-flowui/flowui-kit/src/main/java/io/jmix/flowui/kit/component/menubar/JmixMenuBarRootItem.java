@@ -19,7 +19,7 @@ package io.jmix.flowui.kit.component.menubar;
 import com.vaadin.flow.component.shared.Tooltip.TooltipPosition;
 import com.vaadin.flow.function.SerializableRunnable;
 
-// CAUTION: copied from com.vaadin.flow.component.menubar.MenuBarRootItem [last update Vaadin 25.3.0]
+// CAUTION: copied from com.vaadin.flow.component.menubar.MenuBarRootItem [last update Vaadin 25.3.5]
 public class JmixMenuBarRootItem extends JmixMenuBarItem {
 
     JmixMenuBarRootItem(JmixMenuBar menuBar, SerializableRunnable contentReset) {

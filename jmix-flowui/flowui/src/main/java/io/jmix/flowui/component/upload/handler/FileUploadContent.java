@@ -34,7 +34,7 @@ import java.util.Optional;
  * Tracks every stream it hands out and is {@link AutoCloseable}, so the handler can close them before deleting
  * the file of a rejected upload.
  */
-// CAUTION: copied from com.vaadin.flow.server.streams.FileUploadContent [last update Vaadin 25.3.0]
+// CAUTION: copied from com.vaadin.flow.server.streams.FileUploadContent [last update Vaadin 25.3.5]
 class FileUploadContent implements UploadContent, AutoCloseable {
 
     private final File file;

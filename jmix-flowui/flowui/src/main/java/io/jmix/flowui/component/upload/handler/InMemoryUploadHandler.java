@@ -50,7 +50,7 @@ public class InMemoryUploadHandler
 
     @Override
     public void handleUploadRequest(UploadEvent event) throws IOException {
-        // CAUTION: copied from com.vaadin.flow.server.streams.InMemoryUploadHandler [last update Vaadin 25.3.0]
+        // CAUTION: copied from com.vaadin.flow.server.streams.InMemoryUploadHandler [last update Vaadin 25.3.5]
         setTransferUI(event.getUI());
         byte[] data = null;
         try {
@@ -115,7 +115,7 @@ public class InMemoryUploadHandler
      * @throws IOException if reading the upload or a validator fails
      */
     protected byte @Nullable [] readContent(UploadEvent event) throws IOException {
-        // CAUTION: copied from com.vaadin.flow.server.streams.InMemoryUploadHandler [last update Vaadin 25.3.0]
+        // CAUTION: copied from com.vaadin.flow.server.streams.InMemoryUploadHandler [last update Vaadin 25.3.5]
         runMetadataValidators(event);
         if (event.isRejected()) {
             return null;

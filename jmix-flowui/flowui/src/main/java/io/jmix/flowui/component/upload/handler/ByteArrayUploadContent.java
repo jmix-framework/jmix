@@ -27,7 +27,7 @@ import java.util.Optional;
  * {@link UploadContent} backed by an in-memory {@code byte[]}, used by {@link InMemoryUploadHandler} for the
  * complete-validation phase. Reuses the given array without copying it.
  */
-// CAUTION: copied from com.vaadin.flow.server.streams.ByteArrayUploadContent [last update Vaadin 25.3.0]
+// CAUTION: copied from com.vaadin.flow.server.streams.ByteArrayUploadContent [last update Vaadin 25.3.5]
 class ByteArrayUploadContent implements UploadContent {
 
     private final byte[] data;

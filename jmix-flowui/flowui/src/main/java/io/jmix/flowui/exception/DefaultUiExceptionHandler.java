@@ -64,7 +64,6 @@ public class DefaultUiExceptionHandler implements ApplicationContextAware {
      * @return {@code true} if the exception is handled; {@code false} if not handled
      */
     public boolean handle(Throwable exception) {
-        // Copied from com.vaadin.flow.server.DefaultErrorHandler#error(ErrorEvent)
         if (exception instanceof InvalidLocationException) {
             log.warn("", exception);
             return true;

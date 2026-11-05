@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  ~ Copyright 2026 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+<view xmlns="http://jmix.io/schema/flowui/view"
+      xmlns:c="http://jmix.io/schema/flowui/jpql-condition">
+    <data>
+        <collection id="gfOrdersDc" class="test_support.entity.sales.Order">
+            <fetchPlan extends="_base"/>
+            <loader id="gfOrdersDl">
+                <query>
+                    <![CDATA[select e from test_Order e]]>
+                    <condition>
+                        <or>
+                            <c:jpql>
+                                <c:where>{E}.number = 'OB_NEW'</c:where>
+                            </c:jpql>
+                            <c:jpql>
+                                <c:where>{E}.number = 'OB_IN_PROGRESS'</c:where>
+                            </c:jpql>
+                        </or>
+                    </condition>
+                </query>
+            </loader>
+        </collection>
+        <collection id="groupOrdersDc" class="test_support.entity.sales.Order">
+            <fetchPlan extends="_base"/>
+            <loader id="groupOrdersDl">
+                <query>
+                    <![CDATA[select e from test_Order e]]>
+                    <condition>
+                        <or>
+                            <c:jpql>
+                                <c:where>{E}.number = 'OB_NEW'</c:where>
+                            </c:jpql>
+                            <c:jpql>
+                                <c:where>{E}.number = 'OB_IN_PROGRESS'</c:where>
+                            </c:jpql>
+                        </or>
+                    </condition>
+                </query>
+            </loader>
+        </collection>
+        <collection id="propertyOrdersDc" class="test_support.entity.sales.Order">
+            <fetchPlan extends="_base"/>
+            <loader id="propertyOrdersDl">
+                <query>
+                    <![CDATA[select e from test_Order e]]>
+                    <condition>
+                        <or>
+                            <c:jpql>
+                                <c:where>{E}.number = 'OB_NEW'</c:where>
+                            </c:jpql>
+                            <c:jpql>
+                                <c:where>{E}.number = 'OB_IN_PROGRESS'</c:where>
+                            </c:jpql>
+                        </or>
+                    </condition>
+                </query>
+            </loader>
+        </collection>
+        <collection id="jpqlOrdersDc" class="test_support.entity.sales.Order">
+            <fetchPlan extends="_base"/>
+            <loader id="jpqlOrdersDl">
+                <query>
+                    <![CDATA[select e from test_Order e]]>
+                    <condition>
+                        <or>
+                            <c:jpql>
+                                <c:where>{E}.number = 'OB_NEW'</c:where>
+                            </c:jpql>
+                            <c:jpql>
+                                <c:where>{E}.number = 'OB_IN_PROGRESS'</c:where>
+                            </c:jpql>
+                        </or>
+                    </condition>
+                </query>
+            </loader>
+        </collection>
+        <collection id="gridOrdersDc" class="test_support.entity.sales.Order">
+            <fetchPlan extends="_base"/>
+            <loader id="gridOrdersDl">
+                <query>
+                    <![CDATA[select e from test_Order e]]>
+                    <condition>
+                        <or>
+                            <c:jpql>
+                                <c:where>{E}.number = 'OB_NEW'</c:where>
+                            </c:jpql>
+                            <c:jpql>
+                                <c:where>{E}.number = 'OB_IN_PROGRESS'</c:where>
+                            </c:jpql>
+                        </or>
+                    </condition>
+                </query>
+            </loader>
+        </collection>
+        <collection id="gridGfOrdersDc" class="test_support.entity.sales.Order">
+            <fetchPlan extends="_base"/>
+            <loader id="gridGfOrdersDl">
+                <query>
+                    <![CDATA[select e from test_Order e]]>
+                    <condition>
+                        <or>
+                            <c:jpql>
+                                <c:where>{E}.number = 'OB_NEW'</c:where>
+                            </c:jpql>
+                            <c:jpql>
+                                <c:where>{E}.number = 'OB_IN_PROGRESS'</c:where>
+                            </c:jpql>
+                        </or>
+                    </condition>
+                </query>
+            </loader>
+        </collection>
+        <collection id="andGfOrdersDc" class="test_support.entity.sales.Order">
+            <fetchPlan extends="_base"/>
+            <loader id="andGfOrdersDl">
+                <query>
+                    <![CDATA[select e from test_Order e]]>
+                    <condition>
+                        <and>
+                            <c:jpql>
+                                <c:where>{E}.number is not null</c:where>
+                            </c:jpql>
+                            <c:jpql>
+                                <c:where>{E}.amount is not null</c:where>
+                            </c:jpql>
+                        </and>
+                    </condition>
+                </query>
+            </loader>
+        </collection>
+        <collection id="andPropertyOrdersDc" class="test_support.entity.sales.Order">
+            <fetchPlan extends="_base"/>
+            <loader id="andPropertyOrdersDl">
+                <query>
+                    <![CDATA[select e from test_Order e]]>
+                    <condition>
+                        <and>
+                            <c:jpql>
+                                <c:where>{E}.number is not null</c:where>
+                            </c:jpql>
+                            <c:jpql>
+                                <c:where>{E}.amount is not null</c:where>
+                            </c:jpql>
+                        </and>
+                    </condition>
+                </query>
+            </loader>
+        </collection>
+    </data>
+    <layout>
+        <genericFilter id="genericFilter" dataLoader="gfOrdersDl">
+            <configurations>
+                <configuration id="byNumber" name="By number" default="true">
+                    <propertyFilter property="number" operation="EQUAL"/>
+                </configuration>
+            </configurations>
+        </genericFilter>
+
+        <groupFilter id="groupFilter" operation="AND" dataLoader="groupOrdersDl">
+            <propertyFilter property="number" operation="EQUAL"/>
+        </groupFilter>
+
+        <propertyFilter id="numberFilter" property="number" operation="EQUAL" dataLoader="propertyOrdersDl"/>
+        <propertyFilter id="amountFilter" property="amount" operation="GREATER" dataLoader="propertyOrdersDl"/>
+
+        <jpqlFilter id="jpqlFilter" parameterClass="java.lang.Void" dataLoader="jpqlOrdersDl">
+            <condition>
+                <c:jpql>
+                    <c:where>{E}.amount is not null</c:where>
+                </c:jpql>
+            </condition>
+        </jpqlFilter>
+
+        <dataGrid id="gridOrdersGrid" dataContainer="gridOrdersDc">
+            <columns>
+                <column property="number" filterable="true"/>
+                <column property="amount"/>
+            </columns>
+        </dataGrid>
+
+        <genericFilter id="gridGenericFilter" dataLoader="gridGfOrdersDl">
+            <configurations>
+                <configuration id="byAmount" name="By amount" default="true">
+                    <propertyFilter property="amount" operation="GREATER"/>
+                </configuration>
+            </configurations>
+        </genericFilter>
+        <dataGrid id="gridGfOrdersGrid" dataContainer="gridGfOrdersDc">
+            <columns>
+                <column property="number" filterable="true"/>
+                <column property="amount"/>
+            </columns>
+        </dataGrid>
+
+        <genericFilter id="andGenericFilter" dataLoader="andGfOrdersDl">
+            <configurations>
+                <configuration id="byNumber" name="By number" default="true">
+                    <propertyFilter property="number" operation="EQUAL"/>
+                </configuration>
+            </configurations>
+        </genericFilter>
+
+        <propertyFilter id="andNumberFilter" property="number" operation="EQUAL" dataLoader="andPropertyOrdersDl"/>
+    </layout>
+</view>

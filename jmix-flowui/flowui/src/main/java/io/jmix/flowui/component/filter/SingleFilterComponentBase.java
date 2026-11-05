@@ -182,7 +182,9 @@ public abstract class SingleFilterComponentBase<V> extends CustomField<V>
             dataLoader.setCondition(rootCondition);
         }
 
-        if (!(rootCondition instanceof LogicalCondition)) {
+        // An 'or' group or a single condition is wrapped: appending to an 'or' group would widen it.
+        if (!(rootCondition instanceof LogicalCondition logicalCondition)
+                || logicalCondition.getType() != LogicalCondition.Type.AND) {
             rootCondition = LogicalCondition.and().add(rootCondition);
             dataLoader.setCondition(rootCondition);
         }

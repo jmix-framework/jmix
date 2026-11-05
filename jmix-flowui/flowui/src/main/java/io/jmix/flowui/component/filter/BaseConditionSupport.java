@@ -69,10 +69,11 @@ public final class BaseConditionSupport {
         }
 
         LogicalCondition loaderCondition;
-        if (base instanceof LogicalCondition logicalBase) {
+        if (base instanceof LogicalCondition logicalBase && logicalBase.getType() == LogicalCondition.Type.AND) {
             loaderCondition = (LogicalCondition) copy.apply(logicalBase);
             loaderCondition.add(filterCondition);
         } else if (base != null) {
+            // An 'or' group or a single condition: adding the filter's output to an 'or' group would widen it.
             loaderCondition = LogicalCondition.and()
                     .add(base)
                     .add(filterCondition);

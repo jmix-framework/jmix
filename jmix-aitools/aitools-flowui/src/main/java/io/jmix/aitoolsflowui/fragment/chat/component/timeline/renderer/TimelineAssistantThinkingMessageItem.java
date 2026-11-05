@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.aitoolsflowui.fragment.chat.renderer.component;
+package io.jmix.aitoolsflowui.fragment.chat.component.timeline.renderer;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.html.Div;
@@ -23,8 +23,8 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.function.SerializableSupplier;
 import io.jmix.aitools.tool.AiToolStatusPublisher;
 import io.jmix.aitools.tool.AiToolStatusUpdate;
-import io.jmix.aitoolsflowui.fragment.chat.timeline.TimelineItem;
-import io.jmix.aitoolsflowui.fragment.chat.timeline.TimelineItemStatus;
+import io.jmix.aitoolsflowui.fragment.chat.component.timeline.TimelineItem;
+import io.jmix.aitoolsflowui.fragment.chat.component.timeline.TimelineItemStatus;
 import io.jmix.core.Messages;
 import io.jmix.core.Metadata;
 import org.jspecify.annotations.NullMarked;

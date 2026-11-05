@@ -15,6 +15,6 @@
  */
 
 @Internal
-package io.jmix.aitoolsflowui.fragment.chat.renderer;
+package io.jmix.aitoolsflowui.fragment.chat.component.timeline;
 
 import io.jmix.core.annotation.Internal;

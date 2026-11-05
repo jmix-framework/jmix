@@ -14,20 +14,16 @@
  * limitations under the License.
  */
 
-package io.jmix.aitoolsflowui.fragment.chat.renderer;
+package io.jmix.aitoolsflowui.fragment.chat.component.timeline.renderer;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.function.SerializableSupplier;
 import io.jmix.aitoolsflowui.fragment.chat.AiChatFragment;
-import io.jmix.aitoolsflowui.fragment.chat.renderer.component.AbstractTimelineItem;
-import io.jmix.aitoolsflowui.fragment.chat.renderer.component.TimelineAssistantMessageItem;
-import io.jmix.aitoolsflowui.fragment.chat.renderer.component.TimelineAssistantThinkingMessageItem;
-import io.jmix.aitoolsflowui.fragment.chat.renderer.component.TimelineUserMessageItem;
 import io.jmix.aitoolsflowui.fragment.chat.support.ActorNameResolver;
 import io.jmix.aitoolsflowui.fragment.chat.support.ChatDateTimeSupport;
-import io.jmix.aitoolsflowui.fragment.chat.timeline.TimelineItem;
-import io.jmix.aitoolsflowui.fragment.chat.timeline.TimelineItemType;
+import io.jmix.aitoolsflowui.fragment.chat.component.timeline.TimelineItem;
+import io.jmix.aitoolsflowui.fragment.chat.component.timeline.TimelineItemType;
 import io.jmix.aitoolsflowui.icon.AiIconProvider;
 import io.jmix.aitoolsflowui.model.AiChatMessage;
 import io.jmix.core.Messages;

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.aitoolsflowui.fragment.chat.timeline;
+package io.jmix.aitoolsflowui.fragment.chat.component.timeline;
 
 import io.jmix.core.metamodel.datatype.EnumClass;
 

@@ -22,6 +22,7 @@ import com.vaadin.flow.data.provider.Query;
 import com.vaadin.flow.function.SerializableComparator;
 import com.vaadin.flow.function.SerializablePredicate;
 import com.vaadin.flow.shared.Registration;
+import io.jmix.core.common.event.Subscription;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.flowui.data.BindingState;
@@ -34,6 +35,7 @@ import io.jmix.flowui.model.DataLoader;
 import io.jmix.flowui.model.HasLoader;
 import org.jspecify.annotations.Nullable;
 
+import java.lang.ref.WeakReference;
 import java.util.Comparator;
 import java.util.Objects;
 import java.util.Optional;
@@ -45,6 +47,10 @@ import java.util.stream.Stream;
  * This class allows interaction with the underlying data collection, enabling
  * querying, filtering, and sorting operations, as well as propagating changes
  * from the container to listeners.
+ * <p>
+ * The container references the data provider weakly, so that it does not keep the provider and the components
+ * that use it in memory. Keep a reference to the provider, for example by setting it to a component, for as long
+ * as it should receive container changes.
  *
  * @param <E> the type of entities managed by this data provider
  */
@@ -73,8 +79,7 @@ public class ContainerDataProvider<E> extends AbstractDataProvider<E, Serializab
             loader = ((HasLoader) container).getLoader();
         }
 
-        container.addCollectionChangeListener(this::containerCollectionChanged);
-        container.addItemPropertyChangeListener(this::containerItemPropertyChanged);
+        WeakContainerListener.subscribe(this, container);
     }
 
     protected void containerCollectionChanged(@SuppressWarnings("unused") CollectionContainer.CollectionChangeEvent<E> e) {
@@ -231,5 +236,50 @@ public class ContainerDataProvider<E> extends AbstractDataProvider<E, Serializab
         }
 
         return eventBus;
+    }
+
+    /**
+     * Listens to the container on behalf of a data provider that it references weakly. Once the provider is
+     * garbage-collected, the listener unsubscribes from the container on the next container event.
+     */
+    private static class WeakContainerListener<E> {
+
+        private final WeakReference<ContainerDataProvider<E>> providerReference;
+        private Subscription collectionChangeSubscription;
+        private Subscription itemPropertyChangeSubscription;
+
+        private WeakContainerListener(ContainerDataProvider<E> provider) {
+            this.providerReference = new WeakReference<>(provider);
+        }
+
+        private static <E> void subscribe(ContainerDataProvider<E> provider, CollectionContainer<E> container) {
+            WeakContainerListener<E> listener = new WeakContainerListener<>(provider);
+            listener.collectionChangeSubscription = container.addCollectionChangeListener(listener::onCollectionChange);
+            listener.itemPropertyChangeSubscription =
+                    container.addItemPropertyChangeListener(listener::onItemPropertyChange);
+        }
+
+        private void onCollectionChange(CollectionContainer.CollectionChangeEvent<E> event) {
+            ContainerDataProvider<E> provider = providerReference.get();
+            if (provider != null) {
+                provider.containerCollectionChanged(event);
+            } else {
+                unsubscribe();
+            }
+        }
+
+        private void onItemPropertyChange(CollectionContainer.ItemPropertyChangeEvent<E> event) {
+            ContainerDataProvider<E> provider = providerReference.get();
+            if (provider != null) {
+                provider.containerItemPropertyChanged(event);
+            } else {
+                unsubscribe();
+            }
+        }
+
+        private void unsubscribe() {
+            collectionChangeSubscription.remove();
+            itemPropertyChangeSubscription.remove();
+        }
     }
 }

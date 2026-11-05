@@ -102,10 +102,10 @@ public class DataViewBindingImpl<C extends Component & HasDataView<V, ?, ?>, V>
     @Nullable
     protected Registration addComponentValueChangeListener() {
         if (component instanceof SupportsTypedValue) {
-            ((SupportsTypedValue<?, ?, V, ?>) component).addTypedValueChangeListener(event ->
+            return ((SupportsTypedValue<?, ?, V, ?>) component).addTypedValueChangeListener(event ->
                     componentValueChanged(event.getValue()));
         } else if (component instanceof HasValue) {
-            ((HasValue<?, V>) component).addValueChangeListener(event ->
+            return ((HasValue<?, V>) component).addValueChangeListener(event ->
                     componentValueChanged(event.getValue()));
         }
         return null;

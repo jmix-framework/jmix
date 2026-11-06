@@ -72,6 +72,14 @@ public class TenantEntityOperationImpl implements TenantEntityOperation {
                 .findFirst().orElse(null);
     }
 
+    @Nullable
+    public String getTenant(Object entity) {
+        MetaProperty property = findTenantProperty(entity.getClass());
+        if (property == null) {
+            return null;
+        }
+        return EntityValues.getValue(entity, property.getName());
+    }
 
     /**
      * Set the Tenant Id for some entity

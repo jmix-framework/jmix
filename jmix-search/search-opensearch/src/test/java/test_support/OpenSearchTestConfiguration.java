@@ -25,7 +25,9 @@ import io.jmix.search.SearchConfiguration;
 import io.jmix.search.SearchProperties;
 import io.jmix.search.index.EntityIndexer;
 import io.jmix.search.index.IndexManager;
+import io.jmix.search.index.impl.IndexConfigurationComparator;
 import io.jmix.search.index.impl.IndexStateRegistry;
+import io.jmix.search.index.impl.IndexStateResolver;
 import io.jmix.search.index.impl.StartupIndexSynchronizer;
 import io.jmix.search.index.mapping.IndexConfigurationManager;
 import io.jmix.search.index.mapping.processor.impl.IndexDefinitionDetector;
@@ -79,10 +81,8 @@ public class OpenSearchTestConfiguration {
     }
 
     @Bean("search_IndexManager")
-    public IndexManager indexManager(IndexConfigurationManager indexConfigurationManager,
-                                     IndexStateRegistry indexStateRegistry,
-                                     SearchProperties searchProperties) {
-        return new TestNoopIndexManager(indexConfigurationManager, indexStateRegistry, searchProperties);
+    public IndexManager indexManager() {
+        return new TestNoopIndexManager();
     }
 
     @Bean
@@ -106,7 +106,6 @@ public class OpenSearchTestConfiguration {
         final OpenSearchTransport transport = new RestClientTransport(restClient, new JacksonJsonpMapper());
         return new OpenSearchClient(transport);
     }
-
 
     // Test Common beans
 

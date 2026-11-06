@@ -21,6 +21,7 @@ import io.jmix.search.SearchProperties;
 
 import io.jmix.search.index.IndexConfiguration;
 import io.jmix.search.index.IndexResult;
+import io.jmix.search.index.impl.MultitenancyAdapter;
 import io.jmix.search.index.impl.IndexStateRegistry;
 import io.jmix.search.index.impl.dynattr.DynamicAttributesSupport;
 import io.jmix.search.index.mapping.IndexConfigurationManager;
@@ -30,7 +31,6 @@ import co.elastic.clients.elasticsearch.core.BulkResponse;
 import co.elastic.clients.elasticsearch.core.bulk.BulkResponseItem;
 import co.elastic.clients.elasticsearch.core.bulk.OperationType;
 import org.jspecify.annotations.NullMarked;
-
 
 import javax.annotation.Nonnull;
 
@@ -54,7 +54,8 @@ public class ElasticsearchTestEntityIndexer extends ElasticsearchEntityIndexer {
                                           MetadataTools metadataTools,
                                           SearchProperties searchProperties,
                                           ElasticsearchTestBulkRequestsTracker bulkRequestsTracker,
-                                          DynamicAttributesSupport dynamicAttributesSupport) {
+                                          DynamicAttributesSupport dynamicAttributesSupport,
+                                          MultitenancyAdapter multitenancyAdapter) {
         super(dataManager,
                 fetchPlans,
                 indexConfigurationManager,
@@ -63,7 +64,8 @@ public class ElasticsearchTestEntityIndexer extends ElasticsearchEntityIndexer {
                 indexStateRegistry,
                 metadataTools, searchProperties,
                 null,
-                dynamicAttributesSupport);
+                dynamicAttributesSupport,
+                multitenancyAdapter);
         this.bulkRequestsTracker = bulkRequestsTracker;
     }
 
@@ -86,10 +88,5 @@ public class ElasticsearchTestEntityIndexer extends ElasticsearchEntityIndexer {
     @Override
     public IndexResult index(Object entityInstance) {
         return indexCollection(Collections.singletonList(entityInstance));
-    }
-
-    @Override
-    protected IndexResult deleteByGroupedDocIds(Map<IndexConfiguration, Collection<String>> groupedDocIds) {
-        return deleteByGroupedDocIds(groupedDocIds);
     }
 }

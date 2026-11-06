@@ -27,6 +27,8 @@ import org.springframework.data.annotation.CreatedDate;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import java.util.Date;
+import org.jspecify.annotations.Nullable;
+
 import java.util.UUID;
 
 @JmixEntity
@@ -52,6 +54,15 @@ public class IndexingQueueItem {
     @Column(name = "ENTITY_NAME")
     private String entityName;
 
+    /**
+     * Tenant the record belonged to, for an entity whose indexes are split by tenants.
+     * <p>
+     * It is stored because it cannot be determined later: by the time a deletion is processed the record is gone from
+     * the database. An item without it is processed against every index of the entity.
+     */
+    @Column(name = "TENANT_ID")
+    private String tenantId;
+
     @CreatedBy
     @Column(name = "CREATED_BY")
     private String createdBy;
@@ -59,6 +70,15 @@ public class IndexingQueueItem {
     @CreatedDate
     @Column(name = "CREATED_DATE")
     private Date createdDate;
+
+    @Nullable
+    public String getTenantId() {
+        return tenantId;
+    }
+
+    public void setTenantId(@Nullable String tenantId) {
+        this.tenantId = tenantId;
+    }
 
     public String getEntityName() {
         return entityName;

@@ -18,28 +18,44 @@ package io.jmix.search.index.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import io.jmix.search.index.AtomicIndexOperationResult;
 import io.jmix.search.index.IndexConfiguration;
 import io.jmix.search.index.IndexManager;
+import io.jmix.search.index.IndexManipulationResult;
+import io.jmix.search.index.IndexOperationResult;
+import io.jmix.search.index.IndexRecreationStatus;
 import io.jmix.search.index.IndexSynchronizationStatus;
 import io.jmix.search.index.IndexValidationStatus;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Collection;
-import java.util.Map;
+import java.util.List;
 
 @NullMarked
 public class NoopIndexManager implements IndexManager {
 
     protected final ObjectMapper objectMapper;
 
+    @Autowired
+    protected IndexLayout indexLayout;
+
     public NoopIndexManager() {
         this.objectMapper = new ObjectMapper();
     }
 
     @Override
-    public boolean createIndex(IndexConfiguration indexConfiguration) {
-        return false;
+    public List<IndexOperationResult<IndexManipulationResult>> createIndexes(
+            Collection<IndexConfiguration> indexConfigurations, @Nullable String tenantId) {
+        return createResult(indexConfigurations, IndexManipulationResult.FAILURE);
+    }
+
+    @Override
+    public List<IndexOperationResult<IndexManipulationResult>> deleteIndexes(
+            Collection<IndexConfiguration> indexConfigurations, @Nullable String tenantId) {
+        return createResult(indexConfigurations, IndexManipulationResult.FAILURE);
     }
 
     @Override
@@ -48,18 +64,14 @@ public class NoopIndexManager implements IndexManager {
     }
 
     @Override
-    public Map<IndexConfiguration, Boolean> recreateIndexes() {
-        return Map.of();
+    public List<IndexOperationResult<IndexRecreationStatus>> recreateIndexes() {
+        return List.of();
     }
 
     @Override
-    public Map<IndexConfiguration, Boolean> recreateIndexes(Collection<IndexConfiguration> indexConfigurations) {
-        return Map.of();
-    }
-
-    @Override
-    public boolean recreateIndex(IndexConfiguration indexConfiguration) {
-        return false;
+    public List<IndexOperationResult<IndexRecreationStatus>> recreateIndexes(
+            Collection<IndexConfiguration> indexConfigurations, @Nullable String tenantId) {
+        return createResult(indexConfigurations, IndexRecreationStatus.PROBLEM_WITH_INDEX_CREATING);
     }
 
     @Override
@@ -68,18 +80,14 @@ public class NoopIndexManager implements IndexManager {
     }
 
     @Override
-    public Map<IndexConfiguration, IndexValidationStatus> validateIndexes() {
-        return Map.of();
+    public List<IndexOperationResult<IndexValidationStatus>> validateIndexes() {
+        return List.of();
     }
 
     @Override
-    public Map<IndexConfiguration, IndexValidationStatus> validateIndexes(Collection<IndexConfiguration> indexConfigurations) {
-        return Map.of();
-    }
-
-    @Override
-    public IndexValidationStatus validateIndex(IndexConfiguration indexConfiguration) {
-        return IndexValidationStatus.IRRELEVANT;
+    public List<IndexOperationResult<IndexValidationStatus>> validateIndexes(
+            Collection<IndexConfiguration> indexConfigurations, @Nullable String tenantId) {
+        return createResult(indexConfigurations, IndexValidationStatus.IRRELEVANT);
     }
 
     @Override
@@ -88,17 +96,22 @@ public class NoopIndexManager implements IndexManager {
     }
 
     @Override
-    public Map<IndexConfiguration, IndexSynchronizationStatus> synchronizeIndexSchemas() {
-        return Map.of();
+    public List<IndexOperationResult<IndexSynchronizationStatus>> synchronizeIndexSchemas() {
+        return List.of();
     }
 
     @Override
-    public Map<IndexConfiguration, IndexSynchronizationStatus> synchronizeIndexSchemas(Collection<IndexConfiguration> indexConfigurations) {
-        return Map.of();
+    public List<IndexOperationResult<IndexSynchronizationStatus>> synchronizeIndexSchemas(
+            Collection<IndexConfiguration> indexConfigurations, @Nullable String tenantId) {
+        return createResult(indexConfigurations, IndexSynchronizationStatus.IRRELEVANT);
     }
 
-    @Override
-    public IndexSynchronizationStatus synchronizeIndexSchema(IndexConfiguration indexConfiguration) {
-        return IndexSynchronizationStatus.IRRELEVANT;
+    protected <RT extends AtomicIndexOperationResult> List<IndexOperationResult<RT>> createResult(
+            Collection<IndexConfiguration> indexConfigurations, RT result) {
+        return indexConfigurations.stream()
+                .flatMap(configuration -> IndexOperationResults
+                        .perIndex(configuration, indexLayout.allIndexes(configuration), index -> result)
+                        .stream())
+                .toList();
     }
 }

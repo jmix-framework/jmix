@@ -83,7 +83,7 @@ public class OpenSearchQueryConfigurer extends AbstractSearchQueryConfigurer<Sea
         return Query.of(root ->
                 root.bool(b -> b
                         .must(m -> m.term(t -> t.field("_index")
-                                .value(v -> v.stringValue(indexSearchRequestScope.indexConfiguration().getIndexName()))))
+                                .value(v -> v.stringValue(indexSearchRequestScope.indexName()))))
                         .must(m2 -> businessQueryConfigurer.apply(m2, indexSearchRequestScope))
                 ));
     }

@@ -67,4 +67,20 @@
             <column name="CREATED_DATE" type="DATETIME"/>
         </createTable>
     </changeSet>
+
+    <changeSet author="search" id="4">
+        <addColumn tableName="SEARCH_ENQUEUEING_SESSION">
+            <column name="TENANT_ID" type="VARCHAR(255)"/>
+        </addColumn>
+        <createIndex indexName="IDX_SEARCH_ENQ_SESS_ENTITY_TENANT" tableName="SEARCH_ENQUEUEING_SESSION">
+            <column name="ENTITY_NAME"/>
+            <column name="TENANT_ID"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet author="search" id="5">
+        <addColumn tableName="SEARCH_INDEXING_QUEUE">
+            <column name="TENANT_ID" type="VARCHAR(255)"/>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>

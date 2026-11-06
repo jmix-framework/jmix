@@ -26,10 +26,10 @@ class IndexConfigurationComparatorTest extends Specification {
         IndexConfiguration configurationMock = Mock(IndexConfiguration.class)
         IndexConfigurationComparator<?, ?, ?> comparator
                 = new IndexConfigurationComparatorTestImpl(null, null, null)
-        comparator.getIndexState(configurationMock) >> null
+        comparator.getIndexState("test_index") >> null
 
         when:
-        ConfigurationComparingResult result = comparator.compareConfigurations(configurationMock)
+        ConfigurationComparingResult result = comparator.compareConfigurations(configurationMock, "test_index")
 
         then:
         result.mappingComparingResult == MappingComparingResult.NOT_COMPATIBLE
@@ -43,7 +43,7 @@ class IndexConfigurationComparatorTest extends Specification {
         }
 
         @Override
-        protected Object getIndexState(IndexConfiguration indexConfiguration) {
+        protected Object getIndexState(String indexName) {
             return null
         }
     }

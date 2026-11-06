@@ -29,6 +29,18 @@ public interface TenantEntityOperation {
     @Nullable
     MetaProperty findTenantProperty(Class<?> entityClass);
 
+    /**
+     * Reads the tenant of a record as it stands in the entity.
+     * <p>
+     * Says nothing about why the answer is empty: the entity may have no tenant attribute, the attribute may not
+     * have been fetched, or the record may belong to no tenant. A caller that has to tell these apart asks
+     * {@link io.jmix.multitenancy.Multitenancy} instead.
+     *
+     * @return tenant of the record, or null
+     */
+    @Nullable
+    String getTenant(Object entity);
+
     void setTenant(Object entity, String tenantId);
 
 }

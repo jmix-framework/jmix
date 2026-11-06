@@ -29,6 +29,7 @@ class JmixPlugin implements Plugin<Project> {
 
     public static final String PROVIDED_RUNTIME_CONFIGURATION_NAME = 'providedRuntime'
     public static final String PRODUCTION_RUNTIME_CLASSPATH_CONFIGURATION_NAME = 'productionRuntimeClasspath'
+    public static final String VAADIN_NODE_VERSION = 'v22.23.4'
 
     @Override
     void apply(Project project) {
@@ -160,6 +161,34 @@ class JmixPlugin implements Plugin<Project> {
         project.task([type: ZipProject], 'zipProject')
 
         registerCleanConfTask(project)
+
+        project.pluginManager.withPlugin('com.vaadin') {
+            setupVaadinNodeDefaults(project)
+        }
+    }
+
+    /**
+     * Makes Vaadin use a patched Node.js when it falls back to its own Node.js in {@code ~/.vaadin}.
+     * <p>
+     * Vaadin 24.10.7 downloads Node.js 22.22.2, which is affected by CVE-2026-111497 and other vulnerabilities fixed
+     * in Node.js 22.23.4 (https://vaadin.com/security/advisory-2026-10-23-2). The Vaadin release with the updated
+     * default is available only under extended maintenance, so the plugin sets the version and enables the update of
+     * an older Node.js in {@code ~/.vaadin}. A suitable globally installed Node.js is still preferred by Vaadin.
+     * <p>
+     * The values are set right after the Vaadin plugin is applied, so {@code nodeVersion} and {@code nodeAutoUpdate}
+     * assigned in the project's {@code vaadin {}} block take precedence. Conventions can't be used: Vaadin re-applies
+     * its own conventions to these properties whenever it reads the effective configuration.
+     * <p>
+     * Jmix 2.8 only: Vaadin 25 requires Node.js 24 or newer and has no {@code nodeAutoUpdate} option.
+     */
+    private static void setupVaadinNodeDefaults(Project project) {
+        def vaadin = project.extensions.findByName('vaadin') ?: project.extensions.findByName('vaadinPlatform')
+        if (vaadin == null) {
+            project.logger.debug("Vaadin extension not found, Node.js defaults are not set")
+            return
+        }
+        vaadin.nodeVersion.set(VAADIN_NODE_VERSION)
+        vaadin.nodeAutoUpdate.set(true)
     }
 
     /**

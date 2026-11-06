@@ -71,6 +71,14 @@ public interface AiChatPanel {
     void focusInput();
 
     /**
+     * Puts the text into the message input in place of what the user has typed, for the user to edit and send.
+     * Nothing is sent.
+     *
+     * @param text the text to show in the input
+     */
+    void setInputText(String text);
+
+    /**
      * Enables or disables the message input.
      *
      * @param enabled {@code false} to disable it

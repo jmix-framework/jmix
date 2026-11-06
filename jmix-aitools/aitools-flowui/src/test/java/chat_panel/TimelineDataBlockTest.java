@@ -20,6 +20,7 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.textfield.TextArea;
 import io.jmix.aitoolsflowui.fragment.chat.AiChatFragment;
 import io.jmix.aitoolsflowui.fragment.chat.component.AiChatDataBlockChip;
 import io.jmix.aitoolsflowui.fragment.chat.component.AiChatSuggestions;
@@ -86,6 +87,20 @@ class TimelineDataBlockTest {
         assertInstanceOf(AiChatInputFragment.class, children.get(0));
         assertInstanceOf(AiChatSuggestions.class, children.get(1));
         assertEquals(List.of("Summarize", "Compare"), promptTexts(panel));
+    }
+
+    @Test
+    void setInputText_textIsInTheInput() {
+        TimelineChatPanel panel = createPanel();
+
+        panel.setInputText("Compare");
+
+        assertEquals("Compare", descendants(panel)
+                .filter(TextArea.class::isInstance)
+                .map(TextArea.class::cast)
+                .findFirst()
+                .orElseThrow()
+                .getValue());
     }
 
     @Test

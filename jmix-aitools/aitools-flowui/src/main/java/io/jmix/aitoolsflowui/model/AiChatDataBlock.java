@@ -19,6 +19,7 @@ package io.jmix.aitoolsflowui.model;
 import io.jmix.aitoolsflowui.prompt.AiSuggestedPromptProvider;
 import io.jmix.core.annotation.Internal;
 import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.flowui.view.View;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
@@ -41,17 +42,19 @@ public class AiChatDataBlock implements Serializable {
     private final String content;
     @Nullable
     private final MetaClass metaClass;
+    @Nullable
+    private final View<?> view;
     private final List<String> suggestedPrompts;
 
     /**
-     * Creates a data block for which the chat chooses the prompts to offer.
+     * Creates a data block of unknown origin for which the chat chooses the prompts to offer.
      *
      * @param caption   short text the chat shows for the pending block, e.g. "Orders · 12 rows"
      * @param content   Markdown appended to the user's question when it is sent
      * @param metaClass entity of the rows, or {@code null} if unknown
      */
     public AiChatDataBlock(String caption, String content, @Nullable MetaClass metaClass) {
-        this(caption, content, metaClass, List.of());
+        this(caption, content, metaClass, null, List.of());
     }
 
     /**
@@ -60,11 +63,13 @@ public class AiChatDataBlock implements Serializable {
      * @param caption          short text the chat shows for the pending block, e.g. "Orders · 12 rows"
      * @param content          Markdown appended to the user's question when it is sent
      * @param metaClass        entity of the rows, or {@code null} if unknown
+     * @param view             view the rows come from, or {@code null} if unknown
      * @param suggestedPrompts prompts to offer for this block, or an empty list to let the chat choose them
      */
     public AiChatDataBlock(String caption,
                            String content,
                            @Nullable MetaClass metaClass,
+                           @Nullable View<?> view,
                            List<String> suggestedPrompts) {
         checkNotNullArgument(caption);
         checkNotNullArgument(content);
@@ -73,6 +78,7 @@ public class AiChatDataBlock implements Serializable {
         this.caption = caption;
         this.content = content;
         this.metaClass = metaClass;
+        this.view = view;
         this.suggestedPrompts = List.copyOf(suggestedPrompts);
     }
 
@@ -102,6 +108,17 @@ public class AiChatDataBlock implements Serializable {
     @Nullable
     public MetaClass getMetaClass() {
         return metaClass;
+    }
+
+    /**
+     * Returns the view the rows in the block come from. A chat that outlives the view keeps it, so the view may
+     * already be closed.
+     *
+     * @return the view, or {@code null} if unknown
+     */
+    @Nullable
+    public View<?> getView() {
+        return view;
     }
 
     /**

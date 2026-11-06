@@ -30,8 +30,9 @@ import io.jmix.securityflowui.role.annotation.MenuPolicy;
 import io.jmix.securityflowui.role.annotation.ViewPolicy;
 
 /**
- * Grants an end user access to the AI chat: the chat hub and the conversation view, and management
- * of their own conversations and messages (start, continue, rename and delete chats).
+ * Grants an end user access to the AI chat: the chat hub, the conversation view and the dialog that asks the AI
+ * about data grid rows, and management of their own conversations and messages (start, continue, rename and delete
+ * chats).
  * <p>
  * Policies are granted on the UI models the chat works with; the persistent entities behind them are
  * an internal detail of the data module and are not exposed to this role.
@@ -47,7 +48,8 @@ public interface AiToolsChatUserRole {
     @EntityAttributePolicy(entityClass = AiChatMessage.class, attributes = "*", action = EntityAttributePolicyAction.MODIFY)
     void entityPolicies();
 
-    @ViewPolicy(viewClasses = {AiChatHubView.class, AiChatView.class})
+    // The "Ask AI about the data" dialog exists only with the grid export add-on, so it is named by id.
+    @ViewPolicy(viewClasses = {AiChatHubView.class, AiChatView.class}, viewIds = "aitls_AiGridDataDialog")
     @MenuPolicy(menuIds = "aitls_AiChatHubView")
     void screenPolicies();
 }

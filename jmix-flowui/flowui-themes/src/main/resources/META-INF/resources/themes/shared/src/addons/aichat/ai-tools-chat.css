@@ -51,3 +51,10 @@
     background: ButtonText;
   }
 }
+
+/*
+ * In the AI chat fragment the composer stays at the bottom also while the conversation is empty, as in the free panel.
+ */
+.ai-chat-fragment .chat-content-layout .jmix-ai-chat[empty] {
+  justify-content: flex-end;
+}

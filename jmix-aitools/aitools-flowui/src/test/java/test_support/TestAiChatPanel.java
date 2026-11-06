@@ -52,6 +52,9 @@ public class TestAiChatPanel extends Div implements AiChatPanel, HasAiAvatarIcon
     public boolean inputEnabled = true;
     public boolean inputVisible = true;
     @Nullable
+    public String inputText;
+    public int focusInputCalls;
+    @Nullable
     public SerializableSupplier<Component> avatarIconSupplier;
 
     /**
@@ -89,6 +92,12 @@ public class TestAiChatPanel extends Div implements AiChatPanel, HasAiAvatarIcon
 
     @Override
     public void focusInput() {
+        focusInputCalls++;
+    }
+
+    @Override
+    public void setInputText(String text) {
+        this.inputText = text;
     }
 
     @Override

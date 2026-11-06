@@ -16,15 +16,21 @@
 
 package io.jmix.autoconfigure.aitoolsflowui;
 
+import io.jmix.aitoolsflowui.gridexport.AiGridDataExportDialogContributor;
 import io.jmix.aitoolsflowui.gridexport.AiGridDataSupport;
+import io.jmix.core.impl.scanning.AnnotationScanMetadataReaderFactory;
+import io.jmix.flowui.sys.ViewControllersConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 
+import java.util.List;
+
 /**
- * Registers the beans that send data grid rows to the AI chat. Active only when the grid export add-on is on the
- * classpath, which is referenced by name because this starter does not depend on it.
+ * Registers the beans and views that send data grid rows to the AI chat. Active only when the grid export add-on is
+ * on the classpath, which is referenced by name because this starter does not depend on it.
  */
 @AutoConfiguration(after = AiToolsFlowuiAutoConfiguration.class)
 @ConditionalOnClass(name = "io.jmix.autoconfigure.flowuiexport.GridExportFlowuiAutoConfiguration")
@@ -34,5 +40,20 @@ public class AiToolsGridExportAutoConfiguration {
     @ConditionalOnMissingBean
     public AiGridDataSupport aiGridDataSupport() {
         return new AiGridDataSupport();
+    }
+
+    @Bean("aitls_AiGridDataExportDialogContributor")
+    @ConditionalOnMissingBean
+    public AiGridDataExportDialogContributor aiGridDataExportDialogContributor() {
+        return new AiGridDataExportDialogContributor();
+    }
+
+    @Bean("aitls_AiToolsGridExportViewControllers")
+    public ViewControllersConfiguration aiToolsGridExportViews(ApplicationContext applicationContext,
+                                                               AnnotationScanMetadataReaderFactory metadataReaderFactory) {
+        ViewControllersConfiguration viewControllers
+                = new ViewControllersConfiguration(applicationContext, metadataReaderFactory);
+        viewControllers.setBasePackages(List.of("io.jmix.aitoolsflowui.gridexport.view"));
+        return viewControllers;
     }
 }

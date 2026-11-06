@@ -382,7 +382,7 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
      * INTERNAL.
      * <p>
      * Sets the data to send with the user's next question, e.g. rows the user wants to ask about. The chat shows
-     * the block with suggested questions; picking one sends it with the data at once. The question and the data are
+     * the block with suggested questions; picking one puts it into the message input. The question and the data are
      * sent as one message, kept in the assistant memory while it has room. After it is sent or the user removes it,
      * the block is gone.
      * <p>
@@ -1064,12 +1064,24 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
         }
 
         List<String> prompts = isInputAvailable() ? getSuggestedPrompts() : List.of();
-        promptsPanel.setSuggestedPromptHandler(prompts.isEmpty() ? null : this::startMessage);
+        promptsPanel.setSuggestedPromptHandler(prompts.isEmpty() ? null : this::onSuggestedPromptPicked);
         promptsPanel.setSuggestedPrompts(prompts);
     }
 
     /**
-     * Returns the questions to offer below the message input; picking one sends it as the user's message.
+     * Handles the question the user picks below the message input: puts it into the input for the user to edit and
+     * send. Nothing is sent.
+     *
+     * @param prompt the picked question
+     */
+    protected void onSuggestedPromptPicked(String prompt) {
+        AiChatPanel chatPanel = getChatPanel();
+        chatPanel.setInputText(prompt);
+        chatPanel.focusInput();
+    }
+
+    /**
+     * Returns the questions to offer below the message input.
      *
      * @return questions to offer, or an empty list to offer none
      */
@@ -1128,7 +1140,8 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
             return dataBlock.getSuggestedPrompts();
         }
 
-        return suggestedPromptManager.getPrompts(new AiSuggestedPromptContext(conversation, dataBlock.getMetaClass()));
+        return suggestedPromptManager.getPrompts(
+                new AiSuggestedPromptContext(conversation, dataBlock.getMetaClass(), dataBlock.getView()));
     }
 
     private void refreshDataBlock() {

@@ -24,3 +24,11 @@
 :where(jmix-ai-user-message, jmix-ai-assistant-message).jmix-ai-message-kept-in-context > .jmix-ai-message-action.jmix-ai-message-action-keep-in-context {
   color: var(--lumo-primary-text-color);
 }
+
+/*
+ * The AI chat fragment clips its content, so the input keeps room for its focus ring at the sides.
+ */
+.ai-chat-fragment .chat-content-layout jmix-ai-message-input {
+  box-sizing: border-box;
+  padding-inline: var(--lumo-space-xs);
+}

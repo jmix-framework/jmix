@@ -39,7 +39,7 @@ class AiChatDataBlockTest {
     void dataBlock_sourcePromptsChanged_keepsOwnCopy() {
         List<String> prompts = new ArrayList<>(List.of("Summarize"));
 
-        AiChatDataBlock block = new AiChatDataBlock("Orders · 2 rows", "| a |", null, prompts);
+        AiChatDataBlock block = new AiChatDataBlock("Orders · 2 rows", "| a |", null, null, prompts);
         prompts.add("Compare");
 
         assertEquals(List.of("Summarize"), block.getSuggestedPrompts());
@@ -47,7 +47,7 @@ class AiChatDataBlockTest {
 
     @Test
     void dataBlock_prompts_areUnmodifiable() {
-        AiChatDataBlock block = new AiChatDataBlock("Orders · 2 rows", "| a |", null, List.of("Summarize"));
+        AiChatDataBlock block = new AiChatDataBlock("Orders · 2 rows", "| a |", null, null, List.of("Summarize"));
 
         assertThrows(UnsupportedOperationException.class, () -> block.getSuggestedPrompts().add("Compare"));
     }

@@ -98,7 +98,7 @@ class AiSuggestedPromptManagerTest {
         secondPromptProvider.prompts = List.of("Second");
         AiConversation conversation = conversationService.addConversation("New chat");
 
-        List<String> prompts = promptManager.getPrompts(new AiSuggestedPromptContext(conversation, null));
+        List<String> prompts = promptManager.getPrompts(new AiSuggestedPromptContext(conversation, null, null));
 
         assertEquals(List.of("Second"), prompts);
         assertNull(firstPromptProvider.askedContexts.get(0).getDataMetaClass());
@@ -114,7 +114,7 @@ class AiSuggestedPromptManagerTest {
 
     AiSuggestedPromptContext dataContext() {
         MetaClass metaClass = metadata.getClass(AiChatMessage.class);
-        return new AiSuggestedPromptContext(null, metaClass);
+        return new AiSuggestedPromptContext(null, metaClass, null);
     }
 
     @TestConfiguration

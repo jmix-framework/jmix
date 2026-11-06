@@ -24,7 +24,6 @@ import io.jmix.aitoolsflowui.fragment.chat.AiConversationCreatedEvent;
 import io.jmix.aitoolsflowui.fragment.input.AiChatInputPanel;
 import io.jmix.aitoolsflowui.generation.AiChatGenerationManager;
 import io.jmix.aitoolsflowui.generation.event.AiChatGenerationCancelledEvent;
-import io.jmix.aitoolsflowui.generation.event.AiChatGenerationStartedEvent;
 import io.jmix.aitoolsflowui.model.AiChatDataBlock;
 import io.jmix.aitoolsflowui.model.AiChatMessage;
 import io.jmix.aitoolsflowui.model.AiChatMessageType;
@@ -252,13 +251,32 @@ class AiChatFragmentDataBlockTest {
     }
 
     @Test
-    void promptPicked_sendsAtOnceWithBlock() {
+    void promptPicked_goesIntoInput_sendsNothing_andKeepsBlockAndPrompts() {
         secondPromptProvider.prompts = PROMPTS;
         AiChatFragment fragment = chatFragment(navigate());
         TestDataBlockAiChatPanel panel = lastChatPanel();
         fragment.setDataBlock(block());
+        int focusCallsBefore = panel.focusInputCalls;
 
         panel.pickPrompt("Compare");
+
+        assertEquals("Compare", panel.inputText);
+        assertTrue(panel.focusInputCalls > focusCallsBefore);
+        verify(generationManager, never()).start(any(), any());
+        verify(generationManager, never()).start(any(), any(), anyBoolean());
+        assertTrue(panel.dataBlockShown);
+        assertEquals(PROMPTS, panel.suggestedPrompts);
+    }
+
+    @Test
+    void promptPicked_thenSubmitted_sendsWithBlock() {
+        secondPromptProvider.prompts = PROMPTS;
+        AiChatFragment fragment = chatFragment(navigate());
+        TestDataBlockAiChatPanel panel = lastChatPanel();
+        fragment.setDataBlock(block());
+        panel.pickPrompt("Compare");
+
+        panel.submit(Objects.requireNonNull(panel.inputText));
 
         verify(generationManager).start(any(), eq("Compare\n\n" + CONTENT), eq(true));
         assertTrue(fragment.isAwaitingResponse());
@@ -288,21 +306,6 @@ class AiChatFragmentDataBlockTest {
         fragment.setDataBlock(block());
 
         fragment.sendMessage("   ");
-
-        verify(generationManager, never()).start(any(), any(), anyBoolean());
-        assertTrue(panel.dataBlockShown);
-        assertNotNull(fragment.getDataBlock());
-    }
-
-    @Test
-    void promptPicked_responseRunning_sendsNothing_andKeepsBlock() {
-        secondPromptProvider.prompts = PROMPTS;
-        AiChatFragment fragment = chatFragment(navigate());
-        TestDataBlockAiChatPanel panel = lastChatPanel();
-        fragment.setDataBlock(block());
-        fragment.onGenerationStarted(new AiChatGenerationStartedEvent(this, conversation.getId(), UUID.randomUUID()));
-
-        panel.pickPrompt("Compare");
 
         verify(generationManager, never()).start(any(), any(), anyBoolean());
         assertTrue(panel.dataBlockShown);
@@ -349,25 +352,27 @@ class AiChatFragmentDataBlockTest {
         AiChatFragment fragment = chatFragment(navigate());
         TestDataBlockAiChatPanel panel = lastChatPanel();
 
-        fragment.setDataBlock(new AiChatDataBlock("Orders · 1 row", CONTENT, null, List.of("Explicit")));
+        fragment.setDataBlock(new AiChatDataBlock("Orders · 1 row", CONTENT, null, null, List.of("Explicit")));
 
         assertEquals(List.of("Explicit"), panel.suggestedPrompts);
         assertTrue(firstPromptProvider.askedContexts.isEmpty());
     }
 
     @Test
-    void prompts_fromProviders_askedWithConversationAndBlockEntity() {
+    void prompts_fromProviders_askedWithConversationAndBlockOrigin() {
         secondPromptProvider.prompts = List.of("Second");
-        AiChatFragment fragment = chatFragment(navigate());
+        AiChatView view = navigate();
+        AiChatFragment fragment = chatFragment(view);
         TestDataBlockAiChatPanel panel = lastChatPanel();
         MetaClass metaClass = metadata.getClass(AiChatMessage.class);
 
-        fragment.setDataBlock(new AiChatDataBlock("Messages · 1 row", CONTENT, metaClass));
+        fragment.setDataBlock(new AiChatDataBlock("Messages · 1 row", CONTENT, metaClass, view, List.of()));
 
         assertEquals(List.of("Second"), panel.suggestedPrompts);
         assertEquals(1, firstPromptProvider.askedContexts.size());
         AiSuggestedPromptContext context = firstPromptProvider.askedContexts.get(0);
         assertSame(metaClass, context.getDataMetaClass());
+        assertSame(view, context.getView());
         assertEquals(conversation.getId(), Objects.requireNonNull(context.getConversation()).getId());
     }
 

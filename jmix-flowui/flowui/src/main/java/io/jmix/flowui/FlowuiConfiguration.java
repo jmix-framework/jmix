@@ -33,6 +33,7 @@ import io.jmix.flowui.entity.filter.JpqlFilterCondition;
 import io.jmix.flowui.entity.filter.PropertyFilterCondition;
 import io.jmix.flowui.sys.ActionsConfiguration;
 import io.jmix.flowui.sys.JmixVaadinServletContextInitializer;
+import io.jmix.flowui.sys.PushCorsServletRegistrationPostProcessor;
 import io.jmix.flowui.sys.ViewControllersConfiguration;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.context.ApplicationContext;
@@ -92,5 +93,10 @@ public class FlowuiConfiguration {
     @Primary
     public VaadinServletContextInitializer jmixVaadinServletContextInitializer(ApplicationContext applicationContext) {
         return new JmixVaadinServletContextInitializer(applicationContext);
+    }
+
+    @Bean("flowui_PushCorsServletRegistrationPostProcessor")
+    public static PushCorsServletRegistrationPostProcessor pushCorsServletRegistrationPostProcessor() {
+        return new PushCorsServletRegistrationPostProcessor();
     }
 }

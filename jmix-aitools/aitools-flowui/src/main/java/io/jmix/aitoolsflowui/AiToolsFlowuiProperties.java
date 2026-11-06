@@ -16,7 +16,7 @@
 
 package io.jmix.aitoolsflowui;
 
-import io.jmix.aitoolsflowui.view.chat.AiConversationTitleMode;
+import io.jmix.aitoolsflowui.fragment.chat.AiConversationTitleMode;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 

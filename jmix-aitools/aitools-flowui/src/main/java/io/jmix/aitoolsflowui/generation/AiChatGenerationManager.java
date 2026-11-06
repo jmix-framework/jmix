@@ -179,6 +179,44 @@ public class AiChatGenerationManager {
     }
 
     /**
+     * Starts generating the assistant's answer again to the last question of the conversation, e.g. after the
+     * previous response failed. Saves nothing new: the question is the conversation's latest message, which must be
+     * a user message still without an answer.
+     * <p>
+     * The same rules as for {@link #start(AiConversation, String)} apply: it must be called on the requesting user's
+     * UI or request thread, the response publishes the same events, and at most one response runs per conversation.
+     *
+     * @param conversation conversation to answer in, accessible to the current user
+     * @return the user message being answered, or {@code null} if the latest message of the conversation is not a
+     * user message (answered meanwhile, or the conversation is empty) and nothing was started
+     * @throws IllegalStateException             if AI chat is not configured
+     * @throws AccessDeniedException             if the conversation does not exist or is not accessible to the
+     *                                           current user
+     * @throws AiChatGenerationRejectedException if a response is already running in the conversation
+     * @throws RejectedExecutionException        if the manager is shutting down
+     */
+    @Nullable
+    public AiChatMessage retry(AiConversation conversation) {
+        Preconditions.checkNotNullArgument(conversation);
+
+        if (!chatService.isAvailable()) {
+            throw new IllegalStateException("AI chat is not available");
+        }
+
+        checkAccess(conversation);
+
+        Generation generation = reserve(conversation);
+        AiChatMessage userMessage = findUnansweredQuestion(generation, conversation);
+        if (userMessage == null) {
+            return null;
+        }
+
+        submit(generation, conversation, userMessage);
+
+        return userMessage;
+    }
+
+    /**
      * Returns whether a response is running in the conversation. Answers only the user who started the response.
      *
      * @param conversation conversation to check
@@ -283,6 +321,33 @@ public class AiChatGenerationManager {
             generationsByConversation.remove(generation.conversationId, generation);
             throw e;
         }
+    }
+
+    /**
+     * Returns the conversation's latest message if it is a question still without an answer. Otherwise releases the
+     * reservation, reporting a cancel that came meanwhile, so that the conversation is not left locked.
+     *
+     * @param generation   the reserved response
+     * @param conversation conversation to answer in
+     * @return the question to answer, or {@code null} if there is none
+     */
+    @Nullable
+    protected AiChatMessage findUnansweredQuestion(Generation generation, AiConversation conversation) {
+        AiChatMessage latest;
+        try {
+            latest = messageService.loadLatestMessage(conversation, null);
+        } catch (RuntimeException e) {
+            generationsByConversation.remove(generation.conversationId, generation);
+            throw e;
+        }
+        if (latest != null && latest.getType() == AiChatMessageType.USER) {
+            return latest;
+        }
+        // Not found if a cancel removed the reservation meanwhile; then it is reported here, as in start().
+        if (!generationsByConversation.remove(generation.conversationId, generation)) {
+            publishCancelledBeforeSubmit(generation);
+        }
+        return null;
     }
 
     protected void submit(Generation generation, AiConversation conversation, AiChatMessage userMessage) {

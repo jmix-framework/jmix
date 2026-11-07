@@ -32,7 +32,6 @@ import io.jmix.core.metamodel.model.impl.MetaClassImpl;
 import io.jmix.core.metamodel.model.impl.MetaPropertyImpl;
 import org.jspecify.annotations.NullMarked;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.stereotype.Component;
 
 import org.jspecify.annotations.Nullable;
@@ -56,8 +55,7 @@ public class ExtendedEntities {
     protected Map<Class<?>, MetaClass> replacedMetaClasses = new HashMap<>();
     protected volatile ExtendedEntitiesState currentState = ExtendedEntitiesState.of(replacedMetaClasses);
 
-    @Autowired
-    protected ObjectProvider<MetadataGenerationManager> metadataGenerationManagerProvider;
+    protected volatile @Nullable MetadataGenerationManager generationManager;
 
     @Autowired
     public ExtendedEntities(Metadata metadata) {
@@ -266,11 +264,7 @@ public class ExtendedEntities {
      * <p>Intended for infrastructure that needs a stable replacement map for the whole request or data operation.</p>
      */
     public ExtendedEntitiesState getCurrentStateSnapshot() {
-        MetadataGenerationManager metadataGenerationManager = metadataGenerationManagerProvider.getIfAvailable();
-        if (metadataGenerationManager != null) {
-            return metadataGenerationManager.getPinnedOrCurrentGeneration().getExtendedEntitiesState();
-        }
-        return currentState;
+        return getState();
     }
 
     /**
@@ -282,10 +276,21 @@ public class ExtendedEntities {
         return currentState;
     }
 
+    /**
+     * Sets the manager whose pinned or current generation provides the extended-entities state.
+     * Until it is set, the state built from the bootstrap metadata session is used.
+     *
+     * @param generationManager metadata generation manager of the application
+     */
+    @Internal
+    public void setGenerationManager(MetadataGenerationManager generationManager) {
+        this.generationManager = generationManager;
+    }
+
     protected ExtendedEntitiesState getState() {
-        MetadataGenerationManager metadataGenerationManager = metadataGenerationManagerProvider.getIfAvailable();
-        if (metadataGenerationManager != null) {
-            return metadataGenerationManager.getPinnedOrCurrentGeneration().getExtendedEntitiesState();
+        MetadataGenerationManager generationManager = this.generationManager;
+        if (generationManager != null) {
+            return generationManager.getPinnedOrCurrentGeneration().getExtendedEntitiesState();
         }
         return currentState;
     }

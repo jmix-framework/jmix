@@ -17,6 +17,7 @@
 package io.jmix.core.impl;
 
 import io.jmix.core.*;
+import io.jmix.core.annotation.Internal;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.entity.HasInstanceMetaClass;
@@ -24,7 +25,6 @@ import io.jmix.core.impl.metadata.MetadataGenerationManager;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.Session;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
@@ -46,8 +46,7 @@ public class MetadataImpl implements Metadata {
     @Autowired(required = false)
     protected List<EntityInitializer> entityInitializers;
 
-    @Autowired
-    protected ObjectProvider<MetadataGenerationManager> metadataGenerationManagerProvider;
+    protected volatile @Nullable MetadataGenerationManager generationManager;
 
     @Autowired
     public MetadataImpl(MetadataLoader metadataLoader) {
@@ -56,11 +55,22 @@ public class MetadataImpl implements Metadata {
 
     @Override
     public Session getSession() {
-        MetadataGenerationManager metadataGenerationManager = metadataGenerationManagerProvider.getIfAvailable();
-        if (metadataGenerationManager != null) {
-            return metadataGenerationManager.getPinnedOrCurrentGeneration().getSession();
+        MetadataGenerationManager generationManager = this.generationManager;
+        if (generationManager != null) {
+            return generationManager.getPinnedOrCurrentGeneration().getSession();
         }
         return session;
+    }
+
+    /**
+     * Sets the manager whose pinned or current generation provides the session returned by {@link #getSession()}.
+     * Until it is set, {@link #getSession()} returns the raw session.
+     *
+     * @param generationManager metadata generation manager of the application
+     */
+    @Internal
+    public void setGenerationManager(MetadataGenerationManager generationManager) {
+        this.generationManager = generationManager;
     }
 
     /**

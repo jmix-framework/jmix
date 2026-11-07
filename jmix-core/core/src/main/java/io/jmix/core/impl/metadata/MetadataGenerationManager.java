@@ -73,6 +73,9 @@ public class MetadataGenerationManager {
         );
         currentGeneration.set(initialGeneration);
 
+        metadata.setGenerationManager(this);
+        extendedEntities.setGenerationManager(this);
+
         log.debug("Initialized metadata generation {} from bootstrap session", initialGeneration.getId());
     }
 

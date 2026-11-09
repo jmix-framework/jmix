@@ -143,6 +143,8 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
 
     /**
      * Removes menu item and its children from the menu.
+     * <p>
+     * If the menu item is a child of a menu bar item, it is also removed from the child items of that menu bar item.
      *
      * @param menuItem menu item to remove
      */
@@ -152,6 +154,15 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
             throw new IllegalArgumentException(MenuItem.class.getSimpleName() + "is not attached to the menu");
         }
 
+        MenuBarItem parentMenuBarItem = findParentMenuBarItem(menuItem);
+        if (parentMenuBarItem != null) {
+            parentMenuBarItem.removeChildItem(menuItem);
+        } else {
+            removeMenuItemInternal(menuItem);
+        }
+    }
+
+    protected void removeMenuItemInternal(MenuItem menuItem) {
         Pair<MenuItem, ListItem> menuItemEntry = registrations.get(menuItem.getId());
         if (menuItemEntry == null) {
             return;
@@ -1062,7 +1073,7 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
 
                 children.remove(menuItem);
                 if (isAttachedToMenu()) {
-                    menuComponent.removeMenuItem(menuItem);
+                    menuComponent.removeMenuItemInternal(menuItem);
                 }
             }
 
@@ -1089,7 +1100,7 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
                     .findFirst()
                     .ifPresent((item) -> {
                         if (isAttachedToMenu()) {
-                            menuComponent.removeMenuItem(menuItem);
+                            menuComponent.removeMenuItemInternal(menuItem);
                         }
                         children.remove(menuItem);
                     });
@@ -1106,7 +1117,7 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
             }
 
             if (isAttachedToMenu()) {
-                menuComponent.removeMenuItem(children.get(index));
+                menuComponent.removeMenuItemInternal(children.get(index));
             }
 
             children.remove(index);
@@ -1123,7 +1134,7 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
 
             if (isAttachedToMenu()) {
                 for (MenuItem menuItem : children) {
-                    menuComponent.removeMenuItem(menuItem);
+                    menuComponent.removeMenuItemInternal(menuItem);
                 }
             }
 

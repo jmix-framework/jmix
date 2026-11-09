@@ -797,8 +797,124 @@ class ListMenuTest extends FlowuiTestSpecification {
         then:
         noExceptionThrown()
         !x.attachedToMenu
+        inner.childItems.isEmpty()
         listMenu.getMenuItem("x") == null
         findElementById(listMenu.element, "x") == null
+    }
+
+    def "Remove nested menu item from its parent menu bar when it is removed from the menu"() {
+        given:
+        def listMenu = uiComponents.create(JmixListMenu)
+
+        def menuBar = ListMenu.MenuItem.createMenuBar("menuBar")
+        def first = ListMenu.MenuItem.create("first")
+        def second = ListMenu.MenuItem.create("second")
+        menuBar.addChildItem(first)
+        menuBar.addChildItem(second)
+        listMenu.addMenuItem(menuBar)
+
+        when:
+        listMenu.removeMenuItem(first)
+
+        then:
+        !first.attachedToMenu
+        menuBar.childItems == [second]
+        listMenu.getMenuItem("first") == null
+        findElementById(listMenu.element, "first") == null
+
+        when:
+        menuBar.addChildItem(first)
+
+        then:
+        first.attachedToMenu
+        menuBar.childItems == [second, first]
+        findElementById(listMenu.element, "first") != null
+    }
+
+    def "Remove child menu item by index"() {
+        given:
+        def listMenu = uiComponents.create(JmixListMenu)
+
+        def menuBar = ListMenu.MenuItem.createMenuBar("menuBar")
+        def first = ListMenu.MenuItem.create("first")
+        def second = ListMenu.MenuItem.create("second")
+        menuBar.addChildItem(first)
+        menuBar.addChildItem(second)
+        listMenu.addMenuItem(menuBar)
+
+        when:
+        menuBar.removeChildItem(0)
+
+        then:
+        menuBar.childItems == [second]
+        !first.attachedToMenu
+        second.attachedToMenu
+        findElementById(listMenu.element, "first") == null
+        findElementById(listMenu.element, "second") != null
+    }
+
+    def "Remove all child items of an attached menu bar"() {
+        given:
+        def listMenu = uiComponents.create(JmixListMenu)
+        def first = item("first")
+        def innerChild = item("innerChild")
+        def inner = menuBar("inner", innerChild)
+        def bar = menuBar("bar", first, inner)
+        listMenu.addMenuItem(bar)
+
+        when:
+        bar.removeAllChildItems()
+
+        then:
+        noExceptionThrown()
+        bar.childItems.isEmpty()
+        !first.attachedToMenu
+        !inner.attachedToMenu
+        !innerChild.attachedToMenu
+        listMenu.getMenuItem("innerChild") == null
+        findElementById(listMenu.element, "first") == null
+        findElementById(listMenu.element, "inner") == null
+    }
+
+    def "Remove a nested menu bar with its children from the menu"() {
+        given:
+        def listMenu = uiComponents.create(JmixListMenu)
+        def x = item("x")
+        def inner = menuBar("inner", x)
+        def outer = menuBar("outer", item("a"), inner)
+        listMenu.addMenuItem(outer)
+
+        when:
+        listMenu.removeMenuItem(inner)
+
+        then:
+        outer.childItems*.id == ["a"]
+        !inner.attachedToMenu
+        !x.attachedToMenu
+        listMenu.getMenuItem("inner") == null
+        listMenu.getMenuItem("x") == null
+        findElementById(listMenu.element, "inner") == null
+    }
+
+    def "Do not render a removed nested item again when its parent menu bar is moved"() {
+        given:
+        def listMenu = uiComponents.create(JmixListMenu)
+        def x = item("x")
+        def y = item("y")
+        def inner = menuBar("inner", x, y)
+        def outer = menuBar("outer", item("a"), inner)
+        listMenu.addMenuItem(outer)
+        listMenu.removeMenuItem(x)
+
+        when:
+        outer.addChildItem(inner, 0)
+
+        then:
+        outer.childItems*.id == ["inner", "a"]
+        inner.childItems == [y]
+        y.attachedToMenu
+        findElementById(listMenu.element, "x") == null
+        findElementById(listMenu.element, "y") != null
     }
 
     protected static ListMenu.MenuItem item(String id) {

@@ -281,7 +281,11 @@ class JmixBuildPlugin implements Plugin<Project> {
                                 }
                             }
                         }
-                        tasks.named('spotbugsMain').get().dependsOn('initSpotbugsExcludeFilter')
+                        // Every SpotBugs task of the module reads the filter: 'spotbugsTest' and the tasks of other
+                        // source sets as well as 'spotbugsMain'.
+                        tasks.withType(SpotBugsTask).configureEach {
+                            dependsOn 'initSpotbugsExcludeFilter'
+                        }
                     }
 
                     spotbugs {

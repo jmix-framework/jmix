@@ -68,8 +68,6 @@ import java.util.stream.Collectors;
 @ViewDescriptor("app-settings-entity-view.xml")
 @DialogMode(width = "50em", height = "37.5em")
 public class AppSettingsEntityView extends StandardView {
-
-    protected static final int MAX_CAPTION_LENGTH = 50;
     protected static final String QUERY_PARAM_SETTINGS_CLASS = "settings";
     protected static final int FORM_COLUMNS = 3;
 
@@ -394,12 +392,7 @@ public class AppSettingsEntityView extends StandardView {
     }
 
     protected String getPropertyCaption(MetaClass metaClass, MetaProperty metaProperty) {
-        String caption = messageTools.getPropertyCaption(metaClass, metaProperty.getName());
-        if (caption.length() < MAX_CAPTION_LENGTH) {
-            return caption;
-        } else {
-            return caption.substring(0, MAX_CAPTION_LENGTH);
-        }
+        return messageTools.getPropertyCaption(metaClass, metaProperty.getName());
     }
 
     @SuppressWarnings({"rawtypes"})

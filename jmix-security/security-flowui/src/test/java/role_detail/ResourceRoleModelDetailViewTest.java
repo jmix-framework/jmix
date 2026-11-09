@@ -139,6 +139,21 @@ public class ResourceRoleModelDetailViewTest {
     }
 
     @Test
+    void nameAndDescriptionFields_designTimeRole_showTranslation() {
+        ResourceRoleModelDetailView view = openView(TestBookkeeperRole.CODE);
+
+        assertThat(getNameField(view).getValue()).isEqualTo("Bookkeeper");
+        assertThat(getDescriptionField(view).getValue()).isEqualTo("Keeps the books");
+    }
+
+    @Test
+    void nameField_databaseRole_showsStoredText() {
+        ResourceRoleModelDetailView view = openView(TRANSLATED_ROLE_CODE);
+
+        assertThat(getNameField(view).getValue()).isEqualTo("Buchhaltung");
+    }
+
+    @Test
     void localizedValueFields_designTimeRole_areHidden() {
         ResourceRoleModelDetailView view = openView(TestBookkeeperRole.CODE);
 
@@ -219,6 +234,14 @@ public class ResourceRoleModelDetailViewTest {
         viewNavigationSupport.navigate(ResourceRoleModelDetailView.class, new RouteParameters(
                 ResourceRoleModelDetailView.ROUTE_PARAM_NAME, urlParamSerializer.serialize(roleCode)));
         return UiTestUtils.getCurrentView();
+    }
+
+    TypedTextField<String> getNameField(ResourceRoleModelDetailView view) {
+        return UiTestUtils.getComponent(view, "nameField");
+    }
+
+    JmixTextArea getDescriptionField(ResourceRoleModelDetailView view) {
+        return UiTestUtils.getComponent(view, "descriptionField");
     }
 
     JmixValuePicker<String> getLocalizedNamesField(ResourceRoleModelDetailView view) {

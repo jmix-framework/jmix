@@ -36,6 +36,7 @@ import io.jmix.flowui.model.InstanceContainer;
 import io.jmix.flowui.view.*;
 import io.jmix.flowui.view.navigation.UrlParamSerializer;
 import io.jmix.security.model.*;
+import io.jmix.security.role.RoleLocalizationSupport;
 import io.jmix.security.role.RolePersistence;
 import io.jmix.security.role.RowLevelRoleRepository;
 import io.jmix.securityflowui.impl.role.LocalizedRoleColumnsSupport;
@@ -79,6 +80,8 @@ public class RowLevelRoleModelDetailView extends StandardDetailView<RowLevelRole
     private RoleModelConverter roleModelConverter;
     @Autowired
     private LocalizedRoleColumnsSupport localizedRoleColumnsSupport;
+    @Autowired
+    private RoleLocalizationSupport roleLocalizationSupport;
     @Autowired
     private RowLevelRoleRepository roleRepository;
     @Autowired
@@ -124,6 +127,7 @@ public class RowLevelRoleModelDetailView extends StandardDetailView<RowLevelRole
         }
 
         RowLevelRoleModel rowLevelRoleModel = roleModelConverter.createRowLevelRoleModel(roleByCode);
+        initTextsOfNotEditedRole(rowLevelRoleModel);
 
         childRolesDc.mute();
         childRolesDc.setItems(loadChildRoleModels(rowLevelRoleModel));
@@ -131,6 +135,15 @@ public class RowLevelRoleModelDetailView extends StandardDetailView<RowLevelRole
 
         RowLevelRoleModel merged = dataContext.merge(rowLevelRoleModel);
         roleModelDc.setItem(merged);
+    }
+
+    private void initTextsOfNotEditedRole(RowLevelRoleModel roleModel) {
+        // Only a database role is edited here, so its fields hold the stored texts. Any other role is shown read-only
+        // by the texts the role lists show, since its stored texts are those of the default locale as of startup.
+        if (!RoleSourceType.DATABASE.equals(roleModel.getSource())) {
+            roleModel.setName(roleLocalizationSupport.getLocalizedName(roleModel));
+            roleModel.setDescription(roleLocalizationSupport.getLocalizedDescription(roleModel));
+        }
     }
 
     protected List<RowLevelRoleModel> loadChildRoleModels(RowLevelRoleModel editedRoleModel) {

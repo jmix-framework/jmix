@@ -49,6 +49,8 @@ public class MetadataImpl implements Metadata {
     @Autowired
     protected ObjectProvider<MetadataGenerationManager> metadataGenerationManagerProvider;
 
+    protected volatile @Nullable MetadataGenerationManager metadataGenerationManager;
+
     @Autowired
     public MetadataImpl(MetadataLoader metadataLoader) {
         session = metadataLoader.getSession();
@@ -56,11 +58,27 @@ public class MetadataImpl implements Metadata {
 
     @Override
     public Session getSession() {
-        MetadataGenerationManager metadataGenerationManager = metadataGenerationManagerProvider.getIfAvailable();
+        MetadataGenerationManager metadataGenerationManager = getMetadataGenerationManager();
         if (metadataGenerationManager != null) {
             return metadataGenerationManager.getPinnedOrCurrentGeneration().getSession();
         }
         return session;
+    }
+
+    /**
+     * Returns the metadata generation manager resolved by Spring, or null if it is not available.
+     * The first resolved instance is cached, because resolving it from {@link ObjectProvider} is expensive.
+     */
+    @Nullable
+    protected MetadataGenerationManager getMetadataGenerationManager() {
+        MetadataGenerationManager manager = metadataGenerationManager;
+        if (manager == null) {
+            manager = metadataGenerationManagerProvider.getIfAvailable();
+            if (manager != null) {
+                metadataGenerationManager = manager;
+            }
+        }
+        return manager;
     }
 
     /**

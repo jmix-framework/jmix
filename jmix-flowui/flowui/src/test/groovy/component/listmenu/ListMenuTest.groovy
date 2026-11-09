@@ -333,6 +333,96 @@ class ListMenuTest extends FlowuiTestSpecification {
         getRenderedMenuItemComponent(listMenu, "secondView").element.hasAttribute("highlight")
     }
 
+    def "Attach child items of a menu bar added to an attached menu bar"() {
+        given:
+        def listMenu = uiComponents.create(JmixListMenu)
+
+        def outer = ListMenu.MenuItem.createMenuBar("outer")
+        outer.addChildItem(ListMenu.MenuItem.create("a"))
+        listMenu.addMenuItem(outer)
+
+        def inner = ListMenu.MenuItem.createMenuBar("inner")
+        def innerChild = ListMenu.MenuItem.create("innerChild")
+        inner.addChildItem(innerChild)
+
+        when:
+        outer.addChildItem(inner)
+
+        then:
+        inner.attachedToMenu
+        innerChild.attachedToMenu
+        innerChild.menuComponent == listMenu
+
+        when:
+        inner.removeChildItem(innerChild)
+
+        then:
+        !innerChild.attachedToMenu
+        inner.childItems.isEmpty()
+        listMenu.getMenuItem("innerChild") == null
+        findElementById(listMenu.element, "innerChild") == null
+    }
+
+    def "Attach child items of a menu bar moved inside its parent"() {
+        given:
+        def listMenu = uiComponents.create(JmixListMenu)
+
+        def outer = ListMenu.MenuItem.createMenuBar("outer")
+        def inner = ListMenu.MenuItem.createMenuBar("inner")
+        def innerChild = ListMenu.MenuItem.create("innerChild")
+        inner.addChildItem(innerChild)
+        outer.addChildItem(ListMenu.MenuItem.create("a"))
+        outer.addChildItem(inner)
+        listMenu.addMenuItem(outer)
+
+        when:
+        outer.addChildItem(inner, 0)
+
+        then:
+        outer.childItems*.id == ["inner", "a"]
+        innerChild.attachedToMenu
+
+        when:
+        inner.removeChildItem(innerChild)
+
+        then:
+        !innerChild.attachedToMenu
+        inner.childItems.isEmpty()
+        findElementById(listMenu.element, "innerChild") == null
+    }
+
+    def "Attach all levels of a menu bar subtree added to an attached menu bar"() {
+        given:
+        def listMenu = uiComponents.create(JmixListMenu)
+
+        def outer = ListMenu.MenuItem.createMenuBar("outer")
+        outer.addChildItem(ListMenu.MenuItem.create("a"))
+        listMenu.addMenuItem(outer)
+
+        def x = ListMenu.MenuItem.create("x")
+        def inner = ListMenu.MenuItem.createMenuBar("inner")
+        inner.addChildItem(x)
+        def middle = ListMenu.MenuItem.createMenuBar("middle")
+        middle.addChildItem(inner)
+
+        when:
+        outer.addChildItem(middle)
+
+        then:
+        middle.attachedToMenu
+        inner.attachedToMenu
+        x.attachedToMenu
+
+        when:
+        listMenu.removeMenuItem(x)
+
+        then:
+        noExceptionThrown()
+        !x.attachedToMenu
+        listMenu.getMenuItem("x") == null
+        findElementById(listMenu.element, "x") == null
+    }
+
     protected void fireAfterNavigation(JmixListMenu listMenu, String path) {
         def event = new AfterNavigationEvent(new LocationChangeEvent(
                 ui.getInternals().getRouter(),

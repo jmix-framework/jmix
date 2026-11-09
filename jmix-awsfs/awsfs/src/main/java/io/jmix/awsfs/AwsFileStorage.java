@@ -74,6 +74,8 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Base64;
@@ -235,6 +237,9 @@ public class AwsFileStorage implements FileStorage {
         try (BufferedInputStream bis = new BufferedInputStream(source, s3ChunkSizeBytes)) {
             S3Client s3Client = s3ClientReference.get();
 
+            // With checksums on, the SHA-256 of each request body is computed here and sent ready-made rather than
+            // requested from the SDK by algorithm: the AWS SDK before 2.30.9 sends the SHA-256 of an empty input
+            // when it signs the payload (plain-HTTP endpoints), so S3 would reject every upload.
             byte[] chunkBytes = new byte[s3ChunkSizeBytes];
             int nBytes = fillBuffer(bis, chunkBytes);
             if (nBytes < s3ChunkSizeBytes) {
@@ -242,7 +247,7 @@ public class AwsFileStorage implements FileStorage {
                         .bucket(bucket)
                         .key(fileKey);
                 if (checksumEnabled) {
-                    putBuilder.checksumAlgorithm(ChecksumAlgorithm.SHA256);
+                    putBuilder.checksumSHA256(sha256Base64(chunkBytes, nBytes));
                 }
                 s3Client.putObject(putBuilder.build(), fromBytes(chunkBytes, nBytes));
                 addDigest(fileRef, digestInputStream);
@@ -262,20 +267,17 @@ public class AwsFileStorage implements FileStorage {
                     .bucket(bucket)
                     .key(fileKey)
                     .uploadId(response.uploadId());
-            if (checksumEnabled) {
-                partBuilder.checksumAlgorithm(ChecksumAlgorithm.SHA256);
-            }
             for (int partNumber = 1; 0 < nBytes; partNumber++) {
+                String partChecksum = checksumEnabled ? sha256Base64(chunkBytes, nBytes) : null;
                 UploadPartResponse partResponse = s3Client.uploadPart(partBuilder
                         .partNumber(partNumber)
+                        .checksumSHA256(partChecksum)
                         .build(), fromBytes(chunkBytes, nBytes));
-                CompletedPart.Builder completedPartBuilder = CompletedPart.builder()
+                completedParts.add(CompletedPart.builder()
                         .partNumber(partNumber)
-                        .eTag(partResponse.eTag());
-                if (checksumEnabled) {
-                    completedPartBuilder.checksumSHA256(partResponse.checksumSHA256());
-                }
-                completedParts.add(completedPartBuilder.build());
+                        .eTag(partResponse.eTag())
+                        .checksumSHA256(partChecksum)
+                        .build());
                 nBytes = fillBuffer(bis, chunkBytes);
             }
 
@@ -329,6 +331,20 @@ public class AwsFileStorage implements FileStorage {
             bytesRead += n;
         }
         return bytesRead == 0 ? -1 : bytesRead;
+    }
+
+    /**
+     * Returns the Base64 SHA-256 of the first {@code length} bytes of the buffer, a negative length meaning none.
+     */
+    protected String sha256Base64(byte[] buffer, int length) {
+        MessageDigest messageDigest;
+        try {
+            messageDigest = MessageDigest.getInstance("SHA-256");
+        } catch (NoSuchAlgorithmException e) {
+            throw new IllegalStateException("SHA-256 is not available", e);
+        }
+        messageDigest.update(buffer, 0, Math.max(0, length));
+        return Base64.getEncoder().encodeToString(messageDigest.digest());
     }
 
     protected RequestBody fromBytes(byte[] buffer, int length) {

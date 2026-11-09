@@ -25,6 +25,7 @@ import org.springframework.context.ApplicationContext
 import org.springframework.test.context.ContextConfiguration
 import software.amazon.awssdk.core.ResponseInputStream
 import software.amazon.awssdk.core.exception.SdkClientException
+import software.amazon.awssdk.core.sync.RequestBody
 import software.amazon.awssdk.http.AbortableInputStream
 import software.amazon.awssdk.services.s3.S3Client
 import software.amazon.awssdk.services.s3.model.ChecksumAlgorithm
@@ -36,6 +37,7 @@ import software.amazon.awssdk.services.s3.model.HeadObjectResponse
 import software.amazon.awssdk.services.s3.model.ListObjectsV2Request
 import software.amazon.awssdk.services.s3.model.NoSuchKeyException
 import software.amazon.awssdk.services.s3.model.S3Exception
+import software.amazon.awssdk.services.s3.model.UploadPartRequest
 import software.amazon.awssdk.services.s3.model.UploadPartResponse
 import spock.lang.Specification
 import test_support.AwsFileStorageTestConfiguration
@@ -53,6 +55,7 @@ class AwsFileStorageIntegrityTest extends Specification {
     static final String ABC_SHA_256 = 'ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad'
     static final String ABC_SHA_256_BASE64 = 'ungWv48Bz+pBQUDeXa4iI7ADYaOWF3qctBD/YfIAFa0='
     static final String EMPTY_SHA_256 = 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855'
+    static final String EMPTY_SHA_256_BASE64 = '47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU='
 
     // The storage is created with the chunk size of 8 kB.
     static final int CHUNK_SIZE_BYTES = 8 * 1024
@@ -62,14 +65,16 @@ class AwsFileStorageIntegrityTest extends Specification {
 
     S3Client s3Client = Mock()
 
-    def "single-part upload sends the SHA-256 checksum and adds the digest"() {
+    // The checksum is sent precomputed, with no algorithm for the SDK to compute it:
+    // the SDK before 2.30.9 sends a wrong SHA-256 when it signs the payload (plain-HTTP endpoints).
+    def "single-part upload sends the precomputed SHA-256 checksum and adds the digest"() {
         def storage = storage(null)
 
         when:
         def fileRef = storage.saveStream('a.txt', stream('abc'), [:])
 
         then:
-        1 * s3Client.putObject({ it.checksumAlgorithm() == ChecksumAlgorithm.SHA256 }, _)
+        1 * s3Client.putObject({ it.checksumSHA256() == ABC_SHA_256_BASE64 && it.checksumAlgorithm() == null }, _)
         fileRef.parameters[DIGEST_PARAMETER] == ABC_SHA_256
     }
 
@@ -80,7 +85,7 @@ class AwsFileStorageIntegrityTest extends Specification {
         def fileRef = storage.saveStream('empty.txt', stream(''), [:])
 
         then:
-        1 * s3Client.putObject(_, _)
+        1 * s3Client.putObject({ it.checksumSHA256() == EMPTY_SHA_256_BASE64 }, _)
         0 * s3Client.createMultipartUpload(_)
         fileRef.parameters[DIGEST_PARAMETER] == EMPTY_SHA_256
     }
@@ -100,9 +105,15 @@ class AwsFileStorageIntegrityTest extends Specification {
         fileRef.parameters[DIGEST_PARAMETER] == sha256Hex(content)
     }
 
-    def "multipart upload sends part checksums and completes with them"() {
+    def "multipart upload sends precomputed part checksums and completes with them"() {
         def storage = storage(null)
         byte[] content = content(CHUNK_SIZE_BYTES * 2 + 1)
+        def partChecksums = [
+                sha256Base64(Arrays.copyOfRange(content, 0, CHUNK_SIZE_BYTES)),
+                sha256Base64(Arrays.copyOfRange(content, CHUNK_SIZE_BYTES, CHUNK_SIZE_BYTES * 2)),
+                sha256Base64(Arrays.copyOfRange(content, CHUNK_SIZE_BYTES * 2, content.length))
+        ]
+        List<UploadPartRequest> partRequests = []
 
         when:
         def fileRef = storage.saveStream('big.bin', new ByteArrayInputStream(content), [:])
@@ -110,11 +121,17 @@ class AwsFileStorageIntegrityTest extends Specification {
         then:
         1 * s3Client.createMultipartUpload({ it.checksumAlgorithm() == ChecksumAlgorithm.SHA256 }) >>
                 CreateMultipartUploadResponse.builder().uploadId('u').build()
-        3 * s3Client.uploadPart({ it.checksumAlgorithm() == ChecksumAlgorithm.SHA256 && it.uploadId() == 'u' }, _) >>>
-                ['c1', 'c2', 'c3'].collect { UploadPartResponse.builder().eTag('e' + it).checksumSHA256(it).build() }
+        // The responses carry no checksum: the completed parts must use the precomputed ones.
+        3 * s3Client.uploadPart(_, _) >> { UploadPartRequest request, RequestBody body ->
+            partRequests << request
+            UploadPartResponse.builder().eTag('e' + request.partNumber()).build()
+        }
         1 * s3Client.completeMultipartUpload({
-            it.uploadId() == 'u' && it.multipartUpload().parts()*.checksumSHA256() == ['c1', 'c2', 'c3']
+            it.uploadId() == 'u' && it.multipartUpload().parts()*.checksumSHA256() == partChecksums
         })
+        partRequests*.uploadId() == ['u', 'u', 'u']
+        partRequests*.checksumSHA256() == partChecksums
+        partRequests*.checksumAlgorithm() == [null, null, null]
         fileRef.parameters[DIGEST_PARAMETER] == sha256Hex(content)
     }
 
@@ -125,7 +142,7 @@ class AwsFileStorageIntegrityTest extends Specification {
         def fileRef = storage.saveStream('a.txt', stream('abc'), [:])
 
         then:
-        1 * s3Client.putObject({ it.checksumAlgorithm() == null }, _)
+        1 * s3Client.putObject({ it.checksumAlgorithm() == null && it.checksumSHA256() == null }, _)
         fileRef.parameters[DIGEST_PARAMETER] == ABC_SHA_256
     }
 
@@ -139,7 +156,8 @@ class AwsFileStorageIntegrityTest extends Specification {
         then:
         1 * s3Client.createMultipartUpload({ it.checksumAlgorithm() == null }) >>
                 CreateMultipartUploadResponse.builder().uploadId('u').build()
-        2 * s3Client.uploadPart({ it.checksumAlgorithm() == null }, _) >> UploadPartResponse.builder().eTag('e').build()
+        2 * s3Client.uploadPart({ it.checksumAlgorithm() == null && it.checksumSHA256() == null }, _) >>
+                UploadPartResponse.builder().eTag('e').build()
         1 * s3Client.completeMultipartUpload({
             it.multipartUpload().parts().size() == 2 && it.multipartUpload().parts().every { part -> part.checksumSHA256() == null }
         })
@@ -153,13 +171,13 @@ class AwsFileStorageIntegrityTest extends Specification {
         storage.saveStream('a.txt', stream('abc'), [:])
 
         then:
-        1 * s3Client.putObject({ it.checksumAlgorithm() == expectedAlgorithm }, _)
+        1 * s3Client.putObject({ it.checksumSHA256() == expectedChecksum }, _)
 
         where:
-        endpointUrl             | checksumEnabled || expectedAlgorithm
-        'http://localhost:9000' | true            || ChecksumAlgorithm.SHA256
+        endpointUrl             | checksumEnabled || expectedChecksum
+        'http://localhost:9000' | true            || ABC_SHA_256_BASE64
         null                    | false           || null
-        ''                      | null            || ChecksumAlgorithm.SHA256
+        ''                      | null            || ABC_SHA_256_BASE64
     }
 
     def "a reserved parameter is rejected"() {
@@ -394,5 +412,9 @@ class AwsFileStorageIntegrityTest extends Specification {
 
     static String sha256Hex(byte[] content) {
         return HexFormat.of().formatHex(MessageDigest.getInstance('SHA-256').digest(content))
+    }
+
+    static String sha256Base64(byte[] content) {
+        return Base64.encoder.encodeToString(MessageDigest.getInstance('SHA-256').digest(content))
     }
 }

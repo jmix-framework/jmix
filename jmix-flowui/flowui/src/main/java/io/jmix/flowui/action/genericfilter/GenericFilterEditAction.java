@@ -21,6 +21,7 @@ import io.jmix.flowui.DialogWindows;
 import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.app.filter.condition.FilterConditionDetailView;
 import io.jmix.flowui.app.filter.condition.GroupFilterConditionDetailView;
+import io.jmix.flowui.component.filter.FilterComponent;
 import io.jmix.flowui.component.genericfilter.Configuration;
 import io.jmix.flowui.component.genericfilter.GenericFilterSupport;
 import io.jmix.flowui.component.genericfilter.configuration.AbstractConfigurationDetail;
@@ -28,6 +29,7 @@ import io.jmix.flowui.component.genericfilter.configuration.DesignTimeConfigurat
 import io.jmix.flowui.component.genericfilter.converter.FilterConverter;
 import io.jmix.flowui.component.genericfilter.registration.FilterComponents;
 import io.jmix.flowui.component.logicalfilter.LogicalFilterComponent;
+import io.jmix.flowui.component.propertyfilter.PropertyFilter;
 import io.jmix.flowui.entity.filter.LogicalFilterCondition;
 import io.jmix.flowui.icon.Icons;
 import io.jmix.flowui.kit.icon.JmixFontIcon;
@@ -36,6 +38,7 @@ import io.jmix.flowui.view.StandardOutcome;
 import io.jmix.flowui.view.View;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -165,12 +168,14 @@ public class GenericFilterEditAction extends GenericFilterAction<GenericFilterEd
                                          Map<String, Object> valuesMap) {
         LogicalFilterComponent rootFilterComponent =
                 (LogicalFilterComponent) converter.convertToComponent(filterCondition);
+        Map<String, Object> valuesToRestore = getValuesToRestore(
+                currentConfiguration.getRootLogicalFilterComponent(), rootFilterComponent, valuesMap);
         Configuration resultConfiguration = genericFilterSupport.saveCurrentFilterConfiguration(
                 currentConfiguration, isNewConfiguration, rootFilterComponent, configurationDetail);
 
         genericFilterSupport.refreshConfigurationDefaultValues(resultConfiguration);
         resultConfiguration.setModified(false);
-        genericFilterSupport.refreshConfigurationValuesMap(resultConfiguration, valuesMap);
+        genericFilterSupport.refreshConfigurationValuesMap(resultConfiguration, valuesToRestore);
 
         if (isNewConfiguration || !currentConfiguration.getId().equals(resultConfiguration.getId())) {
             target.addConfiguration(resultConfiguration);
@@ -183,6 +188,37 @@ public class GenericFilterEditAction extends GenericFilterAction<GenericFilterEd
         }
 
         target.apply();
+    }
+
+    /**
+     * Returns the values entered in the conditions before editing, except the values of the property conditions
+     * whose operation has been changed to an operation of another type: such a condition gets a value component
+     * of another kind, as when the operation is changed in the filter itself.
+     */
+    protected Map<String, Object> getValuesToRestore(LogicalFilterComponent<?> previousRootComponent,
+                                                     LogicalFilterComponent<?> editedRootComponent,
+                                                     Map<String, Object> valuesMap) {
+        Map<String, PropertyFilter.Operation.Type> previousOperationTypes = new HashMap<>();
+        for (FilterComponent filterComponent : previousRootComponent.getFilterComponents()) {
+            if (filterComponent instanceof PropertyFilter<?> propertyFilter) {
+                previousOperationTypes.put(propertyFilter.getParameterName(),
+                        propertyFilter.getOperation().getType());
+            }
+        }
+
+        Map<String, Object> valuesToRestore = new HashMap<>(valuesMap);
+        for (FilterComponent filterComponent : editedRootComponent.getFilterComponents()) {
+            if (filterComponent instanceof PropertyFilter<?> propertyFilter) {
+                PropertyFilter.Operation.Type previousOperationType =
+                        previousOperationTypes.get(propertyFilter.getParameterName());
+                if (previousOperationType != null
+                        && previousOperationType != propertyFilter.getOperation().getType()) {
+                    valuesToRestore.remove(propertyFilter.getParameterName());
+                }
+            }
+        }
+
+        return valuesToRestore;
     }
 
     protected void applyViewConfigurer(View<?> detailView) {

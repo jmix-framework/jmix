@@ -220,7 +220,7 @@ public class GenericFilterSupport {
                 } else {
                     try {
                         singleFilterComponent.setValue(value);
-                    } catch (ClassCastException e) {
+                    } catch (ClassCastException | IllegalArgumentException e) {
                         singleFilterComponent.setValue(defaultValue);
                     }
                 }

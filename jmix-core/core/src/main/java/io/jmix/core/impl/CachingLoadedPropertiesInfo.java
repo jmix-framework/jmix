@@ -22,26 +22,41 @@ import io.jmix.core.EntityStates.PropertyLoadedState;
 import io.jmix.core.entity.EntitySystemAccess;
 import io.jmix.core.entity.LoadedPropertiesInfo;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Implementation of {@link LoadedPropertiesInfo} that caches information about loaded properties to avoid
  * expensive operations for the same instance and property.
  * <p>
  * Used by default for JPA entities.
+ * <p>
+ * The instance is thread-safe: the same detached entity instance can be shared between threads, for example
+ * through the EclipseLink shared cache.
  */
 public class CachingLoadedPropertiesInfo implements LoadedPropertiesInfo {
 
-    private Map<String, Boolean> cache = new HashMap<>();
+    private final Map<String, Boolean> cache = new ConcurrentHashMap<>();
 
     @Override
     public boolean isLoaded(Object entity, String property, PersistentAttributesLoadChecker checker) {
         if (EntitySystemAccess.getEntityEntry(entity).isManaged()) {
             return checker.isLoaded(entity, property);
         }
-        return cache.computeIfAbsent(property, name ->
-                checker.isLoaded(entity, name));
+        Boolean loaded = cache.get(property);
+        if (loaded != null) {
+            return loaded;
+        }
+        // Do not use cache.computeIfAbsent() here. The checker may call the property getter to find out
+        // if the property is loaded. For a detached entity, the getter can trigger lazy loading, and lazy
+        // loading calls registerProperty() on this object, that is, it writes to the same map. A write to
+        // the map from inside the computeIfAbsent() function is not allowed and can fail with IllegalStateException
+        // ("Recursive update"). So the checker is called first, and its result is stored afterwards.
+        // If another thread or lazy loading has stored a value in the meantime, that value is kept
+        // and returned.
+        loaded = checker.isLoaded(entity, property);
+        Boolean registered = cache.putIfAbsent(property, loaded);
+        return registered != null ? registered : loaded;
     }
 
     @Override
@@ -49,8 +64,9 @@ public class CachingLoadedPropertiesInfo implements LoadedPropertiesInfo {
         if (EntitySystemAccess.getEntityEntry(entity).isManaged()) {
             return checker.isLoadedSafe(entity, property);
         }
-        if (cache.containsKey(property)) {
-            return EntityStates.PropertyLoadedState.fromBoolean(cache.get(property));
+        Boolean loaded = cache.get(property);
+        if (loaded != null) {
+            return EntityStates.PropertyLoadedState.fromBoolean(loaded);
         } else {
             PropertyLoadedState state = checker.isLoadedSafe(entity, property);
             if (state != EntityStates.PropertyLoadedState.UNKNOWN) {

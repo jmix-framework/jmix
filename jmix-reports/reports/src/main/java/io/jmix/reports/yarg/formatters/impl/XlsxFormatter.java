@@ -42,12 +42,18 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.SpreadsheetVersion;
+import org.apache.poi.ss.formula.FormulaParser;
+import org.apache.poi.ss.formula.FormulaRenderer;
+import org.apache.poi.ss.formula.FormulaShifter;
+import org.apache.poi.ss.formula.FormulaType;
+import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Picture;
 import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.ss.util.ImageUtils;
 import org.apache.poi.xssf.usermodel.XSSFClientAnchor;
 import org.apache.poi.xssf.usermodel.XSSFDrawing;
+import org.apache.poi.xssf.usermodel.XSSFEvaluationWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFFormulaEvaluator;
 import org.apache.poi.xssf.usermodel.XSSFName;
 import org.apache.poi.xssf.usermodel.XSSFPicture;
@@ -339,11 +345,15 @@ public class XlsxFormatter extends AbstractFormatter {
      */
     protected void expandSharedFormulas() throws IOException {
         Map<Cell, String> sharedFormulaCells = new LinkedHashMap<>();
+        Map<String, Cell> sharedFormulaMasters = new HashMap<>();
         for (Document.SheetWrapper sheetWrapper : template.getWorksheets()) {
             for (Row row : template.getWorksheetContents(sheetWrapper).getSheetData().getRow()) {
                 for (Cell cell : row.getC()) {
                     if (cell.getF() != null && cell.getF().getT() == STCellFormulaType.SHARED) {
                         sharedFormulaCells.put(cell, sheetWrapper.getName());
+                        if (StringUtils.isNotEmpty(cell.getF().getValue())) {
+                            sharedFormulaMasters.put(sheetWrapper.getName() + "!" + cell.getF().getSi(), cell);
+                        }
                     }
                 }
             }
@@ -355,18 +365,15 @@ public class XlsxFormatter extends AbstractFormatter {
 
         Set<String> failedGroups = new HashSet<>();
         try (XSSFWorkbook workbook = new XSSFWorkbook(reportTemplate.getDocumentContent())) {
+            XSSFEvaluationWorkbook evaluationWorkbook = XSSFEvaluationWorkbook.create(workbook);
             for (Map.Entry<Cell, String> entry : sharedFormulaCells.entrySet()) {
                 Cell cell = entry.getKey();
                 String sheetName = entry.getValue();
                 CTCellFormula cellFormula = cell.getF();
-                CellAddress address = new CellAddress(cell.getR());
                 String formula;
                 try {
-                    // POI resolves the cell's formula from the group's first cell
-                    formula = workbook.getSheet(sheetName)
-                            .getRow(address.getRow())
-                            .getCell(address.getColumn())
-                            .getCellFormula();
+                    Cell masterCell = sharedFormulaMasters.get(sheetName + "!" + cellFormula.getSi());
+                    formula = expandSharedFormula(evaluationWorkbook, sheetName, masterCell, cell);
                 } catch (RuntimeException e) {
                     // All cells of a group fail on the formula of its first cell, so a group is reported once
                     if (failedGroups.add(sheetName + "!" + cellFormula.getSi())) {
@@ -384,6 +391,27 @@ public class XlsxFormatter extends AbstractFormatter {
                 cellFormula.setSi(null);
             }
         }
+    }
+
+    protected String expandSharedFormula(XSSFEvaluationWorkbook workbook, String sheetName, Cell masterCell, Cell cell) {
+        CellAddress masterAddress = new CellAddress(masterCell.getR());
+        CellAddress address = new CellAddress(cell.getR());
+        int sheetIndex = workbook.getSheetIndex(sheetName);
+        Ptg[] tokens = FormulaParser.parse(masterCell.getF().getValue(), workbook, FormulaType.CELL,
+                sheetIndex, masterAddress.getRow());
+
+        // XSSFCell.getCellFormula() loses sheet names in shared formulas. Copy shifts preserve the reference types.
+        int rowOffset = address.getRow() - masterAddress.getRow();
+        if (rowOffset != 0) {
+            FormulaShifter.createForRowCopy(sheetIndex, sheetName, masterAddress.getRow(), masterAddress.getRow(),
+                    rowOffset, SpreadsheetVersion.EXCEL2007).adjustFormula(tokens, sheetIndex);
+        }
+        int columnOffset = address.getColumn() - masterAddress.getColumn();
+        if (columnOffset != 0) {
+            FormulaShifter.createForColumnCopy(sheetIndex, sheetName, masterAddress.getColumn(), masterAddress.getColumn(),
+                    columnOffset, SpreadsheetVersion.EXCEL2007).adjustFormula(tokens, sheetIndex);
+        }
+        return FormulaRenderer.toFormulaString(workbook, tokens);
     }
 
     protected void findVerticalDependencies() {

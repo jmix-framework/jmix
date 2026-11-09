@@ -146,6 +146,73 @@ class XlsxFormulaTest extends BaseXlsxFormulaTest {
             formula(sheet, 0, 2) == "2*B1"
     }
 
+    def "a shared formula referencing another sheet calculates like the plain formula control"() {
+        given:
+            def template = buildTemplate { wb ->
+                def sheet = sheet(wb)
+                cell(sheet, 0, 0, "Header")
+                cell(sheet, 1, 1, '${a}')
+                sharedFormula(sheet, "C2:D2", 'B2*Params!$B$2')
+                cell(sheet, 2, 1, '${a}')
+                formulaCell(sheet, 2, 2, 'B3*Params!$B$2')
+                formulaCell(sheet, 2, 3, 'C3*Params!$B$2')
+                numericCell(this.sheet(wb, "Params"), 1, 1, 10)
+                defineBand(wb, "Header", 0, 0, 0, 3)
+                defineBand(wb, "Data", 1, 0, 2, 3)
+                defineBand(wb, "ParamsBand", 0, 0, 1, 1, "Params")
+            }
+            def root = rootBand("Header", "Data", "ParamsBand")
+            addBand(root, "Header", [:])
+            addBand(root, "Data", [a: 2])
+            addBand(root, "Data", [a: 3])
+            addBand(root, "ParamsBand", [:])
+
+        when:
+            def workbook = read(render(template, root))
+            def resultSheet = workbook.getSheetAt(0)
+            def evaluator = workbook.creationHelper.createFormulaEvaluator()
+
+        then:
+            ownFormula(resultSheet, 1, 3) == 'C2*Params!$B$2'
+            ownFormula(resultSheet, 3, 3) == 'C4*Params!$B$2'
+            evaluator.evaluate(requireCell(resultSheet, 1, 3)).numberValue == 200d
+            evaluator.evaluate(requireCell(resultSheet, 2, 3)).numberValue == 200d
+            evaluator.evaluate(requireCell(resultSheet, 3, 3)).numberValue == 300d
+            evaluator.evaluate(requireCell(resultSheet, 4, 3)).numberValue == 300d
+
+        cleanup:
+            workbook?.close()
+    }
+
+    def "a shared formula filled right and down preserves sheet-qualified references: #masterFormula"() {
+        given:
+            def template = buildTemplate { wb ->
+                def sheet = sheet(wb)
+                this.sheet(wb, "Tax Rates")
+                sharedFormula(sheet, "C1:D2", masterFormula)
+                defineBand(wb, "Data", 0, 2, 1, 3)
+            }
+            def root = rootBand("Data")
+            addBand(root, "Data", [:])
+
+        when:
+            def sheet = renderAndReadFirstSheet(template, root)
+
+        then:
+            ownFormula(sheet, 0, 2) == masterFormula
+            ownFormula(sheet, 0, 3) == rightFormula
+            ownFormula(sheet, 1, 2) == downFormula
+            ownFormula(sheet, 1, 3) == diagonalFormula
+
+        where:
+            masterFormula                    | rightFormula                     | downFormula                      | diagonalFormula
+            "'Tax Rates'!A1"                 | "'Tax Rates'!B1"                 | "'Tax Rates'!A2"                 | "'Tax Rates'!B2"
+            "'Tax Rates'!\$A1"               | "'Tax Rates'!\$A1"               | "'Tax Rates'!\$A2"               | "'Tax Rates'!\$A2"
+            "'Tax Rates'!A\$1"               | "'Tax Rates'!B\$1"               | "'Tax Rates'!A\$1"               | "'Tax Rates'!B\$1"
+            "SUM('Tax Rates'!A1:B2)"         | "SUM('Tax Rates'!B1:C2)"         | "SUM('Tax Rates'!A2:B3)"         | "SUM('Tax Rates'!B2:C3)"
+            "SUM('Tax Rates'!\$A\$1:\$B\$2)" | "SUM('Tax Rates'!\$A\$1:\$B\$2)" | "SUM('Tax Rates'!\$A\$1:\$B\$2)" | "SUM('Tax Rates'!\$A\$1:\$B\$2)"
+    }
+
     /**
      * Writes a formula filled over {@code ref} the way Excel stores it: the first cell holds the text and the
      * group's range, the other cells only the group index.

@@ -59,6 +59,8 @@ public class ExtendedEntities {
     @Autowired
     protected ObjectProvider<MetadataGenerationManager> metadataGenerationManagerProvider;
 
+    protected volatile @Nullable MetadataGenerationManager metadataGenerationManager;
+
     @Autowired
     public ExtendedEntities(Metadata metadata) {
         this.metadata = metadata;
@@ -266,7 +268,7 @@ public class ExtendedEntities {
      * <p>Intended for infrastructure that needs a stable replacement map for the whole request or data operation.</p>
      */
     public ExtendedEntitiesState getCurrentStateSnapshot() {
-        MetadataGenerationManager metadataGenerationManager = metadataGenerationManagerProvider.getIfAvailable();
+        MetadataGenerationManager metadataGenerationManager = getMetadataGenerationManager();
         if (metadataGenerationManager != null) {
             return metadataGenerationManager.getPinnedOrCurrentGeneration().getExtendedEntitiesState();
         }
@@ -283,11 +285,27 @@ public class ExtendedEntities {
     }
 
     protected ExtendedEntitiesState getState() {
-        MetadataGenerationManager metadataGenerationManager = metadataGenerationManagerProvider.getIfAvailable();
+        MetadataGenerationManager metadataGenerationManager = getMetadataGenerationManager();
         if (metadataGenerationManager != null) {
             return metadataGenerationManager.getPinnedOrCurrentGeneration().getExtendedEntitiesState();
         }
         return currentState;
+    }
+
+    /**
+     * Returns the metadata generation manager resolved by Spring, or null if it is not available.
+     * The first resolved instance is cached, because resolving it from {@link ObjectProvider} is expensive.
+     */
+    @Nullable
+    protected MetadataGenerationManager getMetadataGenerationManager() {
+        MetadataGenerationManager manager = metadataGenerationManager;
+        if (manager == null) {
+            manager = metadataGenerationManagerProvider.getIfAvailable();
+            if (manager != null) {
+                metadataGenerationManager = manager;
+            }
+        }
+        return manager;
     }
 
     public static class ExtendedEntitiesState {

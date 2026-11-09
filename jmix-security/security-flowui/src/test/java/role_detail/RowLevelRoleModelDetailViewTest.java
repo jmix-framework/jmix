@@ -19,6 +19,8 @@ package role_detail;
 import com.vaadin.flow.router.RouteParameters;
 import io.jmix.core.UnconstrainedDataManager;
 import io.jmix.flowui.component.grid.DataGrid;
+import io.jmix.flowui.component.textarea.JmixTextArea;
+import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.component.valuepicker.JmixValuePicker;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.testassist.FlowuiTestAssistConfiguration;
@@ -57,8 +59,8 @@ import static test_support.TestRoleLocalizedValues.getDialogFields;
 
 /**
  * The test roles are German by default and English for the user of the tests. What the fields of the localized values
- * show, the dialog and the sorting of the child roles are tested on the resource role detail view, which declares and
- * installs them the same way.
+ * show, the dialog, the sorting of the child roles and the stored name of a database role are tested on the resource
+ * role detail view, which declares and installs them the same way.
  */
 @UiTest(viewBasePackages = {"io.jmix.securityflowui.view", "test_support.view"})
 @SpringBootTest(classes = {SecurityFlowuiTestConfiguration.class, FlowuiTestAssistConfiguration.class})
@@ -110,6 +112,16 @@ public class RowLevelRoleModelDetailViewTest {
         RowLevelRoleModel branch = getRoleModel(childRolesDc.getItems(), TestBranchRowLevelRole.CODE);
 
         assertThat(getShownText(childRolesTable, "name", branch)).isEqualTo("Branch records");
+    }
+
+    @Test
+    void nameAndDescriptionFields_designTimeRole_showTranslation() {
+        RowLevelRoleModelDetailView view = openView(TestBranchRowLevelRole.CODE);
+        TypedTextField<String> nameField = UiTestUtils.getComponent(view, "nameField");
+        JmixTextArea descriptionField = UiTestUtils.getComponent(view, "descriptionField");
+
+        assertThat(nameField.getValue()).isEqualTo("Branch records");
+        assertThat(descriptionField.getValue()).isEqualTo("data of one branch");
     }
 
     @Test

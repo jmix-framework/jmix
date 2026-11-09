@@ -42,6 +42,7 @@ import io.jmix.flowui.view.*;
 import io.jmix.flowui.view.navigation.UrlParamSerializer;
 import io.jmix.security.model.*;
 import io.jmix.security.role.ResourceRoleRepository;
+import io.jmix.security.role.RoleLocalizationSupport;
 import io.jmix.security.role.RolePersistence;
 import io.jmix.securityflowui.impl.role.LocalizedRoleColumnsSupport;
 import io.jmix.securityflowui.view.resourcepolicy.*;
@@ -101,6 +102,8 @@ public class ResourceRoleModelDetailView extends StandardDetailView<ResourceRole
     @Autowired
     private LocalizedRoleColumnsSupport localizedRoleColumnsSupport;
     @Autowired
+    private RoleLocalizationSupport roleLocalizationSupport;
+    @Autowired
     private ResourceRoleRepository roleRepository;
     @Autowired
     private UrlParamSerializer urlParamSerializer;
@@ -148,6 +151,7 @@ public class ResourceRoleModelDetailView extends StandardDetailView<ResourceRole
         }
 
         ResourceRoleModel resourceRoleModel = roleModelConverter.createResourceRoleModel(roleByCode);
+        initTextsOfNotEditedRole(resourceRoleModel);
 
         childRolesDc.mute();
         childRolesDc.setItems(loadChildRoleModels(resourceRoleModel));
@@ -155,6 +159,15 @@ public class ResourceRoleModelDetailView extends StandardDetailView<ResourceRole
 
         ResourceRoleModel merged = dataContext.merge(resourceRoleModel);
         roleModelDc.setItem(merged);
+    }
+
+    private void initTextsOfNotEditedRole(ResourceRoleModel roleModel) {
+        // Only a database role is edited here, so its fields hold the stored texts. Any other role is shown read-only
+        // by the texts the role lists show, since its stored texts are those of the default locale as of startup.
+        if (!RoleSourceType.DATABASE.equals(roleModel.getSource())) {
+            roleModel.setName(roleLocalizationSupport.getLocalizedName(roleModel));
+            roleModel.setDescription(roleLocalizationSupport.getLocalizedDescription(roleModel));
+        }
     }
 
     protected List<ResourceRoleModel> loadChildRoleModels(ResourceRoleModel editedRoleModel) {

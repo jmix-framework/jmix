@@ -1203,7 +1203,14 @@ interface StudioComponents {
             ),
             propertyGroups = {
                     StudioPropertyGroups.BaseSizedComponentWithClassNames.class,
-                    StudioPropertyGroups.Content.class
+                    StudioPropertyGroups.Content.class,
+                    StudioPropertyGroups.DataBindingAttributes.class
+            },
+            propertiesBindings = {
+                    @StudioPropertiesBinding(
+                            source = "dataContainer",
+                            item = "property"
+                    )
             },
             properties = @StudioProperty(
                     xmlAttribute = StudioXmlAttributes.LINE_BREAKS,

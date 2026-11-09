@@ -18,7 +18,10 @@ package component_xml_load.screen;
 
 import com.vaadin.flow.component.markdown.Markdown;
 import com.vaadin.flow.router.Route;
+import io.jmix.flowui.model.CollectionContainer;
+import io.jmix.flowui.model.InstanceContainer;
 import io.jmix.flowui.view.*;
+import test_support.entity.Zoo;
 
 @Route(value = "markdown-view")
 @ViewController("MarkdownView")
@@ -29,4 +32,16 @@ public class MarkdownView extends StandardView {
     public Markdown markdown;
     @ViewComponent
     public Markdown markdownContent;
+    @ViewComponent
+    public Markdown boundMarkdown;
+    @ViewComponent
+    public Markdown cityMarkdown;
+    @ViewComponent
+    public Markdown formMarkdown;
+    @ViewComponent
+    public Markdown collectionMarkdown;
+    @ViewComponent
+    public InstanceContainer<Zoo> zooDc;
+    @ViewComponent
+    public CollectionContainer<Zoo> zoosDc;
 }

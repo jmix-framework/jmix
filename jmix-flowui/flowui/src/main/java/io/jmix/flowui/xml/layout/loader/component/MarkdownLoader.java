@@ -18,8 +18,10 @@ package io.jmix.flowui.xml.layout.loader.component;
 
 import com.google.common.base.Strings;
 import com.vaadin.flow.component.markdown.Markdown;
+import io.jmix.flowui.data.binding.TextComponentReadonlyDataBinding;
 import io.jmix.flowui.exception.GuiDevelopmentException;
 import io.jmix.flowui.xml.layout.loader.AbstractComponentLoader;
+import io.jmix.flowui.xml.layout.support.DataLoaderSupport;
 import org.dom4j.Element;
 import org.jspecify.annotations.Nullable;
 
@@ -27,25 +29,47 @@ public class MarkdownLoader extends AbstractComponentLoader<Markdown> {
 
     protected static final String MARKDOWN_CONTENT_ELEMENT_NAME = "content";
 
+    protected DataLoaderSupport dataLoaderSupport;
+    protected TextComponentReadonlyDataBinding textComponentReadonlyDataBinding;
+
     @Override
     protected Markdown createComponent() {
-        String htmlContent = loadMarkdownContent(element);
-        if (!Strings.isNullOrEmpty(htmlContent)) {
-            return new Markdown(htmlContent);
-        }
-
-        htmlContent = getLoaderSupport().loadResourceString(element, "content", context.getMessageGroup())
-                .orElseThrow(() -> new GuiDevelopmentException("Content cannot be null or empty", context));
-
-        return new Markdown(htmlContent);
+        return factory.create(Markdown.class);
     }
 
     @Override
     public void loadComponent() {
+        loadContent();
+
         loadBoolean(element, "lineBreaks", resultComponent::setLineBreaks);
 
         componentLoader().loadClassNames(resultComponent, element);
         componentLoader().loadSizeAttributes(resultComponent, element);
+
+        loadData();
+    }
+
+    protected void loadContent() {
+        String markdownContent = loadMarkdownContent(element);
+        if (markdownContent == null) {
+            markdownContent = getLoaderSupport().loadResourceString(element, "content", context.getMessageGroup())
+                    .orElse(null);
+        }
+
+        if (markdownContent != null) {
+            resultComponent.setContent(markdownContent);
+        } else if (Strings.isNullOrEmpty(element.attributeValue("property"))) {
+            throw new GuiDevelopmentException("Content cannot be null or empty", context);
+        }
+    }
+
+    protected void loadData() {
+        String property = element.attributeValue("property");
+        if (!Strings.isNullOrEmpty(property)) {
+            getDataLoaderSupport().loadContainer(element, property)
+                    .ifPresent(container -> getTextComponentDataBinding().bind(
+                            resultComponent, container, property, resultComponent::setContent));
+        }
     }
 
     @Nullable
@@ -62,5 +86,19 @@ public class MarkdownLoader extends AbstractComponentLoader<Markdown> {
         }
 
         return text;
+    }
+
+    protected DataLoaderSupport getDataLoaderSupport() {
+        if (dataLoaderSupport == null) {
+            dataLoaderSupport = applicationContext.getBean(DataLoaderSupport.class, context);
+        }
+        return dataLoaderSupport;
+    }
+
+    protected TextComponentReadonlyDataBinding getTextComponentDataBinding() {
+        if (textComponentReadonlyDataBinding == null) {
+            textComponentReadonlyDataBinding = applicationContext.getBean(TextComponentReadonlyDataBinding.class);
+        }
+        return textComponentReadonlyDataBinding;
     }
 }

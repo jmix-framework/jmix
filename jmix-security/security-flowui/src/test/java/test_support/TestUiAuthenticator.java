@@ -26,6 +26,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import test_support.role.TestFullAccessRole;
 
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -42,7 +43,9 @@ public class TestUiAuthenticator implements UiTestAuthenticator {
         UserDetails user = User.builder()
                 .username(USERNAME)
                 .password("{noop}")
-                .authorities(roleGrantedAuthorityUtils.createResourceRoleGrantedAuthority(getRoleCode()))
+                .authorities(getRoleCodes().stream()
+                        .map(roleGrantedAuthorityUtils::createResourceRoleGrantedAuthority)
+                        .toList())
                 .build();
 
         UsernamePasswordAuthenticationToken authentication =
@@ -61,5 +64,12 @@ public class TestUiAuthenticator implements UiTestAuthenticator {
      */
     protected String getRoleCode() {
         return TestFullAccessRole.CODE;
+    }
+
+    /**
+     * Returns the codes of the resource roles granted to the user.
+     */
+    protected List<String> getRoleCodes() {
+        return List.of(getRoleCode());
     }
 }

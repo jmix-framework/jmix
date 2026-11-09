@@ -73,9 +73,13 @@ class BundledThemesTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"Vaadin-Icons.woff", "Vaadin-Icons.ttf", "Vaadin-Icons.eot"})
-    void vaadinIconsFont_isOnClasspath(String file) {
-        assertNotNull(getClass().getResource("/META-INF/resources/themes/shared/src/icons/vaadin-icons/" + file));
+    @ValueSource(strings = {"jmix-lumo/jmix-lumo.css", "jmix-aura/jmix-aura.css"})
+    void bundledEntry_urlTargetsAreOnClasspath(String entry) {
+        List<String> missing = bundleUrlTargets(entry).stream()
+                .filter(target -> getClass().getResource("/META-INF/resources/themes/" + target) == null)
+                .toList();
+
+        assertEquals(List.of(), missing);
     }
 
     @Test

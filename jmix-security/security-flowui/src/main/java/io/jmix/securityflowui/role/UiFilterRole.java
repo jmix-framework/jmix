@@ -16,6 +16,7 @@
 
 package io.jmix.securityflowui.role;
 
+import io.jmix.flowui.component.genericfilter.model.FilterConfigurationModel;
 import io.jmix.flowui.entity.filter.FilterCondition;
 import io.jmix.flowui.entity.filter.GroupFilterCondition;
 import io.jmix.flowui.entity.filter.JpqlFilterCondition;
@@ -37,6 +38,8 @@ public interface UiFilterRole {
     @ViewPolicy(viewIds = {"flowui_AddConditionView", "flowui_DateIntervalDialog"})
     @EntityPolicy(entityName = "flowui_FilterConfiguration", actions = EntityPolicyAction.ALL)
     @EntityAttributePolicy(entityName = "flowui_FilterConfiguration", attributes = "*", action = EntityAttributePolicyAction.MODIFY)
+    @EntityPolicy(entityClass = FilterConfigurationModel.class, actions = EntityPolicyAction.ALL)
+    @EntityAttributePolicy(entityClass = FilterConfigurationModel.class, attributes = "*", action = EntityAttributePolicyAction.MODIFY)
     @SpecificPolicy(resources = {
             "ui.genericfilter.modifyConfiguration",
             "ui.genericfilter.modifyGlobalConfiguration"

@@ -24,6 +24,7 @@ import io.jmix.eclipselink.EclipselinkConfiguration;
 import io.jmix.flowui.FlowuiConfiguration;
 import io.jmix.flowui.testassist.FlowuiServletTestBeans;
 import io.jmix.flowui.testassist.UiTestAuthenticator;
+import io.jmix.flowuidata.FlowuiDataConfiguration;
 import io.jmix.security.SecurityConfiguration;
 import io.jmix.security.StandardSecurityConfiguration;
 import io.jmix.securitydata.SecurityDataConfiguration;
@@ -46,6 +47,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @Configuration
 @PropertySource("classpath:/test_support/test-app.properties")
 @Import({CoreConfiguration.class, DataConfiguration.class, EclipselinkConfiguration.class, FlowuiConfiguration.class,
+        FlowuiDataConfiguration.class,
         SecurityConfiguration.class, SecurityDataConfiguration.class, SecurityFlowuiConfiguration.class,
         CommonCoreTestConfiguration.class, HsqlMemDataSourceTestConfiguration.class,
         JpaMainStoreTestConfiguration.class, LiquibaseTestConfiguration.class, FlowuiServletTestBeans.class,

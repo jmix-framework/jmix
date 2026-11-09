@@ -34,14 +34,14 @@ import io.jmix.flowui.model.InstanceContainer;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
+import java.util.function.Consumer;
+
 import static io.jmix.core.common.util.Preconditions.checkNotEmptyString;
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
 /**
  * Implementation of {@link TextComponentReadonlyDataBinding}.
- * This class provides functionality for binding a component that implements {@link HasText} with
- * a {@link ValueSource} or an {@link InstanceContainer} to display entity property values
- * as the component text.
+ * Displays formatted entity property values using {@link HasText} or a custom text setter.
  */
 @NullMarked
 @org.springframework.stereotype.Component("flowui_TextComponentReadonlyDataBinding")
@@ -58,13 +58,31 @@ public class TextComponentReadonlyDataBindingImpl implements TextComponentReadon
 
     @Override
     public <C extends Component & HasText> Registration bind(C component, ValueSource<?> valueSource) {
+        return bindInternal(component, valueSource, value -> updateComponentText(component, value));
+    }
+
+    @Override
+    public Registration bind(Component component, ValueSource<?> valueSource, Consumer<String> textSetter) {
+        checkNotNullArgument(textSetter);
+
+        return bindInternal(component, valueSource, value -> updateComponentText(textSetter, value));
+    }
+
+    protected Registration bindInternal(Component component, ValueSource<?> valueSource,
+                                        Consumer<@Nullable Object> valueConsumer) {
         checkNotNullArgument(component);
         checkNotNullArgument(valueSource);
 
-        updateComponentText(component, valueSource.getValue());
+        valueConsumer.accept(valueSource.getValue());
 
-        Registration registration = valueSource.addValueChangeListener(valueChangeEvent ->
-                updateComponentText(component, valueChangeEvent.getValue()));
+        Registration registration = valueSource.addValueChangeListener(event ->
+                valueConsumer.accept(valueSource.getValue()));
+
+        if (valueSource instanceof EntityValueSource<?, ?> entityValueSource) {
+            Registration instanceChangeRegistration = entityValueSource.addInstanceChangeListener(event ->
+                    valueConsumer.accept(valueSource.getValue()));
+            registration = Registration.combine(registration, instanceChangeRegistration);
+        }
 
         checkPermissions(component, valueSource);
 
@@ -74,20 +92,35 @@ public class TextComponentReadonlyDataBindingImpl implements TextComponentReadon
     @Override
     public <C extends Component & HasText> Registration bind(C component, InstanceContainer<?> dataContainer,
                                                              String property) {
+        return bindInternal(component, dataContainer, property, value -> updateComponentText(component, value), false);
+    }
+
+    @Override
+    public Registration bind(Component component, InstanceContainer<?> dataContainer, String property,
+                             Consumer<String> textSetter) {
+        checkNotNullArgument(textSetter);
+
+        return bindInternal(component, dataContainer, property,
+                value -> updateComponentText(textSetter, value), true);
+    }
+
+    protected Registration bindInternal(Component component, InstanceContainer<?> dataContainer, String property,
+                                        Consumer<@Nullable Object> valueConsumer, boolean initializeEmpty) {
         checkNotNullArgument(component);
         checkNotNullArgument(dataContainer);
         checkNotEmptyString(property);
 
         Object item = dataContainer.getItemOrNull();
-        if (item != null) {
-            Object propertyValue = EntityValues.getValueEx(item, property);
-            updateComponentText(component, propertyValue);
+        if (item != null || initializeEmpty) {
+            Object propertyValue = item != null ? EntityValues.getValueEx(item, property) : null;
+            valueConsumer.accept(propertyValue);
         }
 
         Subscription propertyChangeSubscription = dataContainer.addItemPropertyChangeListener(
                 itemPropertyChangeEvent -> {
-                    if (property.equals(itemPropertyChangeEvent.getProperty())) {
-                        updateComponentText(component, itemPropertyChangeEvent.getValue());
+                    if (itemPropertyChangeEvent.getItem() == dataContainer.getItemOrNull()
+                            && property.equals(itemPropertyChangeEvent.getProperty())) {
+                        valueConsumer.accept(itemPropertyChangeEvent.getValue());
                     }
                 });
 
@@ -95,7 +128,7 @@ public class TextComponentReadonlyDataBindingImpl implements TextComponentReadon
             Object propertyValue = itemChangeEvent.getItem() != null
                     ? EntityValues.getValueEx(itemChangeEvent.getItem(), property)
                     : null;
-            updateComponentText(component, propertyValue);
+            valueConsumer.accept(propertyValue);
         });
 
         checkPermissions(component, dataContainer, property);
@@ -107,7 +140,11 @@ public class TextComponentReadonlyDataBindingImpl implements TextComponentReadon
     }
 
     protected void updateComponentText(HasText component, @Nullable Object value) {
-        component.setText(metadataTools.format(value));
+        updateComponentText(component::setText, value);
+    }
+
+    protected void updateComponentText(Consumer<String> textSetter, @Nullable Object value) {
+        textSetter.accept(metadataTools.format(value));
     }
 
     protected void checkPermissions(Component component, ValueSource<?> valueSource) {

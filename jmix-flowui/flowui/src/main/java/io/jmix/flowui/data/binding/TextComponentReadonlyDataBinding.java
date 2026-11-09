@@ -24,9 +24,11 @@ import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.model.InstanceContainer;
 import org.jspecify.annotations.NullMarked;
 
+import java.util.function.Consumer;
+
 /**
- * Binds a component that implements {@link HasText} with {@link ValueSource} or {@link InstanceContainer}
- * to show entity property value as the component text.
+ * Binds a component with {@link ValueSource} or {@link InstanceContainer} to display entity property values.
+ * Components implementing {@link HasText} use their text setter; other components can supply a custom setter.
  */
 @NullMarked
 public interface TextComponentReadonlyDataBinding {
@@ -42,6 +44,16 @@ public interface TextComponentReadonlyDataBinding {
     <C extends Component & HasText> Registration bind(C component, ValueSource<?> valueSource);
 
     /**
+     * Binds a component with a value source using a custom setter for the formatted text.
+     *
+     * @param component   component whose attribute view permissions are checked
+     * @param valueSource data component holding a typed value
+     * @param textSetter  setter receiving the formatted value, or an empty string for a null value
+     * @return a registration object for removing the binding's event listeners
+     */
+    Registration bind(Component component, ValueSource<?> valueSource, Consumer<String> textSetter);
+
+    /**
      * Binds a component with {@link InstanceContainer} to show {@link InstanceContainer#getItem()} property
      * as the component text.
      * <p>
@@ -54,4 +66,17 @@ public interface TextComponentReadonlyDataBinding {
      * @return a registration object for removing an event listener
      */
     <C extends Component & HasText> Registration bind(C component, InstanceContainer<?> dataContainer, String property);
+
+    /**
+     * Binds a component with a container property using a custom setter for the formatted text.
+     * A collection container supplies the property of its current item.
+     *
+     * @param component     component whose attribute view permissions are checked
+     * @param dataContainer instance or collection container
+     * @param property      name of an entity property whose value is displayed
+     * @param textSetter    setter receiving the formatted value, or an empty string for a null value or absent item
+     * @return a registration object for removing the binding's event listeners
+     */
+    Registration bind(Component component, InstanceContainer<?> dataContainer, String property,
+                      Consumer<String> textSetter);
 }

@@ -15,6 +15,10 @@
   -->
 
 <view xmlns="http://jmix.io/schema/flowui/view">
+    <data>
+        <instance id="zooDc" class="test_support.entity.Zoo"/>
+        <collection id="zoosDc" class="test_support.entity.Zoo"/>
+    </data>
     <layout>
         <markdown id="markdown"
                   content="msg:///component_xml_load.markdown.content"
@@ -34,5 +38,11 @@
 ### Content
 Text</content>
         </markdown>
+        <markdown id="boundMarkdown" dataContainer="zooDc" property="name"/>
+        <markdown id="cityMarkdown" dataContainer="zooDc" property="city.name"/>
+        <formLayout dataContainer="zooDc">
+            <markdown id="formMarkdown" property="address"/>
+        </formLayout>
+        <markdown id="collectionMarkdown" dataContainer="zoosDc" property="name"/>
     </layout>
 </view>

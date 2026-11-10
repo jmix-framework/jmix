@@ -2660,7 +2660,7 @@ public class ReportDetailView extends StandardDetailView<Report> {
     protected void onValidationScriptCodeEditorHelpBtnClick() {
         dialogs.createMessageDialog()
                 .withHeader(messageBundle.getMessage("parametersTab.validationFieldHelp.header"))
-                .withContent(new Html(messageBundle.getMessage("parametersTab.validationFieldHelp.text")))
+                .withContent(new Html(messageBundle.getMessage("parametersTab.crossValidationFieldHelp.text")))
                 .withResizable(true)
                 .withModal(false)
                 .withWidth("40em")

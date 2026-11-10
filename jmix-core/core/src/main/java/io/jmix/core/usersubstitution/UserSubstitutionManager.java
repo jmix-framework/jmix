@@ -30,12 +30,14 @@ import java.util.List;
 public interface UserSubstitutionManager {
 
     /**
-     * @return users which can be substituted by the currently authenticated user at the current time
+     * @return users which can be substituted by the currently authenticated user at the current time,
+     * each user listed once
      */
     List<UserDetails> getCurrentSubstitutedUsers();
 
     /**
-     * @return users which can be substituted by user with specified {@code username} at the given {@code date}
+     * @return users which can be substituted by user with specified {@code username} at the given {@code date},
+     * each user listed once even if several substitutions of the user are active
      */
     List<UserDetails> getSubstitutedUsers(String username, Date date);
 

@@ -23,11 +23,14 @@ import io.jmix.core.security.InMemoryUserRepository
 import io.jmix.core.security.SecurityContextHelper
 import io.jmix.core.security.impl.SubstitutedUserAuthenticationToken
 import io.jmix.core.usersubstitution.CurrentUserSubstitution
+import io.jmix.core.usersubstitution.InMemoryUserSubstitutionProvider
+import io.jmix.core.usersubstitution.UserSubstitution
 import io.jmix.core.usersubstitution.UserSubstitutionManager
 import io.jmix.security.TestUserSubstitutionEventListener
 import io.jmix.security.role.ResourceRoleRepository
 import io.jmix.security.role.RoleGrantedAuthorityUtils
 import io.jmix.securitydata.entity.UserSubstitutionEntity
+import org.apache.commons.lang3.time.DateUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.security.authentication.AuthenticationManager
@@ -57,6 +60,8 @@ class UserSubstitutionsTest extends SecurityDataSpecification {
     AuthenticationManager authenticationManager
     @Autowired
     UserSubstitutionManager substitutionManager
+    @Autowired
+    InMemoryUserSubstitutionProvider inMemoryUserSubstitutionProvider
     @Autowired
     ResourceRoleRepository roleRepository
     @Autowired
@@ -114,6 +119,7 @@ class UserSubstitutionsTest extends SecurityDataSpecification {
         userRepository.removeUser(user3)
 
         eventListener.events.clear()
+        inMemoryUserSubstitutionProvider.clear()
 
         new JdbcTemplate(dataSource).execute('delete from SEC_USER_SUBSTITUTION')
     }
@@ -169,6 +175,39 @@ class UserSubstitutionsTest extends SecurityDataSpecification {
         thrown(IllegalArgumentException)
     }
 
+    def duplicateSubstitutionsTest() {
+        given: "user1 can substitute user2 by three active substitutions and user3 by one"
+        saveSubstitution(user1.username, user2.username, null, null)
+        saveSubstitution(user1.username, user2.username, null, DateUtils.addDays(new Date(), 1))
+        saveSubstitution(user1.username, user3.username, null, null)
+
+        when:
+        def substitutedUsers = substitutionManager.getSubstitutedUsers(user1.username, new Date())
+
+        then: "each substituted user is returned once"
+        substitutedUsers.size() == 2
+        substitutedUsers.toSet() == [user2, user3].toSet()
+    }
+
+    def duplicateSubstitutionsFromDifferentProvidersTest() {
+        given: "user1 can substitute user2 both by the database and by the in-memory provider"
+        inMemoryUserSubstitutionProvider.addUserSubstitution(new UserSubstitution(user1.username, user2.username))
+
+        when:
+        def substitutedUsers = substitutionManager.getSubstitutedUsers(user1.username, new Date())
+
+        then:
+        substitutedUsers == [user2]
+    }
+
+    protected void saveSubstitution(String username, String substitutedUsername, Date startDate, Date endDate) {
+        UserSubstitutionEntity substitution = dataManager.unconstrained().create(UserSubstitutionEntity)
+        substitution.username = username
+        substitution.substitutedUsername = substitutedUsername
+        substitution.startDate = startDate
+        substitution.endDate = endDate
+        dataManager.unconstrained().save(substitution)
+    }
 
     protected void authenticate(String username) {
         Authentication authentication = authenticationManager.authenticate(

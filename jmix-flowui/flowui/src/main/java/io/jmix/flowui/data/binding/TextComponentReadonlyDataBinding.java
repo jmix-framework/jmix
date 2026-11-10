@@ -70,11 +70,15 @@ public interface TextComponentReadonlyDataBinding {
     /**
      * Binds a component with a container property using a custom setter for the formatted text.
      * A collection container supplies the property of its current item.
+     * <p>
+     * The setter is not called while the container has no item, so the component keeps its current text
+     * until an item is set.
      *
      * @param component     component whose attribute view permissions are checked
      * @param dataContainer instance or collection container
      * @param property      name of an entity property whose value is displayed
-     * @param textSetter    setter receiving the formatted value, or an empty string for a null value or absent item
+     * @param textSetter    setter receiving the formatted value, or an empty string for a null value or
+     *                      a removed item
      * @return a registration object for removing the binding's event listeners
      */
     Registration bind(Component component, InstanceContainer<?> dataContainer, String property,

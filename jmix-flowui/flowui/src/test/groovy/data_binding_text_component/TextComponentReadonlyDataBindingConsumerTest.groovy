@@ -69,8 +69,8 @@ class TextComponentReadonlyDataBindingConsumerTest extends FlowuiTestSpecificati
         when: "Bind an empty container"
         def registration = textComponentReadonlyDataBinding.bind(markdown, container, "name", markdown.&setContent)
 
-        then:
-        markdown.content == ""
+        then: "The content is kept until an item is set, as with HasText components"
+        markdown.content == "Old content"
 
         when:
         def zoo = metadata.create(Zoo)

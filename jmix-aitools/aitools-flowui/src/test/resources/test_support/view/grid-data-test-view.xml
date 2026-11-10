@@ -23,6 +23,22 @@
         <dataGrid id="ordersDataGrid" dataContainer="ordersDc" selectionMode="MULTI">
             <actions>
                 <action id="excelExportAction" type="grdexp_excelExport"/>
+                <action id="jsonExportAction" type="grdexp_jsonExport">
+                    <properties>
+                        <property name="dialogActions" value="aitls_askAiAboutGridData"/>
+                    </properties>
+                </action>
+                <action id="askAiAboutGridDataAction" type="aitls_askAiAboutGridData"/>
+                <action id="askAiAboutNoteAction" type="aitls_askAiAboutGridData">
+                    <properties>
+                        <property name="columnKeysToExport" value="internalNote"/>
+                    </properties>
+                </action>
+                <action id="askAiAboutAllColumnsAction" type="aitls_askAiAboutGridData">
+                    <properties>
+                        <property name="columnsToExport" value="ALL_COLUMNS"/>
+                    </properties>
+                </action>
             </actions>
             <columns>
                 <column property="number"/>

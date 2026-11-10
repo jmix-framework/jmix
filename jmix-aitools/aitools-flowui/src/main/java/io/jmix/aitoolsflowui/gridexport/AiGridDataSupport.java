@@ -19,7 +19,7 @@ package io.jmix.aitoolsflowui.gridexport;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.grid.Grid;
 import io.jmix.aitools.AiExclusionSupport;
-import io.jmix.aitoolsflowui.model.AiChatDataBlock;
+import io.jmix.aitoolsflowui.fragment.chat.datablock.AiChatDataBlock;
 import io.jmix.aitoolsflowui.model.AiConversation;
 import io.jmix.aitoolsflowui.view.chat.AiChatView;
 import io.jmix.core.MessageTools;
@@ -28,8 +28,12 @@ import io.jmix.core.annotation.Experimental;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.flowui.DialogWindows;
+import io.jmix.flowui.component.ListDataComponent;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.grid.EnhancedDataGrid;
+import io.jmix.flowui.component.groupgrid.GroupListDataComponent;
+import io.jmix.flowui.component.groupgrid.adapter.AbstractGroupDataGridAdapter;
+import io.jmix.flowui.component.groupgrid.adapter.GroupDataGridAdapterFactory;
 import io.jmix.flowui.data.ContainerDataUnit;
 import io.jmix.flowui.data.DataUnit;
 import io.jmix.flowui.view.DialogWindow;
@@ -43,15 +47,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 /**
  * Prepares data grid rows for a message to the AI and opens the chat with them: leaves out the columns the developer
  * excluded from AI and renders the rest as a captioned Markdown table.
  * <p>
- * Not a component by itself, as it names the optional grid export add-on's types; it is registered by the
+ * Not a component by itself, as it names the optional grid export add-on's types. It is registered by the
  * auto-configuration that is active only when that add-on is present.
  */
 @Experimental
@@ -69,6 +75,8 @@ public class AiGridDataSupport {
     protected MessageTools messageTools;
     @Autowired
     protected DialogWindows dialogWindows;
+    @Autowired
+    protected GroupDataGridAdapterFactory groupDataGridAdapterFactory;
 
     /**
      * Tells whether the rows would have any column that may be sent to the AI: a column that passes the column
@@ -79,15 +87,34 @@ public class AiGridDataSupport {
      * @return {@code true} if at least one column may be sent
      */
     public boolean hasAllowedColumns(AiGridDataContext context) {
-        if (!(context.getTarget() instanceof Grid<?> grid)) {
+        Grid<Object> objectGrid = resolveGrid(context.getTarget());
+        if (objectGrid == null) {
             return true;
         }
 
-        @SuppressWarnings("unchecked")
-        Grid<Object> objectGrid = (Grid<Object>) grid;
-        return objectGrid.getColumns().stream()
-                .filter(context.getColumnFilter())
+        return getColumnsToRead(objectGrid, context.getColumnFilter()).stream()
                 .anyMatch(column -> isAllowed(getColumnMetaPropertyPath(objectGrid, column)));
+    }
+
+    /**
+     * Returns the same set of columns the exporter reads, in no particular order: those that pass the filter, and
+     * for a group grid the grouping columns instead of the group column, which holds no value of its own.
+     *
+     * @param grid         the grid, or the adapter of a group grid
+     * @param columnFilter selects the columns to read
+     * @return columns to read
+     */
+    @SuppressWarnings("unchecked")
+    protected List<Grid.Column<Object>> getColumnsToRead(Grid<Object> grid,
+                                                         Predicate<Grid.Column<Object>> columnFilter) {
+        Stream<Grid.Column<Object>> columns = grid.getColumns().stream().filter(columnFilter);
+        if (grid instanceof AbstractGroupDataGridAdapter<?> adapter) {
+            AbstractGroupDataGridAdapter<Object> groupAdapter = (AbstractGroupDataGridAdapter<Object>) adapter;
+            columns = Stream.concat(
+                    columns.filter(column -> !groupAdapter.isGroupColumn(column)),
+                    groupAdapter.getGroupingColumns().stream());
+        }
+        return columns.toList();
     }
 
     /**
@@ -122,8 +149,8 @@ public class AiGridDataSupport {
 
     /**
      * Opens the AI chat as a dialog over the view of the grid, with the rows waiting to be sent with the user's next
-     * question. Nothing is stored until the user sends a message; the row limit is not checked here. The chat is
-     * {@link AiChatView} or a subclass of it that replaces the view.
+     * question. Nothing is stored until the user sends a message, and the row limit is not checked here. The chat
+     * is {@link AiChatView} or a subclass of it that replaces the view.
      *
      * @param context          the grid and the way its rows are read
      * @param mode             {@link ExportMode#CURRENT_PAGE} or {@link ExportMode#SELECTED_ROWS}
@@ -232,6 +259,25 @@ public class AiGridDataSupport {
 
     protected boolean isAllowed(@Nullable MetaPropertyPath path) {
         return path == null || !exclusionSupport.isExcluded(path);
+    }
+
+    /**
+     * Returns the grid whose columns the rows are read from: the adapter of a group grid, as the exporters read it, or
+     * the grid itself.
+     *
+     * @param target the component the rows come from
+     * @return the grid, or {@code null} if the component is not a grid
+     */
+    @Nullable
+    @SuppressWarnings("unchecked")
+    protected Grid<Object> resolveGrid(ListDataComponent<Object> target) {
+        if (target instanceof GroupListDataComponent<?> groupGrid) {
+            AbstractGroupDataGridAdapter<?> adapter = groupDataGridAdapterFactory.getAdapter(groupGrid);
+            if (adapter != null) {
+                return (Grid<Object>) adapter;
+            }
+        }
+        return target instanceof Grid<?> grid ? (Grid<Object>) grid : null;
     }
 
     @Nullable

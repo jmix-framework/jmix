@@ -14,7 +14,24 @@
  * limitations under the License.
  */
 
-@Experimental
-package io.jmix.aitoolsflowui.prompt;
+package test_support.action;
 
-import io.jmix.core.annotation.Experimental;
+import io.jmix.flowui.action.ActionType;
+
+/**
+ * Dialog action shown as "First".
+ */
+@ActionType(TestFirstDialogAction.ID)
+public class TestFirstDialogAction extends TestDialogAction {
+
+    public static final String ID = "test_firstDialogAction";
+    public static final String TEXT = "First";
+
+    public TestFirstDialogAction() {
+        this(ID);
+    }
+
+    public TestFirstDialogAction(String id) {
+        super(id, TEXT);
+    }
+}

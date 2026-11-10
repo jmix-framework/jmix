@@ -322,6 +322,24 @@ final class StudioActionPropertyGroups {
     @StudioPropertyGroup(
             properties = {
                     @StudioProperty(
+                            xmlAttribute = StudioXmlAttributes.ID,
+                            type = StudioPropertyType.COMPONENT_ID,
+                            category = StudioProperty.Category.GENERAL,
+                            required = true,
+                            initialValue = "askAiAboutGridData"),
+                    @StudioProperty(
+                            xmlAttribute = StudioXmlAttributes.TEXT,
+                            type = StudioPropertyType.LOCALIZED_STRING,
+                            category = StudioProperty.Category.GENERAL,
+                            defaultValue = "msg://io.jmix.aitoolsflowui.gridexport/askAiAboutGridDataAction.text")
+            }
+    )
+    public interface AskAiAboutGridDataActionComponent extends IconActionDefaultProperties {
+    }
+
+    @StudioPropertyGroup(
+            properties = {
+                    @StudioProperty(
                             xmlAttribute = StudioXmlAttributes.ICON,
                             type = StudioPropertyType.ICON,
                             category = StudioProperty.Category.LOOK_AND_FEEL,

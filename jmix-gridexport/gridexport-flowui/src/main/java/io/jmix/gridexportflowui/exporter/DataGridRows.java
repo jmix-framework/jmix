@@ -37,7 +37,7 @@ public class DataGridRows {
 
     /**
      * @param columns exported columns in display order
-     * @param rows    formatted cell values of each row, one per column; an empty string stands for a missing value
+     * @param rows    formatted cell values of each row, one per column, with an empty string for a missing value
      */
     public DataGridRows(List<Column> columns, List<List<String>> rows) {
         this.columns = List.copyOf(columns);
@@ -58,7 +58,7 @@ public class DataGridRows {
     /**
      * Returns the formatted cell values of each row, one per column in the order of {@link #getColumns()}.
      *
-     * @return rows of cell values; an empty string stands for a missing value
+     * @return rows of cell values, with an empty string for a missing value
      */
     public List<List<String>> getRows() {
         return rows;

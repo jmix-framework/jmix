@@ -16,10 +16,12 @@
 
 package io.jmix.gridexportflowui.action;
 
+import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
 import io.jmix.core.Messages;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.common.util.Preconditions;
+import io.jmix.flowui.Actions;
 import io.jmix.flowui.Dialogs;
 import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.action.DialogAction;
@@ -40,7 +42,6 @@ import io.jmix.gridexportflowui.exporter.DataGridExporter;
 import io.jmix.gridexportflowui.exporter.ExportMode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -73,10 +74,11 @@ public class ExportAction extends ListDataComponentAction<ExportAction, Object> 
     protected Downloader downloader;
     protected Dialogs dialogs;
     protected GroupDataGridAdapterFactory groupDataGridFactory;
-    protected ObjectProvider<ExportDialogActionContributor> exportDialogActionContributors;
+    protected Actions actions;
 
     protected DataGridExporter dataGridExporter;
     protected List<ExportMode> availableExportModes;
+    protected List<String> dialogActions;
 
     protected ColumnsToExport columnsToExport;
     protected Predicate<Grid.Column<Object>> columnsExportFilter;
@@ -124,12 +126,12 @@ public class ExportAction extends ListDataComponentAction<ExportAction, Object> 
     public void setGridExportProperties(GridExportProperties gridExportProperties) {
         this.availableExportModes = gridExportProperties.getDefaultExportModes();
         this.columnsToExport = gridExportProperties.getDefaultColumnsToExport();
+        this.dialogActions = List.copyOf(gridExportProperties.getDialogActions());
     }
 
     @Autowired
-    public void setExportDialogActionContributors(
-            ObjectProvider<ExportDialogActionContributor> exportDialogActionContributors) {
-        this.exportDialogActionContributors = exportDialogActionContributors;
+    public void setActions(Actions actions) {
+        this.actions = actions;
     }
 
     /**
@@ -206,6 +208,49 @@ public class ExportAction extends ListDataComponentAction<ExportAction, Object> 
     public ExportAction withAvailableExportModes(List<ExportMode> availableExportModes) {
         setAvailableExportModes(availableExportModes);
         return this;
+    }
+
+    /**
+     * Returns the export modes that will be available in the export option dialog.
+     * <p>
+     * The default value depends on {@link GridExportProperties#getDefaultExportModes()}.
+     *
+     * @return export modes of this action
+     */
+    public List<ExportMode> getAvailableExportModes() {
+        return availableExportModes;
+    }
+
+    /**
+     * Sets the types of the actions added to the export option dialog after the export modes, in the order of
+     * their buttons. Replaces the types from {@link GridExportProperties#getDialogActions()}. An empty list leaves
+     * the dialog without such actions. A type that is not registered is skipped.
+     *
+     * @param dialogActions action type identifiers, see {@link ActionType}
+     */
+    public void setDialogActions(List<String> dialogActions) {
+        this.dialogActions = List.copyOf(dialogActions);
+    }
+
+    /**
+     * @param dialogActions action type identifiers, see {@link ActionType}
+     * @return this
+     * @see #setDialogActions(List)
+     */
+    public ExportAction withDialogActions(List<String> dialogActions) {
+        setDialogActions(dialogActions);
+        return this;
+    }
+
+    /**
+     * Returns the types of the actions added to the export option dialog after the export modes.
+     * <p>
+     * The default value depends on {@link GridExportProperties#getDialogActions()}.
+     *
+     * @return action type identifiers
+     */
+    public List<String> getDialogActions() {
+        return dialogActions;
     }
 
     /**
@@ -318,20 +363,32 @@ public class ExportAction extends ListDataComponentAction<ExportAction, Object> 
             }
         }
 
-        // The primary button is the first export mode, or Cancel when there is none; never a contributed action.
         Action cancelAction = new DialogAction(DialogAction.Type.CANCEL);
         (actions.isEmpty() ? cancelAction : actions.get(0)).setVariant(ActionVariant.PRIMARY);
 
-        actions.addAll(createContributedActions(primaryFilterPredicate));
+        List<Action> createdDialogActions = createDialogActions(primaryFilterPredicate);
+        actions.addAll(createdDialogActions);
         actions.add(cancelAction);
 
-        dialogs.createOptionDialog()
+        Dialog dialog = dialogs.createOptionDialog()
                 .withHeader(getMessage("exportConfirmationDialog.header"))
                 .withText(getMessage("exportConfirmationDialog.message"))
                 .withActions(actions.toArray(new Action[0]))
                 .withMinWidth("32em")
                 .withMaxWidth("50em")
-                .open();
+                .build();
+
+        if (!createdDialogActions.isEmpty()) {
+            // The dialog actions stop listening to the target's selection once the dialog is closed. A dialog
+            // button performs its action before the dialog closes, so the action still has its target then.
+            dialog.addOpenedChangeListener(event -> {
+                if (!event.isOpened()) {
+                    detachDialogActions(createdDialogActions);
+                }
+            });
+        }
+
+        dialog.open();
     }
 
     protected Predicate<Grid.Column<Object>> definePrimaryFilterPredicate() {
@@ -343,12 +400,61 @@ public class ExportAction extends ListDataComponentAction<ExportAction, Object> 
         }
     }
 
-    protected List<Action> createContributedActions(Predicate<Grid.Column<Object>> primaryFilterPredicate) {
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    protected List<Action> createDialogActions(Predicate<Grid.Column<Object>> primaryFilterPredicate) {
+        if (CollectionUtils.isEmpty(dialogActions)) {
+            return List.of();
+        }
+
         ExportDialogContext context = new ExportDialogContext(target, this, dataGridExporter, primaryFilterPredicate);
-        return exportDialogActionContributors.orderedStream()
-                .flatMap(contributor -> contributor.getActions(context).stream())
-                .filter(Action::isVisible)
-                .toList();
+        List<Action> result = new ArrayList<>(dialogActions.size());
+        for (String actionTypeId : dialogActions) {
+            Action action = createDialogAction(actionTypeId);
+            if (action == null) {
+                continue;
+            }
+
+            // The context goes first: setting the target refreshes the state, which may depend on the context.
+            if (action instanceof ExportDialogContextAware contextAware) {
+                contextAware.setExportDialogContext(context);
+            }
+            if (action instanceof ListDataComponentAction listDataComponentAction) {
+                listDataComponentAction.setTarget(target);
+            }
+
+            action.refreshState();
+
+            if (action.getVariant() == ActionVariant.PRIMARY) {
+                action.setVariant(ActionVariant.DEFAULT);
+            }
+
+            // A disabled action is still shown, as a disabled button.
+            if (action.isVisible()) {
+                result.add(action);
+            }
+        }
+        return result;
+    }
+
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    protected void detachDialogActions(List<Action> createdDialogActions) {
+        for (Action action : createdDialogActions) {
+            if (action instanceof ListDataComponentAction listDataComponentAction) {
+                listDataComponentAction.setTarget(null);
+            }
+        }
+    }
+
+    @Nullable
+    protected Action createDialogAction(String actionTypeId) {
+        try {
+            return actions.create(actionTypeId);
+        } catch (IllegalArgumentException e) {
+            // E.g. the add-on that provided the action has
+            // been removed. The export itself must keep working.
+            log.warn("Export dialog action of type '{}' is skipped: {}", actionTypeId, e.getMessage());
+            return null;
+        }
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})

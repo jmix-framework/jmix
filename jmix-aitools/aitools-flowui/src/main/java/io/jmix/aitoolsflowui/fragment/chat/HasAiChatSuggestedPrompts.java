@@ -25,7 +25,7 @@ import java.util.List;
 
 /**
  * An {@link AiChatPanel} that offers the user ready questions below the message input. The panel only reports the
- * question the user picks; the host decides which questions to offer and what picking one does.
+ * question the user picks. The host decides which questions to offer and what picking one does.
  */
 @Experimental
 @NullMarked

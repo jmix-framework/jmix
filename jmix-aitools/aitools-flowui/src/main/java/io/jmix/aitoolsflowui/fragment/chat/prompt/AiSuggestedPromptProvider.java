@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.aitoolsflowui.prompt;
+package io.jmix.aitoolsflowui.fragment.chat.prompt;
 
 import io.jmix.core.annotation.Experimental;
 import org.jspecify.annotations.NullMarked;
@@ -24,7 +24,7 @@ import java.util.List;
 
 /**
  * Suggests questions the user may ask in the chat, e.g. prompts for the rows of a particular entity the user is
- * about to send. Implementations are Spring beans ordered with {@link Order @Order}; the
+ * about to send. Implementations are Spring beans ordered with {@link Order @Order}. The
  * {@link AiSuggestedPromptManager} asks them in their order and takes the first non-empty result.
  * <p>
  * A provider answers for the state of the chat its context describes. A context may come without data, so a provider

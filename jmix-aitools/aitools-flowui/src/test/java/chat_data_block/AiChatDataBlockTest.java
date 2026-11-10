@@ -16,7 +16,7 @@
 
 package chat_data_block;
 
-import io.jmix.aitoolsflowui.model.AiChatDataBlock;
+import io.jmix.aitoolsflowui.fragment.chat.datablock.AiChatDataBlock;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;

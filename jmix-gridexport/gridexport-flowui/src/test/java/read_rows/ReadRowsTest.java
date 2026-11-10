@@ -220,7 +220,7 @@ class ReadRowsTest {
     /**
      * Exports the grid to JSON and reads the exported rows as {@code key=value} entries, one per column. The entries
      * are taken from the JSON objects themselves, so an extra or reordered key fails the test. Gson omits null
-     * members, so a column with a null value is absent from the object; it is read as an empty value at its column
+     * members, so a column with a null value is absent from the object. It is read as an empty value at its column
      * position, which is how the rows hold a missing value.
      */
     @SuppressWarnings({"unchecked", "rawtypes"})

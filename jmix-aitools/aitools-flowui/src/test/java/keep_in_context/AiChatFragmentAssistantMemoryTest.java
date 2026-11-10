@@ -477,7 +477,7 @@ class AiChatFragmentAssistantMemoryTest {
     }
 
     /**
-     * The memory fragment shown in the side panel; it is created when the memory is opened.
+     * The memory fragment shown in the side panel, created when the memory is opened.
      */
     AssistantMemoryFragment memoryFragment(AiChatFragment fragment) {
         return (AssistantMemoryFragment) UiComponentUtils.getComponent(fragment, "sidePanelContent")
@@ -498,7 +498,7 @@ class AiChatFragmentAssistantMemoryTest {
     }
 
     /**
-     * Delivers a browser click on the card. The card filters out clicks on its remove button in the browser; the
+     * Delivers a browser click on the card. The card filters out clicks on its remove button in the browser. The
      * filter result travels with the event, so the test states it.
      */
     void clickCard(Card card, boolean onRemoveButton) {

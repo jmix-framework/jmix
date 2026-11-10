@@ -228,8 +228,8 @@ public class AssistantMemoryFragment extends Fragment<VerticalLayout> {
 
     /**
      * Creates the preview of the message text. An assistant message is Markdown, as in the chat, so that a table
-     * or a list reads as one; a user message is plain text. The Markdown is not cut, since a cut could break a table
-     * or a code block; the card shows only its beginning.
+     * or a list reads as one, while a user message is plain text. The Markdown is not cut, since a cut could break
+     * a table or a code block. The card shows only its beginning.
      *
      * @param message the kept message
      * @return the preview
@@ -285,8 +285,8 @@ public class AssistantMemoryFragment extends Fragment<VerticalLayout> {
     }
 
     /**
-     * Cuts the message text to what a card can show, so that a long message is not sent to the browser in full;
-     * the card clamps the excerpt to its first lines.
+     * Cuts the message text to what a card can show, so that a long message is not sent to the browser in full.
+     * The card clamps the excerpt to its first lines.
      *
      * @param content the message text
      * @return the beginning of the text

@@ -16,8 +16,8 @@
 
 package test_support;
 
-import io.jmix.aitoolsflowui.prompt.AiSuggestedPromptContext;
-import io.jmix.aitoolsflowui.prompt.AiSuggestedPromptProvider;
+import io.jmix.aitoolsflowui.fragment.chat.prompt.AiSuggestedPromptContext;
+import io.jmix.aitoolsflowui.fragment.chat.prompt.AiSuggestedPromptProvider;
 import org.jspecify.annotations.Nullable;
 import org.springframework.core.Ordered;
 
@@ -25,7 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Prompt provider whose answer a test sets; records the contexts it is asked with.
+ * Prompt provider whose answer a test sets. It records the contexts it is asked with.
  */
 public class TestSuggestedPromptProvider implements AiSuggestedPromptProvider, Ordered {
 

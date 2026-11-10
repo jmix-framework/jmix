@@ -24,7 +24,8 @@ import org.jspecify.annotations.NullMarked;
 import java.util.function.Predicate;
 
 /**
- * The export an {@link ExportDialogActionContributor} adds its actions for.
+ * The export that the option dialog of {@link ExportAction} is opened for, passed to its dialog actions that
+ * implement {@link ExportDialogContextAware}.
  */
 @NullMarked
 public class ExportDialogContext {
@@ -69,8 +70,8 @@ public class ExportDialogContext {
     }
 
     /**
-     * Returns the exporter of the action, with its column value providers. It can be any {@link DataGridExporter};
-     * rows can be read with {@code readRows} only when it is an {@code AbstractDataGridExporter}.
+     * Returns the exporter of the action, with its column value providers. It can be any {@link DataGridExporter},
+     * but rows can be read with {@code readRows} only when it is an {@code AbstractDataGridExporter}.
      *
      * @return exporter of the action
      */

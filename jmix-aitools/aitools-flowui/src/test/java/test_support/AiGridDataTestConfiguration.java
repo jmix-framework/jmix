@@ -16,15 +16,19 @@
 
 package test_support;
 
-import io.jmix.aitoolsflowui.gridexport.AiGridDataExportDialogContributor;
 import io.jmix.aitoolsflowui.gridexport.AiGridDataSupport;
+import io.jmix.core.impl.scanning.AnnotationScanMetadataReaderFactory;
 import io.jmix.flowui.component.groupgrid.adapter.DefaultGroupDataGridAdapterFactory;
 import io.jmix.flowui.component.groupgrid.adapter.GroupDataGridAdapterFactory;
+import io.jmix.flowui.sys.ActionsConfiguration;
 import io.jmix.gridexportflowui.GridExportFlowuiConfiguration;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.transaction.PlatformTransactionManager;
+
+import java.util.List;
 
 import static org.mockito.Mockito.mock;
 
@@ -42,8 +46,11 @@ public class AiGridDataTestConfiguration {
     }
 
     @Bean
-    AiGridDataExportDialogContributor aiGridDataExportDialogContributor() {
-        return new AiGridDataExportDialogContributor();
+    ActionsConfiguration aiGridDataActions(ApplicationContext applicationContext,
+                                           AnnotationScanMetadataReaderFactory metadataReaderFactory) {
+        ActionsConfiguration actions = new ActionsConfiguration(applicationContext, metadataReaderFactory);
+        actions.setBasePackages(List.of("io.jmix.aitoolsflowui.gridexport"));
+        return actions;
     }
 
     // Provided by the application's starter, as in the grid export tests.

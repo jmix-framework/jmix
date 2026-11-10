@@ -36,7 +36,7 @@ import java.util.Objects;
  * Works regardless of whether the data-load feature is enabled, so any feature that sends application data
  * to the model applies the same rules as the data-load index.
  * <p>
- * The rules do not depend on the current user; access permissions are checked separately.
+ * The rules do not depend on the current user. Access permissions are checked separately.
  */
 @NullMarked
 @Experimental
@@ -51,9 +51,9 @@ public class AiExclusionSupport {
     /**
      * Checks whether the entity is excluded from AI. The rules apply in this order, the first match wins:
      * <ol>
-     *     <li>{@link ExcludeFromAi} (inherited by subclasses) &mdash; excluded unconditionally;</li>
-     *     <li>listed in {@code excludeEntities} &mdash; excluded, above every include rule;</li>
-     *     <li>explicitly included &mdash; not excluded, overriding the two rules below;</li>
+     *     <li>{@link ExcludeFromAi} (inherited by subclasses) &mdash; excluded unconditionally.</li>
+     *     <li>listed in {@code excludeEntities} &mdash; excluded, above every include rule.</li>
+     *     <li>explicitly included &mdash; not excluded, overriding the two rules below.</li>
      *     <li>system-level entity while {@code excludeSystemLevelEntities} is on, or matching
      *     {@code excludePackages} &mdash; excluded.</li>
      * </ol>

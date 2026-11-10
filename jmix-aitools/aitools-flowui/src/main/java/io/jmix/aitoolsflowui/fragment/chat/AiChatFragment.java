@@ -29,7 +29,11 @@ import io.jmix.aitools.tool.AiToolStatusUpdate;
 import io.jmix.aitoolsflowui.AiToolsFlowuiProperties;
 import io.jmix.aitoolsflowui.fragment.chat.action.RenameConversationAction;
 import io.jmix.aitoolsflowui.fragment.chat.action.ShowAssistantMemoryAction;
+import io.jmix.aitoolsflowui.fragment.chat.datablock.AiChatDataBlock;
+import io.jmix.aitoolsflowui.fragment.chat.datablock.HasAiChatDataBlock;
 import io.jmix.aitoolsflowui.fragment.chat.memory.AssistantMemoryFragment;
+import io.jmix.aitoolsflowui.fragment.chat.prompt.AiSuggestedPromptContext;
+import io.jmix.aitoolsflowui.fragment.chat.prompt.AiSuggestedPromptManager;
 import io.jmix.aitoolsflowui.fragment.chat.support.ConversationTitleSupport;
 import io.jmix.aitoolsflowui.generation.AiChatGeneration;
 import io.jmix.aitoolsflowui.generation.AiChatGenerationManager;
@@ -41,11 +45,8 @@ import io.jmix.aitoolsflowui.generation.event.AiChatGenerationEvent;
 import io.jmix.aitoolsflowui.generation.event.AiChatGenerationFailedEvent;
 import io.jmix.aitoolsflowui.generation.event.AiChatGenerationProgressEvent;
 import io.jmix.aitoolsflowui.generation.event.AiChatGenerationStartedEvent;
-import io.jmix.aitoolsflowui.model.AiChatDataBlock;
 import io.jmix.aitoolsflowui.model.AiChatMessage;
 import io.jmix.aitoolsflowui.model.AiConversation;
-import io.jmix.aitoolsflowui.prompt.AiSuggestedPromptContext;
-import io.jmix.aitoolsflowui.prompt.AiSuggestedPromptManager;
 import io.jmix.aitoolsflowui.service.AiChatMessageService;
 import io.jmix.aitoolsflowui.service.AiChatService;
 import io.jmix.aitoolsflowui.service.AiConversationAutoTitleService;
@@ -59,12 +60,12 @@ import io.jmix.flowui.Actions;
 import io.jmix.flowui.Fragments;
 import io.jmix.flowui.Notifications;
 import io.jmix.flowui.component.sidepanellayout.SidePanelLayout;
-import io.jmix.flowui.kit.component.sidepanellayout.SidePanelCloseEvent;
 import io.jmix.flowui.fragment.Fragment;
 import io.jmix.flowui.fragment.FragmentDescriptor;
 import io.jmix.flowui.icon.Icons;
 import io.jmix.flowui.kit.component.dropdownbutton.DropdownButton;
 import io.jmix.flowui.kit.component.dropdownbutton.DropdownButtonItem;
+import io.jmix.flowui.kit.component.sidepanellayout.SidePanelCloseEvent;
 import io.jmix.flowui.kit.icon.JmixFontIcon;
 import io.jmix.flowui.view.Subscribe;
 import io.jmix.flowui.view.ViewComponent;
@@ -382,9 +383,9 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
      * INTERNAL.
      * <p>
      * Sets the data to send with the user's next question, e.g. rows the user wants to ask about. The chat shows
-     * the block with suggested questions; picking one puts it into the message input. The question and the data are
-     * sent as one message, kept in the assistant memory while it has room. After it is sent or the user removes it,
-     * the block is gone.
+     * the block with suggested questions, and picking one puts it into the message input. The question and the
+     * data are sent as one message, kept in the assistant memory while it has room. After it is sent or the user
+     * removes it, the block is gone.
      * <p>
      * A block set while no conversation is bound makes the chat a new conversation ({@link #isNewConversation()}).
      * While the chat is read-only or the AI is not available, the block is not shown but stays set. A panel that

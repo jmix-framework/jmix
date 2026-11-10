@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.aitoolsflowui.fragment.chat.component;
+package io.jmix.aitoolsflowui.fragment.chat.datablock;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Composite;
@@ -23,13 +23,10 @@ import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.function.SerializableRunnable;
-import io.jmix.aitoolsflowui.fragment.chat.HasAiChatDataBlock;
 import io.jmix.core.Messages;
-import io.jmix.core.annotation.Internal;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.icon.Icons;
 import io.jmix.flowui.kit.icon.JmixFontIcon;
-import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
@@ -39,10 +36,9 @@ import org.springframework.context.ApplicationContextAware;
  * INTERNAL.
  * <p>
  * The pending data block of a chat as a panel shows it: a band with the caption of the data, a control that removes
- * the block and an optional warning line. Meant for panels that implement {@link HasAiChatDataBlock}; create it with
+ * the block and an optional warning line. Meant for panels that implement {@link HasAiChatDataBlock}. Create it with
  * {@link UiComponents#create(Class)}.
  */
-@Internal
 public class AiChatDataBlockChip extends Composite<Div> implements ApplicationContextAware, InitializingBean {
 
     private static final String BASE_CN = "jmix-ai-chat-data-block";
@@ -63,7 +59,6 @@ public class AiChatDataBlockChip extends Composite<Div> implements ApplicationCo
     @Nullable
     private SerializableRunnable removeHandler;
 
-    @NullMarked
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
@@ -82,7 +77,6 @@ public class AiChatDataBlockChip extends Composite<Div> implements ApplicationCo
      *
      * @param caption the caption
      */
-    @NullMarked
     public void setCaption(String caption) {
         this.caption.setText(caption);
     }
@@ -92,7 +86,6 @@ public class AiChatDataBlockChip extends Composite<Div> implements ApplicationCo
      *
      * @param warning localized warning text, or {@code null} to hide the line
      */
-    @NullMarked
     public void setWarning(@Nullable String warning) {
         this.warning.setText(warning != null ? warning : "");
         this.warning.setVisible(warning != null);
@@ -103,7 +96,6 @@ public class AiChatDataBlockChip extends Composite<Div> implements ApplicationCo
      *
      * @param removeHandler the handler, or {@code null} to remove it
      */
-    @NullMarked
     public void setRemoveHandler(@Nullable SerializableRunnable removeHandler) {
         this.removeHandler = removeHandler;
     }
@@ -121,7 +113,6 @@ public class AiChatDataBlockChip extends Composite<Div> implements ApplicationCo
         root.add(row, warning);
     }
 
-    @NullMarked
     private Component createIcon() {
         Component icon = icons.get(JmixFontIcon.TABLE);
         icon.getElement().getClassList().add(ICON_CN);
@@ -129,14 +120,12 @@ public class AiChatDataBlockChip extends Composite<Div> implements ApplicationCo
         return icon;
     }
 
-    @NullMarked
     private Span createCaption() {
         Span caption = new Span();
         caption.addClassName(CAPTION_CN);
         return caption;
     }
 
-    @NullMarked
     private Button createRemoveButton() {
         String description = messages.getMessage("askAiAboutData.remove");
 
@@ -149,7 +138,6 @@ public class AiChatDataBlockChip extends Composite<Div> implements ApplicationCo
         return button;
     }
 
-    @NullMarked
     private Span createWarning() {
         Span warning = new Span();
         warning.addClassName(WARNING_CN);

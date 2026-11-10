@@ -18,8 +18,8 @@ package test_support;
 
 import com.vaadin.flow.function.SerializableConsumer;
 import com.vaadin.flow.function.SerializableRunnable;
-import io.jmix.aitoolsflowui.fragment.chat.HasAiChatDataBlock;
 import io.jmix.aitoolsflowui.fragment.chat.HasAiChatSuggestedPrompts;
+import io.jmix.aitoolsflowui.fragment.chat.datablock.HasAiChatDataBlock;
 import org.jspecify.annotations.Nullable;
 
 import java.util.List;

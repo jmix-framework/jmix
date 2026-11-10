@@ -14,22 +14,19 @@
  * limitations under the License.
  */
 
-package io.jmix.aitoolsflowui.fragment.chat;
+package io.jmix.aitoolsflowui.fragment.chat.datablock;
 
 import com.vaadin.flow.function.SerializableRunnable;
-import io.jmix.core.annotation.Internal;
-import org.jspecify.annotations.NullMarked;
+import io.jmix.aitoolsflowui.fragment.chat.AiChatPanel;
 import org.jspecify.annotations.Nullable;
 
 /**
  * INTERNAL.
  * <p>
  * An {@link AiChatPanel} that shows a block of data waiting to be sent with the user's next question, above the
- * message input. The panel only reports that the user removes the block; the host keeps the block and tells the
+ * message input. The panel only reports that the user removes the block. The host keeps the block and tells the
  * panel what to show.
  */
-@Internal
-@NullMarked
 public interface HasAiChatDataBlock {
 
     /**

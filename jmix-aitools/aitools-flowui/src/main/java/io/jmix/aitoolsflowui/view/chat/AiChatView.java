@@ -22,7 +22,7 @@ import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.Route;
 import io.jmix.aitoolsflowui.fragment.chat.AiChatFragment;
 import io.jmix.aitoolsflowui.fragment.chat.AiConversationCreatedEvent;
-import io.jmix.aitoolsflowui.model.AiChatDataBlock;
+import io.jmix.aitoolsflowui.fragment.chat.datablock.AiChatDataBlock;
 import io.jmix.aitoolsflowui.model.AiConversation;
 import io.jmix.aitoolsflowui.service.AiConversationService;
 import io.jmix.aitoolsflowui.view.chathub.AiChatHubView;

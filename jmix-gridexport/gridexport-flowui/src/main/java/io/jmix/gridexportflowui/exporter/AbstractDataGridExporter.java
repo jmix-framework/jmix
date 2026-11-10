@@ -246,8 +246,8 @@ public abstract class AbstractDataGridExporter<T extends AbstractDataGridExporte
     /**
      * Reads the rows of a data grid without producing a file. The values are formatted as {@code JsonExporter}
      * formats them: through this exporter's column value providers and its text formatting. Only the rows the grid
-     * holds are read; nothing is loaded. Rows come in the order of the grid's items, and for a group data grid in
-     * group order; selected rows come in that same order.
+     * holds are read, and nothing is loaded. Rows come in the order of the grid's items, and for a group data grid
+     * in group order. Selected rows come in that same order.
      * <p>
      * A group data grid is read as a flat table: its grouping columns take the place of the group column, and its
      * rows are the entities without group rows, group after group as the grid shows them.
@@ -256,9 +256,10 @@ public abstract class AbstractDataGridExporter<T extends AbstractDataGridExporte
      * {@link #getColumnHeaderText(Grid, Grid.Column)}, so a subclass that overrides them affects the read rows the
      * same way as its export.
      *
-     * @param target       data grid to read; a group data grid is read through its adapter
+     * @param target       data grid to read, or a group data grid, which is read through its adapter
      * @param exportMode   {@link ExportMode#CURRENT_PAGE} or {@link ExportMode#SELECTED_ROWS}
-     * @param columnFilter selects the columns to read; grouping columns of a group data grid are always read
+     * @param columnFilter selects the columns to read, except the grouping columns of a group data grid, which are
+     *                     always read
      * @return the columns and the formatted rows
      * @throws IllegalArgumentException      if {@code exportMode} is {@link ExportMode#ALL_ROWS}
      * @throws UnsupportedOperationException if the target is not an {@link EnhancedDataGrid}
@@ -423,7 +424,8 @@ public abstract class AbstractDataGridExporter<T extends AbstractDataGridExporte
             }
         }
 
-        // A selected item the grid no longer shows (e.g. the selection survived a reload) is read after the shown ones.
+        // A selected item the grid no longer shows (e.g. the
+        // selection survived a reload) is read after the shown ones.
         if (items.size() < selectedItems.size()) {
             Set<Object> displayedSelectedItems = new HashSet<>(items);
             for (Object item : selectedItems) {
@@ -436,8 +438,8 @@ public abstract class AbstractDataGridExporter<T extends AbstractDataGridExporte
     }
 
     /**
-     * Returns the items of the grid in the order the grid shows them; for a group data grid, its entities without
-     * group rows.
+     * Returns the items of the grid in the order the grid shows them. For a group data grid, these are its entities
+     * without group rows.
      *
      * @param dataGrid data grid or group data grid adapter
      * @return items of the grid in display order

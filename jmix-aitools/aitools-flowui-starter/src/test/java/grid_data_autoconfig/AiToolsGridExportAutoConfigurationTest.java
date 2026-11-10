@@ -17,15 +17,14 @@
 package grid_data_autoconfig;
 
 import io.jmix.aitools.AiExclusionSupport;
-import io.jmix.aitoolsflowui.gridexport.AiGridDataExportDialogContributor;
 import io.jmix.aitoolsflowui.gridexport.AiGridDataSupport;
-import io.jmix.aitoolsflowui.service.AiChatService;
 import io.jmix.autoconfigure.aitoolsflowui.AiToolsGridExportAutoConfiguration;
-import io.jmix.core.AccessManager;
 import io.jmix.core.MessageTools;
 import io.jmix.core.Messages;
 import io.jmix.core.impl.scanning.AnnotationScanMetadataReaderFactory;
 import io.jmix.flowui.DialogWindows;
+import io.jmix.flowui.component.groupgrid.adapter.GroupDataGridAdapterFactory;
+import io.jmix.flowui.sys.ActionsConfiguration;
 import io.jmix.flowui.sys.ViewControllersConfiguration;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
@@ -57,11 +56,12 @@ public class AiToolsGridExportAutoConfigurationTest {
     }
 
     @Test
-    void askAi_withGridExport_contributorAndDialogViewRegistered() {
+    void askAi_withGridExport_actionAndDialogViewRegistered() {
         contextRunner.run(context -> {
             assertThat(context).hasNotFailed();
-            assertThat(context).hasSingleBean(AiGridDataExportDialogContributor.class);
-            assertThat(context).hasBean("aitls_AiGridDataExportDialogContributor");
+            assertThat(context.getBean("aitls_AiToolsGridExportActions", ActionsConfiguration.class)
+                    .getBasePackages())
+                    .containsExactly("io.jmix.aitoolsflowui.gridexport");
             assertThat(context.getBean("aitls_AiToolsGridExportViewControllers", ViewControllersConfiguration.class)
                     .getBasePackages())
                     .containsExactly("io.jmix.aitoolsflowui.gridexport.view");
@@ -75,7 +75,7 @@ public class AiToolsGridExportAutoConfigurationTest {
                         "io.jmix.gridexportflowui"))
                 .run(context -> {
                     assertThat(context).hasNotFailed();
-                    assertThat(context).doesNotHaveBean("aitls_AiGridDataExportDialogContributor");
+                    assertThat(context).doesNotHaveBean("aitls_AiToolsGridExportActions");
                     assertThat(context).doesNotHaveBean("aitls_AiToolsGridExportViewControllers");
                 });
     }
@@ -112,10 +112,9 @@ public class AiToolsGridExportAutoConfigurationTest {
         ConfigurableListableBeanFactory beanFactory = context.getBeanFactory();
         beanFactory.registerSingleton("aiExclusionSupport", mock(AiExclusionSupport.class));
         beanFactory.registerSingleton("messages", mock(Messages.class));
-        beanFactory.registerSingleton("aiChatService", mock(AiChatService.class));
-        beanFactory.registerSingleton("accessManager", mock(AccessManager.class));
         beanFactory.registerSingleton("dialogWindows", mock(DialogWindows.class));
         beanFactory.registerSingleton("messageTools", mock(MessageTools.class));
+        beanFactory.registerSingleton("groupDataGridAdapterFactory", mock(GroupDataGridAdapterFactory.class));
         beanFactory.registerSingleton("metadataReaderFactory", mock(AnnotationScanMetadataReaderFactory.class));
     }
 }

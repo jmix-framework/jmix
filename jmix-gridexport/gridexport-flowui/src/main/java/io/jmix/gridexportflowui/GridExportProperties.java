@@ -51,6 +51,12 @@ public class GridExportProperties {
     ColumnsToExport defaultColumnsToExport;
 
     /**
+     * Types of the actions added to the export option dialog of the {@link ExportAction} after the export modes,
+     * in the order of their buttons.
+     */
+    List<String> dialogActions;
+
+    /**
      * Excel exporting configuration.
      */
     ExcelExporterProperties excel;
@@ -60,11 +66,13 @@ public class GridExportProperties {
                                 @DefaultValue({"ALL_ROWS", "CURRENT_PAGE", "SELECTED_ROWS"})
                                 List<String> defaultExportModes,
                                 @DefaultValue("VISIBLE_COLUMNS") ColumnsToExport defaultColumnsToExport,
+                                @DefaultValue List<String> dialogActions,
                                 @DefaultValue ExcelExporterProperties excel) {
         this.exportAllBatchSize = exportAllBatchSize;
         this.exportAllPaginationStrategy = exportAllPaginationStrategy;
         this.defaultExportModes = defaultExportModes;
         this.defaultColumnsToExport = defaultColumnsToExport;
+        this.dialogActions = dialogActions;
         this.excel = excel;
     }
 
@@ -96,6 +104,13 @@ public class GridExportProperties {
      */
     public ColumnsToExport getDefaultColumnsToExport() {
         return defaultColumnsToExport;
+    }
+
+    /**
+     * @see #dialogActions
+     */
+    public List<String> getDialogActions() {
+        return dialogActions;
     }
 
     public ExcelExporterProperties getExcel() {

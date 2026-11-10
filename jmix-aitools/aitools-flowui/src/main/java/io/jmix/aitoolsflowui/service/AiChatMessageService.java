@@ -63,7 +63,7 @@ public interface AiChatMessageService {
      * every request, regardless of the conversation history window. Only user and assistant messages can be kept.
      * <p>
      * Keeping an already kept message and releasing a message always succeed. When the result is
-     * {@link KeepInContextResult#DONE}, the passed message reflects the new state; on
+     * {@link KeepInContextResult#DONE}, the passed message reflects the new state. On
      * {@link KeepInContextResult#LIMIT_REACHED} and on an exception it is left unchanged.
      *
      * @param message message to change
@@ -78,8 +78,8 @@ public interface AiChatMessageService {
      * Loads the messages of the conversation that are kept in context, oldest first.
      *
      * @param conversation conversation whose kept messages are loaded
-     * @return the kept messages, oldest first; empty if there are none or the conversation is not accessible to
-     * the current user
+     * @return the kept messages, oldest first, or an empty collection if there are none or the conversation is not
+     * accessible to the current user
      */
     Collection<AiChatMessage> loadKeptInContextMessages(AiConversation conversation);
 

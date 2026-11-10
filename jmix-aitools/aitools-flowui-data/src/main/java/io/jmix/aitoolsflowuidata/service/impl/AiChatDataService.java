@@ -230,7 +230,7 @@ public class AiChatDataService implements AiChatService, InitializingBean {
 
     /**
      * Builds the model-facing text that presents kept messages older than the history window. The text is not
-     * localized; override to change the wording.
+     * localized. Override the method to change the wording.
      *
      * @param keptMessages kept messages that are not in the window, oldest first
      * @return the text to put in front of the history

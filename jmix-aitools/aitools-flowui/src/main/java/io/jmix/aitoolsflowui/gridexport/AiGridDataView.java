@@ -20,9 +20,9 @@ import io.jmix.core.annotation.Experimental;
 import org.jspecify.annotations.NullMarked;
 
 /**
- * A view that lets the user ask the AI about the rows of a data grid. The view opened by "Ask AI" in the grid export
- * dialog gets the grid through this interface; a view that replaces the standard one by its id implements it to get
- * the grid too, and can open the chat with {@link AiGridDataSupport#openChat}.
+ * A view that lets the user ask the AI about the rows of a data grid. The view opened by
+ * {@link AskAiAboutGridDataAction "Ask AI"} gets the grid through this interface. A view that replaces the standard
+ * one by its id implements it to get the grid too, and can open the chat with {@link AiGridDataSupport#openChat}.
  */
 @Experimental
 @NullMarked

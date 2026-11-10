@@ -19,7 +19,7 @@ package chat_data_block;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Span;
-import io.jmix.aitoolsflowui.fragment.chat.component.AiChatDataBlockChip;
+import io.jmix.aitoolsflowui.fragment.chat.datablock.AiChatDataBlockChip;
 import io.jmix.core.Messages;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.testassist.FlowuiTestAssistConfiguration;

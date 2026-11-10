@@ -14,13 +14,11 @@
  * limitations under the License.
  */
 
-package io.jmix.aitoolsflowui.model;
+package io.jmix.aitoolsflowui.fragment.chat.datablock;
 
-import io.jmix.aitoolsflowui.prompt.AiSuggestedPromptProvider;
-import io.jmix.core.annotation.Internal;
+import io.jmix.aitoolsflowui.fragment.chat.prompt.AiSuggestedPromptProvider;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.flowui.view.View;
-import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 import java.io.Serializable;
@@ -34,8 +32,6 @@ import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
  * A block of data waiting in an open chat to be sent with the user's next question. It exists only while the chat
  * is open: nothing is stored until the user sends it.
  */
-@Internal
-@NullMarked
 public class AiChatDataBlock implements Serializable {
 
     private final String caption;

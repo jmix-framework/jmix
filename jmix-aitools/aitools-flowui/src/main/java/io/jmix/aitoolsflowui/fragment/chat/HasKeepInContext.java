@@ -25,7 +25,7 @@ import java.io.Serializable;
 
 /**
  * An {@link AiChatPanel} that shows which messages are kept in the assistant's context and lets the user keep or
- * release a message. The panel only reports the user's request; the host stores the flag and calls
+ * release a message. The panel only reports the user's request. The host stores the flag and calls
  * {@link #refreshKeepInContext(AiChatMessage)} to show the outcome.
  * <p>
  * The control is offered only while a handler is set: the host clears the handler when the chat must not change

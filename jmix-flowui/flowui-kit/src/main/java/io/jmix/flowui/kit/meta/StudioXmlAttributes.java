@@ -287,6 +287,7 @@ public final class StudioXmlAttributes {
     public static final String DESCRIPTION = "description";
     public static final String DETAILS_VISIBLE_ON_CLICK = "detailsVisibleOnClick";
     public static final String DIALOG_ACCESSIBLE_NAME = "dialogAccessibleName";
+    public static final String DIALOG_ACTIONS = "dialogActions";
     public static final String DIMENSION = "dimension";
     public static final String DIRECTION = "direction";
     public static final String DISABLED = "disabled";

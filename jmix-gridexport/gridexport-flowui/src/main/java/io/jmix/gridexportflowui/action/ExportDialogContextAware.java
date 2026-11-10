@@ -16,25 +16,22 @@
 
 package io.jmix.gridexportflowui.action;
 
-import io.jmix.flowui.kit.action.Action;
 import org.jspecify.annotations.NullMarked;
 
 import java.util.List;
 
 /**
- * Adds actions to the option dialog that {@link ExportAction} opens, e.g. to pass the grid rows somewhere else
- * than a file. Implement it as a Spring bean; contributors are asked in {@link org.springframework.core.Ordered}
- * / {@link org.springframework.core.annotation.Order} order every time the dialog opens, and their actions are
- * shown after the export mode actions and before Cancel.
+ * An action shown in the option dialog of {@link ExportAction} (see {@link ExportAction#setDialogActions(List)})
+ * that needs to know the export the dialog is opened for, e.g. to read the rows the way the export reads them.
  */
 @NullMarked
-public interface ExportDialogActionContributor {
+public interface ExportDialogContextAware {
 
     /**
-     * Returns the actions to show in the export dialog that is about to open.
+     * Passes the export the dialog is opened for. Called before the dialog opens, on the action instance created
+     * for that dialog.
      *
      * @param context the export the dialog is opened for
-     * @return actions to add, empty if this contributor has nothing to add for this export
      */
-    List<Action> getActions(ExportDialogContext context);
+    void setExportDialogContext(ExportDialogContext context);
 }

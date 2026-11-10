@@ -19,17 +19,23 @@ package test_support;
 import io.jmix.core.CoreConfiguration;
 import io.jmix.core.DataManager;
 import io.jmix.core.annotation.JmixModule;
+import io.jmix.core.impl.scanning.AnnotationScanMetadataReaderFactory;
 import io.jmix.data.DataConfiguration;
 import io.jmix.eclipselink.EclipselinkConfiguration;
 import io.jmix.flowui.FlowuiConfiguration;
 import io.jmix.flowui.component.groupgrid.adapter.DefaultGroupDataGridAdapterFactory;
 import io.jmix.flowui.component.groupgrid.adapter.GroupDataGridAdapterFactory;
+import io.jmix.flowui.sys.ActionsConfiguration;
 import io.jmix.flowui.testassist.FlowuiServletTestBeans;
 import io.jmix.gridexportflowui.GridExportFlowuiConfiguration;
 import io.jmix.testsupport.config.*;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import test_support.action.TestDialogActionRecorder;
+
+import java.util.List;
 
 /**
  * Boots the add-on's UI layer over an in-memory database, so that views with exportable data grids can be
@@ -55,12 +61,15 @@ public class GridExportFlowuiTestConfiguration {
     }
 
     @Bean
-    TestExportDialogActionContributor secondExportDialogActionContributor() {
-        return new TestExportDialogActionContributor(20, "Second");
+    ActionsConfiguration testActions(ApplicationContext applicationContext,
+                                     AnnotationScanMetadataReaderFactory metadataReaderFactory) {
+        ActionsConfiguration actionsConfiguration = new ActionsConfiguration(applicationContext, metadataReaderFactory);
+        actionsConfiguration.setBasePackages(List.of("test_support.action"));
+        return actionsConfiguration;
     }
 
     @Bean
-    TestExportDialogActionContributor firstExportDialogActionContributor() {
-        return new TestExportDialogActionContributor(10, "First");
+    TestDialogActionRecorder testDialogActionRecorder() {
+        return new TestDialogActionRecorder();
     }
 }

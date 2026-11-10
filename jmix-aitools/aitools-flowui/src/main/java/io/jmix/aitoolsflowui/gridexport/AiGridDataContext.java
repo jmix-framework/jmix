@@ -20,15 +20,18 @@ import com.vaadin.flow.component.grid.Grid;
 import io.jmix.core.annotation.Experimental;
 import io.jmix.flowui.component.ListDataComponent;
 import io.jmix.gridexportflowui.exporter.AbstractDataGridExporter;
+import io.jmix.gridexportflowui.exporter.ExportMode;
 import org.jspecify.annotations.NullMarked;
 
+import java.util.List;
 import java.util.function.Predicate;
 
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
 /**
- * The data grid whose rows the user wants to ask the AI about, together with the way its rows are read: the exporter
- * and the column filter of the export the user started from, so that the AI gets the values the export would write.
+ * The data grid whose rows the user wants to ask the AI about, the way its rows are read and the rows the user may
+ * choose from. The rows are read with the exporter and the column filter of the export the user started from, or of
+ * the "Ask AI" action used by itself, so that the AI gets the values the export would write.
  */
 @Experimental
 @NullMarked
@@ -37,22 +40,32 @@ public class AiGridDataContext {
     protected final ListDataComponent<Object> target;
     protected final AbstractDataGridExporter<?> exporter;
     protected final Predicate<Grid.Column<Object>> columnFilter;
+    protected final List<ExportMode> exportModes;
 
     /**
      * @param target       grid to read the rows from
      * @param exporter     exporter that reads the rows, with its column value providers
      * @param columnFilter columns to read
+     * @param exportModes  rows the user may choose from: {@link ExportMode#SELECTED_ROWS} and/or
+     *                     {@link ExportMode#CURRENT_PAGE}
+     * @throws IllegalArgumentException if the modes contain {@link ExportMode#ALL_ROWS}, which is never sent
      */
     public AiGridDataContext(ListDataComponent<Object> target,
                              AbstractDataGridExporter<?> exporter,
-                             Predicate<Grid.Column<Object>> columnFilter) {
+                             Predicate<Grid.Column<Object>> columnFilter,
+                             List<ExportMode> exportModes) {
         checkNotNullArgument(target);
         checkNotNullArgument(exporter);
         checkNotNullArgument(columnFilter);
+        checkNotNullArgument(exportModes);
+        if (exportModes.contains(ExportMode.ALL_ROWS)) {
+            throw new IllegalArgumentException("Unsupported export mode: " + ExportMode.ALL_ROWS);
+        }
 
         this.target = target;
         this.exporter = exporter;
         this.columnFilter = columnFilter;
+        this.exportModes = List.copyOf(exportModes);
     }
 
     /**
@@ -80,5 +93,14 @@ public class AiGridDataContext {
      */
     public Predicate<Grid.Column<Object>> getColumnFilter() {
         return columnFilter;
+    }
+
+    /**
+     * Returns the rows the user may choose from.
+     *
+     * @return {@link ExportMode#SELECTED_ROWS} and/or {@link ExportMode#CURRENT_PAGE}, possibly none
+     */
+    public List<ExportMode> getExportModes() {
+        return exportModes;
     }
 }

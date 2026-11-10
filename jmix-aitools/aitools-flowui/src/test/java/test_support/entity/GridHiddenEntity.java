@@ -20,7 +20,7 @@ import io.jmix.aitools.ExcludeFromAi;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 
 /**
- * DTO fixture of an entity left out of the model by the annotation; a grid column on a reference to it must not
+ * DTO fixture of an entity left out of the model by the annotation. A grid column on a reference to it must not
  * reach the AI.
  */
 @ExcludeFromAi

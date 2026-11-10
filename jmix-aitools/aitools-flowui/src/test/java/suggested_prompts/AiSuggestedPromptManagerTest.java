@@ -16,10 +16,10 @@
 
 package suggested_prompts;
 
+import io.jmix.aitoolsflowui.fragment.chat.prompt.AiSuggestedPromptContext;
+import io.jmix.aitoolsflowui.fragment.chat.prompt.AiSuggestedPromptManager;
 import io.jmix.aitoolsflowui.model.AiChatMessage;
 import io.jmix.aitoolsflowui.model.AiConversation;
-import io.jmix.aitoolsflowui.prompt.AiSuggestedPromptContext;
-import io.jmix.aitoolsflowui.prompt.AiSuggestedPromptManager;
 import io.jmix.core.Metadata;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.flowui.testassist.FlowuiTestAssistConfiguration;

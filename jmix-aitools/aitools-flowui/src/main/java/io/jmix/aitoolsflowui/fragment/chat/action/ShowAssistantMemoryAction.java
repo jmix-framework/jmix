@@ -25,7 +25,7 @@ import org.jspecify.annotations.NullMarked;
 
 /**
  * Shows the messages the assistant keeps in memory for the conversation. The action's text carries the number of
- * kept messages, so the user sees the memory filling up before it is full; the chat updates it through
+ * kept messages, so the user sees the memory filling up before it is full. The chat updates it through
  * {@link #setKeptCount(int)}. A listener added to the action replaces the default behaviour of showing the
  * memory.
  */

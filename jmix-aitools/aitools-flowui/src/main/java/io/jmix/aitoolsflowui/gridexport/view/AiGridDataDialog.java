@@ -106,8 +106,10 @@ public class AiGridDataDialog extends StandardView implements AiGridDataView {
     public void onOpenChatBtnClick(final ClickEvent<JmixButton> event) {
         AiGridDataContext context = getGridDataContext();
         ExportMode mode = rowsField.getValue();
+
         int rowCount = gridDataSupport.countRows(context, mode);
         int maxRows = gridExportProperties.getMaxRows();
+
         if (rowCount > maxRows) {
             notifications.create(messageBundle.formatMessage("aiGridDataDialog.tooManyRows", rowCount, maxRows))
                     .withType(Notifications.Type.WARNING)
@@ -133,18 +135,31 @@ public class AiGridDataDialog extends StandardView implements AiGridDataView {
     }
 
     /**
-     * Offers the selected rows, when there are any, and the current page; without a selection the current page is
-     * the only choice and is shown read-only.
+     * Offers the allowed modes of the context: the selected rows, when there are any, and the current page. A single
+     * choice is shown read-only.
      *
      * @param context the grid
+     * @throws IllegalStateException if there is nothing to offer: no allowed mode, or only the selected rows while
+     *                               nothing is selected
      */
     protected void initRowsField(AiGridDataContext context) {
-        int selectedCount = gridDataSupport.countRows(context, ExportMode.SELECTED_ROWS);
-        int pageCount = gridDataSupport.countRows(context, ExportMode.CURRENT_PAGE);
+        List<ExportMode> allowedModes = context.getExportModes();
 
-        List<ExportMode> modes = selectedCount > 0
-                ? List.of(ExportMode.SELECTED_ROWS, ExportMode.CURRENT_PAGE)
-                : List.of(ExportMode.CURRENT_PAGE);
+        int selectedCount = gridDataSupport.countRows(context, ExportMode.SELECTED_ROWS);
+        int pageCount = allowedModes.contains(ExportMode.CURRENT_PAGE)
+                ? gridDataSupport.countRows(context, ExportMode.CURRENT_PAGE)
+                : 0;
+
+        List<ExportMode> modes = Stream.of(ExportMode.SELECTED_ROWS, ExportMode.CURRENT_PAGE)
+                .filter(allowedModes::contains)
+                .filter(mode -> mode != ExportMode.SELECTED_ROWS || selectedCount > 0)
+                .toList();
+
+        if (modes.isEmpty()) {
+            throw new IllegalStateException(String.format("%s has no rows to offer: allowed modes %s, selected rows %d",
+                    getClass().getSimpleName(), allowedModes, selectedCount));
+        }
+
         rowsField.setItems(modes);
         rowsField.setItemLabelGenerator(mode -> mode == ExportMode.SELECTED_ROWS
                 ? messageBundle.formatMessage("aiGridDataDialog.rows.selected", selectedCount)

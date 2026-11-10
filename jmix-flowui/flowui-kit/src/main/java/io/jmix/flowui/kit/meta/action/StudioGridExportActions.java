@@ -39,7 +39,8 @@ interface StudioGridExportActions {
                             options = {"ALL_ROWS", "CURRENT_PAGE", "SELECTED_ROWS"}),
                     @StudioPropertiesItem(xmlAttribute = StudioXmlAttributes.COLUMNS_TO_EXPORT, type = StudioPropertyType.ENUMERATION,
                             options = {"ALL_COLUMNS", "VISIBLE_COLUMNS"}),
-                    @StudioPropertiesItem(xmlAttribute = StudioXmlAttributes.COLUMN_KEYS_TO_EXPORT, type = StudioPropertyType.VALUES_LIST)
+                    @StudioPropertiesItem(xmlAttribute = StudioXmlAttributes.COLUMN_KEYS_TO_EXPORT, type = StudioPropertyType.VALUES_LIST),
+                    @StudioPropertiesItem(xmlAttribute = StudioXmlAttributes.DIALOG_ACTIONS, type = StudioPropertyType.VALUES_LIST)
             }
     )
     void excelExport();
@@ -57,7 +58,8 @@ interface StudioGridExportActions {
                             options = {"ALL_ROWS", "CURRENT_PAGE", "SELECTED_ROWS"}),
                     @StudioPropertiesItem(xmlAttribute = StudioXmlAttributes.COLUMNS_TO_EXPORT, type = StudioPropertyType.ENUMERATION,
                             options = {"ALL_COLUMNS", "VISIBLE_COLUMNS"}),
-                    @StudioPropertiesItem(xmlAttribute = StudioXmlAttributes.COLUMN_KEYS_TO_EXPORT, type = StudioPropertyType.VALUES_LIST)
+                    @StudioPropertiesItem(xmlAttribute = StudioXmlAttributes.COLUMN_KEYS_TO_EXPORT, type = StudioPropertyType.VALUES_LIST),
+                    @StudioPropertiesItem(xmlAttribute = StudioXmlAttributes.DIALOG_ACTIONS, type = StudioPropertyType.VALUES_LIST)
             }
     )
     void jsonExport();

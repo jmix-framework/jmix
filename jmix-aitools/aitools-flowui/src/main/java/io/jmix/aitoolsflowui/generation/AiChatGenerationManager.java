@@ -169,7 +169,7 @@ public class AiChatGenerationManager {
      * answer to it in the background. The same rules as for {@link #start(AiConversation, String)} apply.
      * <p>
      * When the conversation already keeps as many messages as it can, the message is saved without being kept and
-     * the answer is still started; the returned message tells whether it is kept.
+     * the answer is still started. The returned message tells whether it is kept.
      *
      * @param conversation  conversation to answer in, accessible to the current user
      * @param text          text of the user's message
@@ -177,9 +177,9 @@ public class AiChatGenerationManager {
      * @return the saved user message
      * @throws IllegalStateException             if AI chat is not configured
      * @throws AccessDeniedException             if the conversation does not exist or is not accessible to the
-     *                                           current user; nothing is saved
+     *                                           current user, before anything is saved
      * @throws AiChatGenerationRejectedException if a response is already running in the conversation
-     * @throws RejectedExecutionException        if the manager is shutting down; the user message is already saved
+     * @throws RejectedExecutionException        if the manager is shutting down, after the user message is saved
      */
     public AiChatMessage start(AiConversation conversation, String text, boolean keepInContext) {
         Preconditions.checkNotNullArgument(conversation);

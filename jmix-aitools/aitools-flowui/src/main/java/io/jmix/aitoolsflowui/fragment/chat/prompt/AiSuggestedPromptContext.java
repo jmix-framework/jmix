@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.aitoolsflowui.prompt;
+package io.jmix.aitoolsflowui.fragment.chat.prompt;
 
 import io.jmix.aitoolsflowui.model.AiConversation;
 import io.jmix.core.annotation.Experimental;

@@ -46,12 +46,24 @@ public interface EntityIdsLoader {
         private final List<?> ids;
         @Nullable
         private final Object lastOrderingValue;
+        private final boolean lastBatch;
 
         public static final ResultHolder EMPTY = new ResultHolder(Collections.emptyList(), null);
 
         public ResultHolder(List<?> ids, @Nullable Object lastOrderingValue) {
+            this(ids, lastOrderingValue, false);
+        }
+
+        /**
+         * @param ids               loaded ids
+         * @param lastOrderingValue ordering value of the last loaded instance
+         * @param lastBatch         whether these are the last ids of the session, regardless of
+         *                          how their number compares to the batch size
+         */
+        public ResultHolder(List<?> ids, @Nullable Object lastOrderingValue, boolean lastBatch) {
             this.ids = ids;
             this.lastOrderingValue = lastOrderingValue;
+            this.lastBatch = lastBatch;
         }
 
         public List<?> getIds() {
@@ -61,6 +73,13 @@ public interface EntityIdsLoader {
         @Nullable
         public Object getLastOrderingValue() {
             return lastOrderingValue;
+        }
+
+        /**
+         * @return true if the loader has no more ids to load for the session
+         */
+        public boolean isLastBatch() {
+            return lastBatch;
         }
     }
 }

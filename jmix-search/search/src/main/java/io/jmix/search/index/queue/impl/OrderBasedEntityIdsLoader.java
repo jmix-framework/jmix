@@ -50,7 +50,7 @@ import static java.lang.String.format;
 @NullMarked
 public abstract class OrderBasedEntityIdsLoader implements EntityIdsLoader {
 
-    private static final Logger log = LoggerFactory.getLogger(OracleEntityIdsLoader.class);
+    private static final Logger log = LoggerFactory.getLogger(OrderBasedEntityIdsLoader.class);
 
     @Autowired
     protected DataManager dataManager;
@@ -159,7 +159,7 @@ public abstract class OrderBasedEntityIdsLoader implements EntityIdsLoader {
         if (rawIds == null) {
             rawIds = Collections.emptyList();
         }
-        return new ResultHolder(rawIds, null);
+        return new ResultHolder(rawIds, null, true);
     }
 
     @Nullable

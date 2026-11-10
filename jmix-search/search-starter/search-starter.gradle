@@ -22,6 +22,7 @@ base {
 dependencies {
     api project(':search')
     compileOnly project(':dynattr')
+    compileOnly project(':multitenancy')
 
     api 'org.springframework.boot:spring-boot-autoconfigure'
 

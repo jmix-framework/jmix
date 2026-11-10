@@ -17,6 +17,7 @@
 package io.jmix.search.index.impl;
 
 import io.jmix.core.Id;
+import io.jmix.search.index.EntityDeletionTarget;
 import io.jmix.search.index.EntityIndexer;
 import io.jmix.search.index.IndexResult;
 import org.jspecify.annotations.NullMarked;
@@ -62,8 +63,14 @@ public class NoopEntityIndexer implements EntityIndexer {
         return new IndexResult(0, Collections.emptyList());
     }
 
+    @Deprecated(since = "3.1", forRemoval = true)
     @Override
     public IndexResult deleteCollectionByEntityIds(Collection<Id<?>> entityIds) {
+        return new IndexResult(0, Collections.emptyList());
+    }
+
+    @Override
+    public IndexResult deleteCollectionByTargets(Collection<EntityDeletionTarget> targets) {
         return new IndexResult(0, Collections.emptyList());
     }
 }

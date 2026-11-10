@@ -68,6 +68,7 @@ public abstract class OrderBasedEntityIdsLoader implements EntityIdsLoader {
         String orderingPropertyName = session.getOrderingProperty();
         MetaProperty orderingProperty = entityClass.getProperty(orderingPropertyName);
         String lastProcessedRawOrderingValue = session.getLastProcessedValue();
+        String tenantId = session.getTenantId();
         MetaProperty primaryKeyProperty = metadataTools.getPrimaryKeyProperty(entityClass);
         if (primaryKeyProperty == null) {
             throw new RuntimeException(String.format("Entity '%s' doesn't have primary key", entityName));
@@ -77,10 +78,10 @@ public abstract class OrderBasedEntityIdsLoader implements EntityIdsLoader {
         ResultHolder result;
         if (orderingProperty.getType() == MetaProperty.Type.EMBEDDED) {
             log.warn("Sorted loading by embedded property is not supported - perform in-memory loading of all ids");
-            result = loadAllInMemory(entityClass);
+            result = loadAllInMemory(entityClass, tenantId);
         } else {
             Object lastProcessedValue = convertRawValue(orderingProperty, lastProcessedRawOrderingValue);
-            ValueLoadContext valueLoadContext = createValueLoadContext(entityClass, primaryKeyPropertyName, orderingPropertyName, lastProcessedValue, batchSize);
+            ValueLoadContext valueLoadContext = createValueLoadContext(entityClass, primaryKeyPropertyName, orderingPropertyName, lastProcessedValue, tenantId, batchSize);
             List<KeyValueEntity> loadedValues = loadValues(valueLoadContext);
             List<Object> ids = loadedValues.stream().map(v -> v.getValue("objectId")).collect(Collectors.toList());
             Object lastLoadedOrderingValue = resolveLastLoadedOrderingValue(loadedValues, primaryKeyPropertyName, orderingPropertyName);
@@ -92,7 +93,8 @@ public abstract class OrderBasedEntityIdsLoader implements EntityIdsLoader {
 
     protected abstract List<KeyValueEntity> loadValues(ValueLoadContext valueLoadContext);
 
-    protected ValueLoadContext createValueLoadContext(MetaClass entityClass, String pkProperty, String orderingProperty, @Nullable Object orderingValue, int batchSize) {
+    protected ValueLoadContext createValueLoadContext(MetaClass entityClass, String pkProperty, String orderingProperty,
+                                                      @Nullable Object orderingValue, @Nullable String tenantId, int batchSize) {
         String entityName = entityClass.getName();
         String storeName = entityClass.getStore().getName();
         String queryString;
@@ -115,6 +117,11 @@ public abstract class OrderBasedEntityIdsLoader implements EntityIdsLoader {
         if (!initial) {
             conditions.add("e." + orderingProperty + " > :value");
         }
+        String tenantIdProperty = null;
+        if (tenantId != null) {
+            tenantIdProperty = tenantPropertyName(entityClass, entityName);
+            conditions.add("e." + tenantIdProperty + " = :tenantId");
+        }
 
         String where = conditions.isEmpty() ? "" : "where " + String.join(" and ", conditions);
 
@@ -123,6 +130,9 @@ public abstract class OrderBasedEntityIdsLoader implements EntityIdsLoader {
         ValueLoadContext.Query query = ValueLoadContext.createQuery(queryString).setMaxResults(batchSize);
         if (!initial) {
             query.setParameter("value", orderingValue);
+        }
+        if (tenantIdProperty != null) {
+            query.setParameter("tenantId", tenantId);
         }
 
         return ValueLoadContext.create()
@@ -140,7 +150,7 @@ public abstract class OrderBasedEntityIdsLoader implements EntityIdsLoader {
         return loadedValues.get(loadedValues.size() - 1).getValue(effectiveProperty);
     }
 
-    protected ResultHolder loadAllInMemory(MetaClass entityClass) {
+    protected ResultHolder loadAllInMemory(MetaClass entityClass, @Nullable String tenantId) {
         String entityName = entityClass.getName();
         String primaryKeyName = metadataTools.getPrimaryKeyName(entityClass);
         log.debug("Primary key of entity '{}': '{}'", entityName, primaryKeyName);
@@ -153,7 +163,16 @@ public abstract class OrderBasedEntityIdsLoader implements EntityIdsLoader {
         transactionTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
         rawIds = transactionTemplate.execute(status -> {
             EntityManager em = storeAwareLocator.getEntityManager(entityClass.getStore().getName());
-            Query query = em.createQuery(format("select e.%s from %s e", primaryKeyName, entityName));
+            String queryString = format("select e.%s from %s e", primaryKeyName, entityName);
+            String tenantIdProperty = null;
+            if (tenantId != null) {
+                tenantIdProperty = tenantPropertyName(entityClass, entityName);
+                queryString += format(" where e.%s = :tenantId", tenantIdProperty);
+            }
+            Query query = em.createQuery(queryString);
+            if (tenantIdProperty != null) {
+                query.setParameter("tenantId", tenantId);
+            }
             return query.getResultList();
         });
         if (rawIds == null) {
@@ -183,4 +202,19 @@ public abstract class OrderBasedEntityIdsLoader implements EntityIdsLoader {
         }
         throw new IllegalArgumentException("Unsupported property: " + orderingProperty);
     }
+
+    /**
+     * @return name of the attribute that holds the tenant of the entity
+     * @throws IllegalArgumentException if the entity has no such attribute, so that ids of one tenant cannot be
+     *                                  asked for at all
+     */
+    protected String tenantPropertyName(MetaClass entityClass, String entityName) {
+        MetaProperty tenantProperty = metadataTools.findTenantIdProperty(entityClass);
+        if (tenantProperty == null) {
+            throw new IllegalArgumentException(
+                    String.format("Unable to load ids for tenant: entity '%s' is not tenant-aware", entityName));
+        }
+        return tenantProperty.getName();
+    }
+
 }

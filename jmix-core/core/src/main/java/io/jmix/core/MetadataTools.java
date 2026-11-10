@@ -97,7 +97,7 @@ public class MetadataTools {
     public static final String DELETED_DATE_ANN_NAME = DeletedDate.class.getName();
     public static final String DELETED_BY_ANN_NAME = DeletedBy.class.getName();
     public static final String LAST_MODIFIED_DATE_ANN_NAME = LastModifiedDate.class.getName();
-
+    public static final String TENANT_ID_ANN_NAME = TenantId.class.getName();
 
     @Autowired
     protected Metadata metadata;
@@ -834,19 +834,41 @@ public class MetadataTools {
         return findPropertyByAnnotation(clazz, LAST_MODIFIED_DATE_ANN_NAME);
     }
 
+    /**
+     * @return MetaProperty representing an attribute annotated with @TenantId, or null if the entity has no such
+     * attribute
+     */
+    @Nullable
+    public MetaProperty findTenantIdProperty(MetaClass metaClass) {
+        return findPropertyByAnnotation(metaClass, TENANT_ID_ANN_NAME);
+    }
+
+    /**
+     * Determine whether the entity belongs to a tenant.
+     *
+     * @param metaClass meta class of an entity
+     * @return {@code true} if the entity has an attribute annotated with @{@link TenantId}
+     */
+    public boolean isTenantAware(MetaClass metaClass) {
+        return findTenantIdProperty(metaClass) != null;
+    }
+
     @Nullable
     protected String findPropertyByAnnotation(Class<?> clazz, String annotationName) {
-        MetaClass metaClass = metadata.getClass(clazz);
+        MetaProperty property = findPropertyByAnnotation(metadata.getClass(clazz), annotationName);
+        return property == null ? null : property.getName();
+    }
 
+    @Nullable
+    protected MetaProperty findPropertyByAnnotation(MetaClass metaClass, String annotationName) {
         for (MetaProperty property : metaClass.getProperties()) {
             if (property.getAnnotations().containsKey(annotationName)) {
-                return property.getName();
+                return property;
             }
         }
 
         return null;
     }
-
 
     /**
      * @return list contains @{@link DeletedDate}, @{@link DeletedBy} property names if present.
@@ -1234,7 +1256,6 @@ public class MetadataTools {
         if (destination instanceof CopyingSystemState && destination.getClass().isAssignableFrom(source.getClass())) {
             ((CopyingSystemState) destination).copyFrom(source);
         }
-
 
         // todo dynamic attributes
 //        if (source instanceof BaseGenericIdEntity && destination instanceof BaseGenericIdEntity) {

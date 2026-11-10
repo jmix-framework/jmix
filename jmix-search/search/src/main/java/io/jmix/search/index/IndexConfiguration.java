@@ -18,13 +18,23 @@ package io.jmix.search.index;
 
 import io.jmix.search.index.mapping.ExtendedSearchSettings;
 import io.jmix.search.index.mapping.IndexMappingConfiguration;
-
+import org.jspecify.annotations.Nullable;
 import java.util.Set;
 import java.util.function.Predicate;
 
 /**
- * Contains configuration of index related to some entity
+ * Describes how an entity is indexed - not a single index.
+ * <p>
+ * The data of a tenant-aware entity is stored in one index per tenant, so a configuration corresponds to as many
+ * physical indexes as the application has tenants. The name of an index is not held here at all: it is worked out
+ * from the configuration and a tenant by {@link io.jmix.search.index.impl.IndexLayout}.
+ * <p>
+ * The name of this class is older than that and reads as "configuration of an index". Renaming it to
+ * {@code EntityIndexingConfiguration} cannot be softened: Java has no alias for a class, and this type stands both
+ * in arguments and in return values, so every rename is a compile-time break. A break like that belongs to a major
+ * version, where it needs no bridge at all.
  */
+//TODO rename to EntityIndexingConfiguration in 4.0
 public class IndexConfiguration {
 
     protected final String entityName;
@@ -33,32 +43,37 @@ public class IndexConfiguration {
 
     protected final Set<Class<?>> affectedEntityClasses;
 
-    protected final String indexName;
-
     protected final IndexMappingConfiguration mapping;
 
     protected final Predicate<Object> indexablePredicate;
 
     protected final ExtendedSearchSettings extendedSearchSettings;
 
+    protected final boolean tenantAware;
+
+    @Nullable
+    protected final String indexNamePattern;
+
     public IndexConfiguration(String entityName,
                               Class<?> entityClass,
-                              String indexName,
                               IndexMappingConfiguration mapping,
                               Set<Class<?>> affectedEntityClasses,
                               Predicate<Object> indexablePredicate,
-                              ExtendedSearchSettings extendedSearchSettings) {
+                              ExtendedSearchSettings extendedSearchSettings,
+                              boolean tenantAware,
+                              @Nullable String indexNamePattern) {
         this.entityName = entityName;
         this.entityClass = entityClass;
-        this.indexName = indexName;
         this.mapping = mapping;
-        this.affectedEntityClasses = affectedEntityClasses;
+        this.affectedEntityClasses = Set.copyOf(affectedEntityClasses);
         this.indexablePredicate = indexablePredicate;
         this.extendedSearchSettings = extendedSearchSettings;
+        this.tenantAware = tenantAware;
+        this.indexNamePattern = indexNamePattern;
     }
 
     /**
-     * Gets name of entity indexed in this index
+     * Gets entity name of entity indexed in this index
      *
      * @return entity name
      */
@@ -76,12 +91,30 @@ public class IndexConfiguration {
     }
 
     /**
-     * Gets name of this index
+     * Indicates whether the indexed entity has an attribute annotated with
+     * {@link io.jmix.core.annotation.TenantId}.
+     * <p>
+     * This is a structural fact about the entity, not a decision about index layout: whether the index is actually
+     * split per tenant additionally depends on the application configuration.
      *
-     * @return index name
+     * @return true if the indexed entity has a tenant attribute
      */
-    public String getIndexName() {
-        return indexName;
+    public boolean isTenantAware() {
+        return tenantAware;
+    }
+
+    /**
+     * Returns the pattern that names the indexes of this entity, as written in
+     * {@link io.jmix.search.index.annotation.JmixEntitySearchIndex#indexName()}.
+     * <p>
+     * It overrides the application-wide pattern taken from the properties. A pattern without placeholders is the
+     * index name itself.
+     *
+     * @return pattern of the index name, or null if the entity has none of its own
+     */
+    @Nullable
+    public String getIndexNamePattern() {
+        return indexNamePattern;
     }
 
     /**
@@ -120,13 +153,14 @@ public class IndexConfiguration {
     @Override
     public String toString() {
         return "IndexConfiguration{" +
-                "entityName='" + entityName + '\'' +
-                ", entityClass=" + entityClass +
-                ", affectedEntityClasses=" + affectedEntityClasses +
-                ", indexName='" + indexName + '\'' +
-                ", mapping=" + mapping +
-                ", indexablePredicate=" + indexablePredicate +
-                ", extendedSearchSettings=" + extendedSearchSettings +
-                '}';
+               "entityName='" + entityName + '\'' +
+               ", entityClass=" + entityClass +
+               ", affectedEntityClasses=" + affectedEntityClasses +
+               ", mapping=" + mapping +
+               ", indexablePredicate=" + indexablePredicate +
+               ", extendedSearchSettings=" + extendedSearchSettings +
+               ", tenantAware=" + tenantAware +
+               ", indexNamePattern='" + indexNamePattern + '\'' +
+               '}';
     }
 }

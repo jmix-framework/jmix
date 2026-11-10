@@ -18,8 +18,6 @@ package test_support;
 
 import io.jmix.search.index.impl.StartupIndexSynchronizer;
 
-import jakarta.annotation.PostConstruct;
-
 /**
  * Disables synchronization of indexes on application startup
  */
@@ -28,7 +26,11 @@ public class TestNoopStartupIndexSynchronizer extends StartupIndexSynchronizer {
     public TestNoopStartupIndexSynchronizer() {
     }
 
-    @PostConstruct
-    protected void postConstruct() {
+    @Override
+    protected void synchronizeOnStartup() {
+    }
+
+    @Override
+    protected void synchronize() {
     }
 }

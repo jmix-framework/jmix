@@ -16,8 +16,13 @@
 
 package io.jmix.search.index;
 
-public enum IndexValidationStatus {
+public enum IndexValidationStatus implements AtomicIndexOperationResult {
     MISSING,
     IRRELEVANT,
-    ACTUAL
+    ACTUAL;
+
+    @Override
+    public boolean isSuccess() {
+        return this == ACTUAL;
+    }
 }

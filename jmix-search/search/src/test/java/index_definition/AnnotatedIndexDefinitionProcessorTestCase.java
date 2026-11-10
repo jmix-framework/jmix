@@ -26,9 +26,9 @@ public class AnnotatedIndexDefinitionProcessorTestCase {
     private final String name;
     private final Class<?> indexDefinitionClass;
     private final String expectedEntityName;
-    private final String expectedIndexName;
     private final Class<?> expectedEntityClass;
     private final String pathToFileWithExpectedMapping;
+    private final String expectedIndexNamePattern;
     private final AttributeMocker dynamicAttributesMocker;
 
     AnnotatedIndexDefinitionProcessorTestCase(Builder builder) {
@@ -36,9 +36,9 @@ public class AnnotatedIndexDefinitionProcessorTestCase {
                 builder.name,
                 builder.indexDefinitionClass,
                 builder.expectedEntityName,
-                builder.expectedIndexName,
                 builder.expectedEntityClass,
                 builder.pathToFileWithExpectedMapping,
+                builder.expectedIndexNamePattern,
                 builder.dynamicAttributesMocker
         );
     }
@@ -46,16 +46,16 @@ public class AnnotatedIndexDefinitionProcessorTestCase {
     private AnnotatedIndexDefinitionProcessorTestCase(String name,
                                                       Class<?> indexDefinitionClass,
                                                       String expectedEntityName,
-                                                      String expectedIndexName,
                                                       Class<?> expectedEntityClass,
                                                       String pathToFileWithExpectedMapping,
+                                                      String expectedIndexNamePattern,
                                                       AttributeMocker dynamicAttributesMocker) {
         this.name = name;
         this.indexDefinitionClass = indexDefinitionClass;
         this.expectedEntityName = expectedEntityName;
-        this.expectedIndexName = expectedIndexName;
         this.expectedEntityClass = expectedEntityClass;
         this.pathToFileWithExpectedMapping = pathToFileWithExpectedMapping;
+        this.expectedIndexNamePattern = expectedIndexNamePattern;
         this.dynamicAttributesMocker = dynamicAttributesMocker;
     }
 
@@ -76,16 +76,16 @@ public class AnnotatedIndexDefinitionProcessorTestCase {
         return expectedEntityName;
     }
 
-    String getExpectedIndexName() {
-        return expectedIndexName;
-    }
-
     Class<?> getExpectedEntityClass() {
         return expectedEntityClass;
     }
 
     String getPathToFileWithExpectedMapping() {
         return pathToFileWithExpectedMapping;
+    }
+
+    public String getExpectedIndexNamePattern() {
+        return expectedIndexNamePattern;
     }
 
     public AttributeMocker getDynAttrMetadataConsumer() {
@@ -96,9 +96,9 @@ public class AnnotatedIndexDefinitionProcessorTestCase {
         private final String name;
         private Class<?> indexDefinitionClass;
         private String expectedEntityName;
-        private String expectedIndexName;
         private Class<?> expectedEntityClass;
         private String pathToFileWithExpectedMapping;
+        private String expectedIndexNamePattern;
         private AttributeMocker dynamicAttributesMocker = (dynAttrMetadata, metadata) -> {};
 
         private Builder(String name) {
@@ -115,8 +115,14 @@ public class AnnotatedIndexDefinitionProcessorTestCase {
             return this;
         }
 
-        Builder expectedIndexName(String expectedIndexName) {
-            this.expectedIndexName = expectedIndexName;
+        /**
+         * The pattern an entity declares for itself in {@code @JmixEntitySearchIndex(indexName = "...")}.
+         * <p>
+         * Left out, it expects none - which is what almost every definition has. A definition that does declare
+         * one and forgets to say so here fails, because the matcher compares the expectation as it stands.
+         */
+        Builder expectedIndexNamePattern(String expectedIndexNamePattern) {
+            this.expectedIndexNamePattern = expectedIndexNamePattern;
             return this;
         }
 

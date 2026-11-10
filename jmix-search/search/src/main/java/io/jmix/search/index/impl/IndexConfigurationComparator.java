@@ -19,6 +19,10 @@ package io.jmix.search.index.impl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jmix.search.index.IndexConfiguration;
 import org.jspecify.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static io.jmix.search.index.IndexConfigurationFormatter.format;
 
 /**
  * The comparator that compares both the application's index configuration and the search index state
@@ -29,6 +33,8 @@ import org.jspecify.annotations.Nullable;
  * @param <TJsonp>    - Jsonp type
  */
 public abstract class IndexConfigurationComparator<TState, TSettings, TJsonp> {
+
+    private static final Logger log = LoggerFactory.getLogger(IndexConfigurationComparator.class);
 
     protected final IndexSettingsComparator<TState, TSettings, TJsonp> settingsComparator;
     protected final IndexMappingComparator<TState, TJsonp> mappingComparator;
@@ -44,19 +50,21 @@ public abstract class IndexConfigurationComparator<TState, TSettings, TJsonp> {
         this.indexStateResolver = indexStateResolver;
     }
 
-    public ConfigurationComparingResult compareConfigurations(IndexConfiguration indexConfiguration) {
-        TState indexState = getIndexState(indexConfiguration);
+    public ConfigurationComparingResult compareConfigurations(IndexConfiguration indexConfiguration, String indexName) {
+        TState indexState = getIndexState(indexName);
         if (indexState == null) {
+            log.debug("Index state is missing for index '{}' and configuration {}",
+                    indexName, format(indexConfiguration));
             return new ConfigurationComparingResult(
                     MappingComparingResult.NOT_COMPATIBLE,
                     SettingsComparingResult.NOT_COMPATIBLE);
         }
-        MappingComparingResult mappingState = mappingComparator.compare(indexConfiguration, indexState);
-        SettingsComparingResult settingsState = settingsComparator.compareSettings(indexConfiguration, indexState);
+        MappingComparingResult mappingState = mappingComparator.compare(indexConfiguration, indexName, indexState);
+        SettingsComparingResult settingsState = settingsComparator.compareSettings(indexConfiguration, indexName, indexState);
         return new ConfigurationComparingResult(mappingState, settingsState);
     }
 
     @Nullable
-    protected abstract TState getIndexState(IndexConfiguration indexConfiguration);
+    protected abstract TState getIndexState(String indexName);
 
 }

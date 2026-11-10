@@ -155,6 +155,21 @@ public class EntityInspectorCompositionTest {
         assertFalse(masterView.hasUnsavedChanges());
     }
 
+    @Test
+    void testNewCompositionItemOfNewMasterIsSavedWithMaster() {
+        EntityInspectorDetailView masterView = navigateToInspector("new");
+        ((InspectorCompositionMaster) masterView.getEditedEntity()).setName("master");
+
+        createItem(findItemsDataGrid(masterView), "new item");
+        masterView.save();
+
+        InspectorCompositionItem savedItem = dataManager.load(InspectorCompositionItem.class)
+                .query("select e from test_InspectorCompositionItem e where e.master.name = :masterName")
+                .parameter("masterName", "master")
+                .one();
+        assertEquals("new item", savedItem.getName());
+    }
+
     private InspectorCompositionMaster createMasterWithItem() {
         InspectorCompositionMaster master = metadata.create(InspectorCompositionMaster.class);
         master.setName("master");
@@ -171,14 +186,28 @@ public class EntityInspectorCompositionTest {
     }
 
     private EntityInspectorDetailView navigateToInspector(InspectorCompositionMaster master) {
+        return navigateToInspector(urlParamSerializer.serialize(master.getId()));
+    }
+
+    private EntityInspectorDetailView navigateToInspector(String serializedMasterId) {
         String entityName = metadata.getClass(InspectorCompositionMaster.class).getName();
         RouteParameters routeParameters = new RouteParameters(ImmutableMap.of(
                 EntityInspectorDetailView.ROUTE_PARAM_NAME, urlParamSerializer.serialize(entityName),
-                EntityInspectorDetailView.ROUTE_PARAM_ID, urlParamSerializer.serialize(master.getId())
+                EntityInspectorDetailView.ROUTE_PARAM_ID, serializedMasterId
         ));
         navigationSupport.navigate(EntityInspectorDetailView.class, routeParameters);
 
         return UiTestUtils.getCurrentView();
+    }
+
+    private void createItem(DataGrid<Object> itemsDataGrid, String name) {
+        CreateAction<?> createAction = (CreateAction<?>) itemsDataGrid.getAction(EntityInspectorCreateAction.ID);
+        assertNotNull(createAction, "The create action is not created in the entity inspector");
+        createAction.execute();
+
+        EntityInspectorDetailView newItemView = UiTestUtils.getLastOpenedViewDialog();
+        ((InspectorCompositionItem) newItemView.getEditedEntity()).setName(name);
+        newItemView.closeWithSave();
     }
 
     private EntityInspectorDetailView openItemView(DataGrid<Object> itemsDataGrid) {

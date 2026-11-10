@@ -236,7 +236,9 @@ public class EntityInspectorDetailView extends StandardDetailView<Object> {
                 container.setItem(dataContext.merge(entity));
             }
         } else {
-            container.setItem(entity);
+            // A new composition child is saved into the parent data context, which takes only the entities
+            // tracked by this one.
+            container.setItem(dataContext.getParent() != null ? dataContext.merge(entity) : entity);
         }
         return container;
     }

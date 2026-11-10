@@ -20,11 +20,31 @@ import groovy.xml.XmlParser
 import javassist.ClassPool
 import javassist.CtClass
 import javassist.NotFoundException
-import org.gradle.api.Action
+import org.gradle.api.DefaultTask
 import org.gradle.api.Project
-import org.gradle.api.Task
+import org.gradle.api.artifacts.result.ResolvedComponentResult
+import org.gradle.api.file.ArchiveOperations
+import org.gradle.api.file.ConfigurableFileCollection
+import org.gradle.api.file.CopySpec
+import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileCollection
-import org.gradle.api.tasks.SourceSet
+import org.gradle.api.file.FileSystemOperations
+import org.gradle.api.file.FileTree
+import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.ListProperty
+import org.gradle.api.provider.Property
+import org.gradle.api.tasks.CacheableTask
+import org.gradle.api.tasks.Classpath
+import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.InputFiles
+import org.gradle.api.tasks.Internal
+import org.gradle.api.tasks.OutputDirectory
+import org.gradle.api.tasks.PathSensitive
+import org.gradle.api.tasks.PathSensitivity
+import org.gradle.api.tasks.TaskAction
+import org.gradle.process.ExecOperations
+
+import javax.inject.Inject
 
 import java.nio.charset.StandardCharsets
 import java.nio.file.Files
@@ -36,7 +56,16 @@ import java.security.MessageDigest
 import static io.jmix.gradle.DescriptorGenerationUtils.CONVERTERS_LIST_PROPERTY
 import static io.jmix.gradle.MetaModelUtil.*
 
-class EnhancingAction implements Action<Task> {
+/**
+ * Enhances the entities of a source set: generates the {@code persistence.xml} and {@code orm.xml} descriptors,
+ * runs the persistence provider weaver and the Jmix enhancing steps.
+ * <p>
+ * The task reads everything it needs from its properties and injected services and never uses {@link Project}
+ * at execution time, so it is compatible with the Gradle configuration cache. The properties are set by
+ * {@link JmixPlugin}. Properties marked {@link Internal} do not take part in up-to-date checks.
+ */
+@CacheableTask
+abstract class EnhancingTask extends DefaultTask {
 
     static final String MAIN_SET_NAME = "main"
     static final String TEST_SET_NAME = "test"
@@ -46,54 +75,201 @@ class EnhancingAction implements Action<Task> {
     static final String APP_PROPERTIES_FILE = "application.properties"
     static final String ADDITIONAL_STORE_PROPERTY = "jmix.core.additional-stores"
 
-    private String sourceSetName
+    /**
+     * Name of the source set to enhance: {@code main} or {@code test}.
+     */
+    @Input
+    abstract Property<String> getSourceSetName()
 
-    EnhancingAction(String sourceSetName) {
-        this.sourceSetName = sourceSetName
-    }
+    /**
+     * Name of the project, used in log messages.
+     */
+    @Internal
+    abstract Property<String> getProjectDisplayName()
+
+    /**
+     * Directory with the compiled (not enhanced) classes of the source set.
+     */
+    @InputFiles
+    @PathSensitive(PathSensitivity.RELATIVE)
+    abstract DirectoryProperty getCompiledClasses()
+
+    /**
+     * Compile classpath of the source set.
+     */
+    @Classpath
+    abstract ConfigurableFileCollection getCompileClasspath()
+
+    /**
+     * Root of the resolved compile classpath dependency graph of the source set.
+     */
+    @Internal
+    abstract Property<ResolvedComponentResult> getCompileClasspathGraph()
+
+    /**
+     * Runtime classpath of the source set.
+     */
+    @Internal
+    abstract ConfigurableFileCollection getRuntimeClasspath()
+
+    /**
+     * Java and Kotlin source directories of the source set.
+     */
+    @Internal
+    abstract ConfigurableFileCollection getSourceDirs()
+
+    /**
+     * Resource directories of the source set.
+     */
+    @Internal
+    abstract ConfigurableFileCollection getResourceDirs()
+
+    /**
+     * Directory with the compiled (not enhanced) classes of the {@code main} source set.
+     * Used only when enhancing the {@code test} source set.
+     */
+    @Internal
+    abstract DirectoryProperty getMainCompiledClasses()
+
+    /**
+     * Compile classpath of the {@code main} source set. Used only when enhancing the {@code test} source set.
+     */
+    @Internal
+    abstract ConfigurableFileCollection getMainCompileClasspath()
+
+    /**
+     * Java and Kotlin source directories of the {@code main} source set.
+     * Used only when enhancing the {@code test} source set.
+     */
+    @Internal
+    abstract ConfigurableFileCollection getMainSourceDirs()
+
+    /**
+     * Files of the {@code enhancing} configuration: the persistence provider weaver and its dependencies.
+     */
+    @Internal
+    abstract ConfigurableFileCollection getEnhancingClasspath()
+
+    /**
+     * See {@link JmixExtension.EntitiesEnhancing#skipUnmodifiedEntitiesEnhancing}.
+     */
+    @Internal
+    abstract Property<Boolean> getSkipUnmodifiedEntitiesEnhancing()
+
+    /**
+     * See {@link JmixExtension.EntitiesEnhancing#jpaConverters}.
+     */
+    @Internal
+    abstract ListProperty<String> getJpaConverters()
+
+    /**
+     * See {@link JmixExtension.EntitiesEnhancing#nonJpaPackages}.
+     */
+    @Internal
+    abstract ListProperty<String> getNonJpaPackages()
+
+    /**
+     * See {@link JmixExtension.EntitiesEnhancing#nonJpaClasses}.
+     */
+    @Internal
+    abstract ListProperty<String> getNonJpaClasses()
+
+    /**
+     * Whether to start the persistence provider weaver in debug mode (the {@code debugEnhancing} Gradle property).
+     */
+    @Internal
+    abstract Property<Boolean> getDebugEnhancing()
+
+    /**
+     * Work directory for the intermediate descriptors and the entity classes checksum.
+     */
+    @Internal
+    abstract DirectoryProperty getWorkDir()
+
+    /**
+     * Directory with the enhanced classes. It replaces the compiled classes in the source set output.
+     */
+    @OutputDirectory
+    abstract DirectoryProperty getEnhancedClasses()
+
+    /**
+     * Directory with the generated {@code persistence.xml} and {@code orm.xml} descriptors.
+     */
+    @OutputDirectory
+    abstract DirectoryProperty getDescriptors()
+
+    @Inject
+    protected abstract ObjectFactory getObjects()
+
+    @Inject
+    protected abstract FileSystemOperations getFileSystemOperations()
+
+    @Inject
+    protected abstract ArchiveOperations getArchiveOperations()
+
+    @Inject
+    protected abstract ExecOperations getExecOperations()
 
     static String enhancedClassesDir(Project project, String sourceSetName) {
         return "$project.buildDir/classes/jmix/$sourceSetName"
     }
 
-    @Override
-    void execute(Task task) {
-        Project project = task.getProject()
-        project.logger.lifecycle "Enhancing entities in $project for source set '$sourceSetName'"
-        SourceSet sourceSet = project.sourceSets.findByName(sourceSetName)
+    static String enhancingWorkDir(Project project, String sourceSetName) {
+        return "$project.buildDir/tmp/entitiesEnhancing/$sourceSetName"
+    }
 
-        String compiledDir = sourceSet.java.destinationDirectory.get().getAsFile().absolutePath
-        String enhancedDir = enhancedClassesDir(project, sourceSetName)
+    @TaskAction
+    void enhance() {
+        logger.lifecycle "Enhancing entities in ${projectDisplayName.get()} for source set '${sourceSetName.get()}'"
 
-        if (!hasCompiledClasses(project, compiledDir)) {
-            project.logger.info "No compiled classes in $compiledDir; entity enhancing for source set '$sourceSetName' is not required"
+        String compiledDir = compiledClasses.get().asFile.absolutePath
+        String enhancedDir = enhancedClasses.get().asFile.absolutePath
+
+        if (!hasCompiledClasses(compiledDir)) {
+            logger.info "No compiled classes in $compiledDir; entity enhancing for source set '${sourceSetName.get()}' is not required"
             return
         }
 
-        ClassesInfo classesInfo = collectClasses(project, sourceSet, compiledDir)
+        ClassesInfo classesInfo = collectClasses(compiledDir)
 
-        addAbsentEmptyStores(classesInfo, sourceSet, project)
+        addAbsentEmptyStores(classesInfo)
 
-        constructDescriptors(project, sourceSet, classesInfo, compiledDir)
+        constructDescriptors(classesInfo, compiledDir)
 
         Set<String> enhancedClassNames = classesInfo.getAllEntities() as Set
 
-        reconcileEnhancedDir(project, compiledDir, enhancedDir, enhancedClassNames)
+        reconcileEnhancedDir(compiledDir, enhancedDir, enhancedClassNames)
 
-        boolean entitiesEnhancingRequired = !project.jmix.entitiesEnhancing.skipUnmodifiedEntitiesEnhancing ||
-                entityClassesChangedSinceLastBuild(project, classesInfo, compiledDir) ||
+        boolean entitiesEnhancingRequired = !skipUnmodifiedEntitiesEnhancing.get() ||
+                entityClassesChangedSinceLastBuild(classesInfo, compiledDir) ||
                 enhancedEntitiesMissing(compiledDir, enhancedDir, enhancedClassNames)
 
         if (entitiesEnhancingRequired) {
             copyClasses(compiledDir, enhancedDir, enhancedClassNames)
-            persistenceProviderEnhancing(project).run(project, sourceSet, enhancedDir, classesInfo.allStores())
-            runJmixEnhancing(project, sourceSet, enhancedDir, classesInfo)
-            if (project.jmix.entitiesEnhancing.skipUnmodifiedEntitiesEnhancing) {
-                saveEntityClassesChecksumForNextBuild(project, classesInfo, compiledDir)
+            persistenceProviderEnhancing().run(logger, sourceSetName.get(), compileClasspathGraph.get(),
+                    weavingClasspath(enhancedDir), workDir.get().asFile, enhancedDir, classesInfo.allStores(),
+                    debugEnhancing.get())
+            runJmixEnhancing(enhancedDir, classesInfo)
+            if (skipUnmodifiedEntitiesEnhancing.get()) {
+                saveEntityClassesChecksumForNextBuild(classesInfo, compiledDir)
             }
         } else {
-            project.logger.lifecycle "Entities enhancing was skipped, because entity classes haven't been changed since the last build"
+            logger.lifecycle "Entities enhancing was skipped, because entity classes haven't been changed since the last build"
         }
+    }
+
+    /**
+     * Returns the classpath for running the persistence provider weaver.
+     */
+    protected FileCollection weavingClasspath(String enhancedDir) {
+        return objects.fileCollection().from(
+                enhancingClasspath.asFileTree,
+                compileClasspath.files,
+                objects.fileCollection().from(new File(enhancedDir)).asFileTree)
+    }
+
+    protected FileTree fileTree(File dir) {
+        return objects.fileTree().from(dir)
     }
 
     /**
@@ -113,30 +289,30 @@ class EnhancingAction implements Action<Task> {
      * module's top-level declarations (extension functions, top-level {@code fun}/{@code val}, typealiases).
      * Dropping it makes those declarations unresolvable from test sources and from consumers of the jar.
      */
-    protected void reconcileEnhancedDir(Project project, String compiledDir, String enhancedDir, Set<String> enhancedClassNames) {
+    protected void reconcileEnhancedDir(String compiledDir, String enhancedDir, Set<String> enhancedClassNames) {
         File compiledRoot = new File(compiledDir)
         File enhancedRoot = new File(enhancedDir)
 
         Set<String> enhancedRelativePaths = enhancedClassNames.collect { it.replace('.', '/') + '.class' } as Set
 
         if (enhancedRoot.exists()) {
-            project.fileTree(enhancedRoot).each { File file ->
+            fileTree(enhancedRoot).each { File file ->
                 String relativePath = enhancedRoot.toPath().relativize(file.toPath()).toString().replace(File.separator, '/')
                 if (file.name.endsWith('.class')) {
                     File compiledOuterClass = new File(compiledRoot, outerClassFile(relativePath))
                     if (!compiledOuterClass.exists()) {
-                        project.logger.info "Removing stale enhanced class: $relativePath"
+                        logger.info "Removing stale enhanced class: $relativePath"
                         file.delete()
                     }
                 } else if (!new File(compiledRoot, relativePath).exists()) {
-                    project.logger.info "Removing stale enhanced file: $relativePath"
+                    logger.info "Removing stale enhanced file: $relativePath"
                     file.delete()
                 }
             }
         }
 
         if (compiledRoot.exists()) {
-            project.fileTree(compiledRoot).each { File file ->
+            fileTree(compiledRoot).each { File file ->
                 String relativePath = compiledRoot.toPath().relativize(file.toPath()).toString().replace(File.separator, '/')
                 // Enhanced entity classes are (re-)written by the weaver via copyClasses/runJmixEnhancing;
                 // everything else (plain classes and non-class files like *.kotlin_module) is mirrored as-is.
@@ -154,9 +330,9 @@ class EnhancingAction implements Action<Task> {
      * file. A source set with no compiled classes (e.g. a module with no test sources) has nothing to enhance,
      * so enhancement is skipped to avoid running the persistence provider weaver with no input.
      */
-    protected boolean hasCompiledClasses(Project project, String compiledDir) {
+    protected boolean hasCompiledClasses(String compiledDir) {
         File compiledRoot = new File(compiledDir)
-        return compiledRoot.exists() && !project.fileTree(compiledRoot).matching { include '**/*.class' }.empty
+        return compiledRoot.exists() && !fileTree(compiledRoot).matching { include '**/*.class' }.empty
     }
 
     /**
@@ -210,11 +386,11 @@ class EnhancingAction implements Action<Task> {
     /**
      * Completes {@code classesInfo} with "empty" data stores in order to `persistence.xml` and `orm.xml` descriptors will be generated for them.
      * An "Empty" store is a store without entities. Such stores will not be added to {@code classesInfo} by
-     * the {@link io.jmix.gradle.EnhancingAction#collectClasses} discovery method.
+     * the {@link io.jmix.gradle.EnhancingTask#collectClasses} discovery method.
      */
-    protected void addAbsentEmptyStores(ClassesInfo classesInfo, SourceSet sourceSet, Project project) {
+    protected void addAbsentEmptyStores(ClassesInfo classesInfo) {
         def appPropertyFiles = new HashSet<File>()
-        for (File srcDir : sourceSet.getResources().getSrcDirs()) {
+        for (File srcDir : resourceDirs.files) {
             if (srcDir.exists()) {
                 File candidate = new File(srcDir, APP_PROPERTIES_FILE)
                 if (candidate.exists()){
@@ -226,12 +402,12 @@ class EnhancingAction implements Action<Task> {
         def additionalStores = []
 
         for (File file : appPropertyFiles) {
-            project.logger.debug "Looking for '$ADDITIONAL_STORE_PROPERTY' in ${file.getPath()} ..."
+            logger.debug "Looking for '$ADDITIONAL_STORE_PROPERTY' in ${file.getPath()} ..."
             def properties = new Properties()
             file.withInputStream { properties.load(it) }
 
             if (properties.containsKey(ADDITIONAL_STORE_PROPERTY)) {
-                project.logger.debug "Additional datastores found in '${file.getPath()}': ${properties.getProperty(ADDITIONAL_STORE_PROPERTY)}"
+                logger.debug "Additional datastores found in '${file.getPath()}': ${properties.getProperty(ADDITIONAL_STORE_PROPERTY)}"
                 additionalStores.addAll(properties.getProperty(ADDITIONAL_STORE_PROPERTY)
                         .split(',')
                         .collect { it.trim() })
@@ -242,48 +418,48 @@ class EnhancingAction implements Action<Task> {
 
         for (String additionalStore : additionalStores) {
             if (!allStores.contains(additionalStore)) {
-                project.logger.info "Store $additionalStore has no entities. Empty 'persistence.xml' and 'orm.xml' will be generated for it.";
+                logger.info "Store $additionalStore has no entities. Empty 'persistence.xml' and 'orm.xml' will be generated for it.";
                 classesInfo.classesByStores.get(additionalStore)
             }
         }
     }
 
-    protected ClassesInfo collectClasses(Project project, SourceSet sourceSet, String projectClassesDir) {
+    protected ClassesInfo collectClasses(String projectClassesDir) {
         ClassesInfo classesInfo = new ClassesInfo()
 
-        if (sourceSetName == TEST_SET_NAME) {
-            def mainSourceSet = project.sourceSets.findByName(MAIN_SET_NAME)
-            String mainClassesDir = mainSourceSet.java.destinationDirectory.get().getAsFile().absolutePath
-            collectEntitiesFromSources(project, mainSourceSet, classesInfo, mainClassesDir)
+        if (sourceSetName.get() == TEST_SET_NAME) {
+            String mainClassesDir = mainCompiledClasses.get().asFile.absolutePath
+            collectEntitiesFromSources(mainSourceDirs, mainCompileClasspath, classesInfo, mainClassesDir)
         }
 
-        collectEntitiesFromSources(project, sourceSet, classesInfo, projectClassesDir)
+        collectEntitiesFromSources(sourceDirs, compileClasspath, classesInfo, projectClassesDir)
 
-        if (sourceSetName == TEST_SET_NAME && classesInfo.modulePaths.size() > 1) {
+        if (sourceSetName.get() == TEST_SET_NAME && classesInfo.modulePaths.size() > 1) {
             //test sourceSet can have 0 or more Configurations. Production Configuration path should be removed in case of test Configuration presence
             classesInfo.modulePaths.remove(0);
         }
 
-        project.logger.lifecycle("Project entities:\n    JPA: ${classesInfo.getJpaEntities()};\n    DTO: ${classesInfo.getDtoEntities()};\n" +
+        logger.lifecycle("Project entities:\n    JPA: ${classesInfo.getJpaEntities()};\n    DTO: ${classesInfo.getDtoEntities()};\n" +
                 "Project converters: ${classesInfo.getConverters()}.")
 
-        project.jmix.entitiesEnhancing.jpaConverters.each {
+        jpaConverters.get().each {
             classesInfo.converters.add(it)
         }
 
-        collectEntitiesFromClasspathes(project, sourceSet, classesInfo, projectClassesDir)
+        collectEntitiesFromClasspathes(classesInfo, projectClassesDir)
 
-        project.logger.info("Found entities:\n    JPA: ${classesInfo.getJpaEntities()};\n    DTO: ${classesInfo.getDtoEntities()}.\n" +
+        logger.info("Found entities:\n    JPA: ${classesInfo.getJpaEntities()};\n    DTO: ${classesInfo.getDtoEntities()}.\n" +
                 "Converters: ${classesInfo.getConverters()}")
 
         return classesInfo
     }
 
-    protected void collectEntitiesFromSources(Project project, sourceSet, ClassesInfo classesInfo, String projectClassesDir) {
-        ClassPool classPool = createClassPool(project, sourceSet, projectClassesDir)
+    protected void collectEntitiesFromSources(FileCollection srcDirs, FileCollection classpath, ClassesInfo classesInfo,
+                                              String projectClassesDir) {
+        ClassPool classPool = createClassPool(classpath, projectClassesDir)
 
-        sourceSet.allJava.getSrcDirs().each { File srcDir ->
-            project.fileTree(srcDir).each { File file ->
+        srcDirs.files.each { File srcDir ->
+            fileTree(srcDir).each { File file ->
                 if (file.name.endsWith('.java') || file.name.endsWith('.kt')) {
                     String ext = file.name.endsWith('.java') ? '.java' : '.kt'
                     String pathStr = srcDir.toPath().relativize(file.toPath()).join('.')
@@ -298,29 +474,29 @@ class EnhancingAction implements Action<Task> {
                             classesInfo.modulePaths.add(ctClass.getPackageName().replace('.', '/'));
                         }
                     } catch (NotFoundException e) {
-                        project.logger.info "Cannot find $className in ${project} for enhancing: $e"
+                        logger.info "Cannot find $className in ${projectDisplayName.get()} for enhancing: $e"
                     }
                 }
             }
         }
     }
 
-    protected void collectEntitiesFromClasspathes(Project project, sourceSet, ClassesInfo classesInfo, String projectClassesDir) {
-        ClassPool classPool = createClassPool(project, sourceSet, projectClassesDir)
+    protected void collectEntitiesFromClasspathes(ClassesInfo classesInfo, String projectClassesDir) {
+        ClassPool classPool = createClassPool(compileClasspath, projectClassesDir)
 
-        ClassesInfo compileClasses = collectEntitiesFromClasspath(project, sourceSet.compileClasspath, classPool)
-        ClassesInfo runtimeClasses = collectEntitiesFromClasspath(project, sourceSet.runtimeClasspath, classPool)
+        ClassesInfo compileClasses = collectEntitiesFromClasspath(compileClasspath, classPool)
+        ClassesInfo runtimeClasses = collectEntitiesFromClasspath(runtimeClasspath, classPool)
 
         classesInfo.addClassesIntersection(runtimeClasses, compileClasses)
     }
 
-    protected ClassesInfo collectEntitiesFromClasspath(Project project, FileCollection currentClasspath, ClassPool classPool) {
+    protected ClassesInfo collectEntitiesFromClasspath(FileCollection currentClasspath, ClassPool classPool) {
         ClassesInfo classesInfo = new ClassesInfo()
 
         def jars = currentClasspath.asList().findAll { it.name.endsWith('.jar') }
         jars.each { lib ->
             if (lib.exists()) {
-                project.zipTree(lib).matching { include "**/*persistence.xml" }.each {
+                archiveOperations.zipTree(lib).matching { include "**/*persistence.xml" }.each {
                     Node doc = new XmlParser().parse(it)
                     def docPu = doc.'persistence-unit'[0]
                     List<String> currentEntities = docPu.'class'.collect { it.text() }
@@ -331,14 +507,14 @@ class EnhancingAction implements Action<Task> {
 
                     converters?.split(';')?.each { classesInfo.converters.add(it) }
 
-                    project.logger.debug("Found $it.name in $lib.name. Entities: $currentEntities.\n Converters: $converters")
+                    logger.debug("Found $it.name in $lib.name. Entities: $currentEntities.\n Converters: $converters")
                 }
             }
         }
 
         def folders = currentClasspath.asList().findAll { it.isDirectory() }
         folders.each { File folder ->
-            project.fileTree(folder).each {
+            fileTree(folder).each {
                 if (it.name.endsWith('.class')) {
                     String pathStr = folder.toPath().relativize(it.toPath()).join('.')
                     String className = pathStr.substring(0, pathStr.length() - '.class'.length())
@@ -347,7 +523,7 @@ class EnhancingAction implements Action<Task> {
                         CtClass ctClass = classPool.get(className)
                         examineClass(ctClass, classesInfo)
                     } catch (NotFoundException e) {
-                        project.logger.info "Cannot determine $className in classpath folder '${folder}': $e"
+                        logger.info "Cannot determine $className in classpath folder '${folder}': $e"
                     }
                 }
             }
@@ -365,19 +541,19 @@ class EnhancingAction implements Action<Task> {
         }
     }
 
-    protected void constructDescriptors(Project project, sourceSet, ClassesInfo classesInfo, String projectClassesDir) {
+    protected void constructDescriptors(ClassesInfo classesInfo, String projectClassesDir) {
         for (String storeName : classesInfo.allStores()) {
             for (String modulePath : classesInfo.modulePaths) {
 
                 String storePrefix = storeName == MAIN_STORE_NAME ? "" : (storeName + '-')
-                String enhancingWorkDir = "$project.buildDir/tmp/entitiesEnhancing/$sourceSetName/${storePrefix}persistence"
+                String enhancingWorkDir = "${workDir.get().asFile.absolutePath}/${storePrefix}persistence"
 
                 String persistenceFileName = "$enhancingWorkDir/META-INF/persistence.xml"
 
                 String ormRelativeFileName = "$modulePath/${storePrefix}orm.xml";
                 String ormFileName = "$enhancingWorkDir/$ormRelativeFileName"
 
-                Set<String> jpaClasses = filterNonJpaClasses(project, classesInfo.getJpaEntitiesAndConverters(storeName))
+                Set<String> jpaClasses = filterNonJpaClasses(classesInfo.getJpaEntitiesAndConverters(storeName))
 
                 //create persistence.xml in tmp work directory to be processed by orm-provider weaving (e.g. EclipseLink accepts '*/META-INF/persistence.xml' file path only)
                 DescriptorGenerationUtils.constructPersistenceXml(
@@ -390,16 +566,16 @@ class EnhancingAction implements Action<Task> {
                 DescriptorGenerationUtils.constructOrmXml(
                         ormFileName,
                         jpaClasses,
-                        createClassPool(project, sourceSet, projectClassesDir))
+                        createClassPool(compileClasspath, projectClassesDir))
 
-                //write generated persistence/orm xml into a dedicated generated resources dir,
-                //which is registered as a resources srcDir and consumed by processResources (single owner of build/resources)
-                String generatedPath = "${generatedDescriptorsDir(project, sourceSetName)}/$modulePath"
-                project.logger.info "Copying files $persistenceFileName and $ormFileName to $generatedPath"
-                project.copy {
-                    from persistenceFileName, ormFileName
-                    into generatedPath
-                    rename "persistence.xml", "${storePrefix}persistence.xml"
+                //write generated persistence/orm xml into a dedicated generated descriptors dir,
+                //which is registered as a source set output dir and is not processed by processResources
+                String generatedPath = "${descriptors.get().asFile.absolutePath}/$modulePath"
+                logger.info "Copying files $persistenceFileName and $ormFileName to $generatedPath"
+                fileSystemOperations.copy { CopySpec spec ->
+                    spec.from(persistenceFileName, ormFileName)
+                    spec.into(generatedPath)
+                    spec.rename("persistence.xml", "${storePrefix}persistence.xml")
                 }
             }
         }
@@ -409,17 +585,17 @@ class EnhancingAction implements Action<Task> {
         return "$project.buildDir/generated/jmix-descriptors/$sourceSetName"
     }
 
-    protected void runJmixEnhancing(Project project, sourceSet, String enhancedDir, ClassesInfo classesInfo) {
+    protected void runJmixEnhancing(String enhancedDir, ClassesInfo classesInfo) {
         if (!classesInfo.getAllEntities().isEmpty()) {
-            project.logger.lifecycle "Running Jmix enhancer in $project for $sourceSet"
+            logger.lifecycle "Running Jmix enhancer in ${projectDisplayName.get()} for source set '${sourceSetName.get()}'"
 
             for (EnhancingStep step : enhancingSteps()) {
 
-                ClassPool classPool = createClassPool(project, sourceSet, enhancedDir)
+                ClassPool classPool = createClassPool(compileClasspath, enhancedDir)
 
                 step.classPool = classPool
                 step.outputDir = enhancedDir
-                step.logger = project.logger
+                step.logger = logger
 
                 for (className in classesInfo.getAllEntities()) {
                     def classFileName = className.replace('.', '/') + '.class'
@@ -440,9 +616,9 @@ class EnhancingAction implements Action<Task> {
      * On the next project build, the checksum of entities classes from the "build" directory will be compared with the
      * checksum saved to the file to find out if entities have been changed since the last compilation.
      */
-    protected void saveEntityClassesChecksumForNextBuild(Project project, ClassesInfo classesInfo, String compiledDir) {
-        def allEntityClassesChecksum = evaluateEntityClassesChecksum(project, classesInfo, compiledDir)
-        Path checksumFilePath = getEntitiesChecksumFilePath(project)
+    protected void saveEntityClassesChecksumForNextBuild(ClassesInfo classesInfo, String compiledDir) {
+        def allEntityClassesChecksum = evaluateEntityClassesChecksum(classesInfo, compiledDir)
+        Path checksumFilePath = getEntitiesChecksumFilePath()
         if (!Files.exists(checksumFilePath.getParent())) {
             Files.createDirectories(checksumFilePath.getParent())
         }
@@ -452,7 +628,7 @@ class EnhancingAction implements Action<Task> {
     /**
      * Evaluates a single checksum for all entity classes (of the current project) extracted from the ClassesInfo.
      */
-    protected String evaluateEntityClassesChecksum(Project project, ClassesInfo classesInfo, String compiledDir) {
+    protected String evaluateEntityClassesChecksum(ClassesInfo classesInfo, String compiledDir) {
         StringBuilder sb = new StringBuilder()
         Collection<String> allEntities = classesInfo.getAllEntities()
         allEntities.sort()
@@ -464,7 +640,7 @@ class EnhancingAction implements Action<Task> {
             if (classFile.exists()) {
                 def fileChecksum = checkSum(classFile)
                 sb.append(fileChecksum)
-                project.logger.debug("Entity file: {}, checksum: {}", classFileName, fileChecksum)
+                logger.debug("Entity file: {}, checksum: {}", classFileName, fileChecksum)
             }
         }
         return checkSum(sb.toString().getBytes(StandardCharsets.UTF_8))
@@ -475,15 +651,15 @@ class EnhancingAction implements Action<Task> {
      * the same. Method compares the checksum of entity classes saved during previous compilation with the checksum of
      * actual entity classes collection.
      */
-    protected boolean entityClassesChangedSinceLastBuild(Project project, ClassesInfo classesInfo, String compiledDir) {
-        Path entitiesChecksumFilePath = getEntitiesChecksumFilePath(project)
+    protected boolean entityClassesChangedSinceLastBuild(ClassesInfo classesInfo, String compiledDir) {
+        Path entitiesChecksumFilePath = getEntitiesChecksumFilePath()
         if (!Files.exists(entitiesChecksumFilePath)) {
             //previous entity classes checksum was not saved
             return true
         }
         def prevChecksum = Files.readString(entitiesChecksumFilePath)
-        def currentChecksum = evaluateEntityClassesChecksum(project, classesInfo, compiledDir)
-        project.logger.debug("Previous entities checksum: {}, current entities checksum: {}", prevChecksum, currentChecksum)
+        def currentChecksum = evaluateEntityClassesChecksum(classesInfo, compiledDir)
+        logger.debug("Previous entities checksum: {}, current entities checksum: {}", prevChecksum, currentChecksum)
         return prevChecksum != currentChecksum
     }
 
@@ -500,29 +676,30 @@ class EnhancingAction implements Action<Task> {
     /**
      * Returns a path to a file where entity classes checksum will be stored to.
      */
-    protected Path getEntitiesChecksumFilePath(Project project) {
-        return Paths.get("$project.buildDir/tmp/entitiesEnhancing/$sourceSetName/entities.checksum")
+    @Internal
+    protected Path getEntitiesChecksumFilePath() {
+        return Paths.get("${workDir.get().asFile.absolutePath}/entities.checksum")
     }
 
-    static ClassPool createClassPool(Project project, sourceSet, String projectClassesDir) {
+    protected ClassPool createClassPool(FileCollection classpath, String projectClassesDir) {
         ClassPool classPool = new ClassPool(null)
         classPool.appendSystemPath()
 
-        for (File file in sourceSet.compileClasspath) {
+        for (File file in classpath) {
             classPool.insertClassPath(file.getAbsolutePath())
         }
 
         classPool.insertClassPath(projectClassesDir)
 
-        project.configurations.enhancing.files.each { File dep ->
+        enhancingClasspath.files.each { File dep ->
             classPool.insertClassPath(dep.absolutePath)
         }
 
         return classPool
     }
 
-    protected static PersistenceProviderEnhancing persistenceProviderEnhancing(Project project) {
-        return project.objects.newInstance(EclipselinkEnhancing)
+    protected PersistenceProviderEnhancing persistenceProviderEnhancing() {
+        return objects.newInstance(EclipselinkEnhancing)
     }
 
     protected static List<EnhancingStep> enhancingSteps() {
@@ -533,14 +710,14 @@ class EnhancingAction implements Action<Task> {
                 new TransientAnnotationEnhancingStep())
     }
 
-    static Set<String> filterNonJpaClasses(Project project, Set<String> classNames) {
-        List<String> nonJpaPackages = project.jmix.entitiesEnhancing.nonJpaPackages
-        List<String> nonJpaClasses = project.jmix.entitiesEnhancing.nonJpaClasses
+    protected Set<String> filterNonJpaClasses(Set<String> classNames) {
+        List<String> nonJpaPackages = this.nonJpaPackages.get()
+        List<String> nonJpaClasses = this.nonJpaClasses.get()
 
         return classNames.findAll {className ->
             boolean result = !nonJpaClasses.contains(className) && !nonJpaPackages.find {className.startsWith(it + '.')}
             if (!result)
-                project.logger.info "Entity ${className} was filtered out by nonJpaPackages or nonJpaClasses"
+                logger.info "Entity ${className} was filtered out by nonJpaPackages or nonJpaClasses"
             return result
         }
     }

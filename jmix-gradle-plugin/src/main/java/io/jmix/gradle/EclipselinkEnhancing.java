@@ -16,18 +16,18 @@
 
 package io.jmix.gradle;
 
-import org.gradle.api.Project;
-import org.gradle.api.artifacts.Configuration;
-import org.gradle.api.artifacts.ResolvedDependency;
-import org.gradle.api.tasks.SourceSet;
+import org.gradle.api.artifacts.ModuleVersionIdentifier;
+import org.gradle.api.artifacts.result.DependencyResult;
+import org.gradle.api.artifacts.result.ResolvedComponentResult;
+import org.gradle.api.artifacts.result.ResolvedDependencyResult;
+import org.gradle.api.file.FileCollection;
+import org.gradle.api.logging.Logger;
 import org.gradle.process.ExecOperations;
 
 import javax.inject.Inject;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 public class EclipselinkEnhancing implements PersistenceProviderEnhancing {
@@ -39,42 +39,50 @@ public class EclipselinkEnhancing implements PersistenceProviderEnhancing {
         this.execOperations = execOperations;
     }
 
-    public void run(Project project, SourceSet sourceSet, String enhancedDir, Set<String> allStores) {
+    @Override
+    public void run(Logger logger, String sourceSetName, ResolvedComponentResult compileClasspath,
+                    FileCollection weavingClasspath, File workDir, String enhancedDir, Set<String> allStores,
+                    boolean debug) {
         for (String storeName : allStores) {
-            Configuration conf = project.getConfigurations().findByName(sourceSet.getCompileClasspathConfigurationName());
-            if (!findJpaDependencies(conf.getResolvedConfiguration().getFirstLevelModuleDependencies(), new HashSet<>())) {
-                project.getLogger().info("Jpa dependencies not found in classpath, EclipseLink enhancer will not run");
+            if (!findJpaDependencies(compileClasspath, new HashSet<>())) {
+                logger.info("Jpa dependencies not found in classpath, EclipseLink enhancer will not run");
                 return;
             }
 
-            project.getLogger().lifecycle("Running EclipseLink enhancer in {} for {}", project, sourceSet);
+            logger.lifecycle("Running EclipseLink enhancer for source set '{}'", sourceSetName);
 
             execOperations.javaexec(javaExecSpec -> {
                 javaExecSpec.getMainClass().set("org.eclipse.persistence.tools.weaving.jpa.StaticWeave");
 
-                javaExecSpec.setClasspath(project.files(
-                        project.getConfigurations().getByName("enhancing").getAsFileTree(),
-                        sourceSet.getCompileClasspath().getFiles(),
-                        project.files(new File(enhancedDir)).getAsFileTree()));
+                javaExecSpec.setClasspath(weavingClasspath);
 
                 javaExecSpec.args("-loglevel", "INFO", "-persistenceinfo",
-                        project.getBuildDir() + "/tmp/entitiesEnhancing/" + sourceSet.getName() + "/" + (("main".equals(storeName) ? "" : (storeName + '-')) + "persistence"),
+                        new File(workDir, ("main".equals(storeName) ? "" : (storeName + '-')) + "persistence").getPath(),
                         enhancedDir,
                         enhancedDir
                 );
-                javaExecSpec.setDebug(project.hasProperty("debugEnhancing") && Boolean.parseBoolean((String) project.property("debugEnhancing")));
+                javaExecSpec.setDebug(debug);
             });
         }
     }
 
-    protected boolean findJpaDependencies(Set<ResolvedDependency> deps, Set visited) {
-        for (ResolvedDependency dep : deps) {
-            if (!visited.contains(dep)) {
-                if ("org.eclipse.persistence".equals(dep.getModuleGroup()) && "org.eclipse.persistence.core".equals(dep.getModuleName()))
-                    return true;
-                visited.add(dep);
-                if (findJpaDependencies(dep.getChildren(), visited))
-                    return true;
+    /**
+     * Returns {@code true} if the dependency graph below the given component contains the EclipseLink core module.
+     */
+    protected boolean findJpaDependencies(ResolvedComponentResult component, Set<ResolvedComponentResult> visited) {
+        if (!visited.add(component)) {
+            return false;
+        }
+        ModuleVersionIdentifier module = component.getModuleVersion();
+        if (module != null
+                && "org.eclipse.persistence".equals(module.getGroup())
+                && "org.eclipse.persistence.core".equals(module.getName())) {
+            return true;
+        }
+        for (DependencyResult dependency : component.getDependencies()) {
+            if (dependency instanceof ResolvedDependencyResult
+                    && findJpaDependencies(((ResolvedDependencyResult) dependency).getSelected(), visited)) {
+                return true;
             }
         }
         return false;

@@ -16,6 +16,7 @@
 
 package io.jmix.gradle
 
+import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.GradleRunner
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
@@ -86,6 +87,23 @@ class CleanConfFunctionalTest {
 
     @Test
     @Tag('slowTests')
+    void activeProfileFromApplicationModuleGradlePropertiesIsUsed() {
+        copyFixture('nonstandard-layout-conf-dir', testProjectDir)
+        Files.writeString(testProjectDir.resolve("${APP_MODULE_PATH}/gradle.properties"), 'spring.profiles.active=dev\n')
+        Files.writeString(testProjectDir.resolve("${APP_MODULE_PATH}/src/main/resources/application-dev.properties"),
+                'jmix.core.conf-dir = dev-conf\n')
+
+        Path defaultConfDir = createAppConfDir('.jmix/conf')
+        Path devConfDir = createAppConfDir('dev-conf')
+
+        runCleanConf()
+
+        assertFalse(Files.exists(devConfDir), "conf dir of the active profile must be deleted: ${devConfDir}")
+        assertTrue(Files.exists(defaultConfDir), "default conf dir must be left alone: ${defaultConfDir}")
+    }
+
+    @Test
+    @Tag('slowTests')
     void absoluteConfDirPropertyIsUsedAsIs() {
         copyFixture('nonstandard-layout-conf-dir', testProjectDir)
 
@@ -101,10 +119,33 @@ class CleanConfFunctionalTest {
         assertTrue(Files.exists(appConfDir), "default conf dir must be left alone when the property is set: ${appConfDir}")
     }
 
-    private void runCleanConf() {
-        GradleRunner.create()
+    @Test
+    @Tag('slowTests')
+    void confDirIsDeletedWithConfigurationCache() {
+        copyFixture('nonstandard-layout-conf-dir', testProjectDir)
+
+        Path defaultConfDir = createAppConfDir('.jmix/conf')
+
+        BuildResult first = runCleanConf('--configuration-cache')
+        assertTrue(first.output.contains('Configuration cache entry stored'),
+                "Expected the configuration cache entry to be stored:\n${first.output}")
+        assertFalse(Files.exists(defaultConfDir), "conf dir must be deleted: ${defaultConfDir}")
+
+        // The application properties are read when the task runs, so a changed conf dir is used
+        // even when the task is loaded from the configuration cache.
+        appendAppProperty('jmix.core.conf-dir = custom-conf')
+        Path customConfDir = createAppConfDir('custom-conf')
+
+        BuildResult second = runCleanConf('--configuration-cache')
+        assertTrue(second.output.contains('Configuration cache entry reused'),
+                "Expected the configuration cache entry to be reused:\n${second.output}")
+        assertFalse(Files.exists(customConfDir), "conf dir must be deleted: ${customConfDir}")
+    }
+
+    private BuildResult runCleanConf(String... extraArgs) {
+        return GradleRunner.create()
                 .withProjectDir(testProjectDir.toFile())
-                .withArguments(':app:cleanConf', '--stacktrace')
+                .withArguments([':app:cleanConf', '--stacktrace'] + extraArgs.toList())
                 .withPluginClasspath()
                 .forwardOutput()
                 .build()

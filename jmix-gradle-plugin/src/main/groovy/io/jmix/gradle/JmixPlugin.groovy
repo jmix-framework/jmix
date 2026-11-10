@@ -20,8 +20,7 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.UnknownTaskException
 import org.gradle.api.plugins.JavaPlugin
-import org.gradle.api.tasks.Delete
-import org.yaml.snakeyaml.Yaml
+import org.gradle.api.tasks.SourceSet
 
 import java.util.jar.Manifest
 
@@ -75,12 +74,8 @@ class JmixPlugin implements Plugin<Project> {
                 project.configurations.create('enhancing')
                 project.dependencies.add('enhancing', 'org.eclipse.persistence:org.eclipse.persistence.jpa:5.0.2-2-jmix')
 
-                def enhanceMainTask = project.tasks.register('enhanceJmixMain') {
-                    doLast(new EnhancingAction('main'))
-                }
-                def enhanceTestTask = project.tasks.register('enhanceJmixTest') {
-                    doLast(new EnhancingAction('test'))
-                }
+                def enhanceMainTask = project.tasks.register('enhanceJmixMain', EnhancingTask)
+                def enhanceTestTask = project.tasks.register('enhanceJmixTest', EnhancingTask)
 
                 def mainCompileTasks = []
                 def testCompileTasks = []
@@ -91,8 +86,8 @@ class JmixPlugin implements Plugin<Project> {
                 }
 
                 /**
-                 * If project 100% kotlin, compileJava will not execute and EnhancingAction will not run.
-                 * So we need run EnhancingAction after compileKotlin.
+                 * If project 100% kotlin, compileJava will not execute and EnhancingTask will not run.
+                 * So we need run EnhancingTask after compileKotlin.
                  */
                 if (kotlinPlugin) {
                     mainCompileTasks.add(project.tasks.named('compileKotlin'))
@@ -106,33 +101,11 @@ class JmixPlugin implements Plugin<Project> {
                     testCompileTasks.add(project.tasks.named('compileTestGroovy'))
                 }
 
-                def enhancedMainDir = project.file(EnhancingAction.enhancedClassesDir(project, 'main'))
-                def enhancedTestDir = project.file(EnhancingAction.enhancedClassesDir(project, 'test'))
+                def enhancedMainDir = project.file(EnhancingTask.enhancedClassesDir(project, 'main'))
+                def enhancedTestDir = project.file(EnhancingTask.enhancedClassesDir(project, 'test'))
 
-                enhanceMainTask.configure {
-                    dependsOn(mainCompileTasks)
-                    dependsOnClasspathArtifacts(project, it, 'main')
-                    inputs.files(project.sourceSets.main.java.classesDirectory)
-                            .withPropertyName('compiledClasses')
-                            .withPathSensitivity(org.gradle.api.tasks.PathSensitivity.RELATIVE)
-                    inputs.files(project.sourceSets.main.compileClasspath)
-                            .withNormalizer(org.gradle.api.tasks.ClasspathNormalizer)
-                    outputs.dir(enhancedMainDir).withPropertyName('enhancedClasses')
-                    outputs.dir(project.file(EnhancingAction.generatedDescriptorsDir(project, 'main'))).withPropertyName('descriptors')
-                    outputs.cacheIf { true }
-                }
-                enhanceTestTask.configure {
-                    dependsOn(testCompileTasks)
-                    dependsOnClasspathArtifacts(project, it, 'test')
-                    inputs.files(project.sourceSets.test.java.classesDirectory)
-                            .withPropertyName('compiledClasses')
-                            .withPathSensitivity(org.gradle.api.tasks.PathSensitivity.RELATIVE)
-                    inputs.files(project.sourceSets.test.compileClasspath)
-                            .withNormalizer(org.gradle.api.tasks.ClasspathNormalizer)
-                    outputs.dir(enhancedTestDir).withPropertyName('enhancedClasses')
-                    outputs.dir(project.file(EnhancingAction.generatedDescriptorsDir(project, 'test'))).withPropertyName('descriptors')
-                    outputs.cacheIf { true }
-                }
+                enhanceMainTask.configure { configureEnhancingTask(project, it, 'main', mainCompileTasks) }
+                enhanceTestTask.configure { configureEnhancingTask(project, it, 'test', testCompileTasks) }
 
                 project.sourceSets.main.output.classesDirs.setFrom(enhancedMainDir)
                 project.sourceSets.main.output.classesDirs.builtBy(enhanceMainTask)
@@ -214,9 +187,53 @@ class JmixPlugin implements Plugin<Project> {
         }
     }
 
+    /**
+     * Sets the properties of an entity enhancing task. All values the task needs at execution time are taken
+     * from the project here, at configuration time, because the task must not use the project at execution time
+     * to be compatible with the configuration cache.
+     */
+    private static void configureEnhancingTask(Project project, EnhancingTask task, String sourceSetName, List compileTasks) {
+        def sourceSet = project.sourceSets.getByName(sourceSetName)
+        def entitiesEnhancing = project.jmix.entitiesEnhancing
+
+        task.dependsOn(compileTasks)
+        dependsOnClasspathArtifacts(project, task, sourceSetName)
+
+        task.sourceSetName.set(sourceSetName)
+        task.projectDisplayName.set(project.toString())
+        task.compiledClasses.set(sourceSet.java.classesDirectory)
+        task.compileClasspath.from(sourceSet.compileClasspath)
+        task.compileClasspathGraph.set(project.configurations.getByName(sourceSet.compileClasspathConfigurationName)
+                .incoming.resolutionResult.rootComponent)
+        task.runtimeClasspath.from(sourceSet.runtimeClasspath)
+        task.sourceDirs.from(sourceSet.allJava.sourceDirectories)
+        task.resourceDirs.from(sourceSet.resources.sourceDirectories)
+
+        if (sourceSetName == SourceSet.TEST_SOURCE_SET_NAME) {
+            def mainSourceSet = project.sourceSets.getByName(SourceSet.MAIN_SOURCE_SET_NAME)
+            task.mainCompiledClasses.set(mainSourceSet.java.classesDirectory)
+            task.mainCompileClasspath.from(mainSourceSet.compileClasspath)
+            task.mainSourceDirs.from(mainSourceSet.allJava.sourceDirectories)
+        }
+
+        task.enhancingClasspath.from(project.configurations.getByName('enhancing'))
+
+        task.skipUnmodifiedEntitiesEnhancing.set(project.provider { entitiesEnhancing.skipUnmodifiedEntitiesEnhancing })
+        task.jpaConverters.set(project.provider { entitiesEnhancing.jpaConverters })
+        task.nonJpaPackages.set(project.provider { entitiesEnhancing.nonJpaPackages })
+        task.nonJpaClasses.set(project.provider { entitiesEnhancing.nonJpaClasses })
+        task.debugEnhancing.set(project.provider {
+            Boolean.parseBoolean(project.findProperty('debugEnhancing')?.toString())
+        })
+
+        task.workDir.set(project.file(EnhancingTask.enhancingWorkDir(project, sourceSetName)))
+        task.enhancedClasses.set(project.file(EnhancingTask.enhancedClassesDir(project, sourceSetName)))
+        task.descriptors.set(project.file(EnhancingTask.generatedDescriptorsDir(project, sourceSetName)))
+    }
+
     private static void registerGeneratedDescriptors(Project project, String sourceSetName, enhanceTask) {
         def sourceSet = project.sourceSets.getByName(sourceSetName)
-        def generatedDir = project.file(EnhancingAction.generatedDescriptorsDir(project, sourceSetName))
+        def generatedDir = project.file(EnhancingTask.generatedDescriptorsDir(project, sourceSetName))
 
         // Generated persistence.xml/orm.xml are registered as a first-class generated output of the source
         // set: they reach the runtime classpath and the jar without being reprocessed by processResources.
@@ -307,153 +324,15 @@ class JmixPlugin implements Plugin<Project> {
     }
 
     private static void registerCleanConfTask(Project project) {
-        project.tasks.register('cleanConf', Delete) {
-            doFirst {
-                if (project.jmix.confDirCleanupEnabled) {
-                    def resources = project.file("src/main/resources/")
-                    if (resources.exists() && resources.isDirectory()) {
-                        def mainProperties = loadProperties(project)
-                        def confDir = resolveConfDir(project, mainProperties)
-
-                        project.logger.lifecycle("Delete directory: {}", confDir)
-                        delete confDir
-                    } else {
-                        project.logger.lifecycle("Resource directory not found")
-                        return
-                    }
-                } else {
-                    project.logger.lifecycle("'conf' directory cleanup is disabled")
-                }
-            }
+        project.tasks.register('cleanConf', CleanConfTask) { task ->
+            task.cleanupEnabled.set(project.provider { project.jmix.confDirCleanupEnabled })
+            task.projectDirectory.set(project.layout.projectDirectory)
+            task.activeProfiles.set(project.provider { project.findProperty('spring.profiles.active')?.toString() })
         }
         project.pluginManager.withPlugin("org.springframework.boot") {
             project.tasks.named("bootRun") {
                 dependsOn("cleanConf")
             }
         }
-    }
-
-    private static Properties loadProperties(Project project, String profileName = null) {
-        project.logger.lifecycle("Load properties (profile = $profileName)")
-
-        def appPropertiesFile = getAppPropertiesFile(project, profileName)
-        def yamlPropertiesFile = getYamlPropertiesFile(project, profileName)
-
-        if (appPropertiesFile.exists()) {
-            project.logger.lifecycle("Found file: {}", appPropertiesFile.getName())
-            return loadPropertiesFromAppPropertiesFile(appPropertiesFile)
-        } else if (yamlPropertiesFile.exists()) {
-            project.logger.lifecycle("Found file: {}", yamlPropertiesFile.getName())
-            return loadPropertiesFromYamlPropertiesFile(yamlPropertiesFile)
-        } else {
-            project.logger.lifecycle("File with properties is not found")
-            return new Properties()
-        }
-    }
-
-    private static File getAppPropertiesFile(Project project, String profileName = null) {
-        def preparedProfileName = (profileName?.trim() ?: "").with { name -> name ? "-$name" : "" }
-        def fileName = "src/main/resources/application%s.properties".formatted(preparedProfileName)
-        return project.file(fileName)
-    }
-
-    private static File getYamlPropertiesFile(Project project, String profileName = null) {
-        def basePath = "src/main/resources"
-        def templates = ["application%s.yaml", "application%s.yml"]
-                .collect { template ->
-                    def preparedProfileName = (profileName?.trim() ?: "").with { name -> name ? "-$name" : "" }
-                    def fileName = "$template".formatted(preparedProfileName)
-                    project.file("$basePath/$fileName")
-                }
-
-        return templates.find { it.exists() } ?: templates.first()
-    }
-
-    private static Properties loadPropertiesFromAppPropertiesFile(File appPropsFile) {
-        Properties properties = new Properties()
-        appPropsFile.withInputStream { properties.load(it) }
-        return properties;
-    }
-
-    private static Properties loadPropertiesFromYamlPropertiesFile(File yamlPropsFile) {
-        Yaml yaml = new Yaml()
-        Map<String, Object> yamlMap
-        yamlPropsFile.withInputStream { yamlMap = yaml.load(it) }
-
-        Properties properties = new Properties()
-        flattenPropertiesMap("", yamlMap, properties)
-        return properties;
-    }
-
-    private static void flattenPropertiesMap(String prefix, Map<String, Object> map, Properties props) {
-        for (Map.Entry<String, Object> entry : map.entrySet()) {
-            String key = prefix.isEmpty() ? entry.getKey() : prefix + "." + entry.getKey();
-            Object value = entry.getValue();
-
-            if (value instanceof Map) {
-                flattenPropertiesMap(key, (Map<String, Object>) value, props);
-            } else {
-                props.put(key, value.toString());
-            }
-        }
-    }
-
-    /**
-     * Resolves the directory used by the application as 'jmix.core.conf-dir' at runtime.
-     *
-     * The runtime resolves this property against its working directory, which is the project directory
-     * both for the Gradle 'bootRun' task and for Studio run configurations. So relative paths and the
-     * '${user.dir}' placeholder are resolved against the project directory, not the build root directory:
-     * these are different directories when the application is a subproject with a custom 'projectDir'.
-     */
-    private static File resolveConfDir(Project project, Properties mainProperties) {
-        def profilesList = resolveActiveProfiles(project, mainProperties)
-
-        def confDir = null
-        if (!profilesList.isEmpty()) {
-            for (def profileName : profilesList) {
-                project.logger.lifecycle("Check profile: {}", profileName)
-                def profileProperties = loadProperties(project, profileName)
-                confDir = getConfDirProperty(profileProperties)
-                if (confDir != null) {
-                    break
-                }
-            }
-        }
-
-        if (confDir == null) {
-            confDir = getConfDirProperty(mainProperties) ?: DEFAULT_CONF_DIR
-        }
-
-        return project.file(expandPathPlaceholders(project, confDir))
-    }
-
-    private static String getConfDirProperty(Properties properties) {
-        return properties.getProperty("jmix.core.conf-dir") ?: properties.getProperty("jmix.core.confDir") ?: null
-    }
-
-    /**
-     * Replaces the placeholders that the running application resolves in path properties.
-     * '${user.dir}' becomes the project directory because that is the working directory of the application.
-     */
-    private static String expandPathPlaceholders(Project project, String path) {
-        return path.replace('${user.dir}', project.projectDir.absolutePath)
-                .replace('${user.home}', System.getProperty('user.home'))
-    }
-
-    private static List<String> resolveActiveProfiles(Project project, Properties mainProperties) {
-        String profiles
-        if (project.hasProperty("spring.profiles.active")) {
-            profiles = project.property("spring.profiles.active")
-        } else {
-            profiles = mainProperties.getProperty("spring.profiles.active") ?: null
-        }
-
-        def profilesList = []
-        if (profiles != null) {
-            def split = profiles.trim().replaceAll(/^\[(.*)\]$/, '$1').split(",")
-            profilesList = Arrays.stream(split).map { s -> s.trim().toLowerCase() }.toList()
-        }
-        return profilesList
     }
 }

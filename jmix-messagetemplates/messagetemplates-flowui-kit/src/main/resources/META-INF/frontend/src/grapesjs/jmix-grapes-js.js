@@ -93,6 +93,7 @@ export class JmixGrapesJs extends ResizeMixin(ThemableMixin(ElementMixin(Polylit
             plugins: this.getPluginInstances(),
             pluginsOpts: this.getPluginOpts()
         });
+        this._setEditorValue(this._valueFromServer ?? '');
 
         this._editor.Panels.getButton('options', 'sw-visibility')
             .set('active', 1);
@@ -131,7 +132,6 @@ export class JmixGrapesJs extends ResizeMixin(ThemableMixin(ElementMixin(Polylit
     _initEditor(plugins) {
         return grapesjs.init({
             container: this.querySelector('[part="content"]'),
-            components: this._valueFromServer ?? '<body></body>',
             forceClass: false,
             height: '100%',
             storageManager: false,
@@ -241,8 +241,28 @@ export class JmixGrapesJs extends ResizeMixin(ThemableMixin(ElementMixin(Polylit
             this._valueFromServer = value;
         } else {
             this._pendingValueFromServer = true;
-            this._editor.setComponents(value);
+            this._setEditorValue(value);
         }
+    }
+
+    /**
+     * Loads a whole HTML document (with a doctype, `<html>` or `<head>`) in the document mode,
+     * so that the editor keeps them, and anything else as the body content.
+     *
+     * @private
+     */
+    _setEditorValue(value) {
+        const documentMode = /<!doctype\b|<html[\s>]|<head[\s>]/i.test(value);
+        const wrapper = this._editor.getWrapper();
+
+        // setComponents() does not reset the doctype, <html> attributes and <head> of a document loaded before
+        wrapper.set('doctype', '');
+        wrapper.head.components().reset();
+        wrapper.docEl.setAttributes({});
+
+        // passed to each getHtml() call, including the ones made by plugins
+        this._editor.getConfig().optsHtml.asDocument = documentMode;
+        this._editor.setComponents(value, {asDocument: documentMode});
     }
 
     updateBlocks(blocks) {
@@ -286,19 +306,36 @@ export class JmixGrapesJs extends ResizeMixin(ThemableMixin(ElementMixin(Polylit
 
     /** @private */
     getHtml(editor) {
-        let result;
-
         if (this._inlineCssEnabled) {
-            result = editor.runCommand('gjs-get-inlined-html');
-        } else {
-            result = editor.getHtml() + `<style>${editor.getCss()}</style>`;
+            return this._getInlinedHtml(editor);
         }
 
-        return result.replace('&amp;', '&')
-            .replace('&lt;', '<')
-            .replace('&gt;', '>')
-            .replace('&quot;', '\"')
-            .replace('&#039;', '\'');
+        const html = editor.getHtml();
+        const style = `<style>${editor.getCss()}</style>`;
+
+        return editor.getConfig().optsHtml.asDocument
+            ? html.replace('</head>', `${style}</head>`)
+            : html + style;
+    }
+
+    /**
+     * Runs the CSS inlining command of the newsletter preset. Its CSS parser cannot read FreeMarker
+     * interpolations like `color: ${color}`, so they are replaced with tokens while the command runs.
+     *
+     * @private
+     */
+    _getInlinedHtml(editor) {
+        const interpolations = [];
+        const protect = text => text.replace(/\$\{[^}]*}/g, interpolation =>
+            `___FM_INTERPOLATION_${interpolations.push(interpolation) - 1}___`);
+
+        const protectedEditor = Object.create(editor, {
+            getHtml: {value: opts => protect(editor.getHtml(opts))},
+            getCss: {value: opts => protect(editor.getCss(opts))}
+        });
+        const html = editor.Commands.get('gjs-get-inlined-html').run(protectedEditor);
+
+        return html.replace(/___FM_INTERPOLATION_(\d+)___/g, (token, index) => interpolations[index]);
     }
 
     runCommand(command, params) {

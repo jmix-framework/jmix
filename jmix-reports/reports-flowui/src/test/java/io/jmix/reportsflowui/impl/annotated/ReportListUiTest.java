@@ -17,6 +17,7 @@
 package io.jmix.reportsflowui.impl.annotated;
 
 import com.vaadin.flow.data.provider.Query;
+import io.jmix.core.DataManager;
 import io.jmix.core.security.SystemAuthenticator;
 import io.jmix.flowui.component.combobox.EntityComboBox;
 import io.jmix.flowui.component.datepicker.TypedDatePicker;
@@ -25,7 +26,9 @@ import io.jmix.flowui.component.grid.DataGridColumn;
 import io.jmix.flowui.component.select.JmixSelect;
 import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.data.grid.DataGridItems;
+import io.jmix.reports.ReportImportExport;
 import io.jmix.reports.ReportRepository;
+import io.jmix.reports.ReportsSerialization;
 import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportGroup;
 import io.jmix.reports.entity.ReportOutputType;
@@ -42,10 +45,17 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -63,6 +73,12 @@ public class ReportListUiTest extends BaseReportListUiTest<Report, ReportListVie
     protected ReportRepository reportRepository;
     @Autowired
     protected SystemAuthenticator systemAuthenticator;
+    @Autowired
+    DataManager dataManager;
+    @Autowired
+    ReportImportExport reportImportExport;
+    @Autowired
+    ReportsSerialization reportsSerialization;
 
     protected ReportListUiTest() {
         super("reportsDataGrid", ReportListView.class);
@@ -251,5 +267,41 @@ public class ReportListUiTest extends BaseReportListUiTest<Report, ReportListVie
 
         assertThat(reportList).isNotEmpty();
         assertThat(reportList).size().isEqualTo(1);
+    }
+
+    @Test
+    void testExportOfCopyDescribesTheCopy() throws IOException {
+        Report source = runtimeReportUtil.createAndSaveSimpleRuntimeReport();
+        DataGrid<Report> dataGrid = getMainDataGrid();
+        dataGrid.select(source);
+
+        Objects.requireNonNull(dataGrid.getAction("copy")).actionPerform(dataGrid);
+
+        Report copy = dataManager.load(Report.class)
+                .query("e.name = :name")
+                .parameter("name", "Simple runtime report (2)")
+                .one();
+        Map<String, byte[]> exportedFiles = unzipSingleReport(reportImportExport.exportReports(List.of(copy)));
+
+        Report exportedReport = reportsSerialization.convertToReport(
+                new String(exportedFiles.get("report.structure"), StandardCharsets.UTF_8));
+        assertThat(exportedReport.getId()).isEqualTo(copy.getId());
+        assertThat(exportedReport.getName()).isEqualTo("Simple runtime report (2)");
+        assertThat(exportedFiles.get("templates/0/SimpleReport.csv"))
+                .isEqualTo(source.getDefaultTemplate().getContent());
+    }
+
+    Map<String, byte[]> unzipSingleReport(byte[] exportedReports) throws IOException {
+        Map<String, byte[]> files = new HashMap<>();
+        try (ZipInputStream reportsZip = new ZipInputStream(new ByteArrayInputStream(exportedReports))) {
+            reportsZip.getNextEntry();
+            try (ZipInputStream reportZip = new ZipInputStream(new ByteArrayInputStream(reportsZip.readAllBytes()))) {
+                ZipEntry entry;
+                while ((entry = reportZip.getNextEntry()) != null) {
+                    files.put(entry.getName(), reportZip.readAllBytes());
+                }
+            }
+        }
+        return files;
     }
 }

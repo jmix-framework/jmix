@@ -28,7 +28,12 @@ import io.jmix.messagetemplatesflowui.kit.component.event.dom.GrapesJsValueChang
 import io.jmix.messagetemplatesflowui.kit.component.serialization.GrapesJsSerializer;
 import org.jspecify.annotations.Nullable;
 import org.jsoup.Jsoup;
+import org.jsoup.nodes.Attribute;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.DocumentType;
+import org.jsoup.nodes.Element;
+import org.jsoup.parser.Parser;
+import org.jsoup.safety.Cleaner;
 import org.jsoup.safety.Safelist;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -76,7 +81,23 @@ public class GrapesJs extends Component implements HasSize, HasStyle {
             Pattern.DOTALL
     );
 
+    // regular expression for matching the same pseudo-tags HTML-escaped by the client-side editor
+    protected static final Pattern ESCAPED_FM_PATTERN = Pattern.compile(
+            "(&lt;#--.*?--&gt;)" +                                  // Freemarker comments
+                    "|(&lt;/?[#@][A-Za-z0-9_]+(?:\\s[^<>]*?)?&gt;)" + // <#if ...>, </#if>, <@macro ...>, </@macro>
+                    "|(\\$\\{[^}<>]*})",                             // ${...}
+            Pattern.DOTALL
+    );
+
+    // a doctype, <html> or <head> tag marks a whole HTML document
+    protected static final Pattern DOCUMENT_PATTERN =
+            Pattern.compile("<!doctype\\b|<html[\\s>]|<head[\\s>]", Pattern.CASE_INSENSITIVE);
+
     protected static final String FM_PLACEHOLDER = "___FM_%s___";
+
+    // relative URLs, including the ones starting with a FreeMarker expression like href="${url}",
+    // are resolved against it to pass the protocol check of the sanitizer
+    protected static final String SANITIZER_BASE_URI = "https://base.invalid/";
 
     protected GrapesJsSerializer serializer;
 
@@ -351,7 +372,7 @@ public class GrapesJs extends Component implements HasSize, HasStyle {
     }
 
     protected void onValueChangedDomEvent(GrapesJsValueChangedDomEvent event) {
-        setValueInternal(event.getValue(), true);
+        setValueInternal(unescapeFreeMarker(event.getValue()), true);
     }
 
     protected void updateBlocksOnClientSide() {
@@ -382,8 +403,28 @@ public class GrapesJs extends Component implements HasSize, HasStyle {
     }
 
     protected void updateClientSideValue(ExecutionContext context) {
-        getElement().callJsFunction("updateValue", internalValue);
+        getElement().callJsFunction("updateValue", escapeFreeMarker(internalValue));
         synchronizeValueUpdateExecution = null;
+    }
+
+    /**
+     * Escapes FreeMarker pseudo-tags, so that the client-side editor keeps them as text. Otherwise, the browser
+     * turns a closing tag like {@code </#if>} into a comment.
+     */
+    protected String escapeFreeMarker(String html) {
+        return FM_PATTERN.matcher(html).replaceAll(match ->
+                Matcher.quoteReplacement(match.group()
+                        .replace("&", "&amp;")
+                        .replace("<", "&lt;")
+                        .replace(">", "&gt;")));
+    }
+
+    /**
+     * Restores FreeMarker pseudo-tags that the client-side editor returns HTML-escaped.
+     */
+    protected String unescapeFreeMarker(String html) {
+        return ESCAPED_FM_PATTERN.matcher(html).replaceAll(match ->
+                Matcher.quoteReplacement(Parser.unescapeEntities(match.group(), false)));
     }
 
     protected void callJsFunction(String functionName, Object... arguments) {
@@ -422,23 +463,75 @@ public class GrapesJs extends Component implements HasSize, HasStyle {
 
         String protectedHtml = sb.toString();
 
-        var settings = new Document.OutputSettings();
-        settings.prettyPrint(false);
-
-        String sanitizedHtml = Jsoup.clean(protectedHtml, "",
-                Safelist.relaxed()
-                        .addTags("body", "style", "video", "input", "form", "textarea",
-                                "label", "button", "select", "option", "iframe")
-                        .addAttributes(":all", "style", "id", "class", "src", "type", "method", "value")
-                        .addProtocols("img", "src", "data"),
-                settings);
-
+        String sanitizedHtml = DOCUMENT_PATTERN.matcher(protectedHtml).find()
+                ? sanitizeDocument(protectedHtml)
+                : Jsoup.clean(protectedHtml, SANITIZER_BASE_URI, createSafelist(), createOutputSettings());
 
         for (int i = 0; i < placeholders.size(); i++) {
             sanitizedHtml = sanitizedHtml.replace(FM_PLACEHOLDER.formatted(i), placeholders.get(i));
         }
 
         return sanitizedHtml;
+    }
+
+    /**
+     * Sanitizes a whole HTML document. Unlike {@link Jsoup#clean}, keeps the doctype, the safe attributes of
+     * {@code <html>} and {@code <body>} and the safe content of {@code <head>}.
+     */
+    protected String sanitizeDocument(String html) {
+        Safelist safelist = createSafelist();
+        Document.OutputSettings outputSettings = createOutputSettings();
+
+        Document dirty = Jsoup.parse(html, SANITIZER_BASE_URI);
+        dirty.outputSettings(outputSettings);
+        // the cleaner keeps the body content only, and would nest an allowed <body> into the clean one
+        Document clean = new Cleaner(createSafelist().removeTags("body")).clean(dirty);
+        clean.outputSettings(outputSettings);
+
+        DocumentType doctype = dirty.documentType();
+        if (doctype != null) {
+            clean.prependChild(doctype.clone());
+        }
+
+        // the first element child of a document is <html>
+        copySafeAttributes(dirty.child(0), clean.child(0), safelist);
+        copySafeAttributes(dirty.body(), clean.body(), safelist);
+
+        // a refresh would navigate away from the page that shows the template
+        dirty.head().select("meta[http-equiv~=(?i)^\\s*refresh\\s*$]").remove();
+        clean.head().html(Jsoup.clean(dirty.head().html(), "", createHeadSafelist(), outputSettings));
+
+        return clean.outerHtml();
+    }
+
+    protected void copySafeAttributes(Element source, Element target, Safelist safelist) {
+        for (Attribute attribute : source.attributes()) {
+            if (safelist.isSafeAttribute(source.tagName(), source, attribute)) {
+                target.attr(attribute.getKey(), attribute.getValue());
+            }
+        }
+    }
+
+    protected Safelist createSafelist() {
+        return Safelist.relaxed()
+                .addTags("body", "style", "video", "input", "form", "textarea",
+                        "label", "button", "select", "option", "iframe")
+                .addAttributes(":all", "style", "id", "class", "src", "type", "method", "value")
+                .addAttributes("html", "lang", "dir", "xmlns")
+                .addProtocols("img", "src", "data")
+                .preserveRelativeLinks(true);
+    }
+
+    protected Safelist createHeadSafelist() {
+        return new Safelist()
+                .addTags("title", "meta", "style")
+                .addAttributes("meta", "charset", "name", "content", "http-equiv")
+                .addAttributes("style", "type", "media");
+    }
+
+    protected Document.OutputSettings createOutputSettings() {
+        return new Document.OutputSettings()
+                .prettyPrint(false);
     }
 
     protected String getEmptyValue() {

@@ -192,15 +192,13 @@ public class GroupFilterConditionDetailView extends LogicalFilterConditionDetail
         FilterCondition parent = selectedCondition.getParent();
 
         if (parent instanceof LogicalFilterCondition) {
-            List<FilterCondition> items = getCollectionContainer().getMutableItems();
             List<FilterCondition> ownConditions = ((LogicalFilterCondition) parent).getOwnFilterConditions();
-
-            int selectedItemIndex = items.indexOf(selectedCondition);
             int selectedOwnItemIndex = ownConditions.indexOf(selectedCondition);
-            FilterCondition replacedCondition = ownConditions.get(selectedOwnItemIndex - 1);
 
-            Collections.swap(items, selectedItemIndex, items.indexOf(replacedCondition));
             Collections.swap(ownConditions, selectedOwnItemIndex, selectedOwnItemIndex - 1);
+            // Reload the container instead of swapping its items: the grid repaints an item set
+            // in place of another one in the row of the replaced item, so the rows would not move.
+            refreshChildrenConditions();
             refreshMoveButtonsState(selectedCondition);
         }
     }
@@ -216,15 +214,13 @@ public class GroupFilterConditionDetailView extends LogicalFilterConditionDetail
         FilterCondition parent = selectedCondition.getParent();
 
         if (parent instanceof LogicalFilterCondition) {
-            List<FilterCondition> items = getCollectionContainer().getMutableItems();
             List<FilterCondition> ownConditions = ((LogicalFilterCondition) parent).getOwnFilterConditions();
-
-            int selectedItemIndex = items.indexOf(selectedCondition);
             int selectedOwnItemIndex = ownConditions.indexOf(selectedCondition);
-            FilterCondition replacedCondition = ownConditions.get(selectedOwnItemIndex + 1);
 
-            Collections.swap(items, selectedItemIndex, items.indexOf(replacedCondition));
             Collections.swap(ownConditions, selectedOwnItemIndex, selectedOwnItemIndex + 1);
+            // Reload the container instead of swapping its items: the grid repaints an item set
+            // in place of another one in the row of the replaced item, so the rows would not move.
+            refreshChildrenConditions();
             refreshMoveButtonsState(selectedCondition);
         }
     }

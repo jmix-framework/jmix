@@ -60,7 +60,6 @@ import io.jmix.reports.entity.ReportTemplate;
 import io.jmix.reports.exception.MissingDefaultTemplateException;
 import io.jmix.reports.runner.ReportRunner;
 import io.jmix.reports.yarg.reporting.ReportOutputDocument;
-import org.apache.commons.collections4.CollectionUtils;
 import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -301,19 +300,17 @@ public class ReportTableView extends StandardView {
         jmixTabSheet.setWidthFull();
 
         data.forEach((dataSetName, keyValueEntities) -> {
-            if (CollectionUtils.isNotEmpty(keyValueEntities)) {
-                KeyValueCollectionContainer container = createContainer(dataSetName, keyValueEntities, headerMap);
-                DataGrid<KeyValueEntity> dataGrid = createTable(dataSetName, container, headerMap);
-                HorizontalLayout buttonsPanel = createButtonsPanel(document, dataGrid);
+            KeyValueCollectionContainer container = createContainer(dataSetName, keyValueEntities, headerMap);
+            DataGrid<KeyValueEntity> dataGrid = createTable(dataSetName, container, headerMap);
+            HorizontalLayout buttonsPanel = createButtonsPanel(document, dataGrid);
 
-                VerticalLayout verticalLayout = uiComponents.create(VerticalLayout.class);
-                verticalLayout.setPadding(false);
-                verticalLayout.add(buttonsPanel);
-                verticalLayout.add(dataGrid);
+            VerticalLayout verticalLayout = uiComponents.create(VerticalLayout.class);
+            verticalLayout.setPadding(false);
+            verticalLayout.add(buttonsPanel);
+            verticalLayout.add(dataGrid);
 
-                verticalLayout.expand(dataGrid);
-                jmixTabSheet.add(dataSetName, verticalLayout);
-            }
+            verticalLayout.expand(dataGrid);
+            jmixTabSheet.add(dataSetName, verticalLayout);
         });
 
         tablesVBoxLayout.add(jmixTabSheet);

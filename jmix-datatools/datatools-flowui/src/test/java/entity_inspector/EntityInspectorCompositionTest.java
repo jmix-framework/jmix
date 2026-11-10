@@ -21,8 +21,11 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.router.RouteParameters;
 import io.jmix.core.DataManager;
 import io.jmix.core.Metadata;
+import io.jmix.datatoolsflowui.action.EntityInspectorCreateAction;
 import io.jmix.datatoolsflowui.action.EntityInspectorEditAction;
 import io.jmix.datatoolsflowui.view.entityinspector.EntityInspectorDetailView;
+import io.jmix.flowui.action.list.CreateAction;
+import io.jmix.flowui.action.list.RemoveAction;
 import io.jmix.flowui.component.ListDataComponent;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.data.ContainerDataUnit;
@@ -46,6 +49,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @UiTest(authenticator = TestFullAccessUiAuthenticator.class)
@@ -71,16 +75,7 @@ public class EntityInspectorCompositionTest {
 
     @Test
     void testCompositionItemEditedInDialogKeepsUnsavedValueOnReopen() {
-        InspectorCompositionMaster master = metadata.create(InspectorCompositionMaster.class);
-        master.setName("master");
-        master.setItems(new ArrayList<>());
-        dataManager.save(master);
-
-        InspectorCompositionItem item = metadata.create(InspectorCompositionItem.class);
-        item.setName("item");
-        item.setAmount(15);
-        item.setMaster(master);
-        dataManager.save(item);
+        InspectorCompositionMaster master = createMasterWithItem();
 
         EntityInspectorDetailView masterView = navigateToInspector(master);
         DataGrid<Object> itemsDataGrid = findItemsDataGrid(masterView);
@@ -104,16 +99,7 @@ public class EntityInspectorCompositionTest {
 
     @Test
     void testUnchangedCompositionItemIsReloadedOnReopen() {
-        InspectorCompositionMaster master = metadata.create(InspectorCompositionMaster.class);
-        master.setName("master");
-        master.setItems(new ArrayList<>());
-        dataManager.save(master);
-
-        InspectorCompositionItem item = metadata.create(InspectorCompositionItem.class);
-        item.setName("item");
-        item.setAmount(15);
-        item.setMaster(master);
-        dataManager.save(item);
+        InspectorCompositionMaster master = createMasterWithItem();
 
         EntityInspectorDetailView masterView = navigateToInspector(master);
         DataGrid<Object> itemsDataGrid = findItemsDataGrid(masterView);
@@ -126,6 +112,62 @@ public class EntityInspectorCompositionTest {
         EntityInspectorDetailView reopenedItemView = openItemView(itemsDataGrid);
 
         assertEquals(20, ((InspectorCompositionItem) reopenedItemView.getEditedEntity()).getAmount());
+    }
+
+    @Test
+    void testCompositionItemConfirmedWithoutChangesLeavesMasterUnmodified() {
+        InspectorCompositionMaster master = createMasterWithItem();
+
+        EntityInspectorDetailView masterView = navigateToInspector(master);
+        DataGrid<Object> itemsDataGrid = findItemsDataGrid(masterView);
+
+        openItemView(itemsDataGrid).closeWithSave();
+
+        assertFalse(masterView.hasUnsavedChanges());
+    }
+
+    @Test
+    void testCompositionItemCreatedAndRemovedLeavesMasterUnmodified() {
+        InspectorCompositionMaster master = createMasterWithItem();
+
+        EntityInspectorDetailView masterView = navigateToInspector(master);
+        DataGrid<Object> itemsDataGrid = findItemsDataGrid(masterView);
+
+        CreateAction<?> createAction = (CreateAction<?>) itemsDataGrid.getAction(EntityInspectorCreateAction.ID);
+        assertNotNull(createAction, "The create action is not created in the entity inspector");
+        createAction.execute();
+
+        EntityInspectorDetailView newItemView = UiTestUtils.getLastOpenedViewDialog();
+        InspectorCompositionItem newItem = (InspectorCompositionItem) newItemView.getEditedEntity();
+        newItem.setName("new item");
+        newItemView.closeWithSave();
+
+        List<Object> items = getItems(itemsDataGrid);
+        assertEquals(2, items.size());
+
+        itemsDataGrid.select(items.get(1));
+        RemoveAction<?> removeAction = (RemoveAction<?>) itemsDataGrid.getAction(RemoveAction.ID);
+        assertNotNull(removeAction, "The remove action is not created in the entity inspector");
+        removeAction.setConfirmation(false);
+        removeAction.execute();
+
+        assertEquals(1, getItems(itemsDataGrid).size());
+        assertFalse(masterView.hasUnsavedChanges());
+    }
+
+    private InspectorCompositionMaster createMasterWithItem() {
+        InspectorCompositionMaster master = metadata.create(InspectorCompositionMaster.class);
+        master.setName("master");
+        master.setItems(new ArrayList<>());
+        dataManager.save(master);
+
+        InspectorCompositionItem item = metadata.create(InspectorCompositionItem.class);
+        item.setName("item");
+        item.setAmount(15);
+        item.setMaster(master);
+        dataManager.save(item);
+
+        return master;
     }
 
     private EntityInspectorDetailView navigateToInspector(InspectorCompositionMaster master) {
@@ -150,10 +192,14 @@ public class EntityInspectorCompositionTest {
     }
 
     private InspectorCompositionItem getSingleItem(ListDataComponent<Object> itemsDataGrid) {
-        List<Object> items = ((ContainerDataUnit<Object>) itemsDataGrid.getItems()).getContainer().getItems();
+        List<Object> items = getItems(itemsDataGrid);
         assertEquals(1, items.size());
 
         return (InspectorCompositionItem) items.get(0);
+    }
+
+    private List<Object> getItems(ListDataComponent<Object> itemsDataGrid) {
+        return ((ContainerDataUnit<Object>) itemsDataGrid.getItems()).getContainer().getItems();
     }
 
     @SuppressWarnings("unchecked")

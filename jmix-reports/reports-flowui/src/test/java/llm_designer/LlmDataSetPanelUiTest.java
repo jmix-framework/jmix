@@ -26,7 +26,6 @@ import io.jmix.core.Metadata;
 import io.jmix.flowui.ViewNavigators;
 import io.jmix.flowui.Notifications;
 import io.jmix.flowui.backgroundtask.BackgroundTask;
-import io.jmix.flowui.component.validation.ValidationErrors;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.codeeditor.CodeEditor;
 import io.jmix.flowui.component.combobox.JmixComboBox;
@@ -252,18 +251,18 @@ public class LlmDataSetPanelUiTest {
     }
 
     @Test
-    void testTheRefusalToSaveNamesTheMissingQueryRatherThanSomethingElse() {
-        // A data set has more than one way to be unusable, and the author has to be told which one this is.
-        ReportDetailView view = openReportDesignerOnLlmDataSet();
-        DataSet dataSet = selectedDataSet(view);
-        dataSet.setLlmGeneratedQuery(null);
-        ValidationErrors errors = new ValidationErrors();
+    void testRunningADataSetWithoutAQueryIsRefused() {
+        // Saving such a data set is allowed, running it is not: a run executes the stored query and generates
+        // nothing, so it would fail only after the author has filled in the parameters.
+        View<?> view = openDesigner(llmReportUtil.createAndSaveReportWithoutStoredQuery());
 
-        ReflectionTestUtils.invokeMethod(view, "validateLlmDataSet", errors, dataSet);
+        this.<JmixButton>findComponent(view, "runBtn").click();
 
-        assertThat(errors.getAll()).extracting(ValidationErrors.Item::getDescription)
-                .containsExactly(messages.formatMessage("io.jmix.reportsflowui.view.report",
-                        "validation.error.llmDataSetStoredQueryNull", TestLlmReportUtil.DATA_BAND_NAME));
+        NotificationInfo notification = UiTestUtils.getLastOpenedNotification();
+        assertThat(notification).isNotNull();
+        assertThat(notification.getMessage()).isEqualToIgnoringNewLines(messages.formatMessage(
+                "io.jmix.reportsflowui.view.report", "validation.error.llmDataSetStoredQueryNull",
+                TestLlmReportUtil.DATA_BAND_NAME));
     }
 
 
@@ -438,13 +437,25 @@ public class LlmDataSetPanelUiTest {
     }
 
     @Test
-    void testBlankPromptPreventsSaving() {
-        View<?> view = openDesignerOnLlmDataSet();
+    void testDataSetWithNeitherAPromptNorAQueryIsSaved() {
+        // An author whose generation failed, or who has not written the prompt yet, keeps the rest of the work.
+        View<?> view = openDesigner(llmReportUtil.createAndSaveReportWithoutStoredQuery());
         this.<JmixTextArea>findComponent(view, "llmPromptField").setValue("");
 
         this.<JmixButton>findComponent(view, "saveBtn").click();
 
-        assertThat(llmReportUtil.loadStoredPrompt()).isEqualTo(TestLlmReportUtil.PROMPT);
+        assertThat(llmReportUtil.loadStoredPrompt()).isNullOrEmpty();
+    }
+
+    @Test
+    void testClearingTheQueryEditorAndSavingLeavesTheDataSetWithoutAQuery() {
+        View<?> view = openDesignerOnLlmDataSet();
+        this.<JmixButton>findComponent(view, "llmEditQueryBtn").click();
+        this.<CodeEditor>findComponent(view, "llmGeneratedQueryCodeEditor").setValue("");
+
+        this.<JmixButton>findComponent(view, "saveBtn").click();
+
+        assertThat(llmReportUtil.loadStoredQuery()).isNull();
     }
 
     @Test
@@ -464,19 +475,6 @@ public class LlmDataSetPanelUiTest {
         assertThat(columnRows(view)).hasSize(3);
         assertThat(dataSet.getLlmGeneratedQuery()).isEqualTo(storedDraftBeforeSave);
     }
-
-    @Test
-    void testDataSetWithoutAStoredQueryPreventsSaving() {
-        // A run executes the stored query and generates nothing, so a data set without one could never run —
-        // the same reason the designer requires the script of a JPQL data set.
-        View<?> view = openDesigner(llmReportUtil.createAndSaveReportWithoutStoredQuery());
-        this.<JmixTextArea>findComponent(view, "llmPromptField").setValue("Orders of the last quarter");
-
-        this.<JmixButton>findComponent(view, "saveBtn").click();
-
-        assertThat(llmReportUtil.loadStoredPrompt()).isEqualTo(TestLlmReportUtil.PROMPT);
-    }
-
 
     @Test
     void testChangingTheViewToReadOnlyLocksAnEditedLlmQuery() {

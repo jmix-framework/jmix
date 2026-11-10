@@ -1168,6 +1168,7 @@ public class ReportDetailView extends StandardDetailView<Report> {
     protected void onRunAction(ActionPerformedEvent event) {
         ValidationErrors errors = new ValidationErrors();
         validateBands(errors);
+        validateLlmQueriesForRun(errors);
         if (errors.isEmpty()) {
             if (validateInputOutputFormats()) {
                 getEditedEntity().setIsTmp(true);
@@ -1247,38 +1248,26 @@ public class ReportDetailView extends StandardDetailView<Report> {
     }
 
     /**
-     * Refuses an LLM data set a run could not use: one without a prompt, and one without a usable query. The
-     * query is required because a run executes that very query and generates nothing — like the script of a
-     * JPQL data set, which the designer requires for the same reason. The prompt is required because it is what
-     * the query can be generated from again.
+     * Refuses an LLM data set whose query a run could not use. Neither the prompt nor the query is required, so
+     * that an author whose generation failed keeps the rest of the work; running a data set without a query is
+     * refused by {@link #validateLlmQueriesForRun(ValidationErrors)} instead.
      */
     protected void validateLlmDataSet(ValidationErrors errors, DataSet dataSet) {
-        if (StringUtils.isBlank(dataSet.getText())) {
-            errors.add(messageBundle.formatMessage("validation.error.llmDataSetPromptNull", dataSet.getName()));
-        }
-
         validateLlmStoredQuery(errors, dataSet);
     }
 
     /**
-     * Refuses a query the data set could not run: a missing one, one whose document is unreadable, and one left
-     * without columns — the band rows are keyed by those, so a query that names none returns nothing a template
-     * could print.
+     * Refuses a query the data set could not run: one whose document is unreadable, and one left without
+     * columns — the band rows are keyed by those, so a query that names none returns nothing a template could
+     * print. A data set without a query passes.
      */
     protected void validateLlmStoredQuery(ValidationErrors errors, DataSet dataSet) {
-        // Validation observes the draft of an unfinished edit but does not finish it, so what it judges is the
-        // query the data set is about to be saved with: the text on screen while it is being edited, and the
-        // stored document otherwise.
-        boolean editing = llmQueryEditing && dataSet == llmEditedDataSet;
-        String query = editing ? llmGeneratedQueryCodeEditor.getValue() : dataSet.getLlmGeneratedQuery();
-
+        String query = llmQueryToValidate(dataSet);
         if (StringUtils.isBlank(query)) {
-            errors.add(messageBundle.formatMessage(
-                    "validation.error.llmDataSetStoredQueryNull", dataSet.getName()));
             return;
         }
 
-        if (editing) {
+        if (llmQueryEditing && dataSet == llmEditedDataSet) {
             // Rows nobody named are ignored just as they will be when the draft is normalized.
             List<String> named = editedLlmQueryColumns().stream().filter(StringUtils::isNotBlank).toList();
             if (named.isEmpty()) {
@@ -1318,6 +1307,37 @@ public class ReportDetailView extends StandardDetailView<Report> {
 
     protected boolean hasDuplicates(List<String> names) {
         return new HashSet<>(names).size() != names.size();
+    }
+
+    /**
+     * Refuses to run a report with an LLM data set that has no query. Saving one is allowed, but a run executes
+     * the stored query and generates nothing, so it would fail only after the parameters have been filled in.
+     */
+    protected void validateLlmQueriesForRun(ValidationErrors errors) {
+        for (BandDefinition band : getEditedEntity().getBands()) {
+            if (band.getDataSets() == null) {
+                continue;
+            }
+
+            for (DataSet dataSet : band.getDataSets()) {
+                if (dataSet.getType() == DataSetType.LLM && StringUtils.isBlank(llmQueryToValidate(dataSet))) {
+                    errors.add(messageBundle.formatMessage(
+                            "validation.error.llmDataSetStoredQueryNull", dataSet.getName()));
+                }
+            }
+        }
+    }
+
+    /**
+     * Returns the query the data set is about to be saved or run with. Validation observes the draft of an
+     * unfinished edit but does not finish it, so this is the text on screen while the query is being edited, and
+     * the stored document otherwise.
+     */
+    @Nullable
+    protected String llmQueryToValidate(DataSet dataSet) {
+        return llmQueryEditing && dataSet == llmEditedDataSet
+                ? llmGeneratedQueryCodeEditor.getValue()
+                : dataSet.getLlmGeneratedQuery();
     }
 
     protected void validateBand(ValidationErrors errors, BandDefinition band, Multimap<String, BandDefinition> names) {

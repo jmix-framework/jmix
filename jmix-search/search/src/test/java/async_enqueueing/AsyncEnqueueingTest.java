@@ -34,6 +34,8 @@ import test_support.TestCommonEntityWrapperManager;
 import test_support.TestIndexingQueueItemsTracker;
 import test_support.TestJpaIndexingQueueManager;
 import test_support.entity.TestRootEntity;
+import test_support.entity.indexing.TestCompositeKey;
+import test_support.entity.indexing.TestCompositePkNoUuidEntity;
 
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -71,6 +73,11 @@ public class AsyncEnqueueingTest {
 
         List<TestRootEntity> entities = dataManager.load(TestRootEntity.class).all().list();
         entities.forEach(entity -> dataManager.remove(entity));
+
+        List<TestCompositePkNoUuidEntity> compositePkEntities = dataManager.load(TestCompositePkNoUuidEntity.class)
+                .all()
+                .list();
+        compositePkEntities.forEach(entity -> dataManager.remove(entity));
     }
 
     @Test
@@ -211,6 +218,29 @@ public class AsyncEnqueueingTest {
     }
 
     @Test
+    @DisplayName("Process enqueueing session for entity with composite primary key and without UUID")
+    void processEnqueueingSession_compositePkWithoutUuid_enqueuesAllOnceAndRemovesSession() {
+        createCompositePkNoUuidEntity("a", 1L);
+        createCompositePkNoUuidEntity("b", 1L);
+        createCompositePkNoUuidEntity("b", 2L);
+        String entityName = metadata.getClass(TestCompositePkNoUuidEntity.class).getName();
+        indexingQueueManager.initAsyncEnqueueIndexAll(entityName);
+
+        int processed = indexingQueueManager.processEnqueueingSession(entityName, 2);
+        int itemsInQueue = indexingQueueItemsTracker.getAmountOfItemsForEntity(entityName, IndexingOperation.INDEX);
+        Assert.assertEquals(3, processed);
+        Assert.assertEquals(3, itemsInQueue);
+
+        List<EnqueueingSession> sessions = dataManager.load(EnqueueingSession.class).all().list();
+        Assert.assertTrue(sessions.isEmpty());
+
+        processed = indexingQueueManager.processEnqueueingSession(entityName, 2);
+        itemsInQueue = indexingQueueItemsTracker.getAmountOfItemsForEntity(entityName, IndexingOperation.INDEX);
+        Assert.assertEquals(0, processed);
+        Assert.assertEquals(3, itemsInQueue);
+    }
+
+    @Test
     @DisplayName("Try to process absent enqueueing session")
     public void processAbsentSession() {
         ewm.createTestRootEntity().save();
@@ -296,6 +326,16 @@ public class AsyncEnqueueingTest {
         Assert.assertEquals(entityName, session.getEntityName());
         Assert.assertEquals(EnqueueingSessionStatus.SUSPENDED, session.getStatus());
         Assert.assertNotNull(session.getLastProcessedValue());
+    }
+
+    void createCompositePkNoUuidEntity(String pkName, Long pkVersion) {
+        TestCompositeKey key = metadata.create(TestCompositeKey.class);
+        key.setPkName(pkName);
+        key.setPkVersion(pkVersion);
+        TestCompositePkNoUuidEntity entity = metadata.create(TestCompositePkNoUuidEntity.class);
+        entity.setId(key);
+        entity.setName(pkName + "-" + pkVersion);
+        dataManager.saveWithoutReload(entity);
     }
 
     protected void initDuringProcessingInternal() throws Exception {

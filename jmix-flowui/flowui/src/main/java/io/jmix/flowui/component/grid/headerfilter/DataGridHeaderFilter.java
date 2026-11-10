@@ -402,10 +402,11 @@ public class DataGridHeaderFilter extends Composite<HorizontalLayout>
                 headerFilterApplyShortcut = enhancedDataGrid.getHeaderFilterApplyShortcut();
             }
 
-            if (column.getHeaderText() != null) {
-                headerComponent = new Span(column.getHeaderText());
-            } else if (column.getHeaderComponent() != null) {
-                headerComponent = column.getHeaderComponent();
+            String headerText = column.getDefaultHeaderText();
+            if (headerText != null) {
+                headerComponent = new Span(headerText);
+            } else if (column.getDefaultHeaderComponent() != null) {
+                headerComponent = column.getDefaultHeaderComponent();
             }
         }
 

@@ -223,11 +223,11 @@ public class JmixGridColumnVisibility extends Composite<JmixMenuBar>
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     protected String getColumnHeaderText(DataGridColumn<?> column) {
-        String headerText = column.getHeaderText();
+        String headerText = column.getDefaultHeaderText();
         if (!Strings.isNullOrEmpty(headerText)) {
             return headerText;
         } else {
-            Component headerComponent = column.getHeaderComponent();
+            Component headerComponent = column.getDefaultHeaderComponent();
             if (headerComponent instanceof HasText hasText) {
                 headerText = hasText.getText();
             }

@@ -17,12 +17,14 @@
 package facet.url_query_parameters
 
 import com.vaadin.flow.router.QueryParameters
+import facet.url_query_parameters.view.DataGridFilterAggregationTopUrlQueryParamsTestView
 import facet.url_query_parameters.view.DataGridFilterUrlQueryParamsTestView
 import io.jmix.flowui.component.grid.DataGridColumn
 import io.jmix.flowui.component.grid.headerfilter.DataGridHeaderFilter
 import io.jmix.flowui.component.propertyfilter.PropertyFilter
 import io.jmix.flowui.facet.UrlQueryParametersFacet
 import io.jmix.flowui.facet.urlqueryparameters.DataGridFilterUrlQueryParametersBinder
+import io.jmix.flowui.view.StandardView
 import org.springframework.boot.test.context.SpringBootTest
 import test_support.spec.FlowuiTestSpecification
 
@@ -149,6 +151,36 @@ class DataGridFilterUrlQueryParametersBinderTest extends FlowuiTestSpecification
         propertyFilter.operation == PropertyFilter.Operation.CONTAINS
     }
 
+    // --- TOP aggregation row ---
+
+    def "header filters under the TOP aggregation row are bound to the URL"() {
+        given: "a view whose grid has the aggregation row under the column headers"
+        def screen = navigateToView(DataGridFilterAggregationTopUrlQueryParamsTestView)
+        def binder = getBinder(screen)
+        def column = screen.ownersTable.getColumnByKey("name") as DataGridColumn<?>
+        def propertyFilter = (column.defaultHeaderComponent as DataGridHeaderFilter).propertyFilter as PropertyFilter<Object>
+
+        and:
+        propertyFilter.operation = PropertyFilter.Operation.CONTAINS
+        propertyFilter.value = "abc"
+
+        when: "the binder emits a URL query parameter"
+        QueryParameters emitted = null
+        binder.addUrlQueryParametersChangeListener({ event -> emitted = event.queryParameters })
+        binder.updateQueryParameters()
+
+        then:
+        emitted != null
+        emitted.parameters.get(PARAM_NAME) == ["name_name_contains_abc"]
+
+        when: "the filter is restored from the URL"
+        propertyFilter.value = null
+        binder.updateState(emitted)
+
+        then:
+        propertyFilter.value == "abc"
+    }
+
     // --- helpers ---
 
     /**
@@ -166,7 +198,7 @@ class DataGridFilterUrlQueryParametersBinderTest extends FlowuiTestSpecification
         return headerFilter.propertyFilter
     }
 
-    private DataGridFilterUrlQueryParametersBinder getBinder(DataGridFilterUrlQueryParamsTestView screen) {
+    private DataGridFilterUrlQueryParametersBinder getBinder(StandardView screen) {
         UrlQueryParametersFacet facet = screen.urlQueryParameters
         return facet.binders
                 .findAll { it instanceof DataGridFilterUrlQueryParametersBinder }

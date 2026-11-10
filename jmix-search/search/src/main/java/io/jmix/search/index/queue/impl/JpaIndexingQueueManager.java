@@ -352,7 +352,7 @@ public class JpaIndexingQueueManager implements IndexingQueueManager {
         log.debug("Next {} enqueuing instances of entity '{}': {}", ids.size(), entityName, ids);
         int processed = processRawIds(ids, entityClass, batchSize);
         log.debug("Processed {} instances of entity '{}'", processed, entityName);
-        if (ids.size() < batchSize) {
+        if (resultHolder.isLastBatch() || ids.size() < batchSize) {
             log.debug("All instances of entity '{}' have been processed", entityName);
             enqueueingSessionManager.removeSession(session);
         } else {

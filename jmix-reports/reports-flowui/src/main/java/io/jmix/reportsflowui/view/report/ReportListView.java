@@ -110,6 +110,8 @@ public class ReportListView extends StandardListView<Report> {
     @Autowired
     protected ReportImportExport reportImportExport;
     @Autowired
+    protected ReportsSerialization reportsSerialization;
+    @Autowired
     protected UiProperties uiProperties;
     @Autowired
     protected CoreProperties coreProperties;
@@ -364,6 +366,8 @@ public class ReportListView extends StandardListView<Report> {
         for (ReportTemplate copiedTemplate : copiedReport.getTemplates()) {
             copiedTemplate.setId(entityUuidGenerator.generate());
         }
+        // The deep copy carries the source report's XML: rebuild it so that an export describes the copy.
+        copiedReport.setXml(reportsSerialization.convertToString(copiedReport));
 
         reportRepository.save(copiedReport);
         return copiedReport;

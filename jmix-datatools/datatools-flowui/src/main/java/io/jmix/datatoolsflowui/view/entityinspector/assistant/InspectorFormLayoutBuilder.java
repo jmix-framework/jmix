@@ -17,6 +17,7 @@
 package io.jmix.datatoolsflowui.view.entityinspector.assistant;
 
 import com.vaadin.flow.component.formlayout.FormLayout;
+import com.vaadin.flow.component.textfield.TextArea;
 import io.jmix.core.AccessManager;
 import io.jmix.core.MessageTools;
 import io.jmix.core.MetadataTools;
@@ -52,6 +53,8 @@ import java.util.List;
 @Component("datatl_EntityInspectorFormBuilder")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class InspectorFormLayoutBuilder {
+
+    protected static final String TEXT_AREA_MAX_HEIGHT = "9.5em";
 
     @Autowired
     protected UiComponents uiComponents;
@@ -225,6 +228,11 @@ public class InspectorFormLayoutBuilder {
             field = pickerField;
         } else {
             field = uiComponentsGenerator.generate(componentContext);
+
+            // A text area grows with its content, so a long multi-line value would push other fields away.
+            if (field instanceof TextArea textArea) {
+                textArea.setMaxHeight(TEXT_AREA_MAX_HEIGHT);
+            }
         }
 
         form.addFormItem(field, getPropertyTitle(metaClass, metaProperty));

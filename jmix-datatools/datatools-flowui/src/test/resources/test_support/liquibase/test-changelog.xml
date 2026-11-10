@@ -55,4 +55,13 @@
                                  referencedTableName="TEST_INSPECTOR_COMPOSITION_MASTER"
                                  referencedColumnNames="ID"/>
     </changeSet>
+
+    <changeSet author="test" id="inspector-lob-entity">
+        <createTable tableName="TEST_INSPECTOR_LOB_ENTITY">
+            <column name="ID" type="${uuid.type}">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="DESCRIPTION" type="clob"/>
+        </createTable>
+    </changeSet>
 </databaseChangeLog>

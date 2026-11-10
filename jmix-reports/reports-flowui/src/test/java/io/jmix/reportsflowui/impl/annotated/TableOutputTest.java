@@ -41,28 +41,10 @@ public class TableOutputTest extends BaseRunReportUiTest {
 
     @Test
     public void testTableOutput() {
-        // given
-        String reportCode = PublishersAndGamesReport.CODE;
-        String startDateStr = "2025-03-01";
-        String endDateStr = "2025-06-01";
-
         // when
-        launchReportFromRunView(reportCode);
-        InputParametersDialog parametersDialog = (InputParametersDialog) dialogWindows.getOpenedDialogWindows()
-                .getCurrentDialog().orElse(null);
-
-        TypedDatePicker startDateField = findInputParametersComponent(parametersDialog, "param_startDate");
-        startDateField.setValue(parseDate(startDateStr));
-        TypedDatePicker endDateField = findInputParametersComponent(parametersDialog, "param_endDate");
-        endDateField.setValue(parseDate(endDateStr));
-
-        JmixButton runButton = findComponent(parametersDialog, "printReportButton");
-        runButton.click();
+        ReportTableView tableOutputDialog = runPublishersAndGamesReport("2025-03-01", "2025-06-01");
 
         // then
-        ReportTableView tableOutputDialog = (ReportTableView) dialogWindows.getOpenedDialogWindows()
-                .getCurrentDialog().orElse(null);
-
         // band #1
         DataGrid<KeyValueEntity> publishersGrid = findComponent(tableOutputDialog, "PublishersTable");
         assertThat(
@@ -88,6 +70,21 @@ public class TableOutputTest extends BaseRunReportUiTest {
         firstItem = gridItems.getItems().iterator().next();
         assertThat((String) firstItem.getValue("name")).isEqualTo("Assassin's Creed");
         assertThat((Long) firstItem.getValue("purchaseCount")).isEqualTo(2);
+    }
+
+    @Test
+    public void testTableOutputShowsBandWithoutRowsAsEmptyGrid() {
+        // when: no games were purchased in 2024
+        ReportTableView tableOutputDialog = runPublishersAndGamesReport("2024-01-01", "2024-12-31");
+
+        // then
+        DataGrid<KeyValueEntity> gamesGrid = findComponent(tableOutputDialog, "GamesTable");
+        assertThat(gamesGrid.getColumns().stream().map(DataGrid.Column::getHeaderText).toList())
+                .containsExactly("Name", "Purchase count");
+
+        DataGridItems<KeyValueEntity> gridItems = gamesGrid.getItems();
+        assertThat(gridItems).isNotNull();
+        assertThat(gridItems.getItems()).isEmpty();
     }
 
     @Test
@@ -119,5 +116,22 @@ public class TableOutputTest extends BaseRunReportUiTest {
                         MultiTemplateTableReport.FIRST_TABLE_TEMPLATE,
                         MultiTemplateTableReport.SECOND_TABLE_TEMPLATE
                 );
+    }
+
+    private ReportTableView runPublishersAndGamesReport(String startDateStr, String endDateStr) {
+        launchReportFromRunView(PublishersAndGamesReport.CODE);
+        InputParametersDialog parametersDialog = (InputParametersDialog) dialogWindows.getOpenedDialogWindows()
+                .getCurrentDialog().orElse(null);
+
+        TypedDatePicker startDateField = findInputParametersComponent(parametersDialog, "param_startDate");
+        startDateField.setValue(parseDate(startDateStr));
+        TypedDatePicker endDateField = findInputParametersComponent(parametersDialog, "param_endDate");
+        endDateField.setValue(parseDate(endDateStr));
+
+        JmixButton runButton = findComponent(parametersDialog, "printReportButton");
+        runButton.click();
+
+        return (ReportTableView) dialogWindows.getOpenedDialogWindows()
+                .getCurrentDialog().orElse(null);
     }
 }

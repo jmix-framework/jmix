@@ -102,7 +102,7 @@ public class JmixTableFormatter extends AbstractFormatter {
             Set<JmixTableData.ColumnInfo> headers = new HashSet<>();
             Set<String> emptyHeaders = new LinkedHashSet<>();
 
-            bandDataList.forEach(bandData -> {
+            getRows(bandDataList).forEach(bandData -> {
                 Map<String, Object> data = bandData.getData();
                 final Entity instance;
                 final String pkName;
@@ -199,7 +199,15 @@ public class JmixTableFormatter extends AbstractFormatter {
             Set<JmixTableData.ColumnInfo> headers = new LinkedHashSet<>();
             Map<String, TemplateTableColumn> emptyHeaders = new LinkedHashMap<>();
 
-            bandDataList.forEach(bandData -> {
+            List<BandData> rows = getRows(bandDataList);
+            if (rows.isEmpty()) {
+                // No values to take the column types from, so the columns of a band without rows are text.
+                for (TemplateTableColumn column : band.getColumns()) {
+                    emptyHeaders.put(transformationKey(column.getKey()), column);
+                }
+            }
+
+            rows.forEach(bandData -> {
                 Map<String, Object> data = bandData.getData();
                 final String pkName;
                 final boolean pkInFetchPlan;
@@ -278,6 +286,16 @@ public class JmixTableFormatter extends AbstractFormatter {
             headerMap.put(bandName, headers);
         }
         return new JmixTableData(transformedData, headerMap);
+    }
+
+    /**
+     * Returns the rows of a band without the empty row that the data extractor puts into a band without data
+     * (see {@code jmix.reports.put-empty-row-if-no-data-selected}): a table shows such a band without rows.
+     */
+    protected List<BandData> getRows(List<BandData> bandDataList) {
+        return bandDataList.stream()
+                .filter(bandData -> !bandData.getData().isEmpty())
+                .toList();
     }
 
     private String getFormattedValue(String bandName, String name, Object value) {

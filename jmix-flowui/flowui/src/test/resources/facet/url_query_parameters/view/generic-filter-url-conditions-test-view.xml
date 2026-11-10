@@ -48,6 +48,10 @@
                 <configuration id="byNameEditable" name="By name, editable operation">
                     <propertyFilter property="name" operation="EQUAL" operationEditable="true"/>
                 </configuration>
+                <configuration id="byNameOperationsList" name="By name, editable operation from a list">
+                    <propertyFilter property="name" operation="EQUAL" operationEditable="true"
+                                    operationsList="EQUAL, CONTAINS"/>
+                </configuration>
             </configurations>
         </genericFilter>
     </layout>

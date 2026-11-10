@@ -44,9 +44,9 @@ import static facet.url_query_parameters.TestGenericFilterUrlBinders.propertyFil
  * Pins the values {@link GenericFilterUrlQueryParametersBinder} gives to the conditions from the URL and
  * the rows it matches them onto: the value of a reference and a date-time attribute on a new row and on
  * a row of a configuration, and what happens to a condition whose operation differs from the one of a
- * row that does not allow changing it. Also checks that the value of a condition that is not used is not
- * parsed, that an operation the attribute does not support is skipped, and that a row added from the URL
- * keeps the classes of its generated value component.
+ * row that does not allow changing it or that its {@code operationsList} excludes. Also checks that
+ * the value of a condition that is not used is not parsed, that an operation the attribute does not support
+ * is skipped, and that a row added from the URL keeps the classes of its generated value component.
  */
 @SpringBootTest
 class GenericFilterUrlConditionsTest extends FlowuiTestSpecification {
@@ -196,6 +196,32 @@ class GenericFilterUrlConditionsTest extends FlowuiTestSpecification {
         def row = rows.first() as PropertyFilter
         row.operation == PropertyFilter.Operation.EQUAL
         row.value == originalValue
+    }
+
+    def "URL operation is applied to an editable row only if the row's operationsList allows it"() {
+        given:
+        def view = navigateToView(GenericFilterUrlConditionsTestView)
+        Configuration byNameOperationsList = view.ownersFilter.getConfiguration("byNameOperationsList")
+
+        when:
+        applyConfiguration(view, "byNameOperationsList", "property:name_${urlOperation}_S")
+
+        then:
+        view.ownersFilter.currentConfiguration.is(byNameOperationsList)
+
+        and:
+        def rows = rowsOf(byNameOperationsList)
+        rows.size() == 1
+
+        and:
+        def row = rows.first() as PropertyFilter
+        row.operation == expectedOperation
+        row.value == expectedValue
+
+        where:
+        urlOperation  | expectedOperation                 | expectedValue
+        "contains"    | PropertyFilter.Operation.CONTAINS | "S"
+        "starts-with" | PropertyFilter.Operation.EQUAL    | null
     }
 
     def "a condition rejected by the property predicate is not value-parsed"() {

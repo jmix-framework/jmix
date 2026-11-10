@@ -483,8 +483,8 @@ public class GenericFilterUrlQueryParametersBinder extends AbstractUrlQueryParam
 
     /**
      * Applies the URL condition to the given property condition of a configuration if it has the same
-     * attribute. The operation of the property condition is changed only if it is editable, and the value
-     * is set only if the operations then match.
+     * attribute. The operation of the property condition is changed only if it is editable and its operations
+     * list, if set, contains the URL operation, and the value is set only if the operations then match.
      *
      * @param configurationComponent the property condition of a configuration
      * @param condition              the condition parsed from the URL
@@ -494,7 +494,10 @@ public class GenericFilterUrlQueryParametersBinder extends AbstractUrlQueryParam
     protected PropertyFilter<?> updatePropertyCondition(PropertyFilter<?> configurationComponent,
                                                         UrlPropertyCondition condition) {
         if (isPropertyMatched(configurationComponent, condition)) {
-            if (configurationComponent.isOperationEditable()) {
+            // An empty operations list means that the condition has no restriction on its operations.
+            List<PropertyFilter.Operation> operationsList = configurationComponent.getOperationsList();
+            if (configurationComponent.isOperationEditable()
+                    && (operationsList.isEmpty() || operationsList.contains(condition.operation()))) {
                 configurationComponent.setOperation(condition.operation());
             }
 

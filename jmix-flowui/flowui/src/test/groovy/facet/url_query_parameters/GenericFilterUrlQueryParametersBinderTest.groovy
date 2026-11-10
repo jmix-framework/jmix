@@ -17,8 +17,10 @@
 package facet.url_query_parameters
 
 import com.vaadin.flow.router.QueryParameters
+import facet.url_query_parameters.view.GenericFilterEditableOpConfigTestView
 import facet.url_query_parameters.view.GenericFilterUrlQueryParamsTestView
 import io.jmix.flowui.component.filter.FilterComponent
+import io.jmix.flowui.component.genericfilter.Configuration
 import io.jmix.flowui.component.propertyfilter.PropertyFilter
 import io.jmix.flowui.facet.urlqueryparameters.GenericFilterUrlQueryParametersBinder
 import org.springframework.boot.test.context.SpringBootTest
@@ -32,7 +34,8 @@ import static facet.url_query_parameters.TestGenericFilterUrlBinders.getBinder
  * {@code property:propertyName_operation_value}: the parser uses
  * {@code substring(separatorIndex + 1)} to grab the value (everything past the second underscore),
  * so underscores inside the value are preserved, and a condition that cannot be applied to the
- * loaded entity is skipped instead of failing the navigation.
+ * loaded entity is skipped instead of failing the navigation. An editable condition of a configuration
+ * takes the URL operation only if its {@code operationsList} allows it.
  */
 @SpringBootTest
 class GenericFilterUrlQueryParametersBinderTest extends FlowuiTestSpecification {
@@ -94,6 +97,36 @@ class GenericFilterUrlQueryParametersBinderTest extends FlowuiTestSpecification 
         propertyFilter.property == "name"
         propertyFilter.operation == PropertyFilter.Operation.CONTAINS
         propertyFilter.value == "abc"
+    }
+
+    def "applies URL operation to an editable configuration condition only if its operationsList allows it"() {
+        given:
+        def view = navigateToView(GenericFilterEditableOpConfigTestView)
+        def binder = getBinder(view)
+        Configuration byNameOperationsList = view.ownersFilter.getConfiguration("byNameOperationsList")
+        String conditionString = "property:name_${urlOperation}_S"
+
+        when:
+        binder.updateState(new QueryParameters([
+                (binder.configurationParam): List.of("byNameOperationsList"),
+                (binder.conditionParam)    : List.of(conditionString)]))
+
+        then:
+        view.ownersFilter.currentConfiguration.is(byNameOperationsList)
+
+        and:
+        def components = byNameOperationsList.rootLogicalFilterComponent.filterComponents
+        components.size() == 1
+
+        and:
+        def propertyFilter = components.first() as PropertyFilter<?>
+        propertyFilter.operation == expectedOperation
+        propertyFilter.value == expectedValue
+
+        where:
+        urlOperation  | expectedOperation                 | expectedValue
+        "contains"    | PropertyFilter.Operation.CONTAINS | "S"
+        "starts-with" | PropertyFilter.Operation.EQUAL    | null
     }
 
     private PropertyFilter<?> applyConditionAndGetPropertyFilter(String conditionString) {

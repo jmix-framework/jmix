@@ -16,14 +16,32 @@
 
 package io.jmix.gradle;
 
-import org.gradle.api.Project;
-import org.gradle.api.tasks.SourceSet;
+import org.gradle.api.artifacts.result.ResolvedComponentResult;
+import org.gradle.api.file.FileCollection;
+import org.gradle.api.logging.Logger;
 
+import java.io.File;
 import java.util.Set;
 
 /**
- * Used in {@link EnhancingAction} to run provider-specific enhancing logic.
+ * Used in {@link EnhancingTask} to run provider-specific enhancing logic.
+ * <p>
+ * Runs at task execution time, so it must not use {@code Project}: everything it needs is passed as parameters.
  */
 public interface PersistenceProviderEnhancing {
-    void run(Project project, SourceSet sourceSet, String enhancedDir, Set<String> allStores);
+
+    /**
+     * @param logger           logger of the enhancing task
+     * @param sourceSetName    name of the enhanced source set
+     * @param compileClasspath root of the resolved compile classpath dependency graph of the source set
+     * @param weavingClasspath classpath for running the provider's weaver
+     * @param workDir          work directory of the enhancing task, contains the generated
+     *                         {@code [store-]persistence/META-INF/persistence.xml} files
+     * @param enhancedDir      directory with the classes to enhance in place
+     * @param allStores        names of the data stores to enhance the classes for
+     * @param debug            whether to start the weaver in debug mode
+     */
+    void run(Logger logger, String sourceSetName, ResolvedComponentResult compileClasspath,
+             FileCollection weavingClasspath, File workDir, String enhancedDir, Set<String> allStores,
+             boolean debug);
 }

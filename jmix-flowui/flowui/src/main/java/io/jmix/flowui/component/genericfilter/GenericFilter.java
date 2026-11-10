@@ -657,6 +657,9 @@ public class GenericFilter extends Composite<JmixDetails>
      * The configuration must already be registered with this filter via
      * {@link #addConfiguration(Configuration)}. If it is not registered, this method
      * logs a warning and does nothing.
+     * <p>
+     * The conditions that are not saved in the previously current configuration, that is, marked as modified
+     * (see {@link Configuration#isFilterComponentModified(FilterComponent)}), are removed from it.
      *
      * @param currentConfiguration a configuration to activate
      */
@@ -724,6 +727,26 @@ public class GenericFilter extends Composite<JmixDetails>
                 ConfigurationChangeEvent configurationChangeEvent =
                         new ConfigurationChangeEvent(this, currentConfiguration, previousConfiguration, fromClient);
                 getEventBus().fireEvent(configurationChangeEvent);
+
+                if (previousConfiguration != null) {
+                    discardUnsavedConditions(previousConfiguration);
+                }
+            }
+        }
+    }
+
+    /**
+     * Removes the conditions that are not saved, that is, marked as modified, from a configuration that is no longer
+     * current, so that the configuration shows its saved conditions when it is selected again.
+     *
+     * @param configuration a configuration that is no longer current
+     */
+    protected void discardUnsavedConditions(Configuration configuration) {
+        LogicalFilterComponent<?> rootComponent = configuration.getRootLogicalFilterComponent();
+        for (FilterComponent filterComponent : List.copyOf(rootComponent.getOwnFilterComponents())) {
+            if (configuration.isFilterComponentModified(filterComponent)) {
+                rootComponent.remove(filterComponent);
+                configuration.setFilterComponentModified(filterComponent, false);
             }
         }
     }

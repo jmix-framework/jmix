@@ -329,6 +329,9 @@ class GenericFilterReNavigationTest extends FlowuiTestSpecification {
         Configuration active = screen.ownersFilter.getConfiguration("active")
         Configuration other = screen.ownersFilter.getConfiguration("other")
 
+        and: "the entry config is saved: an unsaved condition would be removed when switching away"
+        active.setModified(false)
+
         when: "the user edits the name value on the entry config, then switches to another config and back"
         propertyFilterOn(active, "name").setValue("Zoe")
         screen.ownersFilter.setCurrentConfiguration(other)

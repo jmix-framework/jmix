@@ -98,7 +98,7 @@ public class DataGridFilterUrlQueryParametersBinder extends AbstractUrlQueryPara
         for (Grid.Column<?> column : grid.getColumns()) {
             if (column instanceof DataGridColumn<?> dataGridColumn
                     && dataGridColumn.isFilterable()
-                    && dataGridColumn.getHeaderComponent() instanceof DataGridHeaderFilter headerFilter) {
+                    && dataGridColumn.getDefaultHeaderComponent() instanceof DataGridHeaderFilter headerFilter) {
                 PropertyFilter<?> propertyFilter = headerFilter.getPropertyFilter();
 
                 initialStates.add(
@@ -113,7 +113,7 @@ public class DataGridFilterUrlQueryParametersBinder extends AbstractUrlQueryPara
     }
 
     protected void setupColumn(DataGridColumn<?> column) {
-        DataGridHeaderFilter headerFilter = (DataGridHeaderFilter) column.getHeaderComponent();
+        DataGridHeaderFilter headerFilter = (DataGridHeaderFilter) column.getDefaultHeaderComponent();
         headerFilter.addApplyListener(__ -> updateQueryParameters());
     }
 
@@ -121,11 +121,12 @@ public class DataGridFilterUrlQueryParametersBinder extends AbstractUrlQueryPara
         List<String> parameters = grid.getColumns().stream()
                 .filter(column -> column instanceof DataGridColumn<?> dataGridColumn
                         && dataGridColumn.isFilterable()
-                        && dataGridColumn.getHeaderComponent() instanceof DataGridHeaderFilter headerFilter
+                        && dataGridColumn.getDefaultHeaderComponent() instanceof DataGridHeaderFilter headerFilter
                         && headerFilter.isFilterApplied())
                 .map(column -> serializePropertyFilter(
                         column.getKey(),
-                        ((DataGridHeaderFilter) column.getHeaderComponent()).getPropertyFilter())
+                        ((DataGridHeaderFilter) ((DataGridColumn<?>) column).getDefaultHeaderComponent())
+                                .getPropertyFilter())
                 )
                 .toList();
 
@@ -161,7 +162,7 @@ public class DataGridFilterUrlQueryParametersBinder extends AbstractUrlQueryPara
 
             if (column instanceof DataGridColumn<?> dataGridColumn
                     && dataGridColumn.isFilterable()
-                    && dataGridColumn.getHeaderComponent() instanceof DataGridHeaderFilter headerFilter
+                    && dataGridColumn.getDefaultHeaderComponent() instanceof DataGridHeaderFilter headerFilter
                     && initialState.property.equals(headerFilter.getPropertyFilter().getProperty())) {
                 PropertyFilter propertyFilter = headerFilter.getPropertyFilter();
 
@@ -230,7 +231,7 @@ public class DataGridFilterUrlQueryParametersBinder extends AbstractUrlQueryPara
                 .deserialize(PropertyFilter.Operation.class,
                         filterUrlQueryParametersSupport.restoreSeparatorValue(operationString));
 
-        DataGridHeaderFilter headerFilter = (DataGridHeaderFilter) column.getHeaderComponent();
+        DataGridHeaderFilter headerFilter = (DataGridHeaderFilter) column.getDefaultHeaderComponent();
         PropertyFilter propertyFilter = headerFilter.getPropertyFilter();
         propertyFilter.setOperation(operation);
 

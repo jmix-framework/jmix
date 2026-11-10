@@ -68,7 +68,9 @@ public class UserSubstitutionManagerImpl implements UserSubstitutionManager {
             throw new IllegalStateException("UserRepository is not defined");
         }
         return getUserSubstitutions(username, date).stream()
-                .map(userSubstitution -> userRepository.loadUserByUsername(userSubstitution.getSubstitutedUsername()))
+                .map(UserSubstitution::getSubstitutedUsername)
+                .distinct()
+                .map(userRepository::loadUserByUsername)
                 .collect(Collectors.toList());
     }
 

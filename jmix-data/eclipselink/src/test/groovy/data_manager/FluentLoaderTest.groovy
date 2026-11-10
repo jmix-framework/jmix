@@ -431,6 +431,59 @@ class FluentLoaderTest extends DataSpec {
         loadContext.fetchPlan == baseFP
     }
 
+    def "test LoadContext skipNotFoundIds when loading by collection of ids"() {
+        def loader
+        LoadContext loadContext
+
+        when:
+
+        loader = dataManager.load(Customer).ids(customer.id, customer2.id)
+        loadContext = FluentLoaderTestAccess.createLoadContext(loader)
+
+        then:
+
+        !loadContext.skipNotFoundIds
+        !loadContext.copy().skipNotFoundIds
+
+        when:
+
+        loader = dataManager.load(Customer).ids(customer.id, customer2.id).skipNotFound(true)
+        loadContext = FluentLoaderTestAccess.createLoadContext(loader)
+
+        then:
+
+        loadContext.skipNotFoundIds
+        loadContext.copy().skipNotFoundIds
+    }
+
+    def "loading by ids fails if some id is not found"() {
+        when:
+        dataManager.load(Customer).ids(customer2Id, UUID.randomUUID(), customerId).list()
+
+        then:
+        thrown(EntityAccessException)
+    }
+
+    def "loading by ids with skipNotFound returns found entities in the order of ids"() {
+        when:
+        def list = dataManager.load(Customer)
+                .ids(customer2Id, UUID.randomUUID(), customerId)
+                .skipNotFound(true)
+                .list()
+
+        then:
+        list == [customer2, customer]
+
+        when:
+        list = dataManager.load(Customer)
+                .ids(UUID.randomUUID(), UUID.randomUUID())
+                .skipNotFound(true)
+                .list()
+
+        then:
+        list.isEmpty()
+    }
+
     def "test positional params"() {
         def loader
         LoadContext loadContext

@@ -128,6 +128,39 @@ class DataManagerTest extends DataSpec {
         list == [entity1, entity2]
     }
 
+    def "load by collection of composite ids with skipNotFound"() {
+
+        def id1 = new TestEntityKey(tenant: 1, entityId: 1)
+        def id2 = new TestEntityKey(tenant: 1, entityId: 2)
+        def missingId = new TestEntityKey(tenant: 1, entityId: 3)
+
+        def entity1 = new TestCompositeKeyEntity(id: id1, name: 'e1')
+        def entity2 = new TestCompositeKeyEntity(id: id2, name: 'e2')
+
+        dataManager.save(entity1, entity2)
+
+        when:
+
+        dataManager.load(TestCompositeKeyEntity)
+                .ids([id2, missingId, id1])
+                .list()
+
+        then:
+
+        thrown(EntityAccessException)
+
+        when:
+
+        def list = dataManager.load(TestCompositeKeyEntity)
+                .ids([id2, missingId, id1])
+                .skipNotFound(true)
+                .list()
+
+        then:
+
+        list == [entity2, entity1]
+    }
+
     def "load by null id"() {
 
         when:

@@ -469,12 +469,12 @@ public class GenericFilterUrlQueryParametersBinder extends AbstractUrlQueryParam
     }
 
     /**
-     * Sets the condition parameter name for the URL.
+     * Sets the configuration parameter name for the URL.
      *
-     * @param conditionParam the condition parameter name to set
+     * @param configurationParam the configuration parameter name to set
      */
-    public void setConfigurationParam(@Nullable String conditionParam) {
-        this.conditionParam = conditionParam;
+    public void setConfigurationParam(@Nullable String configurationParam) {
+        this.configurationParam = configurationParam;
     }
 
     /**

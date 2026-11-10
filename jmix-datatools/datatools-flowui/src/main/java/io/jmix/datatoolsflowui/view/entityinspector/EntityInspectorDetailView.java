@@ -154,13 +154,6 @@ public class EntityInspectorDetailView extends StandardDetailView<Object> {
         createContent();
     }
 
-    @Subscribe
-    protected void onAfterSave(AfterSaveEvent event) {
-        if (parentDataContainer != null) {
-            parentDataContainer.replaceItem(getEditedEntity());
-        }
-    }
-
     @Override
     protected void setupEntityToEdit(String serializedEntityId) {
         if (Strings.isNullOrEmpty(metadataId)) {
@@ -398,7 +391,12 @@ public class EntityInspectorDetailView extends StandardDetailView<Object> {
                 : readChildrenFromParent(parent, childMeta));
 
         loader.load();
-        dataContext.setModified(parent.getItem(), false);
+        // Loading the children replaces the content of the owner's collection. With the same entities the owner
+        // stays clean, and resetting it would drop the collection baseline that its later changes are measured
+        // against. The owner is reset only when the loaded children differ, e.g. lack the soft-deleted ones.
+        if (dataContext.isModified(parent.getItem())) {
+            dataContext.setModified(parent.getItem(), false);
+        }
         return container;
     }
 

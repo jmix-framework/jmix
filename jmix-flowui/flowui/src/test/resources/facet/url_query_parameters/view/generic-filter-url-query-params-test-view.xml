@@ -30,6 +30,13 @@
         </urlQueryParameters>
     </facets>
     <layout>
-        <genericFilter id="ownersFilter" dataLoader="ownersDl"/>
+        <genericFilter id="ownersFilter" dataLoader="ownersDl">
+            <configurations>
+                <configuration id="byNameOperationsList" name="By name, editable operation from a list">
+                    <propertyFilter property="name" operation="EQUAL" operationEditable="true"
+                                    operationsList="EQUAL, CONTAINS"/>
+                </configuration>
+            </configurations>
+        </genericFilter>
     </layout>
 </view>

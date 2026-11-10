@@ -356,7 +356,10 @@ public class GenericFilterUrlQueryParametersBinder extends AbstractUrlQueryParam
     protected FilterComponent updatePropertyCondition(PropertyFilter configurationComponent,
                                                       PropertyFilter filterComponent) {
         if (isPropertyMatched(configurationComponent, filterComponent)) {
-            if (configurationComponent.isOperationEditable()) {
+            // An empty operations list means that the condition has no restriction on its operations.
+            List<PropertyFilter.Operation> operationsList = configurationComponent.getOperationsList();
+            if (configurationComponent.isOperationEditable()
+                    && (operationsList.isEmpty() || operationsList.contains(filterComponent.getOperation()))) {
                 configurationComponent.setOperation(filterComponent.getOperation());
             }
 

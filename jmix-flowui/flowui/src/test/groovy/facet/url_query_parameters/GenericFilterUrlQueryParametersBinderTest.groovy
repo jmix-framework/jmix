@@ -18,6 +18,7 @@ package facet.url_query_parameters
 
 import com.vaadin.flow.router.QueryParameters
 import facet.url_query_parameters.view.GenericFilterUrlQueryParamsTestView
+import io.jmix.flowui.component.genericfilter.Configuration
 import io.jmix.flowui.component.propertyfilter.PropertyFilter
 import io.jmix.flowui.facet.UrlQueryParametersFacet
 import io.jmix.flowui.facet.urlqueryparameters.GenericFilterUrlQueryParametersBinder
@@ -29,7 +30,8 @@ import test_support.spec.FlowuiTestSpecification
  * underscore-in-value issue. A property condition serialized by the generic filter uses the
  * shape {@code property:propertyName_operation_value}; the parser uses
  * {@code substring(separatorIndex + 1)} to grab the value (everything past the second
- * underscore), so underscores inside the value are preserved.
+ * underscore), so underscores inside the value are preserved. Also checks that a URL operation is
+ * applied to an editable condition of a configuration only if its {@code operationsList} allows it.
  */
 @SpringBootTest
 class GenericFilterUrlQueryParametersBinderTest extends FlowuiTestSpecification {
@@ -67,6 +69,36 @@ class GenericFilterUrlQueryParametersBinderTest extends FlowuiTestSpecification 
         propertyFilter.property == "name"
         propertyFilter.operation == PropertyFilter.Operation.NOT_EQUAL
         propertyFilter.value == "a_b"
+    }
+
+    def "URL operation is applied to an editable condition only if its operationsList allows it"() {
+        given:
+        def screen = navigateToView(GenericFilterUrlQueryParamsTestView)
+        def binder = getBinder(screen)
+        Configuration byNameOperationsList = screen.ownersFilter.getConfiguration("byNameOperationsList")
+
+        when:
+        binder.updateState(new QueryParameters([
+                (binder.configurationParam): ["byNameOperationsList"],
+                (binder.conditionParam)    : ["property:name_${urlOperation}_S".toString()]
+        ]))
+
+        then:
+        screen.ownersFilter.currentConfiguration.is(byNameOperationsList)
+
+        and:
+        def components = byNameOperationsList.rootLogicalFilterComponent.filterComponents
+        components.size() == 1
+
+        and:
+        def propertyFilter = components.first() as PropertyFilter<?>
+        propertyFilter.operation == expectedOperation
+        propertyFilter.value == expectedValue
+
+        where:
+        urlOperation  | expectedOperation                 | expectedValue
+        "contains"    | PropertyFilter.Operation.CONTAINS | "S"
+        "starts-with" | PropertyFilter.Operation.EQUAL    | null
     }
 
     private PropertyFilter<?> applyConditionAndGetPropertyFilter(String conditionString) {

@@ -35,6 +35,7 @@ import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.flowui.Notifications;
 import io.jmix.flowui.component.ListDataComponent;
 import io.jmix.flowui.component.grid.DataGrid;
+import io.jmix.flowui.component.grid.DataGridColumn;
 import io.jmix.flowui.component.grid.EnhancedDataGrid;
 import io.jmix.flowui.component.grid.TreeDataGrid;
 import io.jmix.flowui.component.grid.headerfilter.DataGridHeaderFilter;
@@ -330,9 +331,7 @@ public class ExcelExporter extends AbstractDataGridExporter<ExcelExporter> {
     }
 
     protected String getColumnHeaderText(DataGrid.Column<?> column) {
-        String headerText = !isHeaderRowAppended(column)
-                ? column.getHeaderText()
-                : getDefaultHeaderText(column);
+        String headerText = getDefaultHeaderText(column);
 
         if (!Strings.isNullOrEmpty(headerText)) {
             return headerText;
@@ -355,6 +354,10 @@ public class ExcelExporter extends AbstractDataGridExporter<ExcelExporter> {
 
     @Nullable
     protected String getDefaultHeaderText(Grid.Column<?> column) {
+        if (column instanceof DataGridColumn<?> dataGridColumn) {
+            return dataGridColumn.getDefaultHeaderText();
+        }
+
         HeaderRow defaultHeaderRow = null;
 
         if (column.getGrid() instanceof JmixGrid<?> jmixGrid) {
@@ -364,12 +367,16 @@ public class ExcelExporter extends AbstractDataGridExporter<ExcelExporter> {
         }
 
         return defaultHeaderRow == null
-                ? null
+                ? column.getHeaderText()
                 : defaultHeaderRow.getCell(column).getText();
     }
 
     @Nullable
     protected Component getDefaultHeaderComponent(DataGrid.Column<?> column) {
+        if (column instanceof DataGridColumn<?> dataGridColumn) {
+            return dataGridColumn.getDefaultHeaderComponent();
+        }
+
         HeaderRow defaultHeaderRow = null;
 
         if (column.getGrid() instanceof JmixGrid<?> jmixGrid) {
@@ -379,7 +386,7 @@ public class ExcelExporter extends AbstractDataGridExporter<ExcelExporter> {
         }
 
         return defaultHeaderRow == null
-                ? null
+                ? column.getHeaderComponent()
                 : defaultHeaderRow.getCell(column).getComponent();
     }
 

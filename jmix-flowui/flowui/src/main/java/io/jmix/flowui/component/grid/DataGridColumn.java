@@ -19,11 +19,14 @@ package io.jmix.flowui.component.grid;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.HeaderRow;
 import com.vaadin.flow.data.renderer.Renderer;
 import com.vaadin.flow.data.provider.SortDirection;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.flowui.component.grid.headerfilter.DataGridHeaderFilter;
+import io.jmix.flowui.kit.component.grid.JmixGrid;
+import io.jmix.flowui.kit.component.grid.JmixTreeGrid;
 import io.jmix.flowui.sys.BeanUtil;
 import org.jspecify.annotations.Nullable;
 import org.springframework.beans.BeansException;
@@ -125,6 +128,48 @@ public class DataGridColumn<E> extends Grid.Column<E> implements ApplicationCont
         }
 
         return super.setHeader(headerComponent);
+    }
+
+    /**
+     * Returns the header text of this column in the grid's default header row, i.e. the text set by
+     * {@link #setHeader(String)}. Unlike {@link #getHeaderText()}, the result does not change when a header row
+     * is appended below the default one, e.g. the aggregation row with
+     * {@link EnhancedDataGrid.AggregationPosition#TOP}.
+     *
+     * @return the header text or {@code null} if the header has no text
+     */
+    @Nullable
+    public String getDefaultHeaderText() {
+        HeaderRow defaultHeaderRow = getGridDefaultHeaderRow();
+        return defaultHeaderRow != null
+                ? defaultHeaderRow.getCell(this).getText()
+                : getHeaderText();
+    }
+
+    /**
+     * Returns the header component of this column in the grid's default header row, e.g. the
+     * {@link DataGridHeaderFilter} of a filterable column. Unlike {@link #getHeaderComponent()}, the result does not
+     * change when a header row is appended below the default one, e.g. the aggregation row with
+     * {@link EnhancedDataGrid.AggregationPosition#TOP}.
+     *
+     * @return the header component or {@code null} if the header has no component
+     */
+    @Nullable
+    public Component getDefaultHeaderComponent() {
+        HeaderRow defaultHeaderRow = getGridDefaultHeaderRow();
+        return defaultHeaderRow != null
+                ? defaultHeaderRow.getCell(this).getComponent()
+                : getHeaderComponent();
+    }
+
+    @Nullable
+    protected HeaderRow getGridDefaultHeaderRow() {
+        if (grid instanceof JmixGrid<?> jmixGrid) {
+            return jmixGrid.getDefaultHeaderRow();
+        } else if (grid instanceof JmixTreeGrid<?> jmixTreeGrid) {
+            return jmixTreeGrid.getDefaultHeaderRow();
+        }
+        return null;
     }
 
     @Override

@@ -92,7 +92,7 @@ public class TextComponentReadonlyDataBindingImpl implements TextComponentReadon
     @Override
     public <C extends Component & HasText> Registration bind(C component, InstanceContainer<?> dataContainer,
                                                              String property) {
-        return bindInternal(component, dataContainer, property, value -> updateComponentText(component, value), false);
+        return bindInternal(component, dataContainer, property, value -> updateComponentText(component, value));
     }
 
     @Override
@@ -101,19 +101,18 @@ public class TextComponentReadonlyDataBindingImpl implements TextComponentReadon
         checkNotNullArgument(textSetter);
 
         return bindInternal(component, dataContainer, property,
-                value -> updateComponentText(textSetter, value), true);
+                value -> updateComponentText(textSetter, value));
     }
 
     protected Registration bindInternal(Component component, InstanceContainer<?> dataContainer, String property,
-                                        Consumer<@Nullable Object> valueConsumer, boolean initializeEmpty) {
+                                        Consumer<@Nullable Object> valueConsumer) {
         checkNotNullArgument(component);
         checkNotNullArgument(dataContainer);
         checkNotEmptyString(property);
 
         Object item = dataContainer.getItemOrNull();
-        if (item != null || initializeEmpty) {
-            Object propertyValue = item != null ? EntityValues.getValueEx(item, property) : null;
-            valueConsumer.accept(propertyValue);
+        if (item != null) {
+            valueConsumer.accept(EntityValues.getValueEx(item, property));
         }
 
         Subscription propertyChangeSubscription = dataContainer.addItemPropertyChangeListener(

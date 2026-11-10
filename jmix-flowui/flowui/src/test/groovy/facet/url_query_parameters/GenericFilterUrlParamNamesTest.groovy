@@ -18,12 +18,12 @@ package facet.url_query_parameters
 
 import com.vaadin.flow.router.QueryParameters
 import facet.url_query_parameters.view.GenericFilterUrlParamNamesTestView
+import io.jmix.flowui.component.genericfilter.Configuration
+import io.jmix.flowui.component.propertyfilter.PropertyFilter
+import io.jmix.flowui.facet.UrlQueryParametersFacet
 import io.jmix.flowui.facet.urlqueryparameters.GenericFilterUrlQueryParametersBinder
 import org.springframework.boot.test.context.SpringBootTest
 import test_support.spec.FlowuiTestSpecification
-
-import static facet.url_query_parameters.TestGenericFilterUrlBinders.getBinder
-import static facet.url_query_parameters.TestGenericFilterUrlBinders.propertyFilterOn
 
 /**
  * Checks the URL parameter names of {@link GenericFilterUrlQueryParametersBinder} set by the
@@ -83,5 +83,18 @@ class GenericFilterUrlParamNamesTest extends FlowuiTestSpecification {
         then:
         binder.configurationParam == "ownersFilter_otherCfg"
         binder.conditionParam == "ownersFilter_cnd"
+    }
+
+    private GenericFilterUrlQueryParametersBinder getBinder(GenericFilterUrlParamNamesTestView screen) {
+        UrlQueryParametersFacet facet = screen.urlQueryParameters
+        return facet.binders
+                .findAll { it instanceof GenericFilterUrlQueryParametersBinder }
+                .first() as GenericFilterUrlQueryParametersBinder
+    }
+
+    private PropertyFilter propertyFilterOn(Configuration configuration, String property) {
+        return configuration.rootLogicalFilterComponent.filterComponents.find {
+            it instanceof PropertyFilter && ((PropertyFilter) it).property == property
+        } as PropertyFilter
     }
 }

@@ -156,7 +156,8 @@ public class FluentLoader<E> {
      *          .list();
      * </pre>
      * Entities in the result list have the same order as provided identifiers. If an instance from the list
-     * cannot be loaded for some reason, the whole operation fails with {@code EntityAccessException}.
+     * cannot be loaded for some reason, the whole operation fails with {@code EntityAccessException},
+     * unless {@link ByIds#skipNotFound(boolean)} is set.
      */
     public ByIds<E> ids(Object... ids) {
         return new ByIds<>(this, Arrays.asList(ids));
@@ -172,7 +173,8 @@ public class FluentLoader<E> {
      *          .list();
      * </pre>
      * Entities in the result list have the same order as provided identifiers. If an instance from the list
-     * cannot be loaded for some reason, the whole operation fails with {@code EntityAccessException}.
+     * cannot be loaded for some reason, the whole operation fails with {@code EntityAccessException},
+     * unless {@link ByIds#skipNotFound(boolean)} is set.
      */
     public ByIds<E> ids(Collection<?> ids) {
         return new ByIds<>(this, ids);
@@ -385,6 +387,7 @@ public class FluentLoader<E> {
 
         private FluentLoader<E> loader;
         private Collection<?> ids;
+        private boolean skipNotFound;
 
         protected ByIds(FluentLoader<E> loader, Collection<?> ids) {
             this.loader = loader;
@@ -392,7 +395,9 @@ public class FluentLoader<E> {
         }
 
         LoadContext<E> createLoadContext() {
-            LoadContext<E> loadContext = loader.instantiateLoadContext(loader.metaClass).setIds(ids);
+            LoadContext<E> loadContext = loader.instantiateLoadContext(loader.metaClass)
+                    .setIds(ids)
+                    .setSkipNotFoundIds(skipNotFound);
             loader.initCommonLoadContextParameters(loadContext);
             return loadContext;
         }
@@ -506,6 +511,19 @@ public class FluentLoader<E> {
          */
         public ByIds<E> lockMode(LockModeType lockMode) {
             loader.lockMode = lockMode;
+            return this;
+        }
+
+        /**
+         * Indicates that the identifiers for which no entity is loaded must be skipped. False by default, which means
+         * that the operation fails with {@link EntityAccessException} if any of the entities cannot be loaded.
+         * <p>
+         * When true, the result list contains only the loaded entities, in the order of their identifiers.
+         *
+         * @see LoadContext#setSkipNotFoundIds(boolean)
+         */
+        public ByIds<E> skipNotFound(boolean skip) {
+            this.skipNotFound = skip;
             return this;
         }
     }

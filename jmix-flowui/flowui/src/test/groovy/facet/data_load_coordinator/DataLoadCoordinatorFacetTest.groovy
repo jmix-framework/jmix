@@ -16,6 +16,7 @@
 
 package facet.data_load_coordinator
 
+import facet.data_load_coordinator.screen.DlcAutoMultipleParamsTestScreen
 import facet.data_load_coordinator.screen.DlcAutoProvidedParamTestScreen
 import facet.data_load_coordinator.screen.DlcAutoTestScreen
 import facet.data_load_coordinator.screen.DlcManualNoParamTestScreen
@@ -156,5 +157,65 @@ class DataLoadCoordinatorFacetTest extends FlowuiTestSpecification {
         where:
 
         screenClass << [DlcAutoTestScreen, DlcAutoProvidedParamTestScreen]
+    }
+
+    def "auto configuration with several parameters in query text"() {
+        when: "show screen"
+
+        def screen = navigateToView(DlcAutoMultipleParamsTestScreen)
+
+        then: "loaders with parameters in query text are not triggered"
+
+        screen.events.isEmpty()
+
+        when: "one of two component parameters is set"
+
+        screen.nameFilterField.setValue("o")
+
+        then: "loader gets values of both component parameters"
+
+        screen.events.size() == 1
+        screen.events[0].loader == 'ownersDl'
+        screen.events[0].loadContext.query.parameters['component_nameFilterField'] == '(?i)%o%'
+        screen.events[0].loadContext.query.parameters.containsKey('component_categoryFilterField')
+        screen.events[0].loadContext.query.parameters['component_categoryFilterField'] == null
+
+        when: "the other component parameter is set"
+
+        screen.events.clear()
+        def category = metadata.create(OwnerCategory)
+        screen.categoryFilterField.setValue(category)
+
+        then: "loader gets current values of both component parameters"
+
+        screen.events.size() == 1
+        screen.events[0].loader == 'ownersDl'
+        screen.events[0].loadContext.query.parameters['component_categoryFilterField'] == category
+        screen.events[0].loadContext.query.parameters['component_nameFilterField'] == '(?i)%o%'
+
+        when: "container item is selected"
+
+        screen.events.clear()
+        screen.ownersDc.setItem(screen.ownersDc.getItems()[0])
+
+        then: "loader gets values of container and component parameters"
+
+        screen.events.size() == 1
+        screen.events[0].loader == 'petsDl'
+        screen.events[0].loadContext.query.parameters['container_ownersDc'] == screen.ownersDc.getItem()
+        screen.events[0].loadContext.query.parameters.containsKey('component_petNameFilterField')
+        screen.events[0].loadContext.query.parameters['component_petNameFilterField'] == null
+
+        when: "component parameter of the same loader is set"
+
+        screen.events.clear()
+        screen.petNameFilterField.setValue("M")
+
+        then: "loader gets current values of container and component parameters"
+
+        screen.events.size() == 1
+        screen.events[0].loader == 'petsDl'
+        screen.events[0].loadContext.query.parameters['component_petNameFilterField'] == '(?i)%M%'
+        screen.events[0].loadContext.query.parameters['container_ownersDc'] == screen.ownersDc.getItem()
     }
 }

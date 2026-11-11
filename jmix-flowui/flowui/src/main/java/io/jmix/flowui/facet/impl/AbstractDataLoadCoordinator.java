@@ -88,7 +88,7 @@ public abstract class AbstractDataLoadCoordinator extends AbstractFacet implemen
                 : findSingleParam(loader);
 
         OnContainerItemChangedLoadTrigger loadTrigger = new OnContainerItemChangedLoadTrigger(loader,
-                container, nonNullParam);
+                container, nonNullParam, this);
 
         triggers.add(loadTrigger);
     }
@@ -101,7 +101,7 @@ public abstract class AbstractDataLoadCoordinator extends AbstractFacet implemen
                 : findSingleParam(loader);
 
         OnComponentValueChangedLoadTrigger loadTrigger = new OnComponentValueChangedLoadTrigger(
-                loader, component, nonNullParam, likeClause);
+                loader, component, nonNullParam, likeClause, this);
 
         triggers.add(loadTrigger);
     }

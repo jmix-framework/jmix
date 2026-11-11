@@ -978,12 +978,16 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolylitMixin(LumoInjec
 
             this.$server.getDayCellBottomTextInfo(contexts[0])
                 .then((textInfo) => {
+                    // Drop the text and class names of the previous generation
+                    bottomElement.className = JMIX_DAY_CELL_BOTTOM_TEXT;
+
                     if (!textInfo || !textInfo.text) {
+                        bottomElement.innerText = '';
                         return;
                     }
                     bottomElement.innerText = textInfo.text;
 
-                    if (textInfo.classNames) {
+                    if (textInfo.classNames && textInfo.classNames.length > 0) {
                         bottomElement.classList.add(...textInfo.classNames);
                     }
                 });

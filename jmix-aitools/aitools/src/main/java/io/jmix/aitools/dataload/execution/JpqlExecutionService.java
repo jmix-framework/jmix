@@ -264,13 +264,11 @@ public class JpqlExecutionService {
         try {
             QueryParser queryParser = queryTransformerFactory.parser(jpqlQuery);
             List<Integer> hiddenIndexes = new ArrayList<>();
-            int selectedIndex = 0;
             for (QueryParser.QueryPath queryPath : queryParser.getQueryPaths()) {
-                if (queryPath.isSelectedPath()) {
-                    if (isHiddenSelectedPath(queryPath)) {
-                        hiddenIndexes.add(selectedIndex);
-                    }
-                    selectedIndex++;
+                int selectedIndex = queryPath.getSelectedItemIndex();
+                if (queryPath.isSelectedPath() && selectedIndex >= 0 && !hiddenIndexes.contains(selectedIndex)
+                        && isHiddenSelectedPath(queryPath)) {
+                    hiddenIndexes.add(selectedIndex);
                 }
             }
             return hiddenIndexes;

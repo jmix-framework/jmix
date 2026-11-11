@@ -53,6 +53,8 @@ public abstract class AbstractDataProviderManager {
 
         this.dataSerializer = serializer.createDataSerializer(sourceId, eventKeyMapper);
         this.dataSerializer.setTimeZoneSupplier(fullCalendar::getTimeZone);
+        this.dataSerializer.setDefaultAllDaySupplier(fullCalendar::isDefaultAllDay);
+        this.dataSerializer.setDataProvider(dataProvider);
     }
 
     /**

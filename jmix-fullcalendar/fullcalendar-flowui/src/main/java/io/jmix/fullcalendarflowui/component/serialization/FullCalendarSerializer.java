@@ -19,6 +19,7 @@ package io.jmix.fullcalendarflowui.component.serialization;
 import com.vaadin.flow.data.provider.KeyMapper;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.metamodel.datatype.EnumClass;
+import io.jmix.fullcalendarflowui.component.data.CalendarDataProvider;
 import io.jmix.fullcalendarflowui.component.data.CalendarEvent;
 import io.jmix.fullcalendarflowui.component.model.IncrementalData;
 import io.jmix.fullcalendarflowui.kit.component.model.HasEnumId;
@@ -35,6 +36,7 @@ import tools.jackson.databind.node.ArrayNode;
 
 import java.util.List;
 import java.util.TimeZone;
+import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 
 public class FullCalendarSerializer extends JmixFullCalendarSerializer {
@@ -104,6 +106,28 @@ public class FullCalendarSerializer extends JmixFullCalendarSerializer {
         public void setTimeZoneSupplier(Supplier<TimeZone> timeZoneSupplier) {
             Preconditions.checkNotNullArgument(timeZoneSupplier);
             eventSerializer.setTimeZoneSupplier(timeZoneSupplier);
+        }
+
+        /**
+         * Sets the supplier of the calendar's {@code defaultAllDay} option. It decides whether an event that does
+         * not specify the {@code allDay} property is serialized as an all-day event.
+         *
+         * @param defaultAllDaySupplier supplier of the calendar's {@code defaultAllDay} value
+         */
+        public void setDefaultAllDaySupplier(BooleanSupplier defaultAllDaySupplier) {
+            Preconditions.checkNotNullArgument(defaultAllDaySupplier);
+            eventSerializer.setDefaultAllDaySupplier(defaultAllDaySupplier);
+        }
+
+        /**
+         * Sets the data provider whose events are serialized. Its entity attributes decide whether the dates of an
+         * all-day event are plain dates or moments in time.
+         *
+         * @param dataProvider data provider of the serialized events
+         */
+        public void setDataProvider(CalendarDataProvider dataProvider) {
+            Preconditions.checkNotNullArgument(dataProvider);
+            eventSerializer.setDataProvider(dataProvider);
         }
 
         public JsonNode serializeIncrementalData(IncrementalData incrementalData) {

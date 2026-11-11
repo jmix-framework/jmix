@@ -20,22 +20,32 @@ import com.google.common.base.Splitter;
 import com.vaadin.flow.data.provider.KeyMapper;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.fullcalendarflowui.component.data.CalendarEvent;
+import io.jmix.fullcalendarflowui.component.data.CalendarDataProvider;
 import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.Nullable;
 import tools.jackson.core.JsonGenerator;
 import tools.jackson.databind.SerializationContext;
 import tools.jackson.databind.ser.std.StdSerializer;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
+import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import static io.jmix.fullcalendarflowui.component.data.DataProviderUtils.isEndDateTimeZoneAware;
+import static io.jmix.fullcalendarflowui.component.data.DataProviderUtils.isStartDateTimeZoneAware;
 import static io.jmix.fullcalendarflowui.component.serialization.FullCalendarSerializer.getRawGroupIdOrConstraint;
 import static io.jmix.fullcalendarflowui.kit.component.CalendarDateTimeUtils.transformToZDT;
 
 public class CalendarEventSerializer extends StdSerializer<CalendarEvent> {
+
+    private BooleanSupplier defaultAllDaySupplier = () -> false;
+
+    @Nullable
+    private CalendarDataProvider dataProvider;
 
     protected Supplier<TimeZone> timeZoneSupplier = TimeZone::getDefault;
     protected final KeyMapper<Object> crossDataProviderKeyMapper;
@@ -61,6 +71,28 @@ public class CalendarEventSerializer extends StdSerializer<CalendarEvent> {
         this.timeZoneSupplier = timeZoneSupplier;
     }
 
+    /**
+     * Sets the supplier of the calendar's {@code defaultAllDay} option. It decides whether an event that does not
+     * specify the {@code allDay} property is serialized as an all-day event.
+     *
+     * @param defaultAllDaySupplier supplier of the calendar's {@code defaultAllDay} value
+     */
+    public void setDefaultAllDaySupplier(BooleanSupplier defaultAllDaySupplier) {
+        Preconditions.checkNotNullArgument(defaultAllDaySupplier);
+        this.defaultAllDaySupplier = defaultAllDaySupplier;
+    }
+
+    /**
+     * Sets the data provider whose events are serialized. Its entity attributes decide whether the dates of an
+     * all-day event are plain dates or moments in time.
+     *
+     * @param dataProvider data provider of the serialized events
+     */
+    public void setDataProvider(CalendarDataProvider dataProvider) {
+        Preconditions.checkNotNullArgument(dataProvider);
+        this.dataProvider = dataProvider;
+    }
+
     @Override
     public void serialize(CalendarEvent value, JsonGenerator gen, SerializationContext provider) {
         gen.writeStartObject();
@@ -71,12 +103,15 @@ public class CalendarEventSerializer extends StdSerializer<CalendarEvent> {
 
         serializeNullableValue("allDay", value.getAllDay(), gen, provider);
 
-        serializeNullableValue("start", value.getStartDateTime() != null
-                ? transformToZDT(value.getStartDateTime(), null)
-                : null, gen, provider);
-        serializeNullableValue("end", value.getEndDateTime() != null
-                ? transformToZDT(value.getEndDateTime(), null)
-                : null, gen, provider);
+        boolean allDay = isAllDay(value);
+
+        Object startDateTime = convertDateTime(value.getStartDateTime(),
+                allDay && !isStartDateTimeZoneAware(dataProvider));
+        serializeNullableValue("start", startDateTime, gen, provider);
+
+        Object endDateTime = convertDateTime(value.getEndDateTime(),
+                allDay && !isEndDateTimeZoneAware(dataProvider));
+        serializeNullableValue("end", endDateTime, gen, provider);
 
         serializeNullableValue("title", value.getTitle(), gen, provider);
         serializeNullableValue("description", value.getDescription(), gen, provider);
@@ -105,6 +140,28 @@ public class CalendarEventSerializer extends StdSerializer<CalendarEvent> {
         gen.writeStringProperty("jmixSourceId", sourceId);
 
         gen.writeEndObject();
+    }
+
+    private boolean isAllDay(CalendarEvent value) {
+        Boolean allDay = value.getAllDay();
+        return allDay != null ? allDay : defaultAllDaySupplier.getAsBoolean();
+    }
+
+    /**
+     * Converts the event's date-time to the value sent to the client. A date-only value is shown by the client
+     * on the same day in any time zone. Otherwise, the value is sent as an absolute moment that the client
+     * converts to the calendar's time zone.
+     *
+     * @param dateTime date-time in the system default time zone
+     * @param dateOnly whether to send only the date, without time and offset
+     * @return the value to serialize or {@code null} if the date-time is not set
+     */
+    @Nullable
+    private Object convertDateTime(@Nullable LocalDateTime dateTime, boolean dateOnly) {
+        if (dateTime == null) {
+            return null;
+        }
+        return dateOnly ? dateTime.toLocalDate() : transformToZDT(dateTime, null);
     }
 
     protected void serializeCrossDataProviderField(String property, @Nullable Object value, JsonGenerator gen,

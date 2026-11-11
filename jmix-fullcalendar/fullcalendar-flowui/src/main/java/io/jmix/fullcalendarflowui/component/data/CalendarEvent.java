@@ -83,6 +83,9 @@ public interface CalendarEvent {
      * <p>
      * For {@link EntityCalendarEvent} value automatically transformed from supported by entity date-time object to
      * {@link LocalDateTime}.
+     * <p>
+     * For an all-day event, only the date of this value is used: the time is dropped, and the date is not
+     * converted to the calendar's time zone.
      *
      * @return start date time object that corresponds to system default time zone or {@code null} if not set
      */
@@ -104,6 +107,9 @@ public interface CalendarEvent {
      * <p>
      * For {@link EntityCalendarEvent} value automatically transformed from supported by entity date-time object to
      * {@link LocalDateTime}.
+     * <p>
+     * For an all-day event, only the date of this value is used: the time is dropped, and the date is not
+     * converted to the calendar's time zone.
      *
      * @return end date time value that corresponds to system default time zone or {@code null} if not set
      */
@@ -114,7 +120,7 @@ public interface CalendarEvent {
      * Sets end date time value that corresponds to system default time zone: {@link TimeZone#getDefault()}.
      * <p>
      * Note that this value is <strong>exclusive</strong>. For instance, an event with end property -
-     * {@code 2024-09-03} will appear to span through {code 2024-09-02} but before the start of {@code 2024-09-03}.
+     * {@code 2024-09-03} will appear to span through {@code 2024-09-02} but before the start of {@code 2024-09-03}.
      * <p>
      * For {@link EntityCalendarEvent} value automatically transformed from {@link LocalDateTime} to supported
      * by entity date-time object to.

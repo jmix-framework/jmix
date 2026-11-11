@@ -1612,11 +1612,20 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
     }
 
     protected void applyChangesToCalendarEvent(CalendarEvent calendarEvent, DomCalendarEvent clientEvent) {
+        CalendarDataProvider dataProvider = getDataProviderManager(clientEvent.getSourceId()).getDataProvider();
+
+        boolean startDateOnly = clientEvent.isAllDay() && !DataProviderUtils.isStartDateTimeZoneAware(dataProvider);
+        boolean endDateOnly = clientEvent.isAllDay() && !DataProviderUtils.isEndDateTimeZoneAware(dataProvider);
+
         if (!Strings.isNullOrEmpty(clientEvent.getStart())) {
-            calendarEvent.setStartDateTime(transformToLocalDateTime(clientEvent.getStart()));
+            calendarEvent.setStartDateTime(startDateOnly
+                    ? toLocalDateTime(clientEvent.getStart()).toLocalDate().atStartOfDay()
+                    : transformToLocalDateTime(clientEvent.getStart()));
         }
         if (!Strings.isNullOrEmpty(clientEvent.getEnd())) {
-            calendarEvent.setEndDateTime(transformToLocalDateTime(clientEvent.getEnd()));
+            calendarEvent.setEndDateTime(endDateOnly
+                    ? toLocalDateTime(clientEvent.getEnd()).toLocalDate().atStartOfDay()
+                    : transformToLocalDateTime(clientEvent.getEnd()));
         }
         if (!Objects.equals(calendarEvent.getAllDay(), clientEvent.isAllDay())) {
             calendarEvent.setAllDay(clientEvent.isAllDay());
@@ -1672,13 +1681,24 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
     }
 
     protected AbstractEventMoveEvent.OldValues createOldValues(DomCalendarEvent clientEvent) {
-        LocalDateTime endDateTime = !Strings.isNullOrEmpty(clientEvent.getEnd())
-                ? transformToLocalDateTime(clientEvent.getEnd())
-                : null;
-        return new AbstractEventMoveEvent.OldValues(
-                transformToLocalDateTime(clientEvent.getStart()),
-                endDateTime,
-                clientEvent.isAllDay());
+        CalendarDataProvider dataProvider = getDataProviderManager(clientEvent.getSourceId()).getDataProvider();
+
+        boolean startDateOnly = clientEvent.isAllDay() && !DataProviderUtils.isStartDateTimeZoneAware(dataProvider);
+        boolean endDateOnly = clientEvent.isAllDay() && !DataProviderUtils.isEndDateTimeZoneAware(dataProvider);
+
+        LocalDateTime startDateTime = startDateOnly
+                ? toLocalDateTime(clientEvent.getStart()).toLocalDate().atStartOfDay()
+                : transformToLocalDateTime(clientEvent.getStart());
+
+        LocalDateTime endDateTime = null;
+
+        if (!Strings.isNullOrEmpty(clientEvent.getEnd())) {
+            endDateTime = endDateOnly
+                    ? toLocalDateTime(clientEvent.getEnd()).toLocalDate().atStartOfDay()
+                    : transformToLocalDateTime(clientEvent.getEnd());
+        }
+
+        return new AbstractEventMoveEvent.OldValues(startDateTime, endDateTime, clientEvent.isAllDay());
     }
 
     protected CalendarDuration createDelta(DomCalendarDuration clientDuration) {

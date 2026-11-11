@@ -23,8 +23,11 @@ import io.jmix.flowui.component.SupportsTypedValue;
 import io.jmix.flowui.facet.DataLoadCoordinator;
 import io.jmix.flowui.facet.DataLoadCoordinator.LikeClause;
 import io.jmix.flowui.model.DataLoader;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
 /**
  * Implementation of the {@link DataLoadCoordinator.Trigger} interface that triggers data loading
@@ -35,17 +38,41 @@ import org.slf4j.LoggerFactory;
  * loader's parameter with the new value before initiating a data load. It can also handle LIKE clause
  * formatting for string parameters based on the {@link DataLoadCoordinator.LikeClause} configuration.
  */
-public class OnComponentValueChangedLoadTrigger implements DataLoadCoordinator.Trigger {
+public class OnComponentValueChangedLoadTrigger extends AbstractParameterLoadTrigger {
 
     private static final Logger log = LoggerFactory.getLogger(OnComponentValueChangedLoadTrigger.class);
 
-    protected final DataLoader loader;
     protected final HasValue<?, ?> component;
-    protected final String param;
     protected final LikeClause likeClause;
 
+    /**
+     * @deprecated use {@link #OnComponentValueChangedLoadTrigger(DataLoader, Component, String, LikeClause,
+     * DataLoadCoordinator)}
+     */
+    @Deprecated(since = "3.1.1", forRemoval = true)
     public OnComponentValueChangedLoadTrigger(DataLoader loader, Component component,
                                               String param, LikeClause likeClause) {
+        this(loader, component, param, likeClause, null);
+    }
+
+    /**
+     * Creates a trigger that also sets the missing parameters of the coordinator's other parameter triggers
+     * of the same loader before loading.
+     *
+     * @param loader      loader
+     * @param component   component which must implement {@code HasValue}
+     * @param param       loader parameter
+     * @param likeClause  whether the condition using the parameter is a LIKE clause
+     * @param coordinator the coordinator that owns the trigger
+     * @see AbstractParameterLoadTrigger
+     */
+    public OnComponentValueChangedLoadTrigger(DataLoader loader, Component component,
+                                              String param, LikeClause likeClause,
+                                              @Nullable DataLoadCoordinator coordinator) {
+        super(loader, param, coordinator);
+        checkNotNullArgument(component);
+        checkNotNullArgument(likeClause);
+
         if (!(component instanceof HasValue)) {
             throw new DevelopmentException(String.format(
                     "Invalid component type in load trigger: %s. Expected " + HasValue.class.getSimpleName(),
@@ -53,15 +80,15 @@ public class OnComponentValueChangedLoadTrigger implements DataLoadCoordinator.T
         }
 
         this.likeClause = likeClause;
-        this.loader = loader;
         this.component = (HasValue<?, ?>) component;
-        this.param = param;
 
         this.component.addValueChangeListener(event -> load());
     }
 
     @SuppressWarnings("rawtypes")
-    protected void load() {
+    @Nullable
+    @Override
+    protected Object getParameterValue() {
         Object value = component instanceof SupportsTypedValue
                 ? ((SupportsTypedValue) component).getTypedValue()
                 : component.getValue();
@@ -75,12 +102,6 @@ public class OnComponentValueChangedLoadTrigger implements DataLoadCoordinator.T
                 }
             }
         }
-        loader.setParameter(param, value);
-        loader.load();
-    }
-
-    @Override
-    public DataLoader getLoader() {
-        return loader;
+        return value;
     }
 }

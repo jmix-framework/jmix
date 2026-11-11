@@ -274,6 +274,19 @@ class DataGridHeaderFooterRowsXmlLoadTest extends FlowuiTestSpecification {
         grid.columns*.key == ["number", "date", "amount", "total"]
     }
 
+    def "Moving a column so that a joined group is split keeps the column list"() {
+        given: "A grid with joined header cells"
+        def grid = navigateToView(DataGridHeaderFooterRowsView).headerRowsDataGrid
+
+        when: "Move a column into the middle of a joined group"
+        grid.setColumnPosition(grid.getColumnByKey("amount"), 1)
+
+        then: "The move is rejected and the column list keeps the declared order"
+        thrown(IllegalArgumentException)
+        grid.allColumns*.key == ["number", "date", "amount", "total"]
+        grid.columns*.key == ["number", "date", "amount", "total"]
+    }
+
     def "Throw an exception for a broken header or footer row declaration: #description"() {
         when: "Open a view with a broken row declaration"
         navigateToView(viewClass)

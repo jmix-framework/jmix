@@ -899,13 +899,19 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
                     "to move column: from 0 to %s including bounds", index, columns.size() - 1));
         }
 
-        columns.remove(column);
-        columns.add(index, column);
+        List<Grid.Column<E>> reorderedColumns = new ArrayList<>(columns);
+        reorderedColumns.remove(column);
+        reorderedColumns.add(index, column);
 
         // remove hidden columns by security
-        List<Grid.Column<E>> newColumnOrder = deleteHiddenColumns(columns);
+        List<Grid.Column<E>> newColumnOrder = deleteHiddenColumns(reorderedColumns);
 
+        // The grid rejects an order that splits joined header or footer cells,
+        // so the column list is changed only after the grid accepted the order.
         component.setColumnOrder(newColumnOrder);
+
+        columns.clear();
+        columns.addAll(reorderedColumns);
     }
 
     @SuppressWarnings("unchecked")

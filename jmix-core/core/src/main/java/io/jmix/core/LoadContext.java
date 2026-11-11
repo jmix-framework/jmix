@@ -58,6 +58,7 @@ public class LoadContext<E> implements DataLoadContext, Serializable {
 
     protected boolean loadPartialEntities = true;
     protected boolean joinTransaction = true;
+    protected boolean skipNotFoundIds;
 
     protected Map<String, Serializable> hints; // lazy initialized map
     protected LockModeType lockMode;
@@ -176,6 +177,26 @@ public class LoadContext<E> implements DataLoadContext, Serializable {
     }
 
     /**
+     * @return whether to skip the identifiers passed to {@link #setIds(Collection)} for which no entity is loaded
+     * @see #setSkipNotFoundIds(boolean)
+     */
+    public boolean isSkipNotFoundIds() {
+        return skipNotFoundIds;
+    }
+
+    /**
+     * Sets whether to skip the identifiers passed to {@link #setIds(Collection)} for which no entity is loaded.
+     * <p>
+     * By default ({@code false}), loading by a list of identifiers fails with {@link EntityAccessException} if any
+     * of the entities cannot be loaded. When {@code true}, such identifiers are skipped and the result contains only
+     * the loaded entities, in the order of their identifiers.
+     */
+    public LoadContext<E> setSkipNotFoundIds(boolean skipNotFoundIds) {
+        this.skipNotFoundIds = skipNotFoundIds;
+        return this;
+    }
+
+    /**
      * @return custom hints which are used by the query
      */
     public Map<String, Object> getHints() {
@@ -272,6 +293,7 @@ public class LoadContext<E> implements DataLoadContext, Serializable {
         }
         ctx.accessConstraints.addAll(accessConstraints);
         ctx.joinTransaction = joinTransaction;
+        ctx.skipNotFoundIds = skipNotFoundIds;
         ctx.lockMode = lockMode;
         return ctx;
     }

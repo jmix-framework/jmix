@@ -414,10 +414,11 @@ public abstract class AbstractDataStore implements DataStore {
         Map<Object, Object> idToEntityMap = entities.stream().collect(Collectors.toMap(EntityValues::getId, Function.identity()));
         for (Object id : context.getIds()) {
             Object entity = idToEntityMap.get(id);
-            if (entity == null) {
+            if (entity != null) {
+                result.add(entity);
+            } else if (!context.isSkipNotFoundIds()) {
                 throw new EntityAccessException(context.getEntityMetaClass(), id);
             }
-            result.add(entity);
         }
         return result;
     }

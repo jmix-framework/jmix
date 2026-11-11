@@ -117,6 +117,7 @@ public class JmixDataRepositoryImpl<T, ID> implements JmixDataRepository<T, ID> 
 
         return getSuitableDataManager().load(domainClass)
                 .ids(toCollection(ids))
+                .skipNotFound(true)
                 .hints(getHints())
                 .fetchPlan(fetchPlan)
                 .list();

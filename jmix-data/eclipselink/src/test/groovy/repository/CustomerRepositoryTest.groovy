@@ -157,6 +157,39 @@ class CustomerRepositoryTest extends DataSpec {
         customers.contains(customer2)
     }
 
+    void findAllById_someIdsNotFound_returnsFoundEntities() {
+        when:
+        List<Customer> customers = customerRepository.findAllById([customer2.getId(), UUID.randomUUID(), customer1.getId()])
+        then:
+        customers == [customer2, customer1]
+    }
+
+    void findAllById_noIdsFound_returnsEmptyList() {
+        when:
+        List<Customer> customers = customerRepository.findAllById([UUID.randomUUID()])
+        then:
+        customers.isEmpty()
+    }
+
+    void findAllWithFetchPlan_someIdsNotFound_returnsFoundEntities() {
+        when:
+        List<Customer> customers = customerRepository.findAll(
+                [customer3.getId(), UUID.randomUUID(), customer1.getId()],
+                fetchPlans.builder(Customer).addAll("name").build())
+        then:
+        customers == [customer3, customer1]
+        entityStates.isLoaded(customers.get(0), "name")
+        !entityStates.isLoaded(customers.get(0), "address")
+    }
+
+    void deleteAllById_someIdsNotFound_deletesFoundEntities() {
+        when:
+        customerRepository.deleteAllById([customer1.getId(), UUID.randomUUID()])
+        then:
+        !customerRepository.findById(customer1.getId()).isPresent()
+        customerRepository.findAll().size() == 2
+    }
+
     void testCountCustomersByCity() {
         when:
         long first = customerRepository.countCustomersByAddressCity("Samara")

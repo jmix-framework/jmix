@@ -20,6 +20,9 @@ import io.jmix.flowui.facet.DataLoadCoordinator;
 import io.jmix.flowui.model.DataLoader;
 import io.jmix.flowui.model.InstanceContainer;
 import io.jmix.flowui.model.InstanceContainer.ItemChangeEvent;
+import org.jspecify.annotations.Nullable;
+
+import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
 /**
  * This class implements a load trigger for a {@link DataLoadCoordinator}.
@@ -30,27 +33,42 @@ import io.jmix.flowui.model.InstanceContainer.ItemChangeEvent;
  * and ensures that the corresponding {@link DataLoader} reloads data by updating
  * the specified parameter with the current item from the container.
  */
-public class OnContainerItemChangedLoadTrigger implements DataLoadCoordinator.Trigger {
+public class OnContainerItemChangedLoadTrigger extends AbstractParameterLoadTrigger {
 
-    protected final DataLoader loader;
     protected final InstanceContainer<?> container;
-    protected final String param;
 
+    /**
+     * @deprecated use {@link #OnContainerItemChangedLoadTrigger(DataLoader, InstanceContainer, String,
+     * DataLoadCoordinator)}
+     */
+    @Deprecated(since = "3.1.1", forRemoval = true)
     public OnContainerItemChangedLoadTrigger(DataLoader loader, InstanceContainer<?> container, String param) {
-        this.loader = loader;
+        this(loader, container, param, null);
+    }
+
+    /**
+     * Creates a trigger that also sets the missing parameters of the coordinator's other parameter triggers
+     * of the same loader before loading.
+     *
+     * @param loader      loader
+     * @param container   master data container
+     * @param param       loader parameter
+     * @param coordinator the coordinator that owns the trigger
+     * @see AbstractParameterLoadTrigger
+     */
+    public OnContainerItemChangedLoadTrigger(DataLoader loader, InstanceContainer<?> container, String param,
+                                             @Nullable DataLoadCoordinator coordinator) {
+        super(loader, param, coordinator);
+        checkNotNullArgument(container);
+
         this.container = container;
-        this.param = param;
 
         container.addItemChangeListener(event -> load());
     }
 
-    protected void load() {
-        loader.setParameter(param, container.getItemOrNull());
-        loader.load();
-    }
-
+    @Nullable
     @Override
-    public DataLoader getLoader() {
-        return loader;
+    protected Object getParameterValue() {
+        return container.getItemOrNull();
     }
 }

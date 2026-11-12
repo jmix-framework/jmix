@@ -27,7 +27,7 @@ The process:
 
 ### Working with Code
 
-- Install JDK 17
+- Install JDK 21
 - Install latest IntelliJ IDEA
 - Import `build.gradle` file of the project into the IDE
 - Work on your issue

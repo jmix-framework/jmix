@@ -49,7 +49,7 @@ To learn Jmix, complete the [tutorial](https://docs.jmix.io/jmix/tutorial/index.
     git clone https://github.com/jmix-framework/jmix.git
     ```
 
-- Install JDK 17.
+- Install JDK 21.
 
 - Build and publish the framework modules to the local Maven:
 

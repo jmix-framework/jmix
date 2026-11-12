@@ -26,6 +26,10 @@ import io.jmix.flowui.model.DataContext
 import org.springframework.beans.factory.annotation.Autowired
 import spock.lang.IgnoreIf
 import spock.lang.Unroll
+import test_support.entity.company.Department
+import test_support.entity.company.Employee
+import test_support.entity.petclinic.Address
+import test_support.entity.petclinic.Owner
 import test_support.entity.sales.Order
 import test_support.entity.sales.OrderLine
 import test_support.entity.sales.OrderLineParam
@@ -433,6 +437,88 @@ class DataContextParentTest extends DataContextSpec {
         parentContext.getModified().size() == 0
     }
 
+
+    def "child saves a scalar change into parent when a non-meta getter depends on the attribute"() {
+        DataContext parentContext = factory.createDataContext()
+        Department parentDepartment = parentContext.merge(makeSaved(newDepartment('d1')))
+
+        DataContext childContext = factory.createDataContext()
+        childContext.setParent(parentContext)
+        Department childDepartment = childContext.merge(parentDepartment)
+
+        when: "an attribute that a non-meta getter depends on is changed through its setter"
+        childDepartment.setName('d2')
+
+        then: "the name of the getter is not a modified attribute"
+        childContext.getModifiedAttributes(childDepartment) == ['name'] as Set
+
+        when: "the child context is saved into the parent one"
+        childContext.save()
+
+        then: "the parent context has the change"
+        parentDepartment.name == 'd2'
+        parentContext.getModifiedAttributes(parentDepartment) == ['name'] as Set
+    }
+
+    def "child saves a collection set into parent when a non-meta getter depends on the collection"() {
+        DataContext parentContext = factory.createDataContext()
+        Department parentDepartment = parentContext.merge(makeSaved(newDepartment('d1')))
+
+        DataContext childContext = factory.createDataContext()
+        childContext.setParent(parentContext)
+        Department childDepartment = childContext.merge(parentDepartment)
+
+        when: "the collection that a non-meta getter depends on is replaced through its setter"
+        Employee employee = childContext.create(Employee)
+        employee.name = 'e1'
+        employee.department = childDepartment
+        childDepartment.setEmployees([employee])
+
+        then: "the name of the getter is not a modified attribute"
+        !childContext.getModifiedAttributes(childDepartment).contains('employeesSafely')
+
+        when: "the child context is saved into the parent one"
+        childContext.save()
+
+        then: "the parent context has the new collection"
+        parentDepartment.employees*.name == ['e1']
+        parentContext.isModified(parentDepartment)
+        !parentContext.getModifiedAttributes(parentDepartment).contains('employeesSafely')
+    }
+
+
+    def "child saves an embedded change into parent when a non-meta getter depends on the attribute"() {
+        Owner owner = dataManager.create(Owner)
+        owner.address = dataManager.create(Address)
+        owner.address.line1 = 'l1'
+
+        DataContext parentContext = factory.createDataContext()
+        Owner parentOwner = parentContext.merge(makeSaved(owner))
+
+        DataContext childContext = factory.createDataContext()
+        childContext.setParent(parentContext)
+        Owner childOwner = childContext.merge(parentOwner)
+
+        when: "an embedded attribute that a non-meta getter depends on is changed through its setter"
+        childOwner.address.setLine1('l2')
+
+        then: "the name of the getter is not a modified attribute"
+        childContext.getModifiedAttributes(childOwner) == ['address.line1'] as Set
+
+        when: "the child context is saved into the parent one"
+        childContext.save()
+
+        then: "the parent context has the change"
+        parentOwner.address.line1 == 'l2'
+        parentContext.getModifiedAttributes(parentOwner) == ['address.line1'] as Set
+    }
+
+    Department newDepartment(String name) {
+        Department department = dataManager.create(Department)
+        department.name = name
+        department.employees = []
+        department
+    }
 
     boolean isNew(def entity) {
         entity.__getEntityEntry().isNew()

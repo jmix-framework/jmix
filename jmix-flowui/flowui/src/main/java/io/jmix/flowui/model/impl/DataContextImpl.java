@@ -1814,9 +1814,10 @@ public class DataContextImpl implements DataContextInternal {
                     && changedProperty.getRange().getCardinality().isMany();
             boolean idChange = e.getProperty().equals(primaryKeyPropertyName);
             // to-many properties are tracked via the observable collection wrappers; an id change is
-            // identity bookkeeping (e.g. setId() in a saveDelegate), not a user edit - skip both
-            if (!toMany && !idChange) {
-                boolean reference = changedProperty != null && changedProperty.getRange().isClass();
+            // identity bookkeeping (e.g. setId() in a saveDelegate), not a user edit; a name without
+            // metadata (a read-only getter with @DependsOnProperties) is not an attribute - skip all three
+            if (changedProperty != null && !toMany && !idChange) {
+                boolean reference = changedProperty.getRange().isClass();
                 changeTracker.trackChange(e.getItem(), e.getProperty(), e.getPrevValue(), e.getValue(), reference);
                 // a user set makes the attribute present in memory (even a set to null), so mark it loaded
                 markLoaded(e.getItem(), e.getProperty());
@@ -1853,8 +1854,9 @@ public class DataContextImpl implements DataContextInternal {
             MetaProperty changedProperty = metadata.getClass(e.getItem()).findProperty(e.getProperty());
             boolean toMany = changedProperty != null && changedProperty.getRange().isClass()
                     && changedProperty.getRange().getCardinality().isMany();
-            // to-many properties are tracked via the observable collection wrappers; skip the tracker here
-            if (!toMany) {
+            // to-many properties are tracked via the observable collection wrappers, and a name without
+            // metadata is not an attribute; skip the tracker for both
+            if (changedProperty != null && !toMany) {
                 changeTracker.trackChange(entity, embeddedPropertyName + '.' + e.getProperty(),
                         e.getPrevValue(), e.getValue(), false);
             }

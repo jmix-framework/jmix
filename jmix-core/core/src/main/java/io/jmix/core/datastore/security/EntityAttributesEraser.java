@@ -16,12 +16,13 @@
 
 package io.jmix.core.datastore.security;
 
-import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
+import com.google.common.collect.Multimaps;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.IdentityHashMap;
 import java.util.Map;
 import java.util.function.Predicate;
 
@@ -34,10 +35,12 @@ public interface EntityAttributesEraser {
     void restoreAttributes(Object entity);
 
     class ReferencesCollector {
-        protected Map<Object, ReferencesByEntity> references = new HashMap<>();
+        // Entities and references are kept by identity, see BaseEntityAttributesEraser#collectErasingReferences().
+        protected Map<Object, ReferencesByEntity> references = new IdentityHashMap<>();
 
         protected static class ReferencesByEntity {
-            protected final Multimap<String, Object> referencesByAttributes = HashMultimap.create();
+            protected final Multimap<String, Object> referencesByAttributes = Multimaps.newSetMultimap(
+                    new HashMap<>(), () -> Collections.newSetFromMap(new IdentityHashMap<>()));
 
             public Collection<String> getAttributes() {
                 return referencesByAttributes.keySet();

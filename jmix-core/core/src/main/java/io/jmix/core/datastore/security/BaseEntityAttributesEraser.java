@@ -27,7 +27,8 @@ import io.jmix.core.metamodel.model.MetaProperty;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Collection;
-import java.util.LinkedHashSet;
+import java.util.Collections;
+import java.util.IdentityHashMap;
 import java.util.Set;
 import java.util.function.Predicate;
 
@@ -46,7 +47,9 @@ public abstract class BaseEntityAttributesEraser implements EntityAttributesEras
 
     @Override
     public ReferencesCollector collectErasingReferences(Collection entityList, Predicate predicate) {
-        Set<Object> visited = new LinkedHashSet<>();
+        // Track visited instances by identity: entity hashCode() can be constant (see NullableIdEntityEntry),
+        // and two instances of the same row must both be traversed.
+        Set<Object> visited = Collections.newSetFromMap(new IdentityHashMap<>());
         ReferencesCollector referencesCollector = new ReferencesCollector();
         for (Object entity : entityList) {
             EntityPreconditions.checkEntityType(entity);

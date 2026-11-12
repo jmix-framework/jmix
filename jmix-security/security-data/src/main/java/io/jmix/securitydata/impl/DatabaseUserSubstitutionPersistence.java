@@ -76,7 +76,15 @@ public class DatabaseUserSubstitutionPersistence implements UserSubstitutionPers
 
     @Override
     public UserSubstitutionModel save(UserSubstitutionModel userSubstitutionModel) {
-        UserSubstitutionEntity entity = modelToEntity(userSubstitutionModel);
+        UserSubstitutionEntity entity;
+        if (entityStates.isNew(userSubstitutionModel)) {
+            entity = modelToEntity(userSubstitutionModel);
+        } else {
+            // Apply the model to the loaded record: saving an instance that was not loaded skips its null
+            // attributes, so a cleared date would not be saved.
+            entity = dataManager.load(UserSubstitutionEntity.class).id(userSubstitutionModel.getId()).one();
+            copyModelToEntity(userSubstitutionModel, entity);
+        }
         UserSubstitutionEntity savedEntity = dataManager.save(entity);
         return entityToModel(savedEntity);
     }
@@ -96,12 +104,16 @@ public class DatabaseUserSubstitutionPersistence implements UserSubstitutionPers
     private UserSubstitutionEntity modelToEntity(UserSubstitutionModel model) {
         UserSubstitutionEntity entity = metadata.create(UserSubstitutionEntity.class);
         entity.setId(model.getId());
+        copyModelToEntity(model, entity);
+        entityStates.setNew(entity, entityStates.isNew(model));
+        return entity;
+    }
+
+    private void copyModelToEntity(UserSubstitutionModel model, UserSubstitutionEntity entity) {
         entity.setVersion(model.getVersion());
         entity.setUsername(model.getUsername());
         entity.setSubstitutedUsername(model.getSubstitutedUsername());
         entity.setStartDate(model.getStartDate());
         entity.setEndDate(model.getEndDate());
-        entityStates.setNew(entity, entityStates.isNew(model));
-        return entity;
     }
 }

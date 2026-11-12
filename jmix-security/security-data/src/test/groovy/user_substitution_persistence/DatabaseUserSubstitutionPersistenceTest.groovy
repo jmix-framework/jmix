@@ -162,9 +162,38 @@ class DatabaseUserSubstitutionPersistenceTest extends SecurityDataSpecification 
         entity.endDate == sdf.parse('2026-06-30')
     }
 
-    UUID createRecord() {
+    def "saving a record removed since it was loaded fails"() {
+        def id = createRecord()
+        def model = persistence.load(id)
+        persistence.remove([persistence.load(id)])
+
+        when:
+        model.startDate = null
+        persistence.save(model)
+
+        then:
+        thrown(OptimisticLockException)
+        jdbcTemplate.queryForObject('select count(*) from SEC_USER_SUBSTITUTION', Integer) == 1
+        jdbcTemplate.queryForObject('select DELETE_TS from SEC_USER_SUBSTITUTION where ID = ?', Date, id.toString()) != null
+    }
+
+    def "removed records are no longer loaded"() {
+        def removedId = createRecord()
+        def keptId = createRecord()
+        def otherUserId = createRecord('user3')
+
+        when:
+        persistence.remove(persistence.loadSubstitutionsOf('user1').findAll { it.id == removedId })
+
+        then:
+        persistence.loadSubstitutionsOf('user1')*.id == [keptId]
+        persistence.loadSubstitutionsOf('user3')*.id == [otherUserId]
+        jdbcTemplate.queryForObject('select DELETE_TS from SEC_USER_SUBSTITUTION where ID = ?', Date, removedId.toString()) != null
+    }
+
+    UUID createRecord(String username = 'user1') {
         def entity = dataManager.create(UserSubstitutionEntity)
-        entity.username = 'user1'
+        entity.username = username
         entity.substitutedUsername = 'user2'
         entity.startDate = sdf.parse('2026-01-01')
         entity.endDate = sdf.parse('2026-12-31')

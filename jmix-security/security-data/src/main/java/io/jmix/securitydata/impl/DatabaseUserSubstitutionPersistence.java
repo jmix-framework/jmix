@@ -21,6 +21,7 @@ import io.jmix.core.accesscontext.CrudEntityContext;
 import io.jmix.security.usersubstitution.UserSubstitutionModel;
 import io.jmix.security.usersubstitution.UserSubstitutionPersistence;
 import io.jmix.securitydata.entity.UserSubstitutionEntity;
+import jakarta.persistence.OptimisticLockException;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
@@ -82,7 +83,12 @@ public class DatabaseUserSubstitutionPersistence implements UserSubstitutionPers
         } else {
             // Apply the model to the loaded record: saving an instance that was not loaded skips its null
             // attributes, so a cleared date would not be saved.
-            entity = dataManager.load(UserSubstitutionEntity.class).id(userSubstitutionModel.getId()).one();
+            entity = dataManager.load(UserSubstitutionEntity.class)
+                    .id(userSubstitutionModel.getId())
+                    .optional()
+                    .orElseThrow(() -> new OptimisticLockException(String.format(
+                            "User substitution %s has been removed or is not accessible",
+                            userSubstitutionModel.getId())));
             copyModelToEntity(userSubstitutionModel, entity);
         }
         UserSubstitutionEntity savedEntity = dataManager.save(entity);

@@ -266,6 +266,22 @@ public class AsyncEnqueueingTest {
     }
 
     @Test
+    @DisplayName("Enqueue all instances of entity with composite primary key, without UUID and with descendants")
+    void enqueueIndexAll_compositePkWithoutUuidWithDescendants_enqueuesOnlyEntityInstances() {
+        TestCompositePkNoUuidParentEntity parent =
+                createCompositePkNoUuidParentEntity(TestCompositePkNoUuidParentEntity.class, "parent");
+        createCompositePkNoUuidParentEntity(TestCompositePkNoUuidChildEntity.class, "child");
+        String entityName = metadata.getClass(TestCompositePkNoUuidParentEntity.class).getName();
+
+        int enqueued = indexingQueueManager.enqueueIndexAll(entityName);
+        int itemsInQueue = indexingQueueItemsTracker.getAmountOfItemsForEntity(entityName, IndexingOperation.INDEX);
+        Assert.assertEquals(1, enqueued);
+        Assert.assertEquals(1, itemsInQueue);
+        Assert.assertTrue(indexingQueueItemsTracker
+                .containsQueueItemsForEntityAndOperation(parent, IndexingOperation.INDEX, 1));
+    }
+
+    @Test
     @DisplayName("Try to process absent enqueueing session")
     public void processAbsentSession() {
         ewm.createTestRootEntity().save();

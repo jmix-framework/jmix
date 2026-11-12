@@ -210,7 +210,15 @@ class ViewTemplateReadViewTest extends FlowuiTestSpecification {
         def instance = root.element("data").element("instance")
 
         then: "the composition is fetched and loaded into a nested container"
-        instance.element("fetchPlan").elements("property")*.attributeValue("name").contains("lines")
+        def linesProperty = instance.element("fetchPlan").elements("property").find { it.attributeValue("name") == "lines" }
+        linesProperty.attributeValue("fetchPlan") == "_base"
+
+        and: "the reference column of the composition is fetched with _base to have its instance name"
+        linesProperty.elements("property").collect {
+            [it.attributeValue("name"), it.attributeValue("fetchPlan")]
+        } == [["customer", "_base"]]
+
+        and: "a nested container is declared for the composition"
         instance.elements("collection")*.attributeValue("id") == ["linesDc"]
         instance.element("collection").attributeValue("property") == "lines"
 
@@ -226,7 +234,7 @@ class ViewTemplateReadViewTest extends FlowuiTestSpecification {
         def grid = content.element("dataGrid")
         grid.attributeValue("id") == "linesDataGrid"
         grid.attributeValue("dataContainer") == "linesDc"
-        grid.element("columns").elements("column")*.attributeValue("property") == ["description", "quantity"]
+        grid.element("columns").elements("column")*.attributeValue("property") == ["description", "quantity", "customer"]
 
         and: "reading the line in a dialog is the only action it carries"
         def actions = grid.element("actions").elements()

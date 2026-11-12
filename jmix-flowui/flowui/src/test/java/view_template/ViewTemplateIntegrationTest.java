@@ -24,7 +24,9 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteConfiguration;
 import com.vaadin.flow.router.RouteParameters;
 import io.jmix.core.DataManager;
+import io.jmix.core.EntityStates;
 import io.jmix.core.Metadata;
+import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.flowui.DialogWindows;
 import io.jmix.flowui.ViewNavigators;
@@ -46,13 +48,20 @@ import io.jmix.flowui.view.template.impl.TemplateDetailView;
 import io.jmix.flowui.view.template.impl.TemplateListView;
 import io.jmix.flowui.view.template.impl.ViewTemplateDefinitions;
 import io.jmix.flowui.view.template.impl.ViewTemplateDescriptorRegistry;
+import org.dom4j.Document;
+import org.dom4j.DocumentException;
+import org.dom4j.DocumentHelper;
+import org.dom4j.Element;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.util.ReflectionTestUtils;
 import test_support.FlowuiTestConfiguration;
+import test_support.entity.sales.Customer;
 import test_support.entity.viewtemplate.ViewTemplateBindingsEntity;
 import test_support.entity.viewtemplate.ViewTemplateFilteringEntity;
+import test_support.entity.viewtemplate.ViewTemplateLineEntity;
 import test_support.entity.viewtemplate.ViewTemplateMasterEntity;
 import test_support.entity.viewtemplate.ViewTemplateParamsEntity;
 import test_support.entity.viewtemplate.ViewTemplateTestEntity;
@@ -122,6 +131,15 @@ public class ViewTemplateIntegrationTest {
     ViewTemplateDefinitions viewTemplateDefinitions;
     @Autowired
     ViewTemplateDescriptorRegistry viewTemplateDescriptorRegistry;
+
+    @Autowired
+    MetadataTools metadataTools;
+
+    @Autowired
+    EntityStates entityStates;
+
+    @Autowired
+    JdbcTemplate jdbcTemplate;
 
     @Test
     void testRefreshRerendersDescriptorFromCurrentMetadata() {
@@ -373,7 +391,7 @@ public class ViewTemplateIntegrationTest {
         String detailDescriptor = getDescriptor(MASTER_DETAIL_VIEW_ID);
 
         // Composition collection is fetched and gets a nested container
-        assertTrue(detailDescriptor.contains("<property name=\"lines\" fetchPlan=\"_base\"/>"));
+        assertTrue(detailDescriptor.contains("<property name=\"lines\" fetchPlan=\"_base\">"));
         assertTrue(detailDescriptor.contains("<collection id=\"linesDc\" property=\"lines\"/>"));
 
         // TabSheet with a general tab holding the form
@@ -394,10 +412,68 @@ public class ViewTemplateIntegrationTest {
         assertTrue(detailDescriptor.contains("<property name=\"openMode\" value=\"DIALOG\"/>"));
         assertTrue(detailDescriptor.contains("<column property=\"description\"/>"));
         assertTrue(detailDescriptor.contains("<column property=\"quantity\"/>"));
+        assertTrue(detailDescriptor.contains("<column property=\"customer\"/>"));
         assertFalse(detailDescriptor.contains("<column property=\"master\"/>"));
 
         // Association collection is NOT rendered
         assertFalse(detailDescriptor.contains("relatedCustomers"));
+    }
+
+    @Test
+    void testDetailTemplateFetchesReferenceColumnsOfCompositionCollection() throws DocumentException {
+        Document document = DocumentHelper.parseText(getDescriptor(MASTER_DETAIL_VIEW_ID));
+        Element fetchPlan = document.getRootElement().element("data").element("instance").element("fetchPlan");
+        Element linesProperty = fetchPlan.elements("property").stream()
+                .filter(property -> "lines".equals(property.attributeValue("name")))
+                .findFirst()
+                .orElseThrow();
+
+        // Only the reference column gets a nested property, loaded with _base to have its instance name
+        assertEquals("_base", linesProperty.attributeValue("fetchPlan"));
+        List<Element> nestedProperties = linesProperty.elements("property");
+        assertEquals(1, nestedProperties.size());
+        assertEquals("customer", nestedProperties.get(0).attributeValue("name"));
+        assertEquals("_base", nestedProperties.get(0).attributeValue("fetchPlan"));
+    }
+
+    @Test
+    void testDetailTemplateShowsReferenceColumnOfCompositionCollectionAfterReopening() {
+        Customer customer = dataManager.create(Customer.class);
+        customer.setName("Mayak");
+
+        ViewTemplateMasterEntity master = dataManager.create(ViewTemplateMasterEntity.class);
+        master.setName("master");
+
+        ViewTemplateLineEntity line = dataManager.create(ViewTemplateLineEntity.class);
+        line.setDescription("Partner");
+        line.setMaster(master);
+        line.setCustomer(customer);
+
+        dataManager.save(customer, master, line);
+
+        try {
+            navigationSupport.navigate(LIST_VIEW_ID);
+            View<?> listView = UiTestUtils.getCurrentView();
+
+            viewNavigators.detailView(listView, ViewTemplateMasterEntity.class)
+                    .editEntity(master)
+                    .navigate();
+
+            View<?> detailView = UiTestUtils.getCurrentView();
+            assertEquals(MASTER_DETAIL_VIEW_ID, detailView.getId().orElseThrow());
+
+            CollectionContainer<ViewTemplateLineEntity> linesDc =
+                    ViewControllerUtils.getViewData(detailView).getContainer("linesDc");
+            ViewTemplateLineEntity loadedLine = linesDc.getItems().get(0);
+
+            assertTrue(entityStates.isLoaded(loadedLine, "customer"));
+            assertEquals("Mayak", metadataTools.getInstanceName(loadedLine.getCustomer()));
+        } finally {
+            // Only the rows this test created: other test classes share the database and the customer table.
+            jdbcTemplate.update("delete from TEST_VIEW_TEMPLATE_LINE where ID = ?", line.getId());
+            jdbcTemplate.update("delete from TEST_VIEW_TEMPLATE_MASTER where ID = ?", master.getId());
+            jdbcTemplate.update("delete from TEST_CUSTOMER where ID = ?", customer.getId());
+        }
     }
 
     @Test

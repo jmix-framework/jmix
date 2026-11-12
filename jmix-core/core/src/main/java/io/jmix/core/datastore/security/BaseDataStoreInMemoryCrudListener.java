@@ -19,7 +19,9 @@ package io.jmix.core.datastore.security;
 import io.jmix.core.*;
 import io.jmix.core.accesscontext.InMemoryCrudEntityContext;
 import io.jmix.core.datastore.*;
+import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.security.AccessDeniedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,6 +33,8 @@ import java.util.*;
 public abstract class BaseDataStoreInMemoryCrudListener implements DataStoreEventListener {
 
     private static final Logger log = LoggerFactory.getLogger(BaseDataStoreInMemoryCrudListener.class);
+
+    private static final String ERASED_REFERENCES_COLLECTORS = "erasedReferencesCollectors";
 
     @Autowired
     protected AccessManager accessManager;
@@ -106,16 +110,73 @@ public abstract class BaseDataStoreInMemoryCrudListener implements DataStoreEven
                     }
                     return readPermitted;
                 });
-        event.getEventState().setValue("erasedReferences", references);
+        // A paged load fires this event once per query, so the references of all queries are kept.
+        List<EntityAttributesEraser.ReferencesCollector> collectors = getReferencesCollectors(event.getEventState());
+        if (collectors.isEmpty()) {
+            event.getEventState().setValue(ERASED_REFERENCES_COLLECTORS, collectors);
+        }
+        collectors.add(references);
     }
 
     @Override
     public void afterEntityLoad(DataStoreAfterEntityLoadEvent event) {
-        EntityAttributesEraser.ReferencesCollector references =
-                (EntityAttributesEraser.ReferencesCollector) event.getEventState().getValue("erasedReferences");
-        if (references != null) {
-            getEntityAttributesEraser().eraseReferences(references);
+        List<EntityAttributesEraser.ReferencesCollector> collectors = getReferencesCollectors(event.getEventState());
+        if (collectors.size() == 1) {
+            // One query: all permitted entities it loaded are returned.
+            getEntityAttributesEraser().eraseReferences(collectors.get(0));
+        } else if (collectors.size() > 1) {
+            // Several queries of a paged load: entities outside the page are not returned and must stay unchanged.
+            Set<Object> returnedEntities = collectReachableEntities(event.getResultEntities());
+            EntityAttributesEraser.ReferencesCollector returnedReferences = new EntityAttributesEraser.ReferencesCollector();
+            for (EntityAttributesEraser.ReferencesCollector collector : collectors) {
+                for (Object entity : collector.getEntities()) {
+                    if (returnedEntities.contains(entity)) {
+                        for (String attribute : collector.getAttributes(entity)) {
+                            for (Object reference : collector.getReferencesByAttribute(entity, attribute)) {
+                                returnedReferences.addReference(entity, reference, attribute);
+                            }
+                        }
+                    }
+                }
+            }
+            getEntityAttributesEraser().eraseReferences(returnedReferences);
         }
+    }
+
+    @SuppressWarnings("unchecked")
+    protected List<EntityAttributesEraser.ReferencesCollector> getReferencesCollectors(EventSharedState eventState) {
+        Object collectors = eventState.getValue(ERASED_REFERENCES_COLLECTORS);
+        return collectors == null ? new ArrayList<>() : (List<EntityAttributesEraser.ReferencesCollector>) collectors;
+    }
+
+    /**
+     * Returns the given entities and all entities reachable from them through loaded reference attributes.
+     * Entities are compared by identity. Attributes that are not loaded are skipped, so nothing is loaded lazily.
+     */
+    protected Set<Object> collectReachableEntities(Collection<?> entities) {
+        Set<Object> reachable = Collections.newSetFromMap(new IdentityHashMap<>());
+        Deque<Object> toVisit = new ArrayDeque<>(entities);
+        while (!toVisit.isEmpty()) {
+            Object entity = toVisit.pop();
+            if (!reachable.add(entity)) {
+                continue;
+            }
+            for (MetaProperty property : metadata.getClass(entity).getProperties()) {
+                if (property.getRange().isClass() && entityStates.isLoaded(entity, property.getName())) {
+                    Object value = EntityValues.getValue(entity, property.getName());
+                    if (value instanceof Collection<?> collection) {
+                        for (Object item : collection) {
+                            if (item != null) {
+                                toVisit.push(item);
+                            }
+                        }
+                    } else if (value != null) {
+                        toVisit.push(value);
+                    }
+                }
+            }
+        }
+        return reachable;
     }
 
     @Override

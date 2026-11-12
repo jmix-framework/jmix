@@ -35,7 +35,9 @@ import test_support.TestIndexingQueueItemsTracker;
 import test_support.TestJpaIndexingQueueManager;
 import test_support.entity.TestRootEntity;
 import test_support.entity.indexing.TestCompositeKey;
+import test_support.entity.indexing.TestCompositePkNoUuidChildEntity;
 import test_support.entity.indexing.TestCompositePkNoUuidEntity;
+import test_support.entity.indexing.TestCompositePkNoUuidParentEntity;
 
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -78,6 +80,12 @@ public class AsyncEnqueueingTest {
                 .all()
                 .list();
         compositePkEntities.forEach(entity -> dataManager.remove(entity));
+
+        List<TestCompositePkNoUuidParentEntity> compositePkParentEntities = dataManager
+                .load(TestCompositePkNoUuidParentEntity.class)
+                .all()
+                .list();
+        compositePkParentEntities.forEach(entity -> dataManager.remove(entity));
     }
 
     @Test
@@ -241,6 +249,39 @@ public class AsyncEnqueueingTest {
     }
 
     @Test
+    @DisplayName("Process enqueueing session for entity with composite primary key, without UUID and with descendants")
+    void processEnqueueingSession_compositePkWithoutUuidWithDescendants_enqueuesOnlyEntityInstances() {
+        TestCompositePkNoUuidParentEntity parent =
+                createCompositePkNoUuidParentEntity(TestCompositePkNoUuidParentEntity.class, "parent");
+        createCompositePkNoUuidParentEntity(TestCompositePkNoUuidChildEntity.class, "child");
+        String entityName = metadata.getClass(TestCompositePkNoUuidParentEntity.class).getName();
+        indexingQueueManager.initAsyncEnqueueIndexAll(entityName);
+
+        int processed = indexingQueueManager.processEnqueueingSession(entityName, 10);
+        int itemsInQueue = indexingQueueItemsTracker.getAmountOfItemsForEntity(entityName, IndexingOperation.INDEX);
+        Assert.assertEquals(1, processed);
+        Assert.assertEquals(1, itemsInQueue);
+        Assert.assertTrue(indexingQueueItemsTracker
+                .containsQueueItemsForEntityAndOperation(parent, IndexingOperation.INDEX, 1));
+    }
+
+    @Test
+    @DisplayName("Enqueue all instances of entity with composite primary key, without UUID and with descendants")
+    void enqueueIndexAll_compositePkWithoutUuidWithDescendants_enqueuesOnlyEntityInstances() {
+        TestCompositePkNoUuidParentEntity parent =
+                createCompositePkNoUuidParentEntity(TestCompositePkNoUuidParentEntity.class, "parent");
+        createCompositePkNoUuidParentEntity(TestCompositePkNoUuidChildEntity.class, "child");
+        String entityName = metadata.getClass(TestCompositePkNoUuidParentEntity.class).getName();
+
+        int enqueued = indexingQueueManager.enqueueIndexAll(entityName);
+        int itemsInQueue = indexingQueueItemsTracker.getAmountOfItemsForEntity(entityName, IndexingOperation.INDEX);
+        Assert.assertEquals(1, enqueued);
+        Assert.assertEquals(1, itemsInQueue);
+        Assert.assertTrue(indexingQueueItemsTracker
+                .containsQueueItemsForEntityAndOperation(parent, IndexingOperation.INDEX, 1));
+    }
+
+    @Test
     @DisplayName("Try to process absent enqueueing session")
     public void processAbsentSession() {
         ewm.createTestRootEntity().save();
@@ -336,6 +377,17 @@ public class AsyncEnqueueingTest {
         entity.setId(key);
         entity.setName(pkName + "-" + pkVersion);
         dataManager.saveWithoutReload(entity);
+    }
+
+    <T extends TestCompositePkNoUuidParentEntity> T createCompositePkNoUuidParentEntity(Class<T> entityClass,
+                                                                                          String pkName) {
+        TestCompositeKey key = metadata.create(TestCompositeKey.class);
+        key.setPkName(pkName);
+        key.setPkVersion(1L);
+        T entity = metadata.create(entityClass);
+        entity.setId(key);
+        entity.setName(pkName);
+        return dataManager.save(entity);
     }
 
     protected void initDuringProcessingInternal() throws Exception {

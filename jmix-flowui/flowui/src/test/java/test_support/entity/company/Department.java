@@ -17,6 +17,7 @@
 package test_support.entity.company;
 
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
+import io.jmix.core.metamodel.annotation.DependsOnProperties;
 import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 import jakarta.persistence.Column;
@@ -25,6 +26,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -70,5 +72,16 @@ public class Department {
 
     public void setEmployees(List<Employee> employees) {
         this.employees = employees;
+    }
+
+    // Read-only getters that are not meta-properties, see jmix-framework/jmix#5914.
+    @DependsOnProperties("name")
+    public String getNameOrEmpty() {
+        return name == null ? "" : name;
+    }
+
+    @DependsOnProperties("employees")
+    public List<Employee> getEmployeesSafely() {
+        return employees == null ? new ArrayList<>() : employees;
     }
 }

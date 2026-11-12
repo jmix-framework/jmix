@@ -16,6 +16,7 @@
 
 package test_support.entity.petclinic;
 
+import io.jmix.core.metamodel.annotation.DependsOnProperties;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 
 import jakarta.persistence.*;
@@ -81,5 +82,11 @@ public class Address {
 
     public void setLine1(String line1) {
         this.line1 = line1;
+    }
+
+    // A read-only getter that is not a meta-property, see jmix-framework/jmix#5914.
+    @DependsOnProperties("line1")
+    public String getLine1OrEmpty() {
+        return line1 == null ? "" : line1;
     }
 }

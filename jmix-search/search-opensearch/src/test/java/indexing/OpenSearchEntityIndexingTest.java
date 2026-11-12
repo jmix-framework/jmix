@@ -175,6 +175,32 @@ public class OpenSearchEntityIndexingTest {
     }
 
     @Test
+    @DisplayName("Indexing by ids of entity with Composite primary key skips instances of its descendants")
+    void indexCollectionByEntityIds_compositePkWithDescendants_skipsDescendantInstances() {
+        TestCompositePkNoUuidParentEntity parent = createCompositePkNoUuidParentEntity(
+                TestCompositePkNoUuidParentEntity.class, "Composite PK parent entity");
+        TestCompositePkNoUuidChildEntity child = createCompositePkNoUuidParentEntity(
+                TestCompositePkNoUuidChildEntity.class, "Composite PK child entity");
+
+        JsonNode jsonNode = TestJsonUtils.readJsonFromFile("indexing/test_content_composite_pk_parent");
+        TestBulkRequestIndexActionValidationData expectedIndexAction = new TestBulkRequestIndexActionValidationData(
+                "search_index_test_compositepknouuidparententity",
+                idSerialization.idToString(Id.of(parent)),
+                jsonNode
+        );
+        TestBulkRequestValidationData expectedData = new TestBulkRequestValidationData(
+                Collections.singletonList(expectedIndexAction),
+                Collections.emptyList());
+
+        List<Id<?>> entityIds = List.of(Id.of(parent), Id.of(child.getId(), TestCompositePkNoUuidParentEntity.class));
+        entityIndexer.indexCollectionByEntityIds(entityIds);
+        List<BulkRequest> bulkRequests = bulkRequestsTracker.getBulkRequests();
+
+        TestBulkRequestValidationResult result = OpenSearchTestBulkRequestValidator.validate(Collections.singletonList(expectedData), bulkRequests);
+        Assert.assertFalse(result.toString(), result.hasFailures());
+    }
+
+    @Test
     @DisplayName("Indexing of entity with various textual properties")
     public void indexTextualContent() {
         // Sub References
@@ -660,5 +686,15 @@ public class OpenSearchEntityIndexingTest {
         TestBulkRequestValidationResult result = OpenSearchTestBulkRequestValidator.validate(Collections.singletonList(expectedData), bulkRequests);
         Assert.assertFalse(result.toString(), result.hasFailures());
     }
-}
 
+    <T extends TestCompositePkNoUuidParentEntity> T createCompositePkNoUuidParentEntity(Class<T> entityClass,
+                                                                                          String name) {
+        TestCompositeKey key = metadata.create(TestCompositeKey.class);
+        key.setPkName(name);
+        key.setPkVersion(1L);
+        T entity = metadata.create(entityClass);
+        entity.setId(key);
+        entity.setName(name);
+        return dataManager.save(entity);
+    }
+}

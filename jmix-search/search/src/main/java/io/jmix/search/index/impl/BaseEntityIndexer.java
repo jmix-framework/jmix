@@ -226,12 +226,18 @@ public abstract class BaseEntityIndexer implements EntityIndexer {
             if (indexConfigurationOpt.isPresent()) {
                 IndexConfiguration indexConfiguration = indexConfigurationOpt.get();
                 FetchPlan fetchPlan = fetchPlanLocalCache.computeIfAbsent(indexConfiguration, this::createFetchPlan);
+                String primaryKeyName = metadataTools.getPrimaryKeyName(metaClass);
+                String discriminatorCondition = metaClass.getDescendants().isEmpty() ? "" : " and TYPE(e) = " + metaClass.getName();
                 List<Object> loaded;
                 if (metadataTools.hasCompositePrimaryKey(metaClass)) {
+                    // A composite key cannot be used in an IN condition, so instances are loaded one by one.
+                    String queryString = "select e from " + metaClass.getName() + " e where e." + primaryKeyName
+                            + " = :id" + discriminatorCondition;
                     loaded = entityIds.stream()
                             .map(id -> dataManager
                                     .load(metaClass.getJavaClass())
-                                    .id(id)
+                                    .query(queryString)
+                                    .parameter("id", id)
                                     .fetchPlan(fetchPlan)
                                     .hint(DynAttrQueryHints.LOAD_DYN_ATTR, true)
                                     .optional())
@@ -240,15 +246,12 @@ public abstract class BaseEntityIndexer implements EntityIndexer {
                             .collect(Collectors.toList());
                 } else if (!metadataTools.isJpaEntity(metaClass)) {
                     // A non-JPA store cannot run the JPQL below; its own query path supports an IN condition.
-                    String primaryKeyName = metadataTools.getPrimaryKeyName(metaClass);
                     loaded = dataManager
                             .load(metaClass.getJavaClass())
                             .condition(PropertyCondition.inList(primaryKeyName, entityIds))
                             .fetchPlan(fetchPlan)
                             .list();
                 } else {
-                    String primaryKeyName = metadataTools.getPrimaryKeyName(metaClass);
-                    String discriminatorCondition = metaClass.getDescendants().isEmpty() ? "" : " and TYPE(e) = " + metaClass.getName();
                     String queryString = "select e from " + metaClass.getName() + " e where e." + primaryKeyName + " in :ids" + discriminatorCondition;
                     loaded = dataManager
                             .load(metaClass.getJavaClass())

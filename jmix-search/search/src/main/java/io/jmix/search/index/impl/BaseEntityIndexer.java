@@ -228,13 +228,9 @@ public abstract class BaseEntityIndexer implements EntityIndexer {
                 FetchPlan fetchPlan = fetchPlanLocalCache.computeIfAbsent(indexConfiguration, this::createFetchPlan);
                 List<Object> loaded;
                 if (metadataTools.hasCompositePrimaryKey(metaClass)) {
+                    // A composite key cannot be used in an IN condition, so instances are loaded one by one.
                     loaded = entityIds.stream()
-                            .map(id -> dataManager
-                                    .load(metaClass.getJavaClass())
-                                    .id(id)
-                                    .fetchPlan(fetchPlan)
-                                    .hint(DynAttrQueryHints.LOAD_DYN_ATTR, true)
-                                    .optional())
+                            .map(id -> loadByCompositeKey(metaClass, id, fetchPlan))
                             .filter(Optional::isPresent)
                             .map(Optional::get)
                             .collect(Collectors.toList());
@@ -262,6 +258,29 @@ public abstract class BaseEntityIndexer implements EntityIndexer {
             }
         });
         return result;
+    }
+
+    /**
+     * Loads an instance of exactly the given entity, not of its descendants, by a composite primary key.
+     */
+    protected Optional<Object> loadByCompositeKey(MetaClass metaClass, Object id, FetchPlan fetchPlan) {
+        if (!metadataTools.isJpaEntity(metaClass)) {
+            // A non-JPA store cannot run the JPQL below, so it loads the instance by id on its own.
+            return dataManager.load(metaClass.getJavaClass())
+                    .id(id)
+                    .fetchPlan(fetchPlan)
+                    .hint(DynAttrQueryHints.LOAD_DYN_ATTR, true)
+                    .optional();
+        }
+        String primaryKeyName = metadataTools.getPrimaryKeyName(metaClass);
+        String discriminatorCondition = metaClass.getDescendants().isEmpty() ? "" : " and TYPE(e) = " + metaClass.getName();
+        String queryString = "select e from " + metaClass.getName() + " e where e." + primaryKeyName + " = :id" + discriminatorCondition;
+        return dataManager.load(metaClass.getJavaClass())
+                .query(queryString)
+                .parameter("id", id)
+                .fetchPlan(fetchPlan)
+                .hint(DynAttrQueryHints.LOAD_DYN_ATTR, true)
+                .optional();
     }
 
     protected FetchPlan createFetchPlan(IndexConfiguration indexConfiguration) {

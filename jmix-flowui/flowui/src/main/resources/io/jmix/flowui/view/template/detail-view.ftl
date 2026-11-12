@@ -19,7 +19,17 @@
                     <property name="${property.name}"<#if property.range.isClass()> fetchPlan="_base"</#if>/>
                     </#list>
                     <#list collectionProperties as collectionProperty>
+                    <#-- Reference columns of the collection grid need the instance name of the referenced entity. -->
+                    <#assign referenceColumnProperties = templateHelper.getProperties(collectionProperty.range.asClass(), [], [])?filter(column -> column.range.isClass())>
+                    <#if referenceColumnProperties?has_content>
+                    <property name="${collectionProperty.name}" fetchPlan="_base">
+                        <#list referenceColumnProperties as column>
+                        <property name="${column.name}" fetchPlan="_base"/>
+                        </#list>
+                    </property>
+                    <#else>
                     <property name="${collectionProperty.name}" fetchPlan="_base"/>
+                    </#if>
                     </#list>
                 </fetchPlan>
             <#list collectionProperties as collectionProperty>

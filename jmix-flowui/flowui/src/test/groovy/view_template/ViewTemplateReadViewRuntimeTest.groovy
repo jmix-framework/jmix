@@ -17,6 +17,8 @@
 package view_template
 
 import io.jmix.core.DataManager
+import io.jmix.core.EntityStates
+import io.jmix.core.MetadataTools
 import io.jmix.flowui.DialogWindows
 import io.jmix.flowui.ViewNavigators
 import io.jmix.flowui.component.UiComponentUtils
@@ -27,6 +29,7 @@ import io.jmix.flowui.view.template.impl.TemplateReadView
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.jdbc.core.JdbcTemplate
+import test_support.entity.sales.Customer
 import test_support.entity.viewtemplate.ViewTemplateLineEntity
 import test_support.entity.viewtemplate.ViewTemplateMasterEntity
 import test_support.entity.viewtemplate.ViewTemplateReadEntity
@@ -56,11 +59,18 @@ class ViewTemplateReadViewRuntimeTest extends FlowuiTestSpecification {
     @Autowired
     JdbcTemplate jdbcTemplate
 
+    @Autowired
+    MetadataTools metadataTools
+
+    @Autowired
+    EntityStates entityStates
+
     @Override
     void cleanup() {
         jdbcTemplate.execute("delete from TEST_VIEW_TEMPLATE_LINE")
         jdbcTemplate.execute("delete from TEST_VIEW_TEMPLATE_MASTER")
         jdbcTemplate.execute("delete from TEST_VIEW_TEMPLATE_READ")
+        jdbcTemplate.execute("delete from TEST_CUSTOMER")
     }
 
     def "generated read view shows the stored entity in read-only fields"() {
@@ -163,6 +173,34 @@ class ViewTemplateReadViewRuntimeTest extends FlowuiTestSpecification {
         dialogView != null
         (dialogView as ReadOnlyAwareView).readOnly
         ViewControllerUtils.getViewData(dialogView).getContainer("entityDc").item.id == line.id
+    }
+
+    def "reference column of a generated collection grid shows the instance name of the referenced entity"() {
+        given: "a master entity with a line that references a customer, all stored"
+        def customer = dataManager.create(Customer)
+        customer.name = "Mayak"
+
+        def master = dataManager.create(ViewTemplateMasterEntity)
+        master.name = "master"
+
+        def line = dataManager.create(ViewTemplateLineEntity)
+        line.description = "Partner"
+        line.master = master
+        line.customer = customer
+
+        dataManager.save(customer, master, line)
+
+        when: "the generated read view of the master is opened"
+        navigators.readView(originView(), ViewTemplateMasterEntity)
+                .readEntity(master)
+                .navigate()
+
+        def view = UiTestUtils.currentView
+
+        then: "the line is loaded together with the customer and its instance name"
+        def loadedLine = ViewControllerUtils.getViewData(view).getContainer("linesDc").items.find { it.id == line.id }
+        entityStates.isLoaded(loadedLine, "customer")
+        metadataTools.getInstanceName(loadedLine.customer) == "Mayak"
     }
 
     def "generated read view opened in a dialog has a default width and can be resized and maximized"() {

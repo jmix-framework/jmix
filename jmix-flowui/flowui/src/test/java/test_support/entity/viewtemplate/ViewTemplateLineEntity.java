@@ -25,9 +25,11 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import test_support.entity.TestBaseEntity;
+import test_support.entity.sales.Customer;
 
 /**
  * Composition line entity used to verify composition collection support in the detail view template.
+ * Its {@code customer} reference becomes a reference column of the master's collection grid.
  */
 @JmixEntity
 @Table(name = "TEST_VIEW_TEMPLATE_LINE")
@@ -44,6 +46,10 @@ public class ViewTemplateLineEntity extends TestBaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "MASTER_ID")
     protected ViewTemplateMasterEntity master;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "CUSTOMER_ID")
+    protected Customer customer;
 
     public String getDescription() {
         return description;
@@ -67,5 +73,13 @@ public class ViewTemplateLineEntity extends TestBaseEntity {
 
     public void setMaster(ViewTemplateMasterEntity master) {
         this.master = master;
+    }
+
+    public Customer getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
     }
 }

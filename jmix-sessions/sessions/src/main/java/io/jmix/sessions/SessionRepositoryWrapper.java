@@ -28,10 +28,13 @@ import jakarta.servlet.http.HttpSessionBindingListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ApplicationListener;
+import org.springframework.core.Ordered;
 import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.session.FindByIndexNameSessionRepository;
 import org.springframework.session.Session;
 import org.springframework.session.SessionRepository;
+import org.springframework.session.events.SessionDestroyedEvent;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -40,7 +43,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 @Internal
-public class SessionRepositoryWrapper<S extends Session> implements FindByIndexNameSessionRepository<SessionRepositoryWrapper<S>.SessionWrapper> {
+public class SessionRepositoryWrapper<S extends Session>
+        implements FindByIndexNameSessionRepository<SessionRepositoryWrapper<S>.SessionWrapper>,
+        ApplicationListener<SessionDestroyedEvent>, Ordered {
 
     private static final Logger log = LoggerFactory.getLogger(SessionRepositoryWrapper.class);
     private List<SessionAttributePersistenceValidator> attributePersistenceValidators = new ArrayList<>();
@@ -83,8 +88,11 @@ public class SessionRepositoryWrapper<S extends Session> implements FindByIndexN
 
     @Override
     public void save(SessionWrapper session) {
+        // Must go before the delegate's save: a store may report the removal of the original id as a deleted
+        // session (Hazelcast does), and the Vaadin session that lives on under the new id must not be unbound then.
         saveNonPersistenceAttributes(session);
         delegate.save(session.getSession());
+        session.originalId = session.getId();
     }
 
     private void restoreNonPersistentAttributes(SessionWrapper session) {
@@ -93,13 +101,29 @@ public class SessionRepositoryWrapper<S extends Session> implements FindByIndexN
             for (Map.Entry<String, Object> entry : nonPersistentAttributes.entrySet()) {
                 session.setAttribute(entry.getKey(), entry.getValue());
             }
+            session.nonPersistentAttributesStored = true;
         }
     }
 
     private void saveNonPersistenceAttributes(SessionWrapper session) {
         Map<String, Object> nonPersistentAttributes = session.getNonPersistentAttributes();
-        if (!nonPersistentAttributes.isEmpty()) {
-            nonPersistentSessionAttributesMap.put(session.getId(), nonPersistentAttributes);
+        String id = session.getId();
+        if (!session.originalId.equals(id)) {
+            // The id has been changed, e.g. by session fixation protection of Spring Security. The Vaadin session
+            // lives on under the new id, so the entry of the original id is dropped without unbinding it.
+            nonPersistentSessionAttributesMap.remove(session.originalId);
+            if (!nonPersistentAttributes.isEmpty()) {
+                nonPersistentSessionAttributesMap.put(id, nonPersistentAttributes);
+                session.nonPersistentAttributesStored = true;
+            }
+        } else if (session.nonPersistentAttributesStored) {
+            // The session may have ended while this request was running (expired, invalidated or got a new id in
+            // a concurrent request). Its entry has been dropped then and must not come back: nothing would drop it
+            // again, or the Vaadin session that lives on under a new id would be unbound when this id expires.
+            nonPersistentSessionAttributesMap.replace(id, nonPersistentAttributes);
+        } else if (!nonPersistentAttributes.isEmpty()) {
+            nonPersistentSessionAttributesMap.put(id, nonPersistentAttributes);
+            session.nonPersistentAttributesStored = true;
         }
     }
 
@@ -140,14 +164,59 @@ public class SessionRepositoryWrapper<S extends Session> implements FindByIndexN
         SessionWrapper session = findById(id);
         if (session != null) {
             applicationEventPublisher.publishEvent(new JmixSessionDestroyedEvent<>(session));
-            delegate.deleteById(id);
-            //workaround for Vaadin and sessions compatibility:
-            Object vaadinSession = session.nonPersistentAttributes.get(VaadinSessionAttributesValidator.VAADIN_SESSION_KEY);
-            if (vaadinSession instanceof HttpSessionBindingListener listener) {
-                listener.valueUnbound(null);
+        }
+        try {
+            // Must go before the delegate's deletion: a store may report it from its own thread (Hazelcast does),
+            // and the Vaadin session must be unbound in this request, where Vaadin can keep it alive for a new HTTP
+            // session on login.
+            destroyNonPersistentAttributes(id);
+        } finally {
+            // The session is deleted even if unbinding fails, so that an invalidated session does not stay usable
+            if (session != null) {
+                delegate.deleteById(id);
             }
         }
-        nonPersistentSessionAttributesMap.remove(id);
+    }
+
+    /**
+     * Reacts to a session that the delegate repository reports as expired or deleted, so that its non-persistent
+     * attributes do not outlive it.
+     *
+     * @param event the event of the ended session
+     */
+    @Override
+    public void onApplicationEvent(SessionDestroyedEvent event) {
+        destroyNonPersistentAttributes(event.getSessionId());
+    }
+
+    /**
+     * Puts this listener before the others, so that an exception in another listener of the same event does not
+     * leave the ended session's Vaadin session behind.
+     *
+     * @return the highest precedence
+     */
+    @Override
+    public int getOrder() {
+        return Ordered.HIGHEST_PRECEDENCE;
+    }
+
+    /**
+     * Drops the non-persistent attributes of an ended session and unbinds its Vaadin session, as a servlet container
+     * does when it destroys an HTTP session. Repeated calls for the same session do nothing, so the Vaadin session
+     * is unbound only once whichever way the session ends first.
+     *
+     * @param sessionId id of the ended session
+     */
+    protected void destroyNonPersistentAttributes(String sessionId) {
+        Map<String, Object> nonPersistentAttributes = nonPersistentSessionAttributesMap.remove(sessionId);
+        if (nonPersistentAttributes == null) {
+            return;
+        }
+        // Workaround for Vaadin and sessions compatibility: Spring Session does not notify attributes on unbinding.
+        Object vaadinSession = nonPersistentAttributes.get(VaadinSessionAttributesValidator.VAADIN_SESSION_KEY);
+        if (vaadinSession instanceof HttpSessionBindingListener listener) {
+            listener.valueUnbound(null);
+        }
     }
 
     @Override
@@ -167,9 +236,12 @@ public class SessionRepositoryWrapper<S extends Session> implements FindByIndexN
     public final class SessionWrapper implements Session {
         private final S session;
         private final Map<String, Object> nonPersistentAttributes = new HashMap<>();
+        private String originalId;
+        private boolean nonPersistentAttributesStored;
 
         public SessionWrapper(S session) {
             this.session = session;
+            this.originalId = session.getId();
         }
 
         public Map<String, Object> getNonPersistentAttributes() {

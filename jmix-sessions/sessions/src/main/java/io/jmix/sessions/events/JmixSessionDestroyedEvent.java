@@ -20,14 +20,16 @@ import io.jmix.sessions.SessionRepositoryWrapper;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.session.SessionDestroyedEvent;
 import org.springframework.session.Session;
+import org.springframework.session.events.SessionExpiredEvent;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Published by the {@link SessionRepositoryWrapper} before a {@code Session}
- * destroyed by the Spring session repository
- *
+ * Published by the {@link SessionRepositoryWrapper} when a {@code Session} is explicitly destroyed (invalidated),
+ * before it is deleted from the Spring session repository.
+ * <p>
+ * Not published when a session expires: the repository reports that with {@link SessionExpiredEvent}.
  */
 public final class JmixSessionDestroyedEvent<S extends Session> extends SessionDestroyedEvent {
 

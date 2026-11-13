@@ -33,6 +33,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -66,6 +67,8 @@ public class SessionsConfiguration<S extends Session> {
     protected ApplicationEventPublisher applicationEventPublisher;
     @Autowired
     protected SessionRegistry sessionRegistry;
+    @Autowired
+    protected ConfigurableApplicationContext applicationContext;
 
     private List<HttpSessionListener> httpSessionListeners = new ArrayList<>();
 
@@ -80,8 +83,11 @@ public class SessionsConfiguration<S extends Session> {
     @Primary
     public SessionRepositoryFilter<SessionRepositoryWrapper<S>.SessionWrapper> jmixSessionRepositoryFilter(
             @Autowired SessionRepository<S> sessionRepository) {
+        SessionRepositoryWrapper<S> sessionRepositoryWrapper = sessionRepositoryWrapper(sessionRepository);
+        // The wrapper is not a bean, so it is subscribed to the events of expired and deleted sessions explicitly.
+        applicationContext.addApplicationListener(sessionRepositoryWrapper);
         SessionRepositoryFilter<SessionRepositoryWrapper<S>.SessionWrapper> sessionRepositoryFilter
-                = new SessionRepositoryFilter<>(sessionRepositoryWrapper(sessionRepository));
+                = new SessionRepositoryFilter<>(sessionRepositoryWrapper);
         sessionRepositoryFilter.setHttpSessionIdResolver(sessionIdResolver);
         return sessionRepositoryFilter;
     }

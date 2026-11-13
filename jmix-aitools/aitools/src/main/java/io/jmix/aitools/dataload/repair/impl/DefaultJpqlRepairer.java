@@ -21,6 +21,7 @@ import io.jmix.aitools.dataload.execution.GeneratedJpqlParameter;
 import io.jmix.aitools.dataload.execution.GeneratedJpqlResult;
 import io.jmix.aitools.dataload.prompt.JpqlRepairerPromptProvider;
 import io.jmix.aitools.dataload.repair.JpqlRepairRequest;
+import io.jmix.aitools.dataload.repair.JpqlRepairSchemaComposer;
 import io.jmix.aitools.dataload.repair.JpqlRepairer;
 import io.jmix.aitools.dataload.validation.JpqlValidationIssue;
 import org.jspecify.annotations.NullMarked;
@@ -40,8 +41,9 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 /**
- * Default {@link JpqlRepairer} that re-prompts the LLM with the previous query and its validation
- * issues, then parses the corrected JPQL from the model's JSON reply.
+ * Default {@link JpqlRepairer} that re-prompts the LLM with the previous query, its validation
+ * issues and, for issues about entity and attribute names, the schema composed by
+ * {@link JpqlRepairSchemaComposer}, then parses the corrected JPQL from the model's JSON reply.
  */
 public class DefaultJpqlRepairer implements JpqlRepairer, InitializingBean {
 
@@ -51,6 +53,8 @@ public class DefaultJpqlRepairer implements JpqlRepairer, InitializingBean {
     protected JpqlRepairerPromptProvider jpqlRepairerPromptProvider;
     @Autowired
     protected ChatClientFactory chatClientFactory;
+    @Autowired
+    protected JpqlRepairSchemaComposer jpqlRepairSchemaComposer;
 
     protected ObjectMapper objectMapper;
 
@@ -81,6 +85,16 @@ public class DefaultJpqlRepairer implements JpqlRepairer, InitializingBean {
                     .append(issue.getMessage());
         }
         return builder.toString();
+    }
+
+    /**
+     * Formats the schema section of the prompt. The section is left out entirely when there is no schema.
+     *
+     * @param schema schema composed for the request, or {@code null} if the issues do not need one
+     * @return schema section, or an empty string
+     */
+    protected String formatSchema(@Nullable String schema) {
+        return schema == null ? "" : "Schema:\n" + schema;
     }
 
     protected String formatRepairGuidance(java.util.List<JpqlValidationIssue> issues) {
@@ -123,7 +137,8 @@ public class DefaultJpqlRepairer implements JpqlRepairer, InitializingBean {
                 request.getExecutionRequest().getUserText(),
                 toJson(request.getGeneratedJpqlResult()),
                 formatValidationIssues(request.getValidationResult().getIssues()),
-                formatRepairGuidance(request.getValidationResult().getIssues()));
+                formatRepairGuidance(request.getValidationResult().getIssues()),
+                formatSchema(jpqlRepairSchemaComposer.compose(request)));
 
         String content = chatClientFactory.createChatClient(builder ->
                         builder.defaultAdvisors(SimpleLoggerAdvisor.builder().build()))

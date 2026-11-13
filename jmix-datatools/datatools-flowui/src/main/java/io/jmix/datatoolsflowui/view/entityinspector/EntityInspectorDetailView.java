@@ -56,7 +56,9 @@ import org.jspecify.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static io.jmix.core.metamodel.model.MetaProperty.Type.ASSOCIATION;
 import static io.jmix.core.metamodel.model.MetaProperty.Type.COMPOSITION;
@@ -126,8 +128,59 @@ public class EntityInspectorDetailView extends StandardDetailView<Object> {
         dataContext = dataComponents.createDataContext();
         getViewData().setDataContext(dataContext);
         setReloadSaved(true);
-        dataContext.setSaveDelegate(saveContext ->
-                entityUpdateDispatcher.save(dataManager, saveContext));
+        dataContext.setSaveDelegate(this::saveWithUpdateDispatcher);
+    }
+
+    /**
+     * Saves the entities through {@link EntityUpdateDispatcher}, so that their {@link SaveDelegate}s are used.
+     * An entity saved with its owner by cascade is not returned by the owner's save delegate, so it is loaded again;
+     * otherwise the data context would keep it as new.
+     */
+    protected Set<Object> saveWithUpdateDispatcher(SaveContext saveContext) {
+        List<Object> entitiesToSave = new ArrayList<>(saveContext.getEntitiesToSave());
+        EntitySet savedEntities = entityUpdateDispatcher.save(dataManager, excludeItemsSavedWithOwner(saveContext));
+
+        Set<Object> result = new HashSet<>(savedEntities);
+        for (Object entity : entitiesToSave) {
+            if (!savedEntities.contains(entity)) {
+                dataManager.load(Id.of(entity))
+                        .fetchPlan(saveContext.getFetchPlans().get(entity))
+                        .hint(PersistenceHints.SOFT_DELETION, false)
+                        .optional()
+                        .ifPresent(result::add);
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Removes from the save context the new composition items of a new owner that have a {@link SaveDelegate}.
+     * {@link EntityUpdateDispatcher} would save such an item by its delegate separately, possibly before the owner,
+     * which fails on the reference to the new owner. The items are left to the owner's save, which persists them by
+     * cascade.
+     */
+    protected SaveContext excludeItemsSavedWithOwner(SaveContext saveContext) {
+        List<Object> itemsSavedWithOwner = saveContext.getEntitiesToSave().stream()
+                .filter(entityStates::isNew)
+                .flatMap(owner -> getCompositionItems(owner).stream())
+                .filter(item -> entityStates.isNew(item)
+                        && entityUpdateDispatcher.getSaveService(item.getClass()) != null)
+                .toList();
+        saveContext.getEntitiesToSave().removeAll(itemsSavedWithOwner);
+        return saveContext;
+    }
+
+    protected List<Object> getCompositionItems(Object owner) {
+        List<Object> items = new ArrayList<>();
+        for (MetaProperty metaProperty : metadata.getClass(owner).getProperties()) {
+            if (metaProperty.getType() == COMPOSITION && EntityFormLayoutUtils.isMany(metaProperty)) {
+                Collection<?> propertyItems = EntityValues.getValue(owner, metaProperty.getName());
+                if (propertyItems != null) {
+                    items.addAll(propertyItems);
+                }
+            }
+        }
+        return items;
     }
 
     @Override

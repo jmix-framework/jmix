@@ -17,6 +17,8 @@
 package test_support;
 
 import io.jmix.core.CoreConfiguration;
+import io.jmix.core.DataManager;
+import io.jmix.core.SaveDelegate;
 import io.jmix.core.annotation.JmixModule;
 import io.jmix.core.security.InMemoryUserRepository;
 import io.jmix.core.security.UserRepository;
@@ -42,6 +44,8 @@ import org.springframework.scripting.groovy.GroovyScriptEvaluator;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import test_support.entity.InspectorDelegatedItem;
+import test_support.entity.InspectorDelegatedMaster;
 
 @Configuration
 @Import({CoreConfiguration.class, DataConfiguration.class, EclipselinkConfiguration.class,
@@ -62,6 +66,17 @@ public class EntityInspectorUiTestConfiguration {
     @Bean("test_CustomStoreDescriptorProvider")
     CustomStoreDescriptorProvider customStoreDescriptorProvider() {
         return new CustomStoreDescriptorProvider();
+    }
+
+    // Save an entity by itself, like the update services Studio generates for entities with data repositories.
+    @Bean
+    SaveDelegate<InspectorDelegatedItem> inspectorDelegatedItemSaveDelegate(DataManager dataManager) {
+        return (entity, saveContext) -> dataManager.save(entity);
+    }
+
+    @Bean
+    SaveDelegate<InspectorDelegatedMaster> inspectorDelegatedMasterSaveDelegate(DataManager dataManager) {
+        return (entity, saveContext) -> dataManager.save(entity);
     }
 
     @Bean

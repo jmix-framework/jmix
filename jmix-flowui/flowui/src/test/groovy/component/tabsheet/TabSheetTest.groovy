@@ -16,6 +16,9 @@
 
 package component.tabsheet
 
+import com.vaadin.flow.internal.change.MapPutChange
+import com.vaadin.flow.internal.change.NodeChange
+import com.vaadin.flow.internal.nodefeature.ElementPropertyMap
 import component.tabsheet.view.TabSheetTestView
 import io.jmix.flowui.component.UiComponentUtils
 import org.springframework.boot.test.context.SpringBootTest
@@ -65,5 +68,30 @@ class TabSheetTest extends FlowuiTestSpecification {
 
         then: "Content of the newly selected tab is attached to the view"
         UiComponentUtils.findView(screen.tab3Checkbox) == screen
+    }
+
+    def "A tab selected on the client is not sent back to the client"() {
+        given: "An open view with a TabSheet whose state the client already has"
+        def screen = navigateToView(TabSheetTestView)
+        ui.internals.stateTree.collectChanges {}
+
+        when: "The client selects the third tab"
+        def tabs = screen.tabSheet.getTabAt(2).parent.get()
+        tabs.element.node.getFeature(ElementPropertyMap)
+                .deferredUpdateFromClient("selected", 2)
+                .run()
+
+        and: "The changes for the client are collected"
+        List<NodeChange> changes = []
+        ui.internals.stateTree.collectChanges { changes << it }
+
+        then: "The selection is applied on the server"
+        screen.tabSheet.selectedIndex == 2
+        screen.tabSheet.getComponent(screen.tabSheet.getTabAt(2)).enabled
+
+        and: "The tab sheet's 'selected' is not sent back, otherwise two selections within one round trip loop forever"
+        changes.findAll {
+            it.node == screen.tabSheet.element.node && it instanceof MapPutChange && it.key == "selected"
+        }.isEmpty()
     }
 }

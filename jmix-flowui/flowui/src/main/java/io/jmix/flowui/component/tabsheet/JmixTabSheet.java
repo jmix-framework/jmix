@@ -64,10 +64,7 @@ public class JmixTabSheet extends Component
     protected void initComponent() {
         SlotUtils.addToSlot(this, "tabs", tabs);
 
-        addSelectedChangeListener(e -> {
-            getElement().setProperty("selected", tabs.getSelectedIndex());
-            updateContent();
-        });
+        addSelectedChangeListener(e -> updateContent());
     }
 
     /**

@@ -106,12 +106,19 @@ public interface QueryParser {
         protected String pathString;
         protected String variableName;
         protected boolean selectedPath;
+        protected int selectedItemIndex;
 
         public QueryPath(String entityName, String variableName, String pathString, boolean selectedPath) {
+            this(entityName, variableName, pathString, selectedPath, -1);
+        }
+
+        public QueryPath(String entityName, String variableName, String pathString, boolean selectedPath,
+                         int selectedItemIndex) {
             this.entityName = entityName;
             this.variableName = variableName;
             this.pathString = pathString;
             this.selectedPath = selectedPath;
+            this.selectedItemIndex = selectedItemIndex;
         }
 
         public String getEntityName() {
@@ -136,6 +143,19 @@ public interface QueryParser {
 
         public boolean isSelectedPath() {
             return selectedPath;
+        }
+
+        /**
+         * Returns the position of the select-clause item of the main query that contains this path. A select
+         * item is one column of the query result, so the position is the column index, even when the item is a
+         * literal, an expression over several attributes or a subquery.
+         *
+         * @return position of the select item, or {@code -1} if the path is not inside a select item of the
+         * main query (for example, it is in the WHERE clause or in the select clause of a subquery placed
+         * outside the main select clause)
+         */
+        public int getSelectedItemIndex() {
+            return selectedItemIndex;
         }
     }
 }

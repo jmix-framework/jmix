@@ -80,17 +80,24 @@ public class LoadValuesAccessContext implements AccessContext {
         return deniedSelectedIndexes == null ? Collections.emptyList() : deniedSelectedIndexes;
     }
 
+    /**
+     * Returns the positions of the select-clause items (result columns) that use the given property path.
+     * A column is counted when the path appears anywhere in it: alone, inside an expression or inside
+     * a subquery.
+     *
+     * @param propertyPath property path to look for
+     * @return column positions in select-clause order, without duplicates
+     */
     public List<Integer> getSelectedIndexes(MetaPropertyPath propertyPath) {
         List<Integer> indexes = new ArrayList<>();
-        int index = 0;
         for (QueryParser.QueryPath path : queryParser.getQueryPaths()) {
-            if (path.isSelectedPath()) {
+            int index = path.getSelectedItemIndex();
+            if (path.isSelectedPath() && index >= 0 && !indexes.contains(index)) {
                 MetaPropertyPath currentPropertyPath =
                         metadata.getClass(path.getEntityName()).getPropertyPath(path.getPropertyPath());
                 if (Objects.equals(propertyPath, currentPropertyPath)) {
                     indexes.add(index);
                 }
-                index++;
             }
         }
         return indexes;
@@ -100,7 +107,9 @@ public class LoadValuesAccessContext implements AccessContext {
         if (deniedSelectedIndexes == null) {
             deniedSelectedIndexes = new ArrayList<>();
         }
-        deniedSelectedIndexes.add(index);
+        if (!deniedSelectedIndexes.contains(index)) {
+            deniedSelectedIndexes.add(index);
+        }
     }
 
     @Nullable

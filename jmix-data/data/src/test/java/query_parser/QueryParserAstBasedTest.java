@@ -524,6 +524,35 @@ public class QueryParserAstBasedTest {
         assertEquals("tags", joinPath.getPropertyPath());
     }
 
+    @Test
+    void testGetQueryPathsSelectedItemIndex() {
+        EntityBuilder builder = EntityBuilder.create();
+        builder.startNewEntity("Product");
+        builder.addStringAttribute("name");
+        builder.addStringAttribute("code");
+        JpqlEntityModel productEntity = builder.produce();
+
+        DomainModel model = new DomainModel(productEntity);
+        QueryParserAstBased parser = new QueryParserAstBased(model,
+                "select 1, concat(p.name, p.code), (select max(q.name) from Product q where q.code = p.code), p.name " +
+                        "from Product p where p.name in (select r.name from Product r)"
+        );
+
+        List<String> selectedPaths = parser.getQueryPaths().stream()
+                .filter(QueryPath::isSelectedPath)
+                .map(path -> path.getFullPath() + "@" + path.getSelectedItemIndex())
+                .toList();
+        assertEquals(List.of("p.name@1", "p.code@1", "q.name@2", "q.code@2", "p.code@2", "p.name@3", "r.name@-1"),
+                selectedPaths);
+
+        List<Integer> otherPathIndexes = parser.getQueryPaths().stream()
+                .filter(path -> !path.isSelectedPath())
+                .map(QueryPath::getSelectedItemIndex)
+                .distinct()
+                .toList();
+        assertEquals(List.of(-1), otherPathIndexes);
+    }
+
     private DomainModel prepareDomainModel() {
         EntityBuilder builder = EntityBuilder.create();
         builder.startNewEntity("sec_GroupHierarchy");

@@ -21,7 +21,9 @@ import io.jmix.data.impl.jpql.model.Attribute;
 import io.jmix.data.impl.jpql.model.JpqlEntityModel;
 import io.jmix.data.impl.jpql.tree.IdentificationVariableNode;
 import io.jmix.data.impl.jpql.tree.PathNode;
+import io.jmix.data.impl.jpql.tree.SelectedItemNode;
 import io.jmix.data.impl.jpql.tree.SimpleConditionNode;
+import org.antlr.runtime.tree.Tree;
 import org.antlr.runtime.tree.TreeVisitor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -211,16 +213,18 @@ public class QueryParserAstBased implements QueryParser {
                 .map(joinNode -> new AbstractMap.SimpleEntry<>(joinNode, joinNode.findPathNode()))
                 .filter(entry -> entry.getValue() != null)
                 .collect(Collectors.toMap(entry -> entry.getKey().getVariableName(), Map.Entry::getValue, (left, right) -> left));
+        List<SelectedItemNode> selectedItems = getTree().getAstSelectedNodes().toList();
         PathNodeFinder finder = getTree().visit(new PathNodeFinder());
         for (PathNode node : finder.getSelectedPathNodes()) {
-            QueryPath queryPath = createQueryPath(variableContext, joinVariablePaths, node, true);
+            QueryPath queryPath = createQueryPath(variableContext, joinVariablePaths, node, true,
+                    getSelectedItemIndex(node, selectedItems));
             if (queryPath == null) {
                 continue;
             }
             queryPaths.add(queryPath);
         }
         for (PathNode node : finder.getOtherPathNodes()) {
-            QueryPath queryPath = createQueryPath(variableContext, joinVariablePaths, node, false);
+            QueryPath queryPath = createQueryPath(variableContext, joinVariablePaths, node, false, -1);
             if (queryPath == null) {
                 continue;
             }
@@ -232,7 +236,8 @@ public class QueryParserAstBased implements QueryParser {
     protected QueryPath createQueryPath(QueryVariableContext variableContext,
                                         Map<String, PathNode> joinVariablePaths,
                                         PathNode node,
-                                        boolean selected) {
+                                        boolean selected,
+                                        int selectedItemIndex) {
         JpqlEntityModel model = variableContext.getEntityByVariableNameHierarchically(node.getEntityVariableName());
         String variableName = node.getEntityVariableName();
         String pathString = node.asPathString();
@@ -249,7 +254,24 @@ public class QueryParserAstBased implements QueryParser {
         if (model == null) {
             return null;
         }
-        return new QueryPath(model.getName(), variableName, pathString, selected);
+        return new QueryPath(model.getName(), variableName, pathString, selected, selectedItemIndex);
+    }
+
+    /**
+     * Returns the position of the select item of the main query that contains the given path node,
+     * or {@code -1} if the node is not inside one.
+     */
+    protected int getSelectedItemIndex(PathNode node, List<SelectedItemNode> selectedItems) {
+        Tree current = node.getParent();
+        while (current != null) {
+            for (int i = 0; i < selectedItems.size(); i++) {
+                if (selectedItems.get(i) == current) {
+                    return i;
+                }
+            }
+            current = current.getParent();
+        }
+        return -1;
     }
 
     @Override

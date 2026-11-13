@@ -17,6 +17,7 @@
 package io.jmix.sessions.impl;
 
 import io.jmix.sessions.SessionsProperties;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
@@ -30,6 +31,8 @@ import org.springframework.session.events.SessionExpiredEvent;
 import org.springframework.util.Assert;
 
 import java.time.Duration;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -60,17 +63,56 @@ public class JmixExpiringSessionMap extends ConcurrentHashMap<String, Session> i
 
     public void cleanUpExpiredSessions() {
         log.debug("Session cleanup started");
+        List<Session> expiredSessions = new ArrayList<>();
         for (Map.Entry<String, Session> entry : entrySet()) {
             computeIfPresent(entry.getKey(), (key, session) -> {
                 if (session.isExpired()) {
-                    log.debug("Session {} expired. Sending SessionExpiredEvent and removing from {}", session.getId(), this.getClass().getName());
-                    applicationEventPublisher.publishEvent(new SessionExpiredEvent(this, session));
-
+                    expiredSessions.add(session);
                     return null;
                 }
                 return session;
             });
         }
+        // Events are published outside computeIfPresent, so that listeners may access this map.
+        for (Session session : expiredSessions) {
+            log.debug("Session {} expired and removed from {}. Sending SessionExpiredEvent",
+                    session.getId(), getClass().getName());
+            try {
+                publishSessionExpiredEvent(session);
+            } catch (RuntimeException e) {
+                log.warn("Error handling expiration of session {}", session.getId(), e);
+            }
+        }
+    }
+
+    /**
+     * Removes the session and, if it has already expired, publishes {@link SessionExpiredEvent}.
+     * {@link MapSessionRepository} removes an expired session itself when it is requested before the periodic
+     * cleanup, and this way such a session is reported as expired too. {@code keySet().remove(key)} delegates to
+     * this method and publishes as well. Other ways of removal, such as {@code remove(key, value)}, iterators,
+     * {@code removeIf} or the values and entry set views, publish nothing.
+     *
+     * @param key the session id
+     * @return the removed session, or {@code null} if there was no session with this id
+     */
+    @Override
+    public @Nullable Session remove(Object key) {
+        Session session = super.remove(key);
+        if (session != null && session.isExpired()) {
+            log.debug("Expired session {} removed from {}. Sending SessionExpiredEvent",
+                    session.getId(), getClass().getName());
+            try {
+                publishSessionExpiredEvent(session);
+            } catch (RuntimeException e) {
+                // The session is requested by a client, which gets a new session instead of an error
+                log.warn("Error handling expiration of session {}", session.getId(), e);
+            }
+        }
+        return session;
+    }
+
+    protected void publishSessionExpiredEvent(Session session) {
+        applicationEventPublisher.publishEvent(new SessionExpiredEvent(this, session));
     }
 
 

@@ -174,6 +174,21 @@ class ContainerItemsComponentsTest extends FlowuiTestSpecification {
         type << COMPONENT_TYPES
     }
 
+    def "GridLayout removed from the view renders the current items when added again"() {
+        given: "A grid layout with items from the container added to the view and removed"
+        def view = navigateToView(ContainerItemsTestView)
+        def gridLayout = createWithItems(GridLayout) as GridLayout<Customer>
+        view.content.add(gridLayout)
+        view.content.remove(gridLayout)
+
+        when: "The container items change while the grid layout is removed, and it is added again"
+        customersDc.setItems([customer1, customer3])
+        view.content.add(gridLayout)
+
+        then: "It renders the current items"
+        gridLayout.itemComponents*.item == [customer1, customer3]
+    }
+
     def "#type.simpleName never attached gets container changes after a garbage collection"() {
         given: "A component with items from the container that is not attached to any view"
         navigateToView(ContainerItemsTestView)

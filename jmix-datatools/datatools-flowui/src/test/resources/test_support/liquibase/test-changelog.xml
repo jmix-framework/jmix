@@ -55,4 +55,62 @@
                                  referencedTableName="TEST_INSPECTOR_COMPOSITION_MASTER"
                                  referencedColumnNames="ID"/>
     </changeSet>
+
+    <changeSet author="test" id="inspector-delegated-item">
+        <createTable tableName="TEST_INSPECTOR_DELEGATED_ITEM_MASTER">
+            <column name="ID" type="${uuid.type}">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="VERSION" type="int" defaultValue="1">
+                <constraints nullable="false"/>
+            </column>
+            <column name="NAME" type="varchar(255)"/>
+        </createTable>
+
+        <createTable tableName="TEST_INSPECTOR_DELEGATED_ITEM">
+            <column name="ID" type="${uuid.type}">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="VERSION" type="int" defaultValue="1">
+                <constraints nullable="false"/>
+            </column>
+            <column name="NAME" type="varchar(255)"/>
+            <column name="MASTER_ID" type="${uuid.type}"/>
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="TEST_INSPECTOR_DELEGATED_ITEM"
+                                 baseColumnNames="MASTER_ID"
+                                 constraintName="FK_TEST_INSPECTOR_DELEGATED_ITEM_ON_MASTER"
+                                 referencedTableName="TEST_INSPECTOR_DELEGATED_ITEM_MASTER"
+                                 referencedColumnNames="ID"/>
+    </changeSet>
+
+    <changeSet author="test" id="inspector-delegated-master">
+        <createTable tableName="TEST_INSPECTOR_DELEGATED_MASTER">
+            <column name="ID" type="${uuid.type}">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="VERSION" type="int" defaultValue="1">
+                <constraints nullable="false"/>
+            </column>
+            <column name="NAME" type="varchar(255)"/>
+        </createTable>
+
+        <createTable tableName="TEST_INSPECTOR_DELEGATED_MASTER_ITEM">
+            <column name="ID" type="${uuid.type}">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="VERSION" type="int" defaultValue="1">
+                <constraints nullable="false"/>
+            </column>
+            <column name="NAME" type="varchar(255)"/>
+            <column name="MASTER_ID" type="${uuid.type}"/>
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="TEST_INSPECTOR_DELEGATED_MASTER_ITEM"
+                                 baseColumnNames="MASTER_ID"
+                                 constraintName="FK_TEST_INSPECTOR_DELEGATED_MASTER_ITEM_ON_MASTER"
+                                 referencedTableName="TEST_INSPECTOR_DELEGATED_MASTER"
+                                 referencedColumnNames="ID"/>
+    </changeSet>
 </databaseChangeLog>

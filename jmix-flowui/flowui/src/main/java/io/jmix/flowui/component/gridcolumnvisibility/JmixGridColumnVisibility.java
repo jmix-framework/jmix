@@ -30,7 +30,6 @@ import io.jmix.core.MetadataTools;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
-import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.component.grid.DataGridColumn;
 import io.jmix.flowui.component.grid.EnhancedDataGrid;
 import io.jmix.flowui.component.grid.headerfilter.DataGridHeaderFilter;
@@ -239,8 +238,8 @@ public class JmixGridColumnVisibility extends Composite<JmixMenuBar>
                     && headerFilter.getHeader() instanceof HasText headerFilterWithText) {
                 headerText = headerFilterWithText.getText();
             }
-            if (Strings.isNullOrEmpty(headerText) && grid instanceof DataGrid dataGrid) {
-                MetaPropertyPath metaPropertyPath = dataGrid.getColumnMetaPropertyPath(column);
+            if (Strings.isNullOrEmpty(headerText) && grid instanceof EnhancedDataGrid enhancedDataGrid) {
+                MetaPropertyPath metaPropertyPath = enhancedDataGrid.getColumnMetaPropertyPath(column);
                 if (metaPropertyPath != null) {
                     MetaClass propertyMetaClass = metadataTools.getPropertyEnclosingMetaClass(metaPropertyPath);
                     headerText = messageTools.getPropertyCaption(propertyMetaClass,

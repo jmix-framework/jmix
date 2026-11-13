@@ -145,10 +145,12 @@ class Options {
             this.localeSuffix = this._generateLocaleSuffix();
         }
 
-        // Create FullCalendar locale
-        const calendarI18nArray = localesAll.filter((item) => item.code === jmixI18n.locale);
-        let calendarI18n = calendarI18nArray.length > 0 ? calendarI18nArray[0] : RAW_EN_LOCALE;
-        const newLocaleName = calendarI18n.code + '-' + this.localeSuffix;
+        // Create FullCalendar locale. Its code is the user's language tag, because
+        // FullCalendar formats some dates (e.g. in navigation link hints) with Intl
+        // by this code. Moment.js looks up locales in lower case, so the code is too.
+        const localeTag = (jmixI18n.locale || 'en').toLowerCase();
+        let calendarI18n = this._findCalendarLocale(localeTag);
+        const newLocaleName = localeTag + '-' + this.localeSuffix.toLowerCase();
         calendarI18n = this._combineI18n(calendarI18n, jmixI18n);
         calendarI18n.code = newLocaleName;
 
@@ -914,6 +916,25 @@ class Options {
         }
 
         return resultI18n;
+    }
+
+    /**
+     * Finds the FullCalendar locale for the language tag: from the most specific
+     * code to the language alone, e.g. 'ru-ru', then 'ru'.
+     * @param localeTag lower-case language tag
+     * @returns FullCalendar locale or English one if there is no locale for the language
+     * @private
+     */
+    _findCalendarLocale(localeTag) {
+        const parts = localeTag.split('-');
+        for (let length = parts.length; length > 0; length--) {
+            const code = parts.slice(0, length).join('-');
+            const calendarLocale = localesAll.find((item) => item.code === code);
+            if (calendarLocale) {
+                return calendarLocale;
+            }
+        }
+        return RAW_EN_LOCALE;
     }
 
     _generateLocaleSuffix() {

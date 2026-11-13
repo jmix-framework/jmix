@@ -106,7 +106,14 @@ public class JmixFileUploadField<C extends AbstractSingleUploadField<C, byte[], 
 
     protected void saveFile(UploadSuccessContext<byte[]> context) {
         uploadedFileName = context.uploadMetadata().fileName();
-        setInternalValue(context.data(), true);
+
+        if (valueEquals(internalValue, context.data())) {
+            // The same content is uploaded under another name: the value is not changed,
+            // so only the shown file name has to be updated.
+            setComponentText(fileNameComponent, generateFileName());
+        } else {
+            setInternalValue(context.data(), true);
+        }
     }
 
     @Override

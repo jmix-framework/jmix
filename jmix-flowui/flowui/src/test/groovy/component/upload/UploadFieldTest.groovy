@@ -24,6 +24,7 @@ import com.vaadin.flow.component.upload.UploadManager
 import com.vaadin.flow.dom.Element
 import com.vaadin.flow.internal.nodefeature.VirtualChildrenList
 import com.vaadin.flow.server.streams.UploadHandler
+import com.vaadin.flow.server.streams.UploadMetadata
 import component.upload.view.UploadFieldTestView
 import io.jmix.flowui.UiComponents
 import io.jmix.flowui.component.upload.FileStorageUploadField
@@ -32,6 +33,7 @@ import io.jmix.flowui.component.upload.handler.FileTemporaryStorageUploadHandler
 import io.jmix.flowui.kit.component.upload.AbstractSingleUploadField
 import io.jmix.flowui.kit.component.upload.JmixUploadI18N
 import io.jmix.flowui.kit.component.upload.event.FileUploadFileRejectedEvent
+import io.jmix.flowui.kit.component.upload.handler.SupportUploadSuccessHandler.UploadSuccessContext
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import test_support.spec.FlowuiTestSpecification
@@ -139,6 +141,22 @@ class UploadFieldTest extends FlowuiTestSpecification {
         then: "The value is cleared and the client file list is cleared"
         field.value == null
         pendingExpressions().any { it.contains("clearFileList") }
+    }
+
+    def "File name is updated when a file with the same content is uploaded under another name"() {
+        given: "A field with an uploaded file"
+        def field = uiComponents.create(FileUploadField)
+        def valueChanges = 0
+        field.addValueChangeListener { valueChanges++ }
+        field.onSucceeded(new UploadSuccessContext<>(new UploadMetadata("first.png", "image/png", 1), [1] as byte[]))
+
+        when: "A file with the same content and another name is uploaded"
+        field.onSucceeded(new UploadSuccessContext<>(new UploadMetadata("second.png", "image/png", 1), [1] as byte[]))
+
+        then: "The field shows the name of the last uploaded file, the value is not changed"
+        field.uploadedFileName == "second.png"
+        field.fileNameComponent.text == "second.png"
+        valueChanges == 1
     }
 
     def "Rejection message comes from i18n, then from Vaadin's defaults"() {

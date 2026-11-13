@@ -225,9 +225,7 @@ public class JpqlExecutionService {
             throw new AccessDeniedException("entity", deniedResource, EntityOp.READ.getId());
         }
 
-        return queryContext.getDeniedSelectedIndexes().stream()
-                .distinct()
-                .collect(Collectors.toList());
+        return List.copyOf(queryContext.getDeniedSelectedIndexes());
     }
 
     /**

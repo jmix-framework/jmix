@@ -21,6 +21,8 @@ import io.jmix.security.model.EntityPolicyAction;
 import io.jmix.security.role.annotation.EntityAttributePolicy;
 import io.jmix.security.role.annotation.EntityPolicy;
 import io.jmix.security.role.annotation.ResourceRole;
+import test_support.entity.ManyToOneEntity;
+import test_support.entity.OneToManyEntity;
 import test_support.entity.TestOrder;
 
 @ResourceRole(name = TestLoadValuesAttributeRole.NAME, code = TestLoadValuesAttributeRole.NAME)
@@ -31,4 +33,14 @@ public interface TestLoadValuesAttributeRole {
     @EntityAttributePolicy(entityClass = TestOrder.class, attributes = "id",
             action = EntityAttributePolicyAction.VIEW)
     void order();
+
+    @EntityPolicy(entityClass = ManyToOneEntity.class, actions = EntityPolicyAction.READ)
+    @EntityAttributePolicy(entityClass = ManyToOneEntity.class, attributes = "*",
+            action = EntityAttributePolicyAction.VIEW)
+    void manyToOneEntity();
+
+    @EntityPolicy(entityClass = OneToManyEntity.class, actions = EntityPolicyAction.READ)
+    @EntityAttributePolicy(entityClass = OneToManyEntity.class, attributes = "id",
+            action = EntityAttributePolicyAction.VIEW)
+    void oneToManyEntity();
 }

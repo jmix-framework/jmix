@@ -30,6 +30,8 @@ import org.springframework.security.core.userdetails.User
 import org.springframework.security.core.userdetails.UserDetails
 import spock.lang.Unroll
 import test_support.SecurityDataSpecification
+import test_support.entity.ManyToOneEntity
+import test_support.entity.OneToManyEntity
 import test_support.entity.TestOrder
 import test_support.role.TestLoadValuesAttributeRole
 
@@ -57,6 +59,7 @@ class DataManagerLoadValuesAttributeAccessTest extends SecurityDataSpecification
 
     UserDetails user
     TestOrder order
+    ManyToOneEntity manyToOneEntity
     Authentication systemAuthentication
 
     def setup() {
@@ -69,7 +72,12 @@ class DataManagerLoadValuesAttributeAccessTest extends SecurityDataSpecification
 
         order = metadata.create(TestOrder)
         order.number = 'n1'
-        unconstrainedDataManager.save(order)
+        def oneToManyEntity = metadata.create(OneToManyEntity)
+        oneToManyEntity.name = 'p1'
+        manyToOneEntity = metadata.create(ManyToOneEntity)
+        manyToOneEntity.name = 'm1'
+        manyToOneEntity.oneToManyEntity = oneToManyEntity
+        unconstrainedDataManager.save(order, oneToManyEntity, manyToOneEntity)
 
         systemAuthentication = SecurityContextHelper.getAuthentication()
     }
@@ -78,6 +86,8 @@ class DataManagerLoadValuesAttributeAccessTest extends SecurityDataSpecification
         SecurityContextHelper.setAuthentication(systemAuthentication)
         userRepository.removeUser(user)
         jdbcTemplate.execute('delete from TEST_ORDER')
+        jdbcTemplate.execute('delete from TEST_MANY_TO_ONE_ENTITY')
+        jdbcTemplate.execute('delete from TEST_ONE_TO_MANY_ENTITY')
     }
 
     def "loadValues hides a denied column selected by a single attribute path"() {
@@ -140,6 +150,39 @@ class DataManagerLoadValuesAttributeAccessTest extends SecurityDataSpecification
         result[0].getValue('number') == null
         result[0].getValue('marker') == 'b'
         result[0].getValue('orderId') == order.id
+    }
+
+    def "loadValues hides a denied attribute of a joined entity when a literal column comes first"() {
+        given:
+        authenticate()
+
+        when:
+        def result = dataManager.loadValues(
+                "select 'x', m.name, p.name from test_ManyToOneEntity m join m.oneToManyEntity p")
+                .properties('marker', 'manyName', 'oneName')
+                .list()
+
+        then:
+        result.size() == 1
+        result[0].getValue('marker') == 'x'
+        result[0].getValue('manyName') == 'm1'
+        result[0].getValue('oneName') == null
+    }
+
+    def "loadValues hides every column that selects the same denied attribute"() {
+        given:
+        authenticate()
+
+        when:
+        def result = dataManager.loadValues('select o.number, o.id, o.number from test_Order o')
+                .properties('number1', 'orderId', 'number2')
+                .list()
+
+        then:
+        result.size() == 1
+        result[0].getValue('number1') == null
+        result[0].getValue('orderId') == order.id
+        result[0].getValue('number2') == null
     }
 
     protected void authenticate() {

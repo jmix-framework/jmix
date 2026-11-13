@@ -88,8 +88,9 @@ public class JmixExpiringSessionMap extends ConcurrentHashMap<String, Session> i
     /**
      * Removes the session and, if it has already expired, publishes {@link SessionExpiredEvent}.
      * {@link MapSessionRepository} removes an expired session itself when it is requested before the periodic
-     * cleanup, and this way such a session is reported as expired too. Other ways of removal, such as
-     * {@code remove(key, value)} or removal through views of this map, publish nothing.
+     * cleanup, and this way such a session is reported as expired too. {@code keySet().remove(key)} delegates to
+     * this method and publishes as well. Other ways of removal, such as {@code remove(key, value)}, iterators,
+     * {@code removeIf} or the values and entry set views, publish nothing.
      *
      * @param key the session id
      * @return the removed session, or {@code null} if there was no session with this id

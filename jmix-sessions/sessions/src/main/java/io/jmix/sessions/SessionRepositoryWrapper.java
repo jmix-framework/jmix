@@ -165,12 +165,16 @@ public class SessionRepositoryWrapper<S extends Session>
         if (session != null) {
             applicationEventPublisher.publishEvent(new JmixSessionDestroyedEvent<>(session));
         }
-        // Must go before the delegate's deletion: a store may report it from its own thread (Hazelcast does), and
-        // the Vaadin session must be unbound in this request, where Vaadin can keep it alive for a new HTTP session
-        // on login.
-        destroyNonPersistentAttributes(id);
-        if (session != null) {
-            delegate.deleteById(id);
+        try {
+            // Must go before the delegate's deletion: a store may report it from its own thread (Hazelcast does),
+            // and the Vaadin session must be unbound in this request, where Vaadin can keep it alive for a new HTTP
+            // session on login.
+            destroyNonPersistentAttributes(id);
+        } finally {
+            // The session is deleted even if unbinding fails, so that an invalidated session does not stay usable
+            if (session != null) {
+                delegate.deleteById(id);
+            }
         }
     }
 

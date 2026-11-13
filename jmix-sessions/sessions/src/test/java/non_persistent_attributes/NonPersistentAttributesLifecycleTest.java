@@ -42,6 +42,7 @@ import java.util.Map;
 
 import static io.jmix.sessions.validators.VaadinSessionAttributesValidator.VAADIN_SESSION_KEY;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * Checks that the non-persistent attributes of a session (the Vaadin session) are dropped and the Vaadin session is
@@ -244,6 +245,26 @@ class NonPersistentAttributesLifecycleTest {
         // Vaadin keeps a Vaadin session moved to a new HTTP session on login only if it is unbound in the request
         assertThat(vaadinSession.unboundCount).isEqualTo(1);
         assertThat(vaadinSession.unboundThread).isSameAs(Thread.currentThread());
+    }
+
+    @Test
+    void deleteById_unbindingFails_stillDeletesSession() {
+        HttpSessionBindingListener failingVaadinSession = new HttpSessionBindingListener() {
+            @Override
+            public void valueUnbound(HttpSessionBindingEvent event) {
+                throw new IllegalStateException("Unbinding failure");
+            }
+        };
+        SessionRepositoryWrapper<MapSession>.SessionWrapper session = repository.createSession();
+        session.setAttribute(VAADIN_SESSION_KEY, failingVaadinSession);
+        repository.save(session);
+
+        assertThatThrownBy(() -> repository.deleteById(session.getId()))
+                .isInstanceOf(IllegalStateException.class);
+
+        // An invalidated session must not stay usable
+        assertThat(sessionMap).doesNotContainKey(session.getId());
+        assertThat(nonPersistentAttributes()).isEmpty();
     }
 
     @Test

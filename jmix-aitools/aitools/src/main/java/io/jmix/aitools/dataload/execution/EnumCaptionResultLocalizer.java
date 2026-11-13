@@ -32,6 +32,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -98,18 +99,22 @@ public class EnumCaptionResultLocalizer {
         Map<String, Class<? extends Enum<?>>> enumColumns = new LinkedHashMap<>();
         try {
             QueryParser parser = queryTransformerFactory.parser(jpql);
-            int index = 0;
+            // A column gets an enum type only when its single attribute path is an enum attribute.
+            Map<Integer, List<QueryParser.QueryPath>> columnPaths = new HashMap<>();
             for (QueryParser.QueryPath path : parser.getQueryPaths()) {
-                if (!path.isSelectedPath()) {
-                    continue;
+                int index = path.getSelectedItemIndex();
+                if (path.isSelectedPath() && index >= 0) {
+                    columnPaths.computeIfAbsent(index, key -> new ArrayList<>()).add(path);
                 }
-                if (index < resultProperties.size()) {
-                    Class<? extends Enum<?>> enumType = resolveEnumType(path);
+            }
+            for (Map.Entry<Integer, List<QueryParser.QueryPath>> entry : columnPaths.entrySet()) {
+                int index = entry.getKey();
+                if (entry.getValue().size() == 1 && index < resultProperties.size()) {
+                    Class<? extends Enum<?>> enumType = resolveEnumType(entry.getValue().get(0));
                     if (enumType != null) {
                         enumColumns.put(resultProperties.get(index), enumType);
                     }
                 }
-                index++;
             }
         } catch (RuntimeException e) {
             // Parsing is best-effort: on any failure fall back to formatting only actual enum

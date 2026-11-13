@@ -63,6 +63,8 @@ class JpqlExecutionServiceExcludeFromAiColumnTest {
             "select c.id as cid, c.piiPhone as cphone from aitls_Customer c";
     private static final String HIDDEN_ONLY_JPQL =
             "select c.piiPhone as cphone from aitls_Customer c";
+    private static final String LITERAL_BEFORE_HIDDEN_JPQL =
+            "select 'marker' as m, c.id as cid, c.piiPhone as cphone from aitls_Customer c";
 
     @Autowired
     AccessManager accessManager;
@@ -91,6 +93,24 @@ class JpqlExecutionServiceExcludeFromAiColumnTest {
         assertTrue(row.containsKey("cid"));
         assertFalse(row.containsKey("cphone"));
         assertEquals(1L, row.get("cid"));
+    }
+
+    @Test
+    @DisplayName("Drops the @ExcludeFromAi column when a column without an attribute path precedes it")
+    void testDropsHiddenColumnAfterLiteralColumn() {
+        TestJpqlExecutionService service = createService(LITERAL_BEFORE_HIDDEN_JPQL,
+                List.of(Map.of("m", "marker", "cid", 1L, "cphone", "+1-555")));
+
+        JpqlExecutionResult result = service.execute(new JpqlExecutionRequest(
+                "Show customers", LITERAL_BEFORE_HIDDEN_JPQL, List.of(), List.of("m", "cid", "cphone"), null, null));
+
+        assertTrue(result.isExecuted());
+        assertEquals(1, result.getRows().size());
+
+        Map<String, Object> row = result.getRows().get(0);
+        assertEquals("marker", row.get("m"));
+        assertEquals(1L, row.get("cid"));
+        assertFalse(row.containsKey("cphone"));
     }
 
     @Test

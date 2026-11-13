@@ -77,6 +77,46 @@ class EnumCaptionResultLocalizerTest {
     }
 
     @Test
+    @DisplayName("Localizes the enum column when a literal column comes before it")
+    void testLocalizesEnumColumnAfterLiteral() {
+        JpqlExecutionResult result = createResult(
+                "select 'x' as marker, o.status as status from aitls_Order o",
+                List.of(Map.of("marker", "x", "status", "O")));
+
+        JpqlExecutionResult localized = localizer.localize(result, List.of("marker", "status"));
+
+        Map<String, Object> row = localized.getRows().get(0);
+        assertEquals("x", row.get("marker"));
+        assertEquals(messages.getMessage(Status.OPEN), row.get("status"));
+    }
+
+    @Test
+    @DisplayName("Localizes the enum column when an expression over several attributes comes before it")
+    void testLocalizesEnumColumnAfterExpression() {
+        JpqlExecutionResult result = createResult(
+                "select concat(o.number, o.comment) as label, o.status as status from aitls_Order o",
+                List.of(Map.of("label", "O", "status", "O")));
+
+        JpqlExecutionResult localized = localizer.localize(result, List.of("label", "status"));
+
+        Map<String, Object> row = localized.getRows().get(0);
+        assertEquals("O", row.get("label"));
+        assertEquals(messages.getMessage(Status.OPEN), row.get("status"));
+    }
+
+    @Test
+    @DisplayName("Leaves a column untouched when the enum attribute is only part of it")
+    void testLeavesExpressionWithEnumAttributeUntouched() {
+        JpqlExecutionResult result = createResult(
+                "select concat(o.status, o.number) as label from aitls_Order o",
+                List.of(Map.of("label", "O")));
+
+        JpqlExecutionResult localized = localizer.localize(result, List.of("label"));
+
+        assertEquals("O", localized.getRows().get(0).get("label"));
+    }
+
+    @Test
     @DisplayName("Formats an enum instance value directly")
     void testLocalizesEnumInstance() {
         JpqlExecutionResult result = createResult(

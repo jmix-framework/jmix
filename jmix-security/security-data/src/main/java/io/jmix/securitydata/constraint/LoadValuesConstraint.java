@@ -70,7 +70,7 @@ public class LoadValuesConstraint implements EntityOperationConstraint<LoadValue
 
         for (MetaPropertyPath propertyPath : context.getSelectedPropertyPaths()) {
             if (propertyPath == null) {
-                return;
+                continue;
             }
 
             if (!secureOperations.isEntityAttrReadPermitted(propertyPath, policyStore)) {

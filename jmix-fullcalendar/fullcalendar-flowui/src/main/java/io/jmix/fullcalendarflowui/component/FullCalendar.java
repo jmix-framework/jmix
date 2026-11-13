@@ -990,10 +990,23 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
     protected void setI18nInternal(FullCalendarI18n i18n) {
         ObjectNode json = getSerializer().serializeObject(i18n);
 
-        json.set("locale", getSerializer().serializeValue(currentAuthentication.getLocale()));
+        json.put("locale", getClientLocaleTag());
         json.set("momentLocale", createCalendarLocalizedUnitNamesJson());
 
         getElement().setPropertyJson("i18n", json);
+    }
+
+    /**
+     * Returns the language tag of the current user's locale, by which the client finds the calendar's
+     * localization and formats dates. The tag has no extensions, because the client adds its own one,
+     * and no private use part (e.g. {@code ja-JP-x-lvariant-JP}), because browsers reject such tags.
+     *
+     * @return language tag of the current user's locale
+     */
+    protected String getClientLocaleTag() {
+        String tag = currentAuthentication.getLocale().stripExtensions().toLanguageTag();
+        int privateUseIndex = tag.indexOf("-x-");
+        return privateUseIndex < 0 ? tag : tag.substring(0, privateUseIndex);
     }
 
     @Override

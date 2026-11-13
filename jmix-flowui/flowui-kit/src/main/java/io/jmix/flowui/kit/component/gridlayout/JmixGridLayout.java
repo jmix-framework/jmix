@@ -214,18 +214,11 @@ public class JmixGridLayout<T> extends Component implements HasSize, HasItemComp
     @Override
     protected void onAttach(AttachEvent attachEvent) {
         super.onAttach(attachEvent);
-        if (getDataProvider() != null) {
+        // The listener is not removed on detach, so that the layout follows the data provider while detached.
+        // Subscribe here only to the initial data provider, which is not set by setDataProvider().
+        if (dataProviderListenerRegistration == null && getDataProvider() != null) {
             setupDataProviderListener(getDataProvider());
         }
-    }
-
-    @Override
-    protected void onDetach(DetachEvent detachEvent) {
-        if (dataProviderListenerRegistration != null) {
-            dataProviderListenerRegistration.remove();
-            dataProviderListenerRegistration = null;
-        }
-        super.onDetach(detachEvent);
     }
 
     /**

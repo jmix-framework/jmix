@@ -219,7 +219,7 @@ public class MessageTools {
 
         MetaPropertyPath propertyPath = metadataTools.resolveMetaPropertyPathOrNull(metaClass, propertyName);
         if (propertyPath != null) {
-            return getPropertyCaption(propertyPath.getMetaProperty());
+            return getPropertyCaption(propertyPath.getMetaProperty(), locale);
         } else {
             return message;
         }

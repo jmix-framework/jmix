@@ -70,4 +70,18 @@ class MessageToolsTest extends Specification {
         messageTools.getPropertyCaption(metadata.getClass(Pet).getProperty('nick'), LOC_EN) == 'Nickname'
         messageTools.getPropertyCaption(metadata.getClass(Pet).getProperty('nick'), LOC_RU) == 'Кличка'
     }
+
+    def "getPropertyCaption uses the passed locale for an inherited property"() {
+        expect:
+
+        messageTools.getPropertyCaption(metadata.getClass(Pet), 'createdBy', LOC_EN) == 'Created By'
+        messageTools.getPropertyCaption(metadata.getClass(Pet), 'createdBy', LOC_RU) == 'Кем создан'
+    }
+
+    def "getPropertyCaption uses the passed locale for a property path"() {
+        expect:
+
+        messageTools.getPropertyCaption(metadata.getClass(Pet), 'owner.name', LOC_EN) == 'Owner Name'
+        messageTools.getPropertyCaption(metadata.getClass(Pet), 'owner.name', LOC_RU) == 'Имя владельца'
+    }
 }

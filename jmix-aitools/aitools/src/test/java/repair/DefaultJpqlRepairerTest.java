@@ -37,8 +37,11 @@ import test_support.AiToolsTestConfiguration;
 import java.util.List;
 
 import static io.jmix.aitools.dataload.validation.validator.UsedPropertyPathsValidator.PROPERTY_PATH_INVALID_CODE;
+import static io.jmix.aitools.dataload.validation.validator.ReservedWordAliasValidator.RESERVED_ALIAS_CODE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {AiToolsTestConfiguration.class, SpringAiJpqlRepairerTestConfiguration.class})
@@ -165,6 +168,43 @@ class DefaultJpqlRepairerTest {
         ));
 
         assertEquals("select e from aitls_Order e where e.customer.name like :customerName", repaired.getJpql());
+    }
+
+    @Test
+    void repair_invalidPropertyPath_promptCarriesSchemaOfUsedEntities() {
+        stubChatModel.setContent("""
+                {"jpql": "select c.name as name from aitls_Customer c", "parameters": [], "explanation": "", "warnings": []}
+                """);
+
+        repairer.repair(repairRequest("select c.nam as name from aitls_Customer c", PROPERTY_PATH_INVALID_CODE));
+
+        String prompt = stubChatModel.getLastPrompt().getContents();
+        assertTrue(prompt.contains("Schema:\nEntities the query uses, with their attributes:\naitls_Customer: "),
+                prompt);
+        assertTrue(prompt.contains("name String"), prompt);
+    }
+
+    @Test
+    void repair_issueNotAboutNames_promptHasNoSchema() {
+        stubChatModel.setContent("""
+                {"jpql": "select c.name as name from aitls_Customer c", "parameters": [], "explanation": "", "warnings": []}
+                """);
+
+        repairer.repair(repairRequest("select c.name as user from aitls_Customer c", RESERVED_ALIAS_CODE));
+
+        String prompt = stubChatModel.getLastPrompt().getContents();
+        assertFalse(prompt.contains("Schema:"), prompt);
+        assertFalse(prompt.contains("aitls_Customer: "), prompt);
+    }
+
+    JpqlRepairRequest repairRequest(String jpql, String issueCode) {
+        JpqlExecutionRequest executionRequest = new JpqlExecutionRequest();
+        executionRequest.setUserText("customer names");
+        return new JpqlRepairRequest(
+                executionRequest,
+                new GeneratedJpqlResult(jpql, List.of(), "Broken query", List.of()),
+                new JpqlValidationResult(false, List.of(new JpqlValidationIssue(issueCode, "Issue"))),
+                1);
     }
 
     @Test

@@ -13,8 +13,11 @@ Validation errors:
 Additional repair guidance:
 %s
 
+%s
+
 CONSTRAINTS:
-- Repair the result so that it uses only valid metadata from the provided schema and fixes the listed validation errors.
+- Repair the result so that it fixes the listed validation errors.
+- When a schema is provided, take entity and attribute names only from it. A reference attribute (shown as name -> TargetEntity) can be navigated with a dot or joined; an embedded attribute (shown as name embedded EmbeddableEntity) is navigated with a dot.
 - Preserve execution options such as maxResults and firstResult when they are relevant.
 - Preserve the original intent as much as possible.
 - Never invent entities, properties, joins, or parameter names.

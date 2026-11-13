@@ -30,6 +30,6 @@ public class FieldSetLoader extends AbstractHtmlContainerLoader<FieldSet> {
         super.loadComponent();
 
         componentLoader().loadAriaLabel(resultComponent, element);
-        loadString(element, "legendText", resultComponent::setLegendText);
+        loadResourceString(element, "legendText", context.getMessageGroup(), resultComponent::setLegendText);
     }
 }

@@ -632,7 +632,7 @@
                   visible="true"
                   whiteSpace="PRE"
                   width="100px"
-                  legendText="Legend Text">
+                  legendText="msg://fieldSet.legendText">
             <input id="nestedInput1"/>
             <input id="nestedInput2"/>
         </fieldSet>

@@ -21,6 +21,7 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.router.RouteParameters;
 import io.jmix.core.DataManager;
 import io.jmix.core.Metadata;
+import io.jmix.core.entity.EntityValues;
 import io.jmix.datatoolsflowui.action.EntityInspectorCreateAction;
 import io.jmix.datatoolsflowui.action.EntityInspectorEditAction;
 import io.jmix.datatoolsflowui.view.entityinspector.EntityInspectorDetailView;
@@ -41,6 +42,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import test_support.EntityInspectorUiTestConfiguration;
 import test_support.TestFullAccessUiAuthenticator;
+import test_support.entity.InspectorDelegatedItem;
+import test_support.entity.InspectorDelegatedItemMaster;
+import test_support.entity.InspectorDelegatedMaster;
+import test_support.entity.InspectorDelegatedMasterItem;
 import test_support.entity.InspectorCompositionItem;
 import test_support.entity.InspectorCompositionMaster;
 
@@ -71,6 +76,10 @@ public class EntityInspectorCompositionTest {
     void cleanup() {
         jdbcTemplate.update("delete from TEST_INSPECTOR_COMPOSITION_ITEM");
         jdbcTemplate.update("delete from TEST_INSPECTOR_COMPOSITION_MASTER");
+        jdbcTemplate.update("delete from TEST_INSPECTOR_DELEGATED_ITEM");
+        jdbcTemplate.update("delete from TEST_INSPECTOR_DELEGATED_ITEM_MASTER");
+        jdbcTemplate.update("delete from TEST_INSPECTOR_DELEGATED_MASTER_ITEM");
+        jdbcTemplate.update("delete from TEST_INSPECTOR_DELEGATED_MASTER");
     }
 
     @Test
@@ -157,7 +166,7 @@ public class EntityInspectorCompositionTest {
 
     @Test
     void testNewCompositionItemOfNewMasterIsSavedWithMaster() {
-        EntityInspectorDetailView masterView = navigateToInspector("new");
+        EntityInspectorDetailView masterView = navigateToInspector(InspectorCompositionMaster.class, "new");
         ((InspectorCompositionMaster) masterView.getEditedEntity()).setName("master");
 
         createItem(findItemsDataGrid(masterView), "new item");
@@ -168,6 +177,41 @@ public class EntityInspectorCompositionTest {
                 .parameter("masterName", "master")
                 .one();
         assertEquals("new item", savedItem.getName());
+    }
+
+    @Test
+    void testNewCompositionItemWithSaveDelegateOfNewMasterIsSavedWithMaster() {
+        EntityInspectorDetailView masterView = navigateToInspector(InspectorDelegatedItemMaster.class, "new");
+        ((InspectorDelegatedItemMaster) masterView.getEditedEntity()).setName("master");
+
+        createItem(findItemsDataGrid(masterView), "new item");
+        masterView.save();
+
+        InspectorDelegatedItem savedItem = dataManager.load(InspectorDelegatedItem.class)
+                .query("select e from test_InspectorDelegatedItem e where e.master.name = :masterName")
+                .parameter("masterName", "master")
+                .one();
+        assertEquals("new item", savedItem.getName());
+    }
+
+    @Test
+    void testNewCompositionItemSavedByMasterSaveDelegateIsUpdatedOnNextSave() {
+        EntityInspectorDetailView masterView = navigateToInspector(InspectorDelegatedMaster.class, "new");
+        ((InspectorDelegatedMaster) masterView.getEditedEntity()).setName("master");
+        DataGrid<Object> itemsDataGrid = findItemsDataGrid(masterView);
+
+        createItem(itemsDataGrid, "new item");
+        masterView.save();
+
+        EntityInspectorDetailView itemView = openItemView(itemsDataGrid);
+        ((InspectorDelegatedMasterItem) itemView.getEditedEntity()).setName("edited item");
+        itemView.closeWithSave();
+        masterView.save();
+
+        List<String> savedItemNames = dataManager.load(InspectorDelegatedMasterItem.class).all().list().stream()
+                .map(InspectorDelegatedMasterItem::getName)
+                .toList();
+        assertEquals(List.of("edited item"), savedItemNames);
     }
 
     private InspectorCompositionMaster createMasterWithItem() {
@@ -186,14 +230,14 @@ public class EntityInspectorCompositionTest {
     }
 
     private EntityInspectorDetailView navigateToInspector(InspectorCompositionMaster master) {
-        return navigateToInspector(urlParamSerializer.serialize(master.getId()));
+        return navigateToInspector(InspectorCompositionMaster.class, urlParamSerializer.serialize(master.getId()));
     }
 
-    private EntityInspectorDetailView navigateToInspector(String serializedMasterId) {
-        String entityName = metadata.getClass(InspectorCompositionMaster.class).getName();
+    private EntityInspectorDetailView navigateToInspector(Class<?> entityClass, String serializedEntityId) {
+        String entityName = metadata.getClass(entityClass).getName();
         RouteParameters routeParameters = new RouteParameters(ImmutableMap.of(
                 EntityInspectorDetailView.ROUTE_PARAM_NAME, urlParamSerializer.serialize(entityName),
-                EntityInspectorDetailView.ROUTE_PARAM_ID, serializedMasterId
+                EntityInspectorDetailView.ROUTE_PARAM_ID, serializedEntityId
         ));
         navigationSupport.navigate(EntityInspectorDetailView.class, routeParameters);
 
@@ -206,12 +250,14 @@ public class EntityInspectorCompositionTest {
         createAction.execute();
 
         EntityInspectorDetailView newItemView = UiTestUtils.getLastOpenedViewDialog();
-        ((InspectorCompositionItem) newItemView.getEditedEntity()).setName(name);
+        EntityValues.setValue(newItemView.getEditedEntity(), "name", name);
         newItemView.closeWithSave();
     }
 
     private EntityInspectorDetailView openItemView(DataGrid<Object> itemsDataGrid) {
-        itemsDataGrid.select(getSingleItem(itemsDataGrid));
+        List<Object> items = getItems(itemsDataGrid);
+        assertEquals(1, items.size());
+        itemsDataGrid.select(items.get(0));
 
         Action editAction = itemsDataGrid.getAction(EntityInspectorEditAction.ID);
         assertNotNull(editAction, "The edit action is not created in the entity inspector");

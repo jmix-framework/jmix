@@ -1773,6 +1773,14 @@ public class DataContextImpl implements DataContextInternal {
         return metadata.getClass(entity);
     }
 
+    /**
+     * Whether a name the entity's own metadata does not know is still a property, resolved through a
+     * {@link MetaPropertyPathResolver} - for example, a {@code +code} dynamic attribute.
+     */
+    protected boolean isResolvedProperty(MetaClass metaClass, String name) {
+        return metadataTools.resolveMetaPropertyPathOrNull(metaClass, name) != null;
+    }
+
     @Nullable
     protected String getPrimaryKeyPropertyName(Object entity) {
         MetaProperty primaryKeyProperty = metadataTools.getPrimaryKeyProperty(entity.getClass());
@@ -1809,15 +1817,19 @@ public class DataContextImpl implements DataContextInternal {
             // off-merge edit, or a listener-injected edit during a merge (#1258): track it as usual
             modifiedInstances.add(e.getItem());
 
-            MetaProperty changedProperty = metadata.getClass(e.getItem()).findProperty(e.getProperty());
+            MetaClass metaClass = metadata.getClass(e.getItem());
+            MetaProperty changedProperty = metaClass.findProperty(e.getProperty());
             boolean toMany = changedProperty != null && changedProperty.getRange().isClass()
                     && changedProperty.getRange().getCardinality().isMany();
             boolean idChange = e.getProperty().equals(primaryKeyPropertyName);
+            boolean attribute = changedProperty != null || isResolvedProperty(metaClass, e.getProperty());
             // to-many properties are tracked via the observable collection wrappers; an id change is
             // identity bookkeeping (e.g. setId() in a saveDelegate), not a user edit; a name without
             // metadata (a read-only getter with @DependsOnProperties) is not an attribute - skip all three
-            if (changedProperty != null && !toMany && !idChange) {
-                boolean reference = changedProperty.getRange().isClass();
+            if (attribute && !toMany && !idChange) {
+                // A resolved property, such as a dynamic attribute, is compared by value: it can hold a
+                // list of entities, which has no id to compare by.
+                boolean reference = changedProperty != null && changedProperty.getRange().isClass();
                 changeTracker.trackChange(e.getItem(), e.getProperty(), e.getPrevValue(), e.getValue(), reference);
                 // a user set makes the attribute present in memory (even a set to null), so mark it loaded
                 markLoaded(e.getItem(), e.getProperty());

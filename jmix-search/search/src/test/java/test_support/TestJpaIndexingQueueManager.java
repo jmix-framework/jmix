@@ -33,6 +33,7 @@ import org.jspecify.annotations.NonNull;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * JpaIndexingQueueManager with additional test tracker of queue items
@@ -42,6 +43,8 @@ public class TestJpaIndexingQueueManager extends JpaIndexingQueueManager {
     protected final TestIndexingQueueItemsTracker indexingQueueItemsTracker;
 
     protected long idsProcessingDelay = 0;
+
+    protected long queueProcessingTimeNanos;
 
     public TestJpaIndexingQueueManager(TestIndexingQueueItemsTracker indexingQueueItemsTracker,
                                        SearchProperties searchProperties,
@@ -71,6 +74,10 @@ public class TestJpaIndexingQueueManager extends JpaIndexingQueueManager {
         this.idsProcessingDelay = idsProcessingDelay;
     }
 
+    public void resetQueueProcessingTime() {
+        queueProcessingTimeNanos = 0;
+    }
+
     @Override
     protected int enqueue(@NonNull Collection<IndexingQueueItem> queueItems) {
         indexingQueueItemsTracker.accept(queueItems);
@@ -85,5 +92,17 @@ public class TestJpaIndexingQueueManager extends JpaIndexingQueueManager {
             throw new RuntimeException("Interrupted during processing delay", e);
         }
         return super.processRawIds(rawIds, metaClass, batchSize);
+    }
+
+    @Override
+    protected List<IndexingQueueItem> processQueueItems(List<IndexingQueueItem> queueItems) {
+        List<IndexingQueueItem> processedItems = super.processQueueItems(queueItems);
+        queueProcessingTimeNanos += TimeUnit.MILLISECONDS.toNanos(1);
+        return processedItems;
+    }
+
+    @Override
+    protected long currentTimeNanos() {
+        return queueProcessingTimeNanos;
     }
 }

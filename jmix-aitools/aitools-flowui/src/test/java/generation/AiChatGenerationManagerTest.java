@@ -72,6 +72,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -393,6 +395,81 @@ class AiChatGenerationManagerTest {
         TestAuthentication.runAs("alice", () -> manager.start(conversation, "Hi"));
 
         events.await(AiChatGenerationFailedEvent.class);
+        assertEquals(1, messageService.loadMessages(conversation).size());
+    }
+
+    @Test
+    void retry_unansweredQuestion_answersItWithoutSavingAnotherMessage() {
+        AiConversation conversation = conversationService.addConversation("Chat", "alice");
+        chatService.setResponder(spec -> {
+            throw new IllegalStateException("model down");
+        });
+        AiChatMessage question = TestAuthentication.callAs("alice", () -> manager.start(conversation, "Hi"));
+        events.await(AiChatGenerationFailedEvent.class);
+        chatService.reset();
+        events.clear();
+
+        AiChatMessage retried = TestAuthentication.callAs("alice", () -> manager.retry(conversation));
+
+        UiEventPublisher.UiUserEvent completed = events.await(AiChatGenerationCompletedEvent.class);
+        assertNotNull(retried);
+        assertEquals(question.getId(), retried.getId());
+        List<AiChatMessage> messages = List.copyOf(messageService.loadMessages(conversation));
+        assertEquals(List.of(AiChatMessageType.USER, AiChatMessageType.ASSISTANT),
+                messages.stream().map(AiChatMessage::getType).toList());
+        assertEquals(messages.get(1).getId(),
+                ((AiChatGenerationCompletedEvent) completed.getEvent()).getAssistantMessageId());
+        assertInstanceOf(AiChatGenerationStartedEvent.class, events.eventsOf(conversation.getId()).get(0));
+    }
+
+    @Test
+    void retry_whileRunning_rejectedAndPersistsNothing() {
+        AiConversation conversation = conversationService.addConversation("Chat", "alice");
+        chatService.setResponder(spec -> awaitRelease());
+        TestAuthentication.runAs("alice", () -> manager.start(conversation, "Hi"));
+
+        assertThrows(AiChatGenerationRejectedException.class,
+                () -> TestAuthentication.runAs("alice", () -> manager.retry(conversation)));
+        assertEquals(1, messageService.loadMessages(conversation).size());
+    }
+
+    @Test
+    void retry_lastQuestionAnswered_returnsNull_startsNothing_andKeepsConversationOpen() {
+        AiConversation conversation = conversationService.addConversation("Chat", "alice");
+        TestAuthentication.runAs("alice", () -> manager.start(conversation, "Hi"));
+        events.await(AiChatGenerationCompletedEvent.class);
+        events.clear();
+
+        AiChatMessage retried = TestAuthentication.callAs("alice", () -> manager.retry(conversation));
+
+        assertNull(retried);
+        assertTrue(events.isEmpty());
+        assertFalse(TestAuthentication.callAs("alice", () -> manager.isGenerating(conversation)));
+        TestAuthentication.runAs("alice", () -> manager.start(conversation, "Next"));
+        events.await(AiChatGenerationCompletedEvent.class);
+        assertEquals(4, messageService.loadMessages(conversation).size());
+    }
+
+    @Test
+    void retry_emptyConversation_returnsNull_andStartsNothing() {
+        AiConversation conversation = conversationService.addConversation("Chat", "alice");
+
+        AiChatMessage retried = TestAuthentication.callAs("alice", () -> manager.retry(conversation));
+
+        assertNull(retried);
+        assertTrue(events.isEmpty());
+        assertTrue(messageService.loadMessages(conversation).isEmpty());
+    }
+
+    @Test
+    void retry_otherUsersConversation_deniedAndStartsNothing() {
+        AiConversation conversation = conversationService.addConversation("Chat", "alice");
+        messageService.createMessage(conversation, AiChatMessageType.USER, "Hi");
+
+        assertThrows(AccessDeniedException.class,
+                () -> TestAuthentication.runAs("bob", () -> manager.retry(conversation)));
+
+        assertTrue(events.isEmpty());
         assertEquals(1, messageService.loadMessages(conversation).size());
     }
 

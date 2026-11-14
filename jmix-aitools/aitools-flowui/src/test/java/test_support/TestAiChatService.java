@@ -31,13 +31,15 @@ import java.util.function.Function;
 
 /**
  * {@link AiChatService} for UI tests: reports the chat as available, so the views render as they do in a
- * configured application, and echoes any message instead of calling a model. Tests can replace the answer and
- * publish tool statuses the way a tool does during a call.
+ * configured application, and echoes any message instead of calling a model. Tests can replace the answer, switch
+ * the availability and publish tool statuses the way a tool does during a call.
  */
 public class TestAiChatService implements AiChatService {
 
     @Autowired
     protected ApplicationEventPublisher eventPublisher;
+
+    protected volatile boolean available = true;
 
     protected volatile Function<AiChatResponseSpec, String> responder = TestAiChatService::echo;
 
@@ -60,8 +62,18 @@ public class TestAiChatService implements AiChatService {
         eventPublisher.publishEvent(new AiToolStatusUpdateEvent(this, correlationId, update));
     }
 
+    /**
+     * Switches what {@link #isAvailable()} reports.
+     *
+     * @param available {@code false} to report the chat as not configured
+     */
+    public void setAvailable(boolean available) {
+        this.available = available;
+    }
+
     public void reset() {
         responder = TestAiChatService::echo;
+        available = true;
     }
 
     /**
@@ -107,7 +119,7 @@ public class TestAiChatService implements AiChatService {
 
     @Override
     public boolean isAvailable() {
-        return true;
+        return available;
     }
 
     private static String echo(AiChatResponseSpec spec) {

@@ -1814,19 +1814,22 @@ public class DataContextImpl implements DataContextInternal {
                 return;
             }
 
+            MetaClass metaClass = metadata.getClass(e.getItem());
+            MetaProperty changedProperty = metaClass.findProperty(e.getProperty());
+            if (changedProperty == null && !isResolvedProperty(metaClass, e.getProperty())) {
+                // Not an attribute (e.g. a @DependsOnProperties getter): the attribute's own event is enough.
+                return;
+            }
+
             // off-merge edit, or a listener-injected edit during a merge (#1258): track it as usual
             modifiedInstances.add(e.getItem());
 
-            MetaClass metaClass = metadata.getClass(e.getItem());
-            MetaProperty changedProperty = metaClass.findProperty(e.getProperty());
             boolean toMany = changedProperty != null && changedProperty.getRange().isClass()
                     && changedProperty.getRange().getCardinality().isMany();
             boolean idChange = e.getProperty().equals(primaryKeyPropertyName);
-            boolean attribute = changedProperty != null || isResolvedProperty(metaClass, e.getProperty());
             // to-many properties are tracked via the observable collection wrappers; an id change is
-            // identity bookkeeping (e.g. setId() in a saveDelegate), not a user edit; a name without
-            // metadata (a read-only getter with @DependsOnProperties) is not an attribute - skip all three
-            if (attribute && !toMany && !idChange) {
+            // identity bookkeeping (e.g. setId() in a saveDelegate), not a user edit - skip both
+            if (!toMany && !idChange) {
                 // A resolved property, such as a dynamic attribute, is compared by value: it can hold a
                 // list of entities, which has no id to compare by.
                 boolean reference = changedProperty != null && changedProperty.getRange().isClass();
@@ -1861,14 +1864,18 @@ public class DataContextImpl implements DataContextInternal {
                 return;
             }
 
+            MetaProperty changedProperty = metadata.getClass(e.getItem()).findProperty(e.getProperty());
+            if (changedProperty == null) {
+                // Not an attribute, see PropertyChangeListener.
+                return;
+            }
+
             modifiedInstances.add(entity);
 
-            MetaProperty changedProperty = metadata.getClass(e.getItem()).findProperty(e.getProperty());
-            boolean toMany = changedProperty != null && changedProperty.getRange().isClass()
+            boolean toMany = changedProperty.getRange().isClass()
                     && changedProperty.getRange().getCardinality().isMany();
-            // to-many properties are tracked via the observable collection wrappers, and a name without
-            // metadata is not an attribute; skip the tracker for both
-            if (changedProperty != null && !toMany) {
+            // to-many properties are tracked via the observable collection wrappers; skip the tracker here
+            if (!toMany) {
                 changeTracker.trackChange(entity, embeddedPropertyName + '.' + e.getProperty(),
                         e.getPrevValue(), e.getValue(), false);
             }

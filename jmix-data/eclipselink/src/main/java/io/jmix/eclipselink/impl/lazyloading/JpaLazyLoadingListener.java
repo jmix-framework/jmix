@@ -98,7 +98,8 @@ public class JpaLazyLoadingListener implements DataStoreEventListener {
 
         FetchPlan fetchPlan = context.getFetchPlan();
         if (fetchPlan == null) {
-            fetchPlan = fetchPlanRepository.getFetchPlan(metaClass, FetchPlan.LOCAL);
+            // The same fetch plan that JpaDataStore loads the entities with when the context has none.
+            fetchPlan = fetchPlanRepository.getFetchPlan(metaClass, FetchPlan.BASE);
         }
         for (Object entity : event.getResultEntities()) {
             processValueHolders(entity, context, fetchPlan);

@@ -1,8 +1,7 @@
 package ${packageName};
 
 import io.jmix.flowui.kit.meta.StudioComponent;
-import io.jmix.flowui.kit.meta.StudioProperty;
-import io.jmix.flowui.kit.meta.StudioPropertyType;
+import io.jmix.flowui.kit.meta.StudioPropertyGroups;
 import io.jmix.flowui.kit.meta.StudioUiKit;
 
 @StudioUiKit
@@ -15,9 +14,11 @@ public interface ${studioMetadataClassName} {
             xmlElement = "${xmlElement}",
             xmlns = "${namespace}",
             xmlnsAlias = "${namespaceAlias}",
-            properties = {
-                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID, category = StudioProperty.Category.GENERAL),
-                    @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST, category = StudioProperty.Category.LOOK_AND_FEEL)
+            // TODO describe your component's own XML attributes, e.g.:
+            // properties = @StudioProperty(xmlAttribute = "value", type = StudioPropertyType.STRING),
+            propertyGroups = {
+                    StudioPropertyGroups.BaseSizedEnabledComponentWithClassName.class,
+                    StudioPropertyGroups.ClickShortcut.class
             }
     )
     void ${xmlElement}();

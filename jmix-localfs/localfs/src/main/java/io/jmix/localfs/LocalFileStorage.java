@@ -143,7 +143,9 @@ public class LocalFileStorage implements FileStorage {
      * <p>
      * The reference must not carry a parameter whose key starts with {@value FileDigest#RESERVED_PARAMETER_PREFIX},
      * as such keys are reserved for the framework. Unless {@link CoreProperties#isFileDigestOnSaveEnabled()} is
-     * off, the SHA-256 digest of the saved bytes is added to the passed reference.
+     * off, the SHA-256 digest of the saved bytes is added to the passed reference. The reference then carries a
+     * reserved parameter, so the same object cannot be passed to this method again: to save the file once more, pass
+     * a new reference without the parameters reserved for the framework.
      *
      * @param fileRef     file reference
      * @param inputStream input stream, must be closed in the calling code

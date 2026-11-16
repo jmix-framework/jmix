@@ -59,9 +59,11 @@ public interface FileStorage {
      * @param inputStream input stream, must be closed in the calling code
      * @param parameters additional parameters that can be used in specific storage implementation
      *                   (for example, can be converted to FileRef parameters). Keys starting with
-     *                   {@value FileDigest#RESERVED_PARAMETER_PREFIX} are reserved for the framework
+     *                   {@value FileDigest#RESERVED_PARAMETER_PREFIX} are reserved for the framework and must not be
+     *                   passed; a storage that adds framework parameters to the reference rejects them
      * @return file reference, which may carry framework parameters such as the {@code jmix-sha-256} digest
-     * @throws IllegalArgumentException if arguments are incorrect or a parameter key is reserved for the framework
+     * @throws IllegalArgumentException if arguments are incorrect, for example a reserved parameter key the storage
+     *                                  rejects
      * @throws FileStorageException     if something goes wrong
      */
     FileRef saveStream(String fileName, InputStream inputStream, Map<String, Object> parameters);

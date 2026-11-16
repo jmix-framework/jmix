@@ -21,6 +21,7 @@ import io.jmix.core.FileIntegrityChecker
 import io.jmix.core.FileIntegrityStatus
 import io.jmix.core.FileRef
 import io.jmix.core.FileStorage
+import io.jmix.localfs.LocalFileStorage
 import io.jmix.localfs.LocalFileStorageConfiguration
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ContextConfiguration
@@ -82,6 +83,27 @@ class LocalFileStorageIntegrityTest extends Specification {
 
         where:
         key << ['jmix-sha-256', 'jmix-other']
+    }
+
+    def "saveStream adds the digest to the passed reference, which then cannot be saved again"() {
+        given:
+        LocalFileStorage localFileStorage = fileStorage as LocalFileStorage
+        FileRef fileRef = new FileRef(fileStorage.storageName, "2026/11/16/${UUID.randomUUID()}.txt", 'test.txt')
+
+        when:
+        localFileStorage.saveStream(fileRef, new ByteArrayInputStream('Test output'.bytes))
+
+        then:
+        fileRef.parameters['jmix-sha-256'] == TEST_OUTPUT_SHA_256
+
+        when:
+        localFileStorage.saveStream(fileRef, new ByteArrayInputStream('Test output'.bytes))
+
+        then:
+        thrown(IllegalArgumentException)
+
+        cleanup:
+        fileStorage.removeFile(fileRef)
     }
 
     def "check of a saved file is VALID"() {

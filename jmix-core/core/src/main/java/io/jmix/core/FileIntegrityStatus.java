@@ -43,8 +43,10 @@ public enum FileIntegrityStatus {
     MISSING,
 
     /**
-     * The file exists, but the {@link FileRef} has no digest to compare it with: the file was saved before the
-     * digest was introduced, or by a storage that does not keep it.
+     * The file exists, but the {@link FileRef} has no digest to compare it with: the file was saved before digests
+     * were introduced or while {@code jmix.core.file-digest-on-save-enabled} was off, it was saved by a storage that
+     * does not add a digest, or the reference was built without {@link FileStorage#saveStream}, for example with
+     * {@link FileRef#create}.
      */
     NO_REFERENCE
 }

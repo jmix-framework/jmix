@@ -389,6 +389,11 @@ public class AwsFileStorage implements FileStorage {
         }
     }
 
+    /**
+     * Looks the object up with {@code ListObjectsV2}, so the credentials need the {@code s3:ListBucket} permission.
+     *
+     * @throws FileStorageException with the {@code IO_EXCEPTION} type if the S3 request fails
+     */
     @Override
     public boolean fileExists(FileRef reference) {
         try {

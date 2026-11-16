@@ -6,7 +6,10 @@ import io.jmix.core.Metadata
 import io.jmix.flowui.model.DataComponents
 import io.jmix.flowui.model.impl.DataContextChangeTracker
 import org.springframework.beans.factory.annotation.Autowired
+import io.jmix.flowui.model.DataContext
 import test_support.entity.TestNullableIdEntity
+import test_support.entity.company.Department
+import test_support.entity.petclinic.Owner
 import test_support.entity.sales.Address
 import test_support.entity.sales.Customer
 import test_support.entity.sales.Order
@@ -360,5 +363,66 @@ class DataContextChangeTrackerTest extends DataContextSpec {
 
         cleanup:
         dataManager.remove(line, order, customer)
+    }
+
+    def "reverted change leaves the entity clean when a non-meta getter depends on the attribute"() {
+        given:
+        DataContext context = factory.createDataContext()
+        Department department = context.merge(makeSaved(newDepartment('d1')))
+        def events = []
+        context.addChangeListener { events << it.entity }
+
+        when: "an attribute that a non-meta getter depends on is changed and set back to its original value"
+        department.setName('d2')
+        department.setName('d1')
+
+        then: "the entity is not modified, and only the changes of the attribute fire events"
+        context.getModifiedAttributes(department).isEmpty()
+        !context.isModified(department)
+        !context.hasChanges()
+        events == [department, department]
+    }
+
+    def "reverted embedded change leaves the entity clean when a non-meta getter depends on the attribute"() {
+        given:
+        Owner owner = dataManager.create(Owner)
+        owner.address = dataManager.create(test_support.entity.petclinic.Address)
+        owner.address.line1 = 'l1'
+        DataContext context = factory.createDataContext()
+        Owner managed = context.merge(makeSaved(owner))
+
+        when: "an embedded attribute that a non-meta getter depends on is changed and set back to its original value"
+        managed.address.setLine1('l2')
+        managed.address.setLine1('l1')
+
+        then: "the entity is not modified"
+        context.getModifiedAttributes(managed).isEmpty()
+        !context.isModified(managed)
+        !context.hasChanges()
+    }
+
+    def "merge of a changed attribute leaves the entity clean when a non-meta getter depends on the attribute"() {
+        given:
+        DataContext context = factory.createDataContext()
+        Department department = makeSaved(newDepartment('d1'))
+        Department managed = context.merge(department)
+
+        when: "a copy with another value of the attribute is merged"
+        Department copy = makeSaved(department)
+        copy.name = 'd2'
+        context.merge(copy)
+
+        then: "the merge writes the value, and the entity is not modified"
+        managed.name == 'd2'
+        context.getModifiedAttributes(managed).isEmpty()
+        !context.isModified(managed)
+        !context.hasChanges()
+    }
+
+    Department newDepartment(String name) {
+        Department department = dataManager.create(Department)
+        department.name = name
+        department.employees = []
+        department
     }
 }

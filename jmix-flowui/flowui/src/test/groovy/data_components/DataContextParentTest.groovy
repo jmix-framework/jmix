@@ -513,6 +513,30 @@ class DataContextParentTest extends DataContextSpec {
         parentContext.getModifiedAttributes(parentOwner) == ['address.line1'] as Set
     }
 
+    def "child saves nothing into parent after a reverted change when a non-meta getter depends on the attribute"() {
+        DataContext parentContext = factory.createDataContext()
+        Department parentDepartment = parentContext.merge(makeSaved(newDepartment('d1')))
+
+        DataContext childContext = factory.createDataContext()
+        childContext.setParent(parentContext)
+        Department childDepartment = childContext.merge(parentDepartment)
+
+        when: "an attribute that a non-meta getter depends on is changed and set back to its original value"
+        childDepartment.setName('d2')
+        childDepartment.setName('d1')
+
+        then: "the child context has no changes"
+        !childContext.hasChanges()
+
+        when: "the child context is saved into the parent one"
+        childContext.save()
+
+        then: "the parent context has no changes"
+        parentDepartment.name == 'd1'
+        !parentContext.isModified(parentDepartment)
+        !parentContext.hasChanges()
+    }
+
     Department newDepartment(String name) {
         Department department = dataManager.create(Department)
         department.name = name

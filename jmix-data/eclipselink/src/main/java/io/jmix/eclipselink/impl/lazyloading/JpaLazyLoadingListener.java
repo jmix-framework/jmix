@@ -25,11 +25,13 @@ import io.jmix.core.entity.EntitySystemAccess;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.entity.LoadedPropertiesInfo;
 import io.jmix.core.entity.annotation.SystemLevel;
+import io.jmix.core.impl.DataStoreFactory;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.Range;
 import io.jmix.data.PersistenceHints;
 import io.jmix.eclipselink.EclipselinkProperties;
+import io.jmix.eclipselink.impl.JpaDataStore;
 import jakarta.persistence.Basic;
 import jakarta.persistence.FetchType;
 import org.eclipse.persistence.expressions.Expression;
@@ -78,6 +80,8 @@ public class JpaLazyLoadingListener implements DataStoreEventListener {
     protected ExtendedEntities extendedEntities;
     @Autowired
     protected FetchPlans fetchPlans;
+    @Autowired
+    protected DataStoreFactory dataStoreFactory;
 
     @Value("${jmix.eclipselink.wrap-excessively-loaded-properties:true}")
     protected boolean wrapExcessivelyLoadedPropertiesEnabled;
@@ -94,16 +98,24 @@ public class JpaLazyLoadingListener implements DataStoreEventListener {
     public void afterEntityLoad(DataStoreAfterEntityLoadEvent event) {
         LoadContext<?> context = event.getLoadContext();
 
-        MetaClass metaClass = extendedEntities.getEffectiveMetaClass(context.getEntityMetaClass());
-
-        FetchPlan fetchPlan = context.getFetchPlan();
-        if (fetchPlan == null) {
-            // The same fetch plan that JpaDataStore loads the entities with when the context has none.
-            fetchPlan = fetchPlanRepository.getFetchPlan(metaClass, FetchPlan.BASE);
-        }
+        FetchPlan fetchPlan = getLoadFetchPlan(context);
         for (Object entity : event.getResultEntities()) {
             processValueHolders(entity, context, fetchPlan);
         }
+    }
+
+    /**
+     * Returns the fetch plan that the data store has loaded the entities of the given context with, so that the
+     * attributes it has not fetched are the ones that get lazy loading value holders.
+     */
+    protected FetchPlan getLoadFetchPlan(LoadContext<?> context) {
+        MetaClass metaClass = extendedEntities.getEffectiveMetaClass(context.getEntityMetaClass());
+        DataStore dataStore = dataStoreFactory.get(metaClass.getStore().getName());
+        if (!(dataStore instanceof JpaDataStore jpaDataStore)) {
+            throw new IllegalStateException(String.format("Lazy loading supports only %s, but entity %s is in %s",
+                    JpaDataStore.class.getSimpleName(), metaClass.getName(), dataStore.getClass().getName()));
+        }
+        return jpaDataStore.getLoadFetchPlan(context);
     }
 
     public void processValueHolders(Object entity, LoadContext<?> loadContext, FetchPlan fetchPlan) {

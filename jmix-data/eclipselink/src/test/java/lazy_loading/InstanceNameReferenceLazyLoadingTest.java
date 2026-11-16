@@ -17,6 +17,7 @@
 package lazy_loading;
 
 import io.jmix.core.CoreConfiguration;
+import io.jmix.core.EntityStates;
 import io.jmix.core.UnconstrainedDataManager;
 import io.jmix.data.DataConfiguration;
 import io.jmix.eclipselink.EclipselinkConfiguration;
@@ -27,9 +28,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.DisabledIf;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.transaction.support.TransactionTemplate;
 import test_support.DataTestConfiguration;
 import test_support.TestContextInititalizer;
 import test_support.entity.lazyloading.instance_name_reference.InrAlpha;
@@ -39,23 +40,28 @@ import test_support.entity.lazyloading.instance_name_reference.InrGamma;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Lazy loading of the references of an entity that the default fetch plan includes because the root's instance name
- * depends on it. Wrapping of excessively loaded properties is disabled, as it would hide a load listener that does
- * not process such an entity.
+ * depends on it.
  */
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(
         classes = {CoreConfiguration.class, DataConfiguration.class, EclipselinkConfiguration.class, DataTestConfiguration.class},
         initializers = {TestContextInititalizer.class}
 )
-@TestPropertySource(properties = "jmix.eclipselink.wrap-excessively-loaded-properties=false")
 @DisabledIf(expression = "#{systemEnvironment['JMIX_ECLIPSELINK_DISABLELAZYLOADING'] == 'true'}")
 public class InstanceNameReferenceLazyLoadingTest {
 
     @Autowired
     UnconstrainedDataManager dataManager;
+
+    @Autowired
+    EntityStates entityStates;
+
+    @Autowired
+    TransactionTemplate transactionTemplate;
 
     @Autowired
     JdbcTemplate jdbc;
@@ -91,5 +97,15 @@ public class InstanceNameReferenceLazyLoadingTest {
         InrAlpha alpha = dataManager.load(InrAlpha.class).id(alphaId).one();
 
         assertEquals("gamma1", alpha.getBeta().getGamma().getName());
+    }
+
+    @Test
+    void load_noFetchPlanInTransaction_detachesInstanceNameReference() {
+        transactionTemplate.executeWithoutResult(status -> {
+            InrAlpha alpha = dataManager.load(InrAlpha.class).id(alphaId).one();
+
+            assertTrue(entityStates.isDetached(alpha.getBeta()));
+            assertEquals("gamma1", alpha.getBeta().getGamma().getName());
+        });
     }
 }

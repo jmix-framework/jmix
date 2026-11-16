@@ -56,6 +56,9 @@ class AwsFileStorageIntegrityTest extends Specification {
     static final String ABC_SHA_256_BASE64 = 'ungWv48Bz+pBQUDeXa4iI7ADYaOWF3qctBD/YfIAFa0='
     static final String EMPTY_SHA_256 = 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855'
     static final String EMPTY_SHA_256_BASE64 = '47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU='
+    // S3 ETags are quoted; the one of a multipart object ends with the part count
+    static final String SINGLE_PART_ETAG = '"900150983cd24fb0d6963f7d28e17f72"'
+    static final String MULTIPART_ETAG = '"9b2cf535f27731c974343645a3985328-3"'
 
     // The storage is created with the chunk size of 8 kB.
     static final int CHUNK_SIZE_BYTES = 8 * 1024
@@ -214,7 +217,7 @@ class AwsFileStorageIntegrityTest extends Specification {
         then:
         1 * s3Client.headObject({
             it.checksumMode() == ChecksumMode.ENABLED && it.bucket() == 'bucket' && it.key() == fileRef.path
-        }) >> HeadObjectResponse.builder().checksumSHA256(ABC_SHA_256_BASE64).build()
+        }) >> HeadObjectResponse.builder().checksumSHA256(ABC_SHA_256_BASE64).eTag(SINGLE_PART_ETAG).build()
         0 * s3Client.getObject(*_)
         digest.algorithm == FileDigest.SHA_256
         digest.value == ABC_SHA_256
@@ -228,7 +231,20 @@ class AwsFileStorageIntegrityTest extends Specification {
 
         then:
         1 * s3Client.headObject(_ as HeadObjectRequest) >>
-                HeadObjectResponse.builder().checksumSHA256(ABC_SHA_256_BASE64 + '-3').build()
+                HeadObjectResponse.builder().checksumSHA256(ABC_SHA_256_BASE64 + '-3').eTag(MULTIPART_ETAG).build()
+        1 * s3Client.getObject(_, _) >> object('abc')
+        digest.value == ABC_SHA_256
+    }
+
+    def "an object with a multipart ETag is read in full although its checksum has no part count"() {
+        def storage = storage(null)
+
+        when:
+        def digest = storage.calculateDigest(fileRef(), FileDigest.SHA_256)
+
+        then:
+        1 * s3Client.headObject(_ as HeadObjectRequest) >>
+                HeadObjectResponse.builder().checksumSHA256(ABC_SHA_256_BASE64).eTag(MULTIPART_ETAG).build()
         1 * s3Client.getObject(_, _) >> object('abc')
         digest.value == ABC_SHA_256
     }

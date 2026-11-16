@@ -84,6 +84,7 @@ import java.util.HexFormat;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Internal
@@ -93,6 +94,7 @@ public class AwsFileStorage implements FileStorage {
     private static final Logger log = LoggerFactory.getLogger(AwsFileStorage.class);
     private static final String DEFAULT_STORAGE_NAME = "s3";
     private static final int SHA_256_LENGTH_BYTES = 32;
+    private static final Pattern MULTIPART_ETAG_PATTERN = Pattern.compile("-\\d+\"?$");
 
     protected String storageName;
 
@@ -433,8 +435,11 @@ public class AwsFileStorage implements FileStorage {
                 throw new FileStorageException(type, reference.toString(), e);
             }
 
+            // The checksum of a multipart object is a checksum of the part checksums: S3 marks it with a "-<parts>"
+            // suffix, and the ETag of such an object ends with the same suffix, checked too in case a storage omits
+            // the first.
             String checksum = response.checksumSHA256();
-            if (checksum != null && !checksum.contains("-")) {
+            if (checksum != null && !checksum.contains("-") && !isMultipartETag(response.eTag())) {
                 FileDigest digest = toSha256Digest(checksum);
                 if (digest != null) {
                     return digest;
@@ -442,6 +447,14 @@ public class AwsFileStorage implements FileStorage {
             }
         }
         return FileStorage.super.calculateDigest(reference, algorithm);
+    }
+
+    /**
+     * Returns {@code true} if the ETag is that of an object stored by a multipart upload, which ends with
+     * {@code -<number of parts>}.
+     */
+    private boolean isMultipartETag(@Nullable String eTag) {
+        return eTag != null && MULTIPART_ETAG_PATTERN.matcher(eTag).find();
     }
 
     /**

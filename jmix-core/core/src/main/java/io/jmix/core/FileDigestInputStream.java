@@ -21,6 +21,7 @@ import org.jspecify.annotations.NullMarked;
 import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.security.MessageDigest;
 import java.util.HexFormat;
 
@@ -34,6 +35,7 @@ import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 public class FileDigestInputStream extends FilterInputStream {
 
     private static final int SKIP_BUFFER_SIZE = 8192;
+    private static final int TRANSFER_BUFFER_SIZE = 16384;
 
     private final String algorithm;
     private final MessageDigest messageDigest;
@@ -89,6 +91,23 @@ public class FileDigestInputStream extends FilterInputStream {
             messageDigest.update(b, off, count);
         }
         return count;
+    }
+
+    /**
+     * Transfers the remaining bytes through {@link #read(byte[], int, int)}, so they are digested whatever the
+     * superclass or the underlying stream would do.
+     */
+    @Override
+    public long transferTo(OutputStream out) throws IOException {
+        checkNotNullArgument(out);
+        byte[] buffer = new byte[TRANSFER_BUFFER_SIZE];
+        long transferred = 0;
+        int count;
+        while ((count = read(buffer, 0, buffer.length)) >= 0) {
+            out.write(buffer, 0, count);
+            transferred += count;
+        }
+        return transferred;
     }
 
     @Override

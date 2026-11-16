@@ -23,6 +23,7 @@ import org.junit.jupiter.api.Test;
 import test_support.app.TestFileStorage;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -51,6 +52,17 @@ public class FileDigestTest {
             assertEquals(FileDigest.SHA_256, digest.getAlgorithm());
             assertEquals(ABC_HEX, digest.getValue());
             assertEquals(digest, in.getDigest());
+        }
+    }
+
+    @Test
+    void fileDigestInputStream_transferTo_includesTransferredBytes() throws IOException {
+        // ByteArrayInputStream has its own transferTo, which must not bypass the digest
+        try (FileDigestInputStream in = new FileDigestInputStream(stream("abc"))) {
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            assertEquals(3, in.transferTo(out));
+            assertEquals("abc", out.toString(StandardCharsets.UTF_8));
+            assertEquals(ABC_HEX, in.getDigest().getValue());
         }
     }
 

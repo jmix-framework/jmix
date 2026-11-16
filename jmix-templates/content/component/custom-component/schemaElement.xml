@@ -5,6 +5,9 @@
                     <!-- TODO declare your component's XML attributes here -->
                     <!--<xs:attribute name="value" type="xs:string"/>-->
                     <xs:attributeGroup ref="layout:hasClassNames"/>
+                    <xs:attributeGroup ref="layout:hasClickNotifierAttributes"/>
+                    <xs:attributeGroup ref="layout:hasEnabled"/>
+                    <xs:attributeGroup ref="layout:hasSize"/>
                 </xs:extension>
             </xs:complexContent>
         </xs:complexType>

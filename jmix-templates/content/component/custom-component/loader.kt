@@ -10,5 +10,8 @@ class ${loaderClassName} : AbstractComponentLoader<${componentClassName}>() {
         // TODO load your component's XML attributes, e.g.:
         // loadString(element, "value") { resultComponent.value = it }
         componentLoader().loadClassNames(resultComponent, element)
+        componentLoader().loadClickNotifierAttributes(resultComponent, element)
+        componentLoader().loadEnabled(resultComponent, element)
+        componentLoader().loadSizeAttributes(resultComponent, element)
     }
 }

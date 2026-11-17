@@ -151,8 +151,8 @@ public class LocalFileStorage implements FileStorage {
      * {@link FileStorage#saveStream(String, InputStream, Map)}: a {@code jmix-sha-256} digest is verified against the
      * saved content if {@link CoreProperties#isFileDigestOnSaveEnabled()} is on and kept as it is otherwise, a
      * malformed digest and other keys starting with {@value FileDigest#RESERVED_PARAMETER_PREFIX} are rejected.
-     * The reference is changed only
-     * when the digest is calculated and the reference has none: the digest is added to it.
+     * The reference is changed only when the digest is calculated and the reference has none: the digest is added
+     * to it.
      * <p>
      * A file or directory that already exists at the path is never overwritten or deleted: the call fails with
      * {@link FileStorageException.Type#FILE_ALREADY_EXISTS}. If the save fails after the file has been created, for

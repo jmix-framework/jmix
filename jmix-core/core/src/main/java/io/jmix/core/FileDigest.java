@@ -57,7 +57,6 @@ public final class FileDigest implements Serializable {
     public static final String RESERVED_PARAMETER_PREFIX = "jmix-";
 
     private static final Map<String, String> JCA_ALGORITHM_NAMES = Map.of(SHA_256, "SHA-256");
-    private static final Map<String, Integer> DIGEST_LENGTHS_BYTES = Map.of(SHA_256, 32);
 
     private final String algorithm;
     private final String value;
@@ -153,17 +152,17 @@ public final class FileDigest implements Serializable {
                         + RESERVED_PARAMETER_PREFIX + SHA_256 + "' must be removed from the parameters");
             }
             String algorithm = key.substring(RESERVED_PARAMETER_PREFIX.length());
+            int hexLength = createMessageDigest(algorithm).getDigestLength() * 2;
             Object value = entry.getValue();
-            if (value == null || !isWellFormed(algorithm, value.toString())) {
+            if (value == null || !isWellFormed(value.toString(), hexLength)) {
                 throw new IllegalArgumentException("Parameter '" + key + "' must be the " + algorithm
-                        + " digest in hex, " + DIGEST_LENGTHS_BYTES.get(algorithm) * 2 + " hex digits, but is '"
-                        + value + "'");
+                        + " digest in hex, " + hexLength + " hex digits, but is '" + value + "'");
             }
         }
     }
 
-    private static boolean isWellFormed(String algorithm, String value) {
-        if (value.length() != DIGEST_LENGTHS_BYTES.get(algorithm) * 2) {
+    private static boolean isWellFormed(String value, int hexLength) {
+        if (value.length() != hexLength) {
             return false;
         }
         for (int i = 0; i < value.length(); i++) {

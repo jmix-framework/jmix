@@ -52,8 +52,6 @@ public class FileIntegrityCheckerImpl implements FileIntegrityChecker {
             boolean exists;
             try {
                 exists = fileStorage.fileExists(reference);
-            } catch (IllegalArgumentException e) {
-                throw e;
             } catch (RuntimeException e) {
                 throw toFileStorageException(e, reference);
             }
@@ -64,8 +62,6 @@ public class FileIntegrityCheckerImpl implements FileIntegrityChecker {
         FileDigest actual;
         try {
             actual = fileStorage.calculateDigest(reference, expected.getAlgorithm());
-        } catch (IllegalArgumentException e) {
-            throw e;
         } catch (RuntimeException e) {
             // A storage may report a missing file with any exception type, so the file is looked up explicitly.
             FileStorageException failure = toFileStorageException(e, reference);
@@ -92,8 +88,14 @@ public class FileIntegrityCheckerImpl implements FileIntegrityChecker {
     /**
      * Returns a storage failure as {@link FileStorageException}: a storage such as {@code RestFileStorage} reports
      * failures with other exception types, which are wrapped with the {@code IO_EXCEPTION} type.
+     *
+     * @throws IllegalArgumentException the passed exception itself if it is one: the storage rejects the reference,
+     *                                  which is not a storage failure
      */
     protected FileStorageException toFileStorageException(RuntimeException e, FileRef reference) {
+        if (e instanceof IllegalArgumentException illegalArgumentException) {
+            throw illegalArgumentException;
+        }
         return e instanceof FileStorageException fileStorageException
                 ? fileStorageException
                 : new FileStorageException(FileStorageException.Type.IO_EXCEPTION, reference.toString(), e);

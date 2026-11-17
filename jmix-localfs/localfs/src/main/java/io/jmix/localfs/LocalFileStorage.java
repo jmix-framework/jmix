@@ -149,8 +149,9 @@ public class LocalFileStorage implements FileStorage {
      * <p>
      * The parameters of the reference are handled as described in
      * {@link FileStorage#saveStream(String, InputStream, Map)}: a {@code jmix-sha-256} digest is verified against the
-     * saved content if {@link CoreProperties#isFileDigestOnSaveEnabled()} is on and kept as it is otherwise, other
-     * keys starting with {@value FileDigest#RESERVED_PARAMETER_PREFIX} are rejected. The reference is changed only
+     * saved content if {@link CoreProperties#isFileDigestOnSaveEnabled()} is on and kept as it is otherwise, a
+     * malformed digest and other keys starting with {@value FileDigest#RESERVED_PARAMETER_PREFIX} are rejected.
+     * The reference is changed only
      * when the digest is calculated and the reference has none: the digest is added to it.
      * <p>
      * A file or directory that already exists at the path is never overwritten or deleted: the call fails with
@@ -160,12 +161,13 @@ public class LocalFileStorage implements FileStorage {
      * @param fileRef     file reference
      * @param inputStream input stream, must be closed in the calling code
      * @return size of the saved file in bytes
-     * @throws IllegalArgumentException if the reference carries a reserved parameter other than the digest
+     * @throws IllegalArgumentException if the reference carries a reserved parameter other than the digest, or a
+     *                                  malformed digest
      * @throws FileStorageException     if something goes wrong, the file already exists, or the content does not
      *                                  match the digest of the reference
      */
     public long saveStream(FileRef fileRef, InputStream inputStream) {
-        FileDigest.checkReservedParameters(fileRef.getParameters().keySet());
+        FileDigest.checkReservedParameters(fileRef.getParameters());
         FileDigest expectedDigest = FileDigest.fromFileRef(fileRef);
 
         Path relativePath = getRelativePath(fileRef.getPath());

@@ -27,6 +27,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -128,15 +129,39 @@ public class FileDigestTest {
     void checkReservedParameters_reservedKeyOtherThanDigest_throws() {
         for (String key : List.of("jmix-sha-512", "jmix-md5", "jmix-other")) {
             IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
-                    () -> FileDigest.checkReservedParameters(List.of("size", key)));
+                    () -> FileDigest.checkReservedParameters(Map.of("size", "3", key, ABC_HEX)));
             assertTrue(e.getMessage().contains(key), e.getMessage());
         }
     }
 
     @Test
     void checkReservedParameters_digestAndOtherKeys_passes() {
-        assertDoesNotThrow(() -> FileDigest.checkReservedParameters(
-                List.of("jmix-sha-256", "size", "sha-256", "md5", "crc32c", "Jmix-sha-256", "jmix")));
+        assertDoesNotThrow(() -> FileDigest.checkReservedParameters(Map.of(
+                "jmix-sha-256", ABC_HEX, "size", "3", "sha-256", "mine", "md5", "x", "crc32c", "y",
+                "Jmix-sha-256", "not checked", "jmix", "z")));
+    }
+
+    @Test
+    void checkReservedParameters_uppercaseDigest_passes() {
+        assertDoesNotThrow(() -> FileDigest.checkReservedParameters(Map.of("jmix-sha-256", ABC_HEX.toUpperCase())));
+    }
+
+    @Test
+    void checkReservedParameters_malformedDigest_throws() {
+        String base64OfAbcDigest = "ungWv48Bz+pBQUDeXa4iI7ADYaOWF3qctBD/YfIAFa0=";
+        for (String value : List.of("", "abc", base64OfAbcDigest, "g".repeat(64), ABC_HEX + "0", ABC_HEX + " ")) {
+            IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
+                    () -> FileDigest.checkReservedParameters(Map.of("jmix-sha-256", value)), value);
+            assertTrue(e.getMessage().contains("jmix-sha-256"), e.getMessage());
+        }
+    }
+
+    @Test
+    void checkReservedParameters_nullDigest_throws() {
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("jmix-sha-256", null);
+
+        assertThrows(IllegalArgumentException.class, () -> FileDigest.checkReservedParameters(parameters));
     }
 
     @Test

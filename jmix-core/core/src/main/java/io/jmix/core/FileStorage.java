@@ -59,14 +59,18 @@ public interface FileStorage {
      * keeps the digest of a file in its reference handles them as follows:
      * <ul>
      *     <li>the digest key ({@code jmix-sha-256}) may be passed, for example when a file is copied with the
-     *     parameters of its reference. If the storage calculates the digest on save
-     *     ({@link CoreProperties#isFileDigestOnSaveEnabled()}), it verifies the passed one against the saved content
-     *     and fails with {@link FileStorageException.Type#DIGEST_MISMATCH} if they differ, storing nothing; otherwise
-     *     the passed digest is kept as it is;</li>
-     *     <li>other reserved keys are rejected.</li>
+     *     parameters of its reference; its value must be the digest in hex. If the storage calculates the digest on
+     *     save ({@link CoreProperties#isFileDigestOnSaveEnabled()}), it verifies the passed one against the saved
+     *     content and fails with {@link FileStorageException.Type#DIGEST_MISMATCH} if they differ, storing nothing;
+     *     otherwise the passed digest is kept as it is;</li>
+     *     <li>other reserved keys, and a malformed digest, are rejected.</li>
      * </ul>
-     * The passed parameters are kept in the returned reference unchanged. The only parameter a storage may add is
+     * Such a storage keeps the passed parameters in the returned reference unchanged. The only parameter it may add is
      * the digest, when it calculates one and none was passed.
+     * <p>
+     * A storage that hands the file over to another system, such as {@code RestFileStorage} of the REST data store
+     * add-on, may not pass the parameters on: its returned reference carries what that system reports, and a passed
+     * digest is neither verified nor kept.
      *
      * @param fileName    file name
      * @param inputStream input stream, must be closed in the calling code

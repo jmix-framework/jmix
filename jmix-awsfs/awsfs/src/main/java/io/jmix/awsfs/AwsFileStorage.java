@@ -220,7 +220,7 @@ public class AwsFileStorage implements FileStorage {
 
     @Override
     public FileRef saveStream(String fileName, InputStream inputStream, Map<String, Object> parameters) {
-        FileDigest.checkReservedParameters(parameters.keySet());
+        FileDigest.checkReservedParameters(parameters);
 
         String fileKey = createFileKey(fileName);
         String bucket = this.bucket;
@@ -335,7 +335,8 @@ public class AwsFileStorage implements FileStorage {
                     .key(fileKey)
                     .uploadId(uploadId)
                     .build());
-        } catch (SdkException e) {
+        } catch (RuntimeException e) {
+            // The caller gets the failure the upload was aborted for, whatever the abort throws
             cause.addSuppressed(e);
         }
     }

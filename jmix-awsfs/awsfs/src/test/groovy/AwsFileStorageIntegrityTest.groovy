@@ -236,6 +236,37 @@ class AwsFileStorageIntegrityTest extends Specification {
         e.type == FileStorageException.Type.DIGEST_MISMATCH
     }
 
+    def "a failing abort of a mismatching multipart upload is attached to the digest mismatch"() {
+        def storage = storage(null)
+        byte[] content = content(CHUNK_SIZE_BYTES * 2 + 1)
+
+        when:
+        storage.saveStream('big.bin', new ByteArrayInputStream(content), [(DIGEST_PARAMETER): EMPTY_SHA_256])
+
+        then:
+        1 * s3Client.createMultipartUpload(_) >> CreateMultipartUploadResponse.builder().uploadId('u').build()
+        3 * s3Client.uploadPart(_, _) >> UploadPartResponse.builder().eTag('e').build()
+        1 * s3Client.abortMultipartUpload(_) >> { throw abortFailure }
+        def e = thrown(FileStorageException)
+        e.type == FileStorageException.Type.DIGEST_MISMATCH
+        e.suppressed as List == [abortFailure]
+
+        where:
+        abortFailure << [SdkClientException.create('Abort failed'), new IllegalStateException('Client closed')]
+    }
+
+    def "a malformed passed digest is rejected before anything is uploaded"() {
+        def storage = storage(null)
+
+        when:
+        storage.saveStream('a.txt', stream('abc'),
+                [(DIGEST_PARAMETER): 'ungWv48Bz+pBQUDeXa4iI7ADYaOWF3qctBD/YfIAFa0='])
+
+        then:
+        thrown(IllegalArgumentException)
+        0 * s3Client._
+    }
+
     def "application parameters are kept next to the digest"() {
         def storage = storage(null)
 

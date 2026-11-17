@@ -86,6 +86,21 @@ class LocalFileStorageIntegrityTest extends Specification {
         key << ['jmix-sha-512', 'jmix-other']
     }
 
+    def "saveStream rejects a malformed passed digest and stores nothing"() {
+        given:
+        LocalFileStorage localFileStorage = fileStorage as LocalFileStorage
+        String path = "2026/11/17/${UUID.randomUUID()}.txt"
+        FileRef fileRef = new FileRef(fileStorage.storageName, path, 'test.txt',
+                ['jmix-sha-256': 'ungWv48Bz+pBQUDeXa4iI7ADYaOWF3qctBD/YfIAFa0='])
+
+        when:
+        localFileStorage.saveStream(fileRef, new ByteArrayInputStream('abc'.bytes))
+
+        then:
+        thrown(IllegalArgumentException)
+        !Files.exists(storageRoot().resolve(path))
+    }
+
     def "saveStream keeps a passed digest that matches the content"() {
         when:
         FileRef fileRef = fileStorage.saveStream('test.txt', new ByteArrayInputStream('Test output'.bytes),

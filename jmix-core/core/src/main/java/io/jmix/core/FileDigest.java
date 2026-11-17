@@ -22,7 +22,7 @@ import org.jspecify.annotations.Nullable;
 import java.io.Serializable;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Collection;
+import java.util.HexFormat;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
@@ -57,6 +57,7 @@ public final class FileDigest implements Serializable {
     public static final String RESERVED_PARAMETER_PREFIX = "jmix-";
 
     private static final Map<String, String> JCA_ALGORITHM_NAMES = Map.of(SHA_256, "SHA-256");
+    private static final Map<String, Integer> DIGEST_LENGTHS_BYTES = Map.of(SHA_256, 32);
 
     private final String algorithm;
     private final String value;
@@ -132,21 +133,45 @@ public final class FileDigest implements Serializable {
     }
 
     /**
-     * Checks that the {@link FileRef} parameter keys passed to save a file contain no key reserved for the framework
-     * other than a digest one. A digest passed this way is verified against the saved content, see
+     * Checks the {@link FileRef} parameters passed to save a file: they must contain no key reserved for the framework
+     * other than a digest one, and a digest must be the hex value of the digest (64 hex digits for
+     * {@link #SHA_256}, in any case). A digest passed this way is verified against the saved content, see
      * {@link FileStorage#saveStream}.
      *
-     * @throws IllegalArgumentException if a key is reserved and is not a digest one
+     * @throws IllegalArgumentException if a key is reserved and is not a digest one, or a digest value is malformed
      */
-    public static void checkReservedParameters(Collection<String> keys) {
-        checkNotNullArgument(keys);
-        for (String key : keys) {
-            if (isReservedParameter(key) && !isDigestParameter(key)) {
+    public static void checkReservedParameters(Map<String, ?> parameters) {
+        checkNotNullArgument(parameters);
+        for (Map.Entry<String, ?> entry : parameters.entrySet()) {
+            String key = entry.getKey();
+            if (!isReservedParameter(key)) {
+                continue;
+            }
+            if (!isDigestParameter(key)) {
                 throw new IllegalArgumentException("Parameter '" + key + "' is reserved for the framework: keys "
                         + "starting with '" + RESERVED_PARAMETER_PREFIX + "' other than '"
                         + RESERVED_PARAMETER_PREFIX + SHA_256 + "' must be removed from the parameters");
             }
+            String algorithm = key.substring(RESERVED_PARAMETER_PREFIX.length());
+            Object value = entry.getValue();
+            if (value == null || !isWellFormed(algorithm, value.toString())) {
+                throw new IllegalArgumentException("Parameter '" + key + "' must be the " + algorithm
+                        + " digest in hex, " + DIGEST_LENGTHS_BYTES.get(algorithm) * 2 + " hex digits, but is '"
+                        + value + "'");
+            }
         }
+    }
+
+    private static boolean isWellFormed(String algorithm, String value) {
+        if (value.length() != DIGEST_LENGTHS_BYTES.get(algorithm) * 2) {
+            return false;
+        }
+        for (int i = 0; i < value.length(); i++) {
+            if (!HexFormat.isHexDigit(value.charAt(i))) {
+                return false;
+            }
+        }
+        return true;
     }
 
     static MessageDigest createMessageDigest(String algorithm) {

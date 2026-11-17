@@ -18,6 +18,7 @@
 import io.jmix.core.CoreConfiguration
 import io.jmix.core.FileDigest
 import io.jmix.core.FileRef
+import io.jmix.core.FileStorageException
 import io.jmix.localfs.LocalFileStorage
 import io.jmix.localfs.LocalFileStorageConfiguration
 import org.apache.commons.io.IOUtils
@@ -113,6 +114,28 @@ class LocalFileStorageRootsTest extends Specification {
         then:
         Files.readString(primary.resolve(path)) == 'Newer'
         Files.readString(secondaryFile) == 'Older'
+    }
+
+    def "content that does not match the passed digest is copied to no root"() {
+        given:
+        String path = "2026/11/17/${UUID.randomUUID()}.txt"
+        FileRef fileRef = new FileRef('rootsFs', path, 'test.txt',
+                ['jmix-sha-256': 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855'])
+
+        when:
+        storage.saveStream(fileRef, new ByteArrayInputStream('Not empty'.bytes))
+
+        then:
+        def e = thrown(FileStorageException)
+        e.type == FileStorageException.Type.DIGEST_MISMATCH
+
+        when:
+        storage.stopWriteExecutor()
+        storage.writeExecutor.awaitTermination(5, TimeUnit.SECONDS)
+
+        then:
+        !Files.exists(primary.resolve(path))
+        !Files.exists(secondary.resolve(path))
     }
 
     private FileRef saveAndAwaitCopy(String content) {

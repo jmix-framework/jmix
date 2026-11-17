@@ -75,4 +75,12 @@ class LocalFileStorageDigestDisabledTest extends Specification {
         then:
         thrown(IllegalArgumentException)
     }
+
+    def "a malformed passed digest is rejected when switched off"() {
+        when:
+        fileStorage.saveStream('test.txt', new ByteArrayInputStream('Test output'.bytes), ['jmix-sha-256': 'abc'])
+
+        then:
+        thrown(IllegalArgumentException)
+    }
 }

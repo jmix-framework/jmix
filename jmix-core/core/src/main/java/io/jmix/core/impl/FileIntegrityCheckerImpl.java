@@ -75,7 +75,14 @@ public class FileIntegrityCheckerImpl implements FileIntegrityChecker {
             if (exists) {
                 throw failure;
             }
-            log.debug("Reading file {} failed and the file does not exist, reporting it as missing", reference, e);
+            if (e instanceof FileStorageException) {
+                log.debug("Reading file {} failed and the file does not exist, reporting it as missing", reference, e);
+            } else {
+                // A failure of another type may be a storage error rather than a missing file, and fileExists may
+                // answer false on an error too: RestFileStorage does so for any error response of the remote side.
+                log.warn("Reading file {} failed and the storage reports that the file does not exist, "
+                        + "reporting it as missing", reference, e);
+            }
             return new FileIntegrityCheckResult(reference, FileIntegrityStatus.MISSING, expected, null);
         }
 

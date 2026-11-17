@@ -53,7 +53,7 @@ public class FileIntegrityCheckerImpl implements FileIntegrityChecker {
             try {
                 exists = fileStorage.fileExists(reference);
             } catch (RuntimeException e) {
-                throw toFileStorageException(e, reference);
+                throw rethrowOrWrap(e, reference);
             }
             FileIntegrityStatus status = exists ? FileIntegrityStatus.NO_REFERENCE : FileIntegrityStatus.MISSING;
             return new FileIntegrityCheckResult(reference, status, null, null);
@@ -64,7 +64,7 @@ public class FileIntegrityCheckerImpl implements FileIntegrityChecker {
             actual = fileStorage.calculateDigest(reference, expected.getAlgorithm());
         } catch (RuntimeException e) {
             // A storage may report a missing file with any exception type, so the file is looked up explicitly.
-            FileStorageException failure = toFileStorageException(e, reference);
+            FileStorageException failure = rethrowOrWrap(e, reference);
             boolean exists;
             try {
                 exists = fileStorage.fileExists(reference);
@@ -75,14 +75,15 @@ public class FileIntegrityCheckerImpl implements FileIntegrityChecker {
             if (exists) {
                 throw failure;
             }
-            if (e instanceof FileStorageException) {
-                log.debug("Reading file {} failed and the file does not exist, reporting it as missing", reference, e);
-            } else {
+            if (!(e instanceof FileStorageException)) {
                 // A failure of another type may be a storage error rather than a missing file, and fileExists may
                 // answer false on an error too: RestFileStorage does so for any error response of the remote side.
-                log.warn("Reading file {} failed and the storage reports that the file does not exist, "
-                        + "reporting it as missing", reference, e);
+                // The stack trace goes to the debug log only, as a bulk check may meet many such failures.
+                log.warn("Reading file {}://{} failed ({}) and the storage reports that the file does not exist, "
+                                + "reporting it as missing",
+                        reference.getStorageName(), reference.getPath(), e.getClass().getName());
             }
+            log.debug("Reading file {} failed and the file does not exist, reporting it as missing", reference, e);
             return new FileIntegrityCheckResult(reference, FileIntegrityStatus.MISSING, expected, null);
         }
 
@@ -93,13 +94,13 @@ public class FileIntegrityCheckerImpl implements FileIntegrityChecker {
     }
 
     /**
-     * Returns a storage failure as {@link FileStorageException}: a storage such as {@code RestFileStorage} reports
-     * failures with other exception types, which are wrapped with the {@code IO_EXCEPTION} type.
+     * Rethrows an {@link IllegalArgumentException}, with which the storage rejects the reference: it is not a storage
+     * failure. Returns any other failure as {@link FileStorageException}: a storage such as {@code RestFileStorage}
+     * reports failures with other exception types, which are wrapped with the {@code IO_EXCEPTION} type.
      *
-     * @throws IllegalArgumentException the passed exception itself if it is one: the storage rejects the reference,
-     *                                  which is not a storage failure
+     * @throws IllegalArgumentException the passed exception itself if it is one
      */
-    protected FileStorageException toFileStorageException(RuntimeException e, FileRef reference) {
+    protected FileStorageException rethrowOrWrap(RuntimeException e, FileRef reference) {
         if (e instanceof IllegalArgumentException illegalArgumentException) {
             throw illegalArgumentException;
         }

@@ -40,6 +40,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -65,6 +66,7 @@ public class FileIntegrityCheckerTest {
     void tearDown() {
         failingFileStorage.setFileExists(true);
         failingFileStorage.setFileExistsFails(false);
+        failingFileStorage.setFailsWithOtherException(false);
     }
 
     @Test
@@ -193,6 +195,42 @@ public class FileIntegrityCheckerTest {
         assertEquals(1, exception.getSuppressed().length);
         FileStorageException suppressed = (FileStorageException) exception.getSuppressed()[0];
         assertEquals(FileStorageException.Type.STORAGE_INACCESSIBLE, suppressed.getType());
+    }
+
+    @Test
+    void check_readFailsWithOtherExceptionForMissingFile_missing() {
+        FileRef reference = new FileRef("testFsFailing", "x", "x.txt", Map.of(DIGEST_KEY, ABC));
+        failingFileStorage.setFailsWithOtherException(true);
+        failingFileStorage.setFileExists(false);
+
+        FileIntegrityCheckResult result = fileIntegrityChecker.check(reference);
+
+        assertEquals(FileIntegrityStatus.MISSING, result.getStatus());
+    }
+
+    @Test
+    void check_readFailsWithOtherExceptionForExistingFile_throwsItWrapped() {
+        FileRef reference = new FileRef("testFsFailing", "x", "x.txt", Map.of(DIGEST_KEY, ABC));
+        failingFileStorage.setFailsWithOtherException(true);
+
+        FileStorageException exception = assertThrows(FileStorageException.class,
+                () -> fileIntegrityChecker.check(reference));
+
+        assertEquals(FileStorageException.Type.IO_EXCEPTION, exception.getType());
+        assertInstanceOf(IllegalStateException.class, exception.getCause());
+    }
+
+    @Test
+    void check_noReferenceAndFileExistsFailsWithOtherException_throwsItWrapped() {
+        FileRef reference = new FileRef("testFsFailing", "x", "x.txt");
+        failingFileStorage.setFailsWithOtherException(true);
+        failingFileStorage.setFileExistsFails(true);
+
+        FileStorageException exception = assertThrows(FileStorageException.class,
+                () -> fileIntegrityChecker.check(reference));
+
+        assertEquals(FileStorageException.Type.IO_EXCEPTION, exception.getType());
+        assertInstanceOf(IllegalStateException.class, exception.getCause());
     }
 
     @Test

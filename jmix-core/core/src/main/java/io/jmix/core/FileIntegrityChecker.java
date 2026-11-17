@@ -34,9 +34,11 @@ public interface FileIntegrityChecker {
      *
      * @param reference file reference
      * @return the result of the check
-     * @throws IllegalArgumentException if there is no storage with the name from the file reference
+     * @throws IllegalArgumentException if there is no storage with the name from the file reference, or the storage
+     *                                  rejects the reference as invalid
      * @throws FileStorageException     if the storage fails to read an existing file, or fails to find out whether
-     *                                  the file exists
+     *                                  the file exists; a failure the storage reports with another exception type
+     *                                  is wrapped with the {@code IO_EXCEPTION} type
      */
     FileIntegrityCheckResult check(FileRef reference);
 }

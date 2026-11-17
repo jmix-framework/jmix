@@ -33,6 +33,7 @@ public class TestFailingFileStorage implements FileStorage {
 
     private volatile boolean fileExists = true;
     private volatile boolean fileExistsFails = false;
+    private volatile boolean failsWithOtherException = false;
 
     @Override
     public String getStorageName() {
@@ -46,7 +47,7 @@ public class TestFailingFileStorage implements FileStorage {
 
     @Override
     public InputStream openStream(FileRef reference) {
-        throw new FileStorageException(FileStorageException.Type.IO_EXCEPTION, reference.toString());
+        throw failure(FileStorageException.Type.IO_EXCEPTION, reference);
     }
 
     @Override
@@ -57,9 +58,16 @@ public class TestFailingFileStorage implements FileStorage {
     @Override
     public boolean fileExists(FileRef reference) {
         if (fileExistsFails) {
-            throw new FileStorageException(FileStorageException.Type.STORAGE_INACCESSIBLE, reference.toString());
+            throw failure(FileStorageException.Type.STORAGE_INACCESSIBLE, reference);
         }
         return fileExists;
+    }
+
+    // A storage such as RestFileStorage reports failures with exceptions other than FileStorageException
+    private RuntimeException failure(FileStorageException.Type type, FileRef reference) {
+        return failsWithOtherException
+                ? new IllegalStateException("Cannot access file '" + reference + "'")
+                : new FileStorageException(type, reference.toString());
     }
 
     public void setFileExists(boolean fileExists) {
@@ -68,5 +76,9 @@ public class TestFailingFileStorage implements FileStorage {
 
     public void setFileExistsFails(boolean fileExistsFails) {
         this.fileExistsFails = fileExistsFails;
+    }
+
+    public void setFailsWithOtherException(boolean failsWithOtherException) {
+        this.failsWithOtherException = failsWithOtherException;
     }
 }

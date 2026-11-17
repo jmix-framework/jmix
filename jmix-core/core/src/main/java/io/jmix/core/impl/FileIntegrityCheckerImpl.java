@@ -49,26 +49,35 @@ public class FileIntegrityCheckerImpl implements FileIntegrityChecker {
         FileDigest expected = FileDigest.fromFileRef(reference);
 
         if (expected == null) {
-            FileIntegrityStatus status = fileStorage.fileExists(reference)
-                    ? FileIntegrityStatus.NO_REFERENCE
-                    : FileIntegrityStatus.MISSING;
+            boolean exists;
+            try {
+                exists = fileStorage.fileExists(reference);
+            } catch (IllegalArgumentException e) {
+                throw e;
+            } catch (RuntimeException e) {
+                throw toFileStorageException(e, reference);
+            }
+            FileIntegrityStatus status = exists ? FileIntegrityStatus.NO_REFERENCE : FileIntegrityStatus.MISSING;
             return new FileIntegrityCheckResult(reference, status, null, null);
         }
 
         FileDigest actual;
         try {
             actual = fileStorage.calculateDigest(reference, expected.getAlgorithm());
-        } catch (FileStorageException e) {
+        } catch (IllegalArgumentException e) {
+            throw e;
+        } catch (RuntimeException e) {
             // A storage may report a missing file with any exception type, so the file is looked up explicitly.
+            FileStorageException failure = toFileStorageException(e, reference);
             boolean exists;
             try {
                 exists = fileStorage.fileExists(reference);
             } catch (RuntimeException ex) {
-                e.addSuppressed(ex);
-                throw e;
+                failure.addSuppressed(ex);
+                throw failure;
             }
             if (exists) {
-                throw e;
+                throw failure;
             }
             log.debug("Reading file {} failed and the file does not exist, reporting it as missing", reference, e);
             return new FileIntegrityCheckResult(reference, FileIntegrityStatus.MISSING, expected, null);
@@ -78,5 +87,15 @@ public class FileIntegrityCheckerImpl implements FileIntegrityChecker {
                 ? FileIntegrityStatus.VALID
                 : FileIntegrityStatus.MODIFIED;
         return new FileIntegrityCheckResult(reference, status, expected, actual);
+    }
+
+    /**
+     * Returns a storage failure as {@link FileStorageException}: a storage such as {@code RestFileStorage} reports
+     * failures with other exception types, which are wrapped with the {@code IO_EXCEPTION} type.
+     */
+    protected FileStorageException toFileStorageException(RuntimeException e, FileRef reference) {
+        return e instanceof FileStorageException fileStorageException
+                ? fileStorageException
+                : new FileStorageException(FileStorageException.Type.IO_EXCEPTION, reference.toString(), e);
     }
 }

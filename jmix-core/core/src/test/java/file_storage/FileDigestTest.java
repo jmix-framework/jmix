@@ -157,6 +157,28 @@ public class FileDigestTest {
     }
 
     @Test
+    void checkReservedParameters_longMalformedDigest_messageShortened() {
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
+                () -> FileDigest.checkReservedParameters(Map.of("jmix-sha-256", "a".repeat(5000))));
+
+        assertTrue(e.getMessage().length() < 300, e.getMessage());
+        assertTrue(e.getMessage().contains("5000 characters"), e.getMessage());
+    }
+
+    @Test
+    void checkReservedParameters_controlCharacters_escapedInMessage() {
+        IllegalArgumentException digestException = assertThrows(IllegalArgumentException.class,
+                () -> FileDigest.checkReservedParameters(Map.of("jmix-sha-256", "abc\r\nINFO forged log line")));
+        IllegalArgumentException keyException = assertThrows(IllegalArgumentException.class,
+                () -> FileDigest.checkReservedParameters(Map.of("jmix-x\nINFO forged log line", "x")));
+
+        for (IllegalArgumentException e : List.of(digestException, keyException)) {
+            assertFalse(e.getMessage().contains("\n") || e.getMessage().contains("\r"), e.getMessage());
+            assertTrue(e.getMessage().contains("\\u000a"), e.getMessage());
+        }
+    }
+
+    @Test
     void checkReservedParameters_nullDigest_throws() {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("jmix-sha-256", null);

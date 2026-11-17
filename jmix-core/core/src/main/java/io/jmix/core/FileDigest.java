@@ -57,6 +57,7 @@ public final class FileDigest implements Serializable {
     public static final String RESERVED_PARAMETER_PREFIX = "jmix-";
 
     private static final Map<String, String> JCA_ALGORITHM_NAMES = Map.of(SHA_256, "SHA-256");
+    private static final int MAX_QUOTED_LENGTH = 100;
 
     private final String algorithm;
     private final String value;
@@ -147,8 +148,8 @@ public final class FileDigest implements Serializable {
                 continue;
             }
             if (!isDigestParameter(key)) {
-                throw new IllegalArgumentException("Parameter '" + key + "' is reserved for the framework: keys "
-                        + "starting with '" + RESERVED_PARAMETER_PREFIX + "' other than '"
+                throw new IllegalArgumentException("Parameter " + quote(key) + " is reserved for the framework: "
+                        + "keys starting with '" + RESERVED_PARAMETER_PREFIX + "' other than '"
                         + RESERVED_PARAMETER_PREFIX + SHA_256 + "' must be removed from the parameters");
             }
             String algorithm = key.substring(RESERVED_PARAMETER_PREFIX.length());
@@ -156,9 +157,32 @@ public final class FileDigest implements Serializable {
             Object value = entry.getValue();
             if (value == null || !isWellFormed(value.toString(), hexLength)) {
                 throw new IllegalArgumentException("Parameter '" + key + "' must be the " + algorithm
-                        + " digest in hex, " + hexLength + " hex digits, but is '" + value + "'");
+                        + " digest in hex, " + hexLength + " hex digits, but is "
+                        + (value == null ? "null" : quote(value.toString())));
             }
         }
+    }
+
+    /**
+     * Quotes a caller-supplied text for an exception message, which may end up in a log or a response: shortens a
+     * long one and escapes control and line separator characters, so that it cannot break a log line.
+     */
+    private static String quote(String text) {
+        int shownLength = Math.min(text.length(), MAX_QUOTED_LENGTH);
+        StringBuilder sb = new StringBuilder("'");
+        for (int i = 0; i < shownLength; i++) {
+            char c = text.charAt(i);
+            if (Character.isISOControl(c) || c == ' ' || c == ' ') {
+                sb.append(String.format("\\u%04x", (int) c));
+            } else {
+                sb.append(c);
+            }
+        }
+        sb.append('\'');
+        if (shownLength < text.length()) {
+            sb.append("... (").append(text.length()).append(" characters)");
+        }
+        return sb.toString();
     }
 
     private static boolean isWellFormed(String value, int hexLength) {

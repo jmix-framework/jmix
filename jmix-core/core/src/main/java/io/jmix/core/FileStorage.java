@@ -121,8 +121,8 @@ public interface FileStorage {
         checkNotNullArgument(reference);
         checkNotNullArgument(algorithm);
         FileDigest.checkSupported(algorithm);
-        try (InputStream inputStream = openStream(reference)) {
-            FileDigestInputStream digestInputStream = new FileDigestInputStream(inputStream, algorithm);
+        try (InputStream inputStream = openStream(reference);
+             FileDigestInputStream digestInputStream = new FileDigestInputStream(inputStream, algorithm)) {
             digestInputStream.transferTo(OutputStream.nullOutputStream());
             return digestInputStream.getDigest();
         } catch (IOException e) {

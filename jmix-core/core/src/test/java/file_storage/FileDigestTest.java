@@ -179,6 +179,41 @@ public class FileDigestTest {
     }
 
     @Test
+    void checkReservedParameters_supplementaryCharacterAtCut_keptWhole() {
+        String emoji = Character.toString(0x1F600);
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
+                () -> FileDigest.checkReservedParameters(Map.of("jmix-sha-256", "a".repeat(99) + emoji + "bbb")));
+
+        String message = e.getMessage();
+        for (int i = 0; i < message.length(); i++) {
+            char c = message.charAt(i);
+            if (Character.isHighSurrogate(c)) {
+                assertTrue(i + 1 < message.length() && Character.isLowSurrogate(message.charAt(i + 1)), message);
+                i++;
+            } else {
+                assertFalse(Character.isLowSurrogate(c), message);
+            }
+        }
+        assertTrue(message.contains(emoji), message);
+    }
+
+    @Test
+    void checkReservedParameters_formatAndSeparatorCharacters_escapedInMessage() {
+        String rightToLeftOverride = Character.toString(0x202E);
+        String lineSeparator = Character.toString(0x2028);
+        String paragraphSeparator = Character.toString(0x2029);
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
+                () -> FileDigest.checkReservedParameters(Map.of("jmix-sha-256",
+                        "abc" + rightToLeftOverride + "x" + lineSeparator + "y" + paragraphSeparator)));
+
+        String message = e.getMessage();
+        assertFalse(message.contains(rightToLeftOverride) || message.contains(lineSeparator)
+                || message.contains(paragraphSeparator), message);
+        assertTrue(message.contains("\\u202e") && message.contains("\\u2028") && message.contains("\\u2029"),
+                message);
+    }
+
+    @Test
     void checkReservedParameters_nullDigest_throws() {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("jmix-sha-256", null);

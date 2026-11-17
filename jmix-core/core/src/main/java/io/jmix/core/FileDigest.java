@@ -165,24 +165,37 @@ public final class FileDigest implements Serializable {
 
     /**
      * Quotes a caller-supplied text for an exception message, which may end up in a log or a response: shortens a
-     * long one and escapes control and line separator characters, so that it cannot break a log line.
+     * long one and escapes the characters that can break or disguise a log line, see {@link #isEscaped(int)}.
      */
     private static String quote(String text) {
-        int shownLength = Math.min(text.length(), MAX_QUOTED_LENGTH);
+        int length = text.codePointCount(0, text.length());
+        int shownEnd = text.offsetByCodePoints(0, Math.min(length, MAX_QUOTED_LENGTH));
         StringBuilder sb = new StringBuilder("'");
-        for (int i = 0; i < shownLength; i++) {
-            char c = text.charAt(i);
-            if (Character.isISOControl(c) || c == ' ' || c == ' ') {
-                sb.append(String.format("\\u%04x", (int) c));
+        text.substring(0, shownEnd).codePoints().forEach(codePoint -> {
+            if (isEscaped(codePoint)) {
+                sb.append(String.format(Locale.ROOT, "\\u%04x", codePoint));
             } else {
-                sb.append(c);
+                sb.appendCodePoint(codePoint);
             }
-        }
+        });
         sb.append('\'');
-        if (shownLength < text.length()) {
-            sb.append("... (").append(text.length()).append(" characters)");
+        if (length > MAX_QUOTED_LENGTH) {
+            sb.append("... (").append(length).append(" characters)");
         }
         return sb.toString();
+    }
+
+    /**
+     * Returns {@code true} for control characters, line and paragraph separators, format characters such as the
+     * bidirectional overrides, and unpaired surrogates.
+     */
+    private static boolean isEscaped(int codePoint) {
+        int type = Character.getType(codePoint);
+        return Character.isISOControl(codePoint)
+                || type == Character.LINE_SEPARATOR
+                || type == Character.PARAGRAPH_SEPARATOR
+                || type == Character.FORMAT
+                || type == Character.SURROGATE;
     }
 
     private static boolean isWellFormed(String value, int hexLength) {

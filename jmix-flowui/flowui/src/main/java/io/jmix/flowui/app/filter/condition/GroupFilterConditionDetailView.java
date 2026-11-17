@@ -42,6 +42,7 @@ import org.springframework.lang.Nullable;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 @ViewController("flowui_GroupFilterCondition.detail")
 @ViewDescriptor("group-filter-condition-detail-view.xml")
@@ -163,8 +164,8 @@ public class GroupFilterConditionDetailView extends LogicalFilterConditionDetail
     @Subscribe
     protected void onReady(ReadyEvent event) {
         refreshMoveButtonsState(null);
-        getCollectionContainer().addItemChangeListener(itemChangeEvent ->
-                refreshMoveButtonsState(itemChangeEvent.getItem()));
+        conditionsTreeDataGrid.addSelectionListener(selectionEvent ->
+                refreshMoveButtonsState(getSingleSelectedCondition()));
         operationField.addValueChangeListener(valueChangeEvent -> {
             if (valueChangeEvent.getValue() != null) {
                 getEditedEntity().setLocalizedLabel(logicalFilterSupport.getOperationText(valueChangeEvent.getValue()));
@@ -183,7 +184,7 @@ public class GroupFilterConditionDetailView extends LogicalFilterConditionDetail
 
     @Subscribe("conditionsTreeDataGrid.moveUp")
     public void onMoveUp(ActionPerformedEvent event) {
-        FilterCondition selectedCondition = conditionsTreeDataGrid.getSingleSelectedItem();
+        FilterCondition selectedCondition = getSingleSelectedCondition();
 
         if (selectedCondition == null) {
             return;
@@ -195,17 +196,19 @@ public class GroupFilterConditionDetailView extends LogicalFilterConditionDetail
             List<FilterCondition> ownConditions = ((LogicalFilterCondition) parent).getOwnFilterConditions();
             int selectedOwnItemIndex = ownConditions.indexOf(selectedCondition);
 
-            Collections.swap(ownConditions, selectedOwnItemIndex, selectedOwnItemIndex - 1);
-            // Reload the container instead of swapping its items: the grid repaints an item set
-            // in place of another one in the row of the replaced item, so the rows would not move.
-            refreshChildrenConditions();
-            refreshMoveButtonsState(selectedCondition);
+            if (selectedOwnItemIndex > 0) {
+                Collections.swap(ownConditions, selectedOwnItemIndex, selectedOwnItemIndex - 1);
+                // Reload the container instead of swapping its items: the grid repaints an item set
+                // in place of another one in the row of the replaced item, so the rows would not move.
+                refreshChildrenConditions();
+                refreshMoveButtonsState(selectedCondition);
+            }
         }
     }
 
     @Subscribe("conditionsTreeDataGrid.moveDown")
     protected void onMoveDown(ActionPerformedEvent event) {
-        FilterCondition selectedCondition = conditionsTreeDataGrid.getSingleSelectedItem();
+        FilterCondition selectedCondition = getSingleSelectedCondition();
 
         if (selectedCondition == null) {
             return;
@@ -217,12 +220,23 @@ public class GroupFilterConditionDetailView extends LogicalFilterConditionDetail
             List<FilterCondition> ownConditions = ((LogicalFilterCondition) parent).getOwnFilterConditions();
             int selectedOwnItemIndex = ownConditions.indexOf(selectedCondition);
 
-            Collections.swap(ownConditions, selectedOwnItemIndex, selectedOwnItemIndex + 1);
-            // Reload the container instead of swapping its items: the grid repaints an item set
-            // in place of another one in the row of the replaced item, so the rows would not move.
-            refreshChildrenConditions();
-            refreshMoveButtonsState(selectedCondition);
+            if (selectedOwnItemIndex >= 0 && selectedOwnItemIndex < ownConditions.size() - 1) {
+                Collections.swap(ownConditions, selectedOwnItemIndex, selectedOwnItemIndex + 1);
+                // Reload the container instead of swapping its items: the grid repaints an item set
+                // in place of another one in the row of the replaced item, so the rows would not move.
+                refreshChildrenConditions();
+                refreshMoveButtonsState(selectedCondition);
+            }
         }
+    }
+
+    /**
+     * Returns the selected condition if it is the only one selected: the move actions move a single condition.
+     */
+    @Nullable
+    protected FilterCondition getSingleSelectedCondition() {
+        Set<FilterCondition> selectedConditions = conditionsTreeDataGrid.getSelectedItems();
+        return selectedConditions.size() == 1 ? selectedConditions.iterator().next() : null;
     }
 
     @Install(to = "conditionsTreeDataGrid", subject = "itemSelectableProvider")

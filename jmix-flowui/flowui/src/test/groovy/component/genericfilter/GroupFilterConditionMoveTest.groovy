@@ -26,6 +26,7 @@ import io.jmix.flowui.component.grid.TreeDataGrid
 import io.jmix.flowui.component.propertyfilter.PropertyFilter
 import io.jmix.flowui.entity.filter.FilterCondition
 import io.jmix.flowui.entity.filter.PropertyFilterCondition
+import io.jmix.flowui.kit.action.Action
 import io.jmix.flowui.kit.component.button.JmixButton
 import io.jmix.flowui.testassist.vaadin.TestUI
 import org.springframework.boot.test.context.SpringBootTest
@@ -63,6 +64,44 @@ class GroupFilterConditionMoveTest extends FlowuiTestSpecification {
         "moveDownBtn" | "number"
     }
 
+    def "the move buttons are available only for a single selected condition that can move: #selected"() {
+        given: "the editor of a configuration with the 'number', 'amount' and 'total' conditions"
+        GroupFilterConditionDetailView view = openConfigurationEditor("number", "amount", "total")
+        TreeDataGrid<FilterCondition> grid = view.listDataComponent as TreeDataGrid<FilterCondition>
+
+        when: "the user selects the conditions"
+        selected.each { grid.select(ownCondition(view, it)) }
+
+        then: "a button is enabled only when the only selected condition can move that way"
+        button(view, "moveUpBtn").enabled == upEnabled
+        button(view, "moveDownBtn").enabled == downEnabled
+
+        where:
+        selected                      | upEnabled | downEnabled
+        ["number"]                    | false     | true
+        ["total"]                     | true      | false
+        ["number", "amount", "total"] | false     | false
+    }
+
+    def "#actionId performed from code with #selected selected leaves the conditions in place"() {
+        given: "the editor of a configuration with the 'number', 'amount' and 'total' conditions"
+        GroupFilterConditionDetailView view = openConfigurationEditor("number", "amount", "total")
+        TreeDataGrid<FilterCondition> grid = view.listDataComponent as TreeDataGrid<FilterCondition>
+        selected.each { grid.select(ownCondition(view, it)) }
+
+        when: "the move action is performed although the move cannot be made"
+        grid.getAction(actionId).perform(new Action.Context(grid))
+
+        then: "the group's conditions keep their order"
+        view.instanceContainer.item.ownFilterConditions*.property == ["number", "amount", "total"]
+
+        where:
+        actionId   | selected
+        "moveUp"   | ["number"]
+        "moveDown" | ["total"]
+        "moveDown" | ["number", "amount"]
+    }
+
     GroupFilterConditionDetailView openConfigurationEditor(String... properties) {
         GenericFilter filter = navigateToView(GenericFilterApiTestView).genericFilter
         def conditions = properties.collect {
@@ -83,6 +122,10 @@ class GroupFilterConditionMoveTest extends FlowuiTestSpecification {
     static PropertyFilterCondition ownCondition(GroupFilterConditionDetailView view, String property) {
         return view.instanceContainer.item.ownFilterConditions
                 .find { (it as PropertyFilterCondition).property == property } as PropertyFilterCondition
+    }
+
+    static JmixButton button(GroupFilterConditionDetailView view, String id) {
+        return UiComponentUtils.getComponent(view, id) as JmixButton
     }
 
     /**

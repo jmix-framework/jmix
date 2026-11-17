@@ -21,7 +21,6 @@ import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import io.jmix.core.*;
 import io.jmix.core.annotation.Internal;
 import jakarta.annotation.PreDestroy;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -40,6 +39,7 @@ import java.nio.file.Files;
 import java.nio.file.LinkOption;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -254,7 +254,11 @@ public class LocalFileStorage implements FileStorage {
 
             writeExecutor.submit(() -> {
                 try {
-                    FileUtils.copyFile(path.toFile(), pathCopy.toFile(), true);
+                    Files.createDirectories(pathCopy.getParent());
+                    // A file that already exists in the secondary root is kept, as in the primary one
+                    Files.copy(path, pathCopy, StandardCopyOption.COPY_ATTRIBUTES);
+                } catch (FileAlreadyExistsException e) {
+                    log.error("Error saving {} into {} : the file already exists", fileRef.getFileName(), pathCopy);
                 } catch (Exception e) {
                     log.error("Error saving {} into {} : {}", fileRef.getFileName(), pathCopy, e.getMessage());
                 }

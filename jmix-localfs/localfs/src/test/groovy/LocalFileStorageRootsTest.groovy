@@ -33,6 +33,7 @@ import test_support.TestContextInititalizer
 import java.nio.charset.StandardCharsets
 import java.nio.file.Files
 import java.nio.file.Path
+import java.util.concurrent.TimeUnit
 
 @ContextConfiguration(
         classes = [CoreConfiguration, LocalFileStorageConfiguration, LocalFileStorageTestConfiguration],
@@ -95,6 +96,23 @@ class LocalFileStorageRootsTest extends Specification {
         then:
         digest == FileDigest.of(FileDigest.SHA_256, SUBSTITUTED_SHA_256)
         digest != FileDigest.fromFileRef(fileRef)
+    }
+
+    def "the copy to a secondary root keeps a file that is already there"() {
+        given:
+        String path = "2026/11/17/${UUID.randomUUID()}.txt"
+        Path secondaryFile = secondary.resolve(path)
+        Files.createDirectories(secondaryFile.parent)
+        Files.writeString(secondaryFile, 'Older')
+
+        when:
+        storage.saveStream(new FileRef('rootsFs', path, 'test.txt'), new ByteArrayInputStream('Newer'.bytes))
+        storage.stopWriteExecutor()
+        storage.writeExecutor.awaitTermination(5, TimeUnit.SECONDS)
+
+        then:
+        Files.readString(primary.resolve(path)) == 'Newer'
+        Files.readString(secondaryFile) == 'Older'
     }
 
     private FileRef saveAndAwaitCopy(String content) {

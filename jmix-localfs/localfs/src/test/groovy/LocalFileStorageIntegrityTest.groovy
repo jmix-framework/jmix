@@ -157,6 +157,37 @@ class LocalFileStorageIntegrityTest extends Specification {
         Files.deleteIfExists(directory)
     }
 
+    def "a save that fails while writing deletes the file it created"() {
+        given:
+        LocalFileStorage localFileStorage = fileStorage as LocalFileStorage
+        String path = "2026/11/17/${UUID.randomUUID()}.txt"
+        InputStream failingStream = new InputStream() {
+            boolean first = true
+
+            @Override
+            int read() {
+                throw new UnsupportedOperationException()
+            }
+
+            @Override
+            int read(byte[] b, int off, int len) {
+                if (first) {
+                    first = false
+                    b[off] = (byte) 'a'
+                    return 1
+                }
+                throw new IllegalStateException('Upload aborted')
+            }
+        }
+
+        when:
+        localFileStorage.saveStream(new FileRef(fileStorage.storageName, path, 'test.txt'), failingStream)
+
+        then:
+        thrown(IllegalStateException)
+        !Files.exists(storageRoot().resolve(path))
+    }
+
     def "saveStream adds the digest to a passed reference without one, which can then be copied with it"() {
         given:
         LocalFileStorage localFileStorage = fileStorage as LocalFileStorage

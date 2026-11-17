@@ -91,6 +91,25 @@ class LocalFileStorageTraversalPathTest extends Specification {
         Files.deleteIfExists(outside)
     }
 
+    def "'saveStream' doesn't create directories outside of the storage root"() {
+        given:
+        createTraversalPrefix()
+        String outsideDirName = "outside-mkdirs-${UUID.randomUUID()}"
+        Path outsideDir = workDir().resolve(outsideDirName)
+        def fileRef = traversalRef("${outsideDirName}/nested/owned.txt")
+
+        when:
+        ((LocalFileStorage) fileStorage).saveStream(fileRef, new ByteArrayInputStream('OWNED'.bytes))
+
+        then:
+        def e = thrown(FileStorageException)
+        e.type == FileStorageException.Type.INVALID_PATH
+        !Files.exists(outsideDir)
+
+        cleanup:
+        outsideDir.toFile().deleteDir()
+    }
+
     def "'removeFile' doesn't allow to delete outside of the storage root"() {
         given:
         createTraversalPrefix()

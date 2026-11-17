@@ -54,17 +54,28 @@ public interface FileStorage {
 
     /**
      * Saves an InputStream contents into the file storage using additional parameters.
+     * <p>
+     * Keys starting with {@value FileDigest#RESERVED_PARAMETER_PREFIX} are reserved for the framework. A storage that
+     * keeps the digest of a file in its reference handles them as follows:
+     * <ul>
+     *     <li>the digest key ({@code jmix-sha-256}) may be passed, for example when a file is copied with the
+     *     parameters of its reference. If the storage calculates the digest on save
+     *     ({@link CoreProperties#isFileDigestOnSaveEnabled()}), it verifies the passed one against the saved content
+     *     and fails with {@link FileStorageException.Type#DIGEST_MISMATCH} if they differ, storing nothing; otherwise
+     *     the passed digest is kept as it is;</li>
+     *     <li>other reserved keys are rejected.</li>
+     * </ul>
+     * The passed parameters are kept in the returned reference unchanged. The only parameter a storage may add is
+     * the digest, when it calculates one and none was passed.
      *
      * @param fileName    file name
      * @param inputStream input stream, must be closed in the calling code
      * @param parameters additional parameters that can be used in specific storage implementation
-     *                   (for example, can be converted to FileRef parameters). Keys starting with
-     *                   {@value FileDigest#RESERVED_PARAMETER_PREFIX} are reserved for the framework and must not be
-     *                   passed; a storage that adds framework parameters to the reference rejects them
+     *                   (for example, can be converted to FileRef parameters)
      * @return file reference, which may carry framework parameters such as the {@code jmix-sha-256} digest
      * @throws IllegalArgumentException if arguments are incorrect, for example a reserved parameter key the storage
      *                                  rejects
-     * @throws FileStorageException     if something goes wrong
+     * @throws FileStorageException     if something goes wrong, or the content does not match the passed digest
      */
     FileRef saveStream(String fileName, InputStream inputStream, Map<String, Object> parameters);
 

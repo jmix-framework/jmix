@@ -49,6 +49,7 @@ import software.amazon.awssdk.core.sync.ResponseTransformer;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.S3ClientBuilder;
+import software.amazon.awssdk.services.s3.model.AbortMultipartUploadRequest;
 import software.amazon.awssdk.services.s3.model.ChecksumAlgorithm;
 import software.amazon.awssdk.services.s3.model.ChecksumMode;
 import software.amazon.awssdk.services.s3.model.CompleteMultipartUploadRequest;
@@ -219,7 +220,7 @@ public class AwsFileStorage implements FileStorage {
 
     @Override
     public FileRef saveStream(String fileName, InputStream inputStream, Map<String, Object> parameters) {
-        FileDigest.checkNoReservedParameters(parameters.keySet());
+        FileDigest.checkReservedParameters(parameters.keySet());
 
         String fileKey = createFileKey(fileName);
         String bucket = this.bucket;
@@ -245,6 +246,8 @@ public class AwsFileStorage implements FileStorage {
             byte[] chunkBytes = new byte[s3ChunkSizeBytes];
             int nBytes = fillBuffer(bis, chunkBytes);
             if (nBytes < s3ChunkSizeBytes) {
+                // The whole file has been read, so a passed digest is verified before anything is uploaded
+                applyDigest(fileRef, digestInputStream);
                 PutObjectRequest.Builder putBuilder = PutObjectRequest.builder()
                         .bucket(bucket)
                         .key(fileKey);
@@ -252,7 +255,6 @@ public class AwsFileStorage implements FileStorage {
                     putBuilder.checksumSHA256(sha256Base64(chunkBytes, nBytes));
                 }
                 s3Client.putObject(putBuilder.build(), fromBytes(chunkBytes, nBytes));
-                addDigest(fileRef, digestInputStream);
                 return fileRef;
             }
 
@@ -283,13 +285,19 @@ public class AwsFileStorage implements FileStorage {
                 nBytes = fillBuffer(bis, chunkBytes);
             }
 
+            // A passed digest is verified before the upload is completed, so a mismatch leaves no object
+            try {
+                applyDigest(fileRef, digestInputStream);
+            } catch (FileStorageException e) {
+                abortMultipartUpload(s3Client, bucket, fileKey, response.uploadId(), e);
+                throw e;
+            }
             s3Client.completeMultipartUpload(CompleteMultipartUploadRequest.builder()
                     .bucket(bucket)
                     .key(fileKey)
                     .uploadId(response.uploadId())
                     .multipartUpload(CompletedMultipartUpload.builder().parts(completedParts).build())
                     .build());
-            addDigest(fileRef, digestInputStream);
             return fileRef;
         } catch (IOException | SdkException e) {
             log.error("Error saving file to S3 storage", e);
@@ -299,11 +307,36 @@ public class AwsFileStorage implements FileStorage {
     }
 
     /**
-     * Adds the digest of the bytes read so far to the reference, if the digest is being calculated.
+     * If the digest is being calculated, verifies the digest passed in the reference against the bytes read so far,
+     * or adds it to the reference when none was passed.
+     *
+     * @throws FileStorageException with the {@code DIGEST_MISMATCH} type if the passed digest differs
      */
-    private void addDigest(FileRef fileRef, @Nullable FileDigestInputStream digestInputStream) {
-        if (digestInputStream != null) {
-            digestInputStream.getDigest().addTo(fileRef);
+    private void applyDigest(FileRef fileRef, @Nullable FileDigestInputStream digestInputStream) {
+        if (digestInputStream == null) {
+            return;
+        }
+        FileDigest digest = digestInputStream.getDigest();
+        FileDigest expectedDigest = FileDigest.fromFileRef(fileRef);
+        if (expectedDigest == null) {
+            digest.addTo(fileRef);
+        } else if (!expectedDigest.equals(digest)) {
+            log.warn("Content of '{}' does not match the passed digest: expected {}, actual {}",
+                    fileRef.getFileName(), expectedDigest, digest);
+            throw new FileStorageException(FileStorageException.Type.DIGEST_MISMATCH, fileRef.getFileName());
+        }
+    }
+
+    private void abortMultipartUpload(S3Client s3Client, String bucket, String fileKey, String uploadId,
+                                      Exception cause) {
+        try {
+            s3Client.abortMultipartUpload(AbortMultipartUploadRequest.builder()
+                    .bucket(bucket)
+                    .key(fileKey)
+                    .uploadId(uploadId)
+                    .build());
+        } catch (SdkException e) {
+            cause.addSuppressed(e);
         }
     }
 

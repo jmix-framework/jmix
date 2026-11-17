@@ -50,4 +50,19 @@ class AwsFileStorageDigestDisabledTest extends Specification {
         1 * s3Client.putObject(_, _)
         !fileRef.parameters.containsKey('jmix-sha-256')
     }
+
+    def "a passed digest is kept without a check when switched off"() {
+        def storage = new AwsFileStorage('s3test', 'key', 'secret', 'eu-west-1', 'bucket', 8, null)
+        applicationContext.autowireCapableBeanFactory.autowireBean(storage)
+        storage.s3ClientReference.set(s3Client)
+        // The digest of empty content, not of 'abc'
+        def passedDigest = 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855'
+
+        when:
+        def fileRef = storage.saveStream('a.txt', new ByteArrayInputStream('abc'.bytes), ['jmix-sha-256': passedDigest])
+
+        then:
+        1 * s3Client.putObject(_, _)
+        fileRef.parameters == ['jmix-sha-256': passedDigest]
+    }
 }

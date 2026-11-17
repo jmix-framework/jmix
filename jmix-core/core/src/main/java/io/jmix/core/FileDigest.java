@@ -37,7 +37,9 @@ import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
  * Digest Fields" registry (RFC 9530), the value is the digest in lowercase hex, for example
  * {@code jmix-sha-256=ba7816bf...}. Only {@link #SHA_256} is supported.
  * <p>
- * Every key that starts with {@value #RESERVED_PARAMETER_PREFIX} is reserved for the framework.
+ * Every key that starts with {@value #RESERVED_PARAMETER_PREFIX} is reserved for the framework. The digest parameter
+ * itself may be passed to {@link FileStorage#saveStream}, for example when a file is copied with the parameters of its
+ * reference: a storage that calculates the digest on save verifies the passed one against the saved content.
  */
 @NullMarked
 public final class FileDigest implements Serializable {
@@ -120,17 +122,29 @@ public final class FileDigest implements Serializable {
     }
 
     /**
-     * Checks that none of the {@link FileRef} parameter keys is reserved for the framework.
-     *
-     * @throws IllegalArgumentException if a key is reserved
+     * Returns {@code true} if the {@link FileRef} parameter key is that of a digest, for example
+     * {@code jmix-sha-256}. The check is case-sensitive.
      */
-    public static void checkNoReservedParameters(Collection<String> keys) {
+    public static boolean isDigestParameter(String key) {
+        checkNotNullArgument(key);
+        return key.startsWith(RESERVED_PARAMETER_PREFIX)
+                && JCA_ALGORITHM_NAMES.containsKey(key.substring(RESERVED_PARAMETER_PREFIX.length()));
+    }
+
+    /**
+     * Checks that the {@link FileRef} parameter keys passed to save a file contain no key reserved for the framework
+     * other than a digest one. A digest passed this way is verified against the saved content, see
+     * {@link FileStorage#saveStream}.
+     *
+     * @throws IllegalArgumentException if a key is reserved and is not a digest one
+     */
+    public static void checkReservedParameters(Collection<String> keys) {
         checkNotNullArgument(keys);
         for (String key : keys) {
-            if (isReservedParameter(key)) {
+            if (isReservedParameter(key) && !isDigestParameter(key)) {
                 throw new IllegalArgumentException("Parameter '" + key + "' is reserved for the framework: keys "
-                        + "starting with '" + RESERVED_PARAMETER_PREFIX + "' must be removed from the parameters, "
-                        + "the storage adds its own digest to the file reference");
+                        + "starting with '" + RESERVED_PARAMETER_PREFIX + "' other than '"
+                        + RESERVED_PARAMETER_PREFIX + SHA_256 + "' must be removed from the parameters");
             }
         }
     }

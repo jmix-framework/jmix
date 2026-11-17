@@ -33,6 +33,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -124,18 +125,26 @@ public class FileDigestTest {
     }
 
     @Test
-    void checkNoReservedParameters_reservedKey_throws() {
-        for (String key : List.of("jmix-sha-256", "jmix-md5", "jmix-other")) {
+    void checkReservedParameters_reservedKeyOtherThanDigest_throws() {
+        for (String key : List.of("jmix-sha-512", "jmix-md5", "jmix-other")) {
             IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
-                    () -> FileDigest.checkNoReservedParameters(List.of("size", key)));
+                    () -> FileDigest.checkReservedParameters(List.of("size", key)));
             assertTrue(e.getMessage().contains(key), e.getMessage());
         }
     }
 
     @Test
-    void checkNoReservedParameters_otherKeys_passes() {
-        assertDoesNotThrow(() -> FileDigest.checkNoReservedParameters(
-                List.of("size", "sha-256", "md5", "crc32c", "Jmix-sha-256", "jmix")));
+    void checkReservedParameters_digestAndOtherKeys_passes() {
+        assertDoesNotThrow(() -> FileDigest.checkReservedParameters(
+                List.of("jmix-sha-256", "size", "sha-256", "md5", "crc32c", "Jmix-sha-256", "jmix")));
+    }
+
+    @Test
+    void isDigestParameter_digestKeyOnly_true() {
+        assertTrue(FileDigest.isDigestParameter("jmix-sha-256"));
+        assertFalse(FileDigest.isDigestParameter("jmix-sha-512"));
+        assertFalse(FileDigest.isDigestParameter("sha-256"));
+        assertFalse(FileDigest.isDigestParameter("JMIX-SHA-256"));
     }
 
     @Test

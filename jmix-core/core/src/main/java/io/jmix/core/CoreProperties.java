@@ -156,7 +156,9 @@ public class CoreProperties {
     boolean applicationInfoFileEnabled;
 
     /**
-     * Whether a file storage calculates the digest of a file on save and adds it to the {@link FileRef} parameters.
+     * Whether a file storage calculates the digest of a file on save: it adds the digest to the {@link FileRef}
+     * parameters, or verifies the digest passed in the parameters against the saved content. Switched off, a passed
+     * digest is kept without a check.
      * <p>
      * The digest allows to check the integrity of the file later with {@link FileIntegrityChecker}.
      */

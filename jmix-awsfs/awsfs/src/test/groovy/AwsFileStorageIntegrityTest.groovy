@@ -183,15 +183,57 @@ class AwsFileStorageIntegrityTest extends Specification {
         ''                      | null            || ABC_SHA_256_BASE64
     }
 
-    def "a reserved parameter is rejected"() {
+    def "a reserved parameter other than the digest is rejected"() {
         def storage = storage(null)
 
         when:
-        storage.saveStream('a.txt', stream('abc'), [(DIGEST_PARAMETER): 'x'])
+        storage.saveStream('a.txt', stream('abc'), [(key): 'x'])
 
         then:
         thrown(IllegalArgumentException)
         0 * s3Client._
+
+        where:
+        key << ['jmix-sha-512', 'jmix-other']
+    }
+
+    def "a passed digest that matches the content is kept"() {
+        def storage = storage(null)
+
+        when:
+        def fileRef = storage.saveStream('a.txt', stream('abc'), [(DIGEST_PARAMETER): ABC_SHA_256.toUpperCase()])
+
+        then:
+        1 * s3Client.putObject(_, _)
+        fileRef.parameters == [(DIGEST_PARAMETER): ABC_SHA_256.toUpperCase()]
+    }
+
+    def "content that does not match the passed digest is not uploaded"() {
+        def storage = storage(null)
+
+        when:
+        storage.saveStream('a.txt', stream('abc'), [(DIGEST_PARAMETER): EMPTY_SHA_256])
+
+        then:
+        def e = thrown(FileStorageException)
+        e.type == FileStorageException.Type.DIGEST_MISMATCH
+        0 * s3Client._
+    }
+
+    def "a multipart upload of content that does not match the passed digest is aborted"() {
+        def storage = storage(null)
+        byte[] content = content(CHUNK_SIZE_BYTES * 2 + 1)
+
+        when:
+        storage.saveStream('big.bin', new ByteArrayInputStream(content), [(DIGEST_PARAMETER): EMPTY_SHA_256])
+
+        then:
+        1 * s3Client.createMultipartUpload(_) >> CreateMultipartUploadResponse.builder().uploadId('u').build()
+        3 * s3Client.uploadPart(_, _) >> UploadPartResponse.builder().eTag('e').build()
+        0 * s3Client.completeMultipartUpload(_)
+        1 * s3Client.abortMultipartUpload({ it.uploadId() == 'u' && it.bucket() == 'bucket' })
+        def e = thrown(FileStorageException)
+        e.type == FileStorageException.Type.DIGEST_MISMATCH
     }
 
     def "application parameters are kept next to the digest"() {

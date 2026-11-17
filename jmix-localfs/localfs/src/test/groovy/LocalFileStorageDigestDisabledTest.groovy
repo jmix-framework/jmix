@@ -35,6 +35,8 @@ import test_support.TestContextInititalizer
 @TestPropertySource(properties = 'jmix.core.file-digest-on-save-enabled=false')
 class LocalFileStorageDigestDisabledTest extends Specification {
 
+    static final String ABC_SHA_256 = 'ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad'
+
     @Autowired
     private FileStorage fileStorage
 
@@ -51,5 +53,26 @@ class LocalFileStorageDigestDisabledTest extends Specification {
 
         cleanup:
         fileStorage.removeFile(fileRef)
+    }
+
+    def "a passed digest is kept without a check when switched off"() {
+        when: 'the passed digest is that of other content'
+        FileRef fileRef = fileStorage.saveStream('test.txt', new ByteArrayInputStream('Test output'.bytes),
+                ['jmix-sha-256': ABC_SHA_256])
+
+        then: 'it is kept, and the check reports the difference'
+        fileRef.parameters == ['jmix-sha-256': ABC_SHA_256]
+        integrityChecker.check(fileRef).status == FileIntegrityStatus.MODIFIED
+
+        cleanup:
+        fileStorage.removeFile(fileRef)
+    }
+
+    def "a reserved parameter other than the digest is rejected when switched off"() {
+        when:
+        fileStorage.saveStream('test.txt', new ByteArrayInputStream('Test output'.bytes), ['jmix-other': 'x'])
+
+        then:
+        thrown(IllegalArgumentException)
     }
 }

@@ -75,7 +75,7 @@ class LocalFileStorageIntegrityTest extends Specification {
         fileStorage.removeFile(fileRef)
     }
 
-    def "saveStream rejects a reserved parameter"() {
+    def "saveStream rejects a reserved parameter other than the digest"() {
         when:
         fileStorage.saveStream('test.txt', new ByteArrayInputStream('Test output'.bytes), [(key): 'x'])
 
@@ -83,7 +83,36 @@ class LocalFileStorageIntegrityTest extends Specification {
         thrown(IllegalArgumentException)
 
         where:
-        key << ['jmix-sha-256', 'jmix-other']
+        key << ['jmix-sha-512', 'jmix-other']
+    }
+
+    def "saveStream keeps a passed digest that matches the content"() {
+        when:
+        FileRef fileRef = fileStorage.saveStream('test.txt', new ByteArrayInputStream('Test output'.bytes),
+                ['jmix-sha-256': TEST_OUTPUT_SHA_256.toUpperCase()])
+
+        then:
+        fileRef.parameters == ['jmix-sha-256': TEST_OUTPUT_SHA_256.toUpperCase()]
+        integrityChecker.check(fileRef).status == FileIntegrityStatus.VALID
+
+        cleanup:
+        fileStorage.removeFile(fileRef)
+    }
+
+    def "saveStream rejects content that does not match the passed digest and stores nothing"() {
+        given:
+        LocalFileStorage localFileStorage = fileStorage as LocalFileStorage
+        String path = "2026/11/17/${UUID.randomUUID()}.txt"
+        FileRef fileRef = new FileRef(fileStorage.storageName, path, 'test.txt', ['jmix-sha-256': EMPTY_SHA_256])
+
+        when:
+        localFileStorage.saveStream(fileRef, new ByteArrayInputStream('Test output'.bytes))
+
+        then:
+        def e = thrown(FileStorageException)
+        e.type == FileStorageException.Type.DIGEST_MISMATCH
+        !Files.exists(storageRoot().resolve(path))
+        fileRef.parameters == ['jmix-sha-256': EMPTY_SHA_256]
     }
 
     def "saving to the path of an existing file fails and keeps the file"() {
@@ -106,25 +135,31 @@ class LocalFileStorageIntegrityTest extends Specification {
         fileStorage.removeFile(fileRef)
     }
 
-    def "saveStream adds the digest to the passed reference, which then cannot be saved again"() {
+    def "saveStream adds the digest to a passed reference without one, which can then be copied with it"() {
         given:
         LocalFileStorage localFileStorage = fileStorage as LocalFileStorage
-        FileRef fileRef = new FileRef(fileStorage.storageName, "2026/11/16/${UUID.randomUUID()}.txt", 'test.txt')
+        FileRef fileRef = new FileRef(fileStorage.storageName, "2026/11/17/${UUID.randomUUID()}.txt", 'test.txt')
 
         when:
         localFileStorage.saveStream(fileRef, new ByteArrayInputStream('Test output'.bytes))
 
         then:
-        fileRef.parameters['jmix-sha-256'] == TEST_OUTPUT_SHA_256
+        fileRef.parameters == ['jmix-sha-256': TEST_OUTPUT_SHA_256]
 
-        when:
-        localFileStorage.saveStream(fileRef, new ByteArrayInputStream('Test output'.bytes))
+        when: 'the file is copied to another path with the parameters of its reference'
+        FileRef copyRef = new FileRef(fileStorage.storageName, "2026/11/17/${UUID.randomUUID()}.txt", 'test.txt',
+                fileRef.parameters)
+        fileStorage.openStream(fileRef).withCloseable { localFileStorage.saveStream(copyRef, it) }
 
         then:
-        thrown(IllegalArgumentException)
+        copyRef.parameters == ['jmix-sha-256': TEST_OUTPUT_SHA_256]
+        integrityChecker.check(copyRef).status == FileIntegrityStatus.VALID
 
         cleanup:
         fileStorage.removeFile(fileRef)
+        if (copyRef != null) {
+            fileStorage.removeFile(copyRef)
+        }
     }
 
     def "check of a saved file is VALID"() {

@@ -135,6 +135,28 @@ class LocalFileStorageIntegrityTest extends Specification {
         fileStorage.removeFile(fileRef)
     }
 
+    def "saving to the path of an existing directory fails and keeps the directory"() {
+        given:
+        LocalFileStorage localFileStorage = fileStorage as LocalFileStorage
+        String path = "2026/11/17/${UUID.randomUUID()}"
+        Path directory = storageRoot().resolve(path)
+        Files.createDirectories(directory)
+        Path fileInDirectory = Files.writeString(directory.resolve('kept.txt'), 'Kept')
+
+        when:
+        localFileStorage.saveStream(new FileRef(fileStorage.storageName, path, 'test.txt'),
+                new ByteArrayInputStream('Other content'.bytes))
+
+        then:
+        def e = thrown(FileStorageException)
+        e.type == FileStorageException.Type.FILE_ALREADY_EXISTS
+        Files.readString(fileInDirectory) == 'Kept'
+
+        cleanup:
+        Files.deleteIfExists(fileInDirectory)
+        Files.deleteIfExists(directory)
+    }
+
     def "saveStream adds the digest to a passed reference without one, which can then be copied with it"() {
         given:
         LocalFileStorage localFileStorage = fileStorage as LocalFileStorage

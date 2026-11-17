@@ -37,6 +37,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
+import java.nio.file.LinkOption;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -148,7 +149,8 @@ public class LocalFileStorage implements FileStorage {
      * keys starting with {@value FileDigest#RESERVED_PARAMETER_PREFIX} are rejected. The reference is changed only
      * when the digest is calculated and the reference has none: the digest is added to it.
      * <p>
-     * An existing file is never overwritten.
+     * A file or directory that already exists at the path is never overwritten or deleted: the call fails with
+     * {@link FileStorageException.Type#FILE_ALREADY_EXISTS}.
      *
      * @param fileRef     file reference
      * @param inputStream input stream, must be closed in the calling code
@@ -195,9 +197,11 @@ public class LocalFileStorage implements FileStorage {
             source = digestInputStream;
         }
 
+        OutputStream outputStream = openNewFile(path);
         long size;
         long maxAllowedSize = properties.getMaxFileSize().toBytes();
-        try (OutputStream outputStream = Files.newOutputStream(path, CREATE_NEW)) {
+        // The file has been created by this call, so it is deleted if writing fails
+        try (outputStream) {
             size = IOUtils.copyLarge(source, outputStream, 0, maxAllowedSize);
 
             if (size >= maxAllowedSize) {
@@ -219,10 +223,6 @@ public class LocalFileStorage implements FileStorage {
             }
             outputStream.flush();
 //            writeLog(path, false);
-        } catch (FileAlreadyExistsException e) {
-            // The file is not the one being written, so it is kept.
-            throw new FileStorageException(FileStorageException.Type.FILE_ALREADY_EXISTS,
-                    path.toAbsolutePath().toString(), e);
         } catch (IOException e) {
             FileUtils.deleteQuietly(path.toFile());
             throw new FileStorageException(FileStorageException.Type.IO_EXCEPTION, path.toAbsolutePath().toString(), e);
@@ -260,6 +260,23 @@ public class LocalFileStorage implements FileStorage {
         }
 
         return size;
+    }
+
+    /**
+     * Creates the file and opens it for writing. Whatever exists at the path is kept: nothing has been created when
+     * this fails, so nothing is deleted.
+     */
+    private OutputStream openNewFile(Path path) {
+        try {
+            return Files.newOutputStream(path, CREATE_NEW);
+        } catch (IOException e) {
+            // On Windows an existing directory gives AccessDeniedException rather than FileAlreadyExistsException
+            if (e instanceof FileAlreadyExistsException || Files.exists(path, LinkOption.NOFOLLOW_LINKS)) {
+                throw new FileStorageException(FileStorageException.Type.FILE_ALREADY_EXISTS,
+                        path.toAbsolutePath().toString(), e);
+            }
+            throw new FileStorageException(FileStorageException.Type.IO_EXCEPTION, path.toAbsolutePath().toString(), e);
+        }
     }
 
     @Override

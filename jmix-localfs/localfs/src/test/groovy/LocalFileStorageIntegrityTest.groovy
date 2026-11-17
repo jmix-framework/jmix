@@ -21,6 +21,7 @@ import io.jmix.core.FileIntegrityChecker
 import io.jmix.core.FileIntegrityStatus
 import io.jmix.core.FileRef
 import io.jmix.core.FileStorage
+import io.jmix.core.FileStorageException
 import io.jmix.localfs.LocalFileStorage
 import io.jmix.localfs.LocalFileStorageConfiguration
 import org.springframework.beans.factory.annotation.Autowired
@@ -83,6 +84,26 @@ class LocalFileStorageIntegrityTest extends Specification {
 
         where:
         key << ['jmix-sha-256', 'jmix-other']
+    }
+
+    def "saving to the path of an existing file fails and keeps the file"() {
+        given:
+        LocalFileStorage localFileStorage = fileStorage as LocalFileStorage
+        String path = "2026/11/17/${UUID.randomUUID()}.txt"
+        FileRef fileRef = new FileRef(fileStorage.storageName, path, 'test.txt')
+        localFileStorage.saveStream(fileRef, new ByteArrayInputStream('Test output'.bytes))
+
+        when:
+        localFileStorage.saveStream(new FileRef(fileStorage.storageName, path, 'test.txt'),
+                new ByteArrayInputStream('Other content'.bytes))
+
+        then:
+        def e = thrown(FileStorageException)
+        e.type == FileStorageException.Type.FILE_ALREADY_EXISTS
+        Files.readString(storageRoot().resolve(path)) == 'Test output'
+
+        cleanup:
+        fileStorage.removeFile(fileRef)
     }
 
     def "saveStream adds the digest to the passed reference, which then cannot be saved again"() {

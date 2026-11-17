@@ -35,6 +35,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -214,6 +215,10 @@ public class LocalFileStorage implements FileStorage {
             }
             outputStream.flush();
 //            writeLog(path, false);
+        } catch (FileAlreadyExistsException e) {
+            // The file is not the one being written, so it is kept.
+            throw new FileStorageException(FileStorageException.Type.FILE_ALREADY_EXISTS,
+                    path.toAbsolutePath().toString(), e);
         } catch (IOException e) {
             FileUtils.deleteQuietly(path.toFile());
             throw new FileStorageException(FileStorageException.Type.IO_EXCEPTION, path.toAbsolutePath().toString(), e);
@@ -433,8 +438,9 @@ public class LocalFileStorage implements FileStorage {
     /**
      * This method is mostly needed for compatibility with an old API.
      * <p>
-     * If {@link #isImmutableFileStorage} is false then {@link #saveStream(FileRef, InputStream)}
-     * will be overwriting existing files.
+     * Existing files are never overwritten: {@link #saveStream(FileRef, InputStream)} to the path of an existing file
+     * fails with {@link FileStorageException.Type#FILE_ALREADY_EXISTS} and keeps the file. If
+     * {@link #isImmutableFileStorage} is true, the existence is checked before the file is opened.
      */
     public void setImmutableFileStorage(boolean immutableFileStorage) {
         isImmutableFileStorage = immutableFileStorage;

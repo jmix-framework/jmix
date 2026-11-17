@@ -21,6 +21,7 @@ import com.vaadin.flow.component.HasValue
 import com.vaadin.flow.data.provider.Query
 import container_items.view.ContainerItemsTestView
 import io.jmix.core.Metadata
+import io.jmix.core.MetadataTools
 import io.jmix.flowui.UiComponents
 import io.jmix.flowui.component.SupportsMetaClass
 import io.jmix.flowui.component.checkboxgroup.JmixCheckboxGroup
@@ -79,6 +80,9 @@ class ContainerItemsComponentsTest extends FlowuiTestSpecification {
 
     @Autowired
     Metadata metadata
+
+    @Autowired
+    MetadataTools metadataTools
 
     CollectionContainer<Customer> customersDc
     Customer customer1
@@ -187,6 +191,21 @@ class ContainerItemsComponentsTest extends FlowuiTestSpecification {
 
         then: "It renders the current items"
         gridLayout.itemComponents*.item == [customer1, customer3]
+    }
+
+    def "GridLayout renders the new instance of an item replaced in the container"() {
+        given: "A grid layout with items from the container attached to the view"
+        def view = navigateToView(ContainerItemsTestView)
+        def gridLayout = createWithItems(GridLayout) as GridLayout<Customer>
+        view.content.add(gridLayout)
+
+        when: "An item is replaced with an edited instance of the same entity, as after saving it in a detail view"
+        def editedCustomer1 = metadataTools.copy(customer1)
+        editedCustomer1.name = "Customer 1 edited"
+        customersDc.replaceItem(editedCustomer1)
+
+        then: "The item's tile renders the edited instance in its place"
+        gridLayout.itemComponents*.element*.textRecursively == ["Customer 1 edited", "Customer 2"]
     }
 
     def "#type.simpleName never attached gets container changes after a garbage collection"() {

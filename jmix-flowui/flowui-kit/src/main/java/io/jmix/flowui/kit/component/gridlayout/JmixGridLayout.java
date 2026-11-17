@@ -300,7 +300,19 @@ public class JmixGridLayout<T> extends Component implements HasSize, HasItemComp
         getItemComponents().stream()
                 .filter(gridLayoutItem -> getItemId(gridLayoutItem.getItem()).equals(getItemId(item)))
                 .findAny()
-                .ifPresent(this::refreshContent);
+                .ifPresent(gridLayoutItem -> {
+                    if (gridLayoutItem.getItem() == item) {
+                        refreshContent(gridLayoutItem);
+                    } else {
+                        // The item is replaced with another instance, e.g. an entity saved in a detail view
+                        replaceItemComponent(gridLayoutItem, item);
+                    }
+                });
+    }
+
+    protected void replaceItemComponent(GridLayoutItem<T> gridLayoutItem, T item) {
+        int index = getElement().indexOfChild(gridLayoutItem.getElement());
+        getElement().setChild(index, createItemComponent(item).getElement());
     }
 
     protected void refreshContent(GridLayoutItem<T> gridLayoutItem) {

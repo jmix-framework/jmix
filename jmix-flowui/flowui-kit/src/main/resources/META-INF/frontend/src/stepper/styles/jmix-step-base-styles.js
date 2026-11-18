@@ -99,10 +99,13 @@ export const stepStyles = css`
         background: var(--_completed-success-color);
     }
 
-    [part='checkmark'] {
+    [part='checkmark']::before {
+        content: '';
+        display: block;
         width: 1em;
         height: 1em;
-        fill: currentColor;
+        background: currentColor;
+        mask: var(--_vaadin-icon-checkmark) 50% / 100% no-repeat;
     }
 
     ::slotted([slot='icon']) {
@@ -184,6 +187,11 @@ export const stepStyles = css`
         :host([state='completed']) [part='indicator'] {
             background: Highlight;
             color: HighlightText;
+        }
+
+        [part='checkmark']::before {
+            forced-color-adjust: none;
+            background: HighlightText;
         }
 
         [part='connector'] {

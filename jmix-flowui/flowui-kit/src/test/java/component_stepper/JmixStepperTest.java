@@ -20,6 +20,7 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.dom.Element;
 import io.jmix.flowui.kit.component.stepper.StepperStep;
+import io.jmix.flowui.kit.component.stepper.StepperStep.State;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -74,10 +75,11 @@ class JmixStepperTest {
         stepper.select(c);
         stepper.select(b);
 
-        assertEquals("completed", state(a));
-        assertEquals("current", state(b));
-        assertEquals("visited", state(c));
-        assertEquals("unavailable", state(d));
+        assertEquals(State.COMPLETED, a.getState());
+        assertEquals(State.CURRENT, b.getState());
+        assertEquals(State.VISITED, c.getState());
+        assertEquals(State.UNAVAILABLE, d.getState());
+        assertEquals("current", b.getElement().getProperty("state"));
     }
 
     @Test
@@ -170,10 +172,6 @@ class JmixStepperTest {
         StepperStep step = step(id);
         step.setContent(new Div());
         return step;
-    }
-
-    private static String state(StepperStep step) {
-        return step.getElement().getProperty("state");
     }
 
     private static void assertActiveContent(StepperStep step) {

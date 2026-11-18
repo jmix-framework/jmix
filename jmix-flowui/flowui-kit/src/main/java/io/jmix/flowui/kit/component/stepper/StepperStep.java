@@ -40,6 +40,7 @@ public class StepperStep extends Component implements HasStyle {
     protected Component icon;
     @Nullable
     protected JmixStepper stepper;
+    protected State state = State.UNAVAILABLE;
 
     /**
      * @return the step label shown in the header, or {@code null} if not set
@@ -139,6 +140,18 @@ public class StepperStep extends Component implements HasStyle {
         }
     }
 
+    /**
+     * @return the state of the step in the header; the stepper sets it
+     */
+    public State getState() {
+        return state;
+    }
+
+    protected void setState(State state) {
+        this.state = state;
+        getElement().setProperty("state", state.getValue());
+    }
+
     @Nullable
     protected JmixStepper getStepper() {
         return stepper;
@@ -153,6 +166,45 @@ public class StepperStep extends Component implements HasStyle {
             getElement().removeProperty(name);
         } else {
             getElement().setProperty(name, value);
+        }
+    }
+
+    /**
+     * State of a step in the stepper header.
+     */
+    public enum State {
+
+        /**
+         * The selected step.
+         */
+        CURRENT("current"),
+
+        /**
+         * A step before the selected one: it passed its check when the user left it and has not changed since.
+         */
+        COMPLETED("completed"),
+
+        /**
+         * A step after the selected one that the user has already reached.
+         */
+        VISITED("visited"),
+
+        /**
+         * A step after the furthest step the user has reached.
+         */
+        UNAVAILABLE("unavailable");
+
+        private final String value;
+
+        State(String value) {
+            this.value = value;
+        }
+
+        /**
+         * @return the value of the {@code state} attribute of the {@code <jmix-step>} element
+         */
+        public String getValue() {
+            return value;
         }
     }
 }

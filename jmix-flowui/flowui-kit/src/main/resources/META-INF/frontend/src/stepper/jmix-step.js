@@ -128,10 +128,8 @@ class JmixStep extends ThemableMixin(DirMixin(PolylitMixin(LumoInjectionMixin(Li
             return nothing;
         }
         if (this.state === 'completed') {
-            return html`
-                <svg part="checkmark" viewBox="0 0 16 16" aria-hidden="true">
-                    <path d="M6.2 11.2 2.9 7.9 1.5 9.3l4.7 4.7 8.3-8.3-1.4-1.4z"></path>
-                </svg>`;
+            // The glyph comes from the theme CSS, as the done icon of vaadin-upload-file does
+            return html`<span part="checkmark"></span>`;
         }
         return html`<span part="number">${this.number}</span>`;
     }

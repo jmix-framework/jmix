@@ -274,19 +274,19 @@ public class JmixStepper extends Component implements HasSize, HasStyle, HasThem
             Element element = step.getElement();
             element.setProperty("number", number);
             element.setProperty("last", step == lastVisibleStep);
-            element.setProperty("state", getStepState(i, selectedIndex, furthestIndex));
+            step.setState(getStepState(i, selectedIndex, furthestIndex));
         }
     }
 
-    protected String getStepState(int index, int selectedIndex, int furthestIndex) {
+    protected StepperStep.State getStepState(int index, int selectedIndex, int furthestIndex) {
         if (index == selectedIndex) {
-            return "current";
+            return StepperStep.State.CURRENT;
         } else if (index < selectedIndex) {
-            return "completed";
+            return StepperStep.State.COMPLETED;
         } else if (index <= furthestIndex) {
-            return "visited";
+            return StepperStep.State.VISITED;
         } else {
-            return "unavailable";
+            return StepperStep.State.UNAVAILABLE;
         }
     }
 

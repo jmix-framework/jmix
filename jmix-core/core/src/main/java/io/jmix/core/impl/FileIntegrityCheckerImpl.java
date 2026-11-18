@@ -1,0 +1,111 @@
+/*
+ * Copyright 2026 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package io.jmix.core.impl;
+
+import io.jmix.core.FileDigest;
+import io.jmix.core.FileIntegrityCheckResult;
+import io.jmix.core.FileIntegrityChecker;
+import io.jmix.core.FileIntegrityStatus;
+import io.jmix.core.FileRef;
+import io.jmix.core.FileStorage;
+import io.jmix.core.FileStorageException;
+import io.jmix.core.FileStorageLocator;
+import org.jspecify.annotations.NullMarked;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
+
+@NullMarked
+@Component("core_FileIntegrityChecker")
+public class FileIntegrityCheckerImpl implements FileIntegrityChecker {
+
+    private static final Logger log = LoggerFactory.getLogger(FileIntegrityCheckerImpl.class);
+
+    @Autowired
+    protected FileStorageLocator fileStorageLocator;
+
+    @Override
+    public FileIntegrityCheckResult check(FileRef reference) {
+        checkNotNullArgument(reference);
+
+        FileStorage fileStorage = fileStorageLocator.getByName(reference.getStorageName());
+        FileDigest expected = FileDigest.fromFileRef(reference);
+
+        if (expected == null) {
+            boolean exists;
+            try {
+                exists = fileStorage.fileExists(reference);
+            } catch (RuntimeException e) {
+                throw rethrowOrWrap(e, reference);
+            }
+            FileIntegrityStatus status = exists ? FileIntegrityStatus.NO_REFERENCE : FileIntegrityStatus.MISSING;
+            return new FileIntegrityCheckResult(reference, status, null, null);
+        }
+
+        FileDigest actual;
+        try {
+            actual = fileStorage.calculateDigest(reference, expected.getAlgorithm());
+        } catch (RuntimeException e) {
+            // A storage may report a missing file with any exception type, so the file is looked up explicitly.
+            FileStorageException failure = rethrowOrWrap(e, reference);
+            boolean exists;
+            try {
+                exists = fileStorage.fileExists(reference);
+            } catch (RuntimeException ex) {
+                failure.addSuppressed(ex);
+                throw failure;
+            }
+            if (exists) {
+                throw failure;
+            }
+            if (!(e instanceof FileStorageException)) {
+                // A failure of another type may be a storage error rather than a missing file, and fileExists may
+                // answer false on an error too: RestFileStorage does so for any error response of the remote side.
+                // The stack trace goes to the debug log only, as a bulk check may meet many such failures.
+                log.warn("Reading file {}://{} failed ({}) and the storage reports that the file does not exist, "
+                                + "reporting it as missing",
+                        reference.getStorageName(), reference.getPath(), e.getClass().getName());
+            }
+            log.debug("Reading file {} failed and the file does not exist, reporting it as missing", reference, e);
+            return new FileIntegrityCheckResult(reference, FileIntegrityStatus.MISSING, expected, null);
+        }
+
+        FileIntegrityStatus status = expected.equals(actual)
+                ? FileIntegrityStatus.VALID
+                : FileIntegrityStatus.MODIFIED;
+        return new FileIntegrityCheckResult(reference, status, expected, actual);
+    }
+
+    /**
+     * Rethrows an {@link IllegalArgumentException}, with which the storage rejects the reference: it is not a storage
+     * failure. Returns any other failure as {@link FileStorageException}: a storage such as {@code RestFileStorage}
+     * reports failures with other exception types, which are wrapped with the {@code IO_EXCEPTION} type.
+     *
+     * @throws IllegalArgumentException the passed exception itself if it is one
+     */
+    protected FileStorageException rethrowOrWrap(RuntimeException e, FileRef reference) {
+        if (e instanceof IllegalArgumentException illegalArgumentException) {
+            throw illegalArgumentException;
+        }
+        return e instanceof FileStorageException fileStorageException
+                ? fileStorageException
+                : new FileStorageException(FileStorageException.Type.IO_EXCEPTION, reference.toString(), e);
+    }
+}

@@ -1,0 +1,261 @@
+/*
+ * Copyright 2026 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package file_storage;
+
+import io.jmix.core.FileDigest;
+import io.jmix.core.FileDigestInputStream;
+import io.jmix.core.FileRef;
+import org.junit.jupiter.api.Test;
+import test_support.app.TestFileStorage;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+public class FileDigestTest {
+
+    static final String ABC_HEX = "ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad";
+    static final String SOME_CONTENT_HEX = "290f493c44f5d63d06b374d0a5abd292fae38b92cab2fae5efefe1b0e9347f56";
+    static final String EMPTY_HEX = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855";
+
+    @Test
+    void fileDigestInputStream_readFully_sha256OfContent() throws IOException {
+        try (FileDigestInputStream in = new FileDigestInputStream(stream("abc"))) {
+            in.readAllBytes();
+
+            FileDigest digest = in.getDigest();
+            assertEquals(FileDigest.SHA_256, digest.getAlgorithm());
+            assertEquals(ABC_HEX, digest.getValue());
+            assertEquals(digest, in.getDigest());
+        }
+    }
+
+    @Test
+    void fileDigestInputStream_transferTo_includesTransferredBytes() throws IOException {
+        // ByteArrayInputStream has its own transferTo, which must not bypass the digest
+        try (FileDigestInputStream in = new FileDigestInputStream(stream("abc"))) {
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            assertEquals(3, in.transferTo(out));
+            assertEquals("abc", out.toString(StandardCharsets.UTF_8));
+            assertEquals(ABC_HEX, in.getDigest().getValue());
+        }
+    }
+
+    @Test
+    void fileDigestInputStream_emptyStream_sha256OfEmpty() throws IOException {
+        try (FileDigestInputStream in = new FileDigestInputStream(stream(""))) {
+            in.readAllBytes();
+
+            assertEquals(EMPTY_HEX, in.getDigest().getValue());
+        }
+    }
+
+    @Test
+    void fileDigestInputStream_skip_includesSkippedBytes() throws IOException {
+        try (FileDigestInputStream in = new FileDigestInputStream(stream("abc"))) {
+            assertEquals('a', in.read());
+            assertEquals(1, in.skip(1));
+            assertEquals('c', in.read());
+            assertEquals(-1, in.read());
+
+            assertEquals(ABC_HEX, in.getDigest().getValue());
+        }
+    }
+
+    @Test
+    void of_unsupportedAlgorithm_throws() {
+        assertThrows(IllegalArgumentException.class, () -> FileDigest.of("sha-512", "00"));
+    }
+
+    @Test
+    void fromFileRef_sha256Parameter_returnsLowercasedDigest() {
+        FileRef reference = new FileRef("fs", "2026/11/02/x.txt", "x.txt",
+                Map.of("jmix-sha-256", ABC_HEX.toUpperCase()));
+
+        FileDigest digest = FileDigest.fromFileRef(reference);
+
+        assertEquals(FileDigest.SHA_256, digest.getAlgorithm());
+        assertEquals(ABC_HEX, digest.getValue());
+    }
+
+    @Test
+    void fromFileRef_noSupportedParameter_returnsNull() {
+        assertNull(FileDigest.fromFileRef(new FileRef("fs", "x.txt", "x.txt", Map.of("size", "3"))));
+        assertNull(FileDigest.fromFileRef(new FileRef("fs", "x.txt", "x.txt", Map.of("sha-256", ABC_HEX))));
+        assertNull(FileDigest.fromFileRef(new FileRef("fs", "x.txt", "x.txt", Map.of("jmix-sha-512", "00"))));
+    }
+
+    @Test
+    void addTo_fileRefString_roundTrips() {
+        FileRef reference = new FileRef("fs", "2026/11/02/x.txt", "Отчёт.txt",
+                Map.of("a", "1", "sha-256", "app"));
+
+        FileDigest.of(FileDigest.SHA_256, ABC_HEX).addTo(reference);
+
+        assertTrue(reference.toString().endsWith("&jmix-sha-256=" + ABC_HEX));
+        FileRef parsed = FileRef.fromString(reference.toString());
+        assertEquals("Отчёт.txt", parsed.getFileName());
+        assertEquals(Map.of("a", "1", "sha-256", "app", "jmix-sha-256", ABC_HEX), parsed.getParameters());
+    }
+
+    @Test
+    void checkReservedParameters_reservedKeyOtherThanDigest_throws() {
+        for (String key : List.of("jmix-sha-512", "jmix-md5", "jmix-other")) {
+            IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
+                    () -> FileDigest.checkReservedParameters(Map.of("size", "3", key, ABC_HEX)));
+            assertTrue(e.getMessage().contains(key), e.getMessage());
+        }
+    }
+
+    @Test
+    void checkReservedParameters_digestAndOtherKeys_passes() {
+        assertDoesNotThrow(() -> FileDigest.checkReservedParameters(Map.of(
+                "jmix-sha-256", ABC_HEX, "size", "3", "sha-256", "mine", "md5", "x", "crc32c", "y",
+                "Jmix-sha-256", "not checked", "jmix", "z")));
+    }
+
+    @Test
+    void checkReservedParameters_uppercaseDigest_passes() {
+        assertDoesNotThrow(() -> FileDigest.checkReservedParameters(Map.of("jmix-sha-256", ABC_HEX.toUpperCase())));
+    }
+
+    @Test
+    void checkReservedParameters_malformedDigest_throws() {
+        String base64OfAbcDigest = "ungWv48Bz+pBQUDeXa4iI7ADYaOWF3qctBD/YfIAFa0=";
+        for (String value : List.of("", "abc", base64OfAbcDigest, "g".repeat(64), ABC_HEX + "0", ABC_HEX + " ")) {
+            IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
+                    () -> FileDigest.checkReservedParameters(Map.of("jmix-sha-256", value)), value);
+            assertTrue(e.getMessage().contains("jmix-sha-256"), e.getMessage());
+        }
+    }
+
+    @Test
+    void checkReservedParameters_longMalformedDigest_messageShortened() {
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
+                () -> FileDigest.checkReservedParameters(Map.of("jmix-sha-256", "a".repeat(5000))));
+
+        assertTrue(e.getMessage().length() < 300, e.getMessage());
+        assertTrue(e.getMessage().contains("5000 characters"), e.getMessage());
+    }
+
+    @Test
+    void checkReservedParameters_controlCharacters_escapedInMessage() {
+        IllegalArgumentException digestException = assertThrows(IllegalArgumentException.class,
+                () -> FileDigest.checkReservedParameters(Map.of("jmix-sha-256", "abc\r\nINFO forged log line")));
+        IllegalArgumentException keyException = assertThrows(IllegalArgumentException.class,
+                () -> FileDigest.checkReservedParameters(Map.of("jmix-x\nINFO forged log line", "x")));
+
+        for (IllegalArgumentException e : List.of(digestException, keyException)) {
+            assertFalse(e.getMessage().contains("\n") || e.getMessage().contains("\r"), e.getMessage());
+            assertTrue(e.getMessage().contains("\\u000a"), e.getMessage());
+        }
+    }
+
+    @Test
+    void checkReservedParameters_supplementaryCharacterAtCut_keptWhole() {
+        String emoji = Character.toString(0x1F600);
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
+                () -> FileDigest.checkReservedParameters(Map.of("jmix-sha-256", "a".repeat(99) + emoji + "bbb")));
+
+        String message = e.getMessage();
+        for (int i = 0; i < message.length(); i++) {
+            char c = message.charAt(i);
+            if (Character.isHighSurrogate(c)) {
+                assertTrue(i + 1 < message.length() && Character.isLowSurrogate(message.charAt(i + 1)), message);
+                i++;
+            } else {
+                assertFalse(Character.isLowSurrogate(c), message);
+            }
+        }
+        assertTrue(message.contains(emoji), message);
+    }
+
+    @Test
+    void checkReservedParameters_formatAndSeparatorCharacters_escapedInMessage() {
+        String rightToLeftOverride = Character.toString(0x202E);
+        String lineSeparator = Character.toString(0x2028);
+        String paragraphSeparator = Character.toString(0x2029);
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
+                () -> FileDigest.checkReservedParameters(Map.of("jmix-sha-256",
+                        "abc" + rightToLeftOverride + "x" + lineSeparator + "y" + paragraphSeparator)));
+
+        String message = e.getMessage();
+        assertFalse(message.contains(rightToLeftOverride) || message.contains(lineSeparator)
+                || message.contains(paragraphSeparator), message);
+        assertTrue(message.contains("\\u202e") && message.contains("\\u2028") && message.contains("\\u2029"),
+                message);
+    }
+
+    @Test
+    void checkReservedParameters_nullDigest_throws() {
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("jmix-sha-256", null);
+
+        assertThrows(IllegalArgumentException.class, () -> FileDigest.checkReservedParameters(parameters));
+    }
+
+    @Test
+    void isDigestParameter_digestKeyOnly_true() {
+        assertTrue(FileDigest.isDigestParameter("jmix-sha-256"));
+        assertFalse(FileDigest.isDigestParameter("jmix-sha-512"));
+        assertFalse(FileDigest.isDigestParameter("sha-256"));
+        assertFalse(FileDigest.isDigestParameter("JMIX-SHA-256"));
+    }
+
+    @Test
+    void calculateDigest_defaultMethod_readsThroughOpenStream() {
+        TestFileStorage fileStorage = new TestFileStorage("testFs");
+        FileRef reference = fileStorage.saveStream("testfile", stream("some content"));
+
+        FileDigest digest = fileStorage.calculateDigest(reference, FileDigest.SHA_256);
+
+        assertEquals(SOME_CONTENT_HEX, digest.getValue());
+    }
+
+    @Test
+    void calculateDigest_unsupportedAlgorithm_throwsBeforeOpeningStream() {
+        AtomicInteger openStreamCalls = new AtomicInteger();
+        TestFileStorage fileStorage = new TestFileStorage("testFs") {
+            @Override
+            public InputStream openStream(FileRef reference) {
+                openStreamCalls.incrementAndGet();
+                return super.openStream(reference);
+            }
+        };
+        FileRef missing = new FileRef("testFs", "missing.txt", "missing.txt");
+
+        assertThrows(IllegalArgumentException.class, () -> fileStorage.calculateDigest(missing, "md5"));
+        assertEquals(0, openStreamCalls.get());
+    }
+
+    private static InputStream stream(String s) {
+        return new ByteArrayInputStream(s.getBytes(StandardCharsets.UTF_8));
+    }
+}

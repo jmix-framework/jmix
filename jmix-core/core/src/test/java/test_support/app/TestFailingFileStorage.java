@@ -1,0 +1,84 @@
+/*
+ * Copyright 2026 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package test_support.app;
+
+import io.jmix.core.FileRef;
+import io.jmix.core.FileStorage;
+import io.jmix.core.FileStorageException;
+import org.jspecify.annotations.NullMarked;
+
+import java.io.InputStream;
+import java.util.Map;
+
+/**
+ * A storage whose reads always fail, while {@link #fileExists(FileRef)} returns the flag set by the test
+ * or fails if the test asks for it.
+ */
+@NullMarked
+public class TestFailingFileStorage implements FileStorage {
+
+    private volatile boolean fileExists = true;
+    private volatile boolean fileExistsFails = false;
+    private volatile boolean failsWithOtherException = false;
+
+    @Override
+    public String getStorageName() {
+        return "testFsFailing";
+    }
+
+    @Override
+    public FileRef saveStream(String fileName, InputStream inputStream, Map<String, Object> parameters) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public InputStream openStream(FileRef reference) {
+        throw failure(FileStorageException.Type.IO_EXCEPTION, reference);
+    }
+
+    @Override
+    public void removeFile(FileRef reference) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean fileExists(FileRef reference) {
+        if (fileExistsFails) {
+            throw failure(FileStorageException.Type.STORAGE_INACCESSIBLE, reference);
+        }
+        return fileExists;
+    }
+
+    // A storage such as RestFileStorage reports failures with exceptions other than FileStorageException
+    private RuntimeException failure(FileStorageException.Type type, FileRef reference) {
+        return failsWithOtherException
+                ? new IllegalStateException("Cannot access file '" + reference + "'")
+                : new FileStorageException(type, reference.toString());
+    }
+
+    public void setFileExists(boolean fileExists) {
+        this.fileExists = fileExists;
+    }
+
+    public void setFileExistsFails(boolean fileExistsFails) {
+        this.fileExistsFails = fileExistsFails;
+    }
+
+    public void setFailsWithOtherException(boolean failsWithOtherException) {
+        this.failsWithOtherException = failsWithOtherException;
+    }
+}

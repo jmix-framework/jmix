@@ -18,6 +18,9 @@ package io.jmix.awsfs;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
+import io.jmix.core.CoreProperties;
+import io.jmix.core.FileDigest;
+import io.jmix.core.FileDigestInputStream;
 import io.jmix.core.FileRef;
 import io.jmix.core.FileStorage;
 import io.jmix.core.FileStorageException;
@@ -46,12 +49,23 @@ import software.amazon.awssdk.core.sync.ResponseTransformer;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.S3ClientBuilder;
+import software.amazon.awssdk.services.s3.model.AbortMultipartUploadRequest;
+import software.amazon.awssdk.services.s3.model.ChecksumAlgorithm;
+import software.amazon.awssdk.services.s3.model.ChecksumMode;
+import software.amazon.awssdk.services.s3.model.CompleteMultipartUploadRequest;
+import software.amazon.awssdk.services.s3.model.CompletedMultipartUpload;
 import software.amazon.awssdk.services.s3.model.CompletedPart;
+import software.amazon.awssdk.services.s3.model.CreateMultipartUploadRequest;
 import software.amazon.awssdk.services.s3.model.CreateMultipartUploadResponse;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
+import software.amazon.awssdk.services.s3.model.HeadObjectRequest;
+import software.amazon.awssdk.services.s3.model.HeadObjectResponse;
 import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
 import software.amazon.awssdk.services.s3.model.ListObjectsV2Response;
+import software.amazon.awssdk.services.s3.model.NoSuchKeyException;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import software.amazon.awssdk.services.s3.model.S3Exception;
 import software.amazon.awssdk.services.s3.model.S3Object;
 import software.amazon.awssdk.services.s3.model.UploadPartRequest;
 import software.amazon.awssdk.services.s3.model.UploadPartResponse;
@@ -61,12 +75,17 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Calendar;
+import java.util.HexFormat;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Internal
@@ -75,6 +94,8 @@ public class AwsFileStorage implements FileStorage {
 
     private static final Logger log = LoggerFactory.getLogger(AwsFileStorage.class);
     private static final String DEFAULT_STORAGE_NAME = "s3";
+    private static final int SHA_256_LENGTH_BYTES = 32;
+    private static final Pattern MULTIPART_ETAG_PATTERN = Pattern.compile("-\\d+\"?$");
 
     protected String storageName;
 
@@ -91,6 +112,10 @@ public class AwsFileStorage implements FileStorage {
     protected volatile int chunkSize;
     protected String endpointUrl;
     protected volatile boolean usePathStyleBucketAddressing;
+    protected volatile @Nullable Boolean checksumEnabled;
+
+    @Autowired
+    protected CoreProperties coreProperties;
 
     @Autowired
     protected TimeSource timeSource;
@@ -134,6 +159,7 @@ public class AwsFileStorage implements FileStorage {
             this.chunkSize = properties.getChunkSize();
             this.endpointUrl = properties.getEndpointUrl();
             this.usePathStyleBucketAddressing = properties.getUsePathStyleBucketAddressing();
+            this.checksumEnabled = properties.getChecksumEnabled();
         }
     }
 
@@ -194,29 +220,51 @@ public class AwsFileStorage implements FileStorage {
 
     @Override
     public FileRef saveStream(String fileName, InputStream inputStream, Map<String, Object> parameters) {
+        FileDigest.checkReservedParameters(parameters);
+
         String fileKey = createFileKey(fileName);
         String bucket = this.bucket;
         int s3ChunkSizeBytes = this.chunkSize * 1024;
+        boolean checksumEnabled = isChecksumEnabled();
 
         Map<String, String> fileRefParameters = Maps.toMap(parameters.keySet(), key -> parameters.get(key).toString());
         FileRef fileRef = new FileRef(getStorageName(), fileKey, fileName, fileRefParameters);
 
-        try (BufferedInputStream bis = new BufferedInputStream(inputStream, s3ChunkSizeBytes)) {
+        InputStream source = inputStream;
+        FileDigestInputStream digestInputStream = null;
+        if (coreProperties.isFileDigestOnSaveEnabled()) {
+            digestInputStream = new FileDigestInputStream(inputStream);
+            source = digestInputStream;
+        }
+
+        try (BufferedInputStream bis = new BufferedInputStream(source, s3ChunkSizeBytes)) {
             S3Client s3Client = s3ClientReference.get();
 
+            // With checksums on, the SHA-256 of each request body is computed here and sent ready-made rather than
+            // requested from the SDK by algorithm: the AWS SDK before 2.30.9 sends the SHA-256 of an empty input
+            // when it signs the payload (plain-HTTP endpoints), so S3 would reject every upload.
             byte[] chunkBytes = new byte[s3ChunkSizeBytes];
             int nBytes = fillBuffer(bis, chunkBytes);
             if (nBytes < s3ChunkSizeBytes) {
-                s3Client.putObject(objectBuilder -> objectBuilder
+                // The whole file has been read, so a passed digest is verified before anything is uploaded
+                applyDigest(fileRef, digestInputStream);
+                PutObjectRequest.Builder putBuilder = PutObjectRequest.builder()
                         .bucket(bucket)
-                        .key(fileKey)
-                        .build(), fromBytes(chunkBytes, nBytes));
+                        .key(fileKey);
+                if (checksumEnabled) {
+                    putBuilder.checksumSHA256(sha256Base64(chunkBytes, nBytes));
+                }
+                s3Client.putObject(putBuilder.build(), fromBytes(chunkBytes, nBytes));
                 return fileRef;
             }
 
-            CreateMultipartUploadResponse response = s3Client.createMultipartUpload(uploadBuilder -> uploadBuilder
+            CreateMultipartUploadRequest.Builder createBuilder = CreateMultipartUploadRequest.builder()
                     .bucket(bucket)
-                    .key(fileKey));
+                    .key(fileKey);
+            if (checksumEnabled) {
+                createBuilder.checksumAlgorithm(ChecksumAlgorithm.SHA256);
+            }
+            CreateMultipartUploadResponse response = s3Client.createMultipartUpload(createBuilder.build());
 
             List<CompletedPart> completedParts = new ArrayList<>();
             UploadPartRequest.Builder partBuilder = UploadPartRequest.builder()
@@ -224,28 +272,84 @@ public class AwsFileStorage implements FileStorage {
                     .key(fileKey)
                     .uploadId(response.uploadId());
             for (int partNumber = 1; 0 < nBytes; partNumber++) {
+                String partChecksum = checksumEnabled ? sha256Base64(chunkBytes, nBytes) : null;
                 UploadPartResponse partResponse = s3Client.uploadPart(partBuilder
                         .partNumber(partNumber)
+                        .checksumSHA256(partChecksum)
                         .build(), fromBytes(chunkBytes, nBytes));
-                CompletedPart completedPart = CompletedPart.builder()
+                completedParts.add(CompletedPart.builder()
                         .partNumber(partNumber)
                         .eTag(partResponse.eTag())
-                        .build();
-                completedParts.add(completedPart);
+                        .checksumSHA256(partChecksum)
+                        .build());
                 nBytes = fillBuffer(bis, chunkBytes);
             }
 
-            s3Client.completeMultipartUpload(completeBuilder -> completeBuilder
+            // A passed digest is verified before the upload is completed, so a mismatch leaves no object
+            try {
+                applyDigest(fileRef, digestInputStream);
+            } catch (FileStorageException e) {
+                abortMultipartUpload(s3Client, bucket, fileKey, response.uploadId(), e);
+                throw e;
+            }
+            s3Client.completeMultipartUpload(CompleteMultipartUploadRequest.builder()
                     .bucket(bucket)
                     .key(fileKey)
                     .uploadId(response.uploadId())
-                    .multipartUpload(multipartBuilder -> multipartBuilder.parts(completedParts)));
+                    .multipartUpload(CompletedMultipartUpload.builder().parts(completedParts).build())
+                    .build());
             return fileRef;
         } catch (IOException | SdkException e) {
             log.error("Error saving file to S3 storage", e);
             String message = String.format("Could not save file %s.", fileName);
             throw new FileStorageException(FileStorageException.Type.IO_EXCEPTION, message);
         }
+    }
+
+    /**
+     * If the digest is being calculated, verifies the digest passed in the reference against the bytes read so far,
+     * or adds it to the reference when none was passed.
+     *
+     * @throws FileStorageException with the {@code DIGEST_MISMATCH} type if the passed digest differs
+     */
+    private void applyDigest(FileRef fileRef, @Nullable FileDigestInputStream digestInputStream) {
+        if (digestInputStream == null) {
+            return;
+        }
+        FileDigest digest = digestInputStream.getDigest();
+        FileDigest expectedDigest = FileDigest.fromFileRef(fileRef);
+        if (expectedDigest == null) {
+            digest.addTo(fileRef);
+        } else if (!expectedDigest.equals(digest)) {
+            log.warn("Content of '{}' does not match the passed digest: expected {}, actual {}",
+                    fileRef.getFileName(), expectedDigest, digest);
+            throw new FileStorageException(FileStorageException.Type.DIGEST_MISMATCH, fileRef.getFileName());
+        }
+    }
+
+    private void abortMultipartUpload(S3Client s3Client, String bucket, String fileKey, String uploadId,
+                                      Exception cause) {
+        try {
+            s3Client.abortMultipartUpload(AbortMultipartUploadRequest.builder()
+                    .bucket(bucket)
+                    .key(fileKey)
+                    .uploadId(uploadId)
+                    .build());
+        } catch (RuntimeException e) {
+            // The caller gets the failure the upload was aborted for, whatever the abort throws
+            cause.addSuppressed(e);
+        }
+    }
+
+    /**
+     * Returns {@code true} if the SHA-256 checksum is sent to S3 on upload and the checksum S3 reports
+     * ({@code HeadObject}) is trusted by the integrity check. Unless set explicitly, it is on when
+     * {@code endpointUrl} is empty (Amazon S3), as an S3-compatible storage may reject the checksum headers or not
+     * validate the checksum.
+     */
+    protected boolean isChecksumEnabled() {
+        Boolean enabled = this.checksumEnabled;
+        return enabled != null ? enabled : Strings.isNullOrEmpty(endpointUrl);
     }
 
     /**
@@ -263,6 +367,20 @@ public class AwsFileStorage implements FileStorage {
             bytesRead += n;
         }
         return bytesRead == 0 ? -1 : bytesRead;
+    }
+
+    /**
+     * Returns the Base64 SHA-256 of the first {@code length} bytes of the buffer, a negative length meaning none.
+     */
+    protected String sha256Base64(byte[] buffer, int length) {
+        MessageDigest messageDigest;
+        try {
+            messageDigest = MessageDigest.getInstance("SHA-256");
+        } catch (NoSuchAlgorithmException e) {
+            throw new IllegalStateException("SHA-256 is not available", e);
+        }
+        messageDigest.update(buffer, 0, Math.max(0, length));
+        return Base64.getEncoder().encodeToString(messageDigest.digest());
     }
 
     protected RequestBody fromBytes(byte[] buffer, int length) {
@@ -305,19 +423,92 @@ public class AwsFileStorage implements FileStorage {
         }
     }
 
+    /**
+     * Looks the object up with {@code ListObjectsV2}, so the credentials need the {@code s3:ListBucket} permission.
+     *
+     * @throws FileStorageException with the {@code IO_EXCEPTION} type if the S3 request fails
+     */
     @Override
     public boolean fileExists(FileRef reference) {
-        S3Client s3Client = s3ClientReference.get();
-        ListObjectsV2Request listObjectsReqManual = ListObjectsV2Request.builder()
-                .bucket(bucket)
-                .prefix(reference.getPath())
-                .maxKeys(1)
-                .build();
-        ListObjectsV2Response listObjResponse = s3Client.listObjectsV2(listObjectsReqManual);
-        return listObjResponse.contents().stream()
-                .map(S3Object::key)
-                .collect(Collectors.toList())
-                .contains(reference.getPath());
+        try {
+            S3Client s3Client = s3ClientReference.get();
+            ListObjectsV2Request listObjectsReqManual = ListObjectsV2Request.builder()
+                    .bucket(bucket)
+                    .prefix(reference.getPath())
+                    .maxKeys(1)
+                    .build();
+            ListObjectsV2Response listObjResponse = s3Client.listObjectsV2(listObjectsReqManual);
+            return listObjResponse.contents().stream()
+                    .map(S3Object::key)
+                    .collect(Collectors.toList())
+                    .contains(reference.getPath());
+        } catch (SdkException e) {
+            throw new FileStorageException(FileStorageException.Type.IO_EXCEPTION, reference.toString(), e);
+        }
+    }
+
+    /**
+     * Takes the SHA-256 digest of an object stored by a single upload from {@code HeadObject} without downloading
+     * the object. Reads the object in full if checksums are off, S3 reports no checksum, a composite one (that of
+     * a multipart upload) or a malformed one, or another algorithm is requested.
+     */
+    @Override
+    public FileDigest calculateDigest(FileRef reference, String algorithm) {
+        Preconditions.checkNotNullArgument(reference);
+        Preconditions.checkNotNullArgument(algorithm);
+
+        if (isChecksumEnabled() && FileDigest.SHA_256.equals(algorithm)) {
+            HeadObjectResponse response;
+            try {
+                response = s3ClientReference.get().headObject(HeadObjectRequest.builder()
+                        .bucket(bucket)
+                        .key(reference.getPath())
+                        .checksumMode(ChecksumMode.ENABLED)
+                        .build());
+            } catch (SdkException e) {
+                boolean notFound = e instanceof NoSuchKeyException
+                        || (e instanceof S3Exception s3Exception && s3Exception.statusCode() == 404);
+                FileStorageException.Type type = notFound
+                        ? FileStorageException.Type.FILE_NOT_FOUND
+                        : FileStorageException.Type.IO_EXCEPTION;
+                throw new FileStorageException(type, reference.toString(), e);
+            }
+
+            // The checksum of a multipart object is a checksum of the part checksums: S3 marks it with a "-<parts>"
+            // suffix, and the ETag of such an object ends with the same suffix, checked too in case a storage omits
+            // the first.
+            String checksum = response.checksumSHA256();
+            if (checksum != null && !checksum.contains("-") && !isMultipartETag(response.eTag())) {
+                FileDigest digest = toSha256Digest(checksum);
+                if (digest != null) {
+                    return digest;
+                }
+            }
+        }
+        return FileStorage.super.calculateDigest(reference, algorithm);
+    }
+
+    /**
+     * Returns {@code true} if the ETag is that of an object stored by a multipart upload, which ends with
+     * {@code -<number of parts>}.
+     */
+    private boolean isMultipartETag(@Nullable String eTag) {
+        return eTag != null && MULTIPART_ETAG_PATTERN.matcher(eTag).find();
+    }
+
+    /**
+     * Converts the Base64 SHA-256 checksum reported by S3 to a digest. Returns {@code null} if the value is not
+     * Base64 or is not 32 bytes long, so it cannot be trusted.
+     */
+    private @Nullable FileDigest toSha256Digest(String checksum) {
+        try {
+            byte[] bytes = Base64.getDecoder().decode(checksum);
+            return bytes.length == SHA_256_LENGTH_BYTES
+                    ? FileDigest.of(FileDigest.SHA_256, HexFormat.of().formatHex(bytes))
+                    : null;
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
     }
 
     public void setAccessKey(String accessKey) {
@@ -346,5 +537,15 @@ public class AwsFileStorage implements FileStorage {
 
     public void setUsePathStyleBucketAddressing(boolean usePathStyleBucketAddressing) {
         this.usePathStyleBucketAddressing = usePathStyleBucketAddressing;
+    }
+
+    /**
+     * Sets whether to send the SHA-256 checksum of the uploaded files to S3 and to trust the checksum S3 reports
+     * for a file stored by a single upload when checking its integrity, instead of reading the file. If {@code null},
+     * it is on when {@code endpointUrl} is empty (Amazon S3) and off otherwise, as an S3-compatible storage may
+     * reject the checksum headers or not validate the checksum.
+     */
+    public void setChecksumEnabled(@Nullable Boolean checksumEnabled) {
+        this.checksumEnabled = checksumEnabled;
     }
 }

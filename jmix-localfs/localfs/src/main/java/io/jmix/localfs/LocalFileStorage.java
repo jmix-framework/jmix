@@ -21,7 +21,6 @@ import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import io.jmix.core.*;
 import io.jmix.core.annotation.Internal;
 import jakarta.annotation.PreDestroy;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -35,9 +34,12 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
+import java.nio.file.LinkOption;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -70,6 +72,10 @@ public class LocalFileStorage implements FileStorage {
     @Value("${jmix.localfs.disable-path-check:false}")
     protected Boolean disablePathCheck;
 
+    /**
+     * @deprecated has no effect, see {@link #setImmutableFileStorage(boolean)}
+     */
+    @Deprecated(since = "3.2", forRemoval = true)
     protected boolean isImmutableFileStorage;
 
     protected ExecutorService writeExecutor = Executors.newFixedThreadPool(5,
@@ -138,7 +144,32 @@ public class LocalFileStorage implements FileStorage {
         return storageRoots;
     }
 
+    /**
+     * Saves the stream to the file denoted by the reference.
+     * <p>
+     * The parameters of the reference are handled as described in
+     * {@link FileStorage#saveStream(String, InputStream, Map)}: a {@code jmix-sha-256} digest is verified against the
+     * saved content if {@link CoreProperties#isFileDigestOnSaveEnabled()} is on and kept as it is otherwise, a
+     * malformed digest and other keys starting with {@value FileDigest#RESERVED_PARAMETER_PREFIX} are rejected.
+     * The reference is changed only when the digest is calculated and the reference has none: the digest is added
+     * to it.
+     * <p>
+     * A file or directory that already exists at the path is never overwritten or deleted: the call fails with
+     * {@link FileStorageException.Type#FILE_ALREADY_EXISTS}. If the save fails after the file has been created, for
+     * whatever reason, the file is deleted.
+     *
+     * @param fileRef     file reference
+     * @param inputStream input stream, must be closed in the calling code
+     * @return size of the saved file in bytes
+     * @throws IllegalArgumentException if the reference carries a reserved parameter other than the digest, or a
+     *                                  malformed digest
+     * @throws FileStorageException     if something goes wrong, the file already exists, or the content does not
+     *                                  match the digest of the reference
+     */
     public long saveStream(FileRef fileRef, InputStream inputStream) {
+        FileDigest.checkReservedParameters(fileRef.getParameters());
+        FileDigest expectedDigest = FileDigest.fromFileRef(fileRef);
+
         Path relativePath = getRelativePath(fileRef.getPath());
 
         Path[] roots = getStorageRoots();
@@ -154,45 +185,64 @@ public class LocalFileStorage implements FileStorage {
             throw new FileStorageException(FileStorageException.Type.IO_EXCEPTION,
                     "Invalid storage root: " + path);
         }
-        if (!parentPath.toFile().exists() && !parentPath.toFile().mkdirs()) {
-            throw new FileStorageException(FileStorageException.Type.IO_EXCEPTION,
-                    "Cannot create directory: " + parentPath.toAbsolutePath());
-        }
-
+        // Checked before any directory is created, so a path outside the root creates nothing
         if (isInvalidPath(path, root)) {
             log.error("Unable to save file. File '{}' is outside of root dir '{}': ", path, root);
             throw new FileStorageException(FileStorageException.Type.INVALID_PATH, path.toAbsolutePath().toString());
         }
 
+        if (!parentPath.toFile().exists() && !parentPath.toFile().mkdirs()) {
+            throw new FileStorageException(FileStorageException.Type.IO_EXCEPTION,
+                    "Cannot create directory: " + parentPath.toAbsolutePath());
+        }
+
         checkFileExists(path);
+
+        InputStream source = inputStream;
+        FileDigestInputStream digestInputStream = null;
+        if (coreProperties.isFileDigestOnSaveEnabled()) {
+            digestInputStream = new FileDigestInputStream(inputStream);
+            source = digestInputStream;
+        }
 
         long size;
         long maxAllowedSize = properties.getMaxFileSize().toBytes();
-        try (OutputStream outputStream = Files.newOutputStream(path, CREATE_NEW)) {
-            size = IOUtils.copyLarge(inputStream, outputStream, 0, maxAllowedSize);
+        OutputStream outputStream = openNewFile(path);
+        // The file has been created by this call, so it is deleted unless it is written and closed, whatever fails
+        boolean written = false;
+        try {
+            try (outputStream) {
+                size = IOUtils.copyLarge(source, outputStream, 0, maxAllowedSize);
 
-            if (size >= maxAllowedSize) {
-                if (inputStream.read() != IOUtils.EOF) {
-                    outputStream.close();
-                    if (path.toFile().exists()){
-                        if(!path.toFile().delete()){
-                            log.warn("Failed to delete an incorrectly uploaded file '{}'. " +
-                                            "File was to large and has been rejected but already loaded part was not deleted.",
-                                    path.toAbsolutePath());
-                        };
-                    }
-
+                if (size >= maxAllowedSize && source.read() != IOUtils.EOF) {
                     throw new FileStorageException(FileStorageException.Type.IO_EXCEPTION,
                             String.format("File is too large: '%s'. Max file size = %s MB is exceeded but there are unread bytes left.",
                                     path.toAbsolutePath(),
                                     properties.getMaxFileSize().toMegabytes()));
                 }
+                outputStream.flush();
+//                writeLog(path, false);
             }
-            outputStream.flush();
-//            writeLog(path, false);
+            written = true;
         } catch (IOException e) {
-            FileUtils.deleteQuietly(path.toFile());
             throw new FileStorageException(FileStorageException.Type.IO_EXCEPTION, path.toAbsolutePath().toString(), e);
+        } finally {
+            if (!written) {
+                deleteCreatedFile(path);
+            }
+        }
+
+        if (digestInputStream != null) {
+            FileDigest digest = digestInputStream.getDigest();
+            if (expectedDigest == null) {
+                digest.addTo(fileRef);
+            } else if (!expectedDigest.equals(digest)) {
+                deleteCreatedFile(path);
+                log.warn("Content of '{}' does not match the passed digest: expected {}, actual {}",
+                        path.toAbsolutePath(), expectedDigest, digest);
+                throw new FileStorageException(FileStorageException.Type.DIGEST_MISMATCH,
+                        path.toAbsolutePath().toString());
+            }
         }
 
         // Copy file to secondary storages asynchronously
@@ -206,7 +256,11 @@ public class LocalFileStorage implements FileStorage {
 
             writeExecutor.submit(() -> {
                 try {
-                    FileUtils.copyFile(path.toFile(), pathCopy.toFile(), true);
+                    Files.createDirectories(pathCopy.getParent());
+                    // A file that already exists in the secondary root is kept, as in the primary one
+                    Files.copy(path, pathCopy, StandardCopyOption.COPY_ATTRIBUTES);
+                } catch (FileAlreadyExistsException e) {
+                    log.error("Error saving {} into {} : the file already exists", fileRef.getFileName(), pathCopy);
                 } catch (Exception e) {
                     log.error("Error saving {} into {} : {}", fileRef.getFileName(), pathCopy, e.getMessage());
                 }
@@ -214,6 +268,35 @@ public class LocalFileStorage implements FileStorage {
         }
 
         return size;
+    }
+
+    /**
+     * Creates the file and opens it for writing. Whatever exists at the path is kept: nothing has been created when
+     * this fails, so nothing is deleted.
+     */
+    private OutputStream openNewFile(Path path) {
+        try {
+            return Files.newOutputStream(path, CREATE_NEW);
+        } catch (IOException e) {
+            // On Windows an existing directory gives AccessDeniedException rather than FileAlreadyExistsException
+            if (e instanceof FileAlreadyExistsException || Files.exists(path, LinkOption.NOFOLLOW_LINKS)) {
+                throw new FileStorageException(FileStorageException.Type.FILE_ALREADY_EXISTS,
+                        path.toAbsolutePath().toString(), e);
+            }
+            throw new FileStorageException(FileStorageException.Type.IO_EXCEPTION, path.toAbsolutePath().toString(), e);
+        }
+    }
+
+    /**
+     * Deletes a file this storage has just created, after the save failed. A failure to delete is logged, so that a
+     * file left behind can be found.
+     */
+    private void deleteCreatedFile(Path path) {
+        try {
+            Files.deleteIfExists(path);
+        } catch (IOException e) {
+            log.warn("Unable to delete '{}' after an unsuccessful save", path.toAbsolutePath(), e);
+        }
     }
 
     @Override
@@ -255,6 +338,7 @@ public class LocalFileStorage implements FileStorage {
 
             try {
                 inputStream = Files.newInputStream(path);
+                break;
             } catch (IOException e) {
                 log.error("Error opening input stream for {}", path, e);
             }
@@ -375,7 +459,7 @@ public class LocalFileStorage implements FileStorage {
     }
 
     protected void checkFileExists(Path path) {
-        if (Files.exists(path) && isImmutableFileStorage) {
+        if (Files.exists(path, LinkOption.NOFOLLOW_LINKS)) {
             throw new FileStorageException(FileStorageException.Type.FILE_ALREADY_EXISTS,
                     path.toAbsolutePath().toString());
         }
@@ -402,11 +486,10 @@ public class LocalFileStorage implements FileStorage {
     }
 
     /**
-     * This method is mostly needed for compatibility with an old API.
-     * <p>
-     * If {@link #isImmutableFileStorage} is false then {@link #saveStream(FileRef, InputStream)}
-     * will be overwriting existing files.
+     * @deprecated has no effect: {@link #saveStream(FileRef, InputStream)} never overwrites or deletes a file or
+     * directory that exists at the path, it fails with {@link FileStorageException.Type#FILE_ALREADY_EXISTS}
      */
+    @Deprecated(since = "3.2", forRemoval = true)
     public void setImmutableFileStorage(boolean immutableFileStorage) {
         isImmutableFileStorage = immutableFileStorage;
     }

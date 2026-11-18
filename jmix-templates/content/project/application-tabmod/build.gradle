@@ -18,7 +18,7 @@ version = '${project_version}'
 repositories {
     mavenCentral()<%if (project_additionalRepositories) {
     project_additionalRepositories.each { additionalRepository ->%>
-${additionalRepository}<%if (additionalRepository.contains("jmix.io")) {
+${additionalRepository}<%if (additionalRepository.contains(".jmix.io/repository/public")) {
         def pattern = "url\\s*=?\\s*'(.*?)'"
         def matcher = additionalRepository =~ pattern
         if (matcher.find()) {

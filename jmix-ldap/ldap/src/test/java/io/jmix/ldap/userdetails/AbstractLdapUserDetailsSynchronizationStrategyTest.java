@@ -31,6 +31,7 @@ import org.jspecify.annotations.NullMarked;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.ldap.core.DirContextOperations;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -45,6 +46,9 @@ import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyCollection;
 import static org.mockito.ArgumentMatchers.eq;
@@ -139,6 +143,36 @@ class AbstractLdapUserDetailsSynchronizationStrategyTest {
                 Set.of(new SimpleGrantedAuthority(ROLE_PREFIX + "manager")));
 
         verifyNoInteractions(synchronizer);
+    }
+
+    @Test
+    void testStrategyBeanStartsWithoutSynchronizer() {
+        // ldap-starter does not bring jmix-security-data-starter, so the synchronizer bean may be absent.
+        try (AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext()) {
+            // Registered singletons are not autowired themselves.
+            context.getBeanFactory().registerSingleton("dataManager", dataManager);
+            context.getBeanFactory().registerSingleton("userRepository", mock(UserRepository.class));
+            context.getBeanFactory().registerSingleton("authoritiesMapper",
+                    mock(JmixLdapGrantedAuthoritiesMapper.class));
+            context.getBeanFactory().registerSingleton("ldapProperties", ldapProperties);
+            context.getBeanFactory().registerSingleton("roleGrantedAuthorityUtils",
+                    mock(RoleGrantedAuthorityUtils.class));
+            context.registerBean(TestStrategy.class);
+
+            context.refresh();
+
+            assertNull(context.getBean(TestStrategy.class).roleAssignmentSynchronizer);
+        }
+    }
+
+    @Test
+    void testWithoutSynchronizerSynchronizationFails() {
+        strategy.roleAssignmentSynchronizer = null;
+
+        IllegalStateException exception = assertThrows(IllegalStateException.class,
+                () -> strategy.synchronizeUserDetails(mock(DirContextOperations.class), USERNAME,
+                        Set.of(new SimpleGrantedAuthority(ROLE_PREFIX + "manager"))));
+        assertTrue(exception.getMessage().contains("jmix-security-data"));
     }
 
     @Test

@@ -29,6 +29,7 @@ import io.jmix.security.role.assignment.RoleAssignmentSource;
 import io.jmix.security.role.assignment.RoleAssignmentSynchronizer;
 import io.jmix.securitydata.entity.RoleAssignmentEntity;
 import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,7 +72,11 @@ public abstract class AbstractLdapUserDetailsSynchronizationStrategy<T extends U
     @Autowired
     protected RoleGrantedAuthorityUtils roleGrantedAuthorityUtils;
 
-    @Autowired
+    /**
+     * Synchronizer of stored role assignments. Absent if the application has no jmix-security-data starter.
+     */
+    @Autowired(required = false)
+    @Nullable
     protected RoleAssignmentSynchronizer roleAssignmentSynchronizer;
 
     @Override
@@ -91,6 +96,9 @@ public abstract class AbstractLdapUserDetailsSynchronizationStrategy<T extends U
 
         SaveContext saveContext = new SaveContext();
         if (ldapProperties.getSynchronizeRoleAssignments()) {
+            if (roleAssignmentSynchronizer == null) {
+                throw new IllegalStateException("Role assignment synchronization requires the jmix-security-data module");
+            }
             Set<GrantedAuthority> grantedAuthorities = authoritiesMapper.mapAuthorities(authorities);
 
             List<RoleAssignment> grantedAssignments = new ArrayList<>();

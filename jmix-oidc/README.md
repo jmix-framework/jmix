@@ -209,6 +209,12 @@ public class MySynchronizingOidcUserMapper extends SynchronizingOidcUserMapper<U
 }
 ```
 
+Each stored role assignment has a source in the `SOURCE` column of `SEC_ROLE_ASSIGNMENT`:
+
+- `OIDC` — written by the synchronization. It is removed when the OpenID Provider no longer returns the role.
+- `MANUAL` — assigned by hand, for example on the role assignment screen. The synchronization never removes it, and the mapper adds its role to the user's authorities on every login, whether the synchronization is enabled or not.
+- empty — stored before role assignments had a source. The synchronization takes it over when the OpenID Provider returns the role, and removes it otherwise. To keep such an assignment as a manual one, set its `SOURCE` to `MANUAL` before the user logs in.
+
 ## Protecting API
 
 Jmix application may work as a resource server. To specify which authorization server to use, define the following application property:

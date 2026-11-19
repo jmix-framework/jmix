@@ -20,6 +20,7 @@ import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.JmixId;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.JmixEntity;
+import jakarta.annotation.PostConstruct;
 import jakarta.validation.constraints.NotNull;
 
 import java.util.UUID;
@@ -42,6 +43,13 @@ public class RoleAssignmentModel {
 
     @NotNull
     private String roleType;
+
+    private String source;
+
+    @PostConstruct
+    public void initSource() {
+        source = RoleAssignmentSource.MANUAL;
+    }
 
     public UUID getId() {
         return id;
@@ -81,5 +89,13 @@ public class RoleAssignmentModel {
 
     public void setRoleType(String roleType) {
         this.roleType = roleType;
+    }
+
+    public String getSource() {
+        return source;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
     }
 }

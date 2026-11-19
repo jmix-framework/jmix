@@ -102,6 +102,7 @@ public class DatabaseRoleAssignmentPersistence implements RoleAssignmentPersiste
         model.setRoleCode(entity.getRoleCode());
         model.setRoleType(entity.getRoleType());
         model.setUsername(entity.getUsername());
+        model.setSource(entity.getSource());
         entityStates.setNew(model, false);
         return model;
     }
@@ -113,6 +114,7 @@ public class DatabaseRoleAssignmentPersistence implements RoleAssignmentPersiste
         entity.setRoleCode(model.getRoleCode());
         entity.setRoleType(model.getRoleType());
         entity.setUsername(model.getUsername());
+        entity.setSource(model.getSource());
         entityStates.setNew(entity, entityStates.isNew(model));
         return entity;
     }

@@ -222,4 +222,27 @@ class TenantTest extends Specification {
         then:
         TenantProvider.NO_TENANT == tenantUserB.getTenantId()
     }
+
+    def "tenant id of a deleted tenant cannot be reused"() {
+        given:
+        Tenant deletedTenant = metadata.create(Tenant.class)
+        deletedTenant.setTenantId("deletedTenant")
+        deletedTenant.setName("deletedTenant")
+        unconstrainedDataManager.save(new SaveContext().saving(deletedTenant))
+        unconstrainedDataManager.remove(deletedTenant) // soft delete
+
+        when:
+        Tenant newTenant = metadata.create(Tenant.class)
+        newTenant.setTenantId("deletedTenant")
+        newTenant.setName("newTenant")
+        unconstrainedDataManager.save(new SaveContext().saving(newTenant))
+
+        then:
+        thrown(IllegalArgumentException)
+
+        cleanup:
+        unconstrainedDataManager.save(new SaveContext()
+                .removing(deletedTenant)
+                .setHint(PersistenceHints.SOFT_DELETION, false))
+    }
 }

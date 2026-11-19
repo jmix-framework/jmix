@@ -15,8 +15,8 @@
  */
 package conversation_title;
 
+import io.jmix.aitoolsflowui.fragment.chat.support.ConversationTitleSupport;
 import io.jmix.aitoolsflowui.model.AiConversation;
-import io.jmix.aitoolsflowui.view.chat.support.ConversationTitleSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

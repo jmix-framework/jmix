@@ -17,8 +17,8 @@
 package chat_navigation;
 
 import com.vaadin.flow.component.html.H3;
+import io.jmix.aitoolsflowui.fragment.chat.AiChatFragment;
 import io.jmix.aitoolsflowui.model.AiConversation;
-import io.jmix.aitoolsflowui.view.chat.AiChatFragment;
 import io.jmix.aitoolsflowui.view.chat.AiChatView;
 import io.jmix.core.Messages;
 import io.jmix.flowui.testassist.FlowuiTestAssistConfiguration;

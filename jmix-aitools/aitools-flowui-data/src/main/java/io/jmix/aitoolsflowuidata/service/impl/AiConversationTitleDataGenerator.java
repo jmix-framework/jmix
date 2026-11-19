@@ -18,8 +18,8 @@ package io.jmix.aitoolsflowuidata.service.impl;
 
 import io.jmix.aitools.ChatClientFactory;
 import io.jmix.aitools.ResponseLanguageProvider;
+import io.jmix.aitoolsflowui.fragment.chat.support.ConversationTitleSupport;
 import io.jmix.aitoolsflowui.service.AiConversationTitleGenerator;
-import io.jmix.aitoolsflowui.view.chat.support.ConversationTitleSupport;
 import io.jmix.aitoolsflowuidata.service.prompt.AiConversationTitleSystemPromptProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

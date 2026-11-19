@@ -18,6 +18,7 @@ package io.jmix.aitoolsflowui.view.chathub;
 
 
 import com.vaadin.flow.router.Route;
+import io.jmix.aitoolsflowui.fragment.chathub.AiChatHubFragment;
 import io.jmix.flowui.view.*;
 
 /**

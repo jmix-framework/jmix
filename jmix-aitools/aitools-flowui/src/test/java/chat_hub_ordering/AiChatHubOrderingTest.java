@@ -18,9 +18,9 @@ package chat_hub_ordering;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.html.Anchor;
+import io.jmix.aitoolsflowui.fragment.chathub.component.AiConversationCard;
 import io.jmix.aitoolsflowui.model.AiConversation;
 import io.jmix.aitoolsflowui.view.chathub.AiChatHubView;
-import io.jmix.aitoolsflowui.view.chathub.component.AiConversationCard;
 import io.jmix.flowui.testassist.FlowuiTestAssistConfiguration;
 import io.jmix.flowui.testassist.UiTest;
 import io.jmix.flowui.testassist.UiTestUtils;

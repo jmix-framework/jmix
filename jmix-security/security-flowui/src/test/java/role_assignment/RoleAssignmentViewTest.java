@@ -28,6 +28,7 @@ import io.jmix.flowui.view.navigation.UrlParamSerializer;
 import io.jmix.flowui.view.navigation.ViewNavigationSupport;
 import io.jmix.security.role.assignment.RoleAssignmentModel;
 import io.jmix.security.role.assignment.RoleAssignmentRoleType;
+import io.jmix.security.role.assignment.RoleAssignmentSource;
 import io.jmix.securitydata.entity.RoleAssignmentEntity;
 import io.jmix.securityflowui.view.roleassignment.RoleAssignmentView;
 import org.junit.jupiter.api.AfterEach;
@@ -68,8 +69,8 @@ public class RoleAssignmentViewTest {
         user.setUsername(USERNAME);
         dataManager.save(user);
 
-        saveRoleAssignment(TestBookkeeperRole.CODE, RoleAssignmentRoleType.RESOURCE);
-        saveRoleAssignment(TestBranchRowLevelRole.CODE, RoleAssignmentRoleType.ROW_LEVEL);
+        saveRoleAssignment(TestBookkeeperRole.CODE, RoleAssignmentRoleType.RESOURCE, RoleAssignmentSource.OIDC);
+        saveRoleAssignment(TestBranchRowLevelRole.CODE, RoleAssignmentRoleType.ROW_LEVEL, RoleAssignmentSource.MANUAL);
     }
 
     @AfterEach
@@ -95,11 +96,28 @@ public class RoleAssignmentViewTest {
                 .isEqualTo("Branch records");
     }
 
-    void saveRoleAssignment(String roleCode, String roleType) {
+    @Test
+    void roleAssignmentsTables_showSource() {
+        RoleAssignmentView view = openView();
+
+        DataGrid<RoleAssignmentModel> resourceRoleAssignmentsTable =
+                UiTestUtils.getComponent(view, "resourceRoleAssignmentsTable");
+        assertThat(getShownText(resourceRoleAssignmentsTable, "source",
+                getRoleAssignment(view, "resourceRoleAssignmentsDc", TestBookkeeperRole.CODE)))
+                .isEqualTo(RoleAssignmentSource.OIDC);
+        DataGrid<RoleAssignmentModel> rowLevelRoleAssignmentsTable =
+                UiTestUtils.getComponent(view, "rowLevelRoleAssignmentsTable");
+        assertThat(getShownText(rowLevelRoleAssignmentsTable, "source",
+                getRoleAssignment(view, "rowLevelRoleAssignmentsDc", TestBranchRowLevelRole.CODE)))
+                .isEqualTo(RoleAssignmentSource.MANUAL);
+    }
+
+    void saveRoleAssignment(String roleCode, String roleType, String source) {
         RoleAssignmentEntity roleAssignment = dataManager.create(RoleAssignmentEntity.class);
         roleAssignment.setUsername(USERNAME);
         roleAssignment.setRoleCode(roleCode);
         roleAssignment.setRoleType(roleType);
+        roleAssignment.setSource(source);
         dataManager.save(roleAssignment);
     }
 

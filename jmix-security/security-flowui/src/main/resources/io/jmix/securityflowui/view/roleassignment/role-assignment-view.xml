@@ -75,6 +75,7 @@
                         <column property="roleCode"/>
                         <column key="roleName" header="msg://column.roleName.header" sortable="false"/>
                         <column key="roleScopes" header="msg://column.roleScopes.header" flexGrow="0" sortable="false"/>
+                        <column property="source"/>
                     </columns>
                 </dataGrid>
             </vbox>
@@ -104,6 +105,7 @@
                     <columns resizable="true">
                         <column property="roleCode"/>
                         <column key="roleName" header="msg://column.roleName.header" sortable="false"/>
+                        <column property="source"/>
                     </columns>
                 </dataGrid>
             </vbox>

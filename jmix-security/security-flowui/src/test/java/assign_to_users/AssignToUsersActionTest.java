@@ -29,9 +29,12 @@ import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewControllerUtils;
 import io.jmix.flowui.view.navigation.ViewNavigationSupport;
 import io.jmix.security.model.ResourceRoleModel;
+import io.jmix.security.role.assignment.RoleAssignmentSource;
+import io.jmix.securitydata.entity.RoleAssignmentEntity;
 import io.jmix.securityflowui.view.resourcerole.ResourceRoleModelListView;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -88,6 +91,19 @@ public class AssignToUsersActionTest {
         NotificationInfo notification = Objects.requireNonNull(UiTestUtils.getLastOpenedNotification());
         assertThat(notification.getType()).isEqualTo(type);
         assertThat(notification.getMessage()).contains("Bookkeeper");
+    }
+
+    @Test
+    void assignToUsers_userSelected_storesManualAssignment() {
+        TestUserListView usersView = assignBookkeeperToUsers();
+
+        selectUser(usersView, USERNAME);
+
+        RoleAssignmentEntity roleAssignment = dataManager.load(RoleAssignmentEntity.class)
+                .query("e.username = :username")
+                .parameter("username", USERNAME)
+                .one();
+        assertThat(roleAssignment.getSource()).isEqualTo(RoleAssignmentSource.MANUAL);
     }
 
     void saveUser(String username) {

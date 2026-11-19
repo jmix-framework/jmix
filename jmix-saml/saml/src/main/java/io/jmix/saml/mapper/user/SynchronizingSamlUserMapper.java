@@ -27,9 +27,13 @@ import io.jmix.saml.mapper.role.SamlAssertionRolesMapper;
 import io.jmix.saml.user.JmixSamlUserDetails;
 import io.jmix.saml.util.SamlAssertionUtils;
 import io.jmix.security.role.RoleGrantedAuthorityUtils;
+import io.jmix.security.role.assignment.RoleAssignment;
 import io.jmix.security.role.assignment.RoleAssignmentRoleType;
+import io.jmix.security.role.assignment.RoleAssignmentSource;
+import io.jmix.security.role.assignment.RoleAssignmentSynchronizer;
 import io.jmix.securitydata.entity.RoleAssignmentEntity;
 import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 import org.opensaml.saml.saml2.core.Assertion;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,9 +45,9 @@ import org.springframework.security.saml2.provider.service.authentication.OpenSa
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
@@ -51,11 +55,11 @@ import static org.slf4j.LoggerFactory.getLogger;
  * Implementation of the {@link SamlUserMapper} that maps the external user object to the persistent user
  * and also stores the user and optionally their role assignment to the database.
  * <p>
- * If role assignment synchronization is enabled (see {@link #setSynchronizeRoleAssignments(boolean)}), the
- * identity provider owns <b>all</b> role assignments of the synchronized user: on every login the stored
- * assignments are replaced with the roles derived from the SAML assertion. Role assignments granted manually
- * (e.g. by an administrator in the UI) are removed by the next login and therefore must not be combined with
- * the synchronization mode.
+ * If role assignment synchronization is enabled (see {@link #setSynchronizeRoleAssignments(boolean)}), the stored
+ * role assignments of the user are synchronized with the roles derived from the SAML assertion on every login, and
+ * stored with the {@link RoleAssignmentSource#SAML} source. Role assignments made by hand
+ * ({@link RoleAssignmentSource#MANUAL}) survive the synchronization and are added to the user's authorities, whether
+ * the synchronization is enabled or not.
  *
  * @param <T> class of Jmix user
  */
@@ -72,6 +76,12 @@ public abstract class SynchronizingSamlUserMapper<T extends JmixSamlUserDetails>
     protected SamlAssertionRolesMapper rolesMapper;
     @Autowired
     protected RoleGrantedAuthorityUtils roleGrantedAuthorityUtils;
+    /**
+     * Synchronizer of stored role assignments. Absent if the application has no jmix-security-data module.
+     */
+    @Autowired(required = false)
+    @Nullable
+    protected RoleAssignmentSynchronizer roleAssignmentSynchronizer;
 
     protected boolean synchronizeRoleAssignments;
 
@@ -135,32 +145,66 @@ public abstract class SynchronizingSamlUserMapper<T extends JmixSamlUserDetails>
     }
 
     /**
-     * Saves Jmix user and synchronizes role assignments
+     * Saves the user and, if {@link #setSynchronizeRoleAssignments(boolean) enabled}, synchronizes their stored role
+     * assignments with the roles derived from the SAML assertion (see {@link RoleAssignmentSynchronizer}). Then adds
+     * the authorities of the user's {@link RoleAssignmentSource#MANUAL manual} role assignments to the user, whether
+     * the synchronization is enabled or not.
      */
     protected void saveJmixUserAndRoleAssignments(Assertion assertion, T jmixUser) {
         SaveContext saveContext = new SaveContext();
+        String username = getSamlUsername(assertion);
 
-        if (isSynchronizeRoleAssignments()) {
-            String username = getSamlUsername(assertion);
-
-            //disable soft-deletion to completely remove role assignment records from the database
-            saveContext.setHint(PersistenceHints.SOFT_DELETION, false);
-
-            // Load existing role assignments
-            List<RoleAssignmentEntity> existingRoleAssignments = dataManager.load(RoleAssignmentEntity.class)
-                    .query("select e from sec_RoleAssignmentEntity e where e.username = :username")
-                    .parameter("username", username)
-                    .list();
-
-            // Build new role assignments from current authorities
-            List<RoleAssignmentEntity> newRoleAssignments = buildRoleAssignmentEntities(username, jmixUser.getAuthorities());
-
-            // Perform differential sync
-            updateRoleAssignmentsSaveContext(existingRoleAssignments, newRoleAssignments, saveContext);
+        if (roleAssignmentSynchronizer == null) {
+            if (isSynchronizeRoleAssignments()) {
+                throw new IllegalStateException("Role assignment synchronization requires the jmix-security-data module");
+            }
+        } else {
+            Collection<GrantedAuthority> manualAuthorities;
+            if (isSynchronizeRoleAssignments()) {
+                //disable soft-deletion to completely remove role assignment records from the database
+                saveContext.setHint(PersistenceHints.SOFT_DELETION, false);
+                List<RoleAssignment> assertedAssignments = new ArrayList<>();
+                for (RoleAssignmentEntity entity : buildRoleAssignmentEntities(username, jmixUser.getAuthorities())) {
+                    assertedAssignments.add(new RoleAssignment(username, entity.getRoleCode(), entity.getRoleType()));
+                }
+                manualAuthorities = roleAssignmentSynchronizer.synchronize(username, assertedAssignments,
+                        getRoleAssignmentSource(), saveContext);
+            } else {
+                manualAuthorities = roleAssignmentSynchronizer.getManualAuthorities(username);
+            }
+            addManualAuthorities(jmixUser, manualAuthorities);
         }
         saveContext.saving(jmixUser);
 
         dataManager.save(saveContext);
+    }
+
+    /**
+     * Adds the authorities of the user's manual role assignments to the authorities derived from the SAML assertion,
+     * skipping those the user already has.
+     */
+    protected void addManualAuthorities(T jmixUser, Collection<GrantedAuthority> manualAuthorities) {
+        if (manualAuthorities.isEmpty()) {
+            return;
+        }
+        List<GrantedAuthority> authorities = new ArrayList<>(jmixUser.getAuthorities());
+        Set<@Nullable String> authorityNames = new HashSet<>();
+        for (GrantedAuthority authority : authorities) {
+            authorityNames.add(authority.getAuthority());
+        }
+        for (GrantedAuthority authority : manualAuthorities) {
+            if (authorityNames.add(authority.getAuthority())) {
+                authorities.add(authority);
+            }
+        }
+        jmixUser.setAuthorities(authorities);
+    }
+
+    /**
+     * Returns the source that the synchronized role assignments are stored with.
+     */
+    protected String getRoleAssignmentSource() {
+        return RoleAssignmentSource.SAML;
     }
 
     /**
@@ -169,28 +213,36 @@ public abstract class SynchronizingSamlUserMapper<T extends JmixSamlUserDetails>
      * @param existingAssignments Current role assignments in database
      * @param actualAssignments   New role assignments from SAML assertion
      * @param saveContext         SaveContext to add remove/save operations
+     * @deprecated not called since 3.2: {@link #saveJmixUserAndRoleAssignments(Assertion, JmixSamlUserDetails)}
+     * synchronizes role assignments through {@link RoleAssignmentSynchronizer}, which also respects their source
      */
+    @Deprecated(since = "3.2", forRemoval = true)
     protected void updateRoleAssignmentsSaveContext(List<RoleAssignmentEntity> existingAssignments,
                                                     List<RoleAssignmentEntity> actualAssignments,
                                                     SaveContext saveContext) {
+        // No lambdas or private methods taking RoleAssignmentEntity: Spring introspects the methods of this class,
+        // and jmix-security-data may be absent at runtime.
+        Set<String> existingKeys = new HashSet<>();
+        for (RoleAssignmentEntity assignment : existingAssignments) {
+            existingKeys.add(assignment.getRoleCode() + ":" + assignment.getRoleType());
+        }
+        Set<String> actualKeys = new HashSet<>();
+        for (RoleAssignmentEntity assignment : actualAssignments) {
+            actualKeys.add(assignment.getRoleCode() + ":" + assignment.getRoleType());
+        }
 
-        // Create sets for comparison (using roleCode + roleType as key)
-        Set<String> existingKeys = existingAssignments.stream()
-                .map(assignment -> assignmentKey(assignment))
-                .collect(java.util.stream.Collectors.toSet());
-
-        Set<String> actualKeys = actualAssignments.stream()
-                .map(assignment -> assignmentKey(assignment))
-                .collect(Collectors.toSet());
-
-        // Find assignments to remove/add
-        List<RoleAssignmentEntity> assignmentsToRemove = existingAssignments.stream()
-                .filter(assignment -> !actualKeys.contains(assignmentKey(assignment)))
-                .toList();
-
-        List<RoleAssignmentEntity> assignmentsToAdd = actualAssignments.stream()
-                .filter(assignment -> !existingKeys.contains(assignmentKey(assignment)))
-                .toList();
+        List<RoleAssignmentEntity> assignmentsToRemove = new ArrayList<>();
+        for (RoleAssignmentEntity assignment : existingAssignments) {
+            if (!actualKeys.contains(assignment.getRoleCode() + ":" + assignment.getRoleType())) {
+                assignmentsToRemove.add(assignment);
+            }
+        }
+        List<RoleAssignmentEntity> assignmentsToAdd = new ArrayList<>();
+        for (RoleAssignmentEntity assignment : actualAssignments) {
+            if (!existingKeys.contains(assignment.getRoleCode() + ":" + assignment.getRoleType())) {
+                assignmentsToAdd.add(assignment);
+            }
+        }
 
         if (!assignmentsToRemove.isEmpty()) {
             log.debug("Removing {} obsolete role assignments", assignmentsToRemove.size());
@@ -241,17 +293,11 @@ public abstract class SynchronizingSamlUserMapper<T extends JmixSamlUserDetails>
     /**
      * Enables role assignment synchronization. If true then role assignment entities will be stored to the database.
      * <p>
-     * When enabled, the identity provider becomes the single source of truth for <b>all</b> role assignments of
-     * the user: on every login the assignments stored in the database are replaced with the roles derived from
-     * the SAML assertion. Any assignment granted through other means (e.g. manually by an administrator) is
-     * removed, because the {@code SEC_ROLE_ASSIGNMENT} table has no marker distinguishing the origin of an
-     * assignment. Do not assign roles manually to users synchronized with this mode.
+     * The synchronization removes only the role assignments it owns: those with the {@link RoleAssignmentSource#SAML}
+     * source and those stored before role assignments had a source. Role assignments made by hand
+     * ({@link RoleAssignmentSource#MANUAL}) are kept.
      */
     public void setSynchronizeRoleAssignments(boolean synchronizeRoleAssignments) {
         this.synchronizeRoleAssignments = synchronizeRoleAssignments;
-    }
-
-    private String assignmentKey(RoleAssignmentEntity assignment) {
-        return assignment.getRoleCode() + ":" + assignment.getRoleType();
     }
 }

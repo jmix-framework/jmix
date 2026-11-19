@@ -26,10 +26,12 @@ import io.jmix.flowui.testassist.UiTestUtils;
 import io.jmix.flowui.view.ViewControllerUtils;
 import io.jmix.flowui.view.navigation.UrlParamSerializer;
 import io.jmix.flowui.view.navigation.ViewNavigationSupport;
+import io.jmix.security.model.ResourceRoleModel;
 import io.jmix.security.role.assignment.RoleAssignmentModel;
 import io.jmix.security.role.assignment.RoleAssignmentRoleType;
 import io.jmix.security.role.assignment.RoleAssignmentSource;
 import io.jmix.securitydata.entity.RoleAssignmentEntity;
+import io.jmix.securityflowui.view.resourcerole.ResourceRoleModelLookupView;
 import io.jmix.securityflowui.view.roleassignment.RoleAssignmentView;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -39,10 +41,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import test_support.SecurityFlowuiTestConfiguration;
 import test_support.entity.TestUser;
+import test_support.role.TestAuditorRole;
 import test_support.role.TestBookkeeperRole;
 import test_support.role.TestBranchRowLevelRole;
 
+import java.util.Objects;
+
 import static org.assertj.core.api.Assertions.assertThat;
+import static test_support.TestRoleGrids.getRoleModel;
 import static test_support.TestRoleGrids.getShownText;
 
 /**
@@ -110,6 +116,32 @@ public class RoleAssignmentViewTest {
         assertThat(getShownText(rowLevelRoleAssignmentsTable, "source",
                 getRoleAssignment(view, "rowLevelRoleAssignmentsDc", TestBranchRowLevelRole.CODE)))
                 .isEqualTo(RoleAssignmentSource.MANUAL);
+    }
+
+    @Test
+    void addResourceRole_saved_storesManualAssignment() {
+        RoleAssignmentView view = openView();
+        DataGrid<RoleAssignmentModel> resourceRoleAssignmentsTable =
+                UiTestUtils.getComponent(view, "resourceRoleAssignmentsTable");
+        Objects.requireNonNull(resourceRoleAssignmentsTable.getAction("addResourceRole"))
+                .actionPerform(resourceRoleAssignmentsTable);
+        ResourceRoleModelLookupView lookupView = UiTestUtils.getLastOpenedViewDialog();
+        CollectionContainer<ResourceRoleModel> roleModelsDc =
+                ViewControllerUtils.getViewData(lookupView).getContainer("roleModelsDc");
+        DataGrid<ResourceRoleModel> roleModelsTable = UiTestUtils.getComponent(lookupView, "roleModelsTable");
+        roleModelsTable.select(getRoleModel(roleModelsDc.getItems(), TestAuditorRole.CODE));
+        Objects.requireNonNull(ViewControllerUtils.getViewActions(lookupView).getAction("selectAction"))
+                .actionPerform(roleModelsTable);
+
+        // The view's save delegate stores the models; saveAction would also close the view, which navigates away.
+        ViewControllerUtils.getViewData(view).getDataContext().save();
+
+        RoleAssignmentEntity roleAssignment = dataManager.load(RoleAssignmentEntity.class)
+                .query("e.username = :username and e.roleCode = :roleCode")
+                .parameter("username", USERNAME)
+                .parameter("roleCode", TestAuditorRole.CODE)
+                .one();
+        assertThat(roleAssignment.getSource()).isEqualTo(RoleAssignmentSource.MANUAL);
     }
 
     void saveRoleAssignment(String roleCode, String roleType, String source) {

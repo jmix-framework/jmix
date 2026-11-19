@@ -186,6 +186,17 @@ class SynchronizingOidcUserMapperTest {
                 .contains("ROLE_auditor");
     }
 
+    @Test
+    void buildRoleAssignmentEntities_setsOwnSource() {
+        // The method is an extension point: an override that saves its entities must not store them as manual.
+        Collection<RoleAssignmentEntity> entities = mapper.buildRoleAssignmentEntities(USERNAME,
+                List.of(new SimpleGrantedAuthority("ROLE_manager")));
+
+        assertThat(entities)
+                .extracting(RoleAssignmentEntity::getSource)
+                .containsExactly(RoleAssignmentSource.OIDC);
+    }
+
     /**
      * Spring introspects the fields and methods of a mapper bean, which loads their types. The OIDC add-on depends
      * on jmix-security-data at compile time only, so no field or method of the mapper may be typed with its classes.

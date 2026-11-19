@@ -129,6 +129,7 @@ public abstract class AbstractLdapUserDetailsSynchronizationStrategy<T extends U
                 roleAssignmentEntity.setRoleCode(roleCode);
                 roleAssignmentEntity.setUsername(username);
                 roleAssignmentEntity.setRoleType(roleType);
+                roleAssignmentEntity.setSource(getRoleAssignmentSource());
                 roleAssignmentEntities.add(roleAssignmentEntity);
             }
         }

@@ -141,6 +141,16 @@ class AbstractLdapUserDetailsSynchronizationStrategyTest {
         verifyNoInteractions(synchronizer);
     }
 
+    @Test
+    void testBuiltRoleAssignmentsHaveOwnSource() {
+        // The method is an extension point: an override that saves its entities must not store them as manual.
+        Collection<RoleAssignmentEntity> entities =
+                strategy.buildRoleAssignments(Set.of(new SimpleGrantedAuthority(ROLE_PREFIX + "manager")), USERNAME);
+
+        assertEquals(1, entities.size());
+        assertEquals(RoleAssignmentSource.LDAP, entities.iterator().next().getSource());
+    }
+
     private String assignmentKey(String username, String roleCode, String roleType) {
         return username + "/" + roleCode + "/" + roleType;
     }

@@ -277,6 +277,7 @@ public abstract class SynchronizingSamlUserMapper<T extends JmixSamlUserDetails>
                 roleAssignmentEntity.setRoleCode(roleCode);
                 roleAssignmentEntity.setUsername(username);
                 roleAssignmentEntity.setRoleType(roleType);
+                roleAssignmentEntity.setSource(getRoleAssignmentSource());
                 roleAssignmentEntities.add(roleAssignmentEntity);
             }
         }

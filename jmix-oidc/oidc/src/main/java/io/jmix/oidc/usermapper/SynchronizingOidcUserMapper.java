@@ -207,6 +207,7 @@ public abstract class SynchronizingOidcUserMapper<T extends JmixOidcUser> extend
                 roleAssignmentEntity.setRoleCode(roleCode);
                 roleAssignmentEntity.setUsername(username);
                 roleAssignmentEntity.setRoleType(roleType);
+                roleAssignmentEntity.setSource(getRoleAssignmentSource());
                 roleAssignmentEntities.add(roleAssignmentEntity);
             }
         }

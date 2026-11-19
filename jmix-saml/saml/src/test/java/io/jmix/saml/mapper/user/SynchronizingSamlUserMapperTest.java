@@ -206,6 +206,19 @@ class SynchronizingSamlUserMapperTest {
                 .hasMessageContaining("jmix-security-data");
     }
 
+    @Test
+    void testBuiltRoleAssignmentsHaveOwnSource() {
+        // The method is an extension point: an override that saves its entities must not store them as manual.
+        TestSynchronizingMapper mapper = createMapper();
+
+        List<RoleAssignmentEntity> entities = mapper.buildRoleAssignmentEntities("john",
+                List.of(new SimpleGrantedAuthority("ROLE_manager")));
+
+        assertThat(entities)
+                .extracting(RoleAssignmentEntity::getSource)
+                .containsExactly(RoleAssignmentSource.SAML);
+    }
+
     /**
      * Spring introspects the fields and methods of a mapper bean, which loads their types. The SAML add-on depends
      * on jmix-security-data at compile time only, so no field or method of the mapper may be typed with its classes.

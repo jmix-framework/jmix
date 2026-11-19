@@ -23,6 +23,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -49,6 +50,16 @@ public class SearchProperties {
      * Amount of queue items processed in single batch.
      */
     protected final int processQueueBatchSize;
+
+    /**
+     * Whether queue processing should continue with another full batch within the configured time budget.
+     */
+    protected final boolean processQueueMultipleBatchesEnabled;
+
+    /**
+     * Maximum time spent processing multiple batches of the indexing queue in one iteration.
+     */
+    protected final Duration processQueueBatchTimeBudget;
 
     /**
      * Amount of entity instances enqueued in single batch during entity reindex process.
@@ -142,6 +153,8 @@ public class SearchProperties {
             @DefaultValue("100") int maxSearchPageCount,
             @DefaultValue("100") int searchReloadEntitiesBatchSize,
             @DefaultValue("100") int processQueueBatchSize,
+            @DefaultValue("true") boolean processQueueMultipleBatchesEnabled,
+            @DefaultValue("1s") Duration processQueueBatchTimeBudget,
             @DefaultValue("100") int reindexEntityEnqueueBatchSize,
             @DefaultValue("3") int minPrefixLength,
             @DefaultValue("8") int maxPrefixLength,
@@ -162,6 +175,8 @@ public class SearchProperties {
         this.maxSearchPageCount = maxSearchPageCount;
         this.searchReloadEntitiesBatchSize = searchReloadEntitiesBatchSize;
         this.processQueueBatchSize = processQueueBatchSize;
+        this.processQueueMultipleBatchesEnabled = processQueueMultipleBatchesEnabled;
+        this.processQueueBatchTimeBudget = processQueueBatchTimeBudget;
         this.reindexEntityEnqueueBatchSize = reindexEntityEnqueueBatchSize;
         this.changedEntitiesIndexingEnabled = changedEntitiesIndexingEnabled;
         this.useDefaultIndexingQueueProcessingQuartzConfiguration = useDefaultIndexingQueueProcessingQuartzConfiguration;
@@ -211,6 +226,20 @@ public class SearchProperties {
      */
     public int getProcessQueueBatchSize() {
         return processQueueBatchSize;
+    }
+
+    /**
+     * @see #processQueueMultipleBatchesEnabled
+     */
+    public boolean isProcessQueueMultipleBatchesEnabled() {
+        return processQueueMultipleBatchesEnabled;
+    }
+
+    /**
+     * @see #processQueueBatchTimeBudget
+     */
+    public Duration getProcessQueueBatchTimeBudget() {
+        return processQueueBatchTimeBudget;
     }
 
     /**

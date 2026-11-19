@@ -230,6 +230,7 @@ public interface IndexingQueueManager {
 
     /**
      * Retrieves next batch of items from indexing queue and processes them - store/remove related documents in index.
+     * If multiple-batch processing is enabled, continues with full batches until the configured time budget is reached.
      *
      * @return amount of processed queue items
      */
@@ -239,6 +240,7 @@ public interface IndexingQueueManager {
      * Retrieves next batch of items from indexing queue and processes them - store/remove related documents in index.
      *
      * @param batchSize amount of queue items to process
+     *                  Multiple full batches may be processed when enabled, within the configured time budget.
      * @return amount of processed queue items
      */
     int processNextBatch(int batchSize);

@@ -65,7 +65,6 @@
             <column name="USERNAME" value="admin"/>
             <column name="ROLE_CODE" value="system-full-access"/>
             <column name="ROLE_TYPE" value="resource"/>
-            <column name="SOURCE" value="MANUAL"/>
         </insert>
 
         <insert tableName="SEC_ROLE_ASSIGNMENT" dbms="oracle, mysql, mariadb">
@@ -74,7 +73,6 @@
             <column name="USERNAME" value="admin"/>
             <column name="ROLE_CODE" value="system-full-access"/>
             <column name="ROLE_TYPE" value="resource"/>
-            <column name="SOURCE" value="MANUAL"/>
         </insert>
 
     </changeSet>

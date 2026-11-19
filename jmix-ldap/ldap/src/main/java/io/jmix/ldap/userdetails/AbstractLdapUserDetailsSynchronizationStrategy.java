@@ -23,7 +23,10 @@ import io.jmix.core.entity.EntityValues;
 import io.jmix.core.security.UserRepository;
 import io.jmix.ldap.LdapProperties;
 import io.jmix.security.role.RoleGrantedAuthorityUtils;
+import io.jmix.security.role.assignment.RoleAssignment;
 import io.jmix.security.role.assignment.RoleAssignmentRoleType;
+import io.jmix.security.role.assignment.RoleAssignmentSource;
+import io.jmix.security.role.assignment.RoleAssignmentSynchronizer;
 import io.jmix.securitydata.entity.RoleAssignmentEntity;
 import org.jspecify.annotations.NullMarked;
 import org.slf4j.Logger;
@@ -38,7 +41,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * A basic implementation of {@link LdapUserDetailsSynchronizationStrategy}, which provides
@@ -69,6 +71,9 @@ public abstract class AbstractLdapUserDetailsSynchronizationStrategy<T extends U
     @Autowired
     protected RoleGrantedAuthorityUtils roleGrantedAuthorityUtils;
 
+    @Autowired
+    protected RoleAssignmentSynchronizer roleAssignmentSynchronizer;
+
     @Override
     @SuppressWarnings("unchecked")
     public UserDetails synchronizeUserDetails(DirContextOperations ctx, String username,
@@ -88,31 +93,14 @@ public abstract class AbstractLdapUserDetailsSynchronizationStrategy<T extends U
         if (ldapProperties.getSynchronizeRoleAssignments()) {
             Set<GrantedAuthority> grantedAuthorities = authoritiesMapper.mapAuthorities(authorities);
 
-            List<RoleAssignmentEntity> existingRoleAssignments = dataManager.load(RoleAssignmentEntity.class)
-                    .query("select e from sec_RoleAssignmentEntity e where e.username = :username")
-                    .parameter("username", username)
-                    .list();
-            Set<String> existingRoleAssignmentKeys = existingRoleAssignments.stream()
-                    .map(this::assignmentKey)
-                    .collect(Collectors.toSet());
-
-            Collection<RoleAssignmentEntity> grantedRoleAssignments = buildRoleAssignments(grantedAuthorities, username);
-            Set<String> grantedRoleAssignmentKeys = grantedRoleAssignments.stream()
-                    .map(this::assignmentKey)
-                    .collect(Collectors.toSet());
-
-            //remove only existing role assignments that should not be granted
-            List<RoleAssignmentEntity> roleAssignmentsToRemove = existingRoleAssignments.stream()
-                    .filter(roleAssignmentEntity -> !grantedRoleAssignmentKeys.contains(assignmentKey(roleAssignmentEntity)))
-                    .collect(Collectors.toList());
-
-            //create only non-existing assignments
-            List<RoleAssignmentEntity> roleAssignmentsToCreate = grantedRoleAssignments.stream()
-                    .filter(roleAssignmentEntity -> !existingRoleAssignmentKeys.contains(assignmentKey(roleAssignmentEntity)))
-                    .collect(Collectors.toList());
-
-            saveContext.removing(roleAssignmentsToRemove);
-            saveContext.saving(roleAssignmentsToCreate);
+            List<RoleAssignment> grantedAssignments = new ArrayList<>();
+            for (RoleAssignmentEntity entity : buildRoleAssignments(grantedAuthorities, username)) {
+                grantedAssignments.add(new RoleAssignment(username, entity.getRoleCode(), entity.getRoleType()));
+            }
+            // The returned manual authorities are not needed: the user is reloaded from the database after
+            // the synchronization, see UserDetailsServiceLdapUserDetailsMapper.
+            roleAssignmentSynchronizer.synchronize(username, grantedAssignments, getRoleAssignmentSource(),
+                    saveContext);
         }
         saveContext.saving(jmixUserDetails);
 
@@ -147,8 +135,11 @@ public abstract class AbstractLdapUserDetailsSynchronizationStrategy<T extends U
         return roleAssignmentEntities;
     }
 
-    private String assignmentKey(RoleAssignmentEntity assignment) {
-        return assignment.getRoleCode() + ":" + assignment.getRoleType();
+    /**
+     * Returns the source that the synchronized role assignments are stored with.
+     */
+    protected String getRoleAssignmentSource() {
+        return RoleAssignmentSource.LDAP;
     }
 
     protected abstract Class<T> getUserClass();

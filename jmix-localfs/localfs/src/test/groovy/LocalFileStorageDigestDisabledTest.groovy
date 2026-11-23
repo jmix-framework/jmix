@@ -49,7 +49,7 @@ class LocalFileStorageDigestDisabledTest extends Specification {
 
         then:
         !fileRef.parameters.containsKey('jmix-sha-256')
-        integrityChecker.check(fileRef).status == FileIntegrityStatus.NO_REFERENCE
+        integrityChecker.check(fileRef).status() == FileIntegrityStatus.NO_REFERENCE
 
         cleanup:
         fileStorage.removeFile(fileRef)
@@ -62,7 +62,7 @@ class LocalFileStorageDigestDisabledTest extends Specification {
 
         then: 'it is kept, and the check reports the difference'
         fileRef.parameters == ['jmix-sha-256': ABC_SHA_256]
-        integrityChecker.check(fileRef).status == FileIntegrityStatus.MODIFIED
+        integrityChecker.check(fileRef).status() == FileIntegrityStatus.MODIFIED
 
         cleanup:
         fileStorage.removeFile(fileRef)

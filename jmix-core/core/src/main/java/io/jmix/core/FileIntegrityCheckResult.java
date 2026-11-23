@@ -25,61 +25,23 @@ import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
 /**
  * The result of a {@link FileIntegrityChecker} check of one file.
+ *
+ * @param fileRef  the checked file reference
+ * @param status   the outcome of the check
+ * @param expected the digest kept in the file reference, {@code null} if there is none
+ * @param actual   the digest calculated from the stored file, {@code null} if it was not calculated, that is when the
+ *                 file is missing or the file reference has no digest
  */
 @NullMarked
-public class FileIntegrityCheckResult implements Serializable {
+public record FileIntegrityCheckResult(FileRef fileRef,
+                                       FileIntegrityStatus status,
+                                       @Nullable FileDigest expected,
+                                       @Nullable FileDigest actual) implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private final FileRef fileRef;
-    private final FileIntegrityStatus status;
-    private final @Nullable FileDigest expected;
-    private final @Nullable FileDigest actual;
-
-    /**
-     * Creates a result.
-     *
-     * @param fileRef  the checked file reference
-     * @param status   the outcome of the check
-     * @param expected the digest kept in the file reference, {@code null} if there is none
-     * @param actual   the digest calculated from the stored file, {@code null} if it was not calculated
-     */
-    public FileIntegrityCheckResult(FileRef fileRef, FileIntegrityStatus status,
-                                    @Nullable FileDigest expected, @Nullable FileDigest actual) {
+    public FileIntegrityCheckResult {
         checkNotNullArgument(fileRef);
         checkNotNullArgument(status);
-        this.fileRef = fileRef;
-        this.status = status;
-        this.expected = expected;
-        this.actual = actual;
-    }
-
-    /**
-     * Returns the checked file reference.
-     */
-    public FileRef getFileRef() {
-        return fileRef;
-    }
-
-    /**
-     * Returns the outcome of the check.
-     */
-    public FileIntegrityStatus getStatus() {
-        return status;
-    }
-
-    /**
-     * Returns the digest kept in the file reference or {@code null} if there is none.
-     */
-    public @Nullable FileDigest getExpected() {
-        return expected;
-    }
-
-    /**
-     * Returns the digest calculated from the stored file or {@code null} if it was not calculated, that is when the
-     * file is missing or the file reference has no digest.
-     */
-    public @Nullable FileDigest getActual() {
-        return actual;
     }
 }

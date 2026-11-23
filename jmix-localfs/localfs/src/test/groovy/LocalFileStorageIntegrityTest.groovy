@@ -108,7 +108,7 @@ class LocalFileStorageIntegrityTest extends Specification {
 
         then:
         fileRef.parameters == ['jmix-sha-256': TEST_OUTPUT_SHA_256.toUpperCase()]
-        integrityChecker.check(fileRef).status == FileIntegrityStatus.VALID
+        integrityChecker.check(fileRef).status() == FileIntegrityStatus.VALID
 
         cleanup:
         fileStorage.removeFile(fileRef)
@@ -221,7 +221,7 @@ class LocalFileStorageIntegrityTest extends Specification {
 
         then:
         copyRef.parameters == ['jmix-sha-256': TEST_OUTPUT_SHA_256]
-        integrityChecker.check(copyRef).status == FileIntegrityStatus.VALID
+        integrityChecker.check(copyRef).status() == FileIntegrityStatus.VALID
 
         cleanup:
         fileStorage.removeFile(fileRef)
@@ -235,7 +235,7 @@ class LocalFileStorageIntegrityTest extends Specification {
         FileRef fileRef = fileStorage.saveStream('test.txt', new ByteArrayInputStream('Test output'.bytes))
 
         expect:
-        integrityChecker.check(fileRef).status == FileIntegrityStatus.VALID
+        integrityChecker.check(fileRef).status() == FileIntegrityStatus.VALID
 
         cleanup:
         fileStorage.removeFile(fileRef)
@@ -247,7 +247,7 @@ class LocalFileStorageIntegrityTest extends Specification {
 
         expect:
         fileRef.parameters['jmix-sha-256'] == EMPTY_SHA_256
-        integrityChecker.check(fileRef).status == FileIntegrityStatus.VALID
+        integrityChecker.check(fileRef).status() == FileIntegrityStatus.VALID
 
         cleanup:
         fileStorage.removeFile(fileRef)
@@ -261,7 +261,7 @@ class LocalFileStorageIntegrityTest extends Specification {
         Files.write(storageRoot().resolve(fileRef.path), 'Changed'.bytes)
 
         then:
-        integrityChecker.check(fileRef).status == FileIntegrityStatus.MODIFIED
+        integrityChecker.check(fileRef).status() == FileIntegrityStatus.MODIFIED
 
         cleanup:
         fileStorage.removeFile(fileRef)
@@ -275,7 +275,7 @@ class LocalFileStorageIntegrityTest extends Specification {
         Files.delete(storageRoot().resolve(fileRef.path))
 
         then:
-        integrityChecker.check(fileRef).status == FileIntegrityStatus.MISSING
+        integrityChecker.check(fileRef).status() == FileIntegrityStatus.MISSING
     }
 
     private Path storageRoot() {

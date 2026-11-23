@@ -76,10 +76,10 @@ public class FileIntegrityCheckerTest {
 
         FileIntegrityCheckResult result = fileIntegrityChecker.check(reference);
 
-        assertEquals(FileIntegrityStatus.VALID, result.getStatus());
-        assertEquals(FileDigest.of(FileDigest.SHA_256, SOME_CONTENT), result.getExpected());
-        assertEquals(result.getExpected(), result.getActual());
-        assertEquals(reference, result.getFileRef());
+        assertEquals(FileIntegrityStatus.VALID, result.status());
+        assertEquals(FileDigest.of(FileDigest.SHA_256, SOME_CONTENT), result.expected());
+        assertEquals(result.expected(), result.actual());
+        assertEquals(reference, result.fileRef());
         assertEquals(referenceString, reference.toString());
     }
 
@@ -89,9 +89,9 @@ public class FileIntegrityCheckerTest {
 
         FileIntegrityCheckResult result = fileIntegrityChecker.check(reference);
 
-        assertEquals(FileIntegrityStatus.MODIFIED, result.getStatus());
-        assertEquals(ABC, result.getExpected().getValue());
-        assertEquals(SOME_CONTENT, result.getActual().getValue());
+        assertEquals(FileIntegrityStatus.MODIFIED, result.status());
+        assertEquals(ABC, result.expected().getValue());
+        assertEquals(SOME_CONTENT, result.actual().getValue());
     }
 
     @Test
@@ -101,7 +101,7 @@ public class FileIntegrityCheckerTest {
 
         FileIntegrityCheckResult result = fileIntegrityChecker.check(reference);
 
-        assertEquals(FileIntegrityStatus.VALID, result.getStatus());
+        assertEquals(FileIntegrityStatus.VALID, result.status());
     }
 
     @Test
@@ -110,9 +110,9 @@ public class FileIntegrityCheckerTest {
 
         FileIntegrityCheckResult result = fileIntegrityChecker.check(reference);
 
-        assertEquals(FileIntegrityStatus.MODIFIED, result.getStatus());
-        assertEquals("not-a-digest", result.getExpected().getValue());
-        assertEquals(SOME_CONTENT, result.getActual().getValue());
+        assertEquals(FileIntegrityStatus.MODIFIED, result.status());
+        assertEquals("not-a-digest", result.expected().getValue());
+        assertEquals(SOME_CONTENT, result.actual().getValue());
     }
 
     @Test
@@ -121,9 +121,9 @@ public class FileIntegrityCheckerTest {
 
         FileIntegrityCheckResult result = fileIntegrityChecker.check(reference);
 
-        assertEquals(FileIntegrityStatus.NO_REFERENCE, result.getStatus());
-        assertNull(result.getExpected());
-        assertNull(result.getActual());
+        assertEquals(FileIntegrityStatus.NO_REFERENCE, result.status());
+        assertNull(result.expected());
+        assertNull(result.actual());
     }
 
     @Test
@@ -132,9 +132,9 @@ public class FileIntegrityCheckerTest {
 
         FileIntegrityCheckResult result = fileIntegrityChecker.check(reference);
 
-        assertEquals(FileIntegrityStatus.NO_REFERENCE, result.getStatus());
-        assertNull(result.getExpected());
-        assertNull(result.getActual());
+        assertEquals(FileIntegrityStatus.NO_REFERENCE, result.status());
+        assertNull(result.expected());
+        assertNull(result.actual());
     }
 
     @Test
@@ -144,9 +144,9 @@ public class FileIntegrityCheckerTest {
 
         FileIntegrityCheckResult result = fileIntegrityChecker.check(reference);
 
-        assertEquals(FileIntegrityStatus.MISSING, result.getStatus());
-        assertEquals(SOME_CONTENT, result.getExpected().getValue());
-        assertNull(result.getActual());
+        assertEquals(FileIntegrityStatus.MISSING, result.status());
+        assertEquals(SOME_CONTENT, result.expected().getValue());
+        assertNull(result.actual());
     }
 
     @Test
@@ -156,9 +156,9 @@ public class FileIntegrityCheckerTest {
 
         FileIntegrityCheckResult result = fileIntegrityChecker.check(reference);
 
-        assertEquals(FileIntegrityStatus.MISSING, result.getStatus());
-        assertNull(result.getExpected());
-        assertNull(result.getActual());
+        assertEquals(FileIntegrityStatus.MISSING, result.status());
+        assertNull(result.expected());
+        assertNull(result.actual());
     }
 
     @Test
@@ -178,9 +178,9 @@ public class FileIntegrityCheckerTest {
 
         FileIntegrityCheckResult result = fileIntegrityChecker.check(reference);
 
-        assertEquals(FileIntegrityStatus.MISSING, result.getStatus());
-        assertEquals(ABC, result.getExpected().getValue());
-        assertNull(result.getActual());
+        assertEquals(FileIntegrityStatus.MISSING, result.status());
+        assertEquals(ABC, result.expected().getValue());
+        assertNull(result.actual());
     }
 
     @Test
@@ -205,7 +205,7 @@ public class FileIntegrityCheckerTest {
 
         FileIntegrityCheckResult result = fileIntegrityChecker.check(reference);
 
-        assertEquals(FileIntegrityStatus.MISSING, result.getStatus());
+        assertEquals(FileIntegrityStatus.MISSING, result.status());
     }
 
     @Test

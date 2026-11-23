@@ -20,8 +20,6 @@ import org.jspecify.annotations.NullMarked;
 
 /**
  * The outcome of a {@link FileIntegrityChecker} check.
- * <p>
- * Constants may be added in later versions, so code that handles the status should have a fallback branch.
  */
 @NullMarked
 public enum FileIntegrityStatus {

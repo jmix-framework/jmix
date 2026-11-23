@@ -19,6 +19,6 @@
       title="msg://aiChatHubView.title">
     <layout padding="false">
         <fragment id="hubFragment"
-                  class="io.jmix.aitoolsflowui.view.chathub.AiChatHubFragment"/>
+                  class="io.jmix.aitoolsflowui.fragment.chathub.AiChatHubFragment"/>
     </layout>
 </view>

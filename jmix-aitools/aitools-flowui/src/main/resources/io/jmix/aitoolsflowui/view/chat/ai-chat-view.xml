@@ -50,6 +50,6 @@
         </vbox>
         <fragment id="chatFragment"
                   visible="false"
-                  class="io.jmix.aitoolsflowui.view.chat.AiChatFragment"/>
+                  class="io.jmix.aitoolsflowui.fragment.chat.AiChatFragment"/>
     </layout>
 </view>

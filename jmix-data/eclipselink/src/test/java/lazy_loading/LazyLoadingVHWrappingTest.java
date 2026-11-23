@@ -104,6 +104,13 @@ public class LazyLoadingVHWrappingTest {
     }
 
     @Test
+    public void deepNestedUOWSingleValueHolderWrappingWithoutFetchPlanTest() {
+        MyEntity loadedOne = dataManager.load(MyEntity.class).id(myEntityId).one();
+
+        Assertions.assertNotNull(loadedOne.getMetaEntity().getLastentity().getInfoEntity());
+    }
+
+    @Test
     public void embeddedReferenceLoadedBeforeIntermediateLoadKeepsNestedLazyLoadingTest() {
         transactionTemplate.executeWithoutResult(status -> {
             MyEntity managedMyEntity = entityManager.find(MyEntity.class, myEntityId);

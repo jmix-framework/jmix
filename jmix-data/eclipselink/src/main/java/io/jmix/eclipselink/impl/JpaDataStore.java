@@ -483,8 +483,9 @@ public class JpaDataStore extends AbstractDataStore implements DataSortingOption
             Set<Object> recentlyLoaded = (Set<Object>) persistenceSupport.getInstances(em);
             recentlyLoaded.removeAll(txState.alreadyExisted);
 
+            FetchPlan fetchPlan = createFetchPlan(context);
             for (Object entity : entities) {
-                detachEntity(em, entity, context.getFetchPlan(), false);
+                detachEntity(em, entity, fetchPlan, false);
             }
 
             for (Object entity : recentlyLoaded) {
@@ -671,6 +672,14 @@ public class JpaDataStore extends AbstractDataStore implements DataSortingOption
         query = (JmixEclipseLinkQuery<?>) queryContext.getResultQuery();
 
         return query;
+    }
+
+    /**
+     * Returns the fetch plan that this store loads the entities of the given context with: the context's fetch plan,
+     * or {@code _base} of the entity when the context has none.
+     */
+    public FetchPlan getLoadFetchPlan(LoadContext<?> context) {
+        return createFetchPlan(context);
     }
 
     protected FetchPlan createFetchPlan(LoadContext<?> context) {

@@ -35,7 +35,7 @@ import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
  * The digest of a file saved by a {@link FileStorage} is kept in a {@link FileRef} parameter. The parameter key
  * is {@value #RESERVED_PARAMETER_PREFIX} followed by the algorithm name from the IANA "Hash Algorithms for HTTP
  * Digest Fields" registry (RFC 9530), the value is the digest in lowercase hex, for example
- * {@code jmix-sha-256=ba7816bf...}. Only {@link #SHA_256} is supported.
+ * {@code jmix-sha-256=ba7816bf...}. Only {@link #SHA_256} is currently supported.
  * <p>
  * Every key that starts with {@value #RESERVED_PARAMETER_PREFIX} is reserved for the framework. The digest parameter
  * itself may be passed to {@link FileStorage#saveStream}, for example when a file is copied with the parameters of its

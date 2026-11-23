@@ -38,8 +38,6 @@ public record FileIntegrityCheckResult(FileRef fileRef,
                                        @Nullable FileDigest expected,
                                        @Nullable FileDigest actual) implements Serializable {
 
-    private static final long serialVersionUID = 1L;
-
     public FileIntegrityCheckResult {
         checkNotNullArgument(fileRef);
         checkNotNullArgument(status);

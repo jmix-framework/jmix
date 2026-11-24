@@ -50,6 +50,7 @@ import org.springframework.security.saml2.provider.service.registration.RelyingP
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -217,6 +218,15 @@ class SynchronizingSamlUserMapperTest {
         assertThat(entities)
                 .extracting(RoleAssignmentEntity::getSource)
                 .containsExactly(RoleAssignmentSource.SAML);
+    }
+
+    @Test
+    void testDeprecatedDiffMethodCannotBeOverridden() throws NoSuchMethodException {
+        // The method is no longer called: an override must fail to compile rather than be ignored silently.
+        Method method = SynchronizingSamlUserMapper.class.getDeclaredMethod("updateRoleAssignmentsSaveContext",
+                List.class, List.class, SaveContext.class);
+
+        assertThat(Modifier.isFinal(method.getModifiers())).isTrue();
     }
 
     /**

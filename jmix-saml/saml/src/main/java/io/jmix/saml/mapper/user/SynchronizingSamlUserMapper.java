@@ -214,10 +214,14 @@ public abstract class SynchronizingSamlUserMapper<T extends JmixSamlUserDetails>
      * @param actualAssignments   New role assignments from SAML assertion
      * @param saveContext         SaveContext to add remove/save operations
      * @deprecated not called since 3.2: {@link #saveJmixUserAndRoleAssignments(Assertion, JmixSamlUserDetails)}
-     * synchronizes role assignments through {@link RoleAssignmentSynchronizer}, which also respects their source
+     * synchronizes role assignments through {@link RoleAssignmentSynchronizer}, which also respects their source.
+     * The method is final so that an override fails to compile instead of being ignored. To customize the
+     * synchronization, override {@link #buildRoleAssignmentEntities(String, Collection)},
+     * {@link #getRoleAssignmentSource()}, {@link #addManualAuthorities(JmixSamlUserDetails, Collection)} or
+     * {@link #saveJmixUserAndRoleAssignments(Assertion, JmixSamlUserDetails)}.
      */
     @Deprecated(since = "3.2", forRemoval = true)
-    protected void updateRoleAssignmentsSaveContext(List<RoleAssignmentEntity> existingAssignments,
+    protected final void updateRoleAssignmentsSaveContext(List<RoleAssignmentEntity> existingAssignments,
                                                     List<RoleAssignmentEntity> actualAssignments,
                                                     SaveContext saveContext) {
         // No lambdas or private methods taking RoleAssignmentEntity: Spring introspects the methods of this class,

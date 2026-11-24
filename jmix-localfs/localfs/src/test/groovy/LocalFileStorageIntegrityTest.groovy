@@ -1,0 +1,284 @@
+/*
+ * Copyright 2026 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+
+import io.jmix.core.CoreConfiguration
+import io.jmix.core.CoreProperties
+import io.jmix.core.FileIntegrityChecker
+import io.jmix.core.FileIntegrityStatus
+import io.jmix.core.FileRef
+import io.jmix.core.FileStorage
+import io.jmix.core.FileStorageException
+import io.jmix.localfs.LocalFileStorage
+import io.jmix.localfs.LocalFileStorageConfiguration
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.test.context.ContextConfiguration
+import spock.lang.Specification
+import test_support.LocalFileStorageTestConfiguration
+import test_support.TestContextInititalizer
+
+import java.nio.file.Files
+import java.nio.file.Path
+import java.nio.file.Paths
+
+@ContextConfiguration(
+        classes = [CoreConfiguration, LocalFileStorageConfiguration, LocalFileStorageTestConfiguration],
+        initializers = [TestContextInititalizer]
+)
+class LocalFileStorageIntegrityTest extends Specification {
+
+    static final String TEST_OUTPUT_SHA_256 = 'e6e383e65dabb3ed7c623557f7967ed8edd1c4e4afc09828f97c8ef3d794e65f'
+    static final String EMPTY_SHA_256 = 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855'
+
+    @Autowired
+    private FileStorage fileStorage
+
+    @Autowired
+    private FileIntegrityChecker integrityChecker
+
+    @Autowired
+    private CoreProperties coreProperties
+
+    def "saveStream adds the SHA-256 digest of the content"() {
+        when:
+        FileRef fileRef = fileStorage.saveStream('test.txt', new ByteArrayInputStream('Test output'.bytes))
+
+        then:
+        fileRef.parameters['jmix-sha-256'] == TEST_OUTPUT_SHA_256
+
+        cleanup:
+        fileStorage.removeFile(fileRef)
+    }
+
+    def "saveStream keeps other parameters"() {
+        when:
+        FileRef fileRef = fileStorage.saveStream('test.txt', new ByteArrayInputStream('Test output'.bytes),
+                [size: 11, 'sha-256': 'app'])
+
+        then:
+        fileRef.parameters == [size: '11', 'sha-256': 'app', 'jmix-sha-256': TEST_OUTPUT_SHA_256]
+
+        cleanup:
+        fileStorage.removeFile(fileRef)
+    }
+
+    def "saveStream rejects a reserved parameter other than the digest"() {
+        when:
+        fileStorage.saveStream('test.txt', new ByteArrayInputStream('Test output'.bytes), [(key): 'x'])
+
+        then:
+        thrown(IllegalArgumentException)
+
+        where:
+        key << ['jmix-sha-512', 'jmix-other']
+    }
+
+    def "saveStream rejects a malformed passed digest and stores nothing"() {
+        given:
+        LocalFileStorage localFileStorage = fileStorage as LocalFileStorage
+        String path = "2026/11/17/${UUID.randomUUID()}.txt"
+        FileRef fileRef = new FileRef(fileStorage.storageName, path, 'test.txt',
+                ['jmix-sha-256': 'ungWv48Bz+pBQUDeXa4iI7ADYaOWF3qctBD/YfIAFa0='])
+
+        when:
+        localFileStorage.saveStream(fileRef, new ByteArrayInputStream('abc'.bytes))
+
+        then:
+        thrown(IllegalArgumentException)
+        !Files.exists(storageRoot().resolve(path))
+    }
+
+    def "saveStream keeps a passed digest that matches the content"() {
+        when:
+        FileRef fileRef = fileStorage.saveStream('test.txt', new ByteArrayInputStream('Test output'.bytes),
+                ['jmix-sha-256': TEST_OUTPUT_SHA_256.toUpperCase()])
+
+        then:
+        fileRef.parameters == ['jmix-sha-256': TEST_OUTPUT_SHA_256.toUpperCase()]
+        integrityChecker.check(fileRef).status() == FileIntegrityStatus.VALID
+
+        cleanup:
+        fileStorage.removeFile(fileRef)
+    }
+
+    def "saveStream rejects content that does not match the passed digest and stores nothing"() {
+        given:
+        LocalFileStorage localFileStorage = fileStorage as LocalFileStorage
+        String path = "2026/11/17/${UUID.randomUUID()}.txt"
+        FileRef fileRef = new FileRef(fileStorage.storageName, path, 'test.txt', ['jmix-sha-256': EMPTY_SHA_256])
+
+        when:
+        localFileStorage.saveStream(fileRef, new ByteArrayInputStream('Test output'.bytes))
+
+        then:
+        def e = thrown(FileStorageException)
+        e.type == FileStorageException.Type.DIGEST_MISMATCH
+        !Files.exists(storageRoot().resolve(path))
+        fileRef.parameters == ['jmix-sha-256': EMPTY_SHA_256]
+    }
+
+    def "saving to the path of an existing file fails and keeps the file"() {
+        given:
+        LocalFileStorage localFileStorage = fileStorage as LocalFileStorage
+        String path = "2026/11/17/${UUID.randomUUID()}.txt"
+        FileRef fileRef = new FileRef(fileStorage.storageName, path, 'test.txt')
+        localFileStorage.saveStream(fileRef, new ByteArrayInputStream('Test output'.bytes))
+
+        when:
+        localFileStorage.saveStream(new FileRef(fileStorage.storageName, path, 'test.txt'),
+                new ByteArrayInputStream('Other content'.bytes))
+
+        then:
+        def e = thrown(FileStorageException)
+        e.type == FileStorageException.Type.FILE_ALREADY_EXISTS
+        Files.readString(storageRoot().resolve(path)) == 'Test output'
+
+        cleanup:
+        fileStorage.removeFile(fileRef)
+    }
+
+    def "saving to the path of an existing directory fails and keeps the directory"() {
+        given:
+        LocalFileStorage localFileStorage = fileStorage as LocalFileStorage
+        String path = "2026/11/17/${UUID.randomUUID()}"
+        Path directory = storageRoot().resolve(path)
+        Files.createDirectories(directory)
+        Path fileInDirectory = Files.writeString(directory.resolve('kept.txt'), 'Kept')
+
+        when:
+        localFileStorage.saveStream(new FileRef(fileStorage.storageName, path, 'test.txt'),
+                new ByteArrayInputStream('Other content'.bytes))
+
+        then:
+        def e = thrown(FileStorageException)
+        e.type == FileStorageException.Type.FILE_ALREADY_EXISTS
+        Files.readString(fileInDirectory) == 'Kept'
+
+        cleanup:
+        Files.deleteIfExists(fileInDirectory)
+        Files.deleteIfExists(directory)
+    }
+
+    def "a save that fails while writing deletes the file it created"() {
+        given:
+        LocalFileStorage localFileStorage = fileStorage as LocalFileStorage
+        String path = "2026/11/17/${UUID.randomUUID()}.txt"
+        InputStream failingStream = new InputStream() {
+            boolean first = true
+
+            @Override
+            int read() {
+                throw new UnsupportedOperationException()
+            }
+
+            @Override
+            int read(byte[] b, int off, int len) {
+                if (first) {
+                    first = false
+                    b[off] = (byte) 'a'
+                    return 1
+                }
+                throw new IllegalStateException('Upload aborted')
+            }
+        }
+
+        when:
+        localFileStorage.saveStream(new FileRef(fileStorage.storageName, path, 'test.txt'), failingStream)
+
+        then:
+        thrown(IllegalStateException)
+        !Files.exists(storageRoot().resolve(path))
+    }
+
+    def "saveStream adds the digest to a passed reference without one, which can then be copied with it"() {
+        given:
+        LocalFileStorage localFileStorage = fileStorage as LocalFileStorage
+        FileRef fileRef = new FileRef(fileStorage.storageName, "2026/11/17/${UUID.randomUUID()}.txt", 'test.txt')
+
+        when:
+        localFileStorage.saveStream(fileRef, new ByteArrayInputStream('Test output'.bytes))
+
+        then:
+        fileRef.parameters == ['jmix-sha-256': TEST_OUTPUT_SHA_256]
+
+        when: 'the file is copied to another path with the parameters of its reference'
+        FileRef copyRef = new FileRef(fileStorage.storageName, "2026/11/17/${UUID.randomUUID()}.txt", 'test.txt',
+                fileRef.parameters)
+        fileStorage.openStream(fileRef).withCloseable { localFileStorage.saveStream(copyRef, it) }
+
+        then:
+        copyRef.parameters == ['jmix-sha-256': TEST_OUTPUT_SHA_256]
+        integrityChecker.check(copyRef).status() == FileIntegrityStatus.VALID
+
+        cleanup:
+        fileStorage.removeFile(fileRef)
+        if (copyRef != null) {
+            fileStorage.removeFile(copyRef)
+        }
+    }
+
+    def "check of a saved file is VALID"() {
+        given:
+        FileRef fileRef = fileStorage.saveStream('test.txt', new ByteArrayInputStream('Test output'.bytes))
+
+        expect:
+        integrityChecker.check(fileRef).status() == FileIntegrityStatus.VALID
+
+        cleanup:
+        fileStorage.removeFile(fileRef)
+    }
+
+    def "check of an empty file is VALID"() {
+        given:
+        FileRef fileRef = fileStorage.saveStream('empty.txt', new ByteArrayInputStream(new byte[0]))
+
+        expect:
+        fileRef.parameters['jmix-sha-256'] == EMPTY_SHA_256
+        integrityChecker.check(fileRef).status() == FileIntegrityStatus.VALID
+
+        cleanup:
+        fileStorage.removeFile(fileRef)
+    }
+
+    def "check of a file changed on disk is MODIFIED"() {
+        given:
+        FileRef fileRef = fileStorage.saveStream('test.txt', new ByteArrayInputStream('Test output'.bytes))
+
+        when:
+        Files.write(storageRoot().resolve(fileRef.path), 'Changed'.bytes)
+
+        then:
+        integrityChecker.check(fileRef).status() == FileIntegrityStatus.MODIFIED
+
+        cleanup:
+        fileStorage.removeFile(fileRef)
+    }
+
+    def "check of a deleted file is MISSING"() {
+        given:
+        FileRef fileRef = fileStorage.saveStream('test.txt', new ByteArrayInputStream('Test output'.bytes))
+
+        when:
+        Files.delete(storageRoot().resolve(fileRef.path))
+
+        then:
+        integrityChecker.check(fileRef).status() == FileIntegrityStatus.MISSING
+    }
+
+    private Path storageRoot() {
+        Paths.get(coreProperties.workDir, 'filestorage')
+    }
+}

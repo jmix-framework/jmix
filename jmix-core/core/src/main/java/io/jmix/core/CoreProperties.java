@@ -155,6 +155,15 @@ public class CoreProperties {
      */
     boolean applicationInfoFileEnabled;
 
+    /**
+     * Whether a file storage calculates the digest of a file on save: it adds the digest to the {@link FileRef}
+     * parameters, or verifies the digest passed in the parameters against the saved content. Switched off, a passed
+     * digest is kept without a check.
+     * <p>
+     * The digest allows to check the integrity of the file later with {@link FileIntegrityChecker}.
+     */
+    boolean fileDigestOnSaveEnabled;
+
     public CoreProperties(
             String webHostName,
             String webPort,
@@ -182,7 +191,8 @@ public class CoreProperties {
             @DefaultValue("false") boolean dataObservationEnabled,
             @DefaultValue("true") boolean useUserInfoForObservation,
             @DefaultValue("true") boolean applicationInfoFileEnabled,
-            @DefaultValue("false") boolean invokePostConstructOnEntityDeserialization) {
+            @DefaultValue("false") boolean invokePostConstructOnEntityDeserialization,
+            @DefaultValue("true") boolean fileDigestOnSaveEnabled) {
         this.webHostName = webHostName;
         this.webPort = webPort;
         this.confDir = confDir;
@@ -218,6 +228,7 @@ public class CoreProperties {
         this.useUserInfoForObservation = useUserInfoForObservation;
         this.applicationInfoFileEnabled = applicationInfoFileEnabled;
         this.invokePostConstructOnEntityDeserialization = invokePostConstructOnEntityDeserialization;
+        this.fileDigestOnSaveEnabled = fileDigestOnSaveEnabled;
     }
 
     public String getWebHostName() {
@@ -369,5 +380,12 @@ public class CoreProperties {
      */
     public boolean isApplicationInfoFileEnabled() {
         return applicationInfoFileEnabled;
+    }
+
+    /**
+     * @see #fileDigestOnSaveEnabled
+     */
+    public boolean isFileDigestOnSaveEnabled() {
+        return fileDigestOnSaveEnabled;
     }
 }

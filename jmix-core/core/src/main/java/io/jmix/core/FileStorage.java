@@ -18,9 +18,13 @@ package io.jmix.core;
 
 import org.jspecify.annotations.NullMarked;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Collections;
 import java.util.Map;
+
+import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
 /**
  * Interface of a component to store and load files defined by file references.
@@ -50,14 +54,32 @@ public interface FileStorage {
 
     /**
      * Saves an InputStream contents into the file storage using additional parameters.
+     * <p>
+     * Keys starting with {@value FileDigest#RESERVED_PARAMETER_PREFIX} are reserved for the framework. A storage that
+     * keeps the digest of a file in its reference handles them as follows:
+     * <ul>
+     *     <li>the digest key ({@code jmix-sha-256}) may be passed, for example when a file is copied with the
+     *     parameters of its reference; its value must be the digest in hex. If the storage calculates the digest on
+     *     save ({@link CoreProperties#isFileDigestOnSaveEnabled()}), it verifies the passed one against the saved
+     *     content and fails with {@link FileStorageException.Type#DIGEST_MISMATCH} if they differ, storing nothing;
+     *     otherwise the passed digest is kept as it is;</li>
+     *     <li>other reserved keys, and a malformed digest, are rejected.</li>
+     * </ul>
+     * Such a storage keeps the passed parameters in the returned reference unchanged. The only parameter it may add is
+     * the digest, when it calculates one and none was passed.
+     * <p>
+     * A storage that hands the file over to another system, such as {@code RestFileStorage} of the REST data store
+     * add-on, may not pass the parameters on: its returned reference carries what that system reports, and a passed
+     * digest is neither verified nor kept.
      *
      * @param fileName    file name
      * @param inputStream input stream, must be closed in the calling code
      * @param parameters additional parameters that can be used in specific storage implementation
      *                   (for example, can be converted to FileRef parameters)
-     * @return file reference
-     * @throws IllegalArgumentException if arguments are incorrect
-     * @throws FileStorageException     if something goes wrong
+     * @return file reference, which may carry framework parameters such as the {@code jmix-sha-256} digest
+     * @throws IllegalArgumentException if arguments are incorrect, for example a reserved parameter key the storage
+     *                                  rejects
+     * @throws FileStorageException     if something goes wrong, or the content does not match the passed digest
      */
     FileRef saveStream(String fileName, InputStream inputStream, Map<String, Object> parameters);
 
@@ -87,4 +109,28 @@ public interface FileStorage {
      * @throws IllegalArgumentException if file reference is invalid
      */
     boolean fileExists(FileRef reference);
+
+    /**
+     * Calculates the actual digest of a file, that is of the bytes {@link #openStream(FileRef)} returns.
+     * <p>
+     * The default implementation reads the whole file. A storage may override the method if it has a cheaper way.
+     *
+     * @param reference file reference
+     * @param algorithm algorithm name from the IANA registry, only {@link FileDigest#SHA_256} is supported
+     * @return digest of the file
+     * @throws IllegalArgumentException if arguments are incorrect or the algorithm is not supported
+     * @throws FileStorageException     if something goes wrong
+     */
+    default FileDigest calculateDigest(FileRef reference, String algorithm) {
+        checkNotNullArgument(reference);
+        checkNotNullArgument(algorithm);
+        FileDigest.checkSupported(algorithm);
+        try (InputStream inputStream = openStream(reference);
+             FileDigestInputStream digestInputStream = new FileDigestInputStream(inputStream, algorithm)) {
+            digestInputStream.transferTo(OutputStream.nullOutputStream());
+            return digestInputStream.getDigest();
+        } catch (IOException e) {
+            throw new FileStorageException(FileStorageException.Type.IO_EXCEPTION, reference.toString(), e);
+        }
+    }
 }

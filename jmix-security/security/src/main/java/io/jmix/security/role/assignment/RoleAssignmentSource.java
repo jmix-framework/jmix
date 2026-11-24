@@ -19,12 +19,13 @@ package io.jmix.security.role.assignment;
 /**
  * Sources of stored role assignments: who wrote a role assignment and therefore who may remove it.
  * <ul>
- *     <li>{@link #MANUAL} - assigned by hand, for example on the role assignment screen. The synchronization of an
- *     identity provider never removes such an assignment.</li>
+ *     <li>{@link #MANUAL} - assigned by hand on the role assignment screens. The synchronization of an identity
+ *     provider never removes such an assignment. Application code that assigns roles which must survive the
+ *     synchronization sets this value itself.</li>
  *     <li>{@link #OIDC}, {@link #SAML}, {@link #LDAP} - written by the role assignment synchronization of the
  *     corresponding add-on, which removes the assignment when the identity provider no longer asserts the role.</li>
- *     <li>{@code null} - written before role assignments had a source. The synchronization treats such an assignment
- *     as its own.</li>
+ *     <li>{@code null} - written before role assignments had a source, or created without one, for example by
+ *     application code or an import. The synchronization treats such an assignment as its own.</li>
  * </ul>
  */
 public final class RoleAssignmentSource {

@@ -60,9 +60,11 @@ class RoleAssignmentSourceTest extends SecurityDataSpecification {
         SecurityContextHelper.setAuthentication(null)
     }
 
-    def "an assignment created by DataManager is manual"() {
+    def "an assignment created by DataManager has no source"() {
+        // Only the paths where a person assigns a role mark it as manual: an assignment created anywhere else,
+        // for example imported from JSON without a source, stays owned by the synchronization.
         expect:
-        dataManager.create(RoleAssignmentEntity).source == RoleAssignmentSource.MANUAL
+        dataManager.create(RoleAssignmentEntity).source == null
     }
 
     def "a model created by Metadata is manual"() {

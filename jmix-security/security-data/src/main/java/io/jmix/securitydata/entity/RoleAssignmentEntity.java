@@ -21,8 +21,6 @@ import io.jmix.core.annotation.DeletedDate;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.JmixEntity;
-import io.jmix.security.role.assignment.RoleAssignmentSource;
-import jakarta.annotation.PostConstruct;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.data.annotation.CreatedBy;
@@ -86,11 +84,6 @@ public class RoleAssignmentEntity {
 
     @Column(name = "SOURCE", length = 50)
     private String source;
-
-    @PostConstruct
-    public void initSource() {
-        source = RoleAssignmentSource.MANUAL;
-    }
 
     public UUID getId() {
         return id;

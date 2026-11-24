@@ -23,6 +23,7 @@ import io.jmix.core.querycondition.PropertyCondition;
 import io.jmix.security.role.assignment.RoleAssignment;
 import io.jmix.security.role.assignment.RoleAssignmentModel;
 import io.jmix.security.role.assignment.RoleAssignmentPersistence;
+import io.jmix.security.role.assignment.RoleAssignmentSource;
 import io.jmix.securitydata.entity.RoleAssignmentEntity;
 import org.jspecify.annotations.NullMarked;
 import org.springframework.stereotype.Component;
@@ -63,6 +64,7 @@ public class DatabaseRoleAssignmentPersistence implements RoleAssignmentPersiste
                     entity.setRoleCode(roleAssignment.getRoleCode());
                     entity.setRoleType(roleAssignment.getRoleType());
                     entity.setUsername(roleAssignment.getUsername());
+                    entity.setSource(RoleAssignmentSource.MANUAL);
                     return entity;
                 })
                 .toList();

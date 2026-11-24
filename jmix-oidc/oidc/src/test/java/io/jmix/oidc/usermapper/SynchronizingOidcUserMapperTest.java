@@ -245,7 +245,7 @@ class SynchronizingOidcUserMapperTest {
         }
     }
 
-    public static class TestUser extends JmixOidcUserEntity {
+    static class TestUser extends JmixOidcUserEntity {
 
         private String username;
         private Collection<? extends GrantedAuthority> authorities = List.of();

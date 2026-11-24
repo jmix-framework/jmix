@@ -16,6 +16,8 @@
 
 package io.jmix.security.role.assignment;
 
+import org.jspecify.annotations.NullMarked;
+
 /**
  * Sources of stored role assignments: who wrote a role assignment and therefore who may remove it.
  * <ul>
@@ -28,6 +30,7 @@ package io.jmix.security.role.assignment;
  *     application code or an import. The synchronization treats such an assignment as its own.</li>
  * </ul>
  */
+@NullMarked
 public final class RoleAssignmentSource {
 
     public static final String MANUAL = "MANUAL";

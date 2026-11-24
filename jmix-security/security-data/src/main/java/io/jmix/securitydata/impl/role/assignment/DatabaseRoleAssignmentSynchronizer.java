@@ -67,6 +67,8 @@ public class DatabaseRoleAssignmentSynchronizer implements RoleAssignmentSynchro
 
         Set<String> assertedKeys = new HashSet<>();
         for (RoleAssignment assignment : assertedAssignments) {
+            Preconditions.checkNotNullArgument(assignment.getRoleCode(), "Asserted role assignment has no role code");
+            Preconditions.checkNotNullArgument(assignment.getRoleType(), "Asserted role assignment has no role type");
             assertedKeys.add(assignmentKey(assignment.getRoleCode(), assignment.getRoleType()));
         }
 

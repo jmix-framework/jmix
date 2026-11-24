@@ -191,6 +191,37 @@ class DatabaseRoleAssignmentSynchronizerTest extends SecurityDataSpecification {
         source << [RoleAssignmentSource.MANUAL, null]
     }
 
+    def "an asserted role needs a code and a type: #roleCode, #roleType"() {
+        given:
+        row('a', RESOURCE, RoleAssignmentSource.OIDC)
+        def saveContext = new SaveContext()
+
+        when:
+        synchronizer.synchronize('alice', [assignment(roleCode, roleType)], RoleAssignmentSource.OIDC, saveContext)
+
+        then:
+        thrown(IllegalArgumentException)
+        saveContext.entitiesToSave.isEmpty()
+        saveContext.entitiesToRemove.isEmpty()
+
+        where:
+        roleCode | roleType
+        null     | RESOURCE
+        'b'      | null
+    }
+
+    def "a manual row of a custom role type is kept but grants no authority"() {
+        given:
+        row('a', 'custom', RoleAssignmentSource.MANUAL)
+
+        when:
+        def authorities = sync([])
+
+        then:
+        sources('a', 'custom') == [RoleAssignmentSource.MANUAL]
+        authorities.isEmpty()
+    }
+
     RoleAssignmentEntity row(String roleCode, String roleType, String source) {
         def entity = dataManager.create(RoleAssignmentEntity)
         entity.username = 'alice'

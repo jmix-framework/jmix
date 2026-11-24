@@ -45,7 +45,8 @@ public interface RoleAssignmentSynchronizer {
      * chooses whether removed assignments are soft-deleted.
      *
      * @param username            user whose role assignments are synchronized
-     * @param assertedAssignments role assignments asserted by the identity provider
+     * @param assertedAssignments role assignments asserted by the identity provider, each with a role code and
+     *                            a role type
      * @param source              source of the synchronization, such as {@link RoleAssignmentSource#OIDC}; neither
      *                            {@code null} nor {@link RoleAssignmentSource#MANUAL}
      * @param saveContext         save context to add the changes to

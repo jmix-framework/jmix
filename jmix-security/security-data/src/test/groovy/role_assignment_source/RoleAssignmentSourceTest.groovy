@@ -28,6 +28,7 @@ import io.jmix.security.role.assignment.RoleAssignmentSource
 import io.jmix.securitydata.entity.RoleAssignmentEntity
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
+import org.springframework.security.core.Authentication
 import org.springframework.security.core.userdetails.User
 import test_support.SecurityDataSpecification
 import test_support.role.TestFullAccessRole
@@ -46,7 +47,10 @@ class RoleAssignmentSourceTest extends SecurityDataSpecification {
     @Autowired
     RoleGrantedAuthorityUtils roleGrantedAuthorityUtils
 
+    Authentication previousAuthentication
+
     def setup() {
+        previousAuthentication = SecurityContextHelper.getAuthentication()
         // RoleAssignmentPersistence works through the secured DataManager.
         def admin = User.withUsername('admin')
                 .password('')
@@ -57,7 +61,7 @@ class RoleAssignmentSourceTest extends SecurityDataSpecification {
     }
 
     def cleanup() {
-        SecurityContextHelper.setAuthentication(null)
+        SecurityContextHelper.setAuthentication(previousAuthentication)
     }
 
     def "an assignment created by DataManager has no source"() {

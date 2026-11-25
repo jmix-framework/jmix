@@ -37,3 +37,12 @@ The process:
 ### Working with Documentation
 
 Fork the [jmix-docs](https://github.com/jmix-framework/jmix-docs) repository and follow building instructions in its README. 
+
+## Translations
+
+Translations of the framework messages are kept in a separate repository, [jmix-framework/jmix-translations](https://github.com/jmix-framework/jmix-translations). It accepts pull requests.
+
+- To add or fix a translation, send a pull request there. Edit only the `messages_<locale>.properties` file of the needed locale.
+- The English `messages.properties` files in that repository are a reference copy of the framework messages. Do not change them in a pull request. Maintainers update them together with the framework.
+- A missing key falls back to English, so a translation does not have to cover every key.
+- The files are UTF-8. Write non-Latin characters directly, not as `\u` escapes.

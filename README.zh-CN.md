@@ -55,13 +55,12 @@ Jmix 是一个库和工具的集合，可以加快以数据为中心的 Spring B
     cd jmix
     ./gradlew publishToMavenLocal
     ```
-- 如果你要构建 Jmix Gradle 插件、 Studio 模板或框架的本地化翻译，可在相应的目录中执行 `./gradlew publishToMavenLocal` :
+- 如果你要构建 Jmix Gradle 插件或 Studio 模板，可在相应的目录中执行 `./gradlew publishToMavenLocal` :
 
 
   - `jmix-gradle-plugin` - 用于构建 Jmix 应用程序的 Gradle 插件。
   - `jmix-build` - 一个内部 Gradle 插件，封装了框架的构建逻辑，构建应用程序时不使用它。
   - `jmix-templates` - Studio 新建项目向导中使用的项目模板。
-  - `jmix-translations` - 框架[翻译](https://docs.jmix.io/jmix/localization/framework-translations.html) 。
 
 如果你想要为 Jmix 贡献代码, 请参阅[贡献](CONTRIBUTING.md)。
 

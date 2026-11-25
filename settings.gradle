@@ -6,8 +6,6 @@ includeBuild 'jmix-build'
 
 includeBuild 'jmix-templates'
 
-includeBuild 'jmix-translations'
-
 includeProject('bom', 'jmix-bom')
 
 includeProject('appsettings', 'jmix-appsettings/appsettings')

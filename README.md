@@ -64,12 +64,11 @@ To learn Jmix, complete the [tutorial](https://docs.jmix.io/jmix/tutorial/index.
     ./gradlew publishToMavenLocal -PmavenCentralMirror=https://maven-central-eu.storage-download.googleapis.com/maven2/
     ```
 
-- If you want to build Gradle plugins, Studio templates or framework translations, execute `./gradlew publishToMavenLocal` in the respective directories:
+- If you want to build Gradle plugins or Studio templates, execute `./gradlew publishToMavenLocal` in the respective directories:
 
   - `jmix-gradle-plugin` - a Gradle plugin for building Jmix applications.
   - `jmix-build` - an internal Gradle plugin which encapsulates the framework build logic. It's not used when building applications.
   - `jmix-templates` - templates used by Studio new project wizard.
-  - `jmix-translations` - framework [translations](https://docs.jmix.io/jmix/localization/framework-translations.html).
 
 If you want to contribute your changes to Jmix, see [CONTRIBUTING](CONTRIBUTING.md).
 

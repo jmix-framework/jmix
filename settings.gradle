@@ -8,8 +8,6 @@ includeBuild 'jmix-build'
 
 includeBuild 'jmix-templates'
 
-includeBuild 'jmix-translations'
-
 includeProject('bom', 'jmix-bom')
 
 includeProject('aitools', 'jmix-aitools/aitools')
